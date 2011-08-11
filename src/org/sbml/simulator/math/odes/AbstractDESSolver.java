@@ -17,6 +17,9 @@
  */
 package org.sbml.simulator.math.odes;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -24,13 +27,16 @@ import java.util.List;
 
 import org.apache.commons.math.ode.events.EventException;
 import org.apache.commons.math.ode.events.EventHandler;
-import org.sbml.simulator.math.Mathematics;
+
+import eva2.tools.math.Mathematics;
 
 /**
  * This Class represents an Solver for event-driven DES
  * 
  * @author Alexander D&ouml;rr
  * @author Andreas Dr&auml;ger
+ * @author Philip Stevens
+ * @author Max Zwießele
  * @date 2010-02-04
  * @version $Rev$
  * @since 1.0
@@ -73,6 +79,17 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	private boolean unstableFlag;
 
 	/**
+	 * factor describing an interval for the progress of a certain simulation
+	 * intervalFactor = 100 / (endTime - startTime)
+	 */
+	private double intervalFactor;
+
+	/**
+	 * list of propertychange listeners (for threading purpose)
+	 */
+	ArrayList<PropertyChangeListener> listenerList;
+
+	/**
 	 * Initialize with default integration step size and non-negative attribute
 	 * true.
 	 */
@@ -81,6 +98,8 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 		nonnegative = false;
 		unstableFlag = false;
 		includeIntermediates = false;
+		this.intervalFactor = 0d;
+		this.listenerList = new ArrayList<PropertyChangeListener>();
 	}
 
 	/**
@@ -195,13 +214,13 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 			throws IntegrationException {
 		computeChange(DES, yPrev, t, stepSize, change);
 		checkSolution(change);
-		Mathematics.vvAdd(yPrev, change, yTemp);		
-		checkNonNegativity(yTemp);	
+		Mathematics.vvAdd(yPrev, change, yTemp);
+		checkNonNegativity(yTemp);
 		if (increase) {
 			t += stepSize;
 		}
 		processEventsAndRules(DES, t, yTemp);
-		
+
 		return t;
 	}
 
@@ -244,8 +263,8 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 */
 	private MultiBlockTable initResultMatrix(DESystem DES,
 			double initialValues[], double timeBegin, double timeEnd) {
-		return initResultMatrix(DES, initialValues, timeBegin,
-				numSteps(timeBegin, timeEnd));
+		return initResultMatrix(DES, initialValues, timeBegin, numSteps(
+				timeBegin, timeEnd));
 	}
 
 	/**
@@ -281,8 +300,8 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 			double[] initialValues, double[] timePoints) {
 		double result[][] = new double[timePoints.length][initialValues.length];
 		System.arraycopy(initialValues, 0, result[0], 0, initialValues.length);
-		MultiBlockTable data = new MultiBlockTable(timePoints, result,
-				DES.getIdentifiers());
+		MultiBlockTable data = new MultiBlockTable(timePoints, result, DES
+				.getIdentifiers());
 		data.getBlock(0).setName("Values");
 		if (includeIntermediates && (DES instanceof RichDESystem)) {
 			data.addBlock(((RichDESystem) DES).getAdditionalValueIds());
@@ -346,15 +365,15 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 			throws IntegrationException {
 		int index;
 		List<DESAssignment> assignments;
-		assignments = (LinkedList<DESAssignment>) EDES.getEventAssignments(time,
-				yTemp);
+		assignments = (LinkedList<DESAssignment>) EDES.getEventAssignments(
+				time, yTemp);
 
 		while (assignments != null) {
 			for (DESAssignment assignment : assignments) {
 				index = assignment.getIndex();
 				yTemp[index] = assignment.getValue();
 			}
-			
+
 			assignments = (LinkedList<DESAssignment>) EDES.getEventAssignments(
 					time, yTemp);
 		}
@@ -464,6 +483,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 */
 	public MultiBlockTable solve(DESystem DES, double[] initialValues,
 			double timeBegin, double timeEnd) throws IntegrationException {
+		this.intervalFactor = 100d / (timeEnd - timeBegin);
 		MultiBlockTable data = initResultMatrix(DES, initialValues, timeBegin,
 				timeEnd);
 		double result[][] = data.getBlock(0).getData();
@@ -482,13 +502,15 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 			result[0] = computeSteadyState(((FastProcessDESystem) DES),
 					result[0], timeBegin);
 		}
-		
-		//execute events that trigger at 0.0
+
+		// execute events that trigger at 0.0
 		processEvents((EventDESystem) DES, 0.0, result[0]);
-		
+
 		for (int i = 1; i < result.length; i++) {
+			double oldT = t;
 			t = computeNextState(DES, t, stepSize, result[i - 1], change,
 					result[i], true);
+			firePropertyChange(oldT * intervalFactor, t * intervalFactor);
 
 			if (fastFlag) {
 				yTemp = computeSteadyState(((FastProcessDESystem) DES),
@@ -514,7 +536,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	public MultiBlockTable solve(DESystem DES, double[] initialValues,
 			double x, double h, int steps) throws IntegrationException {
 		double[] timeVector = new double[steps];
-		for (int i = 0; i < steps; i++) {
+		for (int i = 0; i < steps; i++) {	
 			timeVector[i] = x + i * h;
 		}
 		return solve(DES, initialValues, timeVector);
@@ -554,21 +576,23 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 					result[0], timePoints[0]);
 		}
 
-		//execute events that trigger at 0.0
+		// execute events that trigger at 0.0
 		processEvents((EventDESystem) DES, 0.0, result[0]);
-		
+
 		for (int i = 1; i < timePoints.length; i++) {
+			firePropertyChange(timePoints[i-1] * intervalFactor, timePoints[i] * intervalFactor);
 
 			System.arraycopy(result[i - 1], 0, yTemp, 0, result[i - 1].length);
 
-			h = stepSize;			
+			h = stepSize;
 
-			//h = h / 10;
+			// h = h / 10;
 
-			for (int j = 0; j <= inBetweenSteps(timePoints[i - 1],	timePoints[i], h); j++) {
+			for (int j = 0; j <= inBetweenSteps(timePoints[i - 1],
+					timePoints[i], h); j++) {
 				t = computeNextState(DES, t, h, yTemp, change, yTemp, true);
 			}
-			
+
 			h = timePoints[i] - t;
 
 			t = computeNextState(DES, t, h, yTemp, change, result[i], false);
@@ -616,6 +640,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 		double t = timePoints[0];
 		additionalResults(DES, t, result[0], data, 0);
 		for (i = 1; i < timePoints.length; i++) {
+			firePropertyChange(timePoints[i-1] * intervalFactor, timePoints[i] * intervalFactor);
 			double h = stepSize;
 			if (!missingIds.isEmpty()) {
 				for (k = 0; k < initConditions.getColumnCount(); k++) {
@@ -673,9 +698,10 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 		while (!noChange(oldValues, newValues)) {
 			System.arraycopy(newValues, 0, oldValues, 0, newValues.length);
 			newValues = new double[result.length];
-
+			double oldFt = ft;
 			ft = computeNextState(DES, ft, stepSize, oldValues, change,
 					newValues, true);
+			
 
 		}
 		((FastProcessDESystem) DES).setFastProcessComputation(false);
@@ -701,7 +727,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public double g(double t, double[] y) throws EventException {
 		if (Double.isNaN(t)) {
@@ -722,5 +748,37 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * 
 	 */
 	public void resetState(double t, double[] y) throws EventException {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.simulator.math.odes.DESSolver#addPropertyChangedListener(java.beans.PropertyChangeListener)
+	 */
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		if (!listenerList.contains(listener))
+			this.listenerList.add(listener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.simulator.math.odes.DESSolver#removePropertyChangedListener(java.beans.PropertyChangeListener)
+	 */
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		if (listenerList.contains(listener))
+			this.listenerList.remove(listener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.simulator.math.odes.DESSolver#firePropertyChanged(double, double)
+	 */
+	public void firePropertyChange(double oldValue, double newValue) {
+		if (!this.listenerList.isEmpty()) {
+			PropertyChangeEvent evt = new PropertyChangeEvent(this, "progress",
+					oldValue, newValue);
+			for (PropertyChangeListener listener : this.listenerList) {
+				listener.propertyChange(evt);
+			}
+		}
 	}
 }
