@@ -17,7 +17,10 @@
  */
 package org.sbml.simulator.math.odes;
 
+import java.beans.PropertyChangeListener;
 import java.io.Serializable;
+
+import org.sbml.simulator.math.odes.MultiBlockTable.Block;
 
 /**
  * A {@link DESSolver} provides algorithm for the numerical simulation of given
@@ -136,4 +139,23 @@ public interface DESSolver extends Serializable {
 	 * @return
 	 */
 	public DESSolver clone();
+	
+	/**
+	 * Add PropertyChangedListener to this Solver
+	 * @param listener
+	 */
+	public void addPropertyChangeListener(PropertyChangeListener listener);
+	/**
+	 * remove PropertyChangedListener to this Solver
+	 * @param listener
+	 */
+	public void removePropertyChangeListener(PropertyChangeListener listener);
+	/**
+	 * Tell each listener that property value changed. OldValue and newValue are
+	 * the old and current time poit of simulation, respectively.
+	 * 
+	 * @param oldValue
+	 * @param newValue
+	 */
+	public void firePropertyChange(double oldValue, double newValue);
 }
