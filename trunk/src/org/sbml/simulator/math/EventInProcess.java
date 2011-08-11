@@ -1,6 +1,6 @@
 /*
- * $Id: EventInProcess.java 184 2011-08-04 16:25:54Z radbarbeit11 $
- * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsimulator/trunk/src/org/sbml/simulator/math/EventInProcess.java $
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsimulator, a Java-based simulator for models
  * of biochemical processes encoded in the modeling language SBML.
@@ -29,7 +29,7 @@ import java.util.LinkedList;
  * 
  * @author Alexander D&ouml;rr
  * @date 2011-03-04
- * @version $Rev: 184 $
+ * @version $Rev$
  * @since 1.0
  */
 public class EventInProcess {

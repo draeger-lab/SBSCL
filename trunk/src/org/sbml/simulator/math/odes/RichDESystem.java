@@ -1,6 +1,6 @@
 /*
- * $Id: RichDESystem.java 100 2011-03-11 09:46:15Z draeger $
- * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsimulator/trunk/src/org/sbml/simulator/math/odes/RichDESystem.java $
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsimulator, a Java-based simulator for models
  * of biochemical processes encoded in the modeling language SBML.
@@ -25,7 +25,7 @@ package org.sbml.simulator.math.odes;
  * 
  * @author Andreas Dr&auml;ger
  * @date 2010-08-31
- * @version $Rev: 100 $
+ * @version $Rev$
  * @since 1.0
  */
 public interface RichDESystem extends DESystem {
