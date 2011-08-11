@@ -1,4 +1,6 @@
 /*
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsimulator, a Java-based simulator for models
  * of biochemical processes encoded in the modeling language SBML.
@@ -65,7 +67,7 @@ import org.sbml.simulator.math.odes.RichDESystem;
  * @author Roland Keller
  * @author Dieudonn&eacute; Motsou Wouamba
  * @date 2007-09-06
- * @version $Rev: 184 $
+ * @version $Rev$
  * @since 1.0
  */
 public class SBMLinterpreter implements ValueHolder, EventDESystem,

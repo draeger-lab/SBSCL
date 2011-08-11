@@ -1,6 +1,6 @@
 /*
- * $Id: AbstractDESSolver.java 184 2011-08-04 16:25:54Z radbarbeit11 $
- * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsimulator/trunk/src/org/sbml/simulator/math/odes/AbstractDESSolver.java $
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsimulator, a Java-based simulator for models
  * of biochemical processes encoded in the modeling language SBML.
@@ -32,7 +32,7 @@ import org.sbml.simulator.math.Mathematics;
  * @author Alexander D&ouml;rr
  * @author Andreas Dr&auml;ger
  * @date 2010-02-04
- * @version $Rev: 184 $
+ * @version $Rev$
  * @since 1.0
  */
 public abstract class AbstractDESSolver implements DESSolver, EventHandler {
