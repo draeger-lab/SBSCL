@@ -1,6 +1,6 @@
 /*
- * $Id:  Mathematics.java 16:30:47 draeger$
- * $URL: Mathematics.java $
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsimulator, a Java-based simulator for models
  * of biochemical processes encoded in the modeling language SBML.

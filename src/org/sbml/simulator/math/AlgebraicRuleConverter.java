@@ -1,6 +1,6 @@
 /*
- * $Id: AlgebraicRuleConverter.java 170 2011-07-22 15:54:18Z draeger $
- * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsimulator/trunk/src/org/sbml/simulator/math/AlgebraicRuleConverter.java $
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsimulator, a Java-based simulator for models
  * of biochemical processes encoded in the modeling language SBML.
@@ -43,7 +43,7 @@ import org.sbml.jsbml.ASTNode.Type;
  * on the given matching
  * 
  * @author Alexander D&ouml;rr
- * @version $Rev: 170 $
+ * @version $Rev$
  * @since 1.0
  */
 public class AlgebraicRuleConverter {

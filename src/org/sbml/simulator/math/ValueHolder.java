@@ -1,6 +1,6 @@
 /*
- * $Id: ValueHolder.java 15:57:31 draeger$
- * $URL: ValueHolder.java $
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsimulator, a Java-based simulator for models
  * of biochemical processes encoded in the modeling language SBML.
