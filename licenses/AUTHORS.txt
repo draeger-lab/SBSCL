@@ -1,0 +1,32 @@
+                           ---------------------
+                           SBMLsimulator Authors
+                           ---------------------
+
+                           -- Core developers --
+
+         Andreas Dräger, University of Tuebingen, Germany,
+           andreas.draeger@uni-tuebingen.de
+         Alexander Dörr, University of Tuebingen, Germany,
+           a.doerr@student.uni-tuebingen.de
+         Roland Keller, University of Tuebingen, Germany,
+           roland.keller@uni-tuebingen.de
+         Max Zwießele, University of Tuebingen, Germany,
+           max-benjamin.zwiessele@student.uni-tuebingen.de
+         Philip Stevens, University of Tuebingen, Germany,
+           philip.stevens@student.uni-tuebingen.de
+
+                           -- Contributors --
+
+         Marcel Kronfeld, University of Tuebingen, Germany,
+           marcel.kronfeld@uni-tuebingen.de
+         Adrian Schröder, University of Tuebingen, Germany,
+           adrian.schroeder@uni-tuebingen.de
+
+                               -- Alumni --
+         
+         Dieudonné Motsou Wouamba, University of Tuebingen, Germany,
+           dwouamba@yahoo.fr
+         Hannes Planatscher, NMI Reutlingen, Germany,
+           Hannes.Planatscher@nmi.de
+         Michael Ziller, Harvard University, MA, USA,
+           michael_ziller@harvard.edu
