@@ -32,19 +32,8 @@ public interface DESystem extends Serializable, FirstOrderDifferentialEquations 
 	 */
 	public String[] getIdentifiers();
 
-	/**
-	 * Returns the value of the ODE system at the time t given the current
-	 * values of Y
-	 * 
-	 * @param t
-	 * @param Y
-	 * @return
-	 * @throws IntegrationException
-	 * @deprecated use getValue(double t, double[] Y, double[] res) to avoid
-	 *             array reallocations and gain speed
-	 */
-	public double[] getValue(double t, double[] Y) throws IntegrationException;
-
+	
+	
 	/**
 	 * Returns the value of the ODE system at the time t given the current
 	 * values of Y within resultVector.
