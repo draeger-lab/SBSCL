@@ -733,12 +733,17 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
 		return currentTime;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see eva2.tools.math.des.DESystem#getValue(double, double[])
-	 */
-	public double[] getValue(double time, double[] Y)
+	/**
+   * Returns the value of the ODE system at the time t given the current
+   * values of Y
+   * 
+   * @param t
+   * @param Y
+   * @return
+   * @throws IntegrationException
+   * 
+   */
+	private double[] getValue(double time, double[] Y)
 			throws IntegrationException {
 		// create a new array with the same size of Y where the rate of change
 		// is stored for every symbol in the simulation
