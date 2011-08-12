@@ -27,8 +27,7 @@ import java.util.List;
 
 import org.apache.commons.math.ode.events.EventException;
 import org.apache.commons.math.ode.events.EventHandler;
-
-import eva2.tools.math.Mathematics;
+import org.sbml.simulator.math.Mathematics;
 
 /**
  * This Class represents an Solver for event-driven DES
@@ -698,7 +697,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 		while (!noChange(oldValues, newValues)) {
 			System.arraycopy(newValues, 0, oldValues, 0, newValues.length);
 			newValues = new double[result.length];
-			double oldFt = ft;
+      //			double oldFt = ft;
 			ft = computeNextState(DES, ft, stepSize, oldValues, change,
 					newValues, true);
 			
