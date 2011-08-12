@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.tree.TreeNode;
-
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
@@ -486,7 +484,7 @@ public class AlgebraicRuleConverter {
 	 * @param variable
 	 */
 	private void setNodeWithVariable(ASTNode node, Variable variable) {
-		Enumeration<TreeNode> nodes = node.children();
+		Enumeration<?> nodes = node.children();
 		ASTNode subnode;
 
 		while (nodes.hasMoreElements()) {
