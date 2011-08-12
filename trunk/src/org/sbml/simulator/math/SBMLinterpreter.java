@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.math.ode.DerivativeException;
@@ -50,6 +49,7 @@ import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.validator.OverdeterminationValidator;
 import org.sbml.simulator.math.odes.AbstractDESSolver;
 import org.sbml.simulator.math.odes.DESAssignment;
+import org.sbml.simulator.math.odes.DESystem;
 import org.sbml.simulator.math.odes.EventDESystem;
 import org.sbml.simulator.math.odes.FastProcessDESystem;
 import org.sbml.simulator.math.odes.IntegrationException;
@@ -194,24 +194,23 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
 
 	private ASTNodeInterpreter nodeInterpreter;
 
-	/**
-	 * <p>
-	 * This constructs a new DifferentialEquationSystem for the given SBML
-	 * model. Note that only a maximum of <code>Integer.MAX_VALUE</code> species
-	 * can be simulated. If the model contains more species, this class is not
-	 * applicable.
-	 * </p>
-	 * <p>
-	 * Note that currently, units are not considered.
-	 * </p>
-	 * 
-	 * @param model
-	 * @throws ModelOverdeterminedException
-	 * @throws SBMLException
-	 */
+  /**
+   * <p>
+   * This constructs a new {@link DESystem} for the given SBML {@link Model}.
+   * Note that only a maximum of {@link Integer#MAX_VALUE} {@link Species} can
+   * be simulated. If the model contains more {@link Species}, this class is not
+   * applicable.
+   * </p>
+   * <p>
+   * Note that currently, units are not considered.
+   * </p>
+   * 
+   * @param model
+   * @throws ModelOverdeterminedException
+   * @throws SBMLException
+   */
 	public SBMLinterpreter(Model model) throws ModelOverdeterminedException,
 			SBMLException {
-		logger.log(Level.INFO, "Logger works");
 		this.model = model;
 		this.v = new double[this.model.getListOfReactions().size()];
 		this.init();

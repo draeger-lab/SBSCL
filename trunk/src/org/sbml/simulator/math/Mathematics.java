@@ -26,6 +26,18 @@ package org.sbml.simulator.math;
 public class Mathematics {
 
   /**
+   * Scales a vector with the given scalar.
+   * 
+   * @param scale
+   * @param vec
+   */
+  public static void scale(double scale, double[] vec) {
+    for (int i = 0; i < vec.length; i++) {
+      vec[i] *= scale;
+    }
+  }
+  
+  /**
    * Add vectors in place setting res = v1 + v2.
    * 
    * @param v1
@@ -35,7 +47,7 @@ public class Mathematics {
   public static void vvAdd(double[] v1, double[] v2, double[] res) {
     vvAddOffs(v1, 0, v2, 0, res, 0, v1.length);
   }
-  
+
   /**
    * Add vectors in place setting with an offset within the target vector,
    * meaning that res[resOffs+i]=v1[v1Offs+i]+v2[v2Offs+i] for i in length.
