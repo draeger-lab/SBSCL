@@ -206,6 +206,11 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * 
    */
   private List<String> inConcentration;
+  
+  /**
+   * 
+   */
+  private int level;
 
   
   /**
@@ -850,6 +855,8 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     this.stoichiometricCoefHash = new HashMap<String, Double>();
     this.nodeInterpreter = new ASTNodeInterpreter(this);
     
+    this.level=model.getLevel();
+    
     Map<String, Integer> speciesReferenceToRateRule = new HashMap<String, Integer>();
     int speciesReferencesInRateRules = 0;
     for (int k = 0; k < model.getNumRules(); k++) {
@@ -989,15 +996,41 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
      * Check for fast reactions & update math of kinetic law to avoid wrong
      * links concerning local parameters
      */
-    for (i = 0; i < model.getNumReactions(); i++) {
-      if (model.getReaction(i).isFast() && !hasFastReactions) {
+    inConcentration=new LinkedList<String>();
+    for (Reaction r:model.getListOfReactions()) {
+      if (r.isFast() && !hasFastReactions) {
         hasFastReactions = true;
       }
-      if (model.getReaction(i).getKineticLaw() != null) {
-        if (model.getReaction(i).getKineticLaw().getListOfLocalParameters()
+      if (r.getKineticLaw() != null) {
+        if (r.getKineticLaw().getListOfLocalParameters()
             .size() > 0) {
-          model.getReaction(i).getKineticLaw().getMath().updateVariables();
+          r.getKineticLaw().getMath().updateVariables();
         }
+      }
+      
+      Species species;
+      String speciesID;
+      for (SpeciesReference speciesRef:r.getListOfReactants()) {
+        speciesID = speciesRef.getSpecies();
+        species=speciesMap.get(speciesID);
+        
+        if (!species.getBoundaryCondition() && !species.getConstant()) {
+          if (species.isSetInitialConcentration()
+              && !species.hasOnlySubstanceUnits()) {
+            inConcentration.add(speciesID);
+          }
+        }
+      }
+      for (SpeciesReference speciesRef:r.getListOfProducts()) {
+        speciesID = speciesRef.getSpecies();
+        species=speciesMap.get(speciesID);
+        if (!species.getBoundaryCondition() && !species.getConstant()) {
+          if (species.isSetInitialConcentration()
+              && !species.hasOnlySubstanceUnits()) {
+            inConcentration.add(speciesID);
+          }
+        }
+        
       }
     }
     
@@ -1363,57 +1396,56 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    */
   @SuppressWarnings("deprecation")
   protected void processVelocities(double[] changeRate) throws SBMLException {
-    int reactionIndex, sReferenceIndex, speciesIndex;
+    int reactionIndex, speciesIndex;
     String speciesID;
     Species species;
-    SpeciesReference speciesRef;
-    if(inConcentration==null) {
-      inConcentration=new LinkedList<String>();
-    }
-    inConcentration.clear();
     
     // Velocities of each reaction.
     if (hasFastReactions) {
-      for (int i = 0; i < v.length; i++) {
-        currentReaction = model.getReaction(i);
+      reactionIndex=0;
+      for(Reaction currentReaction:model.getListOfReactions()) { 
         KineticLaw kin = currentReaction.getKineticLaw();
         if (kin != null
             && isProcessingFastReactions == currentReaction.isFast()) {
-          v[i] = kin.getMath().compile(nodeInterpreter).toDouble();
+          v[reactionIndex] = kin.getMath().compile(nodeInterpreter).toDouble();
         } else {
-          v[i] = 0;
+          v[reactionIndex] = 0;
         }
+        reactionIndex++;
       }
     }
-
     else {
-      for (int i = 0; i < v.length; i++) {
-        currentReaction = model.getReaction(i);
+      reactionIndex=0;
+      reactionIndex=0;
+      for(Reaction currentReaction:model.getListOfReactions()) {
         KineticLaw kin = currentReaction.getKineticLaw();
         if (kin != null) {
-          v[i] = kin.getMath().compile(nodeInterpreter).toDouble();
+          v[reactionIndex] = kin.getMath().compile(nodeInterpreter).toDouble();
         } else {
-          v[i] = 0;
+          v[reactionIndex] = 0;
         }
+        reactionIndex++;
       }
     }
-    for (reactionIndex = 0; reactionIndex < model.getNumReactions(); reactionIndex++) {
-      Reaction r = model.getReaction(reactionIndex);
-      for (sReferenceIndex = 0; sReferenceIndex < r.getNumReactants(); sReferenceIndex++) {
-        speciesRef = r.getReactant(sReferenceIndex);
+    reactionIndex=0;
+    for(Reaction r:model.getListOfReactions()) {
+      int numProducts=r.getNumProducts();
+      int numReactants=r.getNumReactants();
+      for (int i=0;i!=numReactants;i++) {
+        SpeciesReference speciesRef=r.getReactant(i);
         speciesID = speciesRef.getSpecies();
         species=speciesMap.get(speciesID);
         
         if (!species.getBoundaryCondition() && !species.getConstant()) {
           speciesIndex = symbolHash.get(speciesID);
-          if ((speciesRef.getLevel() >= 3) && (speciesRef.getId() != null)
+          if ((level >= 3) && (speciesRef.getId() != null)
               && this.symbolHash.containsKey(speciesRef.getId())) {
             double currentStoichiometry = this.Y[this.symbolHash.get(speciesRef
                 .getId())];
             changeRate[speciesIndex] -= currentStoichiometry * v[reactionIndex];
             this.stoichiometricCoefHash.put(speciesRef.getId(),
               currentStoichiometry);
-          } else if ((speciesRef.getLevel() >= 3)
+          } else if ((level >= 3)
               && (speciesRef.getId() != null)
               && this.stoichiometricCoefHash.containsKey(speciesRef.getId())) {
             changeRate[speciesIndex] -= this.stoichiometricCoefHash
@@ -1428,27 +1460,23 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
             changeRate[speciesIndex] -= speciesRef.getCalculatedStoichiometry()
                 * v[reactionIndex];
           }
-          if (species.isSetInitialConcentration()
-              && !species.hasOnlySubstanceUnits()) {
-            inConcentration.add(speciesID);
-          }
         }
       }
-      for (sReferenceIndex = 0; sReferenceIndex < r.getNumProducts(); sReferenceIndex++) {
-        speciesRef = r.getProduct(sReferenceIndex);
+      for (int i=0;i!=numProducts;i++) {
+        SpeciesReference speciesRef=r.getProduct(i);
         speciesID = speciesRef.getSpecies();
         species=speciesMap.get(speciesID);
         if (!species.getBoundaryCondition() && !species.getConstant()) {
           speciesIndex = symbolHash.get(speciesID);
           
-          if ((speciesRef.getLevel() >= 3) && (speciesRef.getId() != null)
+          if ((level >= 3) && (speciesRef.getId() != null)
               && this.symbolHash.containsKey(speciesRef.getId())) {
             double currentStoichiometry = this.Y[this.symbolHash.get(speciesRef
                 .getId())];
             changeRate[speciesIndex] += currentStoichiometry * v[reactionIndex];
             this.stoichiometricCoefHash.put(speciesRef.getId(),
               currentStoichiometry);
-          } else if (speciesRef.getLevel() >= 3 && speciesRef.getId() != null
+          } else if (level >= 3 && speciesRef.getId() != null
               && this.stoichiometricCoefHash.containsKey(speciesRef.getId())) {
             changeRate[speciesIndex] += this.stoichiometricCoefHash
                 .get(speciesRef.getId()) * v[reactionIndex];
@@ -1461,13 +1489,11 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
                 * v[reactionIndex];
           }
           
-          if (species.isSetInitialConcentration()
-              && !species.hasOnlySubstanceUnits()) {
-            inConcentration.add(speciesID);
-          }
+          
         }
         
       }
+      reactionIndex++;
     }
     
     // When the unit of reacting species is given mol/volume
