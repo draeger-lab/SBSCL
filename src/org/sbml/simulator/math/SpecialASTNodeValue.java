@@ -61,8 +61,9 @@ public class SpecialASTNodeValue extends ASTNodeValue {
    * 
    */
   public final void setValue(double value) {
-    refreshValues();
     this.doubleValue = value;
+    isBoolean=false;
+    isInt=false;
     isDouble=true;
   }
   
@@ -70,8 +71,9 @@ public class SpecialASTNodeValue extends ASTNodeValue {
    * 
    */
   public final void setValue(boolean value) {
-    refreshValues();
     this.booleanValue = value;
+    isDouble=false;
+    isInt=false;
     isBoolean=true;
   }
   
@@ -80,8 +82,9 @@ public class SpecialASTNodeValue extends ASTNodeValue {
    * @see org.sbml.jsbml.util.compilers.ASTNodeValue#setValue(int)
    */
   public void setValue(int i) {
-    refreshValues();
     this.intValue=i;
+    isBoolean=false;
+    isDouble=false;
     isInt=true;
   }
   /*
