@@ -1,8 +1,6 @@
 /*
- * $Id$ $URL:
- * https
- * ://sbml-simulator.svn.sourceforge.net/svnroot/sbml-simulator/trunk/src/org
- * /sbml/simulator/math/SBMLinterpreter.java $
+ * $Id$ 
+ * $URL$
  * --------------------------------------------------------------------- This
  * file is part of SBMLsimulator, a Java-based simulator for models of
  * biochemical processes encoded in the modeling language SBML.
@@ -26,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.math.ode.DerivativeException;
@@ -75,8 +74,8 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     RichDESystem, FastProcessDESystem, FirstOrderDifferentialEquations {
   
   /**
-     * 
-     */
+   * A logger.
+   */
   private static final Logger logger = Logger.getLogger(SBMLinterpreter.class
       .getName());
   
@@ -455,20 +454,29 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
   @SuppressWarnings("deprecation")
   public double getCurrentStoichiometry(String id) {
     Integer pos = symbolHash.get(id);
-    if (pos != null) { return Y[pos]; }
+    if (pos != null) { 
+      return Y[pos]; 
+    }
     Double value = stoichiometricCoefHash.get(id);
-    if (value != null) { return value; }
+    if (value != null) { 
+      return value; 
+    }
     
+    // TODO: What happens if a species reference does not have an id? 
     SpeciesReference sr = model.findSpeciesReference(id);
     
     if (sr != null && sr.isSetStoichiometryMath()) {
       try {
         return sr.getStoichiometryMath().getMath().compile(nodeInterpreter)
             .toDouble();
-      } catch (SBMLException e) {
-        e.printStackTrace();
+      } catch (SBMLException exc) {
+        logger.log(Level.WARNING, String.format(
+          "Could not compile stoichiometry math of species reference %s.", id),
+          exc);
       }
-    } else if (sr != null) { return sr.getStoichiometry(); }
+    } else if (sr != null) {
+      return sr.getStoichiometry();
+    }
     return 1d;
   }
   
@@ -1485,7 +1493,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
   }
   
   /**
-   * This method allows to set the parameters of the model to the specified
+   * This method allows us to set the parameters of the model to the specified
    * values in the given array.
    * 
    * @param params
@@ -1502,19 +1510,25 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     // "The number of parameters passed to this method must "
     // + "match the number of parameters in the model.");
     int paramNum, reactionNum, localPnum;
-    for (paramNum = 0; paramNum < model.getNumParameters(); paramNum++)
+    for (paramNum = 0; paramNum < model.getNumParameters(); paramNum++) {
       model.getParameter(paramNum).setValue(params[paramNum]);
+    }
     for (reactionNum = 0; reactionNum < model.getNumReactions(); reactionNum++) {
       KineticLaw law = model.getReaction(reactionNum).getKineticLaw();
-      for (localPnum = 0; localPnum < law.getNumLocalParameters(); localPnum++)
+      for (localPnum = 0; localPnum < law.getNumLocalParameters(); localPnum++) {
         law.getLocalParameter(localPnum).setValue(params[paramNum++]);
+      }
     }
-    if (model.getNumInitialAssignments() > 0 || model.getNumEvents() > 0) try {
-      init();
-    } catch (Exception e) {
-      // This can never happen
+    if (model.getNumInitialAssignments() > 0 || model.getNumEvents() > 0) {
+      try {
+        init();
+      } catch (Exception exc) {
+        // This can never happen
+        logger.log(Level.WARNING,
+          "Could not re-initialize the model with the new parameter values.",
+          exc);
+      }
     }
-    
   }
   
   /**
@@ -1545,8 +1559,5 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     }
     
   }
-  
-  
-
   
 }
