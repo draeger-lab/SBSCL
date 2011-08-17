@@ -259,8 +259,7 @@ public class ASTNodeInterpreter implements ASTNodeCompiler {
     String id = nsb.getId();
     if (nsb instanceof Species) {
       Species s = (Species) nsb;
-      double compartmentValue = valueHolder.getCurrentCompartmentValueOf(nsb
-          .getId());
+      double compartmentValue = valueHolder.getCurrentCompartmentValueOf(id);
       if (compartmentValue == 0d) {
         nodeValue.setValue(valueHolder.getCurrentSpeciesValue(id));
       }
@@ -275,7 +274,7 @@ public class ASTNodeInterpreter implements ASTNodeCompiler {
         // return new ASTNodeValue(Y[symbolIndex], this);
         
         nodeValue.setValue(valueHolder.getCurrentSpeciesValue(id)
-            * valueHolder.getCurrentCompartmentValueOf(id));
+            * compartmentValue);
       } else {
         nodeValue.setValue(valueHolder.getCurrentSpeciesValue(id));
         // return new ASTNodeValue(Y[symbolIndex]
@@ -283,29 +282,27 @@ public class ASTNodeInterpreter implements ASTNodeCompiler {
       }
     }
 
-    else if (nsb instanceof Compartment || nsb instanceof Parameter
-        || nsb instanceof LocalParameter) {
-      if (nsb instanceof LocalParameter) {
-        LocalParameter p = (LocalParameter) nsb;
-        // parent: list of parameter; parent of parent: kinetic law
-        SBase parent = p.getParentSBMLObject().getParentSBMLObject();
-        if (parent instanceof KineticLaw) {
-          ListOf<LocalParameter> params = ((KineticLaw) parent)
-              .getListOfLocalParameters();
-          boolean set = false;
-          for (int i = 0; i < params.size(); i++) {
-            if (p.getId() == params.get(i).getId()) {
-              nodeValue.setValue(params.get(i).getValue());
-              set = true;
-              break;
-            }
-          }
-          if (!set) {
-            nodeValue.setValue(valueHolder.getCurrentValueOf(id));
+    else if (nsb instanceof Compartment || nsb instanceof Parameter) {
+      nodeValue.setValue(valueHolder.getCurrentValueOf(id));
+    } else if (nsb instanceof LocalParameter) {
+      LocalParameter p = (LocalParameter) nsb;
+      // parent: list of parameter; parent of parent: kinetic law
+      SBase parent = p.getParentSBMLObject().getParentSBMLObject();
+      if (parent instanceof KineticLaw) {
+        ListOf<LocalParameter> params = ((KineticLaw) parent)
+            .getListOfLocalParameters();
+        boolean set = false;
+        for (int i = 0; i < params.size(); i++) {
+          if (p.getId() == params.get(i).getId()) {
+            nodeValue.setValue(params.get(i).getValue());
+            set = true;
+            break;
           }
         }
-      } else {
-        nodeValue.setValue(valueHolder.getCurrentValueOf(id));
+        if (!set) {
+          nodeValue.setValue(valueHolder.getCurrentValueOf(id));
+        }
+        
       }
       
     } else if (nsb instanceof SpeciesReference) {
@@ -324,7 +321,6 @@ public class ASTNodeInterpreter implements ASTNodeCompiler {
     }
     return nodeValue;
   }
-  
   
   /*
    * (non-Javadoc)
@@ -1011,12 +1007,17 @@ public class ASTNodeInterpreter implements ASTNodeCompiler {
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#times(java.util.List)
    */
   public final ASTNodeValue times(List<ASTNode> nodes) throws SBMLException {
-    if (nodes.size() == 0) { return new ASTNodeValue(0d, this); }
-    double value = 1d;
-    for (ASTNode node : nodes) {
-      value *= node.compile(this).toDouble();
+    int size = nodes.size();
+    if (size == 0) {
+      nodeValue.setValue(0d);
+    } else {
+      double value = 1d;
+      
+      for (int i = 0; i != size; i++) {
+        value *= nodes.get(i).compile(this).toDouble();
+      }
+      nodeValue.setValue(value);
     }
-    nodeValue.setValue(value);
     return nodeValue;
   }
   
