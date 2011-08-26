@@ -586,16 +586,16 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 			h = stepSize;
 
 			// h = h / 10;
-
-			for (int j = 0; j <= inBetweenSteps(timePoints[i - 1],
-					timePoints[i], h); j++) {
+			int steps=inBetweenSteps(timePoints[i - 1],
+        timePoints[i], h);
+			for(int j=1;j<=steps;j++) {
 				t = computeNextState(DES, t, h, yTemp, change, yTemp, true);
 			}
 
 			h = timePoints[i] - t;
-
-			t = computeNextState(DES, t, h, yTemp, change, result[i], false);
-
+			if(h>1E12) {
+			  t = computeNextState(DES, t, h, yTemp, change, result[i], false);
+			}
 			if (fastFlag) {
 				steady = computeSteadyState(((FastProcessDESystem) DES),
 						result[i], timePoints[0]);
@@ -604,7 +604,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 
 			additionalResults(DES, t, yTemp, data, i);
 
-			t += h;
+			t=timePoints[i];
 
 		}
 		return data;
@@ -661,16 +661,18 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 				Mathematics.vvAdd(yTemp, change, yTemp);
 				t += h;
 			}
-			h = timePoints[i] - t;
-			computeChange(DES, yTemp, t, h, change);
-			checkSolution(change);
-			Mathematics.vvAdd(yTemp, change, yTemp);
+			if(h>1E12) {
+			  h = timePoints[i] - t;
+			  computeChange(DES, yTemp, t, h, change);
+			  checkSolution(change);
+			  Mathematics.vvAdd(yTemp, change, yTemp);
+			}
 			checkNonNegativity(yTemp);
 			System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 
 			additionalResults(DES, t, yTemp, data, i);
 
-			t += h;
+			t=timePoints[i];
 		}
 		return data;
 	}
