@@ -344,7 +344,7 @@ public class AlgebraicRuleConverter {
 	private void deleteVariable() {
 		int index;
 		// Node with variable has 2 children
-		if (variableNodeParent.getNumChildren() == 2
+		if (variableNodeParent.getChildCount() == 2
 				&& variableNodeParent.getType() == Type.TIMES) {
 			// Variable has a negativ sign / other child is -1
 			if (variableNodeParent.getLeftChild().isMinusOne()
@@ -380,7 +380,7 @@ public class AlgebraicRuleConverter {
 	private void evaluateEquation(ASTNode node) {
 		if (node != null) {
 			if (node.getType() == Type.TIMES) {
-				if (node.getNumChildren() == 2) {
+				if (node.getChildCount() == 2) {
 					if (node.getLeftChild().isMinusOne()
 							|| node.getRightChild().isMinusOne()) {
 						remainOnSide = false;
@@ -471,7 +471,7 @@ public class AlgebraicRuleConverter {
 			}
 		}
 		// proceed with the children
-		for (int i = 0; i < node.getNumChildren(); i++) {
+		for (int i = 0; i < node.getChildCount(); i++) {
 			replaceNames(node.getChild(i), varibales, numberHash, nodeHash);
 		}
 	}
@@ -517,16 +517,16 @@ public class AlgebraicRuleConverter {
 		if (node.isOperator()) {
 			if (node.getType() == Type.PLUS) {
 
-				for (int i = 0; i < node.getNumChildren(); i++) {
+				for (int i = 0; i < node.getChildCount(); i++) {
 					sortEquationObjects(node.getChild(i), true, false, false);
 				}
 			} else if (node.getType() == Type.MINUS) {
 
-				for (int i = 0; i < node.getNumChildren(); i++) {
+				for (int i = 0; i < node.getChildCount(); i++) {
 					sortEquationObjects(node.getChild(i), true, true, false);
 				}
 			} else if (node.getType() == Type.TIMES) {
-				if (node.getNumChildren() == 2) {
+				if (node.getChildCount() == 2) {
 					if (node.getLeftChild().isMinusOne()
 							&& !node.getRightChild().isMinusOne()) {
 						sortEquationObjects(node.getRightChild(), true, true,
@@ -585,7 +585,7 @@ public class AlgebraicRuleConverter {
 				ASTNode parent;
 
 				// Hash its variables to the parameter
-				for (int i = 0; i < node.getNumChildren(); i++) {
+				for (int i = 0; i < node.getChildCount(); i++) {
 					variable = null; 
 					if (node.getChild(i).isString()) {
 						variable = node.getChild(i).getVariable();
@@ -640,7 +640,7 @@ public class AlgebraicRuleConverter {
 		}
 
 		// Move on with its children
-		for (int i = 0; i < node.getNumChildren(); i++) {
+		for (int i = 0; i < node.getChildCount(); i++) {
 			substituteFunctions(node.getChild(i), i);
 		}
 
