@@ -24,8 +24,8 @@ package org.sbml.simulator.math;
  * @since 1.0
  */
 public class Mathematics {
-
-  /**
+	
+	/**
    * Scales a vector with the given scalar.
    * 
    * @param scale
@@ -36,6 +36,51 @@ public class Mathematics {
       vec[i] *= scale;
     }
   }
+	
+	/**
+	 * Multiplies (scales) every element of the array v with s in place.
+	 * 
+	 * @param s
+	 *            a scalar
+	 * @param v
+	 *            an array to be multiplied with s.
+	 * @return a scaled array.
+	 */
+	public static void svMult(double s, double[] v, double[] res) {
+		for (int i = 0; i < v.length; i++) {
+			res[i] = v[i] * s;
+		}
+	}
+	
+	/**
+	 * Add vectors scaled: res[i] = s*(v[i] + w[i])
+	 * 
+	 * @param s
+	 * @param v
+	 * @param w
+	 * @return
+	 */
+	public static void  svvAddAndScale(double s, double[] v, double[] w,
+			double[] res) {
+		for (int i = 0; i < v.length; i++) {
+			res[i] = s * (v[i] + w[i]);
+		}
+	}
+
+  /**
+	 * Add vectors scaled: res[i] = s*v[i] + w[i]
+	 * 
+	 * @param s
+	 * @param v
+	 * @param w
+	 * @return
+	 */
+	public static void svvAddScaled(double s, double[] v, double[] w,
+			double[] res) {
+		for (int i = 0; i < v.length; i++) {
+			res[i] = s * v[i] + w[i];
+		}
+	}
   
 	/**
    * Add vectors in place setting res = v1 + v2.
