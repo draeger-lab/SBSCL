@@ -796,7 +796,6 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
         }
       }
       
-      
     } catch (SBMLException exc) {
       throw new IntegrationException(exc);
     }
@@ -1403,8 +1402,8 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     for (Reaction r : model.getListOfReactions()) {
       kin = r.getKineticLaw();
       if (hasFastReactions) {
-        if (kin != null
-            && isProcessingFastReactions == currentReaction.isFast()) {
+        if ((kin != null)
+            && (isProcessingFastReactions == currentReaction.isFast())) {
           v[reactionIndex] = nodeInterpreter.compileDouble(kin.getMath());
         } else {
           v[reactionIndex] = 0;
@@ -1468,7 +1467,6 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
                   .getCalculatedStoichiometry() * v[reactionIndex];
             }
           }
-          
         }
       }
       for (int i = 0; i != numProducts; i++) {
@@ -1477,7 +1475,6 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
         species = speciesMap.get(speciesID);
         if (species != null) {
           speciesIndex = symbolHash.get(speciesID);
-          
           if (level >= 3) {
             id = speciesRef.getId();
             if (id != null) {
@@ -1523,6 +1520,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
           
         }
       }
+      
       reactionIndex++;
     }
     // When the unit of reacting species is given mol/volume
@@ -1613,6 +1611,15 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
       }
     }
     
+  }
+  
+  @Override
+  public boolean containsEventsOrRules() {
+    if ((model.getNumRules() != 0) || (model.getNumEvents() != 0)) {
+      return true;
+    } else {
+      return false;
+    }
   }
   
 }
