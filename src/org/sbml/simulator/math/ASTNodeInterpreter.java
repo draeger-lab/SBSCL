@@ -67,7 +67,7 @@ public class ASTNodeInterpreter implements ASTNodeCompiler {
    */
   public ASTNodeInterpreter(ValueHolder valueHolder) {
     this.valueHolder = valueHolder;
-    this.nodeValue = new SpecialASTNodeValue(this);
+    this.nodeValue = new ASTNodeValue(this);
   }
   
   /*

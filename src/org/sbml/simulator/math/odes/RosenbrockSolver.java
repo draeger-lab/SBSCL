@@ -158,11 +158,11 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	public RosenbrockSolver(int size, double stepsize) {
 		super();
 
-		init(size,stepsize);
+		init(size,stepsize,2);
 		
 	}
 
-	private void init(int size, double stepsize) {
+	private void init(int size, double stepsize, int nTimepoints) {
     numEqn = size;
 		
 		hMin = 1E-12;
@@ -172,7 +172,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		relTol = 1E-7;
 
 		stop = false;
-		timePoints = new double[2]; 
+		timePoints = new double[nTimepoints]; 
 		// allocate arrays
 		y = new double[numEqn];
 		f1 = new double[numEqn];
@@ -207,32 +207,22 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	public AbstractDESSolver clone() {
 		return new RosenbrockSolver(numEqn,this.getStepSize());
 	}
-/*
-	private MultiBlockTable initResultMatrix(DESystem DES,
-			double[] initialValues, double[] timePoints) {
-		double result[][] = new double[timePoints.length][initialValues.length];
-		System.arraycopy(initialValues, 0, result[0], 0, initialValues.length);
-		MultiBlockTable data = new MultiBlockTable(timePoints, result,
-				DES.getIdentifiers());
-		data.getBlock(0).setName("Values");
-		if (includeIntermediates && (DES instanceof RichDESystem)) {
-			data.addBlock(((RichDESystem) DES).getAdditionalValueIds());
-			data.getBlock(data.getBlockCount() - 1)
-					.setName("Additional values");
-		}
-		return data;
-	}
 
+	/*
 	public MultiBlockTable solve(DESystem DES, double[] initialValues,double timeBegin,
 			double timeEnd) throws IntegrationException {
-		if(y==null) {
-		  init(DES.getDESystemDimension(),this.getStepSize());
-		}
-		int points = (int) Math.ceil(timeEnd / this.getStepSize()) + 1;
-		double[] timePoints = new double[points];
-
-		MultiBlockTable data = initResultMatrix(DES, initialValues, timePoints);
+	  if (((DES instanceof FastProcessDESystem) &&( ((FastProcessDESystem) DES).containsFastProcesses()))||(DES.containsEventsOrRules())) {
+	    super.solve(DES, initialValues, timeBegin,timeEnd);
+	  }
+	  
+	  MultiBlockTable data = initResultMatrix(DES, initialValues, timeBegin,timeEnd);
 		double result[][] = data.getBlock(0).getData();
+		additionalResults(DES, t, result[0], data, 0);
+	  if(y==null) {
+		  init(DES.getDESystemDimension(),this.getStepSize(),data.getTimePoints().length);
+		}
+		
+		
 		
 		try {
 
@@ -258,8 +248,9 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 			// set t to the initial independent value and y[] to the
 			// initial dependent values
-			t = 0.0;
-			timePoints[0] = t;
+			t = timeBegin;
+      timePoints[0] = t;
+      
 
 			for (int i = 0; i < initialValues.length; i++){
 				y[i] = initialValues[i];
@@ -284,7 +275,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 					// by
 					// at least stepsize...
 					if (Math.abs(timePoints[solutionIndex] - t) >= Math
-							.abs(stepsize)) {
+							.abs(this.getStepSize())) {
 
 						// ...we want to record the current point in the
 						// solution
@@ -295,6 +286,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 						solutionIndex++;
 						timePoints[solutionIndex] = t;
 						System.arraycopy(y, 0, result[solutionIndex], 0, y.length);
+						additionalResults(DES, t - this.getStepSize(), result[solutionIndex - 1], data, solutionIndex);
 					}
 				}
 
@@ -373,7 +365,9 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		return data;
 
 	}
-*/
+	*/
+
+	
 	public double step(DESystem DES) throws IntegrationException {
 
 		double largestError = 0;
@@ -515,7 +509,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	public double[] computeChange(DESystem DES, double[] y2, double time,
 			double currentStepSize, double[] change) throws IntegrationException {
 	  if(y==null) {
-      init(DES.getDESystemDimension(),this.getStepSize());
+      init(DES.getDESystemDimension(),this.getStepSize(),2);
     }
 	  if(currentStepSize!=this.getStepSize()) {
 	    this.hMax = Math.min(currentStepSize,standardStepSize);
@@ -658,5 +652,6 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
     return change;
 	}
+	
 
 }

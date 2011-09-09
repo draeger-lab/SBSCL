@@ -63,4 +63,10 @@ public interface DESystem extends Serializable, FirstOrderDifferentialEquations 
 	 */
 	public void getValue(double t, double[] Y, double[] resultVector)
 			throws IntegrationException;
+
+	/**
+	 * 
+	 * @return
+	 */
+  public boolean containsEventsOrRules();
 }
