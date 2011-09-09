@@ -17,11 +17,9 @@
  */
 package org.sbml.simulator.math;
 
-import org.sbml.jsbml.CallableSBase;
+import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
 import org.sbml.jsbml.util.compilers.ASTNodeValue;
-import org.w3c.dom.Node;
 
 /**
  * Run-time efficient implementation of {@link ASTNodeValue}
@@ -30,21 +28,24 @@ import org.w3c.dom.Node;
  * @version $Rev$
  * @since 1.0
  */
-public class SpecialASTNodeValue extends ASTNodeValue {
+public class SpecialASTNodeValue extends ASTNodeValue{
 
   private double doubleValue;
   private boolean booleanValue;
   private boolean isDouble;
   private boolean isBoolean;
-  private int intValue;
-  private boolean isInt;
+  
+  private ASTNode node;
+  private double time;
+  private EfficientASTNodeInterpreter interpreter;
   
   /**
    * 
    * @param compiler
    */
-  public SpecialASTNodeValue(ASTNodeCompiler compiler) {
-    super(compiler);
+  public SpecialASTNodeValue(EfficientASTNodeInterpreter interpreter) {
+    super(interpreter);
+    this.interpreter=interpreter;
     refreshValues();
   }
   
@@ -54,147 +55,44 @@ public class SpecialASTNodeValue extends ASTNodeValue {
   private void refreshValues() {
     isDouble=false;
     isBoolean=false;
-    isInt=false;
   }
   
   /**
+   * @throws SBMLException 
    * 
    */
-  public final void setValue(double value) {
-    this.doubleValue = value;
+  public final double compileDouble(double time) throws SBMLException {
+    if(this.time==time) {
+      
+     return doubleValue;
+    }
+    else {
+      doubleValue=interpreter.compileDouble(node);
+    }
     isBoolean=false;
-    isInt=false;
     isDouble=true;
+    this.time=time;
+    return doubleValue;
   }
   
   /**
+   * @throws SBMLException 
    * 
    */
-  public final void setValue(boolean value) {
-    this.booleanValue = value;
-    isDouble=false;
-    isInt=false;
+  public final boolean compileBoolean(double time) throws SBMLException {
+    if(this.time==time) {
+     return booleanValue;
+    }
+    else {
+      booleanValue=interpreter.compileBoolean(node);
+    }
     isBoolean=true;
-  }
-  
-  /*
-   * (non-Javadoc)
-   * @see org.sbml.jsbml.util.compilers.ASTNodeValue#setValue(int)
-   */
-  public void setValue(int i) {
-    this.intValue=i;
-    isBoolean=false;
     isDouble=false;
-    isInt=true;
-  }
-  /*
-   * (non-Javadoc)
-   * @see org.sbml.jsbml.util.compilers.ASTNodeValue#toDouble()
-   */
-  public final double toDouble() throws SBMLException {
-    if(isDouble) {
-      return doubleValue;
-    }
-    else if(isInt) {
-      return intValue;
-    }
-    else {
-      return super.toDouble();
-    }
+    this.time=time;
+    return booleanValue;
   }
   
- /*
-  * (non-Javadoc)
-  * @see org.sbml.jsbml.util.compilers.ASTNodeValue#toInteger()
-  */
-  public final int toInteger() throws SBMLException {
-    if(isInt) {
-      return intValue;
-    }
-    else {
-      return super.toInteger();
-    }
-  }
   
-  /*
-   * (non-Javadoc)
-   * @see org.sbml.jsbml.util.compilers.ASTNodeValue#toBoolean()
-   */
-  public final boolean toBoolean() throws SBMLException {
-    if(isBoolean) {
-      return booleanValue;
-    }
-    else {
-      return super.toBoolean();
-    }
-  }
- 
-  
-  
-  /*
-   * (non-Javadoc)
-   * @see org.sbml.jsbml.util.compilers.ASTNodeValue#setValue(java.lang.Boolean)
-   */
-  public void setValue(Boolean value) {
-    refreshValues();
-    super.setValue(value);
-  }
-
-  
-
-  /*
-   * (non-Javadoc)
-   * @see org.sbml.jsbml.util.compilers.ASTNodeValue#setValue(long)
-   */
-  public void setValue(long l) {
-    refreshValues();
-    super.setValue(Long.valueOf(l));
-  }
-
-  /*
-   * (non-Javadoc)
-   * @see org.sbml.jsbml.util.compilers.ASTNodeValue#setValue(org.sbml.jsbml.CallableSBase)
-   */
-  public void setValue(CallableSBase value) {
-    refreshValues();
-    super.setValue(value);
-  }
-
-  /*
-   * (non-Javadoc)
-   * @see org.sbml.jsbml.util.compilers.ASTNodeValue#setValue(org.w3c.dom.Node)
-   */
-  public void setValue(Node value) {
-    refreshValues();
-    super.setValue(value);
-  }
-
-  /*
-   * (non-Javadoc)
-   * @see org.sbml.jsbml.util.compilers.ASTNodeValue#setValue(java.lang.Number)
-   */
-  public void setValue(Number value) {
-    refreshValues();
-    super.setValue(value);
-  }
-
-  /*
-   * (non-Javadoc)
-   * @see org.sbml.jsbml.util.compilers.ASTNodeValue#setValue(short)
-   */
-  public void setValue(short s) {
-    refreshValues();
-    super.setValue(Short.valueOf(s));
-  }
-
-  /*
-   * (non-Javadoc)
-   * @see org.sbml.jsbml.util.compilers.ASTNodeValue#setValue(java.lang.String)
-   */
-  public void setValue(String value) {
-    refreshValues();
-    super.setValue(value);
-  }
   
   /*
    * (non-Javadoc)
@@ -206,9 +104,6 @@ public class SpecialASTNodeValue extends ASTNodeValue {
     }
     else if(isBoolean) {
       return booleanValue;
-    }
-    else if(isInt) {
-      return intValue;
     }
     else {
       return super.getValue();

@@ -1313,7 +1313,9 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
       case LAMBDA:
         value = lambdaDoubleHelp(node.getChildren());
         break;
-      
+      default:
+        // TODO throw new
+        break;
     }
     return value;
     
@@ -1356,7 +1358,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
         // / getCompartmentValueOf(nsb.getId()), this);
       }
     }
-    else if (nsb instanceof Compartment || nsb instanceof Parameter) {
+    else if ((nsb instanceof Compartment) || (nsb instanceof Parameter)) {
       String id=nsb.getId();
       return valueHolder.getCurrentValueOf(id);
     } 
@@ -1368,17 +1370,21 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
     else if (nsb instanceof LocalParameter) {
       LocalParameter p = (LocalParameter) nsb;
       // parent: list of parameter; parent of parent: kinetic law
+      /*
       SBase parent = p.getParentSBMLObject().getParentSBMLObject();
       if (parent instanceof KineticLaw) {
         ListOf<LocalParameter> params = ((KineticLaw) parent)
             .getListOfLocalParameters();
         for (int i = 0; i < params.size(); i++) {
-          if (p.getId() == params.get(i).getId()) { return params.get(i)
-              .getValue(); }
+          if (id == params.get(i).getId()) { double value=params.get(i)
+              .getValue(); 
+            return value;
+          }
         }
-        String id=nsb.getId();
-        return valueHolder.getCurrentValueOf(id);
-      }
+        */
+      
+        return p.getValue();
+      
       
     } else if (nsb instanceof Reaction) {
       Reaction r = (Reaction) nsb;
@@ -1815,7 +1821,10 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
     }
   
   private double powHelp(ASTNode left, ASTNode right) throws SBMLException {
-    return Math.pow(compileDouble(left), compileDouble(right));
+    double l = compileDouble(left);
+    double r = compileDouble(right);
+    double result= Math.pow(l,r);
+    return result;
   }
   
   private double compileHelp(double value, String units) {

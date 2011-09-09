@@ -260,7 +260,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * @param timeEnd
 	 * @return
 	 */
-	private MultiBlockTable initResultMatrix(DESystem DES,
+	protected MultiBlockTable initResultMatrix(DESystem DES,
 			double initialValues[], double timeBegin, double timeEnd) {
 		return initResultMatrix(DES, initialValues, timeBegin, numSteps(
 				timeBegin, timeEnd));
@@ -274,7 +274,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * @param numSteps
 	 * @return
 	 */
-	private MultiBlockTable initResultMatrix(DESystem DES,
+	protected MultiBlockTable initResultMatrix(DESystem DES,
 			double[] initialValues, double timeBegin, int numSteps) {
 		int dim = DES.getDESystemDimension();
 		if (dim != initialValues.length) {
@@ -295,7 +295,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * @param timePoints
 	 * @return
 	 */
-	private MultiBlockTable initResultMatrix(DESystem DES,
+	protected MultiBlockTable initResultMatrix(DESystem DES,
 			double[] initialValues, double[] timePoints) {
 		double result[][] = new double[timePoints.length][initialValues.length];
 		System.arraycopy(initialValues, 0, result[0], 0, initialValues.length);
@@ -424,7 +424,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * @param rowIndex
 	 * @throws IntegrationException
 	 */
-	private void additionalResults(DESystem DES, double t, double[] yTemp,
+	protected void additionalResults(DESystem DES, double t, double[] yTemp,
 			MultiBlockTable data, int rowIndex) throws IntegrationException {
 		if (includeIntermediates && (DES instanceof RichDESystem)) {
 			MultiBlockTable.Block block = data.getBlock(1);
