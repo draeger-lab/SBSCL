@@ -10,23 +10,32 @@
            a.doerr@student.uni-tuebingen.de
          Roland Keller, University of Tuebingen, Germany,
            roland.keller@uni-tuebingen.de
+
+
+                           -- Contributors --
+
+         Akira Funahashi, Keio University, Yokohama, Japan,
+           funa@bio.keio.ac.jp
          Max Zwießele, University of Tuebingen, Germany,
            max-benjamin.zwiessele@student.uni-tuebingen.de
          Philip Stevens, University of Tuebingen, Germany,
            philip.stevens@student.uni-tuebingen.de
-
-                           -- Contributors --
-
+         Mike Cooling, University of Auckland, Auckland, New Zealand,
+           m.cooling@auckland.ac.nz
+         Michael Ziller, Harvard University, MA, USA,
+           michael_ziller@harvard.edu
+         Nicolas Rodriguez, European Bioinformatics Institute, Hinxton, UK,
+            rodrigue@ebi.ac.uk
          Marcel Kronfeld, University of Tuebingen, Germany,
            marcel.kronfeld@uni-tuebingen.de
          Adrian Schröder, University of Tuebingen, Germany,
            adrian.schroeder@uni-tuebingen.de
 
+           
                                -- Alumni --
          
          Dieudonné Motsou Wouamba, University of Tuebingen, Germany,
            dwouamba@yahoo.fr
          Hannes Planatscher, NMI Reutlingen, Germany,
            Hannes.Planatscher@nmi.de
-         Michael Ziller, Harvard University, MA, USA,
-           michael_ziller@harvard.edu
+
