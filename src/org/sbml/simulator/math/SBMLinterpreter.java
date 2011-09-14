@@ -1613,7 +1613,10 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     
   }
   
-  @Override
+  /*
+   * (non-Javadoc)
+   * @see org.sbml.simulator.math.odes.DESystem#containsEventsOrRules()
+   */
   public boolean containsEventsOrRules() {
     if ((model.getNumRules() != 0) || (model.getNumEvents() != 0)) {
       return true;
