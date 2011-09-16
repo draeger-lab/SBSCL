@@ -30,7 +30,15 @@
            marcel.kronfeld@uni-tuebingen.de
          Adrian Schröder, University of Tuebingen, Germany,
            adrian.schroeder@uni-tuebingen.de
-
+           
+           
+                                -- Thanks to --
+                                      
+         Beky Kotcon, Samantha Mesuro, Daniel Rozenfeld, Anak Yodpinyanee, 
+         Andres Perez, Eric Doi, Richard Mehlinger, Steven Ehrlich, Martin Hunt, 
+         George Tucker, Peter Scherpelz, Aaron Becker, Eric Harley, and 
+         Chris Moore, Harvey Mudd College, Claremont, California, USA.
+           
            
                                -- Alumni --
          
