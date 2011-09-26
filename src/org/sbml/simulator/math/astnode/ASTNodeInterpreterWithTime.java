@@ -1,7 +1,5 @@
 /*
- * $Id: AdamsBashforthSolver.java 16 2011-09-04 09:30:39Z andreas-draeger $
- * $URL: https://sbml-simulator.svn.sourceforge.net/svnroot/sbml-simulator/trunk/src/org/sbml/simulator/math/odes/AdamsBashforthSolver.java $
- * ---------------------------------------------------------------------
+ *---------------------------------------------------------------------
  * This file is part of SBMLsimulator, a Java-based simulator for models
  * of biochemical processes encoded in the modeling language SBML.
  *
