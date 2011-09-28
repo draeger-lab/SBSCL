@@ -1,1 +1,33 @@
 <?xml version="1.0"?>
+<project name="FatJar SBMLsimulatorCore_v0.9_full.jar (experimental)" default="main" basedir=".">
+    <!-- this file was created by Fat-Jar Eclipse Plug-in -->
+    <!-- the ANT-Export is in a very early stage, so this -->
+    <!-- is only experimental, ANT 1.6 or above is        -->
+    <!-- required, feedback is always welcome:            -->
+    <!--       http://sourceforge.net/projects/fjep       -->
+    <!-- uncomment the following lines if using ANT outside Eclipse -->
+    <!--
+        <property name="fjepPath" value="reference:file:plugins/net.sf.fjep.fatjar_0.0.31/fatjar.jar"/>
+        <taskdef name="fatjar.build" classname="net.sf.fjep.anttask.FJBuildTask" classpath="${fjepPath}"/>
+        <typedef name="fatjar.manifest" classname="net.sf.fjep.anttask.FJManifestType" classpath="${fjepPath}"/>
+        <typedef name="fatjar.exclude" classname="net.sf.fjep.anttask.FJExcludeType" classpath="${fjepPath}"/>
+        <typedef name="fatjar.jarsource" classname="net.sf.fjep.anttask.FJJarSourceType" classpath="${fjepPath}"/>
+        <typedef name="fatjar.filesource" classname="net.sf.fjep.anttask.FJFileSourceType" classpath="${fjepPath}"/>
+    -->
+    <!-- uncomment the above lines to use ANT outside of Eclipse -->
+    <target name="main">
+        <fatjar.build output="SBMLsimulatorCore_v0.9_full.jar">
+            <fatjar.manifest/>
+            <fatjar.filesource path="/local/draeger/workspace/SBMLsimulatorCore/bin" relpath=""/>
+            <fatjar.jarsource file="/local/draeger/workspace/SBMLsimulatorCore/lib/commons-math-2.2.jar" relpath=""/>
+            <fatjar.jarsource file="/local/draeger/workspace/SBMLsimulatorCore/lib/jsbml-0.8-b2-with-dependencies.jar" relpath=""/>
+            <fatjar.filesource path="/local/draeger/workspace/SBMLsimulatorCore/licenses/lib-licenses/JSBML.txt" relpath="lib-licenses/JSBML.txt"/>
+            <fatjar.filesource path="/local/draeger/workspace/SBMLsimulatorCore/licenses/lib-licenses/Rosenbrock.txt" relpath="lib-licenses/Rosenbrock.txt"/>
+            <fatjar.filesource path="/local/draeger/workspace/SBMLsimulatorCore/licenses/lib-licenses/Commons-math.txt" relpath="lib-licenses/Commons-math.txt"/>
+            <fatjar.filesource path="/local/draeger/workspace/SBMLsimulatorCore/licenses/COPYING.html" relpath="COPYING.html"/>
+            <fatjar.filesource path="/local/draeger/workspace/SBMLsimulatorCore/licenses/COPYING.txt" relpath="COPYING.txt"/>
+            <fatjar.filesource path="/local/draeger/workspace/SBMLsimulatorCore/licenses/License.html" relpath="License.html"/>
+            <fatjar.filesource path="/local/draeger/workspace/SBMLsimulatorCore/licenses/AUTHORS.txt" relpath="AUTHORS.txt"/>
+        </fatjar.build>
+    </target>
+</project>
