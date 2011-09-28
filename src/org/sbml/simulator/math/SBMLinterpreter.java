@@ -34,13 +34,10 @@ import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Assignment;
 import org.sbml.jsbml.AssignmentRule;
-import org.sbml.jsbml.CallableSBase;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Event;
-import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
-import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.RateRule;
@@ -52,12 +49,6 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Variable;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.validator.OverdeterminationValidator;
-import org.sbml.simulator.math.astnode.ASTNodeInterpreterWithTime;
-import org.sbml.simulator.math.astnode.ASTNodeObject;
-import org.sbml.simulator.math.astnode.CompartmentOrParameterValue;
-import org.sbml.simulator.math.astnode.LocalParameterValue;
-import org.sbml.simulator.math.astnode.ReactionValue;
-import org.sbml.simulator.math.astnode.SpeciesValue;
 import org.sbml.simulator.math.odes.AbstractDESSolver;
 import org.sbml.simulator.math.odes.DESAssignment;
 import org.sbml.simulator.math.odes.DESystem;
@@ -221,21 +212,6 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * 
    */
   private int level;
-
-  /**
-   * 
-   */
-  private List<ASTNode> kineticLawRoots;
-  
-  /**
-   * 
-   */
-  private List<ASTNode> nodes;
-  
-  /**
-   * 
-   */
-  private ASTNodeInterpreterWithTime nodeInterpreterWithTime;
   
   /**
    * <p>
@@ -1070,129 +1046,6 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     initialValues = new double[Y.length];
     System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
     
-    createSimplifiedSyntaxTree();
-    
-  }
-  
-  /**
-   * 
-   */
-  private void createSimplifiedSyntaxTree() {
-    nodes = new LinkedList<ASTNode>();
-    kineticLawRoots = new LinkedList<ASTNode>();
-    for(Reaction r: model.getListOfReactions()) {
-      KineticLaw kl = r.getKineticLaw();
-      if(kl!=null) {
-        kineticLawRoots.add(copyAST(kl.getMath()));
-      }
-    }
-    
-  }
-
-  /**
-   * 
-   * @param node
-   * @return
-   */
-  private ASTNode copyAST(ASTNode node) {
-    String nodeString = node.toString();
-    ASTNode copiedAST=null;
-    for(ASTNode current: nodes) {
-      if(current.toString().equals(nodeString)) {
-        copiedAST=current;
-        break;
-      }
-    }
-    if(copiedAST==null) {
-      copiedAST=new ASTNode(node.getType());
-      if(node.isSetUnits()) {
-        copiedAST.setUnits(node.getUnits());
-      }
-      switch (node.getType()) {
-        case REAL:
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
-          copiedAST.setValue(node.getMantissa(),node.getExponent());
-          break;
-        case INTEGER:
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
-          copiedAST.setValue(node.getInteger());
-          break;
-        
-        case RATIONAL:
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
-          copiedAST.setValue(node.getNumerator(), node.getDenominator());
-          break;
-        case NAME_TIME:
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
-          copiedAST.setName(node.getName());
-          break;
-        case FUNCTION_DELAY:
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
-          copiedAST.setName(node.getName());
-          break;
-        /*
-         * Names of identifiers: parameters, functions, species etc.
-         */
-        case NAME:
-          copiedAST.setName(node.getName());
-          CallableSBase variable = node.getVariable();
-          
-          if (variable != null) {
-            copiedAST.setVariable(variable);
-            if (variable instanceof FunctionDefinition) {
-              copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
-            } 
-            else if(variable instanceof Species){
-              copiedAST.setUserObject(new SpeciesValue(nodeInterpreterWithTime, copiedAST, (Species)variable, this));
-            } 
-            else if ((variable instanceof Compartment) || (variable instanceof Parameter)) {
-              copiedAST.setUserObject(new CompartmentOrParameterValue(nodeInterpreterWithTime, copiedAST, variable, this));
-            } 
-            else if (variable instanceof LocalParameter) {
-              copiedAST.setUserObject(new LocalParameterValue(nodeInterpreterWithTime, copiedAST, (LocalParameter)variable));
-            } 
-            else if (variable instanceof Reaction) {
-              copiedAST.setUserObject(new ReactionValue(nodeInterpreterWithTime, copiedAST, (Reaction)variable));
-            }
-          }
-          break;
-        
-        case NAME_AVOGADRO:
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
-          copiedAST.setName(node.getName());
-          break;
-        case REAL_E:
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
-          copiedAST.setValue(node.getMantissa(),node.getExponent());
-          break;
-        case FUNCTION: {
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
-          copiedAST.setName(node.getName());
-          variable = node.getVariable();
-          
-          if (variable != null) {
-            copiedAST.setVariable(variable);
-            if (variable instanceof FunctionDefinition) {
-              copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
-            } 
-          }
-          break;
-        }
-        case FUNCTION_PIECEWISE:
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
-          break;
-        case LAMBDA:
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
-          break;
-        default: 
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
-          break;
-        }
-      for(ASTNode child: node.getChildren()) {
-        copiedAST.addChild(copyAST(child));
-      }
-    }
-    return copiedAST;
   }
   
   /**
