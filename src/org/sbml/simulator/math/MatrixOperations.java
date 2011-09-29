@@ -2,10 +2,13 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsimulator, a Java-based simulator for models
- * of biochemical processes encoded in the modeling language SBML.
- *
- * Copyright (C) 2007-2011 by the University of Tuebingen, Germany.
+ * This file is part of ODE Toolkit: a free application for solving
+ * systems of ordinary differential equations.
+ * 
+ * Copyright (C) 2002-2011 Beky Kotcon, Samantha Mesuro, Daniel 
+ * Rozenfeld, Anak Yodpinyanee, Andres Perez, Eric Doi, Richard 
+ * Mehlinger, Steven Ehrlich, Martin Hunt, George Tucker, Peter 
+ * Scherpelz, Aaron Becker, Eric Harley, and Chris Moore
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -62,8 +65,10 @@ package org.sbml.simulator.math;
  * References: _Numerical Recipies in C_ (2nd Edition) by Press, Teutolsky,
  * Vetterling, and Flannery Cambridge University Press, 1992
  * 
- * @author Clinic 08-09, modified by Clinic 10-11
+ * @author Chris Moore
+ * @author Roland Keller
  * @version $Rev$
+ * @since 0.9
  */
 public class MatrixOperations {
 
@@ -73,25 +78,25 @@ public class MatrixOperations {
 	 */
 
 	/** Ensures sufficient decrease in function value */
-	public static final double ALF = 1.0e-4;
+	public static final double ALF = 1.0e-4d;
 
 	/** Approximate square root of the JVM precision */
-	public static final double EPS = 1.0e-8;
+	public static final double EPS = 1.0e-8d;
 
 	/** Scaled maximum step length allowed in line searches */
-	public static final double STPMX = 100.0;
+	public static final double STPMX = 100.0d;
 
 	/** Extremely small value. Nigh zero. */
-	public static final double TINY = 1.0e-20;
+	public static final double TINY = 1.0e-20d;
 
 	/** Convergence criterion on function values */
-	public static final double TOLF = 1.0e-4;
+	public static final double TOLF = 1.0e-4d;
 
 	/** Criterion deciding whether spurious convergence to a minimum of min */
-	public static final double TOLMIN = 1.0e-6;
+	public static final double TOLMIN = 1.0e-6d;
 
 	/** Convergence criterion on delta X */
-	public static final double TOLX = 1.0e-7;
+	public static final double TOLX = 1.0e-7d;
 
 	/**
 	 * Given a matrix a[1..n][1..n], this routine replaces it by the LU

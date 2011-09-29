@@ -22,7 +22,7 @@ package org.sbml.simulator.math.odes;
  * @author Alexander D&ouml;rr
  * @date 2010-09-27
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public interface FastProcessDESystem extends DESystem {
 

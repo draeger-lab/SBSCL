@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  * 
  * @author Marcel Kronfeld
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class RNG {
   /**

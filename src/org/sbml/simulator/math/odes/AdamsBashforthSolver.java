@@ -23,7 +23,7 @@ import org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegrator;
  * 
  * @author Roland Keller
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class AdamsBashforthSolver extends FirstOrderSolver{
 	

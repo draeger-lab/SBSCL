@@ -24,7 +24,7 @@ import org.apache.commons.math.ode.nonstiff.DormandPrince853Integrator;
  * 
  * @author Roland Keller
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class DormandPrince853Solver extends FirstOrderSolver {
     

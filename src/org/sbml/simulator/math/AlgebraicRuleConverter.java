@@ -42,7 +42,7 @@ import org.sbml.jsbml.ASTNode.Type;
  * 
  * @author Alexander D&ouml;rr
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class AlgebraicRuleConverter {
 

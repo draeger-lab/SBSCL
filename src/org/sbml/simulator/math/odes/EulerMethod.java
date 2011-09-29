@@ -25,7 +25,7 @@ import org.sbml.simulator.math.Mathematics;
  * @author Andreas Dr&auml;ger
  * @date 14:37:21, 2010-08-03
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class EulerMethod extends AbstractDESSolver {
 

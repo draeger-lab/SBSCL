@@ -21,7 +21,7 @@ package org.sbml.simulator.math;
  * @author Marcel Kronfeld
  * @author Andreas Dr&auml;ger
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class Mathematics {
 	
