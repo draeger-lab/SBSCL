@@ -55,6 +55,15 @@ public abstract class FirstOrderSolver extends AbstractDESSolver {
   
   protected AbstractIntegrator integrator;
   
+  /*
+   * (non-Javadoc)
+   * @see org.sbml.simulator.math.odes.AbstractDESSolver#setStepSize(double)
+   */
+  public void setStepSize(double stepSize) {
+    super.setStepSize(stepSize);
+    createIntegrator();
+  }
+  
   /**
 	 * 
 	 */
