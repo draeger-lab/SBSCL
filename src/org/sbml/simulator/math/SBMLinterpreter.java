@@ -55,9 +55,12 @@ import org.sbml.jsbml.validator.OverdeterminationValidator;
 import org.sbml.simulator.math.astnode.ASTNodeInterpreterWithTime;
 import org.sbml.simulator.math.astnode.ASTNodeObject;
 import org.sbml.simulator.math.astnode.CompartmentOrParameterValue;
+import org.sbml.simulator.math.astnode.FunctionValue;
 import org.sbml.simulator.math.astnode.LocalParameterValue;
 import org.sbml.simulator.math.astnode.ReactionValue;
+import org.sbml.simulator.math.astnode.SpeciesReferenceValue;
 import org.sbml.simulator.math.astnode.SpeciesValue;
+import org.sbml.simulator.math.astnode.StoichiometryObject;
 import org.sbml.simulator.math.odes.AbstractDESSolver;
 import org.sbml.simulator.math.odes.DESAssignment;
 import org.sbml.simulator.math.odes.DESystem;
@@ -225,7 +228,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
   /**
    * 
    */
-  private List<ASTNode> kineticLawRoots;
+  private List<ASTNodeObject> kineticLawRoots;
   
   /**
    * 
@@ -236,6 +239,16 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * 
    */
   private ASTNodeInterpreterWithTime nodeInterpreterWithTime;
+  
+  /**
+   * 
+   */
+  private List<StoichiometryObject> stoichiometries;
+  
+  /**
+   * 
+   */
+  private boolean[] reactionFast;
   
   /**
    * <p>
@@ -790,7 +803,15 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    */
   public void getValue(double time, double[] Y, double[] changeRate)
     throws IntegrationException {
-    
+    boolean change=false;
+    if(currentTime==time) {
+      if(!Arrays.equals(this.Y,Y)) {
+        change=true;
+      }
+    }
+    else {
+      change=true;
+    }
     this.currentTime = time;
     this.Y = Y;
     if (model.getNumEvents() > 0) {
@@ -804,7 +825,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
       /*
        * Compute changes due to reactions
        */
-      processVelocities(changeRate);
+      processVelocities(changeRate, change);
       /*
        * Compute changes due to rules
        */
@@ -871,6 +892,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     
     this.stoichiometricCoefHash = new HashMap<String, Double>();
     this.nodeInterpreter = new EfficientASTNodeInterpreter(this);
+    this.nodeInterpreterWithTime = new ASTNodeInterpreterWithTime(this);
     
     this.level = model.getLevel();
     
@@ -1018,7 +1040,10 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
      * links concerning local parameters
      */
     inConcentration = new LinkedList<String>();
+    reactionFast=new boolean[model.getNumReactions()];
+    int reactionIndex=0;
     for (Reaction r : model.getListOfReactions()) {
+      reactionFast[reactionIndex]=r.isFast();
       if (r.isFast() && !hasFastReactions) {
         hasFastReactions = true;
       }
@@ -1052,6 +1077,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
         }
         
       }
+      reactionIndex++;
     }
     
     /*
@@ -1079,14 +1105,55 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    */
   private void createSimplifiedSyntaxTree() {
     nodes = new LinkedList<ASTNode>();
-    kineticLawRoots = new LinkedList<ASTNode>();
+    kineticLawRoots=new ArrayList<ASTNodeObject>();
+    stoichiometries=new ArrayList<StoichiometryObject>();
+    int reactionIndex=0;
     for(Reaction r: model.getListOfReactions()) {
       KineticLaw kl = r.getKineticLaw();
       if(kl!=null) {
-        kineticLawRoots.add(copyAST(kl.getMath()));
-      }
-    }
+        ASTNodeObject currentLaw=(ASTNodeObject)copyAST(kl.getMath()).getUserObject();
+        kineticLawRoots.add(currentLaw);
+        for (SpeciesReference speciesRef : r.getListOfReactants()) {
+          String speciesID = speciesRef.getSpecies();
+          int speciesIndex = symbolHash.get(speciesID);
+          int srIndex=-1;
+          if (level >= 3) {
+            String id = speciesRef.getId();
+            if (id != null) {
+              if (this.symbolHash.containsKey(id)) {
+                srIndex=this.symbolHash.get(id);
+              } 
+            
+            } 
+          
+          } 
+          stoichiometries.add(new StoichiometryObject(speciesRef, speciesIndex, srIndex, stoichiometricCoefHash, Y, nodeInterpreter, reactionIndex,true));
+        
+        }
+        for (SpeciesReference speciesRef : r.getListOfProducts()) {
+          String speciesID = speciesRef.getSpecies();
+          int speciesIndex = symbolHash.get(speciesID);
+          int srIndex=-1;
+          if (level >= 3) {
+            String id = speciesRef.getId();
+            if (id != null) {
+              if (this.symbolHash.containsKey(id)) {
+                srIndex=this.symbolHash.get(id);
+              } 
+            
+            } 
+          
+          } 
+          stoichiometries.add(new StoichiometryObject(speciesRef, speciesIndex, srIndex, stoichiometricCoefHash, Y, nodeInterpreter, reactionIndex,false));
+        
+        }
     
+      }
+      else {
+        kineticLawRoots.add(new ASTNodeObject(nodeInterpreterWithTime,new ASTNode(0d)));
+      }
+      reactionIndex++;
+    }
   }
 
   /**
@@ -1097,7 +1164,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
   private ASTNode copyAST(ASTNode node) {
     String nodeString = node.toString();
     ASTNode copiedAST=null;
-    if(!(node.isName()) || !(node.getVariable() instanceof LocalParameter)) {
+    if(!(node.isName()) || !((node.getVariable()!=null) && (node.getVariable() instanceof LocalParameter))) {
       for(ASTNode current: nodes) {
         if(!(current.isName()) || ((current.isName())&& !(current.getVariable() instanceof LocalParameter))) {
           if(current.toString().equals(nodeString)) {
@@ -1109,31 +1176,35 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     }
     if(copiedAST==null) {
       copiedAST=new ASTNode(node.getType());
+      
+      for(ASTNode child: node.getChildren()) {
+        copiedAST.addChild(copyAST(child));
+      }
       nodes.add(copiedAST);
       if(node.isSetUnits()) {
         copiedAST.setUnits(node.getUnits());
       }
       switch (node.getType()) {
         case REAL:
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
           copiedAST.setValue(node.getMantissa(),node.getExponent());
+          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
           break;
         case INTEGER:
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
           copiedAST.setValue(node.getInteger());
+          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
           break;
         
         case RATIONAL:
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
           copiedAST.setValue(node.getNumerator(), node.getDenominator());
+          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
           break;
         case NAME_TIME:
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
           copiedAST.setName(node.getName());
+          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
           break;
         case FUNCTION_DELAY:
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
           copiedAST.setName(node.getName());
+          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
           break;
         /*
          * Names of identifiers: parameters, functions, species etc.
@@ -1141,24 +1212,33 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
         case NAME:
           copiedAST.setName(node.getName());
           CallableSBase variable = node.getVariable();
-          
           if (variable != null) {
             copiedAST.setVariable(variable);
             if (variable instanceof FunctionDefinition) {
-              copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
+              ASTNode mathAST=copyAST(((FunctionDefinition)variable).getMath());
+              copiedAST.setUserObject(new FunctionValue(nodeInterpreterWithTime, copiedAST, mathAST));
             } 
             else if(variable instanceof Species){
-              copiedAST.setUserObject(new SpeciesValue(nodeInterpreterWithTime, copiedAST, (Species)variable, this,symbolHash.get(variable.getId()),compartmentHash.get(variable.getId())));
+              copiedAST.setUserObject(new SpeciesValue(nodeInterpreterWithTime, copiedAST, (Species)variable, this, symbolHash.get(variable.getId()),compartmentHash.get(variable.getId())));
             } 
             else if ((variable instanceof Compartment) || (variable instanceof Parameter)) {
-              copiedAST.setUserObject(new CompartmentOrParameterValue(nodeInterpreterWithTime, copiedAST, variable, this,symbolHash.get(variable.getId())));
+              copiedAST.setUserObject(new CompartmentOrParameterValue(nodeInterpreterWithTime, copiedAST, variable, this, symbolHash.get(variable.getId())));
             } 
             else if (variable instanceof LocalParameter) {
               copiedAST.setUserObject(new LocalParameterValue(nodeInterpreterWithTime, copiedAST, (LocalParameter)variable));
             } 
+            else if (variable instanceof SpeciesReference) {
+              copiedAST.setUserObject(new SpeciesReferenceValue(nodeInterpreterWithTime, copiedAST,(SpeciesReference)variable,this));
+            }
             else if (variable instanceof Reaction) {
               copiedAST.setUserObject(new ReactionValue(nodeInterpreterWithTime, copiedAST, (Reaction)variable));
             }
+            else {
+              copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
+            }
+          }
+          else {
+            copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
           }
           break;
         
@@ -1171,15 +1251,18 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
           copiedAST.setValue(node.getMantissa(),node.getExponent());
           break;
         case FUNCTION: {
-          copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
           copiedAST.setName(node.getName());
           variable = node.getVariable();
-          
+          ASTNode mathAST=null;
           if (variable != null) {
             copiedAST.setVariable(variable);
-            if (variable instanceof FunctionDefinition) {
-              copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
-            } 
+            if(variable instanceof FunctionDefinition) {
+              mathAST=copyAST(((FunctionDefinition)variable).getMath());
+            }
+          }
+          copiedAST.setUserObject(new FunctionValue(nodeInterpreterWithTime, copiedAST,mathAST));
+          if(mathAST!=null) {
+            nodes.add(mathAST);
           }
           break;
         }
@@ -1193,10 +1276,9 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
           copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
           break;
         }
-      for(ASTNode child: node.getChildren()) {
-        copiedAST.addChild(copyAST(child));
-      }
+      
     }
+    
     return copiedAST;
   }
   
@@ -1541,7 +1623,49 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    *         model system of this class.
    * @throws SBMLException
    */
-  @SuppressWarnings("deprecation")
+  protected void processVelocities(double[] changeRate, boolean change) throws SBMLException {
+    int speciesIndex;
+    
+    //If Y or the time has changed, call the compile function with a new time
+    double astNodeTime=kineticLawRoots.get(0).getTime();
+    if(Double.isNaN(astNodeTime)) {
+      astNodeTime=0d;
+    }
+    if(change) {
+      astNodeTime+=0.01;
+    }
+    
+    // Velocities of each reaction.
+    for (int reactionIndex=0;reactionIndex!=v.length;reactionIndex++) {
+      if (hasFastReactions) {
+        if (isProcessingFastReactions == reactionFast[reactionIndex]) {
+          v[reactionIndex] = kineticLawRoots.get(reactionIndex).compileDouble(astNodeTime);
+        } else {
+          v[reactionIndex] = 0;
+        }
+      } else {
+        v[reactionIndex] = kineticLawRoots.get(reactionIndex).compileDouble(astNodeTime);
+        
+      }
+    }
+    
+    
+    int size=stoichiometries.size();
+    for(int i=0;i!=size;i++) {
+      stoichiometries.get(i).computeChange(currentTime, changeRate, v);
+    }
+    
+    // When the unit of reacting species is given mol/volume
+    // then it has to be considered in the change rate that should
+    // always be only in mol/time
+    
+    for (String s : inConcentration) {
+      speciesIndex = symbolHash.get(s);
+      changeRate[speciesIndex] = changeRate[speciesIndex]
+          / getCurrentCompartmentValueOf(s);
+    }
+  }
+  /*
   protected void processVelocities(double[] changeRate) throws SBMLException {
     int reactionIndex, speciesIndex;
     String speciesID;
@@ -1685,6 +1809,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
           / getCurrentCompartmentValueOf(s);
     }
   }
+  */
   
   /*
    * (non-Javadoc)
