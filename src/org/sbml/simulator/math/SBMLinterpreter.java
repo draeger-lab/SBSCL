@@ -1097,14 +1097,19 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
   private ASTNode copyAST(ASTNode node) {
     String nodeString = node.toString();
     ASTNode copiedAST=null;
-    for(ASTNode current: nodes) {
-      if(current.toString().equals(nodeString)) {
-        copiedAST=current;
-        break;
+    if(!(node.isName()) || !(node.getVariable() instanceof LocalParameter)) {
+      for(ASTNode current: nodes) {
+        if(!(current.isName()) || ((current.isName())&& !(current.getVariable() instanceof LocalParameter))) {
+          if(current.toString().equals(nodeString)) {
+            copiedAST=current;
+            break;
+          }
+        }
       }
     }
     if(copiedAST==null) {
       copiedAST=new ASTNode(node.getType());
+      nodes.add(copiedAST);
       if(node.isSetUnits()) {
         copiedAST.setUnits(node.getUnits());
       }
@@ -1143,10 +1148,10 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
               copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime, copiedAST));
             } 
             else if(variable instanceof Species){
-              copiedAST.setUserObject(new SpeciesValue(nodeInterpreterWithTime, copiedAST, (Species)variable, this));
+              copiedAST.setUserObject(new SpeciesValue(nodeInterpreterWithTime, copiedAST, (Species)variable, this,symbolHash.get(variable.getId()),compartmentHash.get(variable.getId())));
             } 
             else if ((variable instanceof Compartment) || (variable instanceof Parameter)) {
-              copiedAST.setUserObject(new CompartmentOrParameterValue(nodeInterpreterWithTime, copiedAST, variable, this));
+              copiedAST.setUserObject(new CompartmentOrParameterValue(nodeInterpreterWithTime, copiedAST, variable, this,symbolHash.get(variable.getId())));
             } 
             else if (variable instanceof LocalParameter) {
               copiedAST.setUserObject(new LocalParameterValue(nodeInterpreterWithTime, copiedAST, (LocalParameter)variable));
@@ -1770,6 +1775,13 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     } else {
       return false;
     }
+  }
+
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.ValueHolder#getCurrentValueOf(int)
+   */
+  public double getCurrentValueOf(int position) {
+    return Y[position];
   }
   
 }
