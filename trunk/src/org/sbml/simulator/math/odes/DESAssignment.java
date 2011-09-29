@@ -21,7 +21,7 @@ package org.sbml.simulator.math.odes;
  * 
  * @author Alexander D&ouml;rr
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class DESAssignment {
 	private int index;

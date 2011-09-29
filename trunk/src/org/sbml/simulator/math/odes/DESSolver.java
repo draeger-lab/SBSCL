@@ -29,7 +29,7 @@ import org.sbml.simulator.math.odes.MultiBlockTable.Block;
  * @author Andreas Dr&auml;ger
  * @date Sep 10, 2007
  * @version $Rev$
- * @since 1.0 
+ * @since 0.9 
  */
 public interface DESSolver extends Serializable {
 

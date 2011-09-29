@@ -79,7 +79,7 @@ import org.sbml.simulator.math.odes.RichDESystem;
  * @author Dieudonn&eacute; Motsou Wouamba
  * @date 2007-09-06
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class SBMLinterpreter implements ValueHolder, EventDESystem,
     RichDESystem, FastProcessDESystem, FirstOrderDifferentialEquations {
@@ -731,7 +731,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     for (int i = 0; i < model.getNumReactions(); i++) {
       KineticLaw k = model.getReaction(i).getKineticLaw();
       if (k != null) {
-        p += k.getNumLocalParameters();
+        p += k.getLocalParameterCount();
       }
     }
     return p;
@@ -1715,7 +1715,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     }
     for (reactionNum = 0; reactionNum < model.getNumReactions(); reactionNum++) {
       KineticLaw law = model.getReaction(reactionNum).getKineticLaw();
-      for (localPnum = 0; localPnum < law.getNumLocalParameters(); localPnum++) {
+      for (localPnum = 0; localPnum < law.getLocalParameterCount(); localPnum++) {
         law.getLocalParameter(localPnum).setValue(params[paramNum++]);
       }
     }

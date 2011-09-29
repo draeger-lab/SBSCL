@@ -26,7 +26,7 @@ import java.util.List;
  * @author Andreas Dr&auml;ger
  * @date 2010-02-04
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public interface EventDESystem extends DESystem {
 

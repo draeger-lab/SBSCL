@@ -23,6 +23,7 @@ import org.sbml.simulator.math.ValueHolder;
 /**
  * @author Roland Keller
  * @version $Rev$
+ * @since 1.0
  */
 public class SpeciesReferenceValue extends ASTNodeObject {
 

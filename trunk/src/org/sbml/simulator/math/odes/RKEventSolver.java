@@ -25,7 +25,7 @@ import org.sbml.simulator.math.Mathematics;
  * 
  * @author Andreas Dr&auml;ger
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class RKEventSolver extends AbstractDESSolver {
 

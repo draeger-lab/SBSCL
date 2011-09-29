@@ -29,7 +29,7 @@ import org.sbml.simulator.math.Mathematics;
  * 
  * @author Roland Keller
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public abstract class FirstOrderSolver extends AbstractDESSolver {
   

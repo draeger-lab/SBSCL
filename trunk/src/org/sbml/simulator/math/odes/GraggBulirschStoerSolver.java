@@ -24,7 +24,7 @@ import org.apache.commons.math.ode.nonstiff.GraggBulirschStoerIntegrator;
  * 
  * @author Roland Keller
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class GraggBulirschStoerSolver extends FirstOrderSolver {
     

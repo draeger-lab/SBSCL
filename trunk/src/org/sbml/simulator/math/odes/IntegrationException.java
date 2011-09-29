@@ -24,7 +24,7 @@ package org.sbml.simulator.math.odes;
  * @author Andreas Dr&auml;ger
  * @date 2010-08-25
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class IntegrationException extends Exception {
 

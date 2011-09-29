@@ -24,7 +24,7 @@ import org.apache.commons.math.ode.nonstiff.HighamHall54Integrator;
  * 
  * @author Roland Keller
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class HighamHall54Solver extends FirstOrderSolver {
     

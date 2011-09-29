@@ -38,7 +38,7 @@ import org.sbml.simulator.math.MatrixOperations.MatrixException;
  * @author Chris Moore
  * @author Roland Keller
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class RosenbrockSolver extends AbstractDESSolver {
 

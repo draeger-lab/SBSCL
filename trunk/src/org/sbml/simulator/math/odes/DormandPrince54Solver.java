@@ -24,7 +24,7 @@ import org.apache.commons.math.ode.nonstiff.DormandPrince54Integrator;
  * 
  * @author Roland Keller
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class DormandPrince54Solver extends FirstOrderSolver {
     

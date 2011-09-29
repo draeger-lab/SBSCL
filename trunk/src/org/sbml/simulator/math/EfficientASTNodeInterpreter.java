@@ -45,7 +45,7 @@ import org.sbml.jsbml.util.compilers.ASTNodeValue;
  * @author Roland Keller
  * @author Andreas Dr&auml;ger
  * @version $Rev: 12 $
- * @since 1.0
+ * @since 0.9
  */
 public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
   /**

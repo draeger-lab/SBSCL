@@ -1,6 +1,6 @@
 /*
  * $Id:  SimulatorTest.java 15:40:12 draeger$
- * $URL: SimulatorTest.java $
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsimulator, a Java-based simulator for models
  * of biochemical processes encoded in the modeling language SBML.
@@ -40,7 +40,7 @@ import org.sbml.simulator.math.odes.MultiBlockTable;
  * 
  * @author Andreas Dr&auml;ger
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class SimulatorTest {
   
