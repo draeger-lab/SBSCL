@@ -46,7 +46,7 @@ import org.sbml.simulator.math.odes.MultiBlockTable.Block.Column;
  * @author Andreas Dr&auml;ger
  * @date 2010-08-26
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class MultiBlockTable extends AbstractTableModel implements
 		Iterable<Iterable<Double>> {

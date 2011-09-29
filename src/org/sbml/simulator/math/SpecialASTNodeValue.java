@@ -26,7 +26,7 @@ import org.sbml.jsbml.util.compilers.ASTNodeValue;
  * 
  * @author Roland Keller
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public class SpecialASTNodeValue extends ASTNodeValue{
 

@@ -43,7 +43,7 @@ import org.sbml.jsbml.util.compilers.ASTNodeValue;
  * @author Roland Keller    
  * @author Andreas Dr&auml;ger    
  * @version $Rev$   
- * @since 1.0   
+ * @since 0.9
  */
 public class ASTNodeInterpreter implements ASTNodeCompiler {
   

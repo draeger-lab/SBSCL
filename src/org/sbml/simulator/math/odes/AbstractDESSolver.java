@@ -38,7 +38,7 @@ import org.sbml.simulator.math.Mathematics;
  * @author Max Zwießele
  * @date 2010-02-04
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 

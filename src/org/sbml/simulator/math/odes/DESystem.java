@@ -28,7 +28,7 @@ import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
  * @author Hannes Planatscher
  * @author Andreas Dr&auml;ger
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 
 public interface DESystem extends Serializable, FirstOrderDifferentialEquations {

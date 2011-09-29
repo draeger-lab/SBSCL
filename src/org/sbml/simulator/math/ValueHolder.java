@@ -35,7 +35,7 @@ import org.sbml.jsbml.SpeciesReference;
  * @author Andreas Dr&auml;ger
  * @author Roland Keller
  * @version $Rev$
- * @since 1.0
+ * @since 0.9
  */
 public interface ValueHolder {
 
