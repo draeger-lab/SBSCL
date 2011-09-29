@@ -80,5 +80,12 @@ public interface ValueHolder {
      * @return
      */
     public double getCurrentValueOf(String id);
+    
+    /**
+     * 
+     * @param position
+     * @return
+     */
+    public double getCurrentValueOf(int position);
 
 }

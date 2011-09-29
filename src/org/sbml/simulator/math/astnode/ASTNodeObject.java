@@ -15,6 +15,8 @@
  */
 package org.sbml.simulator.math.astnode;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.ASTNode;
@@ -55,12 +57,33 @@ public class ASTNodeObject {
    * 
    */
   protected ASTNode node;
+  
+  /**
+   * 
+   */
+  protected ASTNode.Type nodeType;
+  
+  
+  /**
+   * 
+   */
+  protected List<ASTNodeObject> children;
+  
+  /**
+   * 
+   */
+  protected int numChildren;
 
   
   /**
    * 
    */
   protected ASTNodeInterpreterWithTime interpreter;
+  
+  /**
+   * 
+   */
+  protected double real;
   
   /**
    * 
@@ -75,6 +98,24 @@ public class ASTNodeObject {
   public ASTNodeObject(ASTNodeInterpreterWithTime interpreter, ASTNode node) {
     this.interpreter=interpreter;
     this.node=node;
+    this.nodeType=node.getType();
+    if(nodeType==ASTNode.Type.REAL) {
+      real=node.getReal();
+    }
+    else {
+      real=Double.NaN;
+    }
+    this.time=Double.NaN;
+    children=new ArrayList<ASTNodeObject>();
+    if(node!=null) {  
+      for(ASTNode childNode:node.getChildren()) {
+        Object userObject = childNode.getUserObject();
+        if(userObject!=null) {
+          children.add((ASTNodeObject)userObject);
+        }
+      }
+    }
+    numChildren=children.size();
   }
   
   /**
@@ -110,11 +151,14 @@ public class ASTNodeObject {
   /**
    * 
    * @param time
+   * @param forceCalculation
    * @return
    */
   public double compileDouble(double time) {
-    
-    if (this.time != time) {
+    if(this.time==time) {
+      return doubleValue;
+    }
+    else {
       isDouble=true;
       this.time = time;
       computeDoubleValue();
@@ -128,7 +172,10 @@ public class ASTNodeObject {
    * @return
    */
   public boolean compileBoolean(double time) {
-    if (this.time != time) {
+    if(this.time==time) {
+      return booleanValue;
+    }
+    else {
       isDouble=false;
       this.time = time;
       computeBooleanValue();
@@ -136,16 +183,16 @@ public class ASTNodeObject {
     return booleanValue;
   }
   
+
   /**
    * 
    */
   protected void computeDoubleValue() {
-    switch (node.getType()) {
+    switch (nodeType) {
       /*
        * Numbers
        */
       case REAL:
-        double real = node.getReal();
         if (Double.isInfinite(real)) {
           doubleValue = (real > 0d) ? Double.POSITIVE_INFINITY
               : Double.NEGATIVE_INFINITY;
@@ -160,33 +207,28 @@ public class ASTNodeObject {
        * Operators
        */
       case POWER:
-        doubleValue = interpreter.pow((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), (ASTNodeObject) node.getRightChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.pow(children.get(0), children.get(numChildren-1), time);
         break;
       case PLUS:
-        doubleValue = interpreter.plus(node.getChildren(), time);
+        doubleValue = interpreter.plus(children, time);
         break;
       case MINUS:
-        if (node.getChildCount() == 1) {
-          doubleValue = interpreter.uMinus((ASTNodeObject) node.getLeftChild()
-              .getUserObject(), time);
+        if (numChildren == 1) {
+          doubleValue = interpreter.uMinus(children.get(0), time);
         } else {
-          doubleValue = interpreter.minus(node.getChildren(), time);
+          doubleValue = interpreter.minus(children, time);
         }
         break;
       case TIMES:
-        doubleValue = interpreter.times(node.getChildren(), time);
+        doubleValue = interpreter.times(children, time);
         break;
       case DIVIDE:
-        if (node.getChildCount() != 2) { throw new SBMLException(
+        if (numChildren != 2) { throw new SBMLException(
           String
               .format(
                 "Fractions must have one numerator and one denominator, here %s elements are given.",
                 node.getChildCount())); }
-        doubleValue = interpreter.frac((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), (ASTNodeObject) node.getRightChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.frac(children.get(0), children.get(numChildren-1), time);
         break;
       case RATIONAL:
         doubleValue = interpreter.frac(node.getNumerator(), node.getDenominator());
@@ -195,8 +237,8 @@ public class ASTNodeObject {
         doubleValue = interpreter.symbolTime(node.getName());
         break;
       case FUNCTION_DELAY:
-        doubleValue = interpreter.delay(node.getName(), node.getLeftChild(),
-          node.getRightChild(), node.getUnits());
+        doubleValue = interpreter.delay(node.getName(), children.get(0),
+          children.get(numChildren-1), node.getUnits());
         break;
       
       /*
@@ -208,7 +250,7 @@ public class ASTNodeObject {
         if (variable != null) {
           if (variable instanceof FunctionDefinition) {
             doubleValue = interpreter.functionDouble((FunctionDefinition) variable,
-              node.getChildren(), time);
+              children, time);
           } else {
             doubleValue = interpreter.compileDouble(variable, time);
           }
@@ -237,113 +279,86 @@ public class ASTNodeObject {
        * Basic Functions
        */
       case FUNCTION_LOG:
-        if (node.getChildCount() == 2) {
-          doubleValue = interpreter.log((ASTNodeObject)node.getLeftChild().getUserObject(), (ASTNodeObject)node.getRightChild().getUserObject(), time);
+        if (numChildren == 2) {
+          doubleValue = interpreter.log(children.get(0), children.get(numChildren-1), time);
         } else {
-          doubleValue = interpreter.log((ASTNodeObject) node.getRightChild()
-              .getUserObject(), time);
+          doubleValue = interpreter.log(children.get(numChildren-1), time);
         }
         break;
       case FUNCTION_ABS:
-        doubleValue = interpreter.abs((ASTNodeObject) node.getRightChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.abs(children.get(numChildren-1), time);
         break;
       case FUNCTION_ARCCOS:
-        doubleValue = interpreter.arccos((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.arccos(children.get(0), time);
         break;
       case FUNCTION_ARCCOSH:
-        doubleValue = interpreter.arccosh((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.arccosh(children.get(0), time);
         break;
       case FUNCTION_ARCCOT:
-        doubleValue = interpreter.arccot((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.arccot(children.get(0), time);
         break;
       case FUNCTION_ARCCOTH:
-        doubleValue = interpreter.arccoth((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.arccoth(children.get(0), time);
         break;
       case FUNCTION_ARCCSC:
-        doubleValue = interpreter.arccsc((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.arccsc(children.get(0), time);
         break;
       case FUNCTION_ARCCSCH:
-        doubleValue = interpreter.arccsch((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.arccsch(children.get(0), time);
         break;
       case FUNCTION_ARCSEC:
-        doubleValue = interpreter.arcsec((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.arcsec(children.get(0), time);
         break;
       case FUNCTION_ARCSECH:
-        doubleValue = interpreter.arcsech((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.arcsech(children.get(0), time);
         break;
       case FUNCTION_ARCSIN:
-        doubleValue = interpreter.arcsin((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.arcsin(children.get(0), time);
         break;
       case FUNCTION_ARCSINH:
-        doubleValue = interpreter.arcsinh((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.arcsinh(children.get(0), time);
         break;
       case FUNCTION_ARCTAN:
-        doubleValue = interpreter.arctan((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.arctan(children.get(0), time);
         break;
       case FUNCTION_ARCTANH:
-        doubleValue = interpreter.arctanh((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.arctanh(children.get(0), time);
         break;
       case FUNCTION_CEILING:
-        doubleValue = interpreter.ceiling((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.ceiling(children.get(0), time);
         break;
       case FUNCTION_COS:
-        doubleValue = interpreter.cos((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.cos(children.get(0), time);
         break;
       case FUNCTION_COSH:
-        doubleValue = interpreter.cosh((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.cosh(children.get(0), time);
         break;
       case FUNCTION_COT:
-        doubleValue = interpreter.cot((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.cot(children.get(0), time);
         break;
       case FUNCTION_COTH:
-        doubleValue = interpreter.coth((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.coth(children.get(0), time);
         break;
       case FUNCTION_CSC:
-        doubleValue = interpreter.csc((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.csc(children.get(0), time);
         break;
       case FUNCTION_CSCH:
-        doubleValue = interpreter.csch((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.csch(children.get(0), time);
         break;
       case FUNCTION_EXP:
-        doubleValue = interpreter.exp((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.exp(children.get(0), time);
         break;
       case FUNCTION_FACTORIAL:
-        doubleValue = interpreter.factorial((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.factorial(children.get(0), time);
         break;
       case FUNCTION_FLOOR:
-        doubleValue = interpreter.floor((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.floor(children.get(0), time);
         break;
       case FUNCTION_LN:
-        doubleValue = interpreter.ln((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.ln(children.get(0), time);
         break;
       case FUNCTION_POWER:
-        doubleValue = interpreter.pow((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), (ASTNodeObject) node.getRightChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.pow(children.get(0), children.get(numChildren-1), time);
         break;
       case FUNCTION_ROOT:
         ASTNode left = node.getLeftChild();
@@ -351,55 +366,45 @@ public class ASTNodeObject {
           if (left.isInteger()) {
             int leftdoubleValue = left.getInteger();
             if (leftdoubleValue == 2) {
-              doubleValue = interpreter.sqrt((ASTNodeObject) node.getRightChild()
-                  .getUserObject(), time);
+              doubleValue = interpreter.sqrt(children.get(numChildren-1), time);
             } else {
-              doubleValue = interpreter.root(leftdoubleValue, (ASTNodeObject)node.getRightChild().getUserObject(), time);
+              doubleValue = interpreter.root(leftdoubleValue, children.get(numChildren-1), time);
             }
           } else if (left.isReal()) {
             double leftdoubleValue = left.getReal();
             if (leftdoubleValue == 2d) {
-              doubleValue = interpreter.sqrt((ASTNodeObject) node.getRightChild()
-                  .getUserObject(), time);
+              doubleValue = interpreter.sqrt(children.get(numChildren-1), time);
             } else {
-              doubleValue = interpreter.root(leftdoubleValue, (ASTNodeObject) node
-                  .getRightChild().getUserObject(), time);
+              doubleValue = interpreter.root(leftdoubleValue, children.get(numChildren-1), time);
             }
           } else {
-            doubleValue = interpreter.root((ASTNodeObject) left.getUserObject(),
-              (ASTNodeObject) node.getRightChild().getUserObject(), time);
+            doubleValue = interpreter.root(children.get(0),
+              children.get(numChildren-1), time);
           }
         } else if (node.getChildCount() == 1) {
-          doubleValue = interpreter.sqrt((ASTNodeObject) node.getRightChild()
-              .getUserObject(), time);
+          doubleValue = interpreter.sqrt(children.get(numChildren-1), time);
         } else {
-          doubleValue = interpreter.root((ASTNodeObject) left.getUserObject(),
-            (ASTNodeObject) node.getRightChild().getUserObject(), time);
+          doubleValue = interpreter.root(children.get(0),
+            children.get(numChildren-1), time);
         }
         break;
       case FUNCTION_SEC:
-        doubleValue = interpreter.sec((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.sec(children.get(0), time);
         break;
       case FUNCTION_SECH:
-        doubleValue = interpreter.sech((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.sech(children.get(0), time);
         break;
       case FUNCTION_SIN:
-        doubleValue = interpreter.sin((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.sin(children.get(0), time);
         break;
       case FUNCTION_SINH:
-        doubleValue = interpreter.sinh((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.sinh(children.get(0), time);
         break;
       case FUNCTION_TAN:
-        doubleValue = interpreter.tan((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.tan(children.get(0), time);
         break;
       case FUNCTION_TANH:
-        doubleValue = interpreter.tanh((ASTNodeObject) node.getLeftChild()
-            .getUserObject(), time);
+        doubleValue = interpreter.tanh(children.get(0), time);
         break;
       case FUNCTION: {
         variable = node.getVariable();
@@ -407,7 +412,7 @@ public class ASTNodeObject {
         if (variable != null) {
           if (variable instanceof FunctionDefinition) {
             doubleValue = interpreter.functionDouble((FunctionDefinition) variable,
-              node.getChildren(), time);
+              children, time);
           } else {
             logger
                 .warning("ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! ("
@@ -422,15 +427,15 @@ public class ASTNodeObject {
               .warning("ASTNode of type FUNCTION but the variable is null !! ("
                   + node.getName() + ", " + node.getParentSBMLObject() + "). "
                   + "Check that your object is linked to a Model.");
-          doubleValue = interpreter.functionDouble(node.getName(), node.getChildren());
+          doubleValue = interpreter.functionDouble(node.getName(), children);
         }
         break;
       }
       case FUNCTION_PIECEWISE:
-        doubleValue = interpreter.piecewise(node.getChildren(), time);
+        doubleValue = interpreter.piecewise(children, time);
         break;
       case LAMBDA:
-        doubleValue = interpreter.lambdaDouble(node.getChildren(), time);
+        doubleValue = interpreter.lambdaDouble(children, time);
         break;
       default: // UNKNOWN:
         doubleValue = Double.NaN;
@@ -443,38 +448,35 @@ public class ASTNodeObject {
    */
   protected void computeBooleanValue() {
     switch (node.getType()) {
-        /*
-         * Logical and relational functions
-         */
         case LOGICAL_AND:
-          booleanValue = interpreter.and(node.getChildren(),time);
+          booleanValue = interpreter.and(children,time);
           break;
         case LOGICAL_XOR:
-          booleanValue = interpreter.xor(node.getChildren(),time);
+          booleanValue = interpreter.xor(children,time);
           break;
         case LOGICAL_OR:
-          booleanValue = interpreter.or(node.getChildren(),time);
+          booleanValue = interpreter.or(children,time);
           break;
         case LOGICAL_NOT:
-          booleanValue = interpreter.not((ASTNodeObject)node.getLeftChild().getUserObject(),time);
+          booleanValue = interpreter.not(children.get(0),time);
           break;
         case RELATIONAL_EQ:
-          booleanValue = interpreter.eq((ASTNodeObject)node.getLeftChild().getUserObject(), (ASTNodeObject)node.getRightChild().getUserObject(),time);
+          booleanValue = interpreter.eq(children.get(0), children.get(numChildren-1),time);
           break;
         case RELATIONAL_GEQ:
-          booleanValue = interpreter.geq((ASTNodeObject)node.getLeftChild().getUserObject(), (ASTNodeObject)node.getRightChild().getUserObject(),time);
+          booleanValue = interpreter.geq(children.get(0), children.get(numChildren-1),time);
           break;
         case RELATIONAL_GT:
-          booleanValue = interpreter.gt((ASTNodeObject)node.getLeftChild().getUserObject(), (ASTNodeObject)node.getRightChild().getUserObject(),time);
+          booleanValue = interpreter.gt(children.get(0), children.get(numChildren-1),time);
           break;
         case RELATIONAL_NEQ:
-          booleanValue = interpreter.neq((ASTNodeObject)node.getLeftChild().getUserObject(), (ASTNodeObject)node.getRightChild().getUserObject(),time);
+          booleanValue = interpreter.neq(children.get(0), children.get(numChildren-1),time);
           break;
         case RELATIONAL_LEQ:
-          booleanValue = interpreter.leq((ASTNodeObject)node.getLeftChild().getUserObject(), (ASTNodeObject)node.getRightChild().getUserObject(),time);
+          booleanValue = interpreter.leq(children.get(0), children.get(numChildren-1),time);
           break;
         case RELATIONAL_LT:
-          booleanValue = interpreter.lt((ASTNodeObject)node.getLeftChild().getUserObject(), (ASTNodeObject)node.getRightChild().getUserObject(),time);
+          booleanValue = interpreter.lt(children.get(0), children.get(numChildren-1),time);
           break;
         case CONSTANT_TRUE:
           booleanValue = true;
@@ -488,7 +490,7 @@ public class ASTNodeObject {
           if (variable != null) {
             if (variable instanceof FunctionDefinition) {
               booleanValue = interpreter.functionBoolean((FunctionDefinition) variable,
-                node.getChildren(), time);
+                children, time);
             } else {
               booleanValue = interpreter.compileBoolean(variable, time);
             }
@@ -501,7 +503,7 @@ public class ASTNodeObject {
           if (variable != null) {
             if (variable instanceof FunctionDefinition) {
               booleanValue = interpreter.functionBoolean((FunctionDefinition) variable,
-                node.getChildren(), time);
+                children, time);
             } else {
               logger
                   .warning("ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! ("
@@ -516,17 +518,16 @@ public class ASTNodeObject {
                 .warning("ASTNode of type FUNCTION but the variable is null !! ("
                     + node.getName() + ", " + node.getParentSBMLObject() + "). "
                     + "Check that your object is linked to a Model.");
-            booleanValue = interpreter.functionBoolean(node.getName(), node.getChildren());
+            booleanValue = interpreter.functionBoolean(node.getName(), children);
           }
           break;
         }
         case LAMBDA:
-          booleanValue = interpreter.lambdaBoolean(node.getChildren(), time);
+          booleanValue = interpreter.lambdaBoolean(children, time);
           break;
         default:
           booleanValue=false;
           break;
       }
     }
-  
 }

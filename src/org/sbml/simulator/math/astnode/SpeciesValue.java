@@ -1,16 +1,15 @@
 /*
- * ---------------------------------------------------------------------
- * This file is part of SBMLsimulator, a Java-based simulator for models
- * of biochemical processes encoded in the modeling language SBML.
- *
+ * --------------------------------------------------------------------- This
+ * file is part of SBMLsimulator, a Java-based simulator for models of
+ * biochemical processes encoded in the modeling language SBML.
+ * 
  * Copyright (C) 2007-2011 by the University of Tuebingen, Germany.
- *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation. A copy of the license
- * agreement is provided in the file named "LICENSE.txt" included with
- * this software distribution and also available online as
- * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
+ * 
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation. A copy of the license agreement is provided in the file
+ * named "LICENSE.txt" included with this software distribution and also
+ * available online as <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
 package org.sbml.simulator.math.astnode;
@@ -32,6 +31,8 @@ public class SpeciesValue extends ASTNodeObject {
   protected boolean isSetInitialAmount;
   protected boolean hasOnlySubstanceUnits;
   protected boolean isSetInitialConcentration;
+  protected int position;
+  protected int compartmentPosition;
   
   /**
    * 
@@ -41,35 +42,37 @@ public class SpeciesValue extends ASTNodeObject {
    * @param valueHolder
    */
   public SpeciesValue(ASTNodeInterpreterWithTime interpreter, ASTNode node,
-    Species s, ValueHolder valueHolder) {
+    Species s, ValueHolder valueHolder, int position, int compartmentPosition) {
     super(interpreter, node);
     this.s = s;
-    this.id=s.getId();
+    this.id = s.getId();
     this.valueHolder = valueHolder;
-    this.isSetInitialAmount=s.isSetInitialAmount();
-    this.isSetInitialConcentration=s.isSetInitialConcentration();
-    this.hasOnlySubstanceUnits=s.getHasOnlySubstanceUnits();
+    this.isSetInitialAmount = s.isSetInitialAmount();
+    this.isSetInitialConcentration = s.isSetInitialConcentration();
+    this.hasOnlySubstanceUnits = s.getHasOnlySubstanceUnits();
+    this.position = position;
+    this.compartmentPosition = compartmentPosition;
   }
   
   /*
    * (non-Javadoc)
+   * 
    * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
    */
   protected void computeDoubleValue() {
-    double compartmentValue = valueHolder.getCurrentCompartmentValueOf(id);
+    double compartmentValue = valueHolder
+        .getCurrentValueOf(compartmentPosition);
     if (compartmentValue == 0d) {
-      doubleValue = valueHolder.getCurrentSpeciesValue(id);
-    }
-
-    else if (isSetInitialAmount && hasOnlySubstanceUnits) {
-      doubleValue = valueHolder.getCurrentSpeciesValue(id) / compartmentValue;
+      doubleValue = valueHolder.getCurrentValueOf(position);
+    } else if (isSetInitialAmount && hasOnlySubstanceUnits) {
+      doubleValue = valueHolder.getCurrentValueOf(position) / compartmentValue;
       
     }
 
-    else if (isSetInitialConcentration && hasOnlySubstanceUnits) {  
-      doubleValue = valueHolder.getCurrentSpeciesValue(id) * compartmentValue;
+    else if (isSetInitialConcentration && hasOnlySubstanceUnits) {
+      doubleValue = valueHolder.getCurrentValueOf(position) * compartmentValue;
     } else {
-      doubleValue = valueHolder.getCurrentSpeciesValue(id);
+      doubleValue = valueHolder.getCurrentValueOf(position);
       
     }
   }

@@ -29,6 +29,7 @@ public class CompartmentOrParameterValue extends ASTNodeObject {
   protected CallableSBase sb;
   protected String id;
   protected ValueHolder valueHolder;
+  protected int position;
   
   /**
    * 
@@ -38,11 +39,12 @@ public class CompartmentOrParameterValue extends ASTNodeObject {
    * @param valueHolder
    */
   public CompartmentOrParameterValue(ASTNodeInterpreterWithTime interpreter, ASTNode node,
-    CallableSBase sb, ValueHolder valueHolder) {
+    CallableSBase sb, ValueHolder valueHolder, int position) {
     super(interpreter, node);
     this.sb = sb;
     this.id=sb.getId();
     this.valueHolder = valueHolder;
+    this.position=position;
   }
   
   /*
@@ -50,6 +52,6 @@ public class CompartmentOrParameterValue extends ASTNodeObject {
    * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
    */
   protected void computeDoubleValue() {
-    doubleValue=valueHolder.getCurrentValueOf(id);
+    doubleValue=valueHolder.getCurrentValueOf(position);
   }
 }
