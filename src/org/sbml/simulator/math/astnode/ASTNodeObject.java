@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.CallableSBase;
-import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.util.Maths;
 
@@ -246,15 +245,10 @@ public class ASTNodeObject {
        */
       case NAME:
         CallableSBase variable = node.getVariable();
-        
         if (variable != null) {
-          if (variable instanceof FunctionDefinition) {
-            doubleValue = interpreter.functionDouble((FunctionDefinition) variable,
-              children, time);
-          } else {
-            doubleValue = interpreter.compileDouble(variable, time);
-          }
-        } else {
+          doubleValue = interpreter.compileDouble(variable, time);
+        }
+        else {
           doubleValue = interpreter.compileDouble(node.getName(), time);
         }
         break;
@@ -406,31 +400,6 @@ public class ASTNodeObject {
       case FUNCTION_TANH:
         doubleValue = interpreter.tanh(children.get(0), time);
         break;
-      case FUNCTION: {
-        variable = node.getVariable();
-        
-        if (variable != null) {
-          if (variable instanceof FunctionDefinition) {
-            doubleValue = interpreter.functionDouble((FunctionDefinition) variable,
-              children, time);
-          } else {
-            logger
-                .warning("ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! ("
-                    + node.getName() + ", " + node.getParentSBMLObject() + ")");
-            throw new SBMLException(
-              "ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! ("
-                  + node.getName() + ", " + node.getParentSBMLObject() + ")");
-            // doubleValue = compiler.compile(variable);
-          }
-        } else {
-          logger
-              .warning("ASTNode of type FUNCTION but the variable is null !! ("
-                  + node.getName() + ", " + node.getParentSBMLObject() + "). "
-                  + "Check that your object is linked to a Model.");
-          doubleValue = interpreter.functionDouble(node.getName(), children);
-        }
-        break;
-      }
       case FUNCTION_PIECEWISE:
         doubleValue = interpreter.piecewise(children, time);
         break;
@@ -486,42 +455,10 @@ public class ASTNodeObject {
           break;
         case NAME:
           CallableSBase variable=node.getVariable();
-          
           if (variable != null) {
-            if (variable instanceof FunctionDefinition) {
-              booleanValue = interpreter.functionBoolean((FunctionDefinition) variable,
-                children, time);
-            } else {
-              booleanValue = interpreter.compileBoolean(variable, time);
-            }
+            booleanValue = interpreter.compileBoolean(variable, time);
           }
           break;
-        
-        case FUNCTION: {
-          variable=node.getVariable();
-          
-          if (variable != null) {
-            if (variable instanceof FunctionDefinition) {
-              booleanValue = interpreter.functionBoolean((FunctionDefinition) variable,
-                children, time);
-            } else {
-              logger
-                  .warning("ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! ("
-                      + node.getName() + ", " + node.getParentSBMLObject() + ")");
-              throw new SBMLException(
-                "ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! ("
-                    + node.getName() + ", " + node.getParentSBMLObject() + ")");
-              // value = compiler.compile(variable);
-            }
-          } else {
-            logger
-                .warning("ASTNode of type FUNCTION but the variable is null !! ("
-                    + node.getName() + ", " + node.getParentSBMLObject() + "). "
-                    + "Check that your object is linked to a Model.");
-            booleanValue = interpreter.functionBoolean(node.getName(), children);
-          }
-          break;
-        }
         case LAMBDA:
           booleanValue = interpreter.lambdaBoolean(children, time);
           break;

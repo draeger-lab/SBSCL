@@ -156,13 +156,12 @@ public class ASTNodeInterpreterWithTime {
   
   public boolean compileBoolean(CallableSBase nsb, double time) throws SBMLException {
     if (nsb instanceof FunctionDefinition) { return functionBoolean(
-      (FunctionDefinition) nsb, new LinkedList<ASTNodeObject>(), time); }
+      ((FunctionDefinition) nsb).getMath(), new LinkedList<ASTNodeObject>(), time); }
     return false;
   }
   
-  public double functionDouble(FunctionDefinition function,
+  public double functionDouble(ASTNode lambda,
     List<ASTNodeObject> arguments, double time) throws SBMLException {
-    ASTNode lambda = function.getMath();
     Hashtable<String, Double> argValues = new Hashtable<String, Double>();
     for (int i = 0; i < arguments.size(); i++) {
       argValues.put(compileString(lambda.getChild(i)),
@@ -219,7 +218,7 @@ public class ASTNodeInterpreterWithTime {
   }
   
   public double functionDouble(String functionDefinitionName,
-    List<ASTNodeObject> args) throws SBMLException {
+    List<ASTNodeObject> args, double time) throws SBMLException {
     // can not compile a function without an ASTNode representing its lambda
     // expression
     
@@ -315,9 +314,8 @@ public class ASTNodeInterpreterWithTime {
     return false;
   }
   
-  public boolean functionBoolean(FunctionDefinition function,
+  public boolean functionBoolean(ASTNode lambda,
     List<ASTNodeObject> arguments, double time) throws SBMLException {
-    ASTNode lambda = function.getMath();
     
     Hashtable<String, Double> argValues = new Hashtable<String, Double>();
     for (int i = 0; i < arguments.size(); i++) {
