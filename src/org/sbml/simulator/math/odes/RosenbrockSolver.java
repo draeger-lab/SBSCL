@@ -621,6 +621,9 @@ public class RosenbrockSolver extends AbstractDESSolver {
           hAdap = Math.max(fac1,
               Math.min(fac2, Math.pow(localError, PWR) / SAFETY));
           h = h / hAdap;
+          if(timeEnd-t-h<hMin) {
+            h=timeEnd-t;
+          }
           lastStepSuccessful = true;
 
         } else {
@@ -637,6 +640,9 @@ public class RosenbrockSolver extends AbstractDESSolver {
           hAdap = Math.max(fac1,
               Math.min(fac2, Math.pow(localError, PWR) / SAFETY));
           h = h / hAdap;
+          if(timeEnd-t-h<hMin) {
+            h=timeEnd-t;
+          }
           tNew = t + h;
           if (tNew == t) {
             new Error("Stepsize underflow in Rosenbrock solver");
