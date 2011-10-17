@@ -19,6 +19,7 @@ package org.sbml.simulator.math.astnode;
 import java.util.Map;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.simulator.math.EfficientASTNodeInterpreter;
 
@@ -31,7 +32,9 @@ public class StoichiometryObject {
   private double time;
   private int speciesIndex;
   private int speciesRefIndex;
-  private boolean constant;
+  private boolean constantStoichiometry;
+  private boolean constantQuantity;
+  private boolean boundaryCondition;
   private boolean isSetStoichiometryMath;
   private ASTNode math;
   private String id;
@@ -55,20 +58,31 @@ public class StoichiometryObject {
    */
   public StoichiometryObject(SpeciesReference sr, int speciesIndex,
     int speciesRefIndex, Map<String, Double> stoichiometricCoefHash,
-    double[] Y, EfficientASTNodeInterpreter nodeInterpreter,
-    int reactionIndex, boolean isReactant) {
+    double[] Y, EfficientASTNodeInterpreter nodeInterpreter, int reactionIndex,
+    boolean isReactant) {
     this.isSetStoichiometryMath = sr.isSetStoichiometryMath();
     if (isSetStoichiometryMath) {
       math = sr.getStoichiometryMath().getMath();
     }
     this.sr = sr;
-    this.reactionIndex=reactionIndex;
+    this.reactionIndex = reactionIndex;
     this.id = sr.getId();
     this.speciesIndex = speciesIndex;
     this.speciesRefIndex = speciesRefIndex;
-    this.constant = sr.getConstant();
+    this.constantStoichiometry = sr.getConstant();
     if ((!sr.isSetId()) && (!isSetStoichiometryMath)) {
-      constant=true;
+      constantStoichiometry = true;
+    }
+    this.boundaryCondition = false;
+    this.constantQuantity = false;
+    Species s = sr.getSpeciesInstance();
+    if (s != null) {
+      if (s.getBoundaryCondition()) {
+        this.boundaryCondition = true;
+      }
+      if (s.getConstant()) {
+        this.constantQuantity = true;
+      }
     }
     this.stoichiometricCoefHash = stoichiometricCoefHash;
     this.Y = Y;
@@ -79,13 +93,15 @@ public class StoichiometryObject {
   }
   
   public void computeChange(double currentTime, double[] changeRate, double[] v) {
-    if(constant==false) {
+    if (constantStoichiometry == false) {
       compileDouble(currentTime);
     }
-    if (isReactant) {
-      changeRate[speciesIndex]-= stoichiometry * v[reactionIndex];
+    if (constantQuantity || boundaryCondition) {
+      changeRate[speciesIndex] = 0;
+    } else if (isReactant) {
+      changeRate[speciesIndex] -= stoichiometry * v[reactionIndex];
     } else {
-      changeRate[speciesIndex]+= stoichiometry * v[reactionIndex];
+      changeRate[speciesIndex] += stoichiometry * v[reactionIndex];
     }
   }
   
@@ -97,7 +113,7 @@ public class StoichiometryObject {
   private double compileDouble(double time) {
     if (this.time != time) {
       this.time = time;
-      if (!constant || time <= 0d) {
+      if (!constantStoichiometry || time <= 0d) {
         computeStoichiometricValue();
       }
     }
@@ -130,7 +146,6 @@ public class StoichiometryObject {
   public int getSpeciesIndex() {
     return speciesIndex;
   }
-  
   
   /**
    * 
