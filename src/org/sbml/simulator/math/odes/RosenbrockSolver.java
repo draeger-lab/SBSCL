@@ -48,9 +48,9 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Are negative values allowed
+	 * Number of the values of Y that have to be positive (at the beginning of Y)
 	 */
-	private boolean noNegatives=true;;
+	private int numPositives;
 	
 	/**
 	 * Constants used to adapt the stepsize according to the error in the last
@@ -439,7 +439,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] = y[i] + k1[i] * a21;
-			if(noNegatives) {
+			if(i<numPositives) {
 			  yTemp[i]=Math.max(yTemp[i], 0d);
 			}
 		}
@@ -450,7 +450,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] = y[i] + k1[i] * a31 + k2[i] * a32;
-			if(noNegatives) {
+			if(i<numPositives) {
         yTemp[i]=Math.max(yTemp[i], 0d);
       }
 		}
@@ -462,7 +462,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] = y[i] + k1[i] * a41 + k2[i] * a42 + k3[i] * a43;
-			if(noNegatives) {
+			if(i<numPositives) {
         yTemp[i]=Math.max(yTemp[i], 0d);
       }
 		}
@@ -475,7 +475,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] = y[i] + k1[i] * a51 + k2[i] * a52 + k3[i] * a53 + k4[i]
 					* a54;
-			if(noNegatives) {
+			if(i<numPositives) {
         yTemp[i]=Math.max(yTemp[i], 0d);
       }
 		}
@@ -487,7 +487,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] += k5[i];
-			if(noNegatives) {
+			if(i<numPositives) {
         yTemp[i]=Math.max(yTemp[i], 0d);
       }
 		}
@@ -499,7 +499,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 		for (int i = 0; i < numEqn; i++) {
 			yNew[i] = yTemp[i] + yerr[i];
-			if(noNegatives) {
+			if(i<numPositives) {
         yNew[i]=Math.max(yNew[i], 0d);
       }
 		}
@@ -547,6 +547,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	@Override
 	public double[] computeChange(DESystem DES, double[] y2, double time,
 			double currentStepSize, double[] change) throws IntegrationException {
+	  numPositives=DES.getNumPositiveValues();
 	  if(y==null) {
       init(DES.getDESystemDimension(),this.getStepSize(),2);
     }
