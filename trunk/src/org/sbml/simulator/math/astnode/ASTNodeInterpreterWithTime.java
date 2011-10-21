@@ -1,22 +1,22 @@
 /*
- *---------------------------------------------------------------------
- * This file is part of SBMLsimulator, a Java-based simulator for models
- * of biochemical processes encoded in the modeling language SBML.
- *
+ * --------------------------------------------------------------------- This
+ * file is part of SBMLsimulator, a Java-based simulator for models of
+ * biochemical processes encoded in the modeling language SBML.
+ * 
  * Copyright (C) 2007-2011 by the University of Tuebingen, Germany.
- *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation. A copy of the license
- * agreement is provided in the file named "LICENSE.txt" included with
- * this software distribution and also available online as
- * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
+ * 
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation. A copy of the license agreement is provided in the file
+ * named "LICENSE.txt" included with this software distribution and also
+ * available online as <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
 
 package org.sbml.simulator.math.astnode;
 
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -54,12 +54,10 @@ public class ASTNodeInterpreterWithTime {
    */
   private Map<String, Double> funcArgs;
   
-  
   /**
      * 
      */
   private ValueHolder valueHolder;
-  
   
   /**
    * 
@@ -67,44 +65,17 @@ public class ASTNodeInterpreterWithTime {
    */
   public ASTNodeInterpreterWithTime(ValueHolder valueHolder) {
     this.valueHolder = valueHolder;
+    this.funcArgs=new HashMap<String,Double>();
   }
   
-  /**
-     * 
-     */
-  private void clearFuncArgs() {
-    funcArgs.clear();
-  }
-  
-  
-  /**
-   * @param name
-   * @return
-   */
-  private Double getFuncArg(String name) {
-    if ((funcArgs != null) && funcArgs.containsKey(name)) {
-      // replace the name by the associated value of the argument
-      return funcArgs.get(name).doubleValue();
-    }
-    return null;
-  }
-  
-  
-  /**
-   * @param argValues
-   */
-  private void setFuncArgs(Hashtable<String, Double> argValues) {
-    this.funcArgs = argValues;
-  }
   
   
   public final String toString(ASTNode value) {
     return value.toString();
   }
   
-  
   public double compileDouble(String name, double time) {
-    Double funcArg = getFuncArg(name);
+    Double funcArg = funcArgs.get(name).doubleValue();
     double value;
     if (funcArg != null) {
       value = funcArg;
@@ -116,10 +87,11 @@ public class ASTNodeInterpreterWithTime {
     return value;
   }
   
-  public double compileDouble(CallableSBase nsb, double time) throws SBMLException {
+  public double compileDouble(CallableSBase nsb, double time)
+    throws SBMLException {
     if (nsb instanceof Species) {
       Species s = (Species) nsb;
-      String id=s.getId();
+      String id = s.getId();
       double compartmentValue = valueHolder.getCurrentCompartmentValueOf(id);
       if (compartmentValue == 0d) {
         return valueHolder.getCurrentSpeciesValue(id);
@@ -136,40 +108,46 @@ public class ASTNodeInterpreterWithTime {
       } else {
         return valueHolder.getCurrentSpeciesValue(id);
       }
-    }
-    else if ((nsb instanceof Compartment) || (nsb instanceof Parameter)) {
-      String id=nsb.getId();
+    } else if ((nsb instanceof Compartment) || (nsb instanceof Parameter)) {
+      String id = nsb.getId();
       return valueHolder.getCurrentValueOf(id);
-    } 
-    else if (nsb instanceof LocalParameter) {
+    } else if (nsb instanceof LocalParameter) {
       LocalParameter p = (LocalParameter) nsb;
       return p.getValue();
       
-      
     } else if (nsb instanceof Reaction) {
       Reaction r = (Reaction) nsb;
-      if (r.isSetKineticLaw()) { ((ASTNodeObject)r.getKineticLaw()
-          .getMath().getUserObject()).compileDouble(time); }
+      if (r.isSetKineticLaw()) {
+        ((ASTNodeObject) r.getKineticLaw().getMath().getUserObject())
+            .compileDouble(time);
+      }
     }
     return Double.NaN;
   }
   
-  public boolean compileBoolean(CallableSBase nsb, double time) throws SBMLException {
-    if (nsb instanceof FunctionDefinition) { return functionBoolean(
-      ((FunctionDefinition) nsb).getMath(), new LinkedList<ASTNodeObject>(), time); }
+  public boolean compileBoolean(CallableSBase nsb, double time)
+    throws SBMLException {
+    if (nsb instanceof FunctionDefinition) {
+      ASTNode math = ((FunctionDefinition) nsb).getMath();
+      ASTNodeObject rightChild = (ASTNodeObject) math.getRightChild()
+          .getUserObject();
+      List<String> variables = new ArrayList<String>(math.getChildCount());
+      for (ASTNode child : math.getChildren()) {
+        variables.add(compileString(child));
+      }
+      return functionBoolean(rightChild, variables,
+        new LinkedList<ASTNodeObject>(), new double[math.getChildCount()], time);
+    }
     return false;
   }
   
-  public double functionDouble(ASTNode lambda,
-    List<ASTNodeObject> arguments, double time) throws SBMLException {
-    Hashtable<String, Double> argValues = new Hashtable<String, Double>();
+  public double functionDouble(ASTNodeObject rightChild,
+    List<String> variables, List<ASTNodeObject> arguments, double[] values, double time)
+    throws SBMLException {
     for (int i = 0; i < arguments.size(); i++) {
-      argValues.put(compileString(lambda.getChild(i)),
-        arguments.get(i).compileDouble(time));
+      values[i] = arguments.get(i).compileDouble(time);
     }
-    setFuncArgs(argValues);
-    double value = ((ASTNodeObject)lambda.getRightChild().getUserObject()).compileDouble(time);
-    clearFuncArgs();
+    double value = rightChild.compileDouble(time);
     return value;
   }
   
@@ -181,7 +159,8 @@ public class ASTNodeInterpreterWithTime {
     }
   }
   
-  public double lambdaDouble(List<ASTNodeObject> nodes, double time) throws SBMLException {
+  public double lambdaDouble(List<ASTNodeObject> nodes, double time)
+    throws SBMLException {
     double d[] = new double[Math.max(0, nodes.size() - 1)];
     for (int i = 0; i < nodes.size() - 1; i++) {
       d[i++] = nodes.get(i).compileDouble(time);
@@ -190,7 +169,8 @@ public class ASTNodeInterpreterWithTime {
     return nodes.get(nodes.size() - 1).compileDouble(time);
   }
   
-  public boolean lambdaBoolean(List<ASTNodeObject> nodes, double time) throws SBMLException {
+  public boolean lambdaBoolean(List<ASTNodeObject> nodes, double time)
+    throws SBMLException {
     double d[] = new double[Math.max(0, nodes.size() - 1)];
     for (int i = 0; i < nodes.size() - 1; i++) {
       d[i++] = nodes.get(i).compileDouble(time);
@@ -200,10 +180,12 @@ public class ASTNodeInterpreterWithTime {
     
   }
   
-  public double piecewise(List<ASTNodeObject> nodes, double time) throws SBMLException {
+  public double piecewise(List<ASTNodeObject> nodes, double time)
+    throws SBMLException {
     int i;
     for (i = 1; i < nodes.size() - 1; i += 2) {
-      if (nodes.get(i).compileBoolean(time)) { return (nodes.get(i - 1).compileDouble(time)); }
+      if (nodes.get(i).compileBoolean(time)) { return (nodes.get(i - 1)
+          .compileDouble(time)); }
     }
     return nodes.get(i - 1).compileDouble(time);
     
@@ -213,7 +195,8 @@ public class ASTNodeInterpreterWithTime {
     return Math.log(userObject.compileDouble(time));
   }
   
-  public double log(ASTNodeObject left, ASTNodeObject right, double time) throws SBMLException {
+  public double log(ASTNodeObject left, ASTNodeObject right, double time)
+    throws SBMLException {
     return Maths.log(left.compileDouble(time), right.compileDouble(time));
   }
   
@@ -225,7 +208,8 @@ public class ASTNodeInterpreterWithTime {
     return Double.NaN;
   }
   
-  public double tanh(ASTNodeObject userObject, double time) throws SBMLException {
+  public double tanh(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Math.tanh(userObject.compileDouble(time));
   }
   
@@ -233,7 +217,8 @@ public class ASTNodeInterpreterWithTime {
     return Math.tan(userObject.compileDouble(time));
   }
   
-  public double sinh(ASTNodeObject userObject, double time) throws SBMLException {
+  public double sinh(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Math.sinh(userObject.compileDouble(time));
   }
   
@@ -241,7 +226,8 @@ public class ASTNodeInterpreterWithTime {
     return Math.sin(userObject.compileDouble(time));
   }
   
-  public double sech(ASTNodeObject userObject, double time) throws SBMLException {
+  public double sech(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Maths.sech(userObject.compileDouble(time));
   }
   
@@ -249,9 +235,9 @@ public class ASTNodeInterpreterWithTime {
     return Maths.sec(userObject.compileDouble(time));
   }
   
-  public double root(ASTNodeObject rootExponent, ASTNodeObject radiant, double time)
-    throws SBMLException {
-    return root(rootExponent.compileDouble(time), radiant,time);
+  public double root(ASTNodeObject rootExponent, ASTNodeObject radiant,
+    double time) throws SBMLException {
+    return root(rootExponent.compileDouble(time), radiant, time);
   }
   
   public double root(double rootExponent, ASTNodeObject userObject, double time)
@@ -263,11 +249,13 @@ public class ASTNodeInterpreterWithTime {
     return Maths.ln(userObject.compileDouble(time));
   }
   
-  public double floor(ASTNodeObject userObject, double time) throws SBMLException {
+  public double floor(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Math.floor(userObject.compileDouble(time));
   }
   
-  public double factorial(ASTNodeObject userObject, double time) throws SBMLException {
+  public double factorial(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Maths.factorial((int) Math.round(userObject.compileDouble(time)));
   }
   
@@ -275,7 +263,8 @@ public class ASTNodeInterpreterWithTime {
     return Math.exp(userObject.compileDouble(time));
   }
   
-  public double csch(ASTNodeObject userObject, double time) throws SBMLException {
+  public double csch(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Maths.csch(userObject.compileDouble(time));
   }
   
@@ -283,7 +272,8 @@ public class ASTNodeInterpreterWithTime {
     return Maths.csc(userObject.compileDouble(time));
   }
   
-  public double coth(ASTNodeObject userObject, double time) throws SBMLException {
+  public double coth(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Maths.coth(userObject.compileDouble(time));
   }
   
@@ -291,7 +281,8 @@ public class ASTNodeInterpreterWithTime {
     return Maths.cot(userObject.compileDouble(time));
   }
   
-  public double cosh(ASTNodeObject userObject, double time) throws SBMLException {
+  public double cosh(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Math.cosh(userObject.compileDouble(time));
   }
   
@@ -299,11 +290,13 @@ public class ASTNodeInterpreterWithTime {
     return Math.cos(userObject.compileDouble(time));
   }
   
-  public double ceiling(ASTNodeObject userObject, double time) throws SBMLException {
+  public double ceiling(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Math.ceil(userObject.compileDouble(time));
   }
   
-  public double arctanh(ASTNodeObject userObject, double time) throws SBMLException {
+  public double arctanh(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Math.atan(userObject.compileDouble(time));
   }
   
@@ -314,41 +307,43 @@ public class ASTNodeInterpreterWithTime {
     return false;
   }
   
-  public boolean functionBoolean(ASTNode lambda,
-    List<ASTNodeObject> arguments, double time) throws SBMLException {
-    
-    Hashtable<String, Double> argValues = new Hashtable<String, Double>();
+  public boolean functionBoolean(ASTNodeObject rightChild,
+    List<String> variables, List<ASTNodeObject> arguments, double[] values, double time)
+    throws SBMLException {
     for (int i = 0; i < arguments.size(); i++) {
-      argValues.put(compileString(lambda.getChild(i)),
-        arguments.get(i).compileDouble(time));
+      values[i] = arguments.get(i).compileDouble(time);
     }
-    setFuncArgs(argValues);
-    boolean value = ((ASTNodeObject)lambda.getRightChild().getUserObject()).compileBoolean(time);
-    clearFuncArgs();
+    boolean value = rightChild.compileBoolean(time);
     return value;
   }
   
-  public boolean lt(ASTNodeObject left, ASTNodeObject right, double time) throws SBMLException {
+  public boolean lt(ASTNodeObject left, ASTNodeObject right, double time)
+    throws SBMLException {
     return (left.compileDouble(time) < right.compileDouble(time));
   }
   
-  public boolean leq(ASTNodeObject left, ASTNodeObject right, double time) throws SBMLException {
+  public boolean leq(ASTNodeObject left, ASTNodeObject right, double time)
+    throws SBMLException {
     return (left.compileDouble(time) <= right.compileDouble(time));
   }
   
-  public boolean neq(ASTNodeObject left, ASTNodeObject right, double time) throws SBMLException {
+  public boolean neq(ASTNodeObject left, ASTNodeObject right, double time)
+    throws SBMLException {
     return (left.compileDouble(time) != right.compileDouble(time));
   }
   
-  public boolean gt(ASTNodeObject left, ASTNodeObject right, double time) throws SBMLException {
+  public boolean gt(ASTNodeObject left, ASTNodeObject right, double time)
+    throws SBMLException {
     return (left.compileDouble(time) > right.compileDouble(time));
   }
   
-  public boolean geq(ASTNodeObject left, ASTNodeObject right, double time) throws SBMLException {
+  public boolean geq(ASTNodeObject left, ASTNodeObject right, double time)
+    throws SBMLException {
     return (left.compileDouble(time) >= right.compileDouble(time));
   }
   
-  public boolean eq(ASTNodeObject left, ASTNodeObject right, double time) throws SBMLException {
+  public boolean eq(ASTNodeObject left, ASTNodeObject right, double time)
+    throws SBMLException {
     return (left.compileDouble(time) == right.compileDouble(time));
   }
   
@@ -356,16 +351,18 @@ public class ASTNodeInterpreterWithTime {
     return node.compileBoolean(time) ? false : true;
   }
   
-  public boolean or(List<ASTNodeObject> nodes, double time) throws SBMLException {
+  public boolean or(List<ASTNodeObject> nodes, double time)
+    throws SBMLException {
     for (int i = 0; i < nodes.size(); i++) {
       if (nodes.get(i).compileBoolean(time)) { return true; }
     }
     return false;
   }
   
-  public boolean xor(List<ASTNodeObject> nodes, double time) throws SBMLException {
+  public boolean xor(List<ASTNodeObject> nodes, double time)
+    throws SBMLException {
     boolean value = false;
-    int size=nodes.size();
+    int size = nodes.size();
     for (int i = 0; i < size; i++) {
       if (nodes.get(i).compileBoolean(time)) {
         if (value) {
@@ -378,55 +375,67 @@ public class ASTNodeInterpreterWithTime {
     return value;
   }
   
-  public boolean and(List<ASTNodeObject> nodes, double time) throws SBMLException {
-    int size=nodes.size();
+  public boolean and(List<ASTNodeObject> nodes, double time)
+    throws SBMLException {
+    int size = nodes.size();
     for (int i = 0; i < size; i++) {
       if (!(nodes.get(i)).compileBoolean(time)) { return false; }
     }
     return true;
   }
   
-  public double arctan(ASTNodeObject userObject, double time) throws SBMLException {
+  public double arctan(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Math.atan(userObject.compileDouble(time));
   }
   
-  public double arcsinh(ASTNodeObject userObject, double time) throws SBMLException {
+  public double arcsinh(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Maths.arcsinh(userObject.compileDouble(time));
   }
   
-  public double arcsin(ASTNodeObject userObject, double time) throws SBMLException {
+  public double arcsin(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Math.asin(userObject.compileDouble(time));
   }
   
-  public double arcsech(ASTNodeObject userObject, double time) throws SBMLException {
+  public double arcsech(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Maths.arcsech(userObject.compileDouble(time));
   }
   
-  public double arcsec(ASTNodeObject userObject, double time) throws SBMLException {
+  public double arcsec(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Maths.arcsec(userObject.compileDouble(time));
   }
   
-  public double arccsch(ASTNodeObject userObject, double time) throws SBMLException {
+  public double arccsch(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Maths.arccsch(userObject.compileDouble(time));
   }
   
-  public double arccsc(ASTNodeObject userObject, double time) throws SBMLException {
+  public double arccsc(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Maths.arccsc(userObject.compileDouble(time));
   }
   
-  public double arccoth(ASTNodeObject userObject, double time) throws SBMLException {
+  public double arccoth(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Maths.arccoth(userObject.compileDouble(time));
   }
   
-  public double arccot(ASTNodeObject userObject, double time) throws SBMLException {
+  public double arccot(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Maths.arccot(userObject.compileDouble(time));
   }
   
-  public double arccosh(ASTNodeObject userObject, double time) throws SBMLException {
+  public double arccosh(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Maths.arccosh(userObject.compileDouble(time));
   }
   
-  public double arccos(ASTNodeObject userObject, double time) throws SBMLException {
+  public double arccos(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Math.acos(userObject.compileDouble(time));
   }
   
@@ -438,8 +447,8 @@ public class ASTNodeInterpreterWithTime {
     return (mantissa * Math.pow(10, exponent));
   }
   
-  public double delay(String name, ASTNodeObject leftChild, ASTNodeObject rightChild,
-    String units) {
+  public double delay(String name, ASTNodeObject leftChild,
+    ASTNodeObject rightChild, String units) {
     // TODO Auto-generated method stub
     return 0;
   }
@@ -452,11 +461,13 @@ public class ASTNodeInterpreterWithTime {
     return (numerator / denominator);
   }
   
-  public double frac(ASTNodeObject left, ASTNodeObject right, double time) throws SBMLException {
+  public double frac(ASTNodeObject left, ASTNodeObject right, double time)
+    throws SBMLException {
     return (left.compileDouble(time) / right.compileDouble(time));
   }
   
-  public double times(List<ASTNodeObject> nodes, double time) throws SBMLException {
+  public double times(List<ASTNodeObject> nodes, double time)
+    throws SBMLException {
     int size = nodes.size();
     if (size == 0) {
       return (0d);
@@ -470,7 +481,8 @@ public class ASTNodeInterpreterWithTime {
     }
   }
   
-  public double minus(List<ASTNodeObject> nodes, double time) throws SBMLException {
+  public double minus(List<ASTNodeObject> nodes, double time)
+    throws SBMLException {
     int size = nodes.size();
     
     double value = 0d;
@@ -483,19 +495,21 @@ public class ASTNodeInterpreterWithTime {
     return value;
   }
   
-  public double plus(List<ASTNodeObject> nodes, double time) throws SBMLException {
+  public double plus(List<ASTNodeObject> nodes, double time)
+    throws SBMLException {
     int size = nodes.size();
     double value = 0d;
     for (int i = 0; i != size; i++) {
-        value += nodes.get(i).compileDouble(time);
+      value += nodes.get(i).compileDouble(time);
     }
-      return value;
-    }
+    return value;
+  }
   
-  public double pow(ASTNodeObject left, ASTNodeObject right, double time) throws SBMLException {
+  public double pow(ASTNodeObject left, ASTNodeObject right, double time)
+    throws SBMLException {
     double l = left.compileDouble(time);
     double r = right.compileDouble(time);
-    double result= Math.pow(l,r);
+    double result = Math.pow(l, r);
     return result;
   }
   
@@ -504,11 +518,13 @@ public class ASTNodeInterpreterWithTime {
     return value;
   }
   
-  public double sqrt(ASTNodeObject userObject, double time) throws SBMLException {
+  public double sqrt(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return Math.sqrt(userObject.compileDouble(time));
   }
   
-  public double uMinus(ASTNodeObject userObject, double time) throws SBMLException {
+  public double uMinus(ASTNodeObject userObject, double time)
+    throws SBMLException {
     return (-userObject.compileDouble(time));
   }
 }
