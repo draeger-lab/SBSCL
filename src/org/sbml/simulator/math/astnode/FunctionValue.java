@@ -16,6 +16,11 @@
  */
 package org.sbml.simulator.math.astnode;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.CallableSBase;
 import org.sbml.jsbml.FunctionDefinition;
@@ -26,19 +31,33 @@ import org.sbml.jsbml.SBMLException;
  * @version $Rev$
  */
 public class FunctionValue extends ASTNodeObject {
+  protected ASTNodeObject evaluationBlock;
+  protected List<String> variables;
+  protected double[] argumentValues;
+  protected Map<String,Integer> indexMap;
   protected ASTNode math;
   
   /**
+   * 
    * @param interpreter
    * @param node
    */
   public FunctionValue(ASTNodeInterpreterWithTime interpreter,
-    ASTNode node, ASTNode math) {
+    ASTNode node, List<ASTNode> variableNodes) {
     super(interpreter, node);
     CallableSBase variable = node.getVariable();
     if ((variable != null)) {
       if (variable instanceof FunctionDefinition) {
-        this.math=math;
+        this.variables=new ArrayList<String>(variableNodes.size());
+        this.indexMap=new HashMap<String,Integer>();
+        int index=0;
+        for(ASTNode argument:variableNodes) {
+          String argumentName=interpreter.compileString(argument);
+          variables.add(argumentName);
+          indexMap.put(argumentName, index);
+          index++;
+        }
+        this.argumentValues=new double[variables.size()];
       } else {
         logger
             .warning("ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! ("
@@ -54,7 +73,10 @@ public class FunctionValue extends ASTNodeObject {
           + node.getName() + ", " + node.getParentSBMLObject() + "). "
           + "Check that your object is linked to a Model.");
     }
+    
+    
   }
+  
   
   /*
    * (non-Javadoc)
@@ -63,7 +85,7 @@ public class FunctionValue extends ASTNodeObject {
    */
   protected void computeDoubleValue() {
     if (math != null) {
-      doubleValue = interpreter.functionDouble(math, children, time);
+      doubleValue = interpreter.functionDouble(evaluationBlock, variables, children, argumentValues, time);
     } else {
       doubleValue = Double.NaN;
     }
@@ -76,9 +98,35 @@ public class FunctionValue extends ASTNodeObject {
    */
   protected void computeBooleanValue() {
     if (math != null) {
-      booleanValue = interpreter.functionBoolean(math, children, time);
+      booleanValue = interpreter.functionBoolean(evaluationBlock, variables, children, argumentValues, time);
     } else {
       booleanValue = false;
     }
+  }
+  
+  /**
+   * 
+   * @param math
+   */
+  public void setMath(ASTNode math) {
+    this.math=math;
+    this.evaluationBlock=(ASTNodeObject)math.getRightChild().getUserObject();
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public double[] getArgumentValues() {
+    return argumentValues;
+  }
+  
+  /**
+   * 
+   * @param argumentName
+   * @return
+   */
+  public int getIndex(String argumentName) {
+    return indexMap.get(argumentName);
   }
 }

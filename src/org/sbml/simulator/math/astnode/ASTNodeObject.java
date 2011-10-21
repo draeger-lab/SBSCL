@@ -71,6 +71,18 @@ public class ASTNodeObject {
   /**
    * 
    */
+  protected ASTNodeObject leftChild;
+  
+  /**
+   * 
+   */
+  protected ASTNodeObject rightChild;
+  
+  
+  
+  /**
+   * 
+   */
   protected int numChildren;
 
   
@@ -115,6 +127,10 @@ public class ASTNodeObject {
       }
     }
     numChildren=children.size();
+    if(numChildren>0) {
+      leftChild=children.get(0);
+      rightChild=children.get(numChildren-1);
+    }
   }
   
   /**
@@ -206,14 +222,14 @@ public class ASTNodeObject {
        * Operators
        */
       case POWER:
-        doubleValue = interpreter.pow(children.get(0), children.get(numChildren-1), time);
+        doubleValue = interpreter.pow(leftChild, rightChild, time);
         break;
       case PLUS:
         doubleValue = interpreter.plus(children, time);
         break;
       case MINUS:
         if (numChildren == 1) {
-          doubleValue = interpreter.uMinus(children.get(0), time);
+          doubleValue = interpreter.uMinus(leftChild, time);
         } else {
           doubleValue = interpreter.minus(children, time);
         }
@@ -227,7 +243,7 @@ public class ASTNodeObject {
               .format(
                 "Fractions must have one numerator and one denominator, here %s elements are given.",
                 node.getChildCount())); }
-        doubleValue = interpreter.frac(children.get(0), children.get(numChildren-1), time);
+        doubleValue = interpreter.frac(leftChild, rightChild, time);
         break;
       case RATIONAL:
         doubleValue = interpreter.frac(node.getNumerator(), node.getDenominator());
@@ -236,8 +252,8 @@ public class ASTNodeObject {
         doubleValue = interpreter.symbolTime(node.getName());
         break;
       case FUNCTION_DELAY:
-        doubleValue = interpreter.delay(node.getName(), children.get(0),
-          children.get(numChildren-1), node.getUnits());
+        doubleValue = interpreter.delay(node.getName(), leftChild,
+          rightChild, node.getUnits());
         break;
       
       /*
@@ -274,85 +290,85 @@ public class ASTNodeObject {
        */
       case FUNCTION_LOG:
         if (numChildren == 2) {
-          doubleValue = interpreter.log(children.get(0), children.get(numChildren-1), time);
+          doubleValue = interpreter.log(leftChild, rightChild, time);
         } else {
-          doubleValue = interpreter.log(children.get(numChildren-1), time);
+          doubleValue = interpreter.log(rightChild, time);
         }
         break;
       case FUNCTION_ABS:
-        doubleValue = interpreter.abs(children.get(numChildren-1), time);
+        doubleValue = interpreter.abs(rightChild, time);
         break;
       case FUNCTION_ARCCOS:
-        doubleValue = interpreter.arccos(children.get(0), time);
+        doubleValue = interpreter.arccos(leftChild, time);
         break;
       case FUNCTION_ARCCOSH:
-        doubleValue = interpreter.arccosh(children.get(0), time);
+        doubleValue = interpreter.arccosh(leftChild, time);
         break;
       case FUNCTION_ARCCOT:
-        doubleValue = interpreter.arccot(children.get(0), time);
+        doubleValue = interpreter.arccot(leftChild, time);
         break;
       case FUNCTION_ARCCOTH:
-        doubleValue = interpreter.arccoth(children.get(0), time);
+        doubleValue = interpreter.arccoth(leftChild, time);
         break;
       case FUNCTION_ARCCSC:
-        doubleValue = interpreter.arccsc(children.get(0), time);
+        doubleValue = interpreter.arccsc(leftChild, time);
         break;
       case FUNCTION_ARCCSCH:
-        doubleValue = interpreter.arccsch(children.get(0), time);
+        doubleValue = interpreter.arccsch(leftChild, time);
         break;
       case FUNCTION_ARCSEC:
-        doubleValue = interpreter.arcsec(children.get(0), time);
+        doubleValue = interpreter.arcsec(leftChild, time);
         break;
       case FUNCTION_ARCSECH:
-        doubleValue = interpreter.arcsech(children.get(0), time);
+        doubleValue = interpreter.arcsech(leftChild, time);
         break;
       case FUNCTION_ARCSIN:
-        doubleValue = interpreter.arcsin(children.get(0), time);
+        doubleValue = interpreter.arcsin(leftChild, time);
         break;
       case FUNCTION_ARCSINH:
-        doubleValue = interpreter.arcsinh(children.get(0), time);
+        doubleValue = interpreter.arcsinh(leftChild, time);
         break;
       case FUNCTION_ARCTAN:
-        doubleValue = interpreter.arctan(children.get(0), time);
+        doubleValue = interpreter.arctan(leftChild, time);
         break;
       case FUNCTION_ARCTANH:
-        doubleValue = interpreter.arctanh(children.get(0), time);
+        doubleValue = interpreter.arctanh(leftChild, time);
         break;
       case FUNCTION_CEILING:
-        doubleValue = interpreter.ceiling(children.get(0), time);
+        doubleValue = interpreter.ceiling(leftChild, time);
         break;
       case FUNCTION_COS:
-        doubleValue = interpreter.cos(children.get(0), time);
+        doubleValue = interpreter.cos(leftChild, time);
         break;
       case FUNCTION_COSH:
-        doubleValue = interpreter.cosh(children.get(0), time);
+        doubleValue = interpreter.cosh(leftChild, time);
         break;
       case FUNCTION_COT:
-        doubleValue = interpreter.cot(children.get(0), time);
+        doubleValue = interpreter.cot(leftChild, time);
         break;
       case FUNCTION_COTH:
-        doubleValue = interpreter.coth(children.get(0), time);
+        doubleValue = interpreter.coth(leftChild, time);
         break;
       case FUNCTION_CSC:
-        doubleValue = interpreter.csc(children.get(0), time);
+        doubleValue = interpreter.csc(leftChild, time);
         break;
       case FUNCTION_CSCH:
-        doubleValue = interpreter.csch(children.get(0), time);
+        doubleValue = interpreter.csch(leftChild, time);
         break;
       case FUNCTION_EXP:
-        doubleValue = interpreter.exp(children.get(0), time);
+        doubleValue = interpreter.exp(leftChild, time);
         break;
       case FUNCTION_FACTORIAL:
-        doubleValue = interpreter.factorial(children.get(0), time);
+        doubleValue = interpreter.factorial(leftChild, time);
         break;
       case FUNCTION_FLOOR:
-        doubleValue = interpreter.floor(children.get(0), time);
+        doubleValue = interpreter.floor(leftChild, time);
         break;
       case FUNCTION_LN:
-        doubleValue = interpreter.ln(children.get(0), time);
+        doubleValue = interpreter.ln(leftChild, time);
         break;
       case FUNCTION_POWER:
-        doubleValue = interpreter.pow(children.get(0), children.get(numChildren-1), time);
+        doubleValue = interpreter.pow(leftChild, rightChild, time);
         break;
       case FUNCTION_ROOT:
         ASTNode left = node.getLeftChild();
@@ -360,45 +376,45 @@ public class ASTNodeObject {
           if (left.isInteger()) {
             int leftdoubleValue = left.getInteger();
             if (leftdoubleValue == 2) {
-              doubleValue = interpreter.sqrt(children.get(numChildren-1), time);
+              doubleValue = interpreter.sqrt(rightChild, time);
             } else {
-              doubleValue = interpreter.root(leftdoubleValue, children.get(numChildren-1), time);
+              doubleValue = interpreter.root(leftdoubleValue, rightChild, time);
             }
           } else if (left.isReal()) {
-            double leftdoubleValue = left.getReal();
-            if (leftdoubleValue == 2d) {
-              doubleValue = interpreter.sqrt(children.get(numChildren-1), time);
+            double leftDoubleValue = left.getReal();
+            if (leftDoubleValue == 2d) {
+              doubleValue = interpreter.sqrt(rightChild, time);
             } else {
-              doubleValue = interpreter.root(leftdoubleValue, children.get(numChildren-1), time);
+              doubleValue = interpreter.root(leftDoubleValue, rightChild, time);
             }
           } else {
-            doubleValue = interpreter.root(children.get(0),
-              children.get(numChildren-1), time);
+            doubleValue = interpreter.root(leftChild,
+              rightChild, time);
           }
         } else if (node.getChildCount() == 1) {
-          doubleValue = interpreter.sqrt(children.get(numChildren-1), time);
+          doubleValue = interpreter.sqrt(rightChild, time);
         } else {
-          doubleValue = interpreter.root(children.get(0),
-            children.get(numChildren-1), time);
+          doubleValue = interpreter.root(leftChild,
+            rightChild, time);
         }
         break;
       case FUNCTION_SEC:
-        doubleValue = interpreter.sec(children.get(0), time);
+        doubleValue = interpreter.sec(leftChild, time);
         break;
       case FUNCTION_SECH:
-        doubleValue = interpreter.sech(children.get(0), time);
+        doubleValue = interpreter.sech(leftChild, time);
         break;
       case FUNCTION_SIN:
-        doubleValue = interpreter.sin(children.get(0), time);
+        doubleValue = interpreter.sin(leftChild, time);
         break;
       case FUNCTION_SINH:
-        doubleValue = interpreter.sinh(children.get(0), time);
+        doubleValue = interpreter.sinh(leftChild, time);
         break;
       case FUNCTION_TAN:
-        doubleValue = interpreter.tan(children.get(0), time);
+        doubleValue = interpreter.tan(leftChild, time);
         break;
       case FUNCTION_TANH:
-        doubleValue = interpreter.tanh(children.get(0), time);
+        doubleValue = interpreter.tanh(leftChild, time);
         break;
       case FUNCTION_PIECEWISE:
         doubleValue = interpreter.piecewise(children, time);
@@ -427,25 +443,25 @@ public class ASTNodeObject {
           booleanValue = interpreter.or(children,time);
           break;
         case LOGICAL_NOT:
-          booleanValue = interpreter.not(children.get(0),time);
+          booleanValue = interpreter.not(leftChild,time);
           break;
         case RELATIONAL_EQ:
-          booleanValue = interpreter.eq(children.get(0), children.get(numChildren-1),time);
+          booleanValue = interpreter.eq(leftChild, rightChild,time);
           break;
         case RELATIONAL_GEQ:
-          booleanValue = interpreter.geq(children.get(0), children.get(numChildren-1),time);
+          booleanValue = interpreter.geq(leftChild, rightChild,time);
           break;
         case RELATIONAL_GT:
-          booleanValue = interpreter.gt(children.get(0), children.get(numChildren-1),time);
+          booleanValue = interpreter.gt(leftChild, rightChild,time);
           break;
         case RELATIONAL_NEQ:
-          booleanValue = interpreter.neq(children.get(0), children.get(numChildren-1),time);
+          booleanValue = interpreter.neq(leftChild, rightChild,time);
           break;
         case RELATIONAL_LEQ:
-          booleanValue = interpreter.leq(children.get(0), children.get(numChildren-1),time);
+          booleanValue = interpreter.leq(leftChild, rightChild,time);
           break;
         case RELATIONAL_LT:
-          booleanValue = interpreter.lt(children.get(0), children.get(numChildren-1),time);
+          booleanValue = interpreter.lt(leftChild, rightChild,time);
           break;
         case CONSTANT_TRUE:
           booleanValue = true;

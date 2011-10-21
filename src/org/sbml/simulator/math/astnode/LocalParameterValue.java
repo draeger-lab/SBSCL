@@ -15,8 +15,14 @@
  */
 package org.sbml.simulator.math.astnode;
 
+import java.beans.PropertyChangeEvent;
+
+import javax.swing.tree.TreeNode;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
+import org.sbml.jsbml.util.TreeNodeChangeListener;
+
 
 /**
  * 
@@ -24,7 +30,7 @@ import org.sbml.jsbml.LocalParameter;
  * @version $Rev: 22 $
  * @since 1.0
  */
-public class LocalParameterValue extends ASTNodeObject {
+public class LocalParameterValue extends ASTNodeObject implements TreeNodeChangeListener {
   protected LocalParameter lp;
 
   /**
@@ -37,6 +43,8 @@ public class LocalParameterValue extends ASTNodeObject {
     LocalParameter lp) {
     super(interpreter, node);
     this.lp=lp;
+    lp.addTreeNodeChangeListener(this);
+    doubleValue=lp.getValue();
   }
   
   /*
@@ -44,6 +52,33 @@ public class LocalParameterValue extends ASTNodeObject {
    * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
    */
   protected void computeDoubleValue() {
-    doubleValue=lp.getValue();;
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+   */
+  public void propertyChange(PropertyChangeEvent evt) {
+    String property = evt.getPropertyName();
+    
+    
+    if ("value".equals(property)) {
+      doubleValue = (Double) evt.getNewValue();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeAdded(javax.swing.tree.TreeNode)
+   */
+  public void nodeAdded(TreeNode node) {
+    
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeRemoved(javax.swing.tree.TreeNode)
+   */
+  public void nodeRemoved(TreeNode node) {
   }
 }

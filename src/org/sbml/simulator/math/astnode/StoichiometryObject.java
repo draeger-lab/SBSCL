@@ -17,11 +17,13 @@
 package org.sbml.simulator.math.astnode;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.simulator.math.EfficientASTNodeInterpreter;
+import org.sbml.simulator.math.ValueHolder;
 
 /**
  * @author Roland Keller
@@ -36,6 +38,8 @@ public class StoichiometryObject {
   private boolean constantQuantity;
   private boolean boundaryCondition;
   private boolean isSetStoichiometryMath;
+  private int compartmentIndex;
+  protected ValueHolder valueHolder;
   private ASTNode math;
   private String id;
   private SpeciesReference sr;
@@ -44,6 +48,7 @@ public class StoichiometryObject {
   private EfficientASTNodeInterpreter nodeInterpreter;
   private int reactionIndex;
   private boolean isReactant;
+  private boolean inConcentration;
   
   /**
    * 
@@ -57,10 +62,12 @@ public class StoichiometryObject {
    * @param isReactant
    */
   public StoichiometryObject(SpeciesReference sr, int speciesIndex,
-    int speciesRefIndex, Map<String, Double> stoichiometricCoefHash,
+    int speciesRefIndex, int compartmentIndex, Map<String, Double> stoichiometricCoefHash, ValueHolder valueHolder,
     double[] Y, EfficientASTNodeInterpreter nodeInterpreter, int reactionIndex,
-    boolean isReactant) {
+    Set<String> inConcentrationSet, boolean isReactant) {
     this.isSetStoichiometryMath = sr.isSetStoichiometryMath();
+    this.valueHolder=valueHolder;
+    this.compartmentIndex=compartmentIndex;
     if (isSetStoichiometryMath) {
       math = sr.getStoichiometryMath().getMath();
     }
@@ -75,6 +82,7 @@ public class StoichiometryObject {
     }
     this.boundaryCondition = false;
     this.constantQuantity = false;
+    this.inConcentration=false;
     Species s = sr.getSpeciesInstance();
     if (s != null) {
       if (s.getBoundaryCondition()) {
@@ -83,12 +91,17 @@ public class StoichiometryObject {
       if (s.getConstant()) {
         this.constantQuantity = true;
       }
+      if(inConcentrationSet.contains(s.getId())) {
+        inConcentration=true;
+      }
     }
     this.stoichiometricCoefHash = stoichiometricCoefHash;
     this.Y = Y;
     this.nodeInterpreter = nodeInterpreter;
     this.time = Double.NaN;
     this.isReactant = isReactant;
+    
+    
     computeStoichiometricValue();
   }
   
@@ -96,13 +109,24 @@ public class StoichiometryObject {
     if (constantStoichiometry == false) {
       compileDouble(currentTime);
     }
+    double value;
     if (constantQuantity || boundaryCondition) {
-      changeRate[speciesIndex] = 0;
+      value = 0;
     } else if (isReactant) {
-      changeRate[speciesIndex] -= stoichiometry * v[reactionIndex];
+      value= - 1 * stoichiometry * v[reactionIndex];
     } else {
-      changeRate[speciesIndex] += stoichiometry * v[reactionIndex];
+      value = stoichiometry * v[reactionIndex];
     }
+    
+    // When the unit of reacting species is given mol/volume
+    // then it has to be considered in the change rate that should
+    // always be only in mol/time
+    if(inConcentration) {
+      value = value
+          / valueHolder.getCurrentValueOf(compartmentIndex);
+    }
+    changeRate[speciesIndex]+=value;
+    
   }
   
   /**
@@ -137,6 +161,8 @@ public class StoichiometryObject {
         stoichiometry = sr.getCalculatedStoichiometry();
       }
     }
+    
+    
   }
   
   /**
