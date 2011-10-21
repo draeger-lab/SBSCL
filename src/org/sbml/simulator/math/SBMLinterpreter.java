@@ -252,6 +252,11 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * 
    */
   private boolean[] reactionFast;
+
+  /**
+   * Number of values in Y that must be positive.
+   */
+  private int numPositives;
   
   /**
    * <p>
@@ -906,6 +911,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     
     this.Y = new double[model.getNumCompartments() + model.getNumSpecies()
         + model.getNumParameters() + speciesReferencesInRateRules];
+    this.numPositives = model.getNumCompartments() + model.getNumSpecies() + speciesReferencesInRateRules;
     this.symbolIdentifiers = new String[Y.length];
     
     /*
@@ -964,6 +970,17 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     }
     
     /*
+     * Save starting values of the stoichiometries
+     */
+    for (String id : speciesReferenceToRateRule.keySet()) {
+      SpeciesReference sr = model.findSpeciesReference(id);
+      Y[yIndex] = sr.getStoichiometry();
+      symbolHash.put(id, yIndex);
+      symbolIdentifiers[yIndex] = id;
+      yIndex++;
+    }
+    
+    /*
      * Save starting values of the model's parameter in Y
      */
     for (i = 0; i < model.getNumParameters(); i++) {
@@ -974,16 +991,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
       yIndex++;
     }
     
-    /*
-     * Save starting values of the stoichiometries
-     */
-    for (String id : speciesReferenceToRateRule.keySet()) {
-      SpeciesReference sr = model.findSpeciesReference(id);
-      Y[yIndex] = sr.getStoichiometry();
-      symbolHash.put(id, yIndex);
-      symbolIdentifiers[yIndex] = id;
-      yIndex++;
-    }
+    
     
     /*
      * Initial assignments
@@ -1183,7 +1191,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     ASTNode copiedAST = null;
     if (mergingPossible) {
       //Be careful with local parameters!
-      if (!(node.isName())
+      if (!(node.isName()) || (node.getType() == ASTNode.Type.NAME_TIME)
           || !((node.getVariable() != null) && (node.getVariable() instanceof LocalParameter))) {
         List<ASTNode> nodesToLookAt=null;
         if(function!=null) {
@@ -1193,7 +1201,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
           nodesToLookAt=nodes;
         }
         for (ASTNode current : nodesToLookAt) {
-          if (!(current.isName())
+          if (!(current.isName()) || (current.getType() == ASTNode.Type.NAME_TIME)
               || ((current.isName()) && !(current.getVariable() instanceof LocalParameter))) {
             if (current.toString().equals(nodeString)) {
               copiedAST = current;
@@ -1901,6 +1909,14 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    */
   public double getCurrentValueOf(int position) {
     return Y[position];
+  }
+  
+  /*
+   * (non-Javadoc)
+   * @see org.sbml.simulator.math.odes.DESystem#getNumPositiveValues()
+   */
+  public int getNumPositiveValues() {
+    return numPositives;
   }
   
 }

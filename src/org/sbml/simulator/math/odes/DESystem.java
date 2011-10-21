@@ -69,4 +69,10 @@ public interface DESystem extends Serializable, FirstOrderDifferentialEquations 
 	 * @return
 	 */
   public boolean containsEventsOrRules();
+
+  /**
+   * 
+   * @return the number of values in Y that have to be positive (concentrations, volumes, stoichiometries)
+   */
+  public int getNumPositiveValues();
 }
