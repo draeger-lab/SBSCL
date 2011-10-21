@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.CallableSBase;
 import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.util.Maths;
 
 /**
@@ -99,6 +100,22 @@ public class ASTNodeObject {
   /**
    * 
    */
+  protected double mantissa;
+  
+  /**
+   * 
+   */
+  protected int exponent;
+  
+  /**
+   * 
+   */
+  protected String units;
+  
+  
+  /**
+   * 
+   */
   public static final Logger logger = Logger.getLogger(ASTNodeObject.class.getName());
   
   /**
@@ -113,8 +130,18 @@ public class ASTNodeObject {
     if(nodeType==ASTNode.Type.REAL) {
       real=node.getReal();
     }
+    else if(nodeType==ASTNode.Type.INTEGER){
+      real=node.getInteger();
+    }
     else {
       real=Double.NaN;
+    }
+    if(node.isSetUnits()) {
+      units=node.getUnits();
+    }
+    if ((nodeType == Type.REAL) || nodeType == Type.REAL_E) {
+      mantissa=node.getMantissa();
+      exponent=node.getExponent();
     }
     this.time=Double.NaN;
     children=new ArrayList<ASTNodeObject>();
@@ -212,11 +239,11 @@ public class ASTNodeObject {
           doubleValue = (real > 0d) ? Double.POSITIVE_INFINITY
               : Double.NEGATIVE_INFINITY;
         } else {
-          doubleValue = interpreter.compile(real, node.getUnits());
+          doubleValue = interpreter.compile(real, units);
         }
         break;
       case INTEGER:
-        doubleValue = interpreter.compile(node.getInteger(), node.getUnits());
+        doubleValue = interpreter.compile(real, units);
         break;
       /*
        * Operators
@@ -225,17 +252,17 @@ public class ASTNodeObject {
         doubleValue = interpreter.pow(leftChild, rightChild, time);
         break;
       case PLUS:
-        doubleValue = interpreter.plus(children, time);
+        doubleValue = interpreter.plus(children, numChildren, time);
         break;
       case MINUS:
         if (numChildren == 1) {
           doubleValue = interpreter.uMinus(leftChild, time);
         } else {
-          doubleValue = interpreter.minus(children, time);
+          doubleValue = interpreter.minus(children, numChildren, time);
         }
         break;
       case TIMES:
-        doubleValue = interpreter.times(children, time);
+        doubleValue = interpreter.times(children, numChildren, time);
         break;
       case DIVIDE:
         if (numChildren != 2) { throw new SBMLException(
@@ -253,20 +280,7 @@ public class ASTNodeObject {
         break;
       case FUNCTION_DELAY:
         doubleValue = interpreter.delay(node.getName(), leftChild,
-          rightChild, node.getUnits());
-        break;
-      
-      /*
-       * Names of identifiers: parameters, functions, species etc.
-       */
-      case NAME:
-        CallableSBase variable = node.getVariable();
-        if (variable != null) {
-          doubleValue = interpreter.compileDouble(variable, time);
-        }
-        else {
-          doubleValue = interpreter.compileDouble(node.getName(), time);
-        }
+          rightChild, units);
         break;
       /*
        * Type: pi, e, true, false, Avogadro
@@ -277,13 +291,12 @@ public class ASTNodeObject {
       case CONSTANT_E:
         doubleValue = Math.E;
         break;
-      
       case NAME_AVOGADRO:
         doubleValue = Maths.AVOGADRO;
         break;
       case REAL_E:
-        doubleValue = interpreter.compile(node.getMantissa(), node.getExponent(),
-          node.isSetUnits() ? node.getUnits() : null);
+        doubleValue = interpreter.compile(mantissa, exponent,
+          units);
         break;
       /*
        * Basic Functions
@@ -369,34 +382,6 @@ public class ASTNodeObject {
         break;
       case FUNCTION_POWER:
         doubleValue = interpreter.pow(leftChild, rightChild, time);
-        break;
-      case FUNCTION_ROOT:
-        ASTNode left = node.getLeftChild();
-        if (node.getChildCount() == 2) {
-          if (left.isInteger()) {
-            int leftdoubleValue = left.getInteger();
-            if (leftdoubleValue == 2) {
-              doubleValue = interpreter.sqrt(rightChild, time);
-            } else {
-              doubleValue = interpreter.root(leftdoubleValue, rightChild, time);
-            }
-          } else if (left.isReal()) {
-            double leftDoubleValue = left.getReal();
-            if (leftDoubleValue == 2d) {
-              doubleValue = interpreter.sqrt(rightChild, time);
-            } else {
-              doubleValue = interpreter.root(leftDoubleValue, rightChild, time);
-            }
-          } else {
-            doubleValue = interpreter.root(leftChild,
-              rightChild, time);
-          }
-        } else if (node.getChildCount() == 1) {
-          doubleValue = interpreter.sqrt(rightChild, time);
-        } else {
-          doubleValue = interpreter.root(leftChild,
-            rightChild, time);
-        }
         break;
       case FUNCTION_SEC:
         doubleValue = interpreter.sec(leftChild, time);
