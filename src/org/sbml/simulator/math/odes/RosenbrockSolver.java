@@ -47,8 +47,11 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	//private boolean includeIntermediates;
-
+	/**
+	 * Are negative values allowed
+	 */
+	private boolean noNegatives=true;;
+	
 	/**
 	 * Constants used to adapt the stepsize according to the error in the last
 	 * step (see rodas.f)
@@ -380,7 +383,6 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	}
 	*/
 
-	
 	public double step(DESystem DES) throws IntegrationException {
 
 		double largestError = 0;
@@ -435,48 +437,72 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 		MatrixOperations.lubksb(FAC, indx, k1);
 
-		for (int i = 0; i < numEqn; i++)
+		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] = y[i] + k1[i] * a21;
+			if(noNegatives) {
+			  yTemp[i]=Math.max(yTemp[i], 0d);
+			}
+		}
 		DES.getValue(t + c2 * h, yTemp, f2);
 		for (int i = 0; i < numEqn; i++)
 			k2[i] = f2[i] + DFDX[i] * h * d2 + k1[i] * c21 / h;
 		MatrixOperations.lubksb(FAC, indx, k2);
 
-		for (int i = 0; i < numEqn; i++)
+		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] = y[i] + k1[i] * a31 + k2[i] * a32;
+			if(noNegatives) {
+        yTemp[i]=Math.max(yTemp[i], 0d);
+      }
+		}
 		DES.getValue(t + c3 * h, yTemp, f3);
 		for (int i = 0; i < numEqn; i++)
 			k3[i] = f3[i] + DFDX[i] * h * d3 + k1[i] * c31 / h + k2[i] * c32
 					/ h;
 		MatrixOperations.lubksb(FAC, indx, k3);
 
-		for (int i = 0; i < numEqn; i++)
+		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] = y[i] + k1[i] * a41 + k2[i] * a42 + k3[i] * a43;
+			if(noNegatives) {
+        yTemp[i]=Math.max(yTemp[i], 0d);
+      }
+		}
 		DES.getValue(t + c4 * h, yTemp, f4);
 		for (int i = 0; i < numEqn; i++)
 			k4[i] = f4[i] + DFDX[i] * h * d4 + k1[i] * c41 / h + k2[i] * c42
 					/ h + k3[i] * c43 / h;
 		MatrixOperations.lubksb(FAC, indx, k4);
 
-		for (int i = 0; i < numEqn; i++)
+		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] = y[i] + k1[i] * a51 + k2[i] * a52 + k3[i] * a53 + k4[i]
 					* a54;
+			if(noNegatives) {
+        yTemp[i]=Math.max(yTemp[i], 0d);
+      }
+		}
 		DES.getValue(t + h, yTemp, f5);
 		for (int i = 0; i < numEqn; i++)
 			k5[i] = f5[i] + k1[i] * c51 / h + k2[i] * c52 / h + k3[i] * c53 / h
 					+ k4[i] * c54 / h;
 		MatrixOperations.lubksb(FAC, indx, k5);
 
-		for (int i = 0; i < numEqn; i++)
+		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] += k5[i];
+			if(noNegatives) {
+        yTemp[i]=Math.max(yTemp[i], 0d);
+      }
+		}
 		DES.getValue(t + h, yTemp, f6);
 		for (int i = 0; i < numEqn; i++)
 			yerr[i] = f6[i] + k1[i] * c61 / h + k2[i] * c62 / h + k3[i] * c63
 					/ h + k4[i] * c64 / h + k5[i] * c65 / h;
 		MatrixOperations.lubksb(FAC, indx, yerr);
 
-		for (int i = 0; i < numEqn; i++)
+		for (int i = 0; i < numEqn; i++) {
 			yNew[i] = yTemp[i] + yerr[i];
+			if(noNegatives) {
+        yNew[i]=Math.max(yNew[i], 0d);
+      }
+		}
 
 		for (int i = 0; i < numEqn; i++) {
 			sk = absTol + relTol * Math.max(Math.abs(y[i]), Math.abs(yNew[i]));
