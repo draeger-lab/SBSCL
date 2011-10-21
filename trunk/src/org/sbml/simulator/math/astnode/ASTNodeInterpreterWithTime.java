@@ -142,9 +142,9 @@ public class ASTNodeInterpreterWithTime {
   }
   
   public double functionDouble(ASTNodeObject rightChild,
-    List<String> variables, List<ASTNodeObject> arguments, double[] values, double time)
+    List<String> variables, List<ASTNodeObject> arguments, int nArguments, double[] values, double time)
     throws SBMLException {
-    for (int i = 0; i < arguments.size(); i++) {
+    for (int i = 0; i < nArguments; i++) {
       values[i] = arguments.get(i).compileDouble(time);
     }
     double value = rightChild.compileDouble(time);
@@ -466,9 +466,8 @@ public class ASTNodeInterpreterWithTime {
     return (left.compileDouble(time) / right.compileDouble(time));
   }
   
-  public double times(List<ASTNodeObject> nodes, double time)
+  public double times(List<ASTNodeObject> nodes, int size, double time)
     throws SBMLException {
-    int size = nodes.size();
     if (size == 0) {
       return (0d);
     } else {
@@ -481,9 +480,8 @@ public class ASTNodeInterpreterWithTime {
     }
   }
   
-  public double minus(List<ASTNodeObject> nodes, double time)
+  public double minus(List<ASTNodeObject> nodes, int size, double time)
     throws SBMLException {
-    int size = nodes.size();
     
     double value = 0d;
     if (size > 0) {
@@ -495,9 +493,8 @@ public class ASTNodeInterpreterWithTime {
     return value;
   }
   
-  public double plus(List<ASTNodeObject> nodes, double time)
+  public double plus(List<ASTNodeObject> nodes, int size, double time)
     throws SBMLException {
-    int size = nodes.size();
     double value = 0d;
     for (int i = 0; i != size; i++) {
       value += nodes.get(i).compileDouble(time);

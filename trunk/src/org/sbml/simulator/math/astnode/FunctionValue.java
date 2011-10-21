@@ -1,5 +1,5 @@
 /*
- * $Id: FunctionDefinitionValue.java 13:47:32 keller $ $URL:
+ * $Id$ $URL:
  * FunctionDefinitionValue.java $
  * --------------------------------------------------------------------- This
  * file is part of SBMLsimulator, a Java-based simulator for models of
@@ -85,7 +85,7 @@ public class FunctionValue extends ASTNodeObject {
    */
   protected void computeDoubleValue() {
     if (math != null) {
-      doubleValue = interpreter.functionDouble(evaluationBlock, variables, children, argumentValues, time);
+      doubleValue = interpreter.functionDouble(evaluationBlock, variables, children, numChildren, argumentValues, time);
     } else {
       doubleValue = Double.NaN;
     }

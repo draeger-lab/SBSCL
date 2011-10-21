@@ -45,13 +45,16 @@ public class LocalParameterValue extends ASTNodeObject implements TreeNodeChange
     this.lp=lp;
     lp.addTreeNodeChangeListener(this);
     doubleValue=lp.getValue();
+    isDouble=true;
   }
   
   /*
    * (non-Javadoc)
-   * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
+   * @see org.sbml.simulator.math.astnode.ASTNodeObject#compileDouble(double)
    */
-  protected void computeDoubleValue() {
+  public double compileDouble(double time) {
+    this.time=time;
+    return doubleValue;
   }
 
   /*

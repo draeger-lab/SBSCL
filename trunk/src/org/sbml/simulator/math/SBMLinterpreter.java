@@ -60,6 +60,7 @@ import org.sbml.simulator.math.astnode.FunctionValue;
 import org.sbml.simulator.math.astnode.LocalParameterValue;
 import org.sbml.simulator.math.astnode.NamedValue;
 import org.sbml.simulator.math.astnode.ReactionValue;
+import org.sbml.simulator.math.astnode.RootFunctionValue;
 import org.sbml.simulator.math.astnode.SpeciesReferenceValue;
 import org.sbml.simulator.math.astnode.SpeciesValue;
 import org.sbml.simulator.math.astnode.StoichiometryObject;
@@ -805,14 +806,6 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    */
   public void getValue(double time, double[] Y, double[] changeRate)
     throws IntegrationException {
-    boolean change = false;
-    if (currentTime == time) {
-      if (!Arrays.equals(this.Y, Y)) {
-        change = true;
-      }
-    } else {
-      change = true;
-    }
     this.currentTime = time;
     this.Y = Y;
     if (model.getNumEvents() > 0) {
@@ -826,7 +819,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
       /*
        * Compute changes due to reactions
        */
-      processVelocities(changeRate, change);
+      processVelocities(changeRate, true);
       /*
        * Compute changes due to rules
        */
@@ -1112,7 +1105,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     for (Reaction r : model.getListOfReactions()) {
       KineticLaw kl = r.getKineticLaw();
       if (kl != null) {
-        ASTNodeObject currentLaw = (ASTNodeObject) copyAST(kl.getMath(),true, null)
+        ASTNodeObject currentLaw = (ASTNodeObject) copyAST(kl.getMath(),true, null,null)
             .getUserObject();
         kineticLawRoots.add(currentLaw);
         for (SpeciesReference speciesRef : r.getListOfReactants()) {
@@ -1185,13 +1178,21 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * @param node
    * @return
    */
-  private ASTNode copyAST(ASTNode node, boolean mergingPossible, FunctionValue function) {
+  private ASTNode copyAST(ASTNode node, boolean mergingPossible, FunctionValue function, List<ASTNode> inFunctionNodes) {
     String nodeString = node.toString();
     ASTNode copiedAST = null;
     if (mergingPossible) {
+      //Be careful with local parameters!
       if (!(node.isName())
           || !((node.getVariable() != null) && (node.getVariable() instanceof LocalParameter))) {
-        for (ASTNode current : nodes) {
+        List<ASTNode> nodesToLookAt=null;
+        if(function!=null) {
+          nodesToLookAt=inFunctionNodes;
+        }
+        else {
+          nodesToLookAt=nodes;
+        }
+        for (ASTNode current : nodesToLookAt) {
           if (!(current.isName())
               || ((current.isName()) && !(current.getVariable() instanceof LocalParameter))) {
             if (current.toString().equals(nodeString)) {
@@ -1202,13 +1203,26 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
         }
       }
     }
+    
     if (copiedAST == null) {
       copiedAST = new ASTNode(node.getType());
       
       for (ASTNode child : node.getChildren()) {
-        copiedAST.addChild(copyAST(child, mergingPossible, function));
+        if(function!=null) {
+          copiedAST.addChild(copyAST(child, true, function, inFunctionNodes));
+        }
+        else {
+          copiedAST.addChild(copyAST(child, mergingPossible, function, inFunctionNodes));
+        }
       }
-      nodes.add(copiedAST);
+      
+      if(function!=null) {
+        inFunctionNodes.add(copiedAST);
+      }
+      else {
+        nodes.add(copiedAST);
+      }
+      
       if (node.isSetUnits()) {
         copiedAST.setUnits(node.getUnits());
       }
@@ -1257,11 +1271,8 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
                 copiedAST,arguments);
               copiedAST.setUserObject(functionValue);
               ASTNode mathAST = copyAST(lambda,
-                false,functionValue);
+                false,functionValue,new LinkedList<ASTNode>());
               functionValue.setMath(mathAST);
-              if (mathAST != null) {
-                nodes.add(mathAST);
-              }
             } else if (variable instanceof Species) {
               copiedAST.setUserObject(new SpeciesValue(nodeInterpreterWithTime,
                 copiedAST, (Species) variable, this, symbolHash.get(variable
@@ -1281,10 +1292,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
             } else if (variable instanceof Reaction) {
               copiedAST.setUserObject(new ReactionValue(
                 nodeInterpreterWithTime, copiedAST, (Reaction) variable));
-            } else {
-              copiedAST.setUserObject(new ASTNodeObject(
-                nodeInterpreterWithTime, copiedAST));
-            }
+            } 
           } else {
             copiedAST.setUserObject(new NamedValue(
               nodeInterpreterWithTime, copiedAST, function));
@@ -1316,11 +1324,8 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
                 copiedAST,arguments);
               copiedAST.setUserObject(functionValue);
               ASTNode mathAST = copyAST(lambda,
-                false,functionValue);
+                false,functionValue,new LinkedList<ASTNode>());
               functionValue.setMath(mathAST);
-              if (mathAST != null) {
-                nodes.add(mathAST);
-              }
             }
           }
           break;
@@ -1329,6 +1334,8 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
           copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime,
             copiedAST));
           break;
+        case FUNCTION_ROOT:
+          copiedAST.setUserObject(new RootFunctionValue(nodeInterpreterWithTime,copiedAST));
         case LAMBDA:
           copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime,
             copiedAST));
