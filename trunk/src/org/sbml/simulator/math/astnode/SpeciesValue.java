@@ -64,7 +64,7 @@ public class SpeciesValue extends ASTNodeObject {
         .getCurrentValueOf(compartmentPosition);
     if (compartmentValue == 0d) {
       doubleValue = valueHolder.getCurrentValueOf(position);
-    } else if (isSetInitialAmount && hasOnlySubstanceUnits) {
+    } else if (isSetInitialAmount && !hasOnlySubstanceUnits) {
       doubleValue = valueHolder.getCurrentValueOf(position) / compartmentValue;
       
     }
