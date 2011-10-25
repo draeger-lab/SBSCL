@@ -55,10 +55,12 @@ import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.validator.OverdeterminationValidator;
 import org.sbml.simulator.math.astnode.ASTNodeInterpreterWithTime;
 import org.sbml.simulator.math.astnode.ASTNodeObject;
+import org.sbml.simulator.math.astnode.AssignmentRuleObject;
 import org.sbml.simulator.math.astnode.CompartmentOrParameterValue;
 import org.sbml.simulator.math.astnode.FunctionValue;
 import org.sbml.simulator.math.astnode.LocalParameterValue;
 import org.sbml.simulator.math.astnode.NamedValue;
+import org.sbml.simulator.math.astnode.RateRuleObject;
 import org.sbml.simulator.math.astnode.ReactionValue;
 import org.sbml.simulator.math.astnode.RootFunctionValue;
 import org.sbml.simulator.math.astnode.SpeciesReferenceValue;
@@ -257,6 +259,16 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * Number of values in Y that must be positive.
    */
   private int numPositives;
+
+  /**
+   * 
+   */
+  private List<AssignmentRuleObject> assignmentRulesRoots;
+
+  /**
+   * 
+   */
+  private List<RateRuleObject> rateRulesRoots;
   
   /**
    * <p>
@@ -773,7 +785,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * @see eva2.tools.math.des.EventDESystem#getPositionOfParameters()
    */
   public int getPositionOfParameters() {
-    return model.getNumCompartments() + model.getNumSpecies() - 1;
+    return Y.length-model.getNumParameters();
   }
   
   /**
@@ -812,7 +824,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
   public void getValue(double time, double[] Y, double[] changeRate)
     throws IntegrationException {
     this.currentTime = time;
-    this.Y = Y;
+    this.Y = Arrays.copyOf(Y, Y.length);
     if (model.getNumEvents() > 0) {
       this.runningEvents.clear();
     }
@@ -821,14 +833,32 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     Arrays.fill(changeRate, 0d);
     
     try {
-      /*
-       * Compute changes due to reactions
-       */
-      processVelocities(changeRate, true);
+      //Always call the compile functions with a new time
+      double astNodeTime = kineticLawRoots.get(0).getTime();
+      if (Double.isNaN(astNodeTime)) {
+        astNodeTime = 0d;
+      }
+      else {
+        astNodeTime += 0.01;
+      }
+      
       /*
        * Compute changes due to rules
        */
-      processRules(changeRate);
+      for(int i=0;i!=rateRulesRoots.size();i++) {
+        rateRulesRoots.get(i).processRule(changeRate, this.Y, astNodeTime);
+      }
+      
+      for(int i=0;i!=assignmentRulesRoots.size();i++) {
+        assignmentRulesRoots.get(i).processRule(this.Y, astNodeTime);
+      }
+      
+      /*
+       * Compute changes due to reactions
+       */
+      processVelocities(changeRate, astNodeTime);
+      
+      
       
       /*
        * Check the model's constraints
@@ -844,6 +874,20 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
       throw new IntegrationException(exc);
     }
     
+  }
+  
+  /**
+   * @param EDES
+   * @param time
+   * @param Ytemp
+   * @return
+   * @throws IntegrationException
+   */
+  public void processRules(double time, double[] Ytemp)
+      throws IntegrationException {
+    for (DESAssignment assignment : processAssignmentRules(time, Ytemp)) {
+      Ytemp[assignment.getIndex()] = assignment.getValue();
+    }
   }
   
   /*
@@ -1109,6 +1153,15 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     nodes = new LinkedList<ASTNode>();
     kineticLawRoots = new ArrayList<ASTNodeObject>();
     stoichiometries = new ArrayList<StoichiometryObject>();
+    
+    initializeKineticLaws();
+    initializeRules();
+  }
+  
+  /**
+   * 
+   */
+  private void initializeKineticLaws() {
     int reactionIndex = 0;
     for (Reaction r : model.getListOfReactions()) {
       KineticLaw kl = r.getKineticLaw();
@@ -1180,6 +1233,101 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
       reactionIndex++;
     }
   }
+  
+  private void initializeRules() {
+    assignmentRulesRoots = new ArrayList<AssignmentRuleObject>();
+    rateRulesRoots = new ArrayList<RateRuleObject>();
+    Integer symbolIndex;
+    
+    for (int i = 0; i < model.getNumRules(); i++) {
+      Rule rule = model.getRule(i);
+      if (rule.isAssignment()) {
+        AssignmentRule as = (AssignmentRule) rule;
+        symbolIndex = symbolHash.get(as.getVariable());
+        if (symbolIndex != null) {
+          Species sp = model.getSpecies(as.getVariable());
+          if (sp != null) {
+            assignmentRulesRoots.add(new AssignmentRuleObject(
+              (ASTNodeObject) copyAST(as.getMath(), true, null, null)
+                  .getUserObject(), symbolIndex, sp, compartmentHash.get(sp
+                  .getId()), this));
+          } else {
+            assignmentRulesRoots.add(new AssignmentRuleObject(
+              (ASTNodeObject) copyAST(as.getMath(), true, null, null)
+                  .getUserObject(), symbolIndex));
+          }
+        } else if (model.findSpeciesReference(as.getVariable()) != null) {
+          SpeciesReference sr = model.findSpeciesReference(as.getVariable());
+          if (sr.getConstant() == false) {
+            assignmentRulesRoots.add(new AssignmentRuleObject(
+              (ASTNodeObject) copyAST(as.getMath(), true, null, null)
+                  .getUserObject(), sr.getId(), stoichiometricCoefHash));
+          }
+        }
+      }
+      else if(rule.isRate()) {
+        RateRule rr = (RateRule) rule;
+        symbolIndex = symbolHash.get(rr.getVariable());
+        if (symbolIndex != null) {
+          Species sp = model.getSpecies(rr.getVariable());
+          if (sp != null) {
+            rateRulesRoots.add(new RateRuleObject(
+              (ASTNodeObject) copyAST(rr.getMath(), true, null, null)
+                  .getUserObject(), symbolIndex, sp, compartmentHash.get(sp
+                  .getId()), this));
+          }
+          else if (compartmentHash.containsValue(symbolIndex)) {
+            List<Integer> speciesIndices = new LinkedList<Integer>();
+            for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
+              if (entry.getValue() == symbolIndex) {
+                Species s = model.getSpecies(entry.getKey());
+                if (s.isSetInitialConcentration()) {
+                  int speciesIndex = symbolHash.get(entry.getKey());
+                  speciesIndices.add(speciesIndex);
+                }
+              }
+            }
+            rateRulesRoots.add(new RateRuleObject(
+              (ASTNodeObject) copyAST(rr.getMath(), true, null, null)
+                  .getUserObject(), symbolIndex, speciesIndices, this));
+          }
+          
+          else {
+            rateRulesRoots.add(new RateRuleObject(
+              (ASTNodeObject) copyAST(rr.getMath(), true, null, null)
+                  .getUserObject(), symbolIndex));
+          }
+        }
+      }
+    }
+    if (algebraicRules != null) {
+      for (AssignmentRule as : algebraicRules) {
+        symbolIndex = symbolHash.get(as.getVariable());
+        if (symbolIndex != null) {
+          Species sp = model.getSpecies(as.getVariable());
+          if (sp != null) {
+            assignmentRulesRoots.add(new AssignmentRuleObject(
+              (ASTNodeObject) copyAST(as.getMath(), true, null, null)
+                  .getUserObject(), symbolIndex, sp, compartmentHash.get(sp
+                  .getId()), this));
+          } else {
+            assignmentRulesRoots.add(new AssignmentRuleObject(
+              (ASTNodeObject) copyAST(as.getMath(), true, null, null)
+                  .getUserObject(), symbolIndex));
+          }
+        } else if (model.findSpeciesReference(as.getVariable()) != null) {
+          SpeciesReference sr = model.findSpeciesReference(as.getVariable());
+          if (sr.getConstant() == false) {
+            assignmentRulesRoots.add(new AssignmentRuleObject(
+              (ASTNodeObject) copyAST(as.getMath(), true, null, null)
+                  .getUserObject(), sr.getId(), stoichiometricCoefHash));
+          }
+        }
+      }
+    }
+  }
+  
+  
   
   /**
    * 
@@ -1390,11 +1538,9 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
   
   /*
    * (non-Javadoc)
-   * 
-   * @see eva2.tools.math.des.EventDESystem#processAssignmentRules(double,
-   * double[], double[])
+   * @see org.sbml.simulator.math.odes.EventDESystem#processAssignmentRules(double, double[])
    */
-  public ArrayList<DESAssignment> processAssignmentRules(double t, double Y[])
+  public List<DESAssignment> processAssignmentRules(double t, double Y[])
     throws IntegrationException {
     ArrayList<DESAssignment> assignmentRules = new ArrayList<DESAssignment>();
     Integer symbolIndex;
@@ -1700,29 +1846,21 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    *         model system of this class.
    * @throws SBMLException
    */
-  protected void processVelocities(double[] changeRate, boolean change)
+  protected void processVelocities(double[] changeRate, double time)
     throws SBMLException {
     
-    //If Y or the time has changed, call the compile function with a new time
-    double astNodeTime = kineticLawRoots.get(0).getTime();
-    if (Double.isNaN(astNodeTime)) {
-      astNodeTime = 0d;
-    }
-    if (change) {
-      astNodeTime += 0.01;
-    }
     // Velocities of each reaction.
     for (int reactionIndex = 0; reactionIndex != v.length; reactionIndex++) {
       if (hasFastReactions) {
         if (isProcessingFastReactions == reactionFast[reactionIndex]) {
           v[reactionIndex] = kineticLawRoots.get(reactionIndex).compileDouble(
-            astNodeTime);
+            time);
         } else {
           v[reactionIndex] = 0;
         }
       } else {
         v[reactionIndex] = kineticLawRoots.get(reactionIndex).compileDouble(
-          astNodeTime);
+          time);
         
       }
     }
@@ -1916,7 +2054,9 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * @see org.sbml.simulator.math.odes.DESystem#getNumPositiveValues()
    */
   public int getNumPositiveValues() {
-    return numPositives;
+    //return numPositives;
+    return 0;
   }
+  
   
 }
