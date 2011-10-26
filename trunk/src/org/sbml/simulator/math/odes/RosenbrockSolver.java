@@ -634,13 +634,13 @@ public class RosenbrockSolver extends AbstractDESSolver {
           new Error("RB.step() threw an exception" + ex);
           stop = true;
         }
-        if (localError == -1) {
-          new Error("Infinity or NaN encountered by the RB solver... stopping solve");
-          stop = true;
-        }
+//        if (localError == -1) {
+//          new Error("Infinity or NaN encountered by the RB solver... stopping solve");
+//          stop = true;
+//        }
 
         // good step
-        if (localError <= 1.0) {
+        if ((!Double.isNaN(localError)) && (localError!=-1) && (localError <= 1.0)) {
           t += h;
           System.arraycopy(yTemp, 0, y, 0, numEqn);
 
@@ -664,8 +664,13 @@ public class RosenbrockSolver extends AbstractDESSolver {
           }
 
           // change stepsize (see Rodas.f) require 0.2<=hnew/h<=6
-          hAdap = Math.max(fac1,
-              Math.min(fac2, Math.pow(localError, PWR) / SAFETY));
+          if((Double.isNaN(localError)) || (localError==-1)) {
+            hAdap=2;
+          } 
+          else {
+            hAdap = Math.max(fac1,
+                Math.min(fac2, Math.pow(localError, PWR) / SAFETY));
+          }
           h = h / hAdap;
           if(timeEnd-t-h<hMin) {
             h=timeEnd-t;
