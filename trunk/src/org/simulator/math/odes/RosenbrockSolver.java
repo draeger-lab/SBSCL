@@ -20,6 +20,8 @@
  */
 package org.simulator.math.odes;
 
+import java.math.BigDecimal;
+
 import org.simulator.math.Mathematics;
 import org.simulator.math.MatrixOperations;
 import org.simulator.math.MatrixOperations.MatrixException;
@@ -47,10 +49,6 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Number of the values of Y that have to be positive (at the beginning of Y)
-	 */
-	private int numPositives;
 	
 	/**
 	 * Constants used to adapt the stepsize according to the error in the last
@@ -439,9 +437,6 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] = y[i] + k1[i] * a21;
-			if(i<numPositives) {
-			  yTemp[i]=Math.max(yTemp[i], 0d);
-			}
 		}
 		DES.getValue(t + c2 * h, yTemp, f2);
 		for (int i = 0; i < numEqn; i++)
@@ -450,9 +445,6 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] = y[i] + k1[i] * a31 + k2[i] * a32;
-			if(i<numPositives) {
-        yTemp[i]=Math.max(yTemp[i], 0d);
-      }
 		}
 		DES.getValue(t + c3 * h, yTemp, f3);
 		for (int i = 0; i < numEqn; i++)
@@ -462,9 +454,6 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] = y[i] + k1[i] * a41 + k2[i] * a42 + k3[i] * a43;
-			if(i<numPositives) {
-        yTemp[i]=Math.max(yTemp[i], 0d);
-      }
 		}
 		DES.getValue(t + c4 * h, yTemp, f4);
 		for (int i = 0; i < numEqn; i++)
@@ -475,9 +464,6 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] = y[i] + k1[i] * a51 + k2[i] * a52 + k3[i] * a53 + k4[i]
 					* a54;
-			if(i<numPositives) {
-        yTemp[i]=Math.max(yTemp[i], 0d);
-      }
 		}
 		DES.getValue(t + h, yTemp, f5);
 		for (int i = 0; i < numEqn; i++)
@@ -487,9 +473,6 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] += k5[i];
-			if(i<numPositives) {
-        yTemp[i]=Math.max(yTemp[i], 0d);
-      }
 		}
 		DES.getValue(t + h, yTemp, f6);
 		for (int i = 0; i < numEqn; i++)
@@ -499,9 +482,6 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 		for (int i = 0; i < numEqn; i++) {
 			yNew[i] = yTemp[i] + yerr[i];
-			if(i<numPositives) {
-        yNew[i]=Math.max(yNew[i], 0d);
-      }
 		}
 
 		for (int i = 0; i < numEqn; i++) {
@@ -547,15 +527,14 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	@Override
 	public double[] computeChange(DESystem DES, double[] y2, double time,
 			double currentStepSize, double[] change) throws IntegrationException {
-	  numPositives=DES.getNumPositiveValues();
-	  if(y==null) {
+	  if((y==null) || (y.length==0)) {
       init(DES.getDESystemDimension(),this.getStepSize(),2);
     }
 	  if(currentStepSize!=this.getStepSize()) {
 	    this.hMax = Math.min(currentStepSize,standardStepSize);
 	  }
 	  
-	  double timeEnd=time+currentStepSize;
+	  double timeEnd = BigDecimal.valueOf(time).add(BigDecimal.valueOf(currentStepSize)).doubleValue();
     try {
       
       double localError = 0;
@@ -597,7 +576,8 @@ public class RosenbrockSolver extends AbstractDESSolver {
       // begin
       // with and move to smaller values if necessary
       h = hMax;
-
+      stop = false;
+      
       while (!stop) {
         
         // if the last step was successful (t was updated)...
@@ -622,7 +602,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
         // see if we're done
         if (t >= timeEnd) {
           Mathematics.vvSub(y, y2, change);
-            break;
+          break;
         }
         // copy the current point into yTemp
         System.arraycopy(y, 0, yTemp, 0, numEqn);
@@ -632,6 +612,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
           localError = step(DES);
         } catch (Exception ex) {
           new Error("RB.step() threw an exception" + ex);
+          ex.printStackTrace();
           stop = true;
         }
 //        if (localError == -1) {
@@ -641,7 +622,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
         // good step
         if ((!Double.isNaN(localError)) && (localError!=-1) && (localError <= 1.0)) {
-          t += h;
+          t = BigDecimal.valueOf(t).add(BigDecimal.valueOf(h)).doubleValue();
           System.arraycopy(yTemp, 0, y, 0, numEqn);
 
           // change stepsize (see Rodas.f) require 0.2<=hnew/h<=6
@@ -649,7 +630,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
               Math.min(fac2, Math.pow(localError, PWR) / SAFETY));
           h = h / hAdap;
           if(timeEnd-t-h<hMin) {
-            h=timeEnd-t;
+            h = BigDecimal.valueOf(timeEnd).subtract(BigDecimal.valueOf(t)).doubleValue();
           }
           lastStepSuccessful = true;
 
@@ -673,9 +654,9 @@ public class RosenbrockSolver extends AbstractDESSolver {
           }
           h = h / hAdap;
           if(timeEnd-t-h<hMin) {
-            h=timeEnd-t;
+            h = BigDecimal.valueOf(timeEnd).subtract(BigDecimal.valueOf(t)).doubleValue();
           }
-          tNew = t + h;
+          tNew = BigDecimal.valueOf(t).add(BigDecimal.valueOf(h)).doubleValue();
           if (tNew == t) {
             new Error("Stepsize underflow in Rosenbrock solver");
             stop = true;
