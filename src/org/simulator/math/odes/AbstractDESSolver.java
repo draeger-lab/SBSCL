@@ -19,6 +19,7 @@ package org.simulator.math.odes;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -216,7 +217,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 		Mathematics.vvAdd(yPrev, change, yTemp);
 		checkNonNegativity(yTemp);
 		if (increase) {
-			t += stepSize;
+			t = BigDecimal.valueOf(stepSize).add(BigDecimal.valueOf(t)).doubleValue();
 		}
 		processEventsAndRules(DES, t, yTemp);
 
@@ -283,7 +284,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 		}
 		double timePoints[] = new double[numSteps];
 		for (int i = 0; i < timePoints.length; i++) {
-			timePoints[i] = timeBegin + i * stepSize;
+			timePoints[i] = BigDecimal.valueOf(timeBegin).add(BigDecimal.valueOf(i).multiply(BigDecimal.valueOf(stepSize))).doubleValue();
 		}
 		return initResultMatrix(DES, initialValues, timePoints);
 	}
@@ -592,9 +593,9 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 				t = computeNextState(DES, t, h, yTemp, change, yTemp, true);
 			}
 
-			h = timePoints[i] - t;
-			if(h>1E12) {
-			  t = computeNextState(DES, t, h, yTemp, change, result[i], false);
+			h = BigDecimal.valueOf(timePoints[i]).subtract(BigDecimal.valueOf(t)).doubleValue();
+			if(h>1E-12) {
+			  t = computeNextState(DES, t, h, yTemp, change, yTemp, false);
 			}
 			if (fastFlag) {
 				steady = computeSteadyState(((FastProcessDESystem) DES),
@@ -603,7 +604,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 			}
 
 			additionalResults(DES, t, yTemp, data, i);
-
+			System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 			t=timePoints[i];
 
 		}
@@ -641,28 +642,30 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 		for (i = 1; i < timePoints.length; i++) {
 			firePropertyChange(timePoints[i-1] * intervalFactor, timePoints[i] * intervalFactor);
 			double h = stepSize;
-			if (!missingIds.isEmpty()) {
-				for (k = 0; k < initConditions.getColumnCount(); k++) {
-					yTemp[idIndex.get(initConditions.getColumnName(k))
-							.intValue()] = initConditions.getValueAt(i - 1,
-							k + 1);
-				}
-				for (String key : missingIds) {
-					k = idIndex.get(key).intValue();
-					yTemp[k] = result[i - 1][k];
-				}
-			} else {
-				System.arraycopy(initConditions.getRow(i - 1), 0, yTemp, 0,
-						yTemp.length);
+			if(i==1) {
+			  if (!missingIds.isEmpty()) {
+			    for (k = 0; k < initConditions.getColumnCount(); k++) {
+			      yTemp[idIndex.get(initConditions.getColumnName(k))
+			            .intValue()] = initConditions.getValueAt(i - 1,
+			              k + 1);
+			    }
+			    for (String key : missingIds) {
+			      k = idIndex.get(key).intValue();
+			      yTemp[k] = result[i - 1][k];
+			    }
+			  } else {
+			    System.arraycopy(initConditions.getRow(i - 1), 0, yTemp, 0,
+			        yTemp.length);
+			  }
 			}
 			for (j = 0; j < inBetweenSteps(timePoints[i - 1], timePoints[i], h); j++) {
 				computeChange(DES, yTemp, t, h, change);
 				checkSolution(change);
 				Mathematics.vvAdd(yTemp, change, yTemp);
-				t += h;
+				t = BigDecimal.valueOf(h).add(BigDecimal.valueOf(t)).doubleValue();
 			}
-			if(h>1E12) {
-			  h = timePoints[i] - t;
+			h = BigDecimal.valueOf(timePoints[i]).subtract(BigDecimal.valueOf(t)).doubleValue();
+			if(h>1E-12) {
 			  computeChange(DES, yTemp, t, h, change);
 			  checkSolution(change);
 			  Mathematics.vvAdd(yTemp, change, yTemp);
@@ -672,8 +675,10 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 
 			additionalResults(DES, t, yTemp, data, i);
 
-			t=timePoints[i];
+ 			t=timePoints[i];
 		}
+		
+		
 		return data;
 	}
 
