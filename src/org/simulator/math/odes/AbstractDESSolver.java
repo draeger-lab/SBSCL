@@ -395,9 +395,9 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 			if (EDES.getNumEvents() > 0) {
 				processEvents(EDES, t, yTemp);
 			}
-			if (EDES.getNumRules() > 0) {
-				processRules(EDES, t, yTemp);
-			}
+//			if (EDES.getNumRules() > 0) {
+//				processRules(EDES, t, yTemp);
+//			}
 		}
 	}
 
