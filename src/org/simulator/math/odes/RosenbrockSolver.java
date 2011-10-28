@@ -20,8 +20,6 @@
  */
 package org.simulator.math.odes;
 
-import java.math.BigDecimal;
-
 import org.simulator.math.Mathematics;
 import org.simulator.math.MatrixOperations;
 import org.simulator.math.MatrixOperations.MatrixException;
@@ -554,7 +552,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	    this.hMax = Math.min(currentStepSize,standardStepSize);
 	  }
 	  
-	  double timeEnd = BigDecimal.valueOf(time).add(BigDecimal.valueOf(currentStepSize)).doubleValue();
+	  double timeEnd = time + currentStepSize;
     try {
       
       double localError = 0;
@@ -642,7 +640,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
         // good step
         if ((!Double.isNaN(localError)) && (localError!=-1) && (localError <= 1.0)) {
-          t = BigDecimal.valueOf(t).add(BigDecimal.valueOf(h)).doubleValue();
+          t+=h;
           System.arraycopy(yTemp, 0, y, 0, numEqn);
 
           // change stepsize (see Rodas.f) require 0.2<=hnew/h<=6
@@ -650,7 +648,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
               Math.min(fac2, Math.pow(localError, PWR) / SAFETY));
           h = h / hAdap;
           if(timeEnd-t-h<hMin) {
-            h = BigDecimal.valueOf(timeEnd).subtract(BigDecimal.valueOf(t)).doubleValue();
+            h = timeEnd - t;
           }
           lastStepSuccessful = true;
 
@@ -674,7 +672,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
           }
           h = h / hAdap;
           if(timeEnd-t-h<hMin) {
-            h = BigDecimal.valueOf(timeEnd).subtract(BigDecimal.valueOf(t)).doubleValue();
+            h = timeEnd - t;
           }
           tNew = t + h;
           if (tNew == t) {
