@@ -863,21 +863,19 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     try {
       //Always call the compile functions with a new time
       double astNodeTime = kineticLawRoots.get(0).getTime();
-      if (Double.isNaN(astNodeTime)) {
-        astNodeTime = 0d;
-      }
-      else {
-        astNodeTime += 0.01;
-      }
+      astNodeTime += 0.01;
       
       /*
        * Compute changes due to rules
        */
-      for(int i=0;i!=rateRulesRoots.size();i++) {
+      int nRateRules = rateRulesRoots.size();
+      int nAssignmentRules = assignmentRulesRoots.size();
+      
+      for(int i=0;i!=nRateRules;i++) {
         rateRulesRoots.get(i).processRule(changeRate, this.Y, astNodeTime);
       }
       
-      for(int i=0;i!=assignmentRulesRoots.size();i++) {
+      for(int i=0;i!=nAssignmentRules;i++) {
         assignmentRulesRoots.get(i).processRule(this.Y, astNodeTime);
       }
       
