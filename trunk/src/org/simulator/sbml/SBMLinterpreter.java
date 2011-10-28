@@ -946,15 +946,22 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * parameter values.
    * </p>
    * 
-   * @return An array containing the initial values of this model. Note that
-   *         this is not necessarily equal to the initial values stored in the
-   *         SBML file as this method also evaluates initial assignments if
-   *         there are any.
+   * 
+   * @throws ModelOverdeterminedException
+   * @throws SBMLException
+   */
+  public void init() throws ModelOverdeterminedException, SBMLException {
+    init(true);
+  }
+  
+  /**
+   * 
+   * @param refreshTree
    * @throws ModelOverdeterminedException
    * @throws SBMLException
    */
   @SuppressWarnings("unchecked")
-  public void init() throws ModelOverdeterminedException, SBMLException {
+  public void init(boolean refreshTree) throws ModelOverdeterminedException, SBMLException {
     int i;
     symbolHash.clear();
     compartmentHash.clear();
