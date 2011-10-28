@@ -169,12 +169,24 @@ public class RosenbrockSolver extends AbstractDESSolver {
   public RosenbrockSolver() {
      super();
   }
+  
+  /**
+   * 
+   * @param size
+   * @param stepsize
+   */
 	public RosenbrockSolver(int size, double stepsize) {
-		super();
-
+		super(stepsize);
 		init(size,stepsize,2);
 		
 	}
+	
+	
+  public RosenbrockSolver(RosenbrockSolver solver) {
+    super(solver);
+    init(solver.getNumEquations(), solver.getStepSize(),2);
+    
+  }
 
 	private void init(int size, double stepsize, int nTimepoints) {
     numEqn = size;
@@ -219,7 +231,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	
 	@Override
 	public AbstractDESSolver clone() {
-		return new RosenbrockSolver(numEqn,this.getStepSize());
+		return new RosenbrockSolver(this.getNumEquations(),this.getStepSize());
 	}
 
 	/*
@@ -522,6 +534,14 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	@Override
 	public String getName() {
 		return "Rosenbrock solver";
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getNumEquations() {
+	  return numEqn;
 	}
 
 	@Override
