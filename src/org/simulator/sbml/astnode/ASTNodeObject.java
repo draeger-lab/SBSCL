@@ -143,7 +143,7 @@ public class ASTNodeObject {
       mantissa=node.getMantissa();
       exponent=node.getExponent();
     }
-    this.time=Double.NaN;
+    this.time=0.0;
     children=new ArrayList<ASTNodeObject>();
     if(node!=null) {  
       for(ASTNode childNode:node.getChildren()) {
