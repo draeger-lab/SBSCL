@@ -676,7 +676,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
           if(timeEnd-t-h<hMin) {
             h = BigDecimal.valueOf(timeEnd).subtract(BigDecimal.valueOf(t)).doubleValue();
           }
-          tNew = BigDecimal.valueOf(t).add(BigDecimal.valueOf(h)).doubleValue();
+          tNew = t + h;
           if (tNew == t) {
             new Error("Stepsize underflow in Rosenbrock solver");
             stop = true;

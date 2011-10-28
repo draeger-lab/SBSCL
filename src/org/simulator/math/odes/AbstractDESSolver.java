@@ -488,7 +488,6 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 				timeEnd);
 		double result[][] = data.getBlock(0).getData();
 		double change[] = new double[initialValues.length];
-		// double yPrev[] = new double[initialValues.length];
 		double yTemp[] = new double[initialValues.length];
 		double t = timeBegin;
 		additionalResults(DES, t, result[0], data, 0);
@@ -517,12 +516,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 						result[i], timeBegin);
 				System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 			}
-
-			// yPrev = result[i - 1];
-			// System.arraycopy(result[i-1], 0, yPrev, 0, result[i-1].length);
-
 			additionalResults(DES, t - stepSize, result[i - 1], data, i);
-			// System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 		}
 		return data;
 	}
