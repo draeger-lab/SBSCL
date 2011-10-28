@@ -1178,7 +1178,9 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     }
     System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
     
-    createSimplifiedSyntaxTree();
+    if(refreshTree) {
+      createSimplifiedSyntaxTree();
+    }
     
   }
   
