@@ -285,7 +285,39 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     SBMLException {
     this.model = model;
     this.v = new double[this.model.getListOfReactions().size()];
+    this.symbolHash = new HashMap<String, Integer>();
+    this.compartmentHash = new HashMap<String, Integer>();
+    this.stoichiometricCoefHash = new HashMap<String, Double>();
+    this.nodeInterpreter = new EfficientASTNodeInterpreter(this);
+    this.nodeInterpreterWithTime = new ASTNodeInterpreterWithTime(this);
+    this.level = model.getLevel();
+    
+    Map<String, Integer> speciesReferenceToRateRule = new HashMap<String, Integer>();
+    int speciesReferencesInRateRules = 0;
+    for (int k = 0; k < model.getNumRules(); k++) {
+      Rule rule = model.getRule(k);
+      if (rule.isRate()) {
+        RateRule rr = (RateRule) rule;
+        SpeciesReference sr = model.findSpeciesReference(rr.getVariable());
+        if (sr != null && sr.getConstant() == false) {
+          speciesReferencesInRateRules++;
+          speciesReferenceToRateRule.put(sr.getId(), k);
+        }
+      }
+    }
+    this.Y = new double[model.getNumCompartments() + model.getNumSpecies()
+        + model.getNumParameters() + speciesReferencesInRateRules];
+    this.symbolIdentifiers = new String[Y.length];
+    
+    speciesMap = new HashMap<String, Species>();
+    inConcentration = new HashSet<String>();
+    reactionFast = new boolean[model.getNumReactions()];
+    initialValues = new double[Y.length];
+    nodes = new LinkedList<ASTNode>();
+    kineticLawRoots = new ArrayList<ASTNodeObject>();
+    stoichiometries = new ArrayList<StoichiometryObject>();
     this.init();
+    
   }
   
   /*
@@ -820,7 +852,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
   public void getValue(double time, double[] Y, double[] changeRate)
     throws IntegrationException {
     this.currentTime = time;
-    this.Y = Arrays.copyOf(Y, Y.length);
+    System.arraycopy(Y, 0, this.Y, 0, Y.length);
     if (model.getNumEvents() > 0) {
       this.runningEvents.clear();
     }
@@ -924,16 +956,10 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
   @SuppressWarnings("unchecked")
   public void init() throws ModelOverdeterminedException, SBMLException {
     int i;
-    symbolHash = new HashMap<String, Integer>();
-    compartmentHash = new HashMap<String, Integer>();
+    symbolHash.clear();
+    compartmentHash.clear();
     Integer compartmentIndex, yIndex = 0;
     currentTime = 0d;
-    
-    this.stoichiometricCoefHash = new HashMap<String, Double>();
-    this.nodeInterpreter = new EfficientASTNodeInterpreter(this);
-    this.nodeInterpreterWithTime = new ASTNodeInterpreterWithTime(this);
-    
-    this.level = model.getLevel();
     
     Map<String, Integer> speciesReferenceToRateRule = new HashMap<String, Integer>();
     int speciesReferencesInRateRules = 0;
@@ -949,9 +975,13 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
       }
     }
     
-    this.Y = new double[model.getNumCompartments() + model.getNumSpecies()
-        + model.getNumParameters() + speciesReferencesInRateRules];
-    this.symbolIdentifiers = new String[Y.length];
+    int sizeY = model.getNumCompartments() + model.getNumSpecies()
+        + model.getNumParameters() + speciesReferencesInRateRules;
+    if(sizeY != this.Y.length) {
+      this.Y = new double[sizeY];
+      this.symbolIdentifiers = new String[Y.length];
+    }
+    
     
     /*
      * Save starting values of the model's compartment in Y
@@ -973,7 +1003,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     // one of them
     Species majority = determineMajorSpeciesAttributes();
     
-    speciesMap = new HashMap<String, Species>();
+    speciesMap.clear();
     /*
      * Save starting values of the model's species in Y and link them with their
      * compartment
@@ -1080,8 +1110,10 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
      * Check for fast reactions & update math of kinetic law to avoid wrong
      * links concerning local parameters
      */
-    inConcentration = new HashSet<String>();
-    reactionFast = new boolean[model.getNumReactions()];
+    inConcentration.clear();
+    if(reactionFast.length != model.getNumReactions()) {
+      reactionFast = new boolean[model.getNumReactions()];
+    }
     int reactionIndex = 0;
     for (Reaction r : model.getListOfReactions()) {
       reactionFast[reactionIndex] = r.isFast();
@@ -1134,7 +1166,9 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     processInitialAssignments();
     
     // save the initial values of this system
-    initialValues = new double[Y.length];
+    if(initialValues.length!=Y.length) {
+      initialValues = new double[Y.length];
+    }
     System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
     
     createSimplifiedSyntaxTree();
@@ -1145,9 +1179,9 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * 
    */
   private void createSimplifiedSyntaxTree() {
-    nodes = new LinkedList<ASTNode>();
-    kineticLawRoots = new ArrayList<ASTNodeObject>();
-    stoichiometries = new ArrayList<StoichiometryObject>();
+    nodes.clear();
+    kineticLawRoots.clear();
+    stoichiometries.clear();
     
     initializeKineticLaws();
     initializeRules();
