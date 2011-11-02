@@ -636,22 +636,19 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 		for (i = 1; i < timePoints.length; i++) {
 			firePropertyChange(timePoints[i-1] * intervalFactor, timePoints[i] * intervalFactor);
 			double h = stepSize;
-			if(i==1) {
-			  if (!missingIds.isEmpty()) {
-			    for (k = 0; k < initConditions.getColumnCount(); k++) {
-			      yTemp[idIndex.get(initConditions.getColumnName(k))
-			            .intValue()] = initConditions.getValueAt(i - 1,
-			              k + 1);
-			    }
-			    for (String key : missingIds) {
-			      k = idIndex.get(key).intValue();
-			      yTemp[k] = result[i - 1][k];
-			    }
-			  } else {
-			    System.arraycopy(initConditions.getRow(i - 1), 0, yTemp, 0,
-			        yTemp.length);
-			  }
-			}
+      if (!missingIds.isEmpty()) {
+        for (k = 0; k < initConditions.getColumnCount(); k++) {
+          yTemp[idIndex.get(initConditions.getColumnName(k)).intValue()] = initConditions
+              .getValueAt(i - 1, k + 1);
+        }
+        for (String key : missingIds) {
+          k = idIndex.get(key).intValue();
+          yTemp[k] = result[i - 1][k];
+        }
+      } else {
+        System.arraycopy(initConditions.getRow(i - 1), 0, yTemp, 0,
+          yTemp.length);
+      }
 			for (j = 0; j < inBetweenSteps(timePoints[i - 1], timePoints[i], h); j++) {
 				computeChange(DES, yTemp, t, h, change);
 				checkSolution(change);
