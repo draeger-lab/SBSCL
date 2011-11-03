@@ -17,6 +17,7 @@
  */
 package org.simulator.math.odes;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -571,6 +572,38 @@ public class MultiBlockTable extends AbstractTableModel implements
 		listOfBlocks.add(block);
 	}
 
+	/**
+	 * Creates a multi block table only containing the values for the given timepoints (if available)
+	 * @param timepoints
+	 * @return
+	 */
+  public MultiBlockTable filter(double[] timepoints) {
+    ArrayList<Integer> rowIndices = new ArrayList<Integer>();
+    int i=0;
+    for(double time: timepoints) {
+      while((i<this.getTimePoints().length) && (this.getTimePoints()[i]<=time)) {
+        if(this.getTimePoints()[i]==time) {
+          rowIndices.add(i);
+        }
+        i++;
+      }
+    }
+    
+    MultiBlockTable filtered= new MultiBlockTable();
+    for(int block=0;block!=this.getBlockCount();block++) {
+      filtered.addBlock(this.getBlock(block).getIdentifiers());
+      filtered.getBlock(block).setData(new double[rowIndices.size()][this.getBlock(block).getIdentifiers().length]);
+      
+      int rowCounter=0;
+      for(int rowIndex: rowIndices) {
+        filtered.getBlock(block).setRowData(rowCounter, this.getBlock(block).getRow(rowIndex));
+        rowCounter++;
+      }
+    }
+    
+    return filtered;
+  }
+	
 	/**
 	 * 
 	 * @param index
