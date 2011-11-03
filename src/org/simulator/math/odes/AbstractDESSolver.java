@@ -617,7 +617,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 			throws IntegrationException {
 		double[] timePoints = initConditions.getTimePoints();
 		// of items to be simulated, this will cause a problem!
-		MultiBlockTable data = initResultMatrix(DES, initialValues, timePoints);
+		
 		HashMap<String, Integer> idIndex = new HashMap<String, Integer>();
 		HashSet<String> missingIds = new HashSet<String>();
 		int i, j, k;
@@ -628,6 +628,14 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 			}
 			idIndex.put(ids[i], Integer.valueOf(i));
 		}
+		
+		for (int col = 0; col < initConditions.getColumnCount(); col++) {
+      initialValues[idIndex.get(initConditions.getColumnName(col)).intValue()] = initConditions
+          .getValueAt(0, col + 1);
+    }
+		
+		MultiBlockTable data = initResultMatrix(DES, initialValues, timePoints);
+		
 		double[][] result = data.getBlock(0).getData();
 		double[] yTemp = new double[DES.getDESystemDimension()];
 		double[] change = new double[DES.getDESystemDimension()];
