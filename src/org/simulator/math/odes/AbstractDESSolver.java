@@ -212,14 +212,15 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	double computeNextState(DESystem DES, double t, double stepSize,
 			double[] yPrev, double[] change, double[] yTemp, boolean increase)
 			throws IntegrationException {
-		computeChange(DES, yPrev, t, stepSize, change);
+	  double previousTime=t;
+	  computeChange(DES, yPrev, t, stepSize, change);
 		checkSolution(change);
 		Mathematics.vvAdd(yPrev, change, yTemp);
 		checkNonNegativity(yTemp);
 		if (increase) {
-			t = BigDecimal.valueOf(stepSize).add(BigDecimal.valueOf(t)).doubleValue();
+		  t = BigDecimal.valueOf(stepSize).add(BigDecimal.valueOf(t)).doubleValue();
 		}
-		processEventsAndRules(DES, t, yTemp);
+		processEventsAndRules(DES, t, previousTime,yTemp);
 
 		return t;
 	}
@@ -361,12 +362,12 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * 
 	 * @throws IntegrationException
 	 */
-	public void processEvents(EventDESystem EDES, double time, double[] yTemp)
+	public void processEvents(EventDESystem EDES, double time, double previousTime, double[] yTemp)
 			throws IntegrationException {
 		int index;
 		List<DESAssignment> assignments;
 		assignments = (LinkedList<DESAssignment>) EDES.getEventAssignments(
-				time, yTemp);
+				time, previousTime, yTemp);
 
 		while (assignments != null) {
 			for (DESAssignment assignment : assignments) {
@@ -375,7 +376,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 			}
 
 			assignments = (LinkedList<DESAssignment>) EDES.getEventAssignments(
-					time, yTemp);
+					time, time, yTemp);
 		}
 
 	}
@@ -388,16 +389,16 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * @param change
 	 * @throws IntegrationException
 	 */
-	public void processEventsAndRules(DESystem DES, double t, double yTemp[])
+	public void processEventsAndRules(DESystem DES, double t, double previousTime, double yTemp[])
 			throws IntegrationException {
 		if (DES instanceof EventDESystem) {
 			EventDESystem EDES = (EventDESystem) DES;
 			if (EDES.getNumEvents() > 0) {
-				processEvents(EDES, t, yTemp);
+				processEvents(EDES, t, previousTime, yTemp);
 			}
-//			if (EDES.getNumRules() > 0) {
-//				processRules(EDES, t, yTemp);
-//			}
+			if (EDES.getNumRules() > 0) {
+				processRules(EDES, t, yTemp);
+			}
 		}
 	}
 
@@ -489,6 +490,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 		double result[][] = data.getBlock(0).getData();
 		double change[] = new double[initialValues.length];
 		double yTemp[] = new double[initialValues.length];
+		double yPrev[] = new double[initialValues.length];
 		double t = timeBegin;
 		additionalResults(DES, t, result[0], data, 0);
 		boolean fastFlag = false;
@@ -503,12 +505,17 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 		}
 
 		// execute events that trigger at 0.0
-		processEvents((EventDESystem) DES, 0.0, result[0]);
-
+		processEvents((EventDESystem) DES, 0.0, 0.0,result[0]);
+		System.arraycopy(result[0], 0, yTemp, 0, yTemp.length);
 		for (int i = 1; i < result.length; i++) {
 			double oldT = t;
-			t = computeNextState(DES, t, stepSize, result[i - 1], change,
-					result[i], true);
+			System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
+			t = computeNextState(DES, t, stepSize, yPrev, change,
+					yTemp, true);
+			System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
+			if(i==1) {
+			  System.arraycopy(yPrev, 0, result[0], 0, yPrev.length);
+			}
 			firePropertyChange(oldT * intervalFactor, t * intervalFactor);
 
 			if (fastFlag) {
@@ -552,6 +559,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 		MultiBlockTable data = initResultMatrix(DES, initialValues, timePoints);
 		double result[][] = data.getBlock(0).getData();
 		double change[] = new double[initialValues.length];
+		double yPrev[] = new double[initialValues.length];
 		double yTemp[] = new double[initialValues.length];
 		double steady[] = new double[initialValues.length];
 		double t = timePoints[0];
@@ -571,12 +579,11 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 		}
 
 		// execute events that trigger at 0.0
-		processEvents((EventDESystem) DES, 0.0, result[0]);
-
+		processEvents((EventDESystem) DES, 0.0, 0.0,result[0]);
+		System.arraycopy(result[0], 0, yTemp, 0, result[0].length);
+		
 		for (int i = 1; i < timePoints.length; i++) {
 			firePropertyChange(timePoints[i-1] * intervalFactor, timePoints[i] * intervalFactor);
-
-			System.arraycopy(result[i - 1], 0, yTemp, 0, result[i - 1].length);
 
 			h = stepSize;
 
@@ -584,11 +591,15 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 			int steps=inBetweenSteps(timePoints[i - 1],
         timePoints[i], h);
 			for(int j=1;j<=steps;j++) {
-				t = computeNextState(DES, t, h, yTemp, change, yTemp, true);
+			  System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
+				t = computeNextState(DES, t, h, yPrev, change, yTemp, true);
+				if((i==1) && (j==1)) {
+				  System.arraycopy(yPrev, 0, result[0], 0, yPrev.length);
+				}
 			}
-
 			h = BigDecimal.valueOf(timePoints[i]).subtract(BigDecimal.valueOf(t)).doubleValue();
 			if(h>1E-12) {
+			  System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
 			  t = computeNextState(DES, t, h, yTemp, change, yTemp, false);
 			}
 			if (fastFlag) {

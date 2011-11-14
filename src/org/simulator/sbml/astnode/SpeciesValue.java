@@ -33,6 +33,7 @@ public class SpeciesValue extends ASTNodeObject {
   protected boolean isSetInitialConcentration;
   protected int position;
   protected int compartmentPosition;
+  protected boolean zeroSpatialDimensions;
   
   /**
    * 
@@ -42,7 +43,7 @@ public class SpeciesValue extends ASTNodeObject {
    * @param valueHolder
    */
   public SpeciesValue(ASTNodeInterpreterWithTime interpreter, ASTNode node,
-    Species s, ValueHolder valueHolder, int position, int compartmentPosition) {
+    Species s, ValueHolder valueHolder, int position, int compartmentPosition, boolean zeroSpatialDimensions) {
     super(interpreter, node);
     this.s = s;
     this.id = s.getId();
@@ -52,6 +53,7 @@ public class SpeciesValue extends ASTNodeObject {
     this.hasOnlySubstanceUnits = s.getHasOnlySubstanceUnits();
     this.position = position;
     this.compartmentPosition = compartmentPosition;
+    this.zeroSpatialDimensions = zeroSpatialDimensions;
   }
   
   /*
@@ -62,7 +64,7 @@ public class SpeciesValue extends ASTNodeObject {
   protected void computeDoubleValue() {
     double compartmentValue = valueHolder
         .getCurrentValueOf(compartmentPosition);
-    if (compartmentValue == 0d) {
+    if ((compartmentValue == 0d) || zeroSpatialDimensions) {
       doubleValue = valueHolder.getCurrentValueOf(position);
     } else if (isSetInitialAmount && !hasOnlySubstanceUnits) {
       doubleValue = valueHolder.getCurrentValueOf(position) / compartmentValue;

@@ -62,8 +62,8 @@ public class AssignmentRuleObject extends RuleObject{
    * @param valueHolder
    */
   public AssignmentRuleObject(ASTNodeObject nodeObject, int index,
-    Species sp, int compartmentIndex, ValueHolder valueHolder) {
-    super(nodeObject, index, sp, compartmentIndex, valueHolder);
+    Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, ValueHolder valueHolder) {
+    super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder);
   }
 
   /**

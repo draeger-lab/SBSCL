@@ -20,6 +20,8 @@
  */
 package org.simulator.math.odes;
 
+import java.util.Arrays;
+
 import org.simulator.math.Mathematics;
 import org.simulator.math.MatrixOperations;
 import org.simulator.math.MatrixOperations.MatrixException;
@@ -128,6 +130,11 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 	/** the current values of the dependent variables */
 	private double[] y;
+	
+	/**
+	 * Saving of older values of y.
+	 */
+	private double[] oldY;
 
 	/** arrays to store derivative evaluations and intermediate steps */
 	private double[] f1, f2, f3, f4, f5, f6, k1, k2, k3, k4, k5;
@@ -213,6 +220,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		yNew = new double[numEqn];
 		yerr = new double[numEqn];
 		yTemp = new double[numEqn];
+		oldY = new double[numEqn];
 		ya = new double[numEqn];
 		yb = new double[numEqn];
 		g0 = new double[numEqn];
@@ -548,9 +556,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	  if((y==null) || (y.length==0)) {
       init(DES.getDESystemDimension(),this.getStepSize(),2);
     }
-	  if(currentStepSize!=this.getStepSize()) {
-	    this.hMax = Math.min(currentStepSize,standardStepSize);
-	  }
+	  this.hMax = Math.min(currentStepSize,standardStepSize);
 	  
 	  double timeEnd = time + currentStepSize;
     try {
@@ -640,17 +646,49 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
         // good step
         if ((!Double.isNaN(localError)) && (localError!=-1) && (localError <= 1.0)) {
-          t+=h;
+          
+          
+          
+          System.arraycopy(y, 0, oldY, 0, numEqn);
           System.arraycopy(yTemp, 0, y, 0, numEqn);
-
-          // change stepsize (see Rodas.f) require 0.2<=hnew/h<=6
-          hAdap = Math.max(fac1,
-              Math.min(fac2, Math.pow(localError, PWR) / SAFETY));
-          h = h / hAdap;
-          if(timeEnd-t-h<hMin) {
-            h = timeEnd - t;
+          
+          if (DES instanceof EventDESystem) {
+            EventDESystem EDES = (EventDESystem) DES;
+            if (EDES.getNumEvents() > 0) {
+              processEvents(EDES, t+h, t, yTemp);
+            }
           }
-          lastStepSuccessful = true;
+          
+          boolean changed = !Arrays.equals(yTemp, y);
+          if(changed) {
+            if(h/10 >hMin) {
+              h = h / 10;
+              System.arraycopy(oldY, 0, y, 0, numEqn);
+            }
+            else {
+              System.arraycopy(yTemp, 0, y, 0, numEqn);
+              t+=h;
+              if(timeEnd-t-h<hMin) {
+                h = timeEnd - t;
+              }
+              lastStepSuccessful = true;
+            }
+          }
+          else {
+            t+=h;
+            // change stepsize (see Rodas.f) require 0.2<=hnew/h<=6
+            hAdap = Math.max(fac1,
+              Math.min(fac2, Math.pow(localError, PWR) / SAFETY));
+            h = h / hAdap;
+            if(timeEnd-t-h<hMin) {
+              h = timeEnd - t;
+            }
+            lastStepSuccessful = true;
+          }
+          
+          
+          
+          
 
         } else {
 
