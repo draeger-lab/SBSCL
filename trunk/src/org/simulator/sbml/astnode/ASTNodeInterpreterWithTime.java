@@ -458,7 +458,7 @@ public class ASTNodeInterpreterWithTime {
   }
   
   public double frac(int numerator, int denominator) {
-    return (numerator / denominator);
+    return ((double)numerator / (double)denominator);
   }
   
   public double frac(ASTNodeObject left, ASTNodeObject right, double time)

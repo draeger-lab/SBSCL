@@ -267,6 +267,11 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
   private List<RateRuleObject> rateRulesRoots;
   
   /**
+   * 
+   */
+  private double astNodeTime;
+  
+  /**
    * <p>
    * This constructs a new {@link DESystem} for the given SBML {@link Model}.
    * Note that only a maximum of {@link Integer#MAX_VALUE} {@link Species} can
@@ -291,6 +296,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     this.nodeInterpreter = new EfficientASTNodeInterpreter(this);
     this.nodeInterpreterWithTime = new ASTNodeInterpreterWithTime(this);
     this.level = model.getLevel();
+    this.astNodeTime=0d;
     
     Map<String, Integer> speciesReferenceToRateRule = new HashMap<String, Integer>();
     int speciesReferencesInRateRules = 0;
@@ -589,14 +595,14 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * @see org.sbml.simulator.math.odes.EventDESystem#getEventAssignments(double,
    * double[])
    */
-  public List<DESAssignment> getEventAssignments(double t, double[] Y)
+  public List<DESAssignment> getEventAssignments(double t, double previousTime, double[] Y)
     throws IntegrationException {
     
     if (model.getNumEvents() == 0) { return null; }
     
     // change Y because of different priorities and reevaluation of
     // trigger/priority after the execution of events
-    this.Y = Y;
+    System.arraycopy(Y, 0, this.Y, 0, Y.length);
     this.currentTime = t;
     Double priority, execTime = 0d;
     Double triggerTimeValues[];
@@ -617,7 +623,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
         if (!persistent) {
           if (!ev.getTrigger().getMath().compile(nodeInterpreter).toBoolean()) {
             runningEvents.remove(i);
-            events[index].aborted();
+            events[index].aborted(currentTime);
             i--;
           } else {
             if (ev.getPriority() != null) {
@@ -643,17 +649,29 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
         index = delayedEvents.get(i);
         ev = model.getEvent(index);
         aborted = false;
+        
+        if(events[index].getLastTimeFired()>currentTime) {
+          delayedEvents.remove(i);
+          events[index].aborted(currentTime);
+          i--;
+          aborted = true;
+        }
+        
+        if((events[index].getLastTimeFired()<=currentTime) && (events[index].getLastTimeExecuted()>previousTime)) {
+          events[index].refresh(previousTime);
+        }
+        
         persistent = ev.getTrigger().getPersistent();
-        if (!persistent) {
+        if (!persistent && !aborted) {
           if (!ev.getTrigger().getMath().compile(nodeInterpreter).toBoolean()) {
-            delayedEvents.remove(i);
-            events[index].aborted();
-            i--;
+            //delayedEvents.remove(i);
+            events[index].aborted(currentTime);
+            //i--;
             aborted = true;
           }
         }
         
-        if ((events[index].getTime() <= currentTime) && !aborted) {
+        if ((events[index].hasExecutionTime()) && (events[index].getTime() <= currentTime) && !aborted) {
           if (ev.getPriority() != null) {
             priority = ev.getPriority().getMath().compile(nodeInterpreter)
                 .toDouble();
@@ -663,8 +681,8 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
             events[index].changePriority(priority);
           }
           runningEvents.add(index);
-          delayedEvents.remove(i);
-          i--;
+          //delayedEvents.remove(i);
+          //i--;
           
         }
         i++;
@@ -675,7 +693,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
         ev = model.getEvent(i);
         if (ev.getTrigger().getMath().compile(nodeInterpreter).toBoolean()) {
           // event has not fired recently -> can fire
-          if (!events[i].getFireStatus()) {
+          if (!events[i].getFireStatus(currentTime)) {
             execTime = currentTime;
             // event has a delay
             if (ev.getDelay() != null) {
@@ -708,13 +726,15 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
             
             events[i].addValues(triggerTimeValues, execTime);
             
-            events[i].fired();
+            events[i].fired(currentTime);
           }
           
         }
         // event has fired recently -> can not fire
         else {
-          events[i].recovered();
+          if(events[i].getFireStatus(currentTime)) {
+            events[i].recovered(currentTime);
+          }
         }
         
       }
@@ -862,7 +882,6 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     
     try {
       //Always call the compile functions with a new time
-      double astNodeTime = kineticLawRoots.get(0).getTime();
       astNodeTime += 0.01;
       
       /*
@@ -965,6 +984,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     compartmentHash.clear();
     Integer compartmentIndex, yIndex = 0;
     currentTime = 0d;
+    astNodeTime=0d;
     
     Map<String, Integer> speciesReferenceToRateRule = new HashMap<String, Integer>();
     int speciesReferencesInRateRules = 0;
@@ -1283,10 +1303,15 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
         if (symbolIndex != null) {
           Species sp = model.getSpecies(as.getVariable());
           if (sp != null) {
+            Compartment c = sp.getCompartmentInstance();
+            boolean hasZeroSpatialDimensions = true;
+            if((c!=null) && (c.getSpatialDimensions()>0)) {
+              hasZeroSpatialDimensions=false;
+            }
             assignmentRulesRoots.add(new AssignmentRuleObject(
               (ASTNodeObject) copyAST(as.getMath(), true, null, null)
                   .getUserObject(), symbolIndex, sp, compartmentHash.get(sp
-                  .getId()), this));
+                  .getId()), hasZeroSpatialDimensions, this));
           } else {
             assignmentRulesRoots.add(new AssignmentRuleObject(
               (ASTNodeObject) copyAST(as.getMath(), true, null, null)
@@ -1307,10 +1332,15 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
         if (symbolIndex != null) {
           Species sp = model.getSpecies(rr.getVariable());
           if (sp != null) {
+            Compartment c = sp.getCompartmentInstance();
+            boolean hasZeroSpatialDimensions = true;
+            if((c!=null) && (c.getSpatialDimensions()>0)) {
+              hasZeroSpatialDimensions=false;
+            }
             rateRulesRoots.add(new RateRuleObject(
               (ASTNodeObject) copyAST(rr.getMath(), true, null, null)
                   .getUserObject(), symbolIndex, sp, compartmentHash.get(sp
-                  .getId()), this));
+                  .getId()), hasZeroSpatialDimensions, this));
           }
           else if (compartmentHash.containsValue(symbolIndex)) {
             List<Integer> speciesIndices = new LinkedList<Integer>();
@@ -1342,10 +1372,15 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
         if (symbolIndex != null) {
           Species sp = model.getSpecies(as.getVariable());
           if (sp != null) {
+            Compartment c = sp.getCompartmentInstance();
+            boolean hasZeroSpatialDimensions = true;
+            if((c!=null) && (c.getSpatialDimensions()>0)) {
+              hasZeroSpatialDimensions=false;
+            }
             assignmentRulesRoots.add(new AssignmentRuleObject(
               (ASTNodeObject) copyAST(as.getMath(), true, null, null)
                   .getUserObject(), symbolIndex, sp, compartmentHash.get(sp
-                  .getId()), this));
+                  .getId()), hasZeroSpatialDimensions, this));
           } else {
             assignmentRulesRoots.add(new AssignmentRuleObject(
               (ASTNodeObject) copyAST(as.getMath(), true, null, null)
@@ -1420,7 +1455,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
       }
       switch (node.getType()) {
         case REAL:
-          copiedAST.setValue(node.getMantissa(), node.getExponent());
+          copiedAST.setValue(node.getReal());
           copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime,
             copiedAST));
           break;
@@ -1466,9 +1501,15 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
                 false,functionValue,new LinkedList<ASTNode>());
               functionValue.setMath(mathAST);
             } else if (variable instanceof Species) {
+              boolean hasZeroSpatialDimensions = true;
+              Species sp = (Species) variable;
+              Compartment c = sp.getCompartmentInstance();
+              if((c!=null) && c.getSpatialDimensions() > 0) {
+                hasZeroSpatialDimensions = false;
+              }
               copiedAST.setUserObject(new SpeciesValue(nodeInterpreterWithTime,
-                copiedAST, (Species) variable, this, symbolHash.get(variable
-                    .getId()), compartmentHash.get(variable.getId())));
+                copiedAST, sp, this, symbolHash.get(variable
+                    .getId()), compartmentHash.get(variable.getId()), hasZeroSpatialDimensions));
             } else if ((variable instanceof Compartment)
                 || (variable instanceof Parameter)) {
               copiedAST.setUserObject(new CompartmentOrParameterValue(
@@ -1497,9 +1538,10 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
           copiedAST.setName(node.getName());
           break;
         case REAL_E:
+          copiedAST.setValue(node.getMantissa(), node.getExponent());
           copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime,
             copiedAST));
-          copiedAST.setValue(node.getMantissa(), node.getExponent());
+          
           break;
         case FUNCTION: {
           copiedAST.setName(node.getName());
@@ -1752,7 +1794,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
               }
             }
           }
-          this.events[index].executed();
+          this.events[index].executed(currentTime);
         }
         events.remove(0);
       }
