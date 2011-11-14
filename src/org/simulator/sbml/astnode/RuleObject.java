@@ -32,6 +32,7 @@ public class RuleObject {
   protected boolean hasOnlySubstanceUnits;
   protected boolean isSetInitialAmount;
   protected boolean isSetInitialConcentration;
+  protected boolean hasZeroSpatialDimensions;
   protected int index;
   
   /**
@@ -54,7 +55,7 @@ public class RuleObject {
    * @param valueHolder
    */
   public RuleObject(ASTNodeObject nodeObject, int index,
-    Species sp, int compartmentIndex, ValueHolder valueHolder) {
+    Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, ValueHolder valueHolder) {
     this.nodeObject = nodeObject;
     this.index = index;
     this.isSpecies = true;
@@ -62,6 +63,7 @@ public class RuleObject {
     this.hasOnlySubstanceUnits = sp.getHasOnlySubstanceUnits();
     this.isSetInitialAmount = sp.isSetInitialAmount();
     this.isSetInitialConcentration = sp.isSetInitialConcentration();
+    this.hasZeroSpatialDimensions = hasZeroSpatialDimensions;
     this.valueHolder = valueHolder;
   }
 
@@ -71,15 +73,15 @@ public class RuleObject {
    */
   protected double processAssignmentVariable(double time) {
     value = nodeObject.compileDouble(time);
-    if(isSpecies) {
+    if(isSpecies && !hasZeroSpatialDimensions) {
       double compartmentValue = valueHolder
           .getCurrentValueOf(compartmentIndex);
       if (isSetInitialAmount && !hasOnlySubstanceUnits) {
-        value = value/ compartmentValue;
+        value = value * compartmentValue;
         
       }
       else if (isSetInitialConcentration && hasOnlySubstanceUnits) {
-        value = value * compartmentValue;
+        value = value / compartmentValue;
       } 
     }
     return value;

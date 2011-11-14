@@ -527,7 +527,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#frac(int, int)
    */
   public final ASTNodeValue frac(int numerator, int denominator) {
-    nodeValue.setValue(numerator / denominator);
+    nodeValue.setValue((double)numerator / denominator);
     return nodeValue;
   }
   
@@ -1777,7 +1777,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
   }
   
   private double fracHelp(int numerator, int denominator) {
-    return (numerator / denominator);
+    return ((double) numerator / denominator);
   }
   
   private double fracHelp(ASTNode left, ASTNode right) throws SBMLException {

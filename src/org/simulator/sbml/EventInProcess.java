@@ -34,8 +34,11 @@ import java.util.LinkedList;
  */
 public class EventInProcess {
 
-	private boolean fired;
-	private double priority;
+	protected boolean fired;
+	protected double priority;
+	protected double lastTimeFired;
+	protected double lastTimeRecovered;
+	protected double lastTimeExecuted;
 	protected LinkedList<Double> execTimes;
 	protected LinkedList<Double[]> values;
 
@@ -50,6 +53,9 @@ public class EventInProcess {
 		this.execTimes = new LinkedList<Double>();
 		this.values = new LinkedList<Double[]>();
 		this.priority = Double.NEGATIVE_INFINITY;
+		this.lastTimeFired=-1;
+		this.lastTimeRecovered=-1;
+		this.lastTimeExecuted=-1;
 
 	}
 
@@ -57,8 +63,8 @@ public class EventInProcess {
 	 * The event has been aborted between trigger and execution. For this class
 	 * it has the same effect as the event has been executed.
 	 */
-	public void aborted() {
-		executed();
+	public void aborted(double time) {
+		executed(time);
 	}
 
 	/**
@@ -89,16 +95,18 @@ public class EventInProcess {
 	 * The event associated with this class has been executed therefore reset
 	 * some values.
 	 */
-	public void executed() {
+	public void executed(double time) {
 		this.execTimes.poll();
 		this.values.poll();
+		this.lastTimeExecuted=time;
 	}
 
 	/**
 	 * Associated event has triggered therefore current value of fired to true
 	 */
-	public void fired() {
+	public void fired(double time) {
 		fired = true;
+		this.lastTimeFired = time;
 	}
 
 	/**
@@ -107,8 +115,25 @@ public class EventInProcess {
 	 * 
 	 * @return
 	 */
-	public boolean getFireStatus() {
-		return fired;
+	public boolean getFireStatus(double time) {
+		if((lastTimeFired<=time) && (lastTimeRecovered<=time)) {
+		  return fired;
+		}
+		else if((lastTimeFired<=time) && (lastTimeRecovered>time)){
+		  lastTimeRecovered=-1;
+		  fired=true;
+		  return true;
+		}
+		else if((lastTimeFired>time) && (lastTimeRecovered<=time)) {
+		  lastTimeFired=-1;
+		  fired=false;
+		  return false;
+		}
+		else {
+		  lastTimeRecovered=-1;
+		  lastTimeFired=-1;
+		  return fired;
+		}
 	}
 
 	/**
@@ -128,6 +153,14 @@ public class EventInProcess {
 	public double getTime() {
 		return execTimes.peek();
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+  public boolean hasExecutionTime() {
+    return execTimes.peek()!=null;
+  }
 
 	/**
 	 * Return the values used in the next execution of the associated event.
@@ -142,8 +175,9 @@ public class EventInProcess {
 	 * The trigger of the associated event has made a transition from true to
 	 * false, so the event can be triggered again.
 	 */
-	public void recovered() {
+	public void recovered(double time) {
 		fired = false;
+		lastTimeRecovered = time;
 	}
 
 	/**
@@ -162,4 +196,27 @@ public class EventInProcess {
 		
 		return execTimes.peek() <= time;
 	}
+
+	/**
+	 * 
+	 * @return
+	 */
+  public double getLastTimeFired() {
+    return lastTimeFired;
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public double getLastTimeExecuted() {
+    return lastTimeExecuted;
+  }
+
+  /**
+   * 
+   * @param currentTime
+   */
+  public void refresh(double currentTime) {
+  }
 }

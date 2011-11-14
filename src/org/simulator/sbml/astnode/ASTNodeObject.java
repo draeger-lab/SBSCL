@@ -110,6 +110,16 @@ public class ASTNodeObject {
   /**
    * 
    */
+  protected int numerator;
+  
+  /**
+   * 
+   */
+  protected int denominator;
+  
+  /**
+   * 
+   */
   protected String units;
   
   
@@ -142,6 +152,10 @@ public class ASTNodeObject {
     if ((nodeType == Type.REAL) || nodeType == Type.REAL_E) {
       mantissa=node.getMantissa();
       exponent=node.getExponent();
+    }
+    if (nodeType == Type.RATIONAL) {
+      numerator = node.getNumerator();
+      denominator = node.getDenominator();
     }
     this.time=0.0;
     children=new ArrayList<ASTNodeObject>();

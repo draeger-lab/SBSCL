@@ -69,7 +69,7 @@ public interface EventDESystem extends DESystem {
 	 * @return Returns a list with event assignments for the events triggered
 	 * @throws IntegrationException
 	 */
-	public List<DESAssignment> getEventAssignments(double t, double Y[])
+	public List<DESAssignment> getEventAssignments(double t, double previousTime, double Y[])
 			throws IntegrationException;
 
 }

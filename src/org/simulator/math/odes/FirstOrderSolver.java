@@ -51,7 +51,7 @@ public abstract class FirstOrderSolver extends AbstractDESSolver {
   /**
    * 
    */
-  private double[] result;
+  private double[] integrationResult;
   
   protected AbstractIntegrator integrator;
   
@@ -126,8 +126,8 @@ public abstract class FirstOrderSolver extends AbstractDESSolver {
   @Override
   public double[] computeChange(DESystem DES, double[] y, double t,
     double stepSize, double[] change) throws IntegrationException {
-    if(result==null) {
-      result = new double[y.length];
+    if(integrationResult==null) {
+      integrationResult = new double[y.length];
     }
     
     double tstart = t;
@@ -139,8 +139,8 @@ public abstract class FirstOrderSolver extends AbstractDESSolver {
       }
     } else {
       try {
-        integrator.integrate(DES, tstart, y, tend, result);
-        Mathematics.vvSub(result, y, change);
+        integrator.integrate(DES, tstart, y, tend, integrationResult);
+        Mathematics.vvSub(integrationResult, y, change);
       } catch (Exception e) {
         setUnstableFlag(true);
         logger.fine(e.getLocalizedMessage());

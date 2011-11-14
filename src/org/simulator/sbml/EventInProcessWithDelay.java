@@ -17,6 +17,9 @@
  */
 package org.simulator.sbml;
 
+import java.util.LinkedList;
+
+
 /**
  * <p>
  * This class represents a compilation of all information calculated during
@@ -31,7 +34,9 @@ package org.simulator.sbml;
  * @since 0.9
  */
 public class EventInProcessWithDelay extends EventInProcess {
-	
+	private LinkedList<Double> previousExecutionTimes;
+	private LinkedList<Double[]> previousExecutionValues;
+  
 	/**
 	 * Creates a new EventInProcessWithDelay with the given boolean value
 	 * indicating whether or not it can fire at time point 0d.
@@ -40,6 +45,8 @@ public class EventInProcessWithDelay extends EventInProcess {
 	 */
 	EventInProcessWithDelay(boolean fired) {
 		super(fired);
+		previousExecutionTimes = new LinkedList<Double>();
+		previousExecutionValues = new LinkedList<Double[]>();
 	}
 
 	/*
@@ -48,9 +55,9 @@ public class EventInProcessWithDelay extends EventInProcess {
 	 * @see org.sbml.simulator.math.EventInProcess#aborted()
 	 */
 	@Override
-	public void aborted() {
+	public void aborted(double time) {
 		execTimes.poll();
-		executed();
+		values.poll();
 	}
 
 	/*
@@ -74,9 +81,11 @@ public class EventInProcessWithDelay extends EventInProcess {
 	 * @see org.sbml.simulator.math.EventInProcess#executed()
 	 */
 	@Override
-	public void executed() {
-		values.poll();
-		execTimes.poll();
+	public void executed(double time) {
+	  double theoreticalExecTime=execTimes.poll();
+		previousExecutionValues.add(values.poll());
+		previousExecutionTimes.add(theoreticalExecTime);
+		lastTimeExecuted=time;
 	}
 	
 	/**
@@ -102,4 +111,23 @@ public class EventInProcessWithDelay extends EventInProcess {
 
 	}
 
+	/**
+   * 
+   * @param currentTime
+   */
+  public void refresh(double currentTime) {
+    while((previousExecutionTimes.peekLast()!=null) && (previousExecutionTimes.peekLast()>currentTime)) {
+      double time=previousExecutionTimes.pollLast();
+      int index = insertTime(time);
+      this.execTimes.add(index, time);
+      this.values.add(index, previousExecutionValues.pollLast());
+    }
+    Double lastTime=previousExecutionTimes.peekLast();
+    if(lastTime!=null) {
+      this.lastTimeExecuted=lastTime;  
+    }
+    else {
+      this.lastTimeExecuted=-1;
+    }
+  }
 }

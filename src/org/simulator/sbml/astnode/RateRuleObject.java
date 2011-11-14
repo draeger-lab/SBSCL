@@ -48,8 +48,8 @@ public class RateRuleObject extends RuleObject{
    * @param valueHolder
    */
   public RateRuleObject(ASTNodeObject nodeObject, int index,
-    Species sp, int compartmentIndex, ValueHolder valueHolder) {
-    super(nodeObject, index, sp, compartmentIndex, valueHolder);
+    Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, ValueHolder valueHolder) {
+    super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder);
   }
   
   /**
@@ -84,6 +84,6 @@ public class RateRuleObject extends RuleObject{
                   * Y[speciesIndex] / Y[index];
         }
       }
-    } 
+    }
   }
 }
