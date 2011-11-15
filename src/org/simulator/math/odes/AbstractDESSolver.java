@@ -221,11 +221,16 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 		  t = BigDecimal.valueOf(stepSize).add(BigDecimal.valueOf(t)).doubleValue();
 		}
 		processEventsAndRules(DES, t, previousTime,yTemp);
-
 		return t;
 	}
 
 	/**
+	 * 
+	 * @return Does the solver do the event processing itself?
+	 */
+	protected abstract boolean hasSolverEventProcessing();
+
+  /**
 	 * This gives a human-readable name of this solver that can be displayed in
 	 * a graphical user interface.
 	 * 
@@ -362,13 +367,17 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * 
 	 * @throws IntegrationException
 	 */
-	public void processEvents(EventDESystem EDES, double time, double previousTime, double[] yTemp)
+	public boolean processEvents(EventDESystem EDES, double time, double previousTime, double[] yTemp)
 			throws IntegrationException {
 		int index;
+		boolean hasNewEvents=false;
 		List<DESAssignment> assignments;
 		assignments = (LinkedList<DESAssignment>) EDES.getEventAssignments(
 				time, previousTime, yTemp);
 
+		if(assignments!=null) {
+		  hasNewEvents=true;
+		}
 		while (assignments != null) {
 			for (DESAssignment assignment : assignments) {
 				index = assignment.getIndex();
@@ -378,6 +387,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 			assignments = (LinkedList<DESAssignment>) EDES.getEventAssignments(
 					time, time, yTemp);
 		}
+		return hasNewEvents;
 
 	}
 
@@ -393,7 +403,8 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 			throws IntegrationException {
 		if (DES instanceof EventDESystem) {
 			EventDESystem EDES = (EventDESystem) DES;
-			if (EDES.getNumEvents() > 0) {
+			
+			if ((!hasSolverEventProcessing()) && (EDES.getNumEvents() > 0)) {
 				processEvents(EDES, t, previousTime, yTemp);
 			}
 			if (EDES.getNumRules() > 0) {
