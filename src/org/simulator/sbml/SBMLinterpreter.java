@@ -610,6 +610,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     int i = 0, index;
     Boolean persistent, aborted;
     HashSet<Double> priorities = new HashSet<Double>();
+    boolean hasNewDelayedEvents=false;
     
     try {
       
@@ -700,6 +701,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
               execTime += ev.getDelay().getMath().compile(nodeInterpreter)
                   .toDouble();
               delayedEvents.add(i);
+              hasNewDelayedEvents=true;
             } else {
               if (ev.getPriority() != null) {
                 priority = ev.getPriority().getMath().compile(nodeInterpreter)
@@ -743,6 +745,9 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
         return processEvents(priorities);
       }
       // nothing to do
+      else if(hasNewDelayedEvents) {
+        return new LinkedList<DESAssignment>();
+      }
       else {
         return null;
       }
@@ -1422,7 +1427,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
         for (ASTNode current : nodesToLookAt) {
           if (!(current.isName()) || (current.getType() == ASTNode.Type.NAME_TIME)
               || ((current.isName()) && !(current.getVariable() instanceof LocalParameter))) {
-            if (current.toString().equals(nodeString)) {
+            if ((current.toString().equals(nodeString)) && (!containUnequalLocalParameters(current,node))) {
               copiedAST = current;
               break;
             }
@@ -1585,6 +1590,33 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     return copiedAST;
   }
   
+  /**
+   * 
+   * @param current
+   * @param node
+   * @return
+   */
+  private boolean containUnequalLocalParameters(ASTNode node1, ASTNode node2) {
+    if((node1.getType() == ASTNode.Type.NAME) && (node2.getType() == ASTNode.Type.NAME) &&
+      (node1.getVariable() instanceof LocalParameter) && (node2.getVariable() instanceof LocalParameter)) {
+        LocalParameter lp1 = (LocalParameter) node1.getVariable();
+        LocalParameter lp2 = (LocalParameter) node2.getVariable();
+        if((lp1.getId().equals(lp2.getId())) && (!lp1.equals(lp2))) {
+          return true;
+        }
+        else {
+          return false;
+      }
+    }
+    else {
+      boolean result=false;
+      for (int i=0;i!=node1.getChildCount();i++) {
+        result=result || containUnequalLocalParameters(node1.getChild(i),node2.getChild(i));
+      }
+      return result;
+    }
+  }
+
   /**
    * Initializes the events of the given model. An Event that triggers at t = 0
    * must not fire. Only when it triggers at t > 0
