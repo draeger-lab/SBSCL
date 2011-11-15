@@ -20,7 +20,6 @@
  */
 package org.simulator.math.odes;
 
-import java.util.Arrays;
 
 import org.simulator.math.Mathematics;
 import org.simulator.math.MatrixOperations;
@@ -652,14 +651,14 @@ public class RosenbrockSolver extends AbstractDESSolver {
           System.arraycopy(y, 0, oldY, 0, numEqn);
           System.arraycopy(yTemp, 0, y, 0, numEqn);
           
+          boolean changed=false;
           if (DES instanceof EventDESystem) {
             EventDESystem EDES = (EventDESystem) DES;
             if (EDES.getNumEvents() > 0) {
-              processEvents(EDES, t+h, t, yTemp);
+              changed=processEvents(EDES, t+h, t, yTemp);
             }
           }
           
-          boolean changed = !Arrays.equals(yTemp, y);
           if(changed) {
             if(h/10 >hMin) {
               h = h / 10;
@@ -740,6 +739,15 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
     return change;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.simulator.math.odes.AbstractDESSolver#hasSolverEventProcessing()
+	 */
+  @Override
+  protected boolean hasSolverEventProcessing() {
+    return true;
+  }
 	
 
 }

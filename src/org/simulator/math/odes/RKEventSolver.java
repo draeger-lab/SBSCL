@@ -138,4 +138,13 @@ public class RKEventSolver extends AbstractDESSolver {
 		return new RKEventSolver(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.simulator.math.odes.AbstractDESSolver#hasSolverEventProcessing()
+	 */
+  @Override
+  protected boolean hasSolverEventProcessing() {
+    return false;
+  }
+
 }
