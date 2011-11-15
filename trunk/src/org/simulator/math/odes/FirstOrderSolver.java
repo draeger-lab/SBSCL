@@ -162,4 +162,13 @@ public abstract class FirstOrderSolver extends AbstractDESSolver {
     return integrator;
   }
   
+  /*
+   * (non-Javadoc)
+   * @see org.simulator.math.odes.AbstractDESSolver#hasSolverEventProcessing()
+   */
+  @Override
+  protected boolean hasSolverEventProcessing() {
+    return false;
+  }
+  
 }

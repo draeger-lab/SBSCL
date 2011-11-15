@@ -97,4 +97,13 @@ public class EulerMethod extends AbstractDESSolver {
 	public EulerMethod clone() {
 		return new EulerMethod(this);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.simulator.math.odes.AbstractDESSolver#hasSolverEventProcessing()
+	 */
+  @Override
+  protected boolean hasSolverEventProcessing() {
+    return false;
+  }
 }
