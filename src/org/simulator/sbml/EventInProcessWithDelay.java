@@ -116,18 +116,26 @@ public class EventInProcessWithDelay extends EventInProcess {
    * @param currentTime
    */
   public void refresh(double currentTime) {
-    while((previousExecutionTimes.peekLast()!=null) && (previousExecutionTimes.peekLast()>currentTime)) {
-      double time=previousExecutionTimes.pollLast();
-      int index = insertTime(time);
-      this.execTimes.add(index, time);
-      this.values.add(index, previousExecutionValues.pollLast());
-    }
-    Double lastTime=previousExecutionTimes.peekLast();
-    if(lastTime!=null) {
-      this.lastTimeExecuted=lastTime;  
+    if(lastTimeFired>currentTime) {
+      this.execTimes.pollLast();
+      this.values.pollLast();
+      this.recovered(currentTime);
+      this.lastTimeFired=-1;
     }
     else {
-      this.lastTimeExecuted=-1;
-    }
+      while((previousExecutionTimes.peekLast()!=null) && (previousExecutionTimes.peekLast()>currentTime)) {
+        double time=previousExecutionTimes.pollLast();
+        int index = insertTime(time);
+        this.execTimes.add(index, time);
+        this.values.add(index, previousExecutionValues.pollLast());
+      }
+      Double lastTime=previousExecutionTimes.peekLast();
+      if(lastTime!=null) {
+        this.lastTimeExecuted=lastTime;  
+      }
+      else {
+        this.lastTimeExecuted=-1;
+      }
+    } 
   }
 }

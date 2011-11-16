@@ -220,7 +220,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 		if (increase) {
 		  t = BigDecimal.valueOf(stepSize).add(BigDecimal.valueOf(t)).doubleValue();
 		}
-		processEventsAndRules(DES, t, previousTime,yTemp);
+		processEventsAndRules(false, DES, t, previousTime,yTemp);
 		return t;
 	}
 
@@ -399,18 +399,18 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * @param change
 	 * @throws IntegrationException
 	 */
-	public void processEventsAndRules(DESystem DES, double t, double previousTime, double yTemp[])
+	public boolean processEventsAndRules(boolean forceProcessing, DESystem DES, double t, double previousTime, double yTemp[])
 			throws IntegrationException {
 		if (DES instanceof EventDESystem) {
 			EventDESystem EDES = (EventDESystem) DES;
-			
-			if ((!hasSolverEventProcessing()) && (EDES.getNumEvents() > 0)) {
-				processEvents(EDES, t, previousTime, yTemp);
-			}
 			if (EDES.getNumRules() > 0) {
 				processRules(EDES, t, yTemp);
 			}
+			if ((forceProcessing || (!this.hasSolverEventProcessing())) && (EDES.getNumEvents() > 0)) {
+				return processEvents(EDES, t, previousTime, yTemp);
+			}
 		}
+		return false;
 	}
 
 	/**

@@ -21,6 +21,8 @@
 package org.simulator.math.odes;
 
 
+import java.math.BigDecimal;
+
 import org.simulator.math.Mathematics;
 import org.simulator.math.MatrixOperations;
 import org.simulator.math.MatrixOperations.MatrixException;
@@ -557,7 +559,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
     }
 	  this.hMax = Math.min(currentStepSize,standardStepSize);
 	  
-	  double timeEnd = time + currentStepSize;
+	  double timeEnd = BigDecimal.valueOf(time).add(BigDecimal.valueOf(currentStepSize)).doubleValue();
     try {
       
       double localError = 0;
@@ -652,10 +654,11 @@ public class RosenbrockSolver extends AbstractDESSolver {
           System.arraycopy(yTemp, 0, y, 0, numEqn);
           
           boolean changed=false;
+          double newTime = BigDecimal.valueOf(t).add(BigDecimal.valueOf(h)).doubleValue();
           if (DES instanceof EventDESystem) {
             EventDESystem EDES = (EventDESystem) DES;
             if (EDES.getNumEvents() > 0) {
-              changed=processEvents(EDES, t+h, t, yTemp);
+              changed=processEventsAndRules(true, EDES, Math.min(newTime,timeEnd), t, yTemp);
             }
           }
           
@@ -666,7 +669,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
             }
             else {
               System.arraycopy(yTemp, 0, y, 0, numEqn);
-              t+=h;
+              t=Math.min(newTime,timeEnd);
               if(timeEnd-t-h<hMin) {
                 h = timeEnd - t;
               }
@@ -674,7 +677,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
             }
           }
           else {
-            t+=h;
+            t=Math.min(newTime,timeEnd);
             // change stepsize (see Rodas.f) require 0.2<=hnew/h<=6
             hAdap = Math.max(fac1,
               Math.min(fac2, Math.pow(localError, PWR) / SAFETY));
