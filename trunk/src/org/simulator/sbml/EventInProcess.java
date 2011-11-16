@@ -100,6 +100,7 @@ public class EventInProcess {
 		this.values.poll();
 		this.lastTimeExecuted=time;
 	}
+	
 
 	/**
 	 * Associated event has triggered therefore current value of fired to true

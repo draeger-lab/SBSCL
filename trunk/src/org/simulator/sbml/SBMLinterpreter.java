@@ -653,12 +653,11 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
         
         if(events[index].getLastTimeFired()>currentTime) {
           delayedEvents.remove(i);
-          events[index].aborted(currentTime);
+          events[index].refresh(currentTime);
           i--;
           aborted = true;
         }
-        
-        if((events[index].getLastTimeFired()<=currentTime) && (events[index].getLastTimeExecuted()>previousTime)) {
+        else if((events[index].getLastTimeFired()<=currentTime) && (events[index].getLastTimeExecuted()>previousTime)) {
           events[index].refresh(previousTime);
         }
         
