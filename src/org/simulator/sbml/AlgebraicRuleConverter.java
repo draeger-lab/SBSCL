@@ -344,8 +344,8 @@ public class AlgebraicRuleConverter {
 	private void deleteVariable() {
 		int index;
 		// Node with variable has 2 children
-		if (variableNodeParent.getChildCount() == 2
-				&& variableNodeParent.getType() == Type.TIMES) {
+		if ((variableNodeParent.getChildCount() == 2)
+				&& (variableNodeParent.getType() == Type.TIMES)) {
 			// Variable has a negativ sign / other child is -1
 			if (variableNodeParent.getLeftChild().isMinusOne()
 					|| variableNodeParent.getRightChild().isMinusOne()) {
@@ -464,11 +464,10 @@ public class AlgebraicRuleConverter {
 				node.setName(varibales.get(node.getName()));
 			} else if (numberHash.get(node.getName()) != null) {
 				node.setValue(numberHash.get(node.getName()));
-			} else if (nodeHash.get(node.getName()) != null) {
-				ASTNode parent = (ASTNode) node.getParent();
-				int index = parent.getIndex(node);
-				parent.replaceChild(index, nodeHash.get(node.getName()));
-			}
+      } else if ((nodeHash.get(node.getName()) != null) && !node.isRoot()) {
+        ASTNode parent = (ASTNode) node.getParent();
+        parent.replaceChild(parent.getIndex(node), nodeHash.get(node.getName()));
+      }
 		}
 		// proceed with the children
 		for (int i = 0; i < node.getChildCount(); i++) {

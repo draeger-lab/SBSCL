@@ -34,13 +34,6 @@ import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 public interface DESystem extends Serializable, FirstOrderDifferentialEquations {
 
 	/**
-	 * Returns the number of dimensions of this ODE system.
-	 * 
-	 * @return Returns the number of dimensions of this ODE system.
-	 */
-	public int getDESystemDimension();
-
-	/**
 	 * Delivers an array of {@link String}s that describe the content of each
 	 * dimension of the resulting array of this {@link DESystem}.
 	 * 
@@ -49,20 +42,6 @@ public interface DESystem extends Serializable, FirstOrderDifferentialEquations 
 	 *         {@link String} describes the content of the given dimension.
 	 */
 	public String[] getIdentifiers();
-
-	
-	
-	/**
-	 * Returns the value of the ODE system at the time t given the current
-	 * values of Y within resultVector.
-	 * 
-	 * @param t
-	 * @param Y
-	 * @param resultVector
-	 * @throws IntegrationException
-	 */
-	public void getValue(double t, double[] Y, double[] resultVector)
-			throws IntegrationException;
 
 	/**
 	 * 

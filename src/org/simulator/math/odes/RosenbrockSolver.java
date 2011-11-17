@@ -23,6 +23,7 @@ package org.simulator.math.odes;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.Mathematics;
 import org.simulator.math.MatrixOperations;
 import org.simulator.math.MatrixOperations.MatrixException;
@@ -239,7 +240,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 	/*
 	public MultiBlockTable solve(DESystem DES, double[] initialValues,double timeBegin,
-			double timeEnd) throws IntegrationException {
+			double timeEnd) throws DerivativeException {
 	  if (((DES instanceof FastProcessDESystem) &&( ((FastProcessDESystem) DES).containsFastProcesses()))||(DES.containsEventsOrRules())) {
 	    super.solve(DES, initialValues, timeBegin,timeEnd);
 	  }
@@ -396,18 +397,18 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	}
 	*/
 
-	public double step(DESystem DES) throws IntegrationException {
+	public double step(DESystem DES) throws DerivativeException {
 
 		double largestError = 0;
 
-		DES.getValue(t, y, g0);
+		DES.computeDerivatives(t, y, g0);
 		for (int j = 0; j < numEqn; j++) {
 			System.arraycopy(y, 0, ya, 0, numEqn);
 			ya[j] += h;
 			System.arraycopy(y, 0, yb, 0, numEqn);
 			yb[j] += 2 * h;
-			DES.getValue(t, ya, g1);
-			DES.getValue(t, yb, g2);
+			DES.computeDerivatives(t, ya, g1);
+			DES.computeDerivatives(t, yb, g2);
 			for (int q = 0; q < numEqn; q++) {
 				JAC[q][j] = (-3 * g0[q] + 4 * g1[q] - g2[q]) / (2 * h);
 			}
@@ -428,15 +429,15 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 		// Forward difference approx for derivative of f
 		// WRT the independent variable
-		DES.getValue(t + h, y, g1x);
-		DES.getValue(t + 2 * h, y, g2x);
+		DES.computeDerivatives(t + h, y, g1x);
+		DES.computeDerivatives(t + 2 * h, y, g2x);
 		for (int i = 0; i < numEqn; i++)
 			DFDX[i] = g0[i] * -3 / (2 * h) + g1x[i] * 2 / h + g2x[i] * -1
 					/ (2 * h);
 
 		// Here the work of taking the step begins
 		// It uses the derivatives calculated above
-		DES.getValue(t, yTemp, f1);
+		DES.computeDerivatives(t, yTemp, f1);
 		for (int i = 0; i < numEqn; i++) {
 			k1[i] = f1[i] + DFDX[i] * h * d1;
 		}
@@ -453,7 +454,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] = y[i] + k1[i] * a21;
 		}
-		DES.getValue(t + c2 * h, yTemp, f2);
+		DES.computeDerivatives(t + c2 * h, yTemp, f2);
 		for (int i = 0; i < numEqn; i++)
 			k2[i] = f2[i] + DFDX[i] * h * d2 + k1[i] * c21 / h;
 		MatrixOperations.lubksb(FAC, indx, k2);
@@ -461,7 +462,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] = y[i] + k1[i] * a31 + k2[i] * a32;
 		}
-		DES.getValue(t + c3 * h, yTemp, f3);
+		DES.computeDerivatives(t + c3 * h, yTemp, f3);
 		for (int i = 0; i < numEqn; i++)
 			k3[i] = f3[i] + DFDX[i] * h * d3 + k1[i] * c31 / h + k2[i] * c32
 					/ h;
@@ -470,7 +471,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] = y[i] + k1[i] * a41 + k2[i] * a42 + k3[i] * a43;
 		}
-		DES.getValue(t + c4 * h, yTemp, f4);
+		DES.computeDerivatives(t + c4 * h, yTemp, f4);
 		for (int i = 0; i < numEqn; i++)
 			k4[i] = f4[i] + DFDX[i] * h * d4 + k1[i] * c41 / h + k2[i] * c42
 					/ h + k3[i] * c43 / h;
@@ -480,7 +481,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 			yTemp[i] = y[i] + k1[i] * a51 + k2[i] * a52 + k3[i] * a53 + k4[i]
 					* a54;
 		}
-		DES.getValue(t + h, yTemp, f5);
+		DES.computeDerivatives(t + h, yTemp, f5);
 		for (int i = 0; i < numEqn; i++)
 			k5[i] = f5[i] + k1[i] * c51 / h + k2[i] * c52 / h + k3[i] * c53 / h
 					+ k4[i] * c54 / h;
@@ -489,7 +490,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		for (int i = 0; i < numEqn; i++) {
 			yTemp[i] += k5[i];
 		}
-		DES.getValue(t + h, yTemp, f6);
+		DES.computeDerivatives(t + h, yTemp, f6);
 		for (int i = 0; i < numEqn; i++)
 			yerr[i] = f6[i] + k1[i] * c61 / h + k2[i] * c62 / h + k3[i] * c63
 					/ h + k4[i] * c64 / h + k5[i] * c65 / h;
@@ -549,9 +550,9 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 	@Override
 	public double[] computeChange(DESystem DES, double[] y2, double time,
-			double currentStepSize, double[] change) throws IntegrationException {
+			double currentStepSize, double[] change) throws DerivativeException {
 	  if((y==null) || (y.length==0)) {
-      init(DES.getDESystemDimension(),this.getStepSize(),2);
+      init(DES.getDimension(),this.getStepSize(),2);
     }
 	  this.hMax = currentStepSize;
 	  

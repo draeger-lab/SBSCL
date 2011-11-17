@@ -31,7 +31,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.math.ode.DerivativeException;
-import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Assignment;
 import org.sbml.jsbml.AssignmentRule;
@@ -58,9 +57,10 @@ import org.simulator.math.RNG;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.DESAssignment;
 import org.simulator.math.odes.DESystem;
+import org.simulator.math.odes.DelayValueHolder;
+import org.simulator.math.odes.DelayedDESystem;
 import org.simulator.math.odes.EventDESystem;
 import org.simulator.math.odes.FastProcessDESystem;
-import org.simulator.math.odes.IntegrationException;
 import org.simulator.math.odes.RichDESystem;
 import org.simulator.sbml.astnode.ASTNodeInterpreterWithTime;
 import org.simulator.sbml.astnode.ASTNodeObject;
@@ -91,13 +91,13 @@ import org.simulator.sbml.astnode.StoichiometryObject;
  * @version $Rev$
  * @since 0.9
  */
-public class SBMLinterpreter implements ValueHolder, EventDESystem,
-    RichDESystem, FastProcessDESystem, FirstOrderDifferentialEquations {
+public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
+    FastProcessDESystem, RichDESystem, ValueHolder {
   
   /**
    * A logger.
    */
-  private static final Logger logger = Logger.getLogger(SBMLinterpreter.class
+  private static final transient Logger logger = Logger.getLogger(SBMLinterpreter.class
       .getName());
   
   /**
@@ -271,6 +271,11 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * 
    */
   private double astNodeTime;
+
+  /**
+   * 
+   */
+  private DelayValueHolder delayValueHolder;
   
   /**
    * <p>
@@ -325,21 +330,6 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     stoichiometries = new ArrayList<StoichiometryObject>();
     this.init();
     
-  }
-  
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.commons.math.ode.FirstOrderDifferentialEquations#
-   * computeDerivatives(double, double[], double[])
-   */
-  public void computeDerivatives(double t, double[] y, double[] yDot)
-    throws DerivativeException {
-    try {
-      getValue(t, y, yDot);
-    } catch (IntegrationException exc) {
-      throw new DerivativeException(exc);
-    }
   }
   
   /*
@@ -480,7 +470,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * @see eva2.tools.math.des.RichDESystem#getIntermediates(double, double[])
    */
   public double[] getAdditionalValues(double t, double[] Y)
-    throws IntegrationException {
+    throws DerivativeException {
     if ((t - currentTime > 1E-15)
         || ((Y != this.Y) && !Arrays.equals(Y, this.Y))) {
       /*
@@ -488,7 +478,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
        * interested in the rates of change, but only in the reaction velocities.
        * Therefore, we throw away the results into a senseless array.
        */
-      getValue(t, Y);
+      computeDerivatives(t, Y);
     }
     return v;
   }
@@ -574,20 +564,11 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
   /*
    * (non-Javadoc)
    * 
-   * @see eva2.tools.math.des.DESystem#getDESystemDimension()
-   */
-  public int getDESystemDimension() {
-    return this.initialValues.length;
-  }
-  
-  /*
-   * (non-Javadoc)
-   * 
    * @see
    * org.apache.commons.math.ode.FirstOrderDifferentialEquations#getDimension ()
    */
   public int getDimension() {
-    return this.getDESystemDimension();
+    return this.initialValues.length;
   }
   
   /*
@@ -597,7 +578,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * double[])
    */
   public List<DESAssignment> getEventAssignments(double t, double previousTime, double[] Y)
-    throws IntegrationException {
+    throws DerivativeException {
     
     if (model.getNumEvents() == 0) { return null; }
     
@@ -753,7 +734,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
       }
       
     } catch (SBMLException exc) {
-      throw new IntegrationException(exc);
+      throw new DerivativeException(exc);
     }
     
   }
@@ -857,15 +838,15 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * @param t
    * @param Y
    * @return
-   * @throws IntegrationException
+   * @throws DerivativeException
    * 
    */
-  private double[] getValue(double time, double[] Y)
-    throws IntegrationException {
+  private double[] computeDerivatives(double time, double[] Y)
+    throws DerivativeException {
     // create a new array with the same size of Y where the rate of change
     // is stored for every symbol in the simulation
     double changeRate[] = new double[Y.length];
-    getValue(time, Y, changeRate);
+    computeDerivatives(time, Y, changeRate);
     return changeRate;
   }
   
@@ -874,8 +855,8 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * 
    * @see eva2.tools.math.des.DESystem#getValue(double, double[], double[])
    */
-  public void getValue(double time, double[] Y, double[] changeRate)
-    throws IntegrationException {
+  public void computeDerivatives(double time, double[] Y, double[] changeRate)
+    throws DerivativeException {
     this.currentTime = time;
     System.arraycopy(Y, 0, this.Y, 0, Y.length);
     if (model.getNumEvents() > 0) {
@@ -921,7 +902,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
       }
       
     } catch (SBMLException exc) {
-      throw new IntegrationException(exc);
+      throw new DerivativeException(exc);
     }
     
   }
@@ -931,10 +912,10 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * @param time
    * @param Ytemp
    * @return
-   * @throws IntegrationException
+   * @throws DerivativeException
    */
   public void processRules(double time, double[] Ytemp)
-      throws IntegrationException {
+      throws DerivativeException {
     for (DESAssignment assignment : processAssignmentRules(time, Ytemp)) {
       Ytemp[assignment.getIndex()] = assignment.getValue();
     }
@@ -1182,11 +1163,14 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
       }
       reactionIndex++;
     }
+    if(refreshTree) {
+      createSimplifiedSyntaxTree();
+    }
     
     /*
      * All other rules
      */
-    processRules(Y);
+    processRules(null);
     
     /*
      * Process initial assignments a 2nd time because there can be rules
@@ -1201,9 +1185,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     }
     System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
     
-    if(refreshTree) {
-      createSimplifiedSyntaxTree();
-    }
+    
     
   }
   
@@ -1651,7 +1633,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * @see org.sbml.simulator.math.odes.EventDESystem#processAssignmentRules(double, double[])
    */
   public List<DESAssignment> processAssignmentRules(double t, double Y[])
-    throws IntegrationException {
+    throws DerivativeException {
     ArrayList<DESAssignment> assignmentRules = new ArrayList<DESAssignment>();
     Integer symbolIndex;
     this.currentTime=t;
@@ -1690,7 +1672,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
         }
       }
     } catch (SBMLException exc) {
-      throw new IntegrationException(exc);
+      throw new DerivativeException(exc);
     }
     
     return assignmentRules;
@@ -1737,7 +1719,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * @return
    */
   private List<DESAssignment> processEvents(HashSet<Double> priorities, double[] Y)
-    throws IntegrationException {
+    throws DerivativeException {
     List<DESAssignment> assignments = new LinkedList<DESAssignment>();
     List<Integer> highOrderEvents, events;
     Integer symbolIndex;
@@ -1843,7 +1825,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
       }
       
     } catch (SBMLException exc) {
-      throw new IntegrationException(exc);
+      throw new DerivativeException(exc);
     }
     
     return assignments;
@@ -1924,31 +1906,20 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * @throws SBMLException
    */
   private void processRules(double[] changeRate) throws SBMLException {
-    // evaluation of assignment rules through the DESystem itself
-    // only at time point 0d, at time points >=0d the solver carries on
-    // with this task. Assignment rules are only processed during
-    // initialization in this class. During this process the passed array
-    // changerate is not the actual changerate but the Y vector since there
-    // is no change at timepoint zero
+    /*
+     * Compute changes due to rules
+     */
+    int nRateRules = rateRulesRoots.size();
+    int nAssignmentRules = assignmentRulesRoots.size();
     
-    for (int i = 0; i < model.getNumRules(); i++) {
-      Rule rule = model.getRule(i);
-      if (rule.isRate() && currentTime > 0d) {
-        RateRule rr = (RateRule) rule;
-        evaluateRateRule(rr, changeRate);
-      } else if (rule.isAssignment() && currentTime == 0d) {
-        AssignmentRule as = (AssignmentRule) rule;
-        evaluateAssignmentRule(as, changeRate);
-      } else /* if (rule.isScalar()) */{
-        // a rule is scalar if it is an assignment rule.
+    if(changeRate!=null) {
+      for(int i=0;i!=nRateRules;i++) {
+        rateRulesRoots.get(i).processRule(changeRate, this.Y, astNodeTime);
       }
     }
-    // process list of algebraic rules
-    if (algebraicRules != null && currentTime == 0d) {
-      for (AssignmentRule as : algebraicRules) {
-        evaluateAssignmentRule(as, changeRate);
-      }
-      
+    
+    for(int i=0;i!=nAssignmentRules;i++) {
+      assignmentRulesRoots.get(i).processRule(this.Y, astNodeTime);
     }
     
   }
@@ -2177,6 +2148,27 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
   public int getNumPositiveValues() {
     //return numPositives;
     return 0;
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see org.simulator.math.odes.DelayedDESSystem#registerDelayValueHolder(org.simulator.math.odes.DelayValueHolder)
+   */
+  public void registerDelayValueHolder(DelayValueHolder dvh) {
+    this.delayValueHolder = dvh;
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see org.simulator.math.odes.DelayValueHolder#computeDelayedValue(double, java.lang.String)
+   */
+  public double computeDelayedValue(double time, String id) throws DerivativeException {
+    if (this.delayValueHolder == null) {
+      logger.warning(String.format(
+        "Cannot access delayed value at time %d for %s.", time, id));
+      return 0;
+    }
+    return this.delayValueHolder.computeDelayedValue(time, id);
   }
   
   

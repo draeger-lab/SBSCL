@@ -20,7 +20,8 @@ package org.simulator.math.odes;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
-import org.simulator.math.odes.MultiBlockTable.Block;
+import org.apache.commons.math.ode.DerivativeException;
+import org.simulator.math.odes.MultiTable.Block;
 
 /**
  * A {@link DESSolver} provides algorithm for the numerical simulation of given
@@ -57,7 +58,7 @@ public interface DESSolver extends Serializable {
 
 	/**
 	 * Solves the given {@link DESystem} using new initial conditions in each
-	 * time step. The given {@link MultiBlockTable} contains the expected
+	 * time step. The given {@link MultiTable} contains the expected
 	 * solution of the solver at certain time points. The solver has the task to
 	 * re-initialize the integration procedure in each given time point using
 	 * the initial values from this state.
@@ -75,14 +76,14 @@ public interface DESSolver extends Serializable {
 	 *            An array of all initial values. This array may exceed the
 	 *            number of columns in the given {@link Block} but its length
 	 *            must equal the dimension of the given {@link DESystem}.
-	 * @return A new {@link MultiBlockTable} containing a time series of the
+	 * @return A new {@link MultiTable} containing a time series of the
 	 *         same dimension as given by the {@link DESystem} and simulated
 	 *         values at each time point.
-	 * @throws IntegrationException
+	 * @throws DerivativeException
 	 */
-	public MultiBlockTable solve(DESystem DES,
-			MultiBlockTable.Block timeSeriesInitConditions,
-			double[] initialValues) throws IntegrationException;
+	public MultiTable solve(DESystem DES,
+			MultiTable.Block timeSeriesInitConditions,
+			double[] initialValues) throws DerivativeException;
 
 	/**
 	 * Solves the {@link DESystem} from the begin time till the end time
@@ -93,10 +94,10 @@ public interface DESSolver extends Serializable {
 	 * @param timeBegin
 	 * @param timeEnd
 	 * @return
-	 * @throws IntegrationException
+	 * @throws DerivativeException
 	 */
-	public MultiBlockTable solve(DESystem DES, double[] initialValues,
-			double timeBegin, double timeEnd) throws IntegrationException;
+	public MultiTable solve(DESystem DES, double[] initialValues,
+			double timeBegin, double timeEnd) throws DerivativeException;
 
 	/**
 	 * Solves the given differential equation system with the step size h and
@@ -115,11 +116,11 @@ public interface DESSolver extends Serializable {
 	 * @return A matrix containing the values of x, x + h, x + h + steps/h... in
 	 *         the rows and the columns contain the return values for the
 	 *         arguments.
-	 * @throws IntegrationException
+	 * @throws DerivativeException
 	 *             if something's wrong...
 	 */
-	public MultiBlockTable solve(DESystem DES, double[] initalValues, double x,
-			double h, int steps) throws IntegrationException;
+	public MultiTable solve(DESystem DES, double[] initalValues, double x,
+			double h, int steps) throws DerivativeException;
 
 	/**
 	 * Solves the given {@link DESystem} at the given time points using the
@@ -129,10 +130,10 @@ public interface DESSolver extends Serializable {
 	 * @param initialvalue
 	 * @param timepoints
 	 * @return
-	 * @throws IntegrationException
+	 * @throws DerivativeException
 	 */
-	public MultiBlockTable solve(DESystem DES, double[] initialvalue,
-			double[] timepoints) throws IntegrationException;
+	public MultiTable solve(DESystem DES, double[] initialvalue,
+			double[] timepoints) throws DerivativeException;
 
 	/**
 	 * 

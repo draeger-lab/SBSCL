@@ -26,7 +26,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.simulator.math.odes.MultiBlockTable.Block.Column;
+import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
  * <p>
@@ -49,7 +49,7 @@ import org.simulator.math.odes.MultiBlockTable.Block.Column;
  * @version $Rev$
  * @since 0.9
  */
-public class MultiBlockTable extends AbstractTableModel implements
+public class MultiTable extends AbstractTableModel implements
 		Iterable<Iterable<Double>> {
 
 	/**
@@ -62,7 +62,7 @@ public class MultiBlockTable extends AbstractTableModel implements
 	public class Block extends AbstractTableModel {
 		
 		/**
-		 * A column of the {@link MultiBlockTable.Block} matrix.
+		 * A column of the {@link MultiTable.Block} matrix.
 		 * 
 		 * @author Andreas Dr&aumlg;ger
 		 * @date 2010-08-26
@@ -225,7 +225,7 @@ public class MultiBlockTable extends AbstractTableModel implements
 		/**
 		 * Pointer to the containing table.
 		 */
-		private MultiBlockTable parent;
+		private MultiTable parent;
 
 		/**
 		 * 
@@ -233,7 +233,7 @@ public class MultiBlockTable extends AbstractTableModel implements
 		 * @param identifiers
 		 */
 		private Block(double[][] data, String[] identifiers,
-				MultiBlockTable parent) {
+				MultiTable parent) {
 			this(parent);
 			setData(data);
 			setIdentifiers(identifiers);
@@ -242,7 +242,7 @@ public class MultiBlockTable extends AbstractTableModel implements
 		/**
 		 * 
 		 */
-		private Block(MultiBlockTable parent) {
+		private Block(MultiTable parent) {
 			this.parent = parent;
 			idHash = new Hashtable<String, Integer>();
 		}
@@ -525,9 +525,9 @@ public class MultiBlockTable extends AbstractTableModel implements
 	private String name;
 
 	/**
-	 * Constructs an empty {@link MultiBlockTable} object.
+	 * Constructs an empty {@link MultiTable} object.
 	 */
-	public MultiBlockTable() {
+	public MultiTable() {
 		listOfBlocks = new LinkedList<Block>();
 	}
 
@@ -540,7 +540,7 @@ public class MultiBlockTable extends AbstractTableModel implements
 	 *            The first column in identifiers may be the name for the time
 	 *            column.
 	 */
-	public MultiBlockTable(double timePoints[], double data[][],
+	public MultiTable(double timePoints[], double data[][],
 			String identifiers[]) {
 		this();
 		setTimePoints(timePoints);
@@ -556,7 +556,7 @@ public class MultiBlockTable extends AbstractTableModel implements
 	}
 
 	/**
-	 * Creates a new {@link MultiBlockTable.Block} and adds it to this object.
+	 * Creates a new {@link MultiTable.Block} and adds it to this object.
 	 * The number of rows will be equal to the number of time points of the
 	 * overall data structure.
 	 * 
@@ -577,7 +577,7 @@ public class MultiBlockTable extends AbstractTableModel implements
 	 * @param timepoints
 	 * @return
 	 */
-  public MultiBlockTable filter(double[] timepoints) {
+  public MultiTable filter(double[] timepoints) {
     ArrayList<Integer> rowIndices = new ArrayList<Integer>();
     int i=0;
     for(double time: timepoints) {
@@ -589,7 +589,7 @@ public class MultiBlockTable extends AbstractTableModel implements
       }
     }
     
-    MultiBlockTable filtered= new MultiBlockTable();
+    MultiTable filtered= new MultiTable();
     for(int block=0;block!=this.getBlockCount();block++) {
       filtered.addBlock(this.getBlock(block).getIdentifiers());
       filtered.getBlock(block).setData(new double[rowIndices.size()][this.getBlock(block).getIdentifiers().length]);
@@ -704,7 +704,7 @@ public class MultiBlockTable extends AbstractTableModel implements
 	}
 
 	/**
-	 * Gives this {@link MultiBlockTable}'s name.
+	 * Gives this {@link MultiTable}'s name.
 	 * 
 	 * @return
 	 */
@@ -838,7 +838,7 @@ public class MultiBlockTable extends AbstractTableModel implements
 	}
 
 	/**
-	 * Sets the name of this {@link MultiBlockTable}.
+	 * Sets the name of this {@link MultiTable}.
 	 * 
 	 * @param name
 	 */
