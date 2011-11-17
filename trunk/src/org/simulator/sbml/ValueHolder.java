@@ -17,12 +17,15 @@
  */
 package org.simulator.sbml;
 
+import java.io.Serializable;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+import org.simulator.math.odes.DelayValueHolder;
 
 /**
  * A {@link ValueHolder} is necessary to provide the current values for
@@ -37,7 +40,7 @@ import org.sbml.jsbml.SpeciesReference;
  * @version $Rev$
  * @since 0.9
  */
-public interface ValueHolder {
+public interface ValueHolder extends DelayValueHolder, Serializable {
 
     /**
      * @param id

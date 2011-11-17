@@ -22,6 +22,7 @@ package org.simulator.math.odes;
 import java.util.logging.Logger;
 
 import org.apache.commons.math.ode.AbstractIntegrator;
+import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.util.FastMath;
 import org.simulator.math.Mathematics;
 
@@ -125,7 +126,7 @@ public abstract class FirstOrderSolver extends AbstractDESSolver {
    */
   @Override
   public double[] computeChange(DESystem DES, double[] y, double t,
-    double stepSize, double[] change) throws IntegrationException {
+    double stepSize, double[] change) throws DerivativeException {
     if(integrationResult==null) {
       integrationResult = new double[y.length];
     }

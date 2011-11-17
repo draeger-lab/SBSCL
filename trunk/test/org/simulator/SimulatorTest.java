@@ -25,14 +25,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.commons.math.ode.DerivativeException;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.EulerMethod;
-import org.simulator.math.odes.IntegrationException;
-import org.simulator.math.odes.MultiBlockTable;
+import org.simulator.math.odes.MultiTable;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
@@ -53,11 +53,11 @@ public class SimulatorTest {
    * @throws XMLStreamException
    * @throws SBMLException
    * @throws ModelOverdeterminedException
-   * @throws IntegrationException
+   * @throws DerivativeException
    */
   public static void main(String[] args) throws XMLStreamException,
     IOException, ModelOverdeterminedException, SBMLException,
-    IntegrationException {
+    DerivativeException {
 
     // Configuration
     String fileName = args[0];
@@ -75,7 +75,7 @@ public class SimulatorTest {
     }
     
     // Compute the numerical solution of the initial value problem
-    MultiBlockTable solution = solver.solve(interpreter, interpreter
+    MultiTable solution = solver.solve(interpreter, interpreter
         .getInitialValues(), 0d, timeEnd);
     
     // Display simulation result to the user

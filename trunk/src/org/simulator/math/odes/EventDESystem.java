@@ -19,6 +19,8 @@ package org.simulator.math.odes;
 
 import java.util.List;
 
+import org.apache.commons.math.ode.DerivativeException;
+
 /**
  * This Class represents an event-driven DES
  * 
@@ -52,10 +54,10 @@ public interface EventDESystem extends DESystem {
 	 * @param Y
 	 *            The current change of the system.
 	 * @return
-	 * @throws IntegrationException
+	 * @throws DerivativeException
 	 */
 	public List<DESAssignment> processAssignmentRules(double t, double Y[])
-			throws IntegrationException;
+			throws DerivativeException;
 
 	/**
 	 * Returns a list with event assignments for the events triggered either by
@@ -67,9 +69,9 @@ public interface EventDESystem extends DESystem {
 	 *            The current change of the system.
 	 * 
 	 * @return Returns a list with event assignments for the events triggered
-	 * @throws IntegrationException
+	 * @throws DerivativeException
 	 */
 	public List<DESAssignment> getEventAssignments(double t, double previousTime, double Y[])
-			throws IntegrationException;
+			throws DerivativeException;
 
 }

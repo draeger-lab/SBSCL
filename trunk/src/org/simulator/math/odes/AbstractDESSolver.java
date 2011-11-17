@@ -25,7 +25,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
+import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.events.EventException;
 import org.apache.commons.math.ode.events.EventHandler;
 import org.simulator.math.Mathematics;
@@ -41,13 +43,26 @@ import org.simulator.math.Mathematics;
  * @version $Rev$
  * @since 0.9
  */
-public abstract class AbstractDESSolver implements DESSolver, EventHandler {
+public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, EventHandler {
 
 	/**
 	 * Generated serial version identifier.
 	 */
 	private static final long serialVersionUID = 1859418461410763939L;
+	
+	/**
+	 * 
+	 */
+	private static final transient Logger logger = Logger.getLogger(AbstractDESSolver.class.getName());
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.simulator.math.odes.DelayValueHolder#computeValue(double, java.lang.String)
+	 */
+	public double computeDelayedValue(double time, String id) throws DerivativeException {
+	  return 0d;
+	}
+	
 	/**
 	 * @return the serial version uid
 	 */
@@ -193,7 +208,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * @throws Exception
 	 */
 	public abstract double[] computeChange(DESystem DES, double[] y, double t,
-			double stepSize, double[] change) throws IntegrationException;
+			double stepSize, double[] change) throws DerivativeException;
 
 	/**
 	 * 
@@ -207,11 +222,11 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 *            whether or not to increase the given time by the given step
 	 *            size.
 	 * @return The time increased by the step size
-	 * @throws IntegrationException
+	 * @throws DerivativeException
 	 */
 	double computeNextState(DESystem DES, double t, double stepSize,
 			double[] yPrev, double[] change, double[] yTemp, boolean increase)
-			throws IntegrationException {
+			throws DerivativeException {
 	  double previousTime=t;
 	  computeChange(DES, yPrev, t, stepSize, change);
 		checkSolution(change);
@@ -220,7 +235,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 		if (increase) {
 		  t = BigDecimal.valueOf(stepSize).add(BigDecimal.valueOf(t)).doubleValue();
 		}
-		processEventsAndRules(false, DES, t, previousTime,yTemp);
+		processEventsAndRules(false, DES, t, previousTime, yTemp);
 		return t;
 	}
 
@@ -267,7 +282,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * @param timeEnd
 	 * @return
 	 */
-	protected MultiBlockTable initResultMatrix(DESystem DES,
+	protected MultiTable initResultMatrix(DESystem DES,
 			double initialValues[], double timeBegin, double timeEnd) {
 		return initResultMatrix(DES, initialValues, timeBegin, numSteps(
 				timeBegin, timeEnd));
@@ -281,9 +296,9 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * @param numSteps
 	 * @return
 	 */
-	protected MultiBlockTable initResultMatrix(DESystem DES,
+	protected MultiTable initResultMatrix(DESystem DES,
 			double[] initialValues, double timeBegin, int numSteps) {
-		int dim = DES.getDESystemDimension();
+		int dim = DES.getDimension();
 		if (dim != initialValues.length) {
 			throw new IllegalArgumentException(
 					"The number of initial values must equal the dimension of the DE system.");
@@ -302,11 +317,11 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * @param timePoints
 	 * @return
 	 */
-	protected MultiBlockTable initResultMatrix(DESystem DES,
+	protected MultiTable initResultMatrix(DESystem DES,
 			double[] initialValues, double[] timePoints) {
 		double result[][] = new double[timePoints.length][initialValues.length];
 		System.arraycopy(initialValues, 0, result[0], 0, initialValues.length);
-		MultiBlockTable data = new MultiBlockTable(timePoints, result, DES
+		MultiTable data = new MultiTable(timePoints, result, DES
 				.getIdentifiers());
 		data.getBlock(0).setName("Values");
 		if (includeIntermediates && (DES instanceof RichDESystem)) {
@@ -365,10 +380,10 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * @param change
 	 * @return
 	 * 
-	 * @throws IntegrationException
+	 * @throws DerivativeException
 	 */
 	public boolean processEvents(EventDESystem EDES, double time, double previousTime, double[] yTemp)
-			throws IntegrationException {
+			throws DerivativeException {
 		int index;
 		boolean hasNewEvents=false;
 		List<DESAssignment> assignments;
@@ -397,10 +412,10 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * @param t
 	 * @param yTemp
 	 * @param change
-	 * @throws IntegrationException
+	 * @throws DerivativeException
 	 */
 	public boolean processEventsAndRules(boolean forceProcessing, DESystem DES, double t, double previousTime, double yTemp[])
-			throws IntegrationException {
+			throws DerivativeException {
 		if (DES instanceof EventDESystem) {
 			EventDESystem EDES = (EventDESystem) DES;
 			if (EDES.getNumRules() > 0) {
@@ -418,10 +433,10 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * @param time
 	 * @param Ytemp
 	 * @return
-	 * @throws IntegrationException
+	 * @throws DerivativeException
 	 */
 	public void processRules(EventDESystem EDES, double time, double[] Ytemp)
-			throws IntegrationException {
+			throws DerivativeException {
 		for (DESAssignment assignment : EDES
 				.processAssignmentRules(time, Ytemp)) {
 			Ytemp[assignment.getIndex()] = assignment.getValue();
@@ -435,12 +450,12 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * @param yTemp
 	 * @param data
 	 * @param rowIndex
-	 * @throws IntegrationException
+	 * @throws DerivativeException
 	 */
 	protected void additionalResults(DESystem DES, double t, double[] yTemp,
-			MultiBlockTable data, int rowIndex) throws IntegrationException {
+			MultiTable data, int rowIndex) throws DerivativeException {
 		if (includeIntermediates && (DES instanceof RichDESystem)) {
-			MultiBlockTable.Block block = data.getBlock(1);
+			MultiTable.Block block = data.getBlock(1);
 			double v[] = ((RichDESystem) DES).getAdditionalValues(t, yTemp);
 			block.setRowData(rowIndex, v.clone());
 		}
@@ -493,10 +508,10 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 *            resulting matrix.
 	 * @return
 	 */
-	public MultiBlockTable solve(DESystem DES, double[] initialValues,
-			double timeBegin, double timeEnd) throws IntegrationException {
+	public MultiTable solve(DESystem DES, double[] initialValues,
+			double timeBegin, double timeEnd) throws DerivativeException {
 		this.intervalFactor = 100d / (timeEnd - timeBegin);
-		MultiBlockTable data = initResultMatrix(DES, initialValues, timeBegin,
+		MultiTable data = initResultMatrix(DES, initialValues, timeBegin,
 				timeEnd);
 		double result[][] = data.getBlock(0).getData();
 		double change[] = new double[initialValues.length];
@@ -524,7 +539,7 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 			t = computeNextState(DES, t, stepSize, yPrev, change,
 					yTemp, true);
 			System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
-			if(i==1) {
+			if (i == 1) {
 			  System.arraycopy(yPrev, 0, result[0], 0, yPrev.length);
 			}
 			firePropertyChange(oldT * intervalFactor, t * intervalFactor);
@@ -545,8 +560,8 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * @see eva2.tools.math.des.DESSolver#solve(eva2.tools.math.des.DESystem,
 	 * double[], double, double, int)
 	 */
-	public MultiBlockTable solve(DESystem DES, double[] initialValues,
-			double x, double h, int steps) throws IntegrationException {
+	public MultiTable solve(DESystem DES, double[] initialValues,
+			double x, double h, int steps) throws DerivativeException {
 		double[] timeVector = new double[steps];
 		for (int i = 0; i < steps; i++) {	
 			timeVector[i] = x + i * h;
@@ -565,9 +580,9 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 *            Sorted time points!!
 	 * @throws Exception
 	 */
-	public MultiBlockTable solve(DESystem DES, double[] initialValues,
-			double[] timePoints) throws IntegrationException {
-		MultiBlockTable data = initResultMatrix(DES, initialValues, timePoints);
+	public MultiTable solve(DESystem DES, double[] initialValues,
+			double[] timePoints) throws DerivativeException {
+		MultiTable data = initResultMatrix(DES, initialValues, timePoints);
 		double result[][] = data.getBlock(0).getData();
 		double change[] = new double[initialValues.length];
 		double yPrev[] = new double[initialValues.length];
@@ -634,9 +649,9 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * eva2.tools.math.des.DESSolver#solveAtTimePointsWithInitialConditions(
 	 * eva2.tools.math.des.DESystem, double[][], double[])
 	 */
-	public MultiBlockTable solve(DESystem DES,
-			MultiBlockTable.Block initConditions, double[] initialValues)
-			throws IntegrationException {
+	public MultiTable solve(DESystem DES,
+			MultiTable.Block initConditions, double[] initialValues)
+			throws DerivativeException {
 		double[] timePoints = initConditions.getTimePoints();
 		// of items to be simulated, this will cause a problem!
 		
@@ -656,11 +671,11 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
           .getValueAt(0, col + 1);
     }
 		
-		MultiBlockTable data = initResultMatrix(DES, initialValues, timePoints);
+		MultiTable data = initResultMatrix(DES, initialValues, timePoints);
 		
 		double[][] result = data.getBlock(0).getData();
-		double[] yTemp = new double[DES.getDESystemDimension()];
-		double[] change = new double[DES.getDESystemDimension()];
+		double[] yTemp = new double[DES.getDimension()];
+		double[] change = new double[DES.getDimension()];
 		double t = timePoints[0];
 		additionalResults(DES, t, result[0], data, 0);
 		for (i = 1; i < timePoints.length; i++) {
@@ -709,10 +724,10 @@ public abstract class AbstractDESSolver implements DESSolver, EventHandler {
 	 * @param result
 	 * @param timeBegin
 	 * @return
-	 * @throws IntegrationException
+	 * @throws DerivativeException
 	 */
 	private double[] computeSteadyState(FastProcessDESystem DES,
-			double[] result, double timeBegin) throws IntegrationException {
+			double[] result, double timeBegin) throws DerivativeException {
 		double[] oldValues = new double[result.length];
 		double[] newValues = new double[result.length];
 		double[] change = new double[result.length];
