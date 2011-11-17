@@ -96,10 +96,6 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	 */
 	public static final double RELMIN = 1.0E-12;
 
-	/**
-	 * 
-	 */
-  private static final double standardStepSize = 0.01;
 
 	/** maximum stepsize */
 	private double hMax;
@@ -557,7 +553,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	  if((y==null) || (y.length==0)) {
       init(DES.getDESystemDimension(),this.getStepSize(),2);
     }
-	  this.hMax = Math.min(currentStepSize,standardStepSize);
+	  this.hMax = currentStepSize;
 	  
 	  double timeEnd = BigDecimal.valueOf(time).add(BigDecimal.valueOf(currentStepSize)).doubleValue();
     try {
