@@ -133,7 +133,8 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * )
    */
   public final ASTNodeValue arccot(ASTNode value) throws SBMLException {
-    nodeValue.setValue(Maths.arccot(compileDouble(value)));
+    double argument = compileDouble(value);
+    nodeValue.setValue(Maths.arccot(argument));
     return nodeValue;
   }
   
@@ -736,7 +737,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    */
   public final ASTNodeValue log(ASTNode left, ASTNode right)
     throws SBMLException {
-    nodeValue.setValue(Maths.log(compileDouble(left), compileDouble(right)));
+    nodeValue.setValue(Maths.log(compileDouble(right), compileDouble(left)));
     return nodeValue;
     
   }
@@ -907,7 +908,8 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#sec(org.sbml.jsbml.ASTNode)
    */
   public final ASTNodeValue sec(ASTNode node) throws SBMLException {
-    nodeValue.setValue(Maths.sec(compileDouble(node)));
+    double argument = compileDouble(node);
+    nodeValue.setValue(Maths.sec(argument));
     return nodeValue;
     
   }
