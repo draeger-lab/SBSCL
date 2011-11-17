@@ -26,10 +26,16 @@ public class NamedValue extends ASTNodeObject {
   private FunctionValue function;
   private int index;
   
+  /**
+   * 
+   * @param interpreter
+   * @param node
+   * @param function
+   */
   public NamedValue(ASTNodeInterpreterWithTime interpreter, ASTNode node, FunctionValue function) {
     super(interpreter, node);
-    this.function=function;
-    this.index=function.getIndex(node.getName());
+    this.function = function;
+    this.index = function.getIndex(node.getName());
   }
   
   /*

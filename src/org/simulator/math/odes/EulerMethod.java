@@ -18,6 +18,7 @@
 
 package org.simulator.math.odes;
 
+import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.Mathematics;
 
 
@@ -84,8 +85,8 @@ public class EulerMethod extends AbstractDESSolver {
 	 * .DESystem, double[], double, double, double[])
 	 */
 	public double[] computeChange(DESystem DES, double[] yPrev, double t,
-			double stepSize, double[] change) throws IntegrationException {
-		DES.getValue(t, yPrev, change);
+			double stepSize, double[] change) throws DerivativeException {
+		DES.computeDerivatives(t, yPrev, change);
 		Mathematics.scale(stepSize, change);
 		return change;
 	}

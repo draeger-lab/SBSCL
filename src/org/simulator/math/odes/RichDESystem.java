@@ -17,6 +17,8 @@
  */
 package org.simulator.math.odes;
 
+import org.apache.commons.math.ode.DerivativeException;
+
 /**
  * A {@link RichDESystem} is a {@link DESystem} that provides additional
  * information besides the pure rate of change during its evaluation. For
@@ -56,12 +58,12 @@ public interface RichDESystem extends DESystem {
 	 *         re-computation. Implementing classes should store interesting
 	 *         intermediate results to be accessible in case time and Y are the
 	 *         same values than those just used for the actual computation.
-	 * @throws IntegrationException
+	 * @throws DerivativeException
 	 *             If the system cannot be solved for the given configuration or
 	 *             no intermediate results can be computed in this step.
 	 */
 	public double[] getAdditionalValues(double t, double[] Y)
-			throws IntegrationException;
+			throws DerivativeException;
 
 	/**
 	 * Gives the number of intermediate results that are computed by this class.
