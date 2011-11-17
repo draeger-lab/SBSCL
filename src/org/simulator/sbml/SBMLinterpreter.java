@@ -38,6 +38,7 @@ import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.CallableSBase;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Event;
+import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
@@ -741,7 +742,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
       }
       // there are events to fire
       if (runningEvents.size() > 0) {
-        return processEvents(priorities);
+        return processEvents(priorities,Y);
       }
       // nothing to do
       else if(hasNewDelayedEvents) {
@@ -1414,7 +1415,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     ASTNode copiedAST = null;
     if (mergingPossible) {
       //Be careful with local parameters!
-      if (!(node.isName()) || (node.getType() == ASTNode.Type.NAME_TIME)
+      if (!(node.isName()) || (node.getType() == ASTNode.Type.NAME_TIME) || (node.getType() == ASTNode.Type.NAME_AVOGADRO)
           || !((node.getVariable() != null) && (node.getVariable() instanceof LocalParameter))) {
         List<ASTNode> nodesToLookAt=null;
         if(function!=null) {
@@ -1424,7 +1425,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
           nodesToLookAt=nodes;
         }
         for (ASTNode current : nodesToLookAt) {
-          if (!(current.isName()) || (current.getType() == ASTNode.Type.NAME_TIME)
+          if (!(current.isName()) || (current.getType() == ASTNode.Type.NAME_TIME) || (current.getType() == ASTNode.Type.NAME_AVOGADRO)
               || ((current.isName()) && !(current.getVariable() instanceof LocalParameter))) {
             if ((current.toString().equals(nodeString)) && (!containUnequalLocalParameters(current,node))) {
               copiedAST = current;
@@ -1653,6 +1654,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
     throws IntegrationException {
     ArrayList<DESAssignment> assignmentRules = new ArrayList<DESAssignment>();
     Integer symbolIndex;
+    this.currentTime=t;
     
     try {
       for (int i = 0; i < model.getNumRules(); i++) {
@@ -1734,7 +1736,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * @param priorities
    * @return
    */
-  private List<DESAssignment> processEvents(HashSet<Double> priorities)
+  private List<DESAssignment> processEvents(HashSet<Double> priorities, double[] Y)
     throws IntegrationException {
     List<DESAssignment> assignments = new LinkedList<DESAssignment>();
     List<Integer> highOrderEvents, events;
@@ -1779,8 +1781,9 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
           // event does not use values from trigger time
           if (!event.getUseValuesFromTriggerTime()) {
             for (int j = 0; j < event.getNumEventAssignments(); j++) {
-              assignment_math = event.getEventAssignment(j).getMath();
-              variable = event.getEventAssignment(j).getVariableInstance();
+              EventAssignment assignment = event.getEventAssignment(j);
+              assignment_math = assignment.getMath();
+              variable = assignment.getVariableInstance();
               
               if (model.findSpeciesReference(variable.getId()) != null) {
                 String id = variable.getId();
@@ -1795,6 +1798,10 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
                 newVal = processAssignmentVaribale(variable.getId(),
                   assignment_math);
                 this.Y[symbolIndex] = newVal;
+                Y[symbolIndex] = newVal;
+                if (compartmentHash.containsValue(symbolIndex)) {
+                  updateSpeciesConcentration(symbolIndex, Y, assignment);
+                }
                 assignments.add(new DESAssignment(currentTime, symbolIndex,
                   newVal));
                 
@@ -1807,8 +1814,9 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
             Double[] triggerTimeValues = this.events[index].getValues();
             
             for (int j = 0; j < event.getNumEventAssignments(); j++) {
-              assignment_math = event.getEventAssignment(j).getMath();
-              variable = event.getEventAssignment(j).getVariableInstance();
+              EventAssignment assignment = event.getEventAssignment(j);
+              assignment_math = assignment.getMath();
+              variable = assignment.getVariableInstance();
               newVal = triggerTimeValues[j];
               
               if (model.findSpeciesReference(variable.getId()) != null) {
@@ -1820,6 +1828,10 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
               } else {
                 symbolIndex = symbolHash.get(variable.getId());
                 this.Y[symbolIndex] = newVal;
+                Y[symbolIndex] = newVal;
+                if (compartmentHash.containsValue(symbolIndex)) {
+                  updateSpeciesConcentration(symbolIndex, Y, assignment);
+                }
                 assignments.add(new DESAssignment(currentTime, symbolIndex,
                   newVal));
               }
@@ -2114,7 +2126,7 @@ public class SBMLinterpreter implements ValueHolder, EventDESystem,
    * @param compartmentIndex
    */
   private void updateSpeciesConcentration(int compartmentIndex,
-    double changeRate[], Rule r) {
+    double changeRate[], Assignment r) {
     int speciesIndex;
     Species s;
     for (Entry<String, Integer> entry : compartmentHash.entrySet()) {

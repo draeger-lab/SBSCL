@@ -197,7 +197,7 @@ public class ASTNodeInterpreterWithTime {
   
   public double log(ASTNodeObject left, ASTNodeObject right, double time)
     throws SBMLException {
-    return Maths.log(left.compileDouble(time), right.compileDouble(time));
+    return Maths.log(right.compileDouble(time), left.compileDouble(time));
   }
   
   public double functionDouble(String functionDefinitionName,
@@ -232,7 +232,8 @@ public class ASTNodeInterpreterWithTime {
   }
   
   public double sec(ASTNodeObject userObject, double time) throws SBMLException {
-    return Maths.sec(userObject.compileDouble(time));
+    double argument = userObject.compileDouble(time);
+    return Maths.sec(argument);
   }
   
   public double root(ASTNodeObject rootExponent, ASTNodeObject radiant,
@@ -426,7 +427,8 @@ public class ASTNodeInterpreterWithTime {
   
   public double arccot(ASTNodeObject userObject, double time)
     throws SBMLException {
-    return Maths.arccot(userObject.compileDouble(time));
+    double argument = userObject.compileDouble(time);
+    return Maths.arccot(argument);
   }
   
   public double arccosh(ASTNodeObject userObject, double time)
