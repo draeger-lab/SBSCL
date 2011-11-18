@@ -1547,7 +1547,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
   }
   
   private double arctanhHelp(ASTNode node) throws SBMLException {
-    return Math.atan(compileDouble(node));
+    return Maths.arctanh(compileDouble(node));
   }
   
   public boolean compileBoolean(ASTNode node) throws SBMLException {
