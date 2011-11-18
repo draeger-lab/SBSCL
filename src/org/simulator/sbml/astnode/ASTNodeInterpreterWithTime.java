@@ -298,7 +298,7 @@ public class ASTNodeInterpreterWithTime {
   
   public double arctanh(ASTNodeObject userObject, double time)
     throws SBMLException {
-    return Math.atan(userObject.compileDouble(time));
+    return Maths.arctanh(userObject.compileDouble(time));
   }
   
   public boolean functionBoolean(String name, List<ASTNodeObject> children) {

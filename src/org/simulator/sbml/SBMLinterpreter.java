@@ -873,16 +873,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       /*
        * Compute changes due to rules
        */
-      int nRateRules = rateRulesRoots.size();
-      int nAssignmentRules = assignmentRulesRoots.size();
-      
-      for(int i=0;i!=nRateRules;i++) {
-        rateRulesRoots.get(i).processRule(changeRate, this.Y, astNodeTime);
-      }
-      
-      for(int i=0;i!=nAssignmentRules;i++) {
-        assignmentRulesRoots.get(i).processRule(this.Y, astNodeTime);
-      }
+      processRules(changeRate);
       
       /*
        * Compute changes due to reactions
@@ -1170,6 +1161,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     /*
      * All other rules
      */
+    astNodeTime+=0.01;
     processRules(null);
     
     /*
