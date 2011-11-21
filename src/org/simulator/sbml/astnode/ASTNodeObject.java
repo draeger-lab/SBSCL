@@ -294,7 +294,7 @@ public class ASTNodeObject {
         break;
       case FUNCTION_DELAY:
         doubleValue = interpreter.delay(node.getName(), leftChild,
-          rightChild, units);
+          rightChild, units, time);
         break;
       /*
        * Type: pi, e, true, false, Avogadro
@@ -482,4 +482,30 @@ public class ASTNodeObject {
           break;
       }
     }
+
+  /**
+   * 
+   * @return
+   */
+  public boolean isName() {
+    if(node!=null) {
+      return node.isName();
+    }
+    else {
+      return false;
+    }
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public String getName() {
+    if(node!=null) {
+      return node.getName();
+    }
+    else {
+      return null;
+    }
+  }
 }

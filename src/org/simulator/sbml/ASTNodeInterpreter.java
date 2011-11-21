@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math.ode.DerivativeException;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.CallableSBase;
 import org.sbml.jsbml.Compartment;
@@ -449,8 +450,13 @@ public class ASTNodeInterpreter implements ASTNodeCompiler {
    */
   public final ASTNodeValue delay(String delayName, ASTNode x, ASTNode delay,
     String timeUnits) throws SBMLException {
-    // TODO Auto-generated method stub
-    return null;
+    double valueTime=symbolTime(delayName).toDouble()-delay.compile(this).toDouble();  
+    try {
+        nodeValue.setValue(valueHolder.computeDelayedValue(valueTime, x.toString()));
+        return nodeValue;
+      } catch (DerivativeException e) {
+        return null;
+      }
   }
   
   /*
