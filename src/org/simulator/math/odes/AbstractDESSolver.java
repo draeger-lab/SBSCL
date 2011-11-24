@@ -434,10 +434,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	public void processRules(EventDESystem EDES, double time, double[] Ytemp)
 			throws DerivativeException {
-		for (DESAssignment assignment : EDES
-				.processAssignmentRules(time, Ytemp)) {
-			Ytemp[assignment.getIndex()] = assignment.getValue();
-		}
+	  EDES.processAssignmentRules(time, Ytemp);
 	}
 
 	/**
