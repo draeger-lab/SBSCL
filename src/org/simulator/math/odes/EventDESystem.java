@@ -20,6 +20,7 @@ package org.simulator.math.odes;
 import java.util.List;
 
 import org.apache.commons.math.ode.DerivativeException;
+import org.simulator.sbml.EventInProcess;
 
 /**
  * This Class represents an event-driven DES
@@ -71,7 +72,7 @@ public interface EventDESystem extends DESystem {
 	 * @return Returns a list with event assignments for the events triggered
 	 * @throws DerivativeException
 	 */
-	public List<DESAssignment> getEventAssignments(double t, double previousTime, double Y[])
+	public EventInProcess getNextEventAssignments(double t, double previousTime, double Y[])
 			throws DerivativeException;
 
 }

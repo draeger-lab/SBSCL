@@ -17,7 +17,9 @@
  */
 package org.simulator.sbml;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * <p>
@@ -41,6 +43,7 @@ public class EventInProcess {
 	protected double lastTimeExecuted;
 	protected LinkedList<Double> execTimes;
 	protected LinkedList<Double[]> values;
+	protected Map<Integer,Double> assignments;
 
 	/**
 	 * Creates a new EventInProcess with the given boolean value indicating
@@ -56,7 +59,7 @@ public class EventInProcess {
 		this.lastTimeFired=-1;
 		this.lastTimeRecovered=-1;
 		this.lastTimeExecuted=-1;
-
+		this.assignments = new HashMap<Integer,Double>();
 	}
 
 	/**
@@ -219,5 +222,29 @@ public class EventInProcess {
    * @param currentTime
    */
   public void refresh(double currentTime) {
+  }
+  
+  /**
+   * 
+   */
+  public void clearAssignments() {
+    assignments.clear();
+  }
+  
+  /**
+   * 
+   * @param index
+   * @param value
+   */
+  public void addAssignment(int index, double value) {
+    assignments.put(index, value);
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public Map<Integer,Double> getAssignments() {
+    return assignments;
   }
 }
