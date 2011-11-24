@@ -51,7 +51,7 @@ public class RootFunctionValue extends ASTNodeObject{
    * (non-Javadoc)
    * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
    */
-  public void computeDoubleValue() {
+  protected void computeDoubleValue() {
     if (numChildren == 2) {
       if (leftChildrenNumeric) {
         if (leftDoubleValue == 2) {

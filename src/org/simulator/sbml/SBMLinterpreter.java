@@ -287,6 +287,11 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * 
    */
   private List<Integer> highOrderEvents;
+
+  /**
+   * 
+   */
+  private double[] conversionFactors;
   
   /**
    * <p>
@@ -332,6 +337,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     }
     this.Y = new double[model.getNumCompartments() + model.getNumSpecies()
         + model.getNumParameters() + speciesReferencesInRateRules];
+    this.conversionFactors = new double[Y.length];
+    Arrays.fill(conversionFactors, 1d);
     this.symbolIdentifiers = new String[Y.length];
     
     speciesMap = new HashMap<String, Species>();
@@ -949,6 +956,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     if(sizeY != this.Y.length) {
       this.Y = new double[sizeY];
       this.symbolIdentifiers = new String[Y.length];
+      this.conversionFactors = new double[Y.length];
+      Arrays.fill(conversionFactors, 1d);
     }
     
     
@@ -981,6 +990,13 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       Species s = model.getSpecies(i);
       if (!s.getBoundaryCondition() && !s.getConstant()) {
         speciesMap.put(s.getId(), s);
+        Parameter convParameter = s.getConversionFactorInstance();
+        if(convParameter == null) {
+          convParameter = model.getConversionFactorInstance();
+        }
+        if(convParameter!=null) {
+          conversionFactors[yIndex] = convParameter.getValue();
+        }
       }
       compartmentIndex = symbolHash.get(s.getCompartment());
       
@@ -1516,6 +1532,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
           break;
         case FUNCTION_ROOT:
           copiedAST.setUserObject(new RootFunctionValue(nodeInterpreterWithTime,copiedAST));
+          break;
         case LAMBDA:
           copiedAST.setUserObject(new ASTNodeObject(nodeInterpreterWithTime,
             copiedAST));
@@ -1910,6 +1927,10 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     int size = stoichiometries.size();
     for (int i = 0; i != size; i++) {
       stoichiometries.get(i).computeChange(currentTime, changeRate, v);
+    }
+    //
+    for(int i=0;i!=changeRate.length;i++) {
+      changeRate[i]*=conversionFactors[i];
     }
     
   }
