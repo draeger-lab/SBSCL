@@ -55,7 +55,6 @@ import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.validator.OverdeterminationValidator;
 import org.simulator.math.RNG;
 import org.simulator.math.odes.AbstractDESSolver;
-import org.simulator.math.odes.DESAssignment;
 import org.simulator.math.odes.DESystem;
 import org.simulator.math.odes.DelayValueHolder;
 import org.simulator.math.odes.DelayedDESystem;
@@ -847,7 +846,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       /*
        * Compute changes due to rules
        */
-      processRules(changeRate);
+      processRules(currentTime, changeRate, this.Y);
       
       /*
        * Compute changes due to reactions
@@ -872,19 +871,6 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     
   }
   
-  /**
-   * @param EDES
-   * @param time
-   * @param Ytemp
-   * @return
-   * @throws DerivativeException
-   */
-  public void processRules(double time, double[] Ytemp)
-      throws DerivativeException {
-    for (DESAssignment assignment : processAssignmentRules(time, Ytemp)) {
-      Ytemp[assignment.getIndex()] = assignment.getValue();
-    }
-  }
   
   /*
    * (non-Javadoc)
@@ -1145,7 +1131,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
      * All other rules
      */
     astNodeTime+=0.01;
-    processRules(null);
+    processRules(currentTime, null, this.Y);
     
     /*
      * Process initial assignments a 2nd time because there can be rules
@@ -1608,50 +1594,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * (non-Javadoc)
    * @see org.sbml.simulator.math.odes.EventDESystem#processAssignmentRules(double, double[])
    */
-  public List<DESAssignment> processAssignmentRules(double t, double Y[])
+  public void processAssignmentRules(double t, double Y[])
     throws DerivativeException {
-    ArrayList<DESAssignment> assignmentRules = new ArrayList<DESAssignment>();
-    Integer symbolIndex;
-    this.currentTime=t;
-    
-    try {
-      for (int i = 0; i < model.getNumRules(); i++) {
-        Rule rule = model.getRule(i);
-        if (rule.isAssignment()) {
-          AssignmentRule as = (AssignmentRule) rule;
-          symbolIndex = symbolHash.get(as.getVariable());
-          if (symbolIndex != null) {
-            assignmentRules.add(new DESAssignment(t, symbolIndex,
-              processAssignmentVaribale(as.getVariable(), as.getMath())));
-          } else if (model.findSpeciesReference(as.getVariable()) != null) {
-            SpeciesReference sr = model.findSpeciesReference(as.getVariable());
-            if (sr.getConstant() == false) {
-              stoichiometricCoefHash.put(sr.getId(),
-                processAssignmentVaribale(as.getVariable(), as.getMath()));
-            }
-          }
-        }
-      }
-      if (algebraicRules != null) {
-        for (AssignmentRule as : algebraicRules) {
-          symbolIndex = symbolHash.get(as.getVariable());
-          if (symbolIndex != null) {
-            assignmentRules.add(new DESAssignment(t, symbolIndex,
-              processAssignmentVaribale(as.getVariable(), as.getMath())));
-          } else if (model.findSpeciesReference(as.getVariable()) != null) {
-            SpeciesReference sr = model.findSpeciesReference(as.getVariable());
-            if (sr.getConstant() == false) {
-              stoichiometricCoefHash.put(sr.getId(),
-                processAssignmentVaribale(as.getVariable(), as.getMath()));
-            }
-          }
-        }
-      }
-    } catch (SBMLException exc) {
-      throw new DerivativeException(exc);
-    }
-    
-    return assignmentRules;
+    processRules(t,null,Y);
   }
   
   /**
@@ -1872,7 +1817,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * @param changeRate
    * @throws SBMLException
    */
-  private void processRules(double[] changeRate) throws SBMLException {
+  public void processRules(double time, double[] changeRate, double[] Y) throws SBMLException {
     /*
      * Compute changes due to rules
      */
@@ -1885,8 +1830,10 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       }
     }
     
-    for(int i=0;i!=nAssignmentRules;i++) {
-      assignmentRulesRoots.get(i).processRule(this.Y, astNodeTime);
+    if(Y != null) {
+      for (int i = 0; i != nAssignmentRules; i++) {
+        assignmentRulesRoots.get(i).processRule(Y, astNodeTime);
+      }
     }
     
   }

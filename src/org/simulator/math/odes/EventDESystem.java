@@ -17,7 +17,6 @@
  */
 package org.simulator.math.odes;
 
-import java.util.List;
 
 import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.sbml.EventInProcess;
@@ -54,10 +53,9 @@ public interface EventDESystem extends DESystem {
 	 *            The current simulation time.
 	 * @param Y
 	 *            The current change of the system.
-	 * @return
 	 * @throws DerivativeException
 	 */
-	public List<DESAssignment> processAssignmentRules(double t, double Y[])
+	public void processAssignmentRules(double t, double Y[])
 			throws DerivativeException;
 
 	/**
