@@ -23,14 +23,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.events.EventException;
 import org.apache.commons.math.ode.events.EventHandler;
 import org.simulator.math.Mathematics;
+import org.simulator.sbml.EventInProcess;
 
 /**
  * This Class represents an Solver for event-driven DES
@@ -384,23 +383,21 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	public boolean processEvents(EventDESystem EDES, double time, double previousTime, double[] yTemp)
 			throws DerivativeException {
-		int index;
 		boolean hasNewEvents=false;
-		List<DESAssignment> assignments;
-		assignments = (LinkedList<DESAssignment>) EDES.getEventAssignments(
+		EventInProcess event;
+		event = EDES.getNextEventAssignments(
 				time, previousTime, yTemp);
 
-		if(assignments!=null) {
+		if(event!=null) {
 		  hasNewEvents=true;
 		}
-		while (assignments != null) {
-			for (DESAssignment assignment : assignments) {
-				index = assignment.getIndex();
-				yTemp[index] = assignment.getValue();
+		while (event != null) {
+			for (int index: event.getAssignments().keySet()) {
+				yTemp[index] = event.getAssignments().get(index);
 			}
 
-			assignments = (LinkedList<DESAssignment>) EDES.getEventAssignments(
-					time, time, yTemp);
+			event = EDES.getNextEventAssignments(
+        time, previousTime, yTemp);
 		}
 		return hasNewEvents;
 
@@ -550,6 +547,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 				System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 			}
 			additionalResults(DES, t - stepSize, result[i - 1], data, i);
+		}
+		for(double vi:DES.getReactionVelocities()) {
+		  System.out.println(vi);
 		}
 		return data;
 	}
