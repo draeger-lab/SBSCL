@@ -338,7 +338,7 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
-	 * Befor sorting the equation of the algebraic rule, the variable of the
+	 * Before sorting the equation of the algebraic rule, the variable of the
 	 * rule has to be deleted.
 	 */
 	private void deleteVariable() {
@@ -369,9 +369,9 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
-	 * Checks if the variable of the algebraic equaiton has to be moved to the
+	 * Checks if the variable of the algebraic equation has to be moved to the
 	 * other side of the equation or not and if its connection to the rest of
-	 * the equation is additiv or multiplicative.
+	 * the equation is additive or multiplicative.
 	 * 
 	 * 
 	 * @param node
@@ -610,12 +610,12 @@ public class AlgebraicRuleConverter {
 				}
 
 				parent = (ASTNode) node.getParent();
-				// Function definiton is child
+				// Function definition is child
 				if (parent != null) {
 					// System.out.println(parent.getType());
 
 					// Replace the reference to a function definition with the
-					// function definiton itself
+					// function definition itself
 					parent.replaceChild(indexParent, function.getRightChild()
 							.clone());
 					// Substitute the variables with the parameter
