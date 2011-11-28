@@ -545,9 +545,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			}
 			additionalResults(DES, t - stepSize, result[i - 1], data, i);
 		}
-		for(double vi:DES.getReactionVelocities()) {
-		  System.out.println(vi);
-		}
+		
 		return data;
 	}
 
@@ -708,7 +706,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 			additionalResults(DES, t, yTemp, data, i);
 
- 			t=timePoints[i];
+ 			t = timePoints[i];
 		}
 		
 		
@@ -765,8 +763,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 	}
 
-	/**
-	 *
+	/*
+	 * (non-Javadoc)
+	 * @see org.apache.commons.math.ode.events.EventHandler#g(double, double[])
 	 */
 	public double g(double t, double[] y) throws EventException {
 		if (Double.isNaN(t)) {
@@ -775,16 +774,18 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		return checkSolution(y) ? 1d : -1d;
 	}
 
-	/**
-	 * 
+	/*
+	 * (non-Javadoc)
+	 * @see org.apache.commons.math.ode.events.EventHandler#eventOccurred(double, double[], boolean)
 	 */
 	public int eventOccurred(double t, double[] y, boolean increasing)
 			throws EventException {
 		return STOP;
 	}
 
-	/**
-	 * 
+	/*
+	 * (non-Javadoc)
+	 * @see org.apache.commons.math.ode.events.EventHandler#resetState(double, double[])
 	 */
 	public void resetState(double t, double[] y) throws EventException {
 	}

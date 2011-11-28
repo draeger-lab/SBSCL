@@ -2008,11 +2008,5 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     }
     return this.delayValueHolder.computeDelayedValue(time, id);
   }
-
-  @Override
-  public double[] getReactionVelocities() {
-    return v;
-  }
-  
   
 }
