@@ -51,13 +51,8 @@ public interface DESystem extends Serializable, FirstOrderDifferentialEquations 
 
   /**
    * 
-   * @return the number of values in Y that have to be positive (concentrations, volumes, stoichiometries)
+   * @return the number of values in Y that have to be positive.
    */
   public int getNumPositiveValues();
 
-  /**
-   * 
-   * @return
-   */
-  public double[] getReactionVelocities();
 }
