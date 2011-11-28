@@ -1,6 +1,6 @@
 /*
- * $Id:  DelayedDESSystem.java 16:41:29 keller $
- * $URL: DelayedDESSystem.java $
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsimulator, a Java-based simulator for models of biochemical processes encoded in the modeling language SBML.
  *
