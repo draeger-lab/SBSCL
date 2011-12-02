@@ -18,12 +18,47 @@
 package org.simulator.math;
 
 /**
+ * This class contains a collection of mathematical functions
+ * like the faculty, logarithms and several trigonometric functions.
+ * 
  * @author Marcel Kronfeld
  * @author Andreas Dr&auml;ger
+ * @author Diedonn&eacute; Motsuo Wouamba
  * @version $Rev$
  * @since 0.9
  */
 public class Mathematics {
+	
+	/**
+   * This method computes the factorial! function.
+   *
+   * @param n
+   * @return
+   */
+  public static final double factorial(double n) {
+    if ((n == 0) || (n == 1)) {
+    	return 1;
+    }
+    return n * factorial(n - 1);
+  }
+	
+	/**
+	 * This just computes the minimum of three integer values.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return Gives the minimum of three integers
+	 */
+	public static int min(int x, int y, int z) {
+		if ((x < y) && (x < z)) {
+			return x;
+		}
+		if (y < z) {
+			return y;
+		}
+		return z;
+	}
 	
 	/**
    * Scales a vector with the given scalar.
@@ -36,8 +71,8 @@ public class Mathematics {
       vec[i] *= scale;
     }
   }
-	
-	/**
+
+  /**
 	 * Multiplies (scales) every element of the array v with s in place.
 	 * 
 	 * @param s
@@ -51,7 +86,7 @@ public class Mathematics {
 			res[i] = v[i] * s;
 		}
 	}
-	
+  
 	/**
 	 * Add vectors scaled: res[i] = s*(v[i] + w[i])
 	 * 
@@ -66,8 +101,8 @@ public class Mathematics {
 			res[i] = s * (v[i] + w[i]);
 		}
 	}
-
-  /**
+	
+	/**
 	 * Add vectors scaled: res[i] = s*v[i] + w[i]
 	 * 
 	 * @param s
@@ -82,7 +117,7 @@ public class Mathematics {
 		}
 	}
   
-	/**
+  /**
    * Add vectors in place setting res = v1 + v2.
    * 
    * @param v1
@@ -92,8 +127,8 @@ public class Mathematics {
   public static void vvAdd(double[] v1, double[] v2, double[] res) {
     vvAddOffs(v1, 0, v2, 0, res, 0, v1.length);
   }
-	
-	/**
+
+  /**
    * Add vectors in place setting with an offset within the target vector,
    * meaning that res[resOffs+i]=v1[v1Offs+i]+v2[v2Offs+i] for i in length.
    * 
@@ -107,7 +142,7 @@ public class Mathematics {
       res[resOffs + i] = v1[v1Offs + i] + v2[v2Offs + i];
     }
   }
-  
+	
   /**
 	 * Subtract vectors returning a new vector c = a - b.
 	 * 
@@ -120,8 +155,8 @@ public class Mathematics {
 		vvSub(a, b, result);
 		return result;
 	}
-
-  /**
+	
+	/**
 	 * Subtract vectors returning a new vector c = a - b.
 	 * 
 	 * @param a
