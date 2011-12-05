@@ -28,7 +28,7 @@ import org.simulator.math.Mathematics;
  * @version $Rev$
  * @since 0.9
  */
-public class RKEventSolver extends AbstractDESSolver {
+public class RK_EventSolver extends AbstractDESSolver {
 
 	/**
 	 * Generated serial version identifier
@@ -47,7 +47,7 @@ public class RKEventSolver extends AbstractDESSolver {
 	/**
 	 * 
 	 */
-	public RKEventSolver() {
+	public RK_EventSolver() {
 		super();
 	}
 	
@@ -55,7 +55,7 @@ public class RKEventSolver extends AbstractDESSolver {
 	 * 
 	 * @param stepSize
 	 */
-	public RKEventSolver(double stepSize) {
+	public RK_EventSolver(double stepSize) {
 		super(stepSize);
 	}
 	
@@ -64,7 +64,7 @@ public class RKEventSolver extends AbstractDESSolver {
 	 * @param stepSize
 	 * @param nonnegative
 	 */
-	public RKEventSolver(double stepSize, boolean nonnegative) {
+	public RK_EventSolver(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
 	}
 	
@@ -72,7 +72,7 @@ public class RKEventSolver extends AbstractDESSolver {
 	 * 
 	 * @param rkEventSolver
 	 */
-	public RKEventSolver(RKEventSolver rkEventSolver) {
+	public RK_EventSolver(RK_EventSolver rkEventSolver) {
 		super(rkEventSolver);
 	}
 
@@ -135,8 +135,8 @@ public class RKEventSolver extends AbstractDESSolver {
 	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#clone()
 	 */
 	@Override
-	public RKEventSolver clone() {
-		return new RKEventSolver(this);
+	public RK_EventSolver clone() {
+		return new RK_EventSolver(this);
 	}
 
 	/*

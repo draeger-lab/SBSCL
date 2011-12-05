@@ -20,14 +20,16 @@ package org.simulator.math.odes;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.events.EventException;
 import org.apache.commons.math.ode.events.EventHandler;
+import org.sbml.jsbml.util.StringTools;
 import org.simulator.math.Mathematics;
 import org.simulator.sbml.EventInProcess;
 
@@ -97,23 +99,23 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * intervalFactor = 100 / (endTime - startTime)
 	 */
 	private double intervalFactor;
-
-	/**
-	 * list of propertychange listeners (for threading purpose)
-	 */
-	ArrayList<PropertyChangeListener> listenerList;
+  
+  /**
+   * {@link List} of {@link PropertyChangeListener}s (for threading purpose)
+   */
+	List<PropertyChangeListener> listenerList;
 
 	/**
 	 * Initialize with default integration step size and non-negative attribute
 	 * true.
 	 */
 	public AbstractDESSolver() {
-		stepSize = 0.01;
+		stepSize = 0.01d;
 		nonnegative = false;
 		unstableFlag = false;
 		includeIntermediates = false;
 		this.intervalFactor = 0d;
-		this.listenerList = new ArrayList<PropertyChangeListener>();
+		this.listenerList = new LinkedList<PropertyChangeListener>();
 	}
 
 	/**
@@ -709,7 +711,6 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
  			t = timePoints[i];
 		}
 		
-		
 		return data;
 	}
 
@@ -738,8 +739,6 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
       //			double oldFt = ft;
 			ft = computeNextState(DES, ft, stepSize, oldValues, change,
 					newValues, true);
-			
-
 		}
 		((FastProcessDESystem) DES).setFastProcessComputation(false);
 		return oldValues;
@@ -795,8 +794,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * @see org.sbml.simulator.math.odes.DESSolver#addPropertyChangedListener(java.beans.PropertyChangeListener)
 	 */
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		if (!listenerList.contains(listener))
+		if (!listenerList.contains(listener)) {
 			this.listenerList.add(listener);
+		}
 	}
 
 	/*
@@ -804,8 +804,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * @see org.sbml.simulator.math.odes.DESSolver#removePropertyChangedListener(java.beans.PropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		if (listenerList.contains(listener))
+		if (listenerList.contains(listener)) {
 			this.listenerList.remove(listener);
+		}
 	}
 
 	/*
@@ -816,6 +817,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		if (!this.listenerList.isEmpty()) {
 			PropertyChangeEvent evt = new PropertyChangeEvent(this, "progress",
 					oldValue, newValue);
+			logger.info(String.format("Progress: %s %%", StringTools.toString(newValue)));
 			for (PropertyChangeListener listener : this.listenerList) {
 				listener.propertyChange(evt);
 			}
