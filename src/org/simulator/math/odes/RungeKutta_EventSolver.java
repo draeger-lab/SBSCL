@@ -28,7 +28,7 @@ import org.simulator.math.Mathematics;
  * @version $Rev$
  * @since 0.9
  */
-public class RK_EventSolver extends AbstractDESSolver {
+public class RungeKutta_EventSolver extends AbstractDESSolver {
 
 	/**
 	 * Generated serial version identifier
@@ -47,7 +47,7 @@ public class RK_EventSolver extends AbstractDESSolver {
 	/**
 	 * 
 	 */
-	public RK_EventSolver() {
+	public RungeKutta_EventSolver() {
 		super();
 	}
 	
@@ -55,7 +55,7 @@ public class RK_EventSolver extends AbstractDESSolver {
 	 * 
 	 * @param stepSize
 	 */
-	public RK_EventSolver(double stepSize) {
+	public RungeKutta_EventSolver(double stepSize) {
 		super(stepSize);
 	}
 	
@@ -64,7 +64,7 @@ public class RK_EventSolver extends AbstractDESSolver {
 	 * @param stepSize
 	 * @param nonnegative
 	 */
-	public RK_EventSolver(double stepSize, boolean nonnegative) {
+	public RungeKutta_EventSolver(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
 	}
 	
@@ -72,7 +72,7 @@ public class RK_EventSolver extends AbstractDESSolver {
 	 * 
 	 * @param rkEventSolver
 	 */
-	public RK_EventSolver(RK_EventSolver rkEventSolver) {
+	public RungeKutta_EventSolver(RungeKutta_EventSolver rkEventSolver) {
 		super(rkEventSolver);
 	}
 
@@ -135,8 +135,8 @@ public class RK_EventSolver extends AbstractDESSolver {
 	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#clone()
 	 */
 	@Override
-	public RK_EventSolver clone() {
-		return new RK_EventSolver(this);
+	public RungeKutta_EventSolver clone() {
+		return new RungeKutta_EventSolver(this);
 	}
 
 	/*
