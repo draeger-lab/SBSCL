@@ -41,6 +41,21 @@ public class Mathematics {
     }
     return n * factorial(n - 1);
   }
+  
+
+	/**
+	 * Swaps a and b if a is greater then b.
+	 * 
+	 * @param a
+	 * @param b
+	 */
+	public static final void swap(double a, double b) {
+		if (a > b) {
+			double swap = b;
+			b = a;
+			a = swap;
+		}
+	}
 	
 	/**
 	 * This just computes the minimum of three integer values.
