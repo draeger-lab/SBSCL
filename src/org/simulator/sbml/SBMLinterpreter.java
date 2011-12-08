@@ -51,6 +51,7 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Variable;
+import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.validator.OverdeterminationValidator;
 import org.simulator.math.RNG;
@@ -2003,7 +2004,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   public double computeDelayedValue(double time, String id) throws DerivativeException {
     if (this.delayValueHolder == null) {
       logger.warning(String.format(
-        "Cannot access delayed value at time %d for %s.", time, id));
+        "Cannot access delayed value at time %s for %s.", StringTools
+            .toString(time), id));
       return 0;
     }
     return this.delayValueHolder.computeDelayedValue(time, id);

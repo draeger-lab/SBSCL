@@ -38,6 +38,8 @@ import org.simulator.sbml.EventInProcess;
  * 
  * @author Alexander D&ouml;rr
  * @author Andreas Dr&auml;ger
+ * @author Roland Keller
+ * @author Hannes Planatscher
  * @author Philip Stevens
  * @author Max Zwießele
  * @date 2010-02-04
@@ -47,30 +49,22 @@ import org.simulator.sbml.EventInProcess;
 public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, EventHandler {
 
 	/**
+	 * A {@link Logger} for this class.
+	 */
+	private static final transient Logger logger = Logger.getLogger(AbstractDESSolver.class.getName());
+	
+	/**
 	 * Generated serial version identifier.
 	 */
 	private static final long serialVersionUID = 1859418461410763939L;
-	
-	/**
-	 * 
-	 */
-	private static final transient Logger logger = Logger.getLogger(AbstractDESSolver.class.getName());
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.simulator.math.odes.DelayValueHolder#computeValue(double, java.lang.String)
-	 */
-	public double computeDelayedValue(double time, String id) throws DerivativeException {
-	  return 0d;
-	}
-	
 	/**
 	 * @return the serial version uid
 	 */
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-
+	
 	/**
 	 * Switches the inclusion of intermediate results on or off. This feature is
 	 * important if the given {@link DESystem} is an instance of
@@ -80,32 +74,34 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	private boolean includeIntermediates;
 
 	/**
+	 * factor describing an interval for the progress of a certain simulation
+	 * intervalFactor = 100 / (endTime - startTime)
+	 */
+	private double intervalFactor;
+
+	/**
+   * {@link List} of {@link PropertyChangeListener}s (for threading purpose)
+   */
+	List<PropertyChangeListener> listenerList;
+	
+	/**
 	 * Flag to indicate whether or not negative values within the solution
 	 * should be set to zero.
 	 */
 	private boolean nonnegative;
+	
 	/**
 	 * The integration step size.
 	 */
 	private double stepSize;
+
 	/**
 	 * Flag to indicate whether at some time point during the simulation NaN
 	 * values occur within the solution.
 	 */
 	private boolean unstableFlag;
-
-	/**
-	 * factor describing an interval for the progress of a certain simulation
-	 * intervalFactor = 100 / (endTime - startTime)
-	 */
-	private double intervalFactor;
   
   /**
-   * {@link List} of {@link PropertyChangeListener}s (for threading purpose)
-   */
-	List<PropertyChangeListener> listenerList;
-
-	/**
 	 * Initialize with default integration step size and non-negative attribute
 	 * true.
 	 */
@@ -113,7 +109,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		stepSize = 0.01d;
 		nonnegative = false;
 		unstableFlag = false;
-		includeIntermediates = false;
+		includeIntermediates = true;
 		this.intervalFactor = 0d;
 		this.listenerList = new LinkedList<PropertyChangeListener>();
 	}
@@ -147,6 +143,34 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	public AbstractDESSolver(double stepSize, boolean nonnegative) {
 		this(stepSize);
 		setNonnegative(nonnegative);
+	}
+
+	/**
+	 * 
+	 * @param DES
+	 * @param t
+	 * @param yTemp
+	 * @param data
+	 * @param rowIndex
+	 * @throws DerivativeException
+	 */
+	protected void additionalResults(DESystem DES, double t, double[] yTemp,
+			MultiTable data, int rowIndex) throws DerivativeException {
+		if (includeIntermediates && (DES instanceof RichDESystem)) {
+			MultiTable.Block block = data.getBlock(1);
+			double v[] = ((RichDESystem) DES).getAdditionalValues(t, yTemp);
+			block.setRowData(rowIndex, v.clone());
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.simulator.math.odes.DESSolver#addPropertyChangedListener(java.beans.PropertyChangeListener)
+	 */
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		if (!listenerList.contains(listener)) {
+			this.listenerList.add(listener);
+		}
 	}
 
 	/**
@@ -211,7 +235,14 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	public abstract double[] computeChange(DESystem DES, double[] y, double t,
 			double stepSize, double[] change) throws DerivativeException;
 
-	/**
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.DelayValueHolder#computeValue(double, java.lang.String)
+	 */
+	public double computeDelayedValue(double time, String id) throws DerivativeException {
+	  return 0d;
+	}
+
+  /**
 	 * 
 	 * @param DES
 	 * @param t
@@ -242,11 +273,71 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 	/**
 	 * 
-	 * @return Does the solver do the event processing itself?
+	 * @param DES
+	 * @param result
+	 * @param timeBegin
+	 * @return
+	 * @throws DerivativeException
 	 */
-	protected abstract boolean hasSolverEventProcessing();
+	private double[] computeSteadyState(FastProcessDESystem DES,
+			double[] result, double timeBegin) throws DerivativeException {
+		double[] oldValues = new double[result.length];
+		double[] newValues = new double[result.length];
+		double[] change = new double[result.length];
+		System.arraycopy(result, 0, newValues, 0, result.length);
+		double ft = timeBegin;
+		((FastProcessDESystem) DES).setFastProcessComputation(true);
 
-  /**
+		// TODO what if there is oscillation, so no state with no change will be
+		// reached
+		while (!noChange(oldValues, newValues)) {
+			System.arraycopy(newValues, 0, oldValues, 0, newValues.length);
+			newValues = new double[result.length];
+      //			double oldFt = ft;
+			ft = computeNextState(DES, ft, stepSize, oldValues, change,
+					newValues, true);
+		}
+		((FastProcessDESystem) DES).setFastProcessComputation(false);
+		return oldValues;
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.apache.commons.math.ode.events.EventHandler#eventOccurred(double, double[], boolean)
+	 */
+	public int eventOccurred(double t, double[] y, boolean increasing)
+			throws EventException {
+		return STOP;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.simulator.math.odes.DESSolver#firePropertyChanged(double, double)
+	 */
+	public void firePropertyChange(double oldValue, double newValue) {
+		if (!this.listenerList.isEmpty()) {
+			PropertyChangeEvent evt = new PropertyChangeEvent(this, "progress",
+					oldValue, newValue);
+			logger.info(String.format("Progress: %s %%", StringTools.toString(newValue)));
+			for (PropertyChangeListener listener : this.listenerList) {
+				listener.propertyChange(evt);
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.apache.commons.math.ode.events.EventHandler#g(double, double[])
+	 */
+	public double g(double t, double[] y) throws EventException {
+		if (Double.isNaN(t)) {
+			return -1d;
+		}
+		return checkSolution(y) ? 1d : -1d;
+	}
+
+	/**
 	 * This gives a human-readable name of this solver that can be displayed in
 	 * a graphical user interface.
 	 * 
@@ -262,6 +353,12 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	public double getStepSize() {
 		return this.stepSize;
 	}
+
+	/**
+	 * 
+	 * @return Does the solver do the event processing itself?
+	 */
+	protected abstract boolean hasSolverEventProcessing();
 
 	/**
 	 * Computes the number of necessary steps between two time steps.
@@ -334,9 +431,8 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		return data;
 	}
 
-	/**
-	 * 
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.DESSolver#isIncludeIntermediates()
 	 */
 	public boolean isIncludeIntermediates() {
 		return includeIntermediates;
@@ -354,6 +450,23 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	public boolean isUnstable() {
 		return unstableFlag;
+	}
+
+	/**
+	 * 
+	 * @param newValues
+	 * @param oldValues
+	 * @return
+	 */
+	private boolean noChange(double newValues[], double oldValues[]) {
+		for (int i = 0; i < newValues.length; i++) {
+			if (Math.abs(newValues[i] - oldValues[i]) > 1e-15) {
+
+				return false;
+			}
+		}
+		return true;
+
 	}
 
 	/**
@@ -439,27 +552,25 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	  EDES.processAssignmentRules(time, Ytemp);
 	}
 
-	/**
-	 * 
-	 * @param DES
-	 * @param t
-	 * @param yTemp
-	 * @param data
-	 * @param rowIndex
-	 * @throws DerivativeException
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.simulator.math.odes.DESSolver#removePropertyChangedListener(java.beans.PropertyChangeListener)
 	 */
-	protected void additionalResults(DESystem DES, double t, double[] yTemp,
-			MultiTable data, int rowIndex) throws DerivativeException {
-		if (includeIntermediates && (DES instanceof RichDESystem)) {
-			MultiTable.Block block = data.getBlock(1);
-			double v[] = ((RichDESystem) DES).getAdditionalValues(t, yTemp);
-			block.setRowData(rowIndex, v.clone());
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		if (listenerList.contains(listener)) {
+			this.listenerList.remove(listener);
 		}
 	}
 
-	/**
-	 * 
-	 * @param includeIntermediates
+	/*
+	 * (non-Javadoc)
+	 * @see org.apache.commons.math.ode.events.EventHandler#resetState(double, double[])
+	 */
+	public void resetState(double t, double[] y) throws EventException {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.DESSolver#setIncludeIntermediates(boolean)
 	 */
 	public void setIncludeIntermediates(boolean includeIntermediates) {
 		this.includeIntermediates = includeIntermediates;
@@ -714,113 +825,4 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		return data;
 	}
 
-	/**
-	 * 
-	 * @param DES
-	 * @param result
-	 * @param timeBegin
-	 * @return
-	 * @throws DerivativeException
-	 */
-	private double[] computeSteadyState(FastProcessDESystem DES,
-			double[] result, double timeBegin) throws DerivativeException {
-		double[] oldValues = new double[result.length];
-		double[] newValues = new double[result.length];
-		double[] change = new double[result.length];
-		System.arraycopy(result, 0, newValues, 0, result.length);
-		double ft = timeBegin;
-		((FastProcessDESystem) DES).setFastProcessComputation(true);
-
-		// TODO what if there is oscillation, so no state with no change will be
-		// reached
-		while (!noChange(oldValues, newValues)) {
-			System.arraycopy(newValues, 0, oldValues, 0, newValues.length);
-			newValues = new double[result.length];
-      //			double oldFt = ft;
-			ft = computeNextState(DES, ft, stepSize, oldValues, change,
-					newValues, true);
-		}
-		((FastProcessDESystem) DES).setFastProcessComputation(false);
-		return oldValues;
-
-	}
-
-	/**
-	 * 
-	 * @param newValues
-	 * @param oldValues
-	 * @return
-	 */
-	private boolean noChange(double newValues[], double oldValues[]) {
-		for (int i = 0; i < newValues.length; i++) {
-			if (Math.abs(newValues[i] - oldValues[i]) > 1e-15) {
-
-				return false;
-			}
-		}
-		return true;
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.apache.commons.math.ode.events.EventHandler#g(double, double[])
-	 */
-	public double g(double t, double[] y) throws EventException {
-		if (Double.isNaN(t)) {
-			return -1d;
-		}
-		return checkSolution(y) ? 1d : -1d;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.apache.commons.math.ode.events.EventHandler#eventOccurred(double, double[], boolean)
-	 */
-	public int eventOccurred(double t, double[] y, boolean increasing)
-			throws EventException {
-		return STOP;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.apache.commons.math.ode.events.EventHandler#resetState(double, double[])
-	 */
-	public void resetState(double t, double[] y) throws EventException {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.DESSolver#addPropertyChangedListener(java.beans.PropertyChangeListener)
-	 */
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		if (!listenerList.contains(listener)) {
-			this.listenerList.add(listener);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.DESSolver#removePropertyChangedListener(java.beans.PropertyChangeListener)
-	 */
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		if (listenerList.contains(listener)) {
-			this.listenerList.remove(listener);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.DESSolver#firePropertyChanged(double, double)
-	 */
-	public void firePropertyChange(double oldValue, double newValue) {
-		if (!this.listenerList.isEmpty()) {
-			PropertyChangeEvent evt = new PropertyChangeEvent(this, "progress",
-					oldValue, newValue);
-			logger.info(String.format("Progress: %s %%", StringTools.toString(newValue)));
-			for (PropertyChangeListener listener : this.listenerList) {
-				listener.propertyChange(evt);
-			}
-		}
-	}
 }
