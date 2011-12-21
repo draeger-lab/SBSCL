@@ -292,8 +292,6 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		// reached
 		while (!noChange(oldValues, newValues)) {
 			System.arraycopy(newValues, 0, oldValues, 0, newValues.length);
-			newValues = new double[result.length];
-      //			double oldFt = ft;
 			ft = computeNextState(DES, ft, stepSize, oldValues, change,
 					newValues, true);
 		}
@@ -528,16 +526,17 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	public boolean processEventsAndRules(boolean forceProcessing, DESystem DES, double t, double previousTime, double yTemp[])
 			throws DerivativeException {
+		boolean change=false;
 		if (DES instanceof EventDESystem) {
 			EventDESystem EDES = (EventDESystem) DES;
 			if (EDES.getNumRules() > 0) {
 				processRules(EDES, t, yTemp);
 			}
 			if ((forceProcessing || (!this.hasSolverEventProcessing())) && (EDES.getNumEvents() > 0)) {
-				return processEvents(EDES, t, previousTime, yTemp);
+				change=processEvents(EDES, t, previousTime, yTemp);
 			}
 		}
-		return false;
+		return change;
 	}
 
 	/**
@@ -547,9 +546,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * @return
 	 * @throws DerivativeException
 	 */
-	public void processRules(EventDESystem EDES, double time, double[] Ytemp)
+	public boolean processRules(EventDESystem EDES, double time, double[] Ytemp)
 			throws DerivativeException {
-	  EDES.processAssignmentRules(time, Ytemp);
+	  return EDES.processAssignmentRules(time, Ytemp);
 	}
 
 	/*
@@ -736,14 +735,16 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			  System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
 			  t = computeNextState(DES, t, h, yTemp, change, yTemp, false);
 			}
+			System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 			if (fastFlag) {
 				steady = computeSteadyState(((FastProcessDESystem) DES),
 						result[i], timePoints[0]);
 				System.arraycopy(steady, 0, result[i], 0, yTemp.length);
+				System.arraycopy(steady, 0, yTemp, 0, yTemp.length);
 			}
 
 			additionalResults(DES, t, yTemp, data, i);
-			System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
+			
 			t=timePoints[i];
 
 		}

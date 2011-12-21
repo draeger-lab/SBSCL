@@ -431,7 +431,7 @@ public class ASTNodeObject {
    * 
    */
   protected void computeBooleanValue() {
-    switch (node.getType()) {
+    switch (nodeType) {
         case LOGICAL_AND:
           booleanValue = interpreter.and(children,time);
           break;
