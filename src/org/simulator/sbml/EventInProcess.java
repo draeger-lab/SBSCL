@@ -19,7 +19,11 @@ package org.simulator.sbml;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+
+import org.simulator.sbml.astnode.ASTNodeObject;
+import org.simulator.sbml.astnode.AssignmentRuleObject;
 
 /**
  * <p>
@@ -44,6 +48,12 @@ public class EventInProcess {
 	protected LinkedList<Double> execTimes;
 	protected LinkedList<Double[]> values;
 	protected Map<Integer,Double> assignments;
+  protected ASTNodeObject triggerObject;
+  private ASTNodeObject priorityObject;
+  private ASTNodeObject delayObject;
+  protected List<AssignmentRuleObject> ruleObjects;
+  protected boolean useValuesFromTriggerTime;
+  protected boolean persistent;
 
 	/**
 	 * Creates a new EventInProcess with the given boolean value indicating
@@ -246,5 +256,119 @@ public class EventInProcess {
    */
   public Map<Integer,Double> getAssignments() {
     return assignments;
+  }
+
+  /**
+   * 
+   * @param userObject
+   */
+  public void setTriggerObject(ASTNodeObject triggerObject) {
+    this.triggerObject=triggerObject;
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public ASTNodeObject getTriggerObject() {
+    return triggerObject;
+  }
+
+  /**
+   * 
+   * @param userObject
+   */
+  public void setPriorityObject(ASTNodeObject priorityObject) {
+    this.priorityObject=priorityObject;
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public ASTNodeObject getPriorityObject() {
+    return priorityObject;
+  }
+
+  /**
+   * 
+   * @param userObject
+   */
+  public void setDelayObject(ASTNodeObject delayObject) {
+    this.delayObject=delayObject;
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public ASTNodeObject getDelayObject() {
+    return delayObject;
+  }
+
+  /**
+   * 
+   * @param assignmentRuleObject
+   */
+  public void addRuleObject(AssignmentRuleObject assignmentRuleObject) {
+    if(ruleObjects==null) {
+      ruleObjects=new LinkedList<AssignmentRuleObject>();
+    }
+    ruleObjects.add(assignmentRuleObject);
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public List<AssignmentRuleObject> getRuleObjects() {
+    return ruleObjects;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public boolean getUseValuesFromTriggerTime() {
+    return useValuesFromTriggerTime;
+  }
+  
+  /**
+   * 
+   * @param useValuesFromTriggerTime
+   */
+  public void setUseValuesFromTriggerTime(boolean useValuesFromTriggerTime) {
+    this.useValuesFromTriggerTime=useValuesFromTriggerTime;
+    
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public int getNumEventAssignments() {
+    return ruleObjects.size();
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public boolean getPersistent() {
+    return persistent;
+  }
+  
+  public void setPersistent(boolean persistent) {
+    this.persistent=persistent;
+  }
+
+  /**
+   * 
+   */
+  public void clearRuleObjects() {
+    if(ruleObjects!=null) {
+      ruleObjects.clear();
+    }
+    
   }
 }

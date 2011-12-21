@@ -71,15 +71,35 @@ public class AssignmentRuleObject extends RuleObject{
    * @param Y
    * @param time
    */
-  public void processRule(double[] Y, double time) {
+  public boolean processRule(double[] Y, double time, boolean changeY) {
     processAssignmentVariable(time);
     if(index>=0) {
-      Y[index] = value;
+      double oldValue=Y[index];
+      if(changeY) {
+        Y[index] = value;
+      }
+      if(oldValue!=value) {
+        return true;
+      }
     }
     else if(speciesReferenceID!=null) {
+      Double v=stoichiometricCoefHash.get(speciesReferenceID);
       stoichiometricCoefHash.put(speciesReferenceID, value);
+      
+      if((v!=null) && (v.doubleValue()!=value)) {
+        return true;
+      }
     }
+    return false;
     
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public String getSpeciesReferenceID() {
+    return speciesReferenceID;
   }
   
 }

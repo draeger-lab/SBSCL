@@ -53,9 +53,10 @@ public interface EventDESystem extends DESystem {
 	 *            The current simulation time.
 	 * @param Y
 	 *            The current change of the system.
+	 * @return 
 	 * @throws DerivativeException
 	 */
-	public void processAssignmentRules(double t, double Y[])
+	public boolean processAssignmentRules(double t, double Y[])
 			throws DerivativeException;
 
 	/**

@@ -86,4 +86,20 @@ public class RuleObject {
     }
     return value;
   }
+  
+  /**
+   * 
+   * @return
+   */
+  public double getValue() {
+    return value;
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public int getIndex() {
+    return index;
+  }
 }
