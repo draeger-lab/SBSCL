@@ -259,6 +259,11 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   /**
    * 
    */
+  private int stoichiometriesSize;
+  
+  /**
+   * 
+   */
   private boolean[] reactionFast;
 
   /**
@@ -295,7 +300,22 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   /**
    * 
    */
-  protected boolean modelHasEvents;
+  private boolean modelHasEvents;
+
+  /**
+   * 
+   */
+  private int nRateRules;
+
+  /**
+   * 
+   */
+  private int nAssignmentRules;
+
+  /**
+   * 
+   */
+  private int nConstraints;
   
   /**
    * <p>
@@ -316,6 +336,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     SBMLException {
     this.model = model;
     this.v = new double[this.model.getListOfReactions().size()];
+    this.nConstraints=this.model.getNumConstraints();
     this.symbolHash = new HashMap<String, Integer>();
     this.compartmentHash = new HashMap<String, Integer>();
     this.stoichiometricCoefHash = new HashMap<String, Double>();
@@ -665,10 +686,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
               ASTNodeObject priorityObject = events[i].getPriorityObject();
               if (priorityObject != null) {
                 priority = events[i].getPriorityObject().compileDouble(astNodeTime);
-                
-                if (!priorities.contains(priority)) {
-                  priorities.add(priority);
-                }
+                priorities.add(priority);
                 events[i].changePriority(priority);
               }
               runningEvents.add(i);
@@ -869,7 +887,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       /*
        * Check the model's constraints
        */
-      for (int i = 0; i < (int) model.getNumConstraints(); i++) {
+      for (int i = 0; i < nConstraints; i++) {
         if (model.getConstraint(i).getMath().compile(nodeInterpreter)
             .toBoolean()) {
           listOfContraintsViolations[i].add(Double.valueOf(time));
@@ -1224,7 +1242,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
             }
           }
         }
+        events[i].setUseValuesFromTriggerTime(e.getUseValuesFromTriggerTime());
       }
+      
     }
     
   }
@@ -1303,6 +1323,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       }
       reactionIndex++;
     }
+    stoichiometriesSize=stoichiometries.size();
   }
   
   private void initializeRules() {
@@ -1411,6 +1432,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
         }
       }
     }
+    
+    nRateRules = rateRulesRoots.size();
+    nAssignmentRules = assignmentRulesRoots.size();
   }
   
   
@@ -1677,17 +1701,25 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   private EventInProcess processNextEvent(HashSet<Double> priorities, double[] Y)
     throws DerivativeException {
     Integer symbolIndex;
-    double newVal, highestPriority;
-    Double[] array;
+    double newVal, highestPriority=-1;
     int index;
     // check if more than one event has a priority set at this point in time
     highOrderEvents.clear();
     
     if (!priorities.isEmpty()) {
-      
-      array = priorities.toArray(new Double[priorities.size()]);
-      Arrays.sort(array);
-      highestPriority = array[array.length - 1];
+      boolean first=true;
+      for(double priority:priorities) {
+        if(first) {
+          first=false;
+          highestPriority=priority;
+        }
+        else {
+          highestPriority=Math.max(highestPriority, priority);
+        }
+      }
+//      array = priorities.toArray(new Double[priorities.size()]);
+//      Arrays.sort(array);
+//      highestPriority = array[array.length - 1];
       // get event with the current highest priority
       for (int i = 0; i < this.runningEvents.size(); i++) {
         if (this.events[runningEvents.get(i)].getPriority() == highestPriority) {
@@ -1718,7 +1750,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
         for(AssignmentRuleObject obj: events[index].getRuleObjects()) {
           obj.processRule(Y, astNodeTime, false);
           newVal = obj.getValue();
-          symbolIndex = symbolHash.get(obj.getIndex());
+          symbolIndex = obj.getIndex();;
           if ((symbolIndex>=0) && (compartmentHash.containsValue(symbolIndex))) {
               updateSpeciesConcentration(symbolIndex, Y, false);
           }
@@ -1839,8 +1871,6 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     /*
      * Compute changes due to rules
      */
-    int nRateRules = rateRulesRoots.size();
-    int nAssignmentRules = assignmentRulesRoots.size();
     
     if(changeRate!=null) {
       for(int i=0;i!=nRateRules;i++) {
@@ -1892,11 +1922,10 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       }
     }
     
-    int size = stoichiometries.size();
-    for (int i = 0; i != size; i++) {
+    for (int i = 0; i != stoichiometriesSize; i++) {
       stoichiometries.get(i).computeChange(currentTime, changeRate, v);
     }
-    //
+    
     for(int i=0;i!=changeRate.length;i++) {
       changeRate[i]*=conversionFactors[i];
     }
