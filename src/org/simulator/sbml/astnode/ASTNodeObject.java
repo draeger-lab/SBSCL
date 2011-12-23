@@ -79,7 +79,10 @@ public class ASTNodeObject {
    */
   protected ASTNodeObject rightChild;
   
-  
+  /**
+   * 
+   */
+  protected String name;
   
   /**
    * 
@@ -157,6 +160,11 @@ public class ASTNodeObject {
       numerator = node.getNumerator();
       denominator = node.getDenominator();
     }
+    
+    if(node.isName()) {
+      name=node.getName();
+    }
+    
     this.time=0.0;
     children=new ArrayList<ASTNodeObject>();
     if(node!=null) {  
@@ -287,13 +295,13 @@ public class ASTNodeObject {
         doubleValue = interpreter.frac(leftChild, rightChild, time);
         break;
       case RATIONAL:
-        doubleValue = interpreter.frac(node.getNumerator(), node.getDenominator());
+        doubleValue = interpreter.frac(numerator, denominator);
         break;
       case NAME_TIME:
-        doubleValue = interpreter.symbolTime(node.getName());
+        doubleValue = interpreter.symbolTime(name);
         break;
       case FUNCTION_DELAY:
-        doubleValue = interpreter.delay(node.getName(), leftChild,
+        doubleValue = interpreter.delay(name, leftChild,
           rightChild, units, time);
         break;
       /*

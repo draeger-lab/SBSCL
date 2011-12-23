@@ -160,6 +160,11 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	 * 
 	 */
   private double[] timePoints;
+
+  /**
+   * NaNs that are set before the calculation are ignored.
+   */
+  private boolean[] ignoreNaN;
 	
 	/**
 	 * 
@@ -231,6 +236,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		JAC = new double[numEqn][numEqn];
 		FAC = new double[numEqn][numEqn];
 		I = new double[numEqn][numEqn];
+		ignoreNaN=new boolean[numEqn];
   }
 	
 	@Override
@@ -398,8 +404,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	*/
 
 	public double step(DESystem DES) throws DerivativeException {
-
-		double largestError = 0;
+	  double largestError = 0;
 
 		DES.computeDerivatives(t, y, g0);
 		for (int j = 0; j < numEqn; j++) {
@@ -501,11 +506,13 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		}
 
 		for (int i = 0; i < numEqn; i++) {
-			sk = absTol + relTol * Math.max(Math.abs(y[i]), Math.abs(yNew[i]));
-			largestError += Math.pow(yerr[i] / sk, 2);
+		  if(!ignoreNaN[i]) {
+		    sk = absTol + relTol * Math.max(Math.abs(y[i]), Math.abs(yNew[i]));
+		    largestError += Math.pow(yerr[i] / sk, 2);
 
-			if (Double.isInfinite(yTemp[i]) || Double.isNaN(yTemp[i]))
-				return -1;
+		    if ((Double.isInfinite(yTemp[i]) || Double.isNaN(yTemp[i])))
+		      return -1;
+		  }
 		}
 		largestError = Math.pow(largestError / numEqn, 0.5);
 		return largestError;
@@ -556,6 +563,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
     }
 	  this.hMax = currentStepSize;
 	  
+	  
 	  double timeEnd = BigDecimal.valueOf(time).add(BigDecimal.valueOf(currentStepSize)).doubleValue();
     try {
       
@@ -586,9 +594,19 @@ public class RosenbrockSolver extends AbstractDESSolver {
       
       if(y.length!=y2.length) {
         y=y2.clone();
+        ignoreNaN=new boolean[y.length];
       }
       else {
         System.arraycopy(y2, 0, y, 0, y.length);
+      }
+      
+      for(int i=0;i!=y.length;i++) {
+        if(Double.isInfinite(y[i]) || (Double.isNaN(y[i]))) {
+          ignoreNaN[i]=true;
+        }
+        else{
+          ignoreNaN[i]=false;
+        }
       }
       // add the initial conditions to the solution matrix and let all
       // point
@@ -623,13 +641,19 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
         // see if we're done
         if (t >= timeEnd) {
+          if (DES instanceof EventDESystem) {
+            EventDESystem EDES = (EventDESystem) DES;
+            if ((EDES.getNumEvents() > 0) || (EDES.getNumRules() > 0)) {
+              processEventsAndRules(true, EDES, timeEnd, t-h, yTemp);
+            }
+            System.arraycopy(yTemp, 0, y, 0, numEqn);
+          }
           Mathematics.vvSub(y, y2, change);
           break;
         }
         // copy the current point into yTemp
         System.arraycopy(y, 0, yTemp, 0, numEqn);
         try {
-          
           // take a step
           localError = step(DES);
         } catch (Exception ex) {
@@ -654,14 +678,16 @@ public class RosenbrockSolver extends AbstractDESSolver {
           double newTime = BigDecimal.valueOf(t).add(BigDecimal.valueOf(h)).doubleValue();
           if (DES instanceof EventDESystem) {
             EventDESystem EDES = (EventDESystem) DES;
-            if (EDES.getNumEvents() > 0) {
+            if ((EDES.getNumEvents() > 0) || (EDES.getNumRules() > 0)) {
               changed=processEventsAndRules(true, EDES, Math.min(newTime,timeEnd), t, yTemp);
             }
           }
           
           if(changed) {
-            if(h/10 >hMin) {
-              h = h / 10;
+            if(h/10>hMin) {
+            //if(h>precisionEventsAndRules)  {
+              h=h/10;
+              //h = Math.max(h / 10,precisionEventsAndRules);
               System.arraycopy(oldY, 0, y, 0, numEqn);
             }
             else {
