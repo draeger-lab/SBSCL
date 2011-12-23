@@ -98,6 +98,8 @@ public class MatrixOperations {
 	/** Convergence criterion on delta X */
 	public static final double TOLX = 1.0e-7d;
 
+  private static double[] vv;
+
 	/**
 	 * Given a matrix a[1..n][1..n], this routine replaces it by the LU
 	 * decomposition of a rowwise permutation of itself. a and n are input. a is
@@ -124,8 +126,9 @@ public class MatrixOperations {
 		double big, dum, sum, temp;
 		double d = 1;
 
-		double vv[] = new double[n];
-
+		if((vv==null)||vv.length!=n) {
+		  vv = new double[n];
+		}
 		for (i = 0; i < n; i++) {
 			big = 0.0;
 			for (j = 0; j < n; j++)
