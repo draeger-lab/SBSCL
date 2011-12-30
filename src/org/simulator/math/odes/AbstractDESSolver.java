@@ -24,12 +24,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.events.EventException;
 import org.apache.commons.math.ode.events.EventHandler;
-import org.sbml.jsbml.util.StringTools;
 import org.simulator.math.Mathematics;
 import org.simulator.sbml.EventInProcess;
 
@@ -49,11 +47,6 @@ import org.simulator.sbml.EventInProcess;
 public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, EventHandler {
 
 	/**
-	 * A {@link Logger} for this class.
-	 */
-	private static final transient Logger logger = Logger.getLogger(AbstractDESSolver.class.getName());
-	
-	/**
 	 * Generated serial version identifier.
 	 */
 	private static final long serialVersionUID = 1859418461410763939L;
@@ -64,7 +57,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
+
 	/**
 	 * Switches the inclusion of intermediate results on or off. This feature is
 	 * important if the given {@link DESystem} is an instance of
@@ -80,16 +73,16 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	private double intervalFactor;
 
 	/**
-   * {@link List} of {@link PropertyChangeListener}s (for threading purpose)
-   */
+	 * {@link List} of {@link PropertyChangeListener}s (for threading purpose)
+	 */
 	List<PropertyChangeListener> listenerList;
-	
+
 	/**
 	 * Flag to indicate whether or not negative values within the solution
 	 * should be set to zero.
 	 */
 	private boolean nonnegative;
-	
+
 	/**
 	 * The integration step size.
 	 */
@@ -101,9 +94,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	private boolean unstableFlag;
   
-  /**
+	/**
 	 * Initialize with default integration step size and non-negative attribute
-	 * true.
+	 * <code>true</code>.
 	 */
 	public AbstractDESSolver() {
 		stepSize = 0.01d;
@@ -207,9 +200,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		return !unstableFlag;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
@@ -300,8 +291,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.apache.commons.math.ode.events.EventHandler#eventOccurred(double, double[], boolean)
 	 */
 	public int eventOccurred(double t, double[] y, boolean increasing)
@@ -309,23 +299,21 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		return STOP;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.DESSolver#firePropertyChanged(double, double)
 	 */
 	public void firePropertyChange(double oldValue, double newValue) {
 		if (!this.listenerList.isEmpty()) {
 			PropertyChangeEvent evt = new PropertyChangeEvent(this, "progress",
 					oldValue, newValue);
-			logger.info(String.format("Progress: %s %%", StringTools.toString(newValue)));
+			// logger.info(String.format("Progress: %s %%", StringTools.toString(newValue)));
 			for (PropertyChangeListener listener : this.listenerList) {
 				listener.propertyChange(evt);
 			}
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.apache.commons.math.ode.events.EventHandler#g(double, double[])
 	 */
 	public double g(double t, double[] y) throws EventException {
@@ -343,10 +331,8 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	public abstract String getName();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see eva2.tools.math.des.DESSolver#getStepSize()
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.DESSolver#getStepSize()
 	 */
 	public double getStepSize() {
 		return this.stepSize;
@@ -551,8 +537,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	  return EDES.processAssignmentRules(time, Ytemp);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.DESSolver#removePropertyChangedListener(java.beans.PropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
@@ -561,8 +546,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.apache.commons.math.ode.events.EventHandler#resetState(double, double[])
 	 */
 	public void resetState(double t, double[] y) throws EventException {
@@ -583,10 +567,8 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		this.nonnegative = nonnegative;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see eva2.tools.math.des.DESSolver#setStepSize(double)
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.DESSolver#setStepSize(double)
 	 */
 	public void setStepSize(double stepSize) {
 		if (stepSize < Double.MIN_VALUE) {
@@ -661,11 +643,8 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		return data;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see eva2.tools.math.des.DESSolver#solve(eva2.tools.math.des.DESystem,
-	 * double[], double, double, int)
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.DESSolver#solve(org.simulator.math.odes.DESystem, double[], double, double, int)
 	 */
 	public MultiTable solve(DESystem DES, double[] initialValues,
 			double x, double h, int steps) throws DerivativeException {
@@ -751,12 +730,8 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		return data;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * eva2.tools.math.des.DESSolver#solveAtTimePointsWithInitialConditions(
-	 * eva2.tools.math.des.DESystem, double[][], double[])
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.DESSolver#solve(org.simulator.math.odes.DESystem, org.simulator.math.odes.MultiTable.Block, double[])
 	 */
 	public MultiTable solve(DESystem DES,
 			MultiTable.Block initConditions, double[] initialValues)
