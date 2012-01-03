@@ -49,8 +49,7 @@ import org.simulator.math.odes.MultiTable.Block.Column;
  * @version $Rev$
  * @since 0.9
  */
-public class MultiTable extends AbstractTableModel implements
-		Iterable<Iterable<Double>> {
+public class MultiTable extends AbstractTableModel implements Iterable<Iterable<Double>> {
 
 	/**
 	 * A {@link Block} is a data structure with a two-dimensional double array
@@ -116,9 +115,7 @@ public class MultiTable extends AbstractTableModel implements
 				return data[rowIndex][columnIndex];
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
+			/* (non-Javadoc)
 			 * @see java.lang.Iterable#iterator()
 			 */
 			public Iterator<Double> iterator() {
@@ -129,27 +126,21 @@ public class MultiTable extends AbstractTableModel implements
 					 */
 					private int currRow = 0;
 
-					/*
-					 * (non-Javadoc)
-					 * 
+					/* (non-Javadoc)
 					 * @see java.util.Iterator#hasNext()
 					 */
 					public boolean hasNext() {
 						return currRow < getRowCount();
 					}
 
-					/*
-					 * (non-Javadoc)
-					 * 
+					/* (non-Javadoc)
 					 * @see java.util.Iterator#next()
 					 */
 					public Double next() {
 						return Double.valueOf(getValue(currRow++));
 					}
 
-					/*
-					 * (non-Javadoc)
-					 * 
+					/* (non-Javadoc)
 					 * @see java.util.Iterator#remove()
 					 */
 					public void remove() {
@@ -174,9 +165,7 @@ public class MultiTable extends AbstractTableModel implements
 						.doubleValue();
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
+			/* (non-Javadoc)
 			 * @see java.lang.Object#toString()
 			 */
 			@Override
@@ -283,17 +272,14 @@ public class MultiTable extends AbstractTableModel implements
 			return new Column(idHash.get(identfier).intValue());
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
+		/* (non-Javadoc)
 		 * @see javax.swing.table.TableModel#getColumnCount()
 		 */
 		public int getColumnCount() {
 			return identifiers.length;
 		}
 
-		/*
-		 * (non-Javadoc)
+		/* (non-Javadoc)
 		 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
 		 */
 		@Override
@@ -335,9 +321,7 @@ public class MultiTable extends AbstractTableModel implements
 			return data[rowIndex];
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
+		/* (non-Javadoc)
 		 * @see javax.swing.table.TableModel#getRowCount()
 		 */
 		public int getRowCount() {
@@ -353,9 +337,7 @@ public class MultiTable extends AbstractTableModel implements
 			return parent.getTimePoints();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
+		/* (non-Javadoc)
 		 * @see javax.swing.table.TableModel#getValueAt(int, int)
 		 */
 		public Double getValueAt(int rowIndex, int columnIndex) {
@@ -431,12 +413,8 @@ public class MultiTable extends AbstractTableModel implements
 			data[rowIndex] = array;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object,
-		 * int, int)
+		/* (non-Javadoc)
+		 * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
 		 */
 		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
@@ -451,9 +429,7 @@ public class MultiTable extends AbstractTableModel implements
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
+		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
 		@Override
@@ -661,9 +637,7 @@ public class MultiTable extends AbstractTableModel implements
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
 	 */
 	@Override
@@ -671,9 +645,7 @@ public class MultiTable extends AbstractTableModel implements
 		return Double.class;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see javax.swing.table.TableModel#getColumnCount()
 	 */
 	public int getColumnCount() {
@@ -687,9 +659,7 @@ public class MultiTable extends AbstractTableModel implements
 		return count;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
 	 */
 	@Override
@@ -720,9 +690,7 @@ public class MultiTable extends AbstractTableModel implements
 		return listOfBlocks.size();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see javax.swing.table.TableModel#getRowCount()
 	 */
 	public int getRowCount() {
@@ -756,9 +724,7 @@ public class MultiTable extends AbstractTableModel implements
 		return timePoints;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see javax.swing.table.TableModel#getValueAt(int, int)
 	 */
 	public Double getValueAt(int rowIndex, int columnIndex) {
@@ -766,9 +732,7 @@ public class MultiTable extends AbstractTableModel implements
 				: getColumn(columnIndex).getValue(rowIndex));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
 	 */
 	@Override
@@ -786,9 +750,7 @@ public class MultiTable extends AbstractTableModel implements
 		return timePoints != null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
 	 */
 	public Iterator<Iterable<Double>> iterator() {
@@ -796,27 +758,21 @@ public class MultiTable extends AbstractTableModel implements
 
 			private int currCol = 0;
 
-			/*
-			 * (non-Javadoc)
-			 * 
+			/* (non-Javadoc)
 			 * @see java.util.Iterator#hasNext()
 			 */
 			public boolean hasNext() {
 				return currCol < getColumnCount() - 1;
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
+			/* (non-Javadoc)
 			 * @see java.util.Iterator#next()
 			 */
 			public Iterable<Double> next() {
 				return getColumn(currCol++);
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
+			/* (non-Javadoc)
 			 * @see java.util.Iterator#remove()
 			 */
 			public void remove() {
@@ -870,11 +826,8 @@ public class MultiTable extends AbstractTableModel implements
 		this.timePoints = timePoints;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object,
-	 * int, int)
+	/* (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
 	 */
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
@@ -889,9 +842,7 @@ public class MultiTable extends AbstractTableModel implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
