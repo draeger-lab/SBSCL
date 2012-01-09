@@ -88,12 +88,31 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 			}
 
 			/**
+			 * Returns the human-readable name for this column if there is any, otherwise
+			 * this will return the same value as {@link #getId()}.
+			 * 
+			 * @return
+			 */
+			public String getColumnName() {
+				return ((columnNames != null) && (columnNames[columnIndex] != null)) ? columnNames[columnIndex]
+						: getId();
+			}
+			
+			/**
 			 * Delivers the {@link Column} identifier of this particular column.
 			 * 
 			 * @return The {@link String} that identifies this {@link Column}.
 			 */
 			public String getId() {
 				return identifiers[columnIndex];
+			}
+			
+			/**
+			 * 
+			 * @return
+			 */
+			public String getName() {
+				return columnNames[columnIndex];
 			}
 
 			/**
@@ -181,6 +200,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 				sb.append(']');
 				return sb.toString();
 			}
+
 		}
 
 		/**
@@ -188,6 +208,16 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		 */
 		private static final long serialVersionUID = -6797479340761921075L;
 
+		/**
+		 * The optional name of the block.
+		 */
+		private String blockName;
+
+		/**
+		 * Human-readable names that are used to display the name of a column.
+		 */
+		private String columnNames[];
+		
 		/**
 		 * The matrix of actual data. Must have an equal number of rows as the
 		 * time points array.
@@ -207,11 +237,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		private Hashtable<String, Integer> idHash;
 
 		/**
-		 * The optional name of the block.
-		 */
-		private String name;
-
-		/**
 		 * Pointer to the containing table.
 		 */
 		private MultiTable parent;
@@ -220,12 +245,19 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		 * 
 		 * @param data
 		 * @param identifiers
+		 * @param parent
 		 */
 		private Block(double[][] data, String[] identifiers,
+				MultiTable parent) {
+			this(data, identifiers, null, parent);
+		}
+
+		private Block(double[][] data, String[] identifiers, String[] names,
 				MultiTable parent) {
 			this(parent);
 			setData(data);
 			setIdentifiers(identifiers);
+			setColumnNames(names);
 		}
 
 		/**
@@ -235,7 +267,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 			this.parent = parent;
 			idHash = new Hashtable<String, Integer>();
 		}
-
+		
 		/**
 		 * Checks whether or not this {@link Block} contains a {@link Column}
 		 * with the given identifier.
@@ -279,14 +311,31 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 			return identifiers.length;
 		}
 
+		/**
+		 * 
+		 * @param column
+		 * @return
+		 */
+		public String getColumnIdentifier(int column) {
+			return identifiers[column];
+		}
+
 		/* (non-Javadoc)
 		 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
 		 */
 		@Override
 		public String getColumnName(int column) {
-			return identifiers[column]; 
+			return (columnNames == null) || (columnNames[column] == null) ? getColumnIdentifier(column)
+					: columnNames[column];
 		}
 
+		/**
+		 * @return the columnNames
+		 */
+		public String[] getColumnNames() {
+			return columnNames;
+		}
+		
 		/**
 		 * @return the data
 		 */
@@ -306,7 +355,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		 * @return
 		 */
 		public String getName() {
-			return name;
+			return blockName;
 		}
 
 		/**
@@ -357,6 +406,13 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		}
 
 		/**
+		 * @param columnNames the columnNames to set
+		 */
+		public void setColumnNames(String[] columnNames) {
+			this.columnNames = columnNames;
+		}
+
+		/**
 		 * @param data
 		 *            the data to set
 		 */
@@ -391,7 +447,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		 * @param name
 		 */
 		public void setName(String name) {
-			this.name = name;
+			this.blockName = name;
 		}
 
 		/**
@@ -485,6 +541,11 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	private List<Block> listOfBlocks;
 
 	/**
+	 * 
+	 */
+	private String name;
+
+	/**
 	 * The name of the time column. Default is the English word "Time".
 	 */
 	private String timeName = "Time";
@@ -494,11 +555,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	 * must be sorted.
 	 */
 	private double timePoints[];
-
-	/**
-	 * 
-	 */
-	private String name;
 
 	/**
 	 * Constructs an empty {@link MultiTable} object.
@@ -518,17 +574,35 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	 */
 	public MultiTable(double timePoints[], double data[][],
 			String identifiers[]) {
+		this(timePoints, data, identifiers, null);
+	}
+
+	/**
+	 * 
+	 * @param timePoints
+	 * @param data
+	 * @param columnIdentifiers
+	 * @param columnNames
+	 */
+	public MultiTable(double[] timePoints, double[][] data,
+			String[] columnIdentifiers, String[] columnNames) {
 		this();
 		setTimePoints(timePoints);
 		String ids[];
-		if (identifiers.length == data[0].length + 1) {
-			setTimeName(identifiers[0]);
-			ids = new String[identifiers.length - 1];
-			System.arraycopy(identifiers, 1, ids, 0, ids.length);
+		if (columnIdentifiers.length == data[0].length + 1) {
+			setTimeName(columnIdentifiers[0]);
+			ids = new String[columnIdentifiers.length - 1];
+			System.arraycopy(columnIdentifiers, 1, ids, 0, ids.length);
 		} else {
-			ids = identifiers;
+			ids = columnIdentifiers;
 		}
-		listOfBlocks.add(new Block(data, ids, this));
+		String names[] = columnNames;
+		if ((columnNames != null) && (columnNames.length == data[0].length + 1)) {
+			setTimeName(columnNames[0]);
+			names = new String[columnNames.length - 1];
+			System.arraycopy(columnNames, 1, names, 0, names.length);
+		}
+		listOfBlocks.add(new Block(data, ids, names, this));
 	}
 
 	/**
@@ -630,7 +704,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	 */
 	public Column getColumn(String identifier) {
 		for (int i = 1; i < getColumnCount(); i++) {
-			if (getColumnName(i).equals(identifier)) {
+			if (getColumnIdentifier(i).equals(identifier)) {
 				return getColumn(i);
 			}
 		}
@@ -659,6 +733,21 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		return count;
 	}
 
+	/**
+	 * 
+	 * @param column
+	 * @return
+	 */
+	public String getColumnIdentifier(int column) {
+		if (column > getColumnCount()) {
+			throw new IndexOutOfBoundsException(Integer.toString(column));
+		}
+		if (column == 0) {
+			return getTimeName();
+		}
+		return getColumn(column).getId();
+	}
+
 	/* (non-Javadoc)
 	 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
 	 */
@@ -670,7 +759,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		if (column == 0) {
 			return getTimeName();
 		}
-		return getColumn(column).getId();
+		return getColumn(column).getColumnName();
 	}
 
 	/**
