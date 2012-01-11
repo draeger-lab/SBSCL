@@ -316,6 +316,12 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * 
    */
   private int nConstraints;
+
+  
+  /**
+   * 
+   */
+  private List<AssignmentRuleObject> initialAssignmentRoots;
   
   /**
    * <p>
@@ -875,7 +881,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       /*
        * Compute changes due to rules
        */
-      processRules(currentTime, changeRate, this.Y);
+      processRules(astNodeTime, changeRate, this.Y);
       
       /*
        * Compute changes due to reactions
@@ -1060,56 +1066,6 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       yIndex++;
     }
     
-    
-    
-    /*
-     * Initial assignments
-     */
-    processInitialAssignments();
-    
-    //updateValues();
-    /*
-     * Evaluate Constraints
-     */
-    if (model.getNumConstraints() > 0) {
-      this.listOfContraintsViolations = (List<Double>[]) new LinkedList<?>[(int) model
-          .getNumConstraints()];
-      for (i = 0; i < (int) model.getNumConstraints(); i++) {
-        if (listOfContraintsViolations[i] == null) {
-          this.listOfContraintsViolations[i] = new LinkedList<Double>();
-        }
-        if (model.getConstraint(i).getMath().compile(nodeInterpreter)
-            .toBoolean()) {
-          this.listOfContraintsViolations[i].add(Double.valueOf(0d));
-        }
-      }
-    }
-    
-    /*
-     * Initialize Events
-     */
-    if (model.getNumEvents() > 0) {
-      // this.events = new ArrayList<EventWithPriority>();
-      this.events = new EventInProcess[model.getNumEvents()];
-      this.runningEvents = new LinkedList<Integer>();
-      this.delayedEvents = new LinkedList<Integer>();
-      initEvents();
-      modelHasEvents=true;
-    }
-    else {
-      modelHasEvents=false;
-    }
-    
-    /*
-     * Algebraic Rules
-     */
-    for (i = 0; i < (int) model.getNumRules(); i++) {
-      if (model.getRule(i).isAlgebraic()) {
-        evaluateAlgebraicRule();
-        break;
-      }
-    }
-    
     /*
      * Check for fast reactions & update math of kinetic law to avoid wrong
      * links concerning local parameters
@@ -1156,27 +1112,83 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       }
       reactionIndex++;
     }
+    
+    /*
+     * Algebraic Rules
+     */
+    for (i = 0; i < (int) model.getNumRules(); i++) {
+      if (model.getRule(i).isAlgebraic()) {
+        evaluateAlgebraicRule();
+        break;
+      }
+    }
+    
+    /*
+     * Initialize Events
+     */
+    if (model.getNumEvents() > 0) {
+      // this.events = new ArrayList<EventWithPriority>();
+      this.events = new EventInProcess[model.getNumEvents()];
+      this.runningEvents = new LinkedList<Integer>();
+      this.delayedEvents = new LinkedList<Integer>();
+      initEvents();
+      modelHasEvents=true;
+    }
+    else {
+      modelHasEvents=false;
+    }
+    
+    
     if(refreshTree) {
       createSimplifiedSyntaxTree();
+    
+    }
+    
+    // save the initial values of this system, necessary at this point for the delay function
+    if(initialValues.length!=Y.length) {
+      initialValues = new double[Y.length];
+    }
+    System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
+    
+    /*
+     * Initial assignments
+     */
+    astNodeTime+=0.01;
+    processInitialAssignments(astNodeTime,this.Y);
+    
+    /*
+     * Evaluate Constraints
+     */
+    if (model.getNumConstraints() > 0) {
+      this.listOfContraintsViolations = (List<Double>[]) new LinkedList<?>[(int) model
+          .getNumConstraints()];
+      for (i = 0; i < (int) model.getNumConstraints(); i++) {
+        if (listOfContraintsViolations[i] == null) {
+          this.listOfContraintsViolations[i] = new LinkedList<Double>();
+        }
+        if (model.getConstraint(i).getMath().compile(nodeInterpreter)
+            .toBoolean()) {
+          this.listOfContraintsViolations[i].add(Double.valueOf(0d));
+        }
+      }
     }
     
     /*
      * All other rules
      */
     astNodeTime+=0.01;
-    processRules(currentTime, null, this.Y);
+    processRules(astNodeTime, null, this.Y);
     
     /*
      * Process initial assignments a 2nd time because there can be rules
      * dependent on initial assignments and vice versa, so one of both has to be
      * evaluated twice at the start
      */
-    processInitialAssignments();
+    
+    astNodeTime+=0.01;
+    processInitialAssignments(astNodeTime,this.Y);
     
     // save the initial values of this system
-    if(initialValues.length!=Y.length) {
-      initialValues = new double[Y.length];
-    }
     System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
     
     
@@ -1328,6 +1340,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   
   private void initializeRules() {
     assignmentRulesRoots = new ArrayList<AssignmentRuleObject>();
+    initialAssignmentRoots = new ArrayList<AssignmentRuleObject>();
     rateRulesRoots = new ArrayList<RateRuleObject>();
     Integer symbolIndex;
     
@@ -1433,6 +1446,35 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       }
     }
     
+    for(int i = 0; i < model.getNumInitialAssignments(); i++) {
+      InitialAssignment iA = model.getInitialAssignment(i);
+      symbolIndex = symbolHash.get(iA.getVariable());
+      if (symbolIndex != null) {
+        Species sp = model.getSpecies(iA.getVariable());
+        if (sp != null) {
+          Compartment c = sp.getCompartmentInstance();
+          boolean hasZeroSpatialDimensions = true;
+          if((c!=null) && (c.getSpatialDimensions()>0)) {
+            hasZeroSpatialDimensions=false;
+          }
+          initialAssignmentRoots.add(new AssignmentRuleObject(
+            (ASTNodeObject) copyAST(iA.getMath(), true, null, null)
+                .getUserObject(), symbolIndex, sp, compartmentHash.get(sp
+                .getId()), hasZeroSpatialDimensions, this));
+        } else {
+          initialAssignmentRoots.add(new AssignmentRuleObject(
+            (ASTNodeObject) copyAST(iA.getMath(), true, null, null)
+                .getUserObject(), symbolIndex));
+        }
+      } else if (model.findSpeciesReference(iA.getVariable()) != null) {
+        SpeciesReference sr = model.findSpeciesReference(iA.getVariable());
+        if (sr.getConstant() == false) {
+          initialAssignmentRoots.add(new AssignmentRuleObject(
+            (ASTNodeObject) copyAST(iA.getMath(), true, null, null)
+                .getUserObject(), sr.getId(), stoichiometricCoefHash));
+        }
+      }
+    }
     nRateRules = rateRulesRoots.size();
     nAssignmentRules = assignmentRulesRoots.size();
   }
@@ -1687,6 +1729,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    */
   public boolean processAssignmentRules(double t, double Y[])
     throws DerivativeException {
+    this.currentTime=t;
+    this.astNodeTime+=0.01;
     return processRules(t,null,Y);
   }
   
@@ -1799,66 +1843,21 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * 
    * @see org.sbml.simulator.math.ValueHolder#getCurrentCompartmentSize()
    */
-
+  
   /**
-   * Processes the initial assignments of the model
    * 
+   * @param time
+   * @param Y
    * @throws SBMLException
    */
-  private void processInitialAssignments() throws SBMLException {
-    for (int i = 0; i < model.getNumInitialAssignments(); i++) {
-      InitialAssignment iA = model.getInitialAssignment(i);
-      Integer index = null;
-      if (iA.isSetMath() && iA.isSetVariable()) {
-        if (model.getSpecies(iA.getVariable()) != null) {
-          Species s = model.getSpecies(iA.getVariable());
-          double compartmentValue;
-          String id = s.getId();
-          index = symbolHash.get(id);
-          
-          if (compartmentHash.containsKey(id)) {
-            if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits()) {
-              compartmentValue = getCurrentCompartmentValueOf(id);
-              this.Y[index] = iA.getMath().compile(nodeInterpreter).toDouble()
-                  * compartmentValue;
-            } else if (s.isSetInitialConcentration()
-                && s.getHasOnlySubstanceUnits()) {
-              compartmentValue = getCurrentCompartmentValueOf(id);
-              this.Y[index] = iA.getMath().compile(nodeInterpreter).toDouble()
-                  / compartmentValue;
-            } else {
-              this.Y[index] = iA.getMath().compile(nodeInterpreter).toDouble();
-            }
-            
-          } else {
-            this.Y[index] = iA.getMath().compile(nodeInterpreter).toDouble();
-          }
-          
-        } else if (model.getCompartment(iA.getVariable()) != null) {
-          Compartment c = model.getCompartment(iA.getVariable());
-          index = symbolHash.get(c.getId());
-          this.Y[index] = iA.getMath().compile(nodeInterpreter).toDouble();
-        } else if (model.getParameter(iA.getVariable()) != null) {
-          Parameter p = model.getParameter(iA.getVariable());
-          index = symbolHash.get(p.getId());
-          this.Y[index] = iA.getMath().compile(nodeInterpreter).toDouble();
-        } else if (model.findSpeciesReference(iA.getVariable()) != null) {
-          SpeciesReference sr = model.findSpeciesReference(iA.getVariable());
-          double assignment = iA.getMath().compile(nodeInterpreter).toDouble();
-          stoichiometricCoefHash.put(sr.getId(), assignment);
-          index = symbolHash.get(sr.getId());
-          if (index != null) {
-            this.Y[index] = assignment;
-          }
-        } else {
-          System.err
-              .println("The model contains an initial assignment for a component other than species, compartment, parameter or species reference.");
-        }
+  public void processInitialAssignments(double time, double[] Y) throws SBMLException {
+    if(Y != null) {
+      for (int i = 0; i != initialAssignmentRoots.size(); i++) {
+        initialAssignmentRoots.get(i).processRule(Y, time,true);
       }
     }
   }
   
-
   /**
    * 
    * @param time
@@ -1874,14 +1873,14 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     
     if(changeRate!=null) {
       for(int i=0;i!=nRateRules;i++) {
-        rateRulesRoots.get(i).processRule(changeRate, this.Y, astNodeTime);
+        rateRulesRoots.get(i).processRule(changeRate, this.Y, time);
       }
     }
     
     boolean changeByAssignmentRules=false;
     if(Y != null) {
       for (int i = 0; i != nAssignmentRules; i++) {
-        boolean currentChange=assignmentRulesRoots.get(i).processRule(Y, astNodeTime,true);
+        boolean currentChange=assignmentRulesRoots.get(i).processRule(Y, time,true);
         changeByAssignmentRules = changeByAssignmentRules || currentChange;
       }
     }
@@ -1923,7 +1922,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     }
     
     for (int i = 0; i != stoichiometriesSize; i++) {
-      stoichiometries.get(i).computeChange(currentTime, changeRate, v);
+      stoichiometries.get(i).computeChange(astNodeTime, changeRate, v);
     }
     
     for(int i=0;i!=changeRate.length;i++) {
@@ -2056,11 +2055,38 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * @see org.simulator.math.odes.DelayValueHolder#computeDelayedValue(double, java.lang.String)
    */
   public double computeDelayedValue(double time, String id) throws DerivativeException {
-    if (this.delayValueHolder == null) {
+    if(time<0) {
+      int index=symbolHash.get(id);
+      double oldTime=currentTime;
+      this.currentTime=time;
+      double value=Double.NaN;
+      for(AssignmentRuleObject r: assignmentRulesRoots) {
+        if(r.getIndex()==index) {
+          r.processRule(Y, -astNodeTime, false);
+          value=r.getValue();
+          break;
+        }
+      }
+      if(Double.isNaN(value)) {
+        for(AssignmentRuleObject i: initialAssignmentRoots) {
+          if(i.getIndex()==index) {
+            i.processRule(Y, -astNodeTime, false);
+            value=i.getValue();
+            break;
+          }
+        }
+      }
+      if(Double.isNaN(value)) {
+        value=initialValues[index]; 
+      }
+      this.currentTime=oldTime;
+      return value;
+    }
+    else if (this.delayValueHolder == null) {
       logger.warning(String.format(
         "Cannot access delayed value at time %s for %s.", StringTools
             .toString(time), id));
-      return 0;
+      
     }
     return this.delayValueHolder.computeDelayedValue(time, id);
   }
