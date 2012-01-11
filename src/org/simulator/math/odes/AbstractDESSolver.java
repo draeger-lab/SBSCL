@@ -29,6 +29,7 @@ import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.events.EventException;
 import org.apache.commons.math.ode.events.EventHandler;
 import org.simulator.math.Mathematics;
+import org.simulator.math.odes.MultiTable.Block.Column;
 import org.simulator.sbml.EventInProcess;
 
 /**
@@ -93,6 +94,11 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * values occur within the solution.
 	 */
 	private boolean unstableFlag;
+
+	/**
+	 * 
+	 */
+  private MultiTable data;
   
 	/**
 	 * Initialize with default integration step size and non-negative attribute
@@ -230,7 +236,44 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * @see org.simulator.math.odes.DelayValueHolder#computeValue(double, java.lang.String)
 	 */
 	public double computeDelayedValue(double time, String id) throws DerivativeException {
-	  return 0d;
+	  //get interval
+	  double[] timepoints=data.getTimePoints();
+	  int leftIndex=-1;
+	  int rightIndex=-1;
+	  for(int i=0;i!=timepoints.length;i++) {
+	    if(timepoints[i]>=time) {
+	      rightIndex=i;
+	      if((i>0)&&(timepoints[i]>time)) {
+	        leftIndex=i-1;
+	      }
+	      break;
+	    }
+	  }
+	  if((leftIndex==-1)&&(rightIndex==-1)) {
+	    leftIndex=timepoints.length-1;
+	  }
+	  
+	  //get values and do an interpolation if necessary
+	  double leftValue=Double.NaN;
+	  double rightValue=Double.NaN;
+	  
+	  Column c=data.getColumn(id);
+	  if(leftIndex!=-1) {
+	    leftValue=c.getValue(leftIndex);
+	  }
+	  if(rightIndex!=-1) {
+	    rightValue=c.getValue(rightIndex);
+	  }
+	  
+	  if(leftIndex==-1) {
+	    return rightValue;
+	  }
+	  else if(rightIndex==-1) {
+	    return leftValue;
+	  }
+	  else {
+	    return leftValue + (rightValue-leftValue)*((time-timepoints[leftIndex])/(timepoints[rightIndex]-timepoints[leftIndex]));
+	  }
 	}
 
   /**
@@ -403,7 +446,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			double[] initialValues, double[] timePoints) {
 		double result[][] = new double[timePoints.length][initialValues.length];
 		System.arraycopy(initialValues, 0, result[0], 0, initialValues.length);
-		MultiTable data = new MultiTable(timePoints, result, DES
+		data = new MultiTable(timePoints, result, DES
 				.getIdentifiers());
 		data.getBlock(0).setName("Values");
 		if (includeIntermediates && (DES instanceof RichDESystem)) {
@@ -598,6 +641,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	public MultiTable solve(DESystem DES, double[] initialValues,
 			double timeBegin, double timeEnd) throws DerivativeException {
+	  if(DES instanceof DelayedDESystem) {
+	    ((DelayedDESystem)DES).registerDelayValueHolder(this);
+	  }
 		this.intervalFactor = 100d / (timeEnd - timeBegin);
 		MultiTable data = initResultMatrix(DES, initialValues, timeBegin,
 				timeEnd);
@@ -668,7 +714,10 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	public MultiTable solve(DESystem DES, double[] initialValues,
 			double[] timePoints) throws DerivativeException {
-		MultiTable data = initResultMatrix(DES, initialValues, timePoints);
+	  if(DES instanceof DelayedDESystem) {
+      ((DelayedDESystem)DES).registerDelayValueHolder(this);
+    }
+	  MultiTable data = initResultMatrix(DES, initialValues, timePoints);
 		double result[][] = data.getBlock(0).getData();
 		double change[] = new double[initialValues.length];
 		double yPrev[] = new double[initialValues.length];
@@ -736,6 +785,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	public MultiTable solve(DESystem DES,
 			MultiTable.Block initConditions, double[] initialValues)
 			throws DerivativeException {
+	  if(DES instanceof DelayedDESystem) {
+      ((DelayedDESystem)DES).registerDelayValueHolder(this);
+    }
 		double[] timePoints = initConditions.getTimePoints();
 		// of items to be simulated, this will cause a problem!
 		
