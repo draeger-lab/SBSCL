@@ -1567,6 +1567,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
         case NAME:
           copiedAST.setName(node.getName());
           CallableSBase variable = node.getVariable();
+          if((variable==null) && (function==null)) {
+            variable = model.findCallableSBase(node.getName());
+          }
           if (variable != null) {
             copiedAST.setVariable(variable);
             if (variable instanceof FunctionDefinition) {
@@ -1674,6 +1677,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * @return
    */
   private boolean containUnequalLocalParameters(ASTNode node1, ASTNode node2) {
+    if(node1.getChildCount()!=node2.getChildCount()) {
+      return true;
+    }
     if((node1.getType() == ASTNode.Type.NAME) && (node2.getType() == ASTNode.Type.NAME) &&
       (node1.getVariable() instanceof LocalParameter) && (node2.getVariable() instanceof LocalParameter)) {
         LocalParameter lp1 = (LocalParameter) node1.getVariable();
