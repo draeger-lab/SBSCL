@@ -71,6 +71,21 @@ public class EventInProcess {
 		this.lastTimeExecuted=-1;
 		this.assignments = new HashMap<Integer,Double>();
 	}
+	
+	/**
+	 * 
+	 * @param fired
+	 */
+	public void refresh(boolean fired) {
+	  this.fired = fired;
+    this.execTimes = new LinkedList<Double>();
+    this.values = new LinkedList<Double[]>();
+    this.priority = Double.NEGATIVE_INFINITY;
+    this.lastTimeFired=-1;
+    this.lastTimeRecovered=-1;
+    this.lastTimeExecuted=-1;
+    this.assignments = new HashMap<Integer,Double>();
+	}
 
 	/**
 	 * The event has been aborted between trigger and execution. For this class
