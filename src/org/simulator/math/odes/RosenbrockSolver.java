@@ -450,7 +450,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		try {
 			MatrixOperations.ludcmp(FAC, indx);
 		} catch (MatrixException e) {
-			throw new Error(
+			throw new DerivativeException(
 					"Rosenbrock solver returns an error due to singular matrix.");
 		}
 
@@ -558,7 +558,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	@Override
 	public double[] computeChange(DESystem DES, double[] y2, double time,
 			double currentStepSize, double[] change) throws DerivativeException {
-	  if((y==null) || (y.length==0)) {
+	  if((y==null) || (y.length==0) || (y.length!=y2.length)) {
       init(DES.getDimension(),this.getStepSize(),2);
     }
 	  this.hMax = currentStepSize;

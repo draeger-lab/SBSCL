@@ -127,7 +127,7 @@ public abstract class FirstOrderSolver extends AbstractDESSolver {
   @Override
   public double[] computeChange(DESystem DES, double[] y, double t,
     double stepSize, double[] change) throws DerivativeException {
-    if(integrationResult==null) {
+    if((integrationResult==null)||(integrationResult.length!=y.length)) {
       integrationResult = new double[y.length];
     }
     

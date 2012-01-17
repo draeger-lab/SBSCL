@@ -112,6 +112,20 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		this.intervalFactor = 0d;
 		this.listenerList = new LinkedList<PropertyChangeListener>();
 	}
+	
+	/**
+   * Initialize with default integration step size and non-negative attribute
+   * <code>true</code>.
+   */
+  public void reset() {
+    stepSize = 0.01d;
+    nonnegative = false;
+    unstableFlag = false;
+    includeIntermediates = true;
+    this.intervalFactor = 0d;
+    this.listenerList = new LinkedList<PropertyChangeListener>();
+  }
+	
 
 	/**
 	 * Clone constructor.
