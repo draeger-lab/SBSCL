@@ -703,12 +703,23 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	 *         {@link Column} exists.
 	 */
 	public Column getColumn(String identifier) {
+		int index = getColumnIndex(identifier);
+		return index > -1 ? getColumn(index) : null;
+	}
+	
+	/**
+	 * Returns the index of a column for a given identifier.
+	 * 
+	 * @param identifier
+	 * @return
+	 */
+	public int getColumnIndex(String identifier) {
 		for (int i = 1; i < getColumnCount(); i++) {
 			if (getColumnIdentifier(i).equals(identifier)) {
-				return getColumn(i);
+				return i;
 			}
 		}
-		return null;
+		return -1;
 	}
 
 	/* (non-Javadoc)
@@ -953,4 +964,5 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		}
 		return sb.toString();
 	}
+
 }
