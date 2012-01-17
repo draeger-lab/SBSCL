@@ -436,7 +436,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * @param changeRate
    * @throws ModelOverdeterminedException
    */
-  private void evaluateAlgebraicRule() throws ModelOverdeterminedException {
+  private void evaluateAlgebraicRules() throws ModelOverdeterminedException {
     OverdeterminationValidator odv = new OverdeterminationValidator(model);
     // model has not to be overdetermined (violation of the SBML
     // specifications)
@@ -866,6 +866,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   public void computeDerivatives(double time, double[] Y, double[] changeRate)
     throws DerivativeException {
     this.currentTime = time;
+    if(Double.isNaN(time)) {
+      throw new DerivativeException("Time should not be NaN!");
+    }
     System.arraycopy(Y, 0, this.Y, 0, Y.length);
     if (modelHasEvents) {
       this.runningEvents.clear();
@@ -1116,11 +1119,15 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     /*
      * Algebraic Rules
      */
+    boolean containsAlgebraicRules=false;
     for (i = 0; i < (int) model.getNumRules(); i++) {
       if (model.getRule(i).isAlgebraic()) {
-        evaluateAlgebraicRule();
+        containsAlgebraicRules=true;
         break;
       }
+    }
+    if(containsAlgebraicRules) {
+      evaluateAlgebraicRules();
     }
     
     /*
@@ -1128,7 +1135,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
      */
     if (model.getNumEvents() > 0) {
       // this.events = new ArrayList<EventWithPriority>();
-      this.events = new EventInProcess[model.getNumEvents()];
+      if(this.events==null) {
+        this.events = new EventInProcess[model.getNumEvents()];
+      }
       this.runningEvents = new LinkedList<Integer>();
       this.delayedEvents = new LinkedList<Integer>();
       initEvents();
@@ -1710,11 +1719,23 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     for (int i = 0; i < model.getNumEvents(); i++) {
       
       if (model.getEvent(i).getDelay() == null) {
-        events[i] = new EventInProcess(model.getEvent(i).getTrigger()
+        if(events[i]!=null) {
+          events[i].refresh(model.getEvent(i).getTrigger()
             .getInitialValue());
+        }
+        else {
+          events[i] = new EventInProcess(model.getEvent(i).getTrigger()
+            .getInitialValue());
+        }
       } else {
-        events[i] = new EventInProcessWithDelay(model.getEvent(i).getTrigger()
+        if(events[i]!=null) {
+          events[i].refresh(model.getEvent(i).getTrigger()
             .getInitialValue());
+        }
+        else {
+          events[i] = new EventInProcessWithDelay(model.getEvent(i).getTrigger()
+            .getInitialValue());
+        }
       }
     }
   }

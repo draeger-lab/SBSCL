@@ -146,9 +146,9 @@ public class AlgebraicRuleConverter {
 	 * @return
 	 */
 	private ASTNode buildEquation() {
-		System.out.println("rebuilding equation...");
-		System.out.println("additive: " + additive);
-		System.out.println("remainOnSide: " + remainOnSide);
+		//System.out.println("rebuilding equation...");
+		//System.out.println("additive: " + additive);
+		//System.out.println("remainOnSide: " + remainOnSide);
 		EquationObject eo;
 		ArrayList<EquationObject> addition = equationObjects.get(0);
 		ArrayList<EquationObject> multiplication = equationObjects.get(1);
@@ -306,18 +306,18 @@ public class AlgebraicRuleConverter {
 			this.variableNodeParent = null;
 			this.variableNode = null;
 			try {
-				System.out.println("before: " + node.toFormula());
+				//System.out.println("before: " + node.toFormula());
 			} catch (SBMLException e) {
 				e.printStackTrace();
 			}
-			System.out.println("variable: " + variable);
+			//System.out.println("variable: " + variable);
 			as = new AssignmentRule();
 			as.setVariable(variable);
 			// Set pointer to algebraic rule's variable node and to its parent
 			setNodeWithVariable(node, variable);
 			nestingDepth = 0;
 			evaluateEquation(variableNodeParent);
-			System.out.println("nesting depth: " + nestingDepth);
+			//System.out.println("nesting depth: " + nestingDepth);
 
 			equationObjects = new ArrayList<ArrayList<EquationObject>>();
 			equationObjects.add(new ArrayList<EquationObject>());
@@ -328,7 +328,7 @@ public class AlgebraicRuleConverter {
 			as.setMath(buildEquation());
 
 			try {
-				System.out.println("after: " + as.getMath().toFormula());
+				//System.out.println("after: " + as.getMath().toFormula());
 			} catch (SBMLException e) {
 				e.printStackTrace();
 			}
@@ -416,12 +416,17 @@ public class AlgebraicRuleConverter {
 		AssignmentRule as;
 		if (matching != null) {
 			for (Map.Entry<SBase, SBase> entry : matching.entrySet()) {
-				System.out.println(entry.getKey() + " -> " + entry.getValue());
+				//System.out.println(entry.getKey() + " -> " + entry.getValue());
 			}
 		} else {
 			System.out.println("no matching found");
 		}
 
+		
+		//determine matchings for algebraic rules
+		
+		
+		
 		// create for every algebraic rule an adequate assignment rule
 		for (int i = 0; i < model.getNumRules(); i++) {
 			Rule r = model.getRule(i);

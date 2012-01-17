@@ -48,6 +48,16 @@ public class EventInProcessWithDelay extends EventInProcess {
 		previousExecutionTimes = new LinkedList<Double>();
 		previousExecutionValues = new LinkedList<Double[]>();
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.simulator.sbml.EventInProcess#refresh(boolean)
+	 */
+  public void refresh(boolean fired) {
+    super.refresh(fired);
+    previousExecutionTimes = new LinkedList<Double>();
+    previousExecutionValues = new LinkedList<Double[]>();
+  }
 
 	/*
 	 * (non-Javadoc)
