@@ -817,8 +817,14 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		}
 		
 		for (int col = 0; col < initConditions.getColumnCount(); col++) {
-      initialValues[idIndex.get(initConditions.getColumnName(col)).intValue()] = initConditions
-          .getValueAt(0, col + 1);
+		  String columnName=initConditions.getColumnIdentifier(col);
+		  if(columnName!=null) {
+		    Integer index=idIndex.get(initConditions.getColumnIdentifier(col));
+		    if(index!=null) {
+		      initialValues[index.intValue()] = initConditions
+            .getValueAt(0, col + 1);
+		    }
+		  }
     }
 		
 		MultiTable data = initResultMatrix(DES, initialValues, timePoints);
