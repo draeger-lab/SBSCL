@@ -324,7 +324,7 @@ public class AlgebraicRuleConverter {
 			equationObjects.add(new ArrayList<EquationObject>());
 
 			deleteVariable();
-			sortEquationObjects(node, false, false, false);
+			sortEquationObjects(node, false, false, false, nestingDepth);
 			as.setMath(buildEquation());
 
 			try {
@@ -347,8 +347,8 @@ public class AlgebraicRuleConverter {
 		if ((variableNodeParent.getChildCount() == 2)
 				&& (variableNodeParent.getType() == Type.TIMES)) {
 			// Variable has a negativ sign / other child is -1
-			if (variableNodeParent.getLeftChild().isMinusOne()
-					|| variableNodeParent.getRightChild().isMinusOne()) {
+			if (variableNodeParent.getLeftChild().isMinusOne() || (variableNodeParent.getLeftChild().isUMinus() && variableNodeParent.getLeftChild().getLeftChild().isOne())
+					|| variableNodeParent.getRightChild().isMinusOne() || (variableNodeParent.getRightChild().isUMinus() && variableNodeParent.getRightChild().getLeftChild().isOne())) {
 
 				index = variableNodeParent.getParent().getIndex(
 						variableNodeParent);
@@ -381,8 +381,8 @@ public class AlgebraicRuleConverter {
 		if (node != null) {
 			if (node.getType() == Type.TIMES) {
 				if (node.getChildCount() == 2) {
-					if (node.getLeftChild().isMinusOne()
-							|| node.getRightChild().isMinusOne()) {
+				  if (node.getLeftChild().isMinusOne() || (node.getLeftChild().isUMinus() && node.getLeftChild().getLeftChild().isOne())
+		          || node.getRightChild().isMinusOne() || (node.getRightChild().isUMinus() && node.getRightChild().getLeftChild().isOne())) {
 						remainOnSide = false;
 					} else {
 						additive = false;
@@ -515,32 +515,31 @@ public class AlgebraicRuleConverter {
 	 * @param divide
 	 */
 	private void sortEquationObjects(ASTNode node, boolean plus, boolean times,
-			boolean divide) {
-
-		// Reached an opartor
-		if (node.isOperator()) {
+			boolean divide, int depth) {
+	  
+		// Reached an operator
+		if ((depth>=0) && (node.isOperator())) {
 			if (node.getType() == Type.PLUS) {
-
 				for (int i = 0; i < node.getChildCount(); i++) {
-					sortEquationObjects(node.getChild(i), true, false, false);
+				  sortEquationObjects(node.getChild(i), true, false, false, depth-1);
 				}
 			} else if (node.getType() == Type.MINUS) {
 
 				for (int i = 0; i < node.getChildCount(); i++) {
-					sortEquationObjects(node.getChild(i), true, true, false);
+					sortEquationObjects(node.getChild(i), true, true, false, depth-1);
 				}
 			} else if (node.getType() == Type.TIMES) {
 				if (node.getChildCount() == 2) {
-					if (node.getLeftChild().isMinusOne()
-							&& !node.getRightChild().isMinusOne()) {
-						sortEquationObjects(node.getRightChild(), true, true,
-								false);
+				  if (((node.getLeftChild().isMinusOne()) || ((node.getLeftChild().isUMinus()) && (node.getLeftChild().getLeftChild().isOne())))
+              && (! (node.getRightChild().isMinusOne() || ((node.getRightChild().isUMinus()) && (node.getRightChild().getLeftChild().isOne()))))) {
+				    sortEquationObjects(node.getRightChild(), true, true,
+								false, depth-1);
 					}
 
-					else if (node.getLeftChild().isMinusOne()
-							&& !node.getRightChild().isMinusOne()) {
+					else if (!((node.getLeftChild().isMinusOne()) || ((node.getLeftChild().isUMinus()) && (node.getLeftChild().getLeftChild().isOne())))
+              && ((node.getRightChild().isMinusOne()) || ((node.getRightChild().isUMinus()) && (node.getRightChild().getLeftChild().isOne())))) {
 						sortEquationObjects(node.getLeftChild(), true, true,
-								false);
+								false, depth-1);
 					} else {
 						equationObjects.get(1).add(
 								new EquationObject(node.clone(), false));
