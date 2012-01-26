@@ -131,10 +131,14 @@ public class MatrixOperations {
 		}
 		for (i = 0; i < n; i++) {
 			big = 0.0;
-			for (j = 0; j < n; j++)
-				if ((temp = Math.abs(a[i][j])) > big)
+			for (j = 0; j < n; j++) {
+				temp = a[i][j];
+				if(temp < 0) {
+				  temp *= -1;
+				}
+			  if (temp > big)
 					big = temp;
-
+			}
 			if (big == 0.0) {
 				// no non-zero largest element
 
@@ -158,7 +162,11 @@ public class MatrixOperations {
 				for (k = 0; k < j; k++)
 					sum -= a[i][k] * a[k][j];
 				a[i][j] = sum;
-				if ((dum = vv[i] * Math.abs(sum)) >= big) {
+				dum = vv[i] * sum;
+				if(sum < 0) {
+				  dum *= -1;
+				}
+				if (dum >= big) {
 					big = dum;
 					imax = i;
 				}
