@@ -274,7 +274,7 @@ public class ASTNodeInterpreterWithTime {
    * @throws SBMLException
    */
   public double log(ASTNodeObject userObject, double time) throws SBMLException {
-    return Math.log(userObject.compileDouble(time));
+    return Math.log10(userObject.compileDouble(time));
   }
   
   /**
@@ -708,9 +708,8 @@ public class ASTNodeInterpreterWithTime {
    * @return
    * @throws SBMLException
    */
-  public boolean and(List<ASTNodeObject> nodes, double time)
+  public boolean and(List<ASTNodeObject> nodes, int size, double time)
     throws SBMLException {
-    int size = nodes.size();
     for (int i = 0; i < size; i++) {
       if (!(nodes.get(i)).compileBoolean(time)) { return false; }
     }
