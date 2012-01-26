@@ -501,8 +501,8 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	private boolean noChange(double newValues[], double oldValues[]) {
 		for (int i = 0; i < newValues.length; i++) {
-			if (Math.abs(newValues[i] - oldValues[i]) > 1e-15) {
-
+		  double distance=Math.abs(newValues[i]-oldValues[i]);
+		  if (distance > 1e-12) {
 				return false;
 			}
 		}
@@ -775,7 +775,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			h = BigDecimal.valueOf(timePoints[i]).subtract(BigDecimal.valueOf(t)).doubleValue();
 			if(h>1E-12) {
 			  System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
-			  t = computeNextState(DES, t, h, yTemp, change, yTemp, false);
+			  t = computeNextState(DES, t, h, yTemp, change, yTemp, true);
 			}
 			System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 			if (fastFlag) {
