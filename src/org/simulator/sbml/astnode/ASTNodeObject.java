@@ -40,6 +40,11 @@ public class ASTNodeObject {
   /**
    * 
    */
+  protected boolean isInfinite;
+  
+  /**
+   * 
+   */
   protected boolean booleanValue;
   
   /**
@@ -142,6 +147,7 @@ public class ASTNodeObject {
     this.nodeType=node.getType();
     if(nodeType==ASTNode.Type.REAL) {
       real=node.getReal();
+      isInfinite=Double.isInfinite(real);
     }
     else if(nodeType==ASTNode.Type.INTEGER){
       real=node.getInteger();
@@ -257,7 +263,7 @@ public class ASTNodeObject {
        * Numbers
        */
       case REAL:
-        if (Double.isInfinite(real)) {
+        if (isInfinite) {
           doubleValue = (real > 0d) ? Double.POSITIVE_INFINITY
               : Double.NEGATIVE_INFINITY;
         } else {
@@ -441,7 +447,7 @@ public class ASTNodeObject {
   protected void computeBooleanValue() {
     switch (nodeType) {
         case LOGICAL_AND:
-          booleanValue = interpreter.and(children,time);
+          booleanValue = interpreter.and(children,numChildren, time);
           break;
         case LOGICAL_XOR:
           booleanValue = interpreter.xor(children,time);
