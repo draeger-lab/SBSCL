@@ -1197,6 +1197,15 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     astNodeTime+=0.01;
     processInitialAssignments(astNodeTime,this.Y);
     
+    boolean changed=true;
+    int counter=0;
+    while(changed && counter<=10) {
+       astNodeTime+=0.01;
+       changed=processRules(astNodeTime, null, this.Y);
+       counter++;
+    }
+   
+    
     // save the initial values of this system
     System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
     
@@ -1281,6 +1290,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
         ASTNodeObject currentLaw = (ASTNodeObject) copyAST(kl.getMath(),true, null,null)
             .getUserObject();
         kineticLawRoots.add(currentLaw);
+        kl.getMath().setUserObject(currentLaw);
         for (SpeciesReference speciesRef : r.getListOfReactants()) {
           String speciesID = speciesRef.getSpecies();
           int speciesIndex = symbolHash.get(speciesID);
@@ -1337,6 +1347,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
             nodeInterpreter, reactionIndex, inConcentration, false));
           
         }
+        
         
       } else {
         kineticLawRoots.add(new ASTNodeObject(nodeInterpreterWithTime,
@@ -1700,6 +1711,11 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
           return false;
       }
     }
+    else if((node1.getType() == ASTNode.Type.NAME) && (node2.getType() == ASTNode.Type.NAME) && 
+        (((node1.getVariable() instanceof LocalParameter) && !(node2.getVariable() instanceof LocalParameter))
+        || (!(node1.getVariable() instanceof LocalParameter) && (node2.getVariable() instanceof LocalParameter)))) {
+      return true;
+    }
     else {
       boolean result=false;
       for (int i=0;i!=node1.getChildCount();i++) {
@@ -1894,21 +1910,21 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * @throws SBMLException
    */
   public boolean processRules(double time, double[] changeRate, double[] Y) throws SBMLException {
-    /*
-     * Compute changes due to rules
-     */
     
-    if(changeRate!=null) {
-      for(int i=0;i!=nRateRules;i++) {
-        rateRulesRoots.get(i).processRule(changeRate, this.Y, time);
-      }
-    }
     
     boolean changeByAssignmentRules=false;
     if(Y != null) {
       for (int i = 0; i != nAssignmentRules; i++) {
         boolean currentChange=assignmentRulesRoots.get(i).processRule(Y, time,true);
         changeByAssignmentRules = changeByAssignmentRules || currentChange;
+      }
+    }/*
+     * Compute changes due to rules
+     */
+    
+    if(changeRate!=null) {
+      for(int i=0;i!=nRateRules;i++) {
+        rateRulesRoots.get(i).processRule(changeRate, this.Y, time);
       }
     }
     return changeByAssignmentRules;
