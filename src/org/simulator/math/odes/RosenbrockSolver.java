@@ -668,6 +668,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
         // good step
         if ((!Double.isNaN(localError)) && (localError!=-1) && (localError <= 1.0)) {
+          this.setUnstableFlag(false);
           
           
           
