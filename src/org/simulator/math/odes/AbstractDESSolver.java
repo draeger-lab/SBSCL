@@ -219,6 +219,21 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		}
 		return !unstableFlag;
 	}
+	
+	/**
+	 * 
+	 * @param currentChange
+	 * @param yPrev
+	 * @return
+	 */
+  boolean checkSolution(double[] currentChange, double[] yPrev) {
+    for (int k = 0; k < currentChange.length; k++) {
+      if (Double.isNaN(currentChange[k]) && !Double.isNaN(yPrev[k])) {
+        unstableFlag = true;
+      }
+    }
+    return !unstableFlag;
+  }
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
@@ -309,7 +324,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			throws DerivativeException {
 	  double previousTime=t;
 	  computeChange(DES, yPrev, t, stepSize, change);
-		checkSolution(change);
+		checkSolution(change, yPrev);
 		Mathematics.vvAdd(yPrev, change, yTemp);
 		checkNonNegativity(yTemp);
 		if (increase) {
@@ -852,7 +867,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
       }
 			for (j = 0; j < inBetweenSteps(timePoints[i - 1], timePoints[i], h); j++) {
 				computeChange(DES, yTemp, t, h, change);
-				checkSolution(change);
+				checkSolution(change, yTemp);
 				Mathematics.vvAdd(yTemp, change, yTemp);
 				t = BigDecimal.valueOf(h).add(BigDecimal.valueOf(t)).doubleValue();
 			}
