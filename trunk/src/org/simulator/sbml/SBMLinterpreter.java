@@ -952,6 +952,19 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * @throws ModelOverdeterminedException
    * @throws SBMLException
    */
+  public void init(boolean refreshTree) throws ModelOverdeterminedException, SBMLException {
+    init(refreshTree, 0d, 0d, 1d);
+  }
+  
+  /**
+   * 
+   * @param refreshTree
+   * @param defaultSpeciesValue
+   * @param defaultParameterValue
+   * @param defaultCompartmentValue
+   * @throws ModelOverdeterminedException
+   * @throws SBMLException
+   */
   @SuppressWarnings("unchecked")
   public void init(boolean refreshTree, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue) throws ModelOverdeterminedException, SBMLException {
     int i;
