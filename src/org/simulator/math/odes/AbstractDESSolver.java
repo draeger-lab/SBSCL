@@ -228,8 +228,13 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
   boolean checkSolution(double[] currentChange, double[] yPrev) {
     for (int k = 0; k < currentChange.length; k++) {
-      if (Double.isNaN(currentChange[k]) && !Double.isNaN(yPrev[k])) {
-        unstableFlag = true;
+      if (Double.isNaN(currentChange[k])) {
+       if(!Double.isNaN(yPrev[k]) &&!Double.isInfinite(yPrev[k])) {
+         unstableFlag = true;
+       }
+       else if(Double.isInfinite(yPrev[k])) {
+         currentChange[k]=0;
+       }
       }
     }
     return !unstableFlag;
