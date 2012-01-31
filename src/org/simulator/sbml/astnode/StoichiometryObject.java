@@ -158,6 +158,8 @@ public class StoichiometryObject {
     } else {
       if (isSetStoichiometryMath) {
         stoichiometry = nodeInterpreter.compileDouble(math);
+      } else if ((!sr.isSetStoichiometry()) && (sr.getLevel() >= 3)) {
+        stoichiometry = 1d;
       } else {
         stoichiometry = sr.getCalculatedStoichiometry();
       }
