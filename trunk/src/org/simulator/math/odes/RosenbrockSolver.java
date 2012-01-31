@@ -657,7 +657,6 @@ public class RosenbrockSolver extends AbstractDESSolver {
           // take a step
           localError = step(DES);
         } catch (Exception ex) {
-          new Error("RB.step() threw an exception" + ex);
           ex.printStackTrace();
           stop = true;
         }
