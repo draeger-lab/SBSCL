@@ -943,7 +943,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * @throws SBMLException
    */
   public void init() throws ModelOverdeterminedException, SBMLException {
-    init(true);
+    init(true, 0d, 0d, 1d);
   }
   
   /**
@@ -953,7 +953,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * @throws SBMLException
    */
   @SuppressWarnings("unchecked")
-  public void init(boolean refreshTree) throws ModelOverdeterminedException, SBMLException {
+  public void init(boolean refreshTree, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue) throws ModelOverdeterminedException, SBMLException {
     int i;
     symbolHash.clear();
     compartmentHash.clear();
@@ -990,9 +990,10 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
      */
     for (i = 0; i < model.getNumCompartments(); i++) {
       Compartment c = model.getCompartment(i);
-      if (Double.isNaN(c.getSize())) {
-        Y[yIndex] = 0;
-      } else {
+      if(!c.isSetValue()) {
+        Y[yIndex] = defaultCompartmentValue;
+      }
+      else {
         Y[yIndex] = c.getSize();
       }
       
@@ -1035,10 +1036,15 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
         s.setHasOnlySubstanceUnits(majority.getHasOnlySubstanceUnits());
       }
       
-      if (s.isSetInitialAmount()) {
-        Y[yIndex] = s.getInitialAmount();
-      } else {
-        Y[yIndex] = s.getInitialConcentration();
+      if(!s.isSetValue()) {
+        Y[yIndex] = defaultSpeciesValue;
+      }
+      else {
+        if (s.isSetInitialAmount()) {
+          Y[yIndex] = s.getInitialAmount();
+        } else {
+          Y[yIndex] = s.getInitialConcentration();
+        }
       }
       symbolHash.put(s.getId(), yIndex);
       compartmentHash.put(s.getId(), compartmentIndex);
@@ -1063,7 +1069,12 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
      */
     for (i = 0; i < model.getNumParameters(); i++) {
       Parameter p = model.getParameter(i);
-      Y[yIndex] = p.getValue();
+      if(!p.isSetValue()) {
+        Y[yIndex] = defaultParameterValue;
+      }
+      else {
+        Y[yIndex] = p.getValue();
+      }
       symbolHash.put(p.getId(), yIndex);
       symbolIdentifiers[yIndex] = p.getId();
       yIndex++;
