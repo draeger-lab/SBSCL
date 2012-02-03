@@ -50,6 +50,7 @@ import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.validator.OverdeterminationValidator;
@@ -265,6 +266,11 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * 
    */
   private boolean[] reactionFast;
+  
+  /**
+   * 
+   */
+  private boolean[] reactionReversible;
 
   /**
    * 
@@ -375,6 +381,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     speciesMap = new HashMap<String, Species>();
     inConcentration = new HashSet<String>();
     reactionFast = new boolean[model.getNumReactions()];
+    reactionReversible = new boolean[model.getNumReactions()];
     initialValues = new double[Y.length];
     nodes = new LinkedList<ASTNode>();
     kineticLawRoots = new ArrayList<ASTNodeObject>();
@@ -943,7 +950,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * @throws SBMLException
    */
   public void init() throws ModelOverdeterminedException, SBMLException {
-    init(true, 0d, 0d, 1d);
+    init(true, 0d, 1d, 1d);
   }
   
   /**
@@ -953,12 +960,12 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * @throws SBMLException
    */
   public void init(boolean refreshTree) throws ModelOverdeterminedException, SBMLException {
-    init(refreshTree, 0d, 0d, 1d);
+    init(refreshTree, 0d, 1d, 1d);
   }
   
   /**
    * 
-   * @param refreshTree
+   * @param renewTree
    * @param defaultSpeciesValue
    * @param defaultParameterValue
    * @param defaultCompartmentValue
@@ -966,7 +973,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * @throws SBMLException
    */
   @SuppressWarnings("unchecked")
-  public void init(boolean refreshTree, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue) throws ModelOverdeterminedException, SBMLException {
+  public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue) throws ModelOverdeterminedException, SBMLException {
     int i;
     symbolHash.clear();
     compartmentHash.clear();
@@ -1104,6 +1111,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     int reactionIndex = 0;
     for (Reaction r : model.getListOfReactions()) {
       reactionFast[reactionIndex] = r.isFast();
+      reactionReversible[reactionIndex] = r.isReversible();
       if (r.isFast() && !hasFastReactions) {
         hasFastReactions = true;
       }
@@ -1172,9 +1180,11 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     }
     
     
-    if(refreshTree) {
+    if(renewTree) {
       createSimplifiedSyntaxTree();
-    
+    }
+    else {
+      refreshSyntaxTree();
     }
     
     // save the initial values of this system, necessary at this point for the delay function
@@ -1237,6 +1247,15 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     
   }
   
+  /**
+   * 
+   */
+  private void refreshSyntaxTree() {
+    for(ASTNode node: nodes) {
+      ((ASTNodeObject)node.getUserObject()).reset();
+    }
+  }
+
   /**
    * 
    */
@@ -1641,7 +1660,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
             } else if ((variable instanceof Compartment)
                 || (variable instanceof Parameter)) {
               copiedAST.setUserObject(new CompartmentOrParameterValue(
-                nodeInterpreterWithTime, copiedAST, variable, this, symbolHash
+                nodeInterpreterWithTime, copiedAST, (Symbol) variable, this, symbolHash
                     .get(variable.getId())));
             } else if (variable instanceof LocalParameter) {
               copiedAST.setUserObject(new LocalParameterValue(
@@ -1986,7 +2005,12 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
           time);
         
       }
+      
+      if((v[reactionIndex]<0) && !reactionReversible[reactionIndex]) {
+        v[reactionIndex] = 0;
+      }
     }
+
     
     for (int i = 0; i != stoichiometriesSize; i++) {
       stoichiometries.get(i).computeChange(astNodeTime, changeRate, v);
