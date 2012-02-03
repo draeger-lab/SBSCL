@@ -657,7 +657,6 @@ public class RosenbrockSolver extends AbstractDESSolver {
           // take a step
           localError = step(DES);
         } catch (Exception ex) {
-          ex.printStackTrace();
           stop = true;
         }
 //        if (localError == -1) {
@@ -666,7 +665,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 //        }
 
         // good step
-        if ((!Double.isNaN(localError)) && (localError!=-1) && (localError <= 1.0)) {
+        if ((!Double.isNaN(localError)) && (localError!=-1) && (localError <= 1.0) && !stop) {
           this.setUnstableFlag(false);
           
           
@@ -721,12 +720,11 @@ public class RosenbrockSolver extends AbstractDESSolver {
           // failed to achieve the desired accuracy, it's useless to
           // continue, so we stop
           if (Math.abs(h) <= Math.abs(hMin)) {
-            new Error("Requested tolerance could not be achieved, even at the minumum stepsize.  Please increase the tolerance or decrease the minimum stepsize.");
-            stop = true;
+            throw new DerivativeException("Requested tolerance could not be achieved, even at the minumum stepsize.  Please increase the tolerance or decrease the minimum stepsize.");
           }
 
           // change stepsize (see Rodas.f) require 0.2<=hnew/h<=6
-          if((Double.isNaN(localError)) || (localError==-1)) {
+          if((Double.isNaN(localError)) || (localError==-1) || (stop==true)) {
             hAdap=2;
           } 
           else {
@@ -739,8 +737,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
           }
           tNew = t + h;
           if (tNew == t) {
-            new Error("Stepsize underflow in Rosenbrock solver");
-            stop = true;
+            throw new DerivativeException("Stepsize underflow in Rosenbrock solver");
           }
           lastStepSuccessful = false;
         }
@@ -752,14 +749,13 @@ public class RosenbrockSolver extends AbstractDESSolver {
         } else if (Math.abs(h) > hMax) {
             h = hMax;
         }
+        
+        stop = false;
       }
 
-      if (!stop){
-        
-      }
       //solveDone();
     } catch (OutOfMemoryError e) {
-      new Error("Out of memory : try reducing solve span or increasing step size.");
+      throw new DerivativeException("Out of memory : try reducing solve span or increasing step size.");
     }
 
 
