@@ -996,7 +996,15 @@ public class ASTNodeInterpreterWithTime {
     throws SBMLException {
     double l = left.compileDouble(time);
     double r = right.compileDouble(time);
-    double result = Math.pow(l, r);
+    double result = Math.pow(Math.abs(l), r);
+    if(l<0) {
+      double sign=Math.pow(-1, r);
+      if(Double.isNaN(sign)) {
+        sign = -1;
+        logger.warning("Power with negative base and non-integer exponent encountered.");
+      }
+      result = result*sign;
+    }
     return result;
   }
   

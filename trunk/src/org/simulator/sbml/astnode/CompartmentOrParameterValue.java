@@ -16,7 +16,7 @@
 package org.simulator.sbml.astnode;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.CallableSBase;
+import org.sbml.jsbml.Symbol;
 import org.simulator.sbml.ValueHolder;
 
 /**
@@ -26,7 +26,7 @@ import org.simulator.sbml.ValueHolder;
  * @since 1.0
  */
 public class CompartmentOrParameterValue extends ASTNodeObject {
-  protected CallableSBase sb;
+  protected Symbol sb;
   protected String id;
   protected ValueHolder valueHolder;
   protected int position;
@@ -39,10 +39,14 @@ public class CompartmentOrParameterValue extends ASTNodeObject {
    * @param valueHolder
    */
   public CompartmentOrParameterValue(ASTNodeInterpreterWithTime interpreter, ASTNode node,
-    CallableSBase sb, ValueHolder valueHolder, int position) {
+    Symbol sb, ValueHolder valueHolder, int position) {
     super(interpreter, node);
     this.sb = sb;
     this.id=sb.getId();
+    if(sb.getConstant()) {
+      isConstant = true;
+      doubleValue = sb.getValue();
+    }
     this.valueHolder = valueHolder;
     this.position=position;
   }

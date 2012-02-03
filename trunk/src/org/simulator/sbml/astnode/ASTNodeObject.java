@@ -40,6 +40,11 @@ public class ASTNodeObject {
   /**
    * 
    */
+  protected boolean isConstant;
+  
+  /**
+   * 
+   */
   protected boolean isInfinite;
   
   /**
@@ -94,6 +99,10 @@ public class ASTNodeObject {
    */
   protected int numChildren;
 
+  /**
+   * 
+   */
+  protected boolean alreadyProcessed;
   
   /**
    * 
@@ -130,6 +139,12 @@ public class ASTNodeObject {
    */
   protected String units;
   
+  /**
+   * 
+   */
+  public void reset() {
+    alreadyProcessed=false;
+  }
   
   /**
    * 
@@ -145,6 +160,8 @@ public class ASTNodeObject {
     this.interpreter=interpreter;
     this.node=node;
     this.nodeType=node.getType();
+    this.isConstant=false;
+    this.alreadyProcessed=false;
     if(nodeType==ASTNode.Type.REAL) {
       real=node.getReal();
       isInfinite=Double.isInfinite(real);
@@ -203,6 +220,13 @@ public class ASTNodeObject {
     this.time=time;
   }
   
+  /**
+   * 
+   */
+  public boolean getConstant() {
+    return isConstant;
+  }
+  
   
   /**
    * 
@@ -225,16 +249,18 @@ public class ASTNodeObject {
    * @return
    */
   public double compileDouble(double time) {
-    if(this.time==time) {
+    if((this.time==time) || (isConstant && alreadyProcessed)) {
       return doubleValue;
     }
     else {
       isDouble=true;
-      this.time = time;
+      alreadyProcessed=true;
+      this.time=time;
       computeDoubleValue();
     }
     return doubleValue;
   }
+  
   
   /**
    * 
@@ -242,11 +268,12 @@ public class ASTNodeObject {
    * @return
    */
   public boolean compileBoolean(double time) {
-    if(this.time==time) {
+    if((this.time==time) || (isConstant && alreadyProcessed)) {
       return booleanValue;
     }
     else {
       isDouble=false;
+      alreadyProcessed=true;
       this.time = time;
       computeBooleanValue();
     }
