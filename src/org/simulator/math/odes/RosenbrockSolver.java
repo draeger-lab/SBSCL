@@ -166,6 +166,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
    */
   private boolean[] ignoreNaN;
 	
+  private static final double precisionEventsAndRules = 1E-7;
 	/**
 	 * 
 	 * @param size
@@ -199,11 +200,11 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	private void init(int size, double stepsize, int nTimepoints) {
     numEqn = size;
 		
-		hMin = 1E-12;
+		hMin = 1E-14;
 		this.setStepSize(stepsize);
 		hMax = Math.min(stepsize,0.1);
 		absTol = 1E-10;
-		relTol = 1E-7;
+		relTol = 1E-6;
 
 		stop = false;
 		timePoints = new double[nTimepoints]; 
@@ -562,7 +563,14 @@ public class RosenbrockSolver extends AbstractDESSolver {
       init(DES.getDimension(),this.getStepSize(),2);
     }
 	  this.hMax = currentStepSize;
+	  boolean hasDerivatives = true;
 	  
+	  if (DES instanceof EventDESystem) {
+      EventDESystem EDES = (EventDESystem) DES;
+      if(EDES.getNoDerivatives()) {
+        hasDerivatives = false;
+      }
+	  }
 	  
 	  double timeEnd = BigDecimal.valueOf(time).add(BigDecimal.valueOf(currentStepSize)).doubleValue();
     try {
@@ -655,7 +663,12 @@ public class RosenbrockSolver extends AbstractDESSolver {
         System.arraycopy(y, 0, yTemp, 0, numEqn);
         try {
           // take a step
-          localError = step(DES);
+          if(hasDerivatives) {
+            localError = step(DES);
+          }
+          else {
+            localError = 0;
+          }
         } catch (Exception ex) {
           stop = true;
         }
@@ -665,7 +678,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 //        }
 
         // good step
-        if ((!Double.isNaN(localError)) && (localError!=-1) && (localError <= 1.0) && !stop) {
+        if (((!Double.isNaN(localError)) && (localError!=-1) && (localError <= 1.0) && !stop)) {
           this.setUnstableFlag(false);
           
           
@@ -683,10 +696,10 @@ public class RosenbrockSolver extends AbstractDESSolver {
           }
           
           if(changed) {
-            if(h/10>hMin) {
-            //if(h>precisionEventsAndRules)  {
-              h=h/10;
-              //h = Math.max(h / 10,precisionEventsAndRules);
+            //if(h/10>hMin) {
+            if(h>precisionEventsAndRules)  {
+              //h=h/10;
+              h = Math.max(h / 10,precisionEventsAndRules);
               System.arraycopy(oldY, 0, y, 0, numEqn);
             }
             else {
@@ -766,7 +779,6 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	 * (non-Javadoc)
 	 * @see org.simulator.math.odes.AbstractDESSolver#hasSolverEventProcessing()
 	 */
-  @Override
   protected boolean hasSolverEventProcessing() {
     return true;
   }
