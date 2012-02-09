@@ -74,4 +74,9 @@ public interface EventDESystem extends DESystem {
 	public EventInProcess getNextEventAssignments(double t, double previousTime, double Y[])
 			throws DerivativeException;
 
+  /**
+   * @return
+   */
+  public boolean getNoDerivatives();
+
 }

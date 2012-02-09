@@ -328,6 +328,12 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * 
    */
   private List<AssignmentRuleObject> initialAssignmentRoots;
+
+  
+  /**
+   * 
+   */
+  private boolean noDerivatives;
   
   /**
    * <p>
@@ -873,16 +879,27 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   public void computeDerivatives(double time, double[] Y, double[] changeRate)
     throws DerivativeException {
     this.currentTime = time;
+    // make sure not to have invalid older values in the change rate
+    //Arrays.fill(changeRate, 0d);
+    
     if(Double.isNaN(time)) {
       throw new DerivativeException("Time should not be NaN!");
     }
+    
+    for(int i=0; i!= changeRate.length;i++) {
+      changeRate[i] = 0d;
+    }
+    if(noDerivatives) {
+      return;
+    }
+    
+    
     System.arraycopy(Y, 0, this.Y, 0, Y.length);
     if (modelHasEvents) {
       this.runningEvents.clear();
     }
     
-    // make sure not to have invalid older values in the change rate
-    Arrays.fill(changeRate, 0d);
+    
     
     try {
       //Always call the compile functions with a new time
@@ -980,6 +997,17 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     Integer compartmentIndex, yIndex = 0;
     currentTime = 0d;
     astNodeTime=0d;
+    
+    noDerivatives = false;
+    if((model.getNumReactions() == 0) && (model.getNumConstraints() == 0)) {
+      noDerivatives = true;
+      for (int k = 0; k < model.getNumRules(); k++) {
+        Rule rule = model.getRule(k);
+        if (rule.isRate()) {
+          noDerivatives=false;
+        }
+      }
+    }
     
     Map<String, Integer> speciesReferenceToRateRule = new HashMap<String, Integer>();
     int speciesReferencesInRateRules = 0;
@@ -2180,6 +2208,13 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       
     }
     return this.delayValueHolder.computeDelayedValue(time, id);
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.EventDESystem#getNoDerivatives()
+   */
+  public boolean getNoDerivatives() {
+    return this.noDerivatives;
   }
   
 }
