@@ -793,7 +793,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 				}
 			}
 			h = BigDecimal.valueOf(timePoints[i]).subtract(BigDecimal.valueOf(t)).doubleValue();
-			if(h>1E-12) {
+			if(h>1E-14) {
 			  System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
 			  t = computeNextState(DES, t, h, yTemp, change, yTemp, true);
 			}
@@ -877,7 +877,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 				t = BigDecimal.valueOf(h).add(BigDecimal.valueOf(t)).doubleValue();
 			}
 			h = BigDecimal.valueOf(timePoints[i]).subtract(BigDecimal.valueOf(t)).doubleValue();
-			if(h>1E-12) {
+			if(h>1E-14) {
 			  computeChange(DES, yTemp, t, h, change);
 			  checkSolution(change);
 			  Mathematics.vvAdd(yTemp, change, yTemp);
