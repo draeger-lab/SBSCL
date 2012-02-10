@@ -567,7 +567,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		if(event!=null) {
 		  hasNewEvents=true;
 		}
-		while (event != null) {
+		while ((event != null) && ((event.getLastTimeExecuted()==time) || (event.getFireStatus(time)))) {
 			for (int index: event.getAssignments().keySet()) {
 				yTemp[index] = event.getAssignments().get(index);
 			}
