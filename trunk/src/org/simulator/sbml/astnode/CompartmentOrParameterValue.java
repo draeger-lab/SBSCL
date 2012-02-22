@@ -43,10 +43,10 @@ public class CompartmentOrParameterValue extends ASTNodeObject {
     super(interpreter, node);
     this.sb = sb;
     this.id=sb.getId();
-    if(sb.getConstant()) {
-      isConstant = true;
-      doubleValue = sb.getValue();
-    }
+//    if(sb.getConstant()) {
+//      isConstant = true;
+//      doubleValue = sb.getValue();
+//    }
     this.valueHolder = valueHolder;
     this.position=position;
   }
