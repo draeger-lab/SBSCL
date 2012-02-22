@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.events.EventException;
@@ -47,6 +48,7 @@ import org.simulator.sbml.EventInProcess;
  */
 public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, EventHandler {
 
+  private static final transient Logger logger = Logger.getLogger(AbstractDESSolver.class.getName());
 	/**
 	 * Generated serial version identifier.
 	 */
@@ -328,8 +330,8 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			double[] yPrev, double[] change, double[] yTemp, boolean increase)
 			throws DerivativeException {
 	  double previousTime=t;
-	  computeChange(DES, yPrev, t, stepSize, change);
-		checkSolution(change, yPrev);
+    computeChange(DES, yPrev, t, stepSize, change);
+    checkSolution(change, yPrev);
 		Mathematics.vvAdd(yPrev, change, yTemp);
 		checkNonNegativity(yTemp);
 		if (increase) {
