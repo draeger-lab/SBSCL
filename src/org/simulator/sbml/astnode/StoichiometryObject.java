@@ -77,8 +77,11 @@ public class StoichiometryObject {
     this.id = sr.getId();
     this.speciesIndex = speciesIndex;
     this.speciesRefIndex = speciesRefIndex;
-    this.constantStoichiometry = sr.getConstant();
-    if ((!sr.isSetId()) && (!isSetStoichiometryMath)) {
+    this.constantStoichiometry = false;
+    if(sr.isSetConstant()) {
+      constantStoichiometry = sr.getConstant();
+    }
+    else if ((!sr.isSetId()) && (!isSetStoichiometryMath)) {
       constantStoichiometry = true;
     }
     this.boundaryCondition = false;
