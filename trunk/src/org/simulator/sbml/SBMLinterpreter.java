@@ -2174,7 +2174,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * @see org.simulator.math.odes.DelayValueHolder#computeDelayedValue(double, java.lang.String)
    */
   public double computeDelayedValue(double time, String id) throws DerivativeException {
-    if(time<0) {
+    if((time<0) || ((time >=0) && (this.delayValueHolder == null))) {
       int index=symbolHash.get(id);
       double oldTime=currentTime;
       this.currentTime=time;
@@ -2205,6 +2205,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       logger.warning(String.format(
         "Cannot access delayed value at time %s for %s.", StringTools
             .toString(time), id));
+      return Double.NaN;
       
     }
     return this.delayValueHolder.computeDelayedValue(time, id);
