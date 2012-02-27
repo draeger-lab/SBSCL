@@ -49,6 +49,7 @@ public class StoichiometryObject {
   private int reactionIndex;
   private boolean isReactant;
   private boolean inConcentration;
+  private boolean stoichiometrySet;
   
   /**
    * 
@@ -105,12 +106,11 @@ public class StoichiometryObject {
     this.time = Double.NaN;
     this.isReactant = isReactant;
     
-    
     computeStoichiometricValue();
   }
   
   public void computeChange(double currentTime, double[] changeRate, double[] v) {
-    if (constantStoichiometry == false) {
+    if ((constantStoichiometry == false) || (stoichiometrySet == false)) {
       compileDouble(currentTime);
     }
     double value;
@@ -141,7 +141,7 @@ public class StoichiometryObject {
   private double compileDouble(double time) {
     if (this.time != time) {
       this.time = time;
-      if (!constantStoichiometry || time <= 0d) {
+      if (!constantStoichiometry || (time <= 0d) || !stoichiometrySet) {
         computeStoichiometricValue();
       }
     }
@@ -155,16 +155,21 @@ public class StoichiometryObject {
     if (speciesRefIndex >= 0) {
       stoichiometry = Y[speciesRefIndex];
       stoichiometricCoefHash.put(id, stoichiometry);
+      stoichiometrySet=true;
     } else if (stoichiometricCoefHash != null
         && stoichiometricCoefHash.containsKey(id)) {
       stoichiometry = stoichiometricCoefHash.get(id);
+      stoichiometrySet=true;
     } else {
       if (isSetStoichiometryMath) {
         stoichiometry = nodeInterpreter.compileDouble(math);
+        stoichiometrySet=true;
       } else if ((!sr.isSetStoichiometry()) && (sr.getLevel() >= 3)) {
         stoichiometry = 1d;
+        stoichiometrySet=false;
       } else {
         stoichiometry = sr.getCalculatedStoichiometry();
+        stoichiometrySet=true;
       }
     }
     
@@ -185,6 +190,13 @@ public class StoichiometryObject {
    */
   public boolean isReactant() {
     return isReactant;
+  }
+  
+  /**
+   * 
+   */
+  public void refresh() {
+    this.computeStoichiometricValue();
   }
   
 }

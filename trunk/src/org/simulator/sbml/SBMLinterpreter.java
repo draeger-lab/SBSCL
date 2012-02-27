@@ -1282,6 +1282,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     for(ASTNode node: nodes) {
       ((ASTNodeObject)node.getUserObject()).reset();
     }
+    for(StoichiometryObject s: stoichiometries) {
+      s.refresh();
+    }
   }
 
   /**
@@ -1559,11 +1562,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
         }
       } else if (model.findSpeciesReference(iA.getVariable()) != null) {
         SpeciesReference sr = model.findSpeciesReference(iA.getVariable());
-        if (sr.getConstant() == false) {
-          initialAssignmentRoots.add(new AssignmentRuleObject(
+        initialAssignmentRoots.add(new AssignmentRuleObject(
             (ASTNodeObject) copyAST(iA.getMath(), true, null, null)
                 .getUserObject(), sr.getId(), stoichiometricCoefHash));
-        }
       }
     }
     nRateRules = rateRulesRoots.size();
@@ -1984,10 +1985,15 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     
     
     boolean changeByAssignmentRules=false;
-    if(Y != null) {
-      for (int i = 0; i != nAssignmentRules; i++) {
-        boolean currentChange=assignmentRulesRoots.get(i).processRule(Y, time,true);
-        changeByAssignmentRules = changeByAssignmentRules || currentChange;
+    double intermediateASTNodeTime = - astNodeTime;
+    if (Y != null) {
+      for (int n = 0; n != nAssignmentRules; n++) {
+        intermediateASTNodeTime = - intermediateASTNodeTime;
+        for (int i = 0; i != nAssignmentRules; i++) {
+          boolean currentChange = assignmentRulesRoots.get(i).processRule(Y,
+          intermediateASTNodeTime, true);
+          changeByAssignmentRules = changeByAssignmentRules || currentChange;
+        }
       }
     }/*
      * Compute changes due to rules
@@ -2181,7 +2187,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       double value=Double.NaN;
       for(AssignmentRuleObject r: assignmentRulesRoots) {
         if(r.getIndex()==index) {
-          r.processRule(Y, -astNodeTime, false);
+          r.processRule(Y, -astNodeTime -0.01, false);
           value=r.getValue();
           break;
         }
@@ -2189,7 +2195,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       if(Double.isNaN(value)) {
         for(AssignmentRuleObject i: initialAssignmentRoots) {
           if(i.getIndex()==index) {
-            i.processRule(Y, -astNodeTime, false);
+            i.processRule(Y, -astNodeTime - 0.01, false);
             value=i.getValue();
             break;
           }
