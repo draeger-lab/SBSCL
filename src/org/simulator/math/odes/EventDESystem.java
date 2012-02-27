@@ -38,14 +38,14 @@ public interface EventDESystem extends DESystem {
 	 * @return The number of events that are to be checked and potentially
 	 *         evaluated in each time point.
 	 */
-	public int getNumEvents();
+	public int getEventCount();
 
 	/**
 	 * Counts the number of rules to be evaluated in each time point.
 	 * 
 	 * @return The number of rules in the system.
 	 */
-	public int getNumRules();
+	public int getRuleCount();
 
 	/**
 	 * 
@@ -74,9 +74,9 @@ public interface EventDESystem extends DESystem {
 	public EventInProcess getNextEventAssignments(double t, double previousTime, double Y[])
 			throws DerivativeException;
 
-  /**
-   * @return
-   */
-  public boolean getNoDerivatives();
+	/**
+	 * @return
+	 */
+	public boolean getNoDerivatives();
 
 }
