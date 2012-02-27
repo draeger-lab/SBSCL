@@ -41,14 +41,17 @@ import org.simulator.sbml.EventInProcess;
  * @author Roland Keller
  * @author Hannes Planatscher
  * @author Philip Stevens
- * @author Max Zwießele
+ * @author Max Zwie&szlig;ele
  * @date 2010-02-04
  * @version $Rev$
  * @since 0.9
  */
 public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, EventHandler {
 
-  private static final transient Logger logger = Logger.getLogger(AbstractDESSolver.class.getName());
+	/**
+	 * A {@link Logger} for this class.
+	 */
+	private static final transient Logger logger = Logger.getLogger(AbstractDESSolver.class.getName());
 	/**
 	 * Generated serial version identifier.
 	 */
@@ -100,7 +103,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	/**
 	 * 
 	 */
-  private MultiTable data;
+	private MultiTable data;
   
 	/**
 	 * Initialize with default integration step size and non-negative attribute
@@ -116,17 +119,17 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	}
 	
 	/**
-   * Initialize with default integration step size and non-negative attribute
-   * <code>true</code>.
-   */
-  public void reset() {
-    stepSize = 0.01d;
-    nonnegative = false;
-    unstableFlag = false;
-    includeIntermediates = true;
-    this.intervalFactor = 0d;
-    this.listenerList = new LinkedList<PropertyChangeListener>();
-  }
+	 * Initialize with default integration step size and non-negative attribute
+	 * <code>true</code>.
+	 */
+	public void reset() {
+		stepSize = 0.01d;
+		nonnegative = false;
+		unstableFlag = false;
+		includeIntermediates = true;
+		this.intervalFactor = 0d;
+		this.listenerList = new LinkedList<PropertyChangeListener>();
+	}
 	
 
 	/**
@@ -231,10 +234,10 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
   boolean checkSolution(double[] currentChange, double[] yPrev) {
     for (int k = 0; k < currentChange.length; k++) {
       if (Double.isNaN(currentChange[k])) {
-       if(!Double.isNaN(yPrev[k]) &&!Double.isInfinite(yPrev[k])) {
+       if (!Double.isNaN(yPrev[k]) &&!Double.isInfinite(yPrev[k])) {
          unstableFlag = true;
        }
-       else if(Double.isInfinite(yPrev[k])) {
+       else if (Double.isInfinite(yPrev[k])) {
          currentChange[k]=0;
        }
       }
@@ -278,15 +281,15 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	  int leftIndex=-1;
 	  int rightIndex=-1;
 	  for(int i=0;i!=timepoints.length;i++) {
-	    if(timepoints[i]>=time) {
+	    if (timepoints[i]>=time) {
 	      rightIndex=i;
-	      if((i>0)&&(timepoints[i]>time)) {
+	      if ((i>0) && (timepoints[i]>time)) {
 	        leftIndex=i-1;
 	      }
 	      break;
 	    }
 	  }
-	  if((leftIndex==-1)&&(rightIndex==-1)) {
+	  if ((leftIndex==-1) && (rightIndex==-1)) {
 	    leftIndex=timepoints.length-1;
 	  }
 	  
@@ -295,17 +298,17 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	  double rightValue=Double.NaN;
 	  
 	  Column c=data.getColumn(id);
-	  if(leftIndex!=-1) {
+	  if (leftIndex!=-1) {
 	    leftValue=c.getValue(leftIndex);
 	  }
-	  if(rightIndex!=-1) {
+	  if (rightIndex!=-1) {
 	    rightValue=c.getValue(rightIndex);
 	  }
 	  
-	  if(leftIndex==-1) {
+	  if (leftIndex==-1) {
 	    return rightValue;
 	  }
-	  else if(rightIndex==-1) {
+	  else if (rightIndex==-1) {
 	    return leftValue;
 	  }
 	  else {
@@ -567,7 +570,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		event = EDES.getNextEventAssignments(
 				time, previousTime, yTemp);
 
-		if(event!=null) {
+		if (event!=null) {
 		  hasNewEvents=true;
 		}
 		while ((event != null) && ((event.getLastTimeExecuted()==time) || (event.getFireStatus(time)))) {
@@ -595,10 +598,10 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		boolean change=false;
 		if (DES instanceof EventDESystem) {
 			EventDESystem EDES = (EventDESystem) DES;
-			if (EDES.getNumRules() > 0) {
+			if (EDES.getRuleCount() > 0) {
 				processRules(EDES, t, yTemp);
 			}
-			if ((forceProcessing || (!this.hasSolverEventProcessing())) && (EDES.getNumEvents() > 0)) {
+			if ((forceProcessing || (!this.hasSolverEventProcessing())) && (EDES.getEventCount() > 0)) {
 				change=processEvents(EDES, t, previousTime, yTemp);
 			}
 		}
@@ -678,7 +681,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	public MultiTable solve(DESystem DES, double[] initialValues,
 			double timeBegin, double timeEnd) throws DerivativeException {
-	  if(DES instanceof DelayedDESystem) {
+	  if (DES instanceof DelayedDESystem) {
 	    ((DelayedDESystem)DES).registerDelayValueHolder(this);
 	  }
 		this.intervalFactor = 100d / (timeEnd - timeBegin);
@@ -751,7 +754,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	public MultiTable solve(DESystem DES, double[] initialValues,
 			double[] timePoints) throws DerivativeException {
-	  if(DES instanceof DelayedDESystem) {
+	  if (DES instanceof DelayedDESystem) {
       ((DelayedDESystem)DES).registerDelayValueHolder(this);
     }
 	  MultiTable data = initResultMatrix(DES, initialValues, timePoints);
@@ -791,12 +794,12 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			for(int j=1;j<=steps;j++) {
 			  System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
 				t = computeNextState(DES, t, h, yPrev, change, yTemp, true, false);
-				if((i==1) && (j==1)) {
+				if ((i==1) && (j==1)) {
 				  System.arraycopy(yPrev, 0, result[0], 0, yPrev.length);
 				}
 			}
 			h = BigDecimal.valueOf(timePoints[i]).subtract(BigDecimal.valueOf(t)).doubleValue();
-			if(h>1E-14) {
+			if (h>1E-14) {
 			  System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
 			  t = computeNextState(DES, t, h, yTemp, change, yTemp, true, false);
 			}
@@ -822,7 +825,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	public MultiTable solve(DESystem DES,
 			MultiTable.Block initConditions, double[] initialValues)
 			throws DerivativeException {
-	  if(DES instanceof DelayedDESystem) {
+	  if (DES instanceof DelayedDESystem) {
       ((DelayedDESystem)DES).registerDelayValueHolder(this);
     }
 		double[] timePoints = initConditions.getTimePoints();
@@ -841,9 +844,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		
 		for (int col = 0; col < initConditions.getColumnCount(); col++) {
 		  String columnName=initConditions.getColumnIdentifier(col);
-		  if(columnName!=null) {
+		  if (columnName!=null) {
 		    Integer index=idIndex.get(initConditions.getColumnIdentifier(col));
-		    if(index!=null) {
+		    if (index!=null) {
 		      initialValues[index.intValue()] = initConditions
             .getValueAt(0, col + 1);
 		    }
@@ -880,7 +883,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 				t = BigDecimal.valueOf(h).add(BigDecimal.valueOf(t)).doubleValue();
 			}
 			h = BigDecimal.valueOf(timePoints[i]).subtract(BigDecimal.valueOf(t)).doubleValue();
-			if(h>1E-14) {
+			if (h>1E-14) {
 			  computeChange(DES, yTemp, t, h, change, false);
 			  checkSolution(change);
 			  Mathematics.vvAdd(yTemp, change, yTemp);
