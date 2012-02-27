@@ -415,9 +415,10 @@ public class AlgebraicRuleConverter {
 		ArrayList<AssignmentRule> assignmentRules = new ArrayList<AssignmentRule>();
 		AssignmentRule as;
 		if (matching != null) {
-			for (Map.Entry<SBase, SBase> entry : matching.entrySet()) {
-				//System.out.println(entry.getKey() + " -> " + entry.getValue());
-			}
+			// TODO: What is happening here?
+//			for (Map.Entry<SBase, SBase> entry : matching.entrySet()) {
+//				//System.out.println(entry.getKey() + " -> " + entry.getValue());
+//			}
 		} else {
 			System.out.println("no matching found");
 		}
@@ -428,7 +429,7 @@ public class AlgebraicRuleConverter {
 		
 		
 		// create for every algebraic rule an adequate assignment rule
-		for (int i = 0; i < model.getNumRules(); i++) {
+		for (int i = 0; i < model.getRuleCount(); i++) {
 			Rule r = model.getRule(i);
 			if (r instanceof AlgebraicRule) {
 				AlgebraicRule ar = (AlgebraicRule) r;
@@ -436,7 +437,7 @@ public class AlgebraicRuleConverter {
 				ASTNode node = ar.getMath().clone();
 
 				// substitute function definitions
-				if (model.getNumFunctionDefinitions() > 0) {
+				if (model.getFunctionDefinitionCount() > 0) {
 					node = substituteFunctions(node, 0);
 				}
 				pso = node.getParentSBMLObject();
