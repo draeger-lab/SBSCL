@@ -883,7 +883,11 @@ public class ASTNodeInterpreterWithTime {
   public final double delay(String delayName, ASTNodeObject x, ASTNodeObject delay,
     String timeUnits, double time) throws SBMLException {
     //TODO: Delay for arbitrary expressions.
-    double valueTime=symbolTime(delayName)-delay.compileDouble(time);
+    double delayTime = delay.compileDouble(time);
+    if(delayTime == 0) {
+      return x.compileDouble(time);
+    }
+    double valueTime=symbolTime(delayName)- delayTime;
     try {
       return valueHolder.computeDelayedValue(valueTime, compileString(x));
     } catch (DerivativeException e) {
