@@ -85,7 +85,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
 	 */
 	@Override
 	public double[] computeChange(DESystem DES, double[] yTemp, double t,
-			double h, double[] change) throws DerivativeException {
+			double h, double[] change, boolean steadyState) throws DerivativeException {
 		int dim = DES.getDimension();
 		if ((kVals == null) || (kVals.length != 4) || (kVals[0].length != dim)) {
 			// "static" vectors which are allocated only once

@@ -85,7 +85,7 @@ public class EulerMethod extends AbstractDESSolver {
 	 * .DESystem, double[], double, double, double[])
 	 */
 	public double[] computeChange(DESystem DES, double[] yPrev, double t,
-			double stepSize, double[] change) throws DerivativeException {
+			double stepSize, double[] change, boolean steadyState) throws DerivativeException {
 		DES.computeDerivatives(t, yPrev, change);
 		Mathematics.scale(stepSize, change);
 		return change;
