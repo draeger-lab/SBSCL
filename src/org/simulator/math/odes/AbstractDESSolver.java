@@ -262,11 +262,12 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 *            current integration step size.
 	 * @param change
 	 *            The vector for the resulting change of the system.
+	 * @param steadyState 
 	 * @return The change.
 	 * @throws Exception
 	 */
 	public abstract double[] computeChange(DESystem DES, double[] y, double t,
-			double stepSize, double[] change) throws DerivativeException;
+			double stepSize, double[] change, boolean steadyState) throws DerivativeException;
 
 	/* (non-Javadoc)
 	 * @see org.simulator.math.odes.DelayValueHolder#computeValue(double, java.lang.String)
@@ -327,10 +328,10 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * @throws DerivativeException
 	 */
 	double computeNextState(DESystem DES, double t, double stepSize,
-			double[] yPrev, double[] change, double[] yTemp, boolean increase)
+			double[] yPrev, double[] change, double[] yTemp, boolean increase, boolean steadyState)
 			throws DerivativeException {
 	  double previousTime=t;
-    computeChange(DES, yPrev, t, stepSize, change);
+    computeChange(DES, yPrev, t, stepSize, change, steadyState);
     checkSolution(change, yPrev);
 		Mathematics.vvAdd(yPrev, change, yTemp);
 		checkNonNegativity(yTemp);
@@ -363,7 +364,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		while (!noChange(oldValues, newValues)) {
 			System.arraycopy(newValues, 0, oldValues, 0, newValues.length);
 			ft = computeNextState(DES, ft, stepSize, oldValues, change,
-					newValues, true);
+					newValues, true, true);
 		}
 		((FastProcessDESystem) DES).setFastProcessComputation(false);
 		return oldValues;
@@ -707,7 +708,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			double oldT = t;
 			System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
 			t = computeNextState(DES, t, stepSize, yPrev, change,
-					yTemp, true);
+					yTemp, true, false);
 			System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 			if (i == 1) {
 			  System.arraycopy(yPrev, 0, result[0], 0, yPrev.length);
@@ -789,7 +790,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
         timePoints[i], h);
 			for(int j=1;j<=steps;j++) {
 			  System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
-				t = computeNextState(DES, t, h, yPrev, change, yTemp, true);
+				t = computeNextState(DES, t, h, yPrev, change, yTemp, true, false);
 				if((i==1) && (j==1)) {
 				  System.arraycopy(yPrev, 0, result[0], 0, yPrev.length);
 				}
@@ -797,7 +798,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			h = BigDecimal.valueOf(timePoints[i]).subtract(BigDecimal.valueOf(t)).doubleValue();
 			if(h>1E-14) {
 			  System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
-			  t = computeNextState(DES, t, h, yTemp, change, yTemp, true);
+			  t = computeNextState(DES, t, h, yTemp, change, yTemp, true, false);
 			}
 			System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 			if (fastFlag) {
@@ -873,14 +874,14 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
           yTemp.length);
       }
 			for (j = 0; j < inBetweenSteps(timePoints[i - 1], timePoints[i], h); j++) {
-				computeChange(DES, yTemp, t, h, change);
+				computeChange(DES, yTemp, t, h, change, false);
 				checkSolution(change, yTemp);
 				Mathematics.vvAdd(yTemp, change, yTemp);
 				t = BigDecimal.valueOf(h).add(BigDecimal.valueOf(t)).doubleValue();
 			}
 			h = BigDecimal.valueOf(timePoints[i]).subtract(BigDecimal.valueOf(t)).doubleValue();
 			if(h>1E-14) {
-			  computeChange(DES, yTemp, t, h, change);
+			  computeChange(DES, yTemp, t, h, change, false);
 			  checkSolution(change);
 			  Mathematics.vvAdd(yTemp, change, yTemp);
 			}
