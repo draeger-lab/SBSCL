@@ -558,7 +558,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 	@Override
 	public double[] computeChange(DESystem DES, double[] y2, double time,
-			double currentStepSize, double[] change) throws DerivativeException {
+			double currentStepSize, double[] change, boolean steadyState) throws DerivativeException {
 	  if((y==null) || (y.length==0) || (y.length!=y2.length)) {
       init(DES.getDimension(),this.getStepSize(),2);
     }
@@ -651,7 +651,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
         if (t >= timeEnd) {
           if (DES instanceof EventDESystem) {
             EventDESystem EDES = (EventDESystem) DES;
-            if ((EDES.getNumEvents() > 0) || (EDES.getNumRules() > 0)) {
+            if (((EDES.getNumEvents() > 0) && (!steadyState))|| (EDES.getNumRules() > 0)) {
               processEventsAndRules(true, EDES, timeEnd, t-h, yTemp);
             }
             System.arraycopy(yTemp, 0, y, 0, numEqn);
@@ -688,7 +688,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
           
           boolean changed=false;
           double newTime = BigDecimal.valueOf(t).add(BigDecimal.valueOf(h)).doubleValue();
-          if (DES instanceof EventDESystem) {
+          if ((DES instanceof EventDESystem) && (!steadyState)) {
             EventDESystem EDES = (EventDESystem) DES;
             if ((EDES.getNumEvents() > 0) || (EDES.getNumRules() > 0)) {
               changed=processEventsAndRules(true, EDES, Math.min(newTime,timeEnd), t, yTemp);
@@ -700,6 +700,9 @@ public class RosenbrockSolver extends AbstractDESSolver {
             if(h>precisionEventsAndRules)  {
               //h=h/10;
               h = Math.max(h / 10,precisionEventsAndRules);
+              if(h - precisionEventsAndRules < precisionEventsAndRules) {
+                h = precisionEventsAndRules;
+              }
               System.arraycopy(oldY, 0, y, 0, numEqn);
             }
             else {
