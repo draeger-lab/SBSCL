@@ -169,7 +169,12 @@ public class StoichiometryObject {
         stoichiometrySet=false;
       } else {
         stoichiometry = sr.getCalculatedStoichiometry();
-        stoichiometrySet=true;
+        if(id.equals("")) {
+          stoichiometrySet=true;
+        }
+        else {
+          stoichiometrySet=false;
+        }
       }
     }
     
