@@ -12,16 +12,21 @@
            roland.keller@uni-tuebingen.de
 
 
+                      -- Principal investigators -- 
+                           
+         Nicolas Le Novère, European Bioinformatics Institute, Wellcome 
+           Trust Genome Campus, Hinxton, United Kingdom,
+           lenov@ebi.ac.uk
+         Andreas Zell, University of Tuebingen, Germany,
+           andreas.zell@uni-tuebingen.de
+
+
                            -- Contributors --
 
          Akira Funahashi, Keio University, Yokohama, Japan,
            funa@bio.keio.ac.jp
          Akito Tabira, Keio University, Yokohama, Japan,
            funa@bio.keio.ac.jp
-         Max Zwießele, University of Tuebingen, Germany,
-           max-benjamin.zwiessele@student.uni-tuebingen.de
-         Philip Stevens, University of Tuebingen, Germany,
-           philip.stevens@student.uni-tuebingen.de
          Mike Cooling, University of Auckland, Auckland, New Zealand,
            m.cooling@auckland.ac.nz
          Michael Ziller, Harvard University, MA, USA,
@@ -48,4 +53,8 @@
            dwouamba@yahoo.fr
          Hannes Planatscher, NMI Reutlingen, Germany,
            Hannes.Planatscher@nmi.de
-
+         Max Zwießele, University of Tuebingen, Germany,
+           max-benjamin.zwiessele@student.uni-tuebingen.de
+         Philip Stevens, University of Tuebingen, Germany,
+           philip.stevens@student.uni-tuebingen.de
+         
