@@ -46,12 +46,12 @@ import org.simulator.math.MatrixOperations.MatrixException;
  */
 public class RosenbrockSolver extends AbstractDESSolver {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
-	
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -3446213991016212781L;
+
 	/**
 	 * Constants used to adapt the stepsize according to the error in the last
 	 * step (see rodas.f)
@@ -107,7 +107,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	private double absTol;
 	/** relative tolerance */
 	private double relTol;
-	
+
 
 	/** the current value of the independent variable */
 	private double t;
@@ -128,7 +128,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 
 	/** the current values of the dependent variables */
 	private double[] y;
-	
+
 	/**
 	 * Saving of older values of y.
 	 */
@@ -159,47 +159,46 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	/**
 	 * 
 	 */
-  private double[] timePoints;
+	private double[] timePoints;
 
-  /**
-   * NaNs that are set before the calculation are ignored.
-   */
-  private boolean[] ignoreNaN;
-	
-  private static final double precisionEventsAndRules = 1E-7;
+	/**
+	 * NaNs that are set before the calculation are ignored.
+	 */
+	private boolean[] ignoreNaN;
+
+	private static final double precisionEventsAndRules = 1E-7;
 	/**
 	 * 
 	 * @param size
 	 * @param stepsize
 	 */
 	/**
-   * 
-   */
-  public RosenbrockSolver() {
-     super();
-  }
-  
-  /**
-   * 
-   * @param size
-   * @param stepsize
-   */
+	 * 
+	 */
+	public RosenbrockSolver() {
+		super();
+	}
+
+	/**
+	 * 
+	 * @param size
+	 * @param stepsize
+	 */
 	public RosenbrockSolver(int size, double stepsize) {
 		super(stepsize);
 		init(size,stepsize,2);
-		
 	}
-	
-	
-  public RosenbrockSolver(RosenbrockSolver solver) {
-    super(solver);
-    init(solver.getNumEquations(), solver.getStepSize(),2);
-    
-  }
+
+
+	public RosenbrockSolver(RosenbrockSolver solver) {
+		super(solver);
+		init(solver.getNumEquations(), solver.getStepSize(),2);
+
+	}
 
 	private void init(int size, double stepsize, int nTimepoints) {
-    numEqn = size;
-		
+		numEqn = size;
+
 		hMin = 1E-14;
 		this.setStepSize(stepsize);
 		hMax = Math.min(stepsize,0.1);
@@ -238,9 +237,11 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		FAC = new double[numEqn][numEqn];
 		I = new double[numEqn][numEqn];
 		ignoreNaN=new boolean[numEqn];
-  }
-	
-	@Override
+	}
+
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.AbstractDESSolver#clone()
+	 */
 	public AbstractDESSolver clone() {
 		return new RosenbrockSolver(this.getNumEquations(),this.getStepSize());
 	}
@@ -251,16 +252,16 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	  if (((DES instanceof FastProcessDESystem) &&( ((FastProcessDESystem) DES).containsFastProcesses()))||(DES.containsEventsOrRules())) {
 	    super.solve(DES, initialValues, timeBegin,timeEnd);
 	  }
-	  
+
 	  MultiBlockTable data = initResultMatrix(DES, initialValues, timeBegin,timeEnd);
 		double result[][] = data.getBlock(0).getData();
 		additionalResults(DES, t, result[0], data, 0);
 	  if(y==null) {
 		  init(DES.getDESystemDimension(),this.getStepSize(),data.getTimePoints().length);
 		}
-		
-		
-		
+
+
+
 		try {
 
 			double localError = 0;
@@ -287,13 +288,13 @@ public class RosenbrockSolver extends AbstractDESSolver {
 			// initial dependent values
 			t = timeBegin;
       timePoints[0] = t;
-      
+
 
 			for (int i = 0; i < initialValues.length; i++){
 				y[i] = initialValues[i];
 
 			}
-			
+
 			// add the initial conditions to the solution matrix and let all
 			// point
 			// ready listeners know about it
@@ -318,8 +319,8 @@ public class RosenbrockSolver extends AbstractDESSolver {
 						// solution
 						// matrix and notify all pointReadyListeners of the
 						// point
-						
-						
+
+
 						solutionIndex++;
 						timePoints[solutionIndex] = t;
 						System.arraycopy(y, 0, result[solutionIndex], 0, y.length);
@@ -392,7 +393,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 			}
 
 			if (!stop){
-				
+
 			}
 			//solveDone();
 		} catch (OutOfMemoryError e) {
@@ -402,10 +403,10 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		return data;
 
 	}
-	*/
+	 */
 
 	public double step(DESystem DES) throws DerivativeException {
-	  double largestError = 0;
+		double largestError = 0;
 
 		DES.computeDerivatives(t, y, g0);
 		for (int j = 0; j < numEqn; j++) {
@@ -439,7 +440,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		DES.computeDerivatives(t + 2 * h, y, g2x);
 		for (int i = 0; i < numEqn; i++)
 			DFDX[i] = g0[i] * -3 / (2 * h) + g1x[i] * 2 / h + g2x[i] * -1
-					/ (2 * h);
+			/ (2 * h);
 
 		// Here the work of taking the step begins
 		// It uses the derivatives calculated above
@@ -471,7 +472,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		DES.computeDerivatives(t + c3 * h, yTemp, f3);
 		for (int i = 0; i < numEqn; i++)
 			k3[i] = f3[i] + DFDX[i] * h * d3 + k1[i] * c31 / h + k2[i] * c32
-					/ h;
+			/ h;
 		MatrixOperations.lubksb(FAC, indx, k3);
 
 		for (int i = 0; i < numEqn; i++) {
@@ -480,7 +481,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		DES.computeDerivatives(t + c4 * h, yTemp, f4);
 		for (int i = 0; i < numEqn; i++)
 			k4[i] = f4[i] + DFDX[i] * h * d4 + k1[i] * c41 / h + k2[i] * c42
-					/ h + k3[i] * c43 / h;
+			/ h + k3[i] * c43 / h;
 		MatrixOperations.lubksb(FAC, indx, k4);
 
 		for (int i = 0; i < numEqn; i++) {
@@ -490,7 +491,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		DES.computeDerivatives(t + h, yTemp, f5);
 		for (int i = 0; i < numEqn; i++)
 			k5[i] = f5[i] + k1[i] * c51 / h + k2[i] * c52 / h + k3[i] * c53 / h
-					+ k4[i] * c54 / h;
+			+ k4[i] * c54 / h;
 		MatrixOperations.lubksb(FAC, indx, k5);
 
 		for (int i = 0; i < numEqn; i++) {
@@ -499,7 +500,7 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		DES.computeDerivatives(t + h, yTemp, f6);
 		for (int i = 0; i < numEqn; i++)
 			yerr[i] = f6[i] + k1[i] * c61 / h + k2[i] * c62 / h + k3[i] * c63
-					/ h + k4[i] * c64 / h + k5[i] * c65 / h;
+			/ h + k4[i] * c64 / h + k5[i] * c65 / h;
 		MatrixOperations.lubksb(FAC, indx, yerr);
 
 		for (int i = 0; i < numEqn; i++) {
@@ -507,13 +508,13 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		}
 
 		for (int i = 0; i < numEqn; i++) {
-		  if(!ignoreNaN[i]) {
-		    sk = absTol + relTol * Math.max(Math.abs(y[i]), Math.abs(yNew[i]));
-		    largestError += Math.pow(yerr[i] / sk, 2);
+			if(!ignoreNaN[i]) {
+				sk = absTol + relTol * Math.max(Math.abs(y[i]), Math.abs(yNew[i]));
+				largestError += Math.pow(yerr[i] / sk, 2);
 
-		    if ((Double.isInfinite(yTemp[i]) || Double.isNaN(yTemp[i])))
-		      return -1;
-		  }
+				if ((Double.isInfinite(yTemp[i]) || Double.isNaN(yTemp[i])))
+					return -1;
+			}
 		}
 		largestError = Math.pow(largestError / numEqn, 0.5);
 		return largestError;
@@ -547,244 +548,244 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	public String getName() {
 		return "Rosenbrock solver";
 	}
-	
+
 	/**
 	 * 
 	 * @return
 	 */
 	public int getNumEquations() {
-	  return numEqn;
+		return numEqn;
 	}
 
 	@Override
 	public double[] computeChange(DESystem DES, double[] y2, double time,
 			double currentStepSize, double[] change, boolean steadyState) throws DerivativeException {
-	  if((y==null) || (y.length==0) || (y.length!=y2.length)) {
-      init(DES.getDimension(),this.getStepSize(),2);
-    }
-	  this.hMax = currentStepSize;
-	  boolean hasDerivatives = true;
-	  
-	  if (DES instanceof EventDESystem) {
-      EventDESystem EDES = (EventDESystem) DES;
-      if(EDES.getNoDerivatives()) {
-        hasDerivatives = false;
-      }
-	  }
-	  
-	  double timeEnd = BigDecimal.valueOf(time).add(BigDecimal.valueOf(currentStepSize)).doubleValue();
-    try {
-      
-      double localError = 0;
-      int solutionIndex = 0;
+		if((y==null) || (y.length==0) || (y.length!=y2.length)) {
+			init(DES.getDimension(),this.getStepSize(),2);
+		}
+		this.hMax = currentStepSize;
+		boolean hasDerivatives = true;
 
-      // temporary variable used when adjusting stepsize
-      double tNew;
+		if (DES instanceof EventDESystem) {
+			EventDESystem EDES = (EventDESystem) DES;
+			if(EDES.getNoDerivatives()) {
+				hasDerivatives = false;
+			}
+		}
 
-      // was the last step successful? (do we have to repeat the step
-      // with a smaller stepsize?)
-      boolean lastStepSuccessful = false;
+		double timeEnd = BigDecimal.valueOf(time).add(BigDecimal.valueOf(currentStepSize)).doubleValue();
+		try {
 
-      // Compute epsilon. This is the smallest double X such that
-      // 1.0+X!=1.0
-      double eps = unitRoundoff();
-      // Restrict relative error tolerance to be at least as large as
-      // 2*eps+RELMIN to avoid limiting precision difficulties arising
-      // from impossible accuracy requests
-      double relMin = 2.0 * eps + RELMIN;
-      if (relTol < relMin)
-        relTol = relMin;
+			double localError = 0;
+			int solutionIndex = 0;
 
-      // set t to the initial independent value and y[] to the
-      // initial dependent values
-      t = time;
-      timePoints[0] = t;
-      
-      if(y.length!=y2.length) {
-        y=y2.clone();
-        ignoreNaN=new boolean[y.length];
-      }
-      else {
-        System.arraycopy(y2, 0, y, 0, y.length);
-      }
-      
-      for(int i=0;i!=y.length;i++) {
-        if(Double.isInfinite(y[i]) || (Double.isNaN(y[i]))) {
-          ignoreNaN[i]=true;
-        }
-        else{
-          ignoreNaN[i]=false;
-        }
-      }
-      // add the initial conditions to the solution matrix and let all
-      // point
-      // ready listeners know about it
+			// temporary variable used when adjusting stepsize
+			double tNew;
 
-      // set initial stepsize - we want to try the maximum stepsize to
-      // begin
-      // with and move to smaller values if necessary
-      h = hMax;
-      stop = false;
-      
-      while (!stop) {
-        
-        // if the last step was successful (t was updated)...
-        if (lastStepSuccessful) {
+			// was the last step successful? (do we have to repeat the step
+			// with a smaller stepsize?)
+			boolean lastStepSuccessful = false;
 
-          // ... and the current t differs from the last recorded one
-          // by
-          // at least stepsize...
-          if (Math.abs(timePoints[solutionIndex] - t) >= Math
-              .abs(currentStepSize)) {
+			// Compute epsilon. This is the smallest double X such that
+			// 1.0+X!=1.0
+			double eps = unitRoundoff();
+			// Restrict relative error tolerance to be at least as large as
+			// 2*eps+RELMIN to avoid limiting precision difficulties arising
+			// from impossible accuracy requests
+			double relMin = 2.0 * eps + RELMIN;
+			if (relTol < relMin)
+				relTol = relMin;
 
-            // ...we want to record the current point in the
-            // solution
-            // matrix and notify all pointReadyListeners of the
-            // point
-            solutionIndex++;
-            timePoints[solutionIndex] = t;
-            
-          }
-        }
+			// set t to the initial independent value and y[] to the
+			// initial dependent values
+			t = time;
+			timePoints[0] = t;
 
-        // see if we're done
-        if (t >= timeEnd) {
-          if (DES instanceof EventDESystem) {
-            EventDESystem EDES = (EventDESystem) DES;
-            if (((EDES.getEventCount() > 0) && (!steadyState)) || (EDES.getRuleCount() > 0)) {
-              processEventsAndRules(true, EDES, timeEnd, t-h, yTemp);
-            }
-            System.arraycopy(yTemp, 0, y, 0, numEqn);
-          }
-          Mathematics.vvSub(y, y2, change);
-          break;
-        }
-        // copy the current point into yTemp
-        System.arraycopy(y, 0, yTemp, 0, numEqn);
-        try {
-          // take a step
-          if(hasDerivatives) {
-            localError = step(DES);
-          }
-          else {
-            localError = 0;
-          }
-        } catch (Exception ex) {
-          stop = true;
-        }
-//        if (localError == -1) {
-//          new Error("Infinity or NaN encountered by the RB solver... stopping solve");
-//          stop = true;
-//        }
+			if(y.length!=y2.length) {
+				y=y2.clone();
+				ignoreNaN=new boolean[y.length];
+			}
+			else {
+				System.arraycopy(y2, 0, y, 0, y.length);
+			}
 
-        // good step
-        if (((!Double.isNaN(localError)) && (localError!=-1) && (localError <= 1.0) && !stop)) {
-          this.setUnstableFlag(false);
-          
-          
-          
-          System.arraycopy(y, 0, oldY, 0, numEqn);
-          System.arraycopy(yTemp, 0, y, 0, numEqn);
-          
-          boolean changed=false;
-          double newTime = BigDecimal.valueOf(t).add(BigDecimal.valueOf(h)).doubleValue();
-          if ((DES instanceof EventDESystem) && (!steadyState)) {
-            EventDESystem EDES = (EventDESystem) DES;
-            if ((EDES.getEventCount() > 0) || (EDES.getRuleCount() > 0)) {
-              changed=processEventsAndRules(true, EDES, Math.min(newTime,timeEnd), t, yTemp);
-            }
-          }
-          
-          if(changed) {
-            //if(h/10>hMin) {
-            if(h>precisionEventsAndRules)  {
-              //h=h/10;
-              h = Math.max(h / 10,precisionEventsAndRules);
-              if(h - precisionEventsAndRules < precisionEventsAndRules) {
-                h = precisionEventsAndRules;
-              }
-              System.arraycopy(oldY, 0, y, 0, numEqn);
-            }
-            else {
-              System.arraycopy(yTemp, 0, y, 0, numEqn);
-              t=Math.min(newTime,timeEnd);
-              if(timeEnd-t-h<hMin) {
-                h = timeEnd - t;
-              }
-              lastStepSuccessful = true;
-            }
-          }
-          else {
-            t=Math.min(newTime,timeEnd);
-            // change stepsize (see Rodas.f) require 0.2<=hnew/h<=6
-            hAdap = Math.max(fac1,
-              Math.min(fac2, Math.pow(localError, PWR) / SAFETY));
-            h = h / hAdap;
-            if(timeEnd-t-h<hMin) {
-              h = timeEnd - t;
-            }
-            lastStepSuccessful = true;
-          }
-          
-          
-          
-          
+			for(int i=0;i!=y.length;i++) {
+				if(Double.isInfinite(y[i]) || (Double.isNaN(y[i]))) {
+					ignoreNaN[i]=true;
+				}
+				else{
+					ignoreNaN[i]=false;
+				}
+			}
+			// add the initial conditions to the solution matrix and let all
+			// point
+			// ready listeners know about it
 
-        } else {
+			// set initial stepsize - we want to try the maximum stepsize to
+			// begin
+			// with and move to smaller values if necessary
+			h = hMax;
+			stop = false;
 
-          // if we just tried to use the minimum stepsize and still
-          // failed to achieve the desired accuracy, it's useless to
-          // continue, so we stop
-          if (Math.abs(h) <= Math.abs(hMin)) {
-            throw new DerivativeException("Requested tolerance could not be achieved, even at the minumum stepsize.  Please increase the tolerance or decrease the minimum stepsize.");
-          }
+			while (!stop) {
 
-          // change stepsize (see Rodas.f) require 0.2<=hnew/h<=6
-          if((Double.isNaN(localError)) || (localError==-1) || (stop==true)) {
-            hAdap=2;
-          } 
-          else {
-            hAdap = Math.max(fac1,
-                Math.min(fac2, Math.pow(localError, PWR) / SAFETY));
-          }
-          h = h / hAdap;
-          if(timeEnd-t-h<hMin) {
-            h = timeEnd - t;
-          }
-          tNew = t + h;
-          if (tNew == t) {
-            throw new DerivativeException("Stepsize underflow in Rosenbrock solver");
-          }
-          lastStepSuccessful = false;
-        }
+				// if the last step was successful (t was updated)...
+				if (lastStepSuccessful) {
 
-        // check bounds on the new stepsize
-        if (Math.abs(h) < hMin) {
-            h = hMin;
+					// ... and the current t differs from the last recorded one
+					// by
+					// at least stepsize...
+					if (Math.abs(timePoints[solutionIndex] - t) >= Math
+							.abs(currentStepSize)) {
 
-        } else if (Math.abs(h) > hMax) {
-            h = hMax;
-        }
-        
-        stop = false;
-      }
+						// ...we want to record the current point in the
+						// solution
+						// matrix and notify all pointReadyListeners of the
+						// point
+						solutionIndex++;
+						timePoints[solutionIndex] = t;
 
-      //solveDone();
-    } catch (OutOfMemoryError e) {
-      throw new DerivativeException("Out of memory : try reducing solve span or increasing step size.");
-    }
+					}
+				}
+
+				// see if we're done
+				if (t >= timeEnd) {
+					if (DES instanceof EventDESystem) {
+						EventDESystem EDES = (EventDESystem) DES;
+						if (((EDES.getEventCount() > 0) && (!steadyState)) || (EDES.getRuleCount() > 0)) {
+							processEventsAndRules(true, EDES, timeEnd, t-h, yTemp);
+						}
+						System.arraycopy(yTemp, 0, y, 0, numEqn);
+					}
+					Mathematics.vvSub(y, y2, change);
+					break;
+				}
+				// copy the current point into yTemp
+				System.arraycopy(y, 0, yTemp, 0, numEqn);
+				try {
+					// take a step
+					if(hasDerivatives) {
+						localError = step(DES);
+					}
+					else {
+						localError = 0;
+					}
+				} catch (Exception ex) {
+					stop = true;
+				}
+				//        if (localError == -1) {
+				//          new Error("Infinity or NaN encountered by the RB solver... stopping solve");
+				//          stop = true;
+				//        }
+
+				// good step
+				if (((!Double.isNaN(localError)) && (localError!=-1) && (localError <= 1.0) && !stop)) {
+					this.setUnstableFlag(false);
 
 
-    return change;
+
+					System.arraycopy(y, 0, oldY, 0, numEqn);
+					System.arraycopy(yTemp, 0, y, 0, numEqn);
+
+					boolean changed=false;
+					double newTime = BigDecimal.valueOf(t).add(BigDecimal.valueOf(h)).doubleValue();
+					if ((DES instanceof EventDESystem) && (!steadyState)) {
+						EventDESystem EDES = (EventDESystem) DES;
+						if ((EDES.getEventCount() > 0) || (EDES.getRuleCount() > 0)) {
+							changed=processEventsAndRules(true, EDES, Math.min(newTime,timeEnd), t, yTemp);
+						}
+					}
+
+					if(changed) {
+						//if(h/10>hMin) {
+							if(h>precisionEventsAndRules)  {
+								//h=h/10;
+								h = Math.max(h / 10,precisionEventsAndRules);
+								if(h - precisionEventsAndRules < precisionEventsAndRules) {
+									h = precisionEventsAndRules;
+								}
+								System.arraycopy(oldY, 0, y, 0, numEqn);
+							}
+							else {
+								System.arraycopy(yTemp, 0, y, 0, numEqn);
+								t=Math.min(newTime,timeEnd);
+								if(timeEnd-t-h<hMin) {
+									h = timeEnd - t;
+								}
+								lastStepSuccessful = true;
+							}
+					}
+					else {
+						t=Math.min(newTime,timeEnd);
+						// change stepsize (see Rodas.f) require 0.2<=hnew/h<=6
+						hAdap = Math.max(fac1,
+								Math.min(fac2, Math.pow(localError, PWR) / SAFETY));
+						h = h / hAdap;
+						if(timeEnd-t-h<hMin) {
+							h = timeEnd - t;
+						}
+						lastStepSuccessful = true;
+					}
+
+
+
+
+
+				} else {
+
+					// if we just tried to use the minimum stepsize and still
+					// failed to achieve the desired accuracy, it's useless to
+					// continue, so we stop
+					if (Math.abs(h) <= Math.abs(hMin)) {
+						throw new DerivativeException("Requested tolerance could not be achieved, even at the minumum stepsize.  Please increase the tolerance or decrease the minimum stepsize.");
+					}
+
+					// change stepsize (see Rodas.f) require 0.2<=hnew/h<=6
+					if((Double.isNaN(localError)) || (localError==-1) || (stop==true)) {
+						hAdap=2;
+					} 
+					else {
+						hAdap = Math.max(fac1,
+								Math.min(fac2, Math.pow(localError, PWR) / SAFETY));
+					}
+					h = h / hAdap;
+					if(timeEnd-t-h<hMin) {
+						h = timeEnd - t;
+					}
+					tNew = t + h;
+					if (tNew == t) {
+						throw new DerivativeException("Stepsize underflow in Rosenbrock solver");
+					}
+					lastStepSuccessful = false;
+				}
+
+				// check bounds on the new stepsize
+				if (Math.abs(h) < hMin) {
+					h = hMin;
+
+				} else if (Math.abs(h) > hMax) {
+					h = hMax;
+				}
+
+				stop = false;
+			}
+
+			//solveDone();
+		} catch (OutOfMemoryError e) {
+			throw new DerivativeException("Out of memory : try reducing solve span or increasing step size.");
+		}
+
+
+		return change;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.simulator.math.odes.AbstractDESSolver#hasSolverEventProcessing()
 	 */
-  protected boolean hasSolverEventProcessing() {
-    return true;
-  }
-	
+	protected boolean hasSolverEventProcessing() {
+		return true;
+	}
+
 
 }
