@@ -104,7 +104,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * 
 	 */
 	private MultiTable data;
-  
+
 	/**
 	 * Initialize with default integration step size and non-negative attribute
 	 * <code>true</code>.
@@ -117,7 +117,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		this.intervalFactor = 0d;
 		this.listenerList = new LinkedList<PropertyChangeListener>();
 	}
-	
+
 	/**
 	 * Initialize with default integration step size and non-negative attribute
 	 * <code>true</code>.
@@ -130,7 +130,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		this.intervalFactor = 0d;
 		this.listenerList = new LinkedList<PropertyChangeListener>();
 	}
-	
+
 
 	/**
 	 * Clone constructor.
@@ -224,26 +224,26 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		}
 		return !unstableFlag;
 	}
-	
+
 	/**
 	 * 
 	 * @param currentChange
 	 * @param yPrev
 	 * @return
 	 */
-  boolean checkSolution(double[] currentChange, double[] yPrev) {
-    for (int k = 0; k < currentChange.length; k++) {
-      if (Double.isNaN(currentChange[k])) {
-       if (!Double.isNaN(yPrev[k]) &&!Double.isInfinite(yPrev[k])) {
-         unstableFlag = true;
-       }
-       else if (Double.isInfinite(yPrev[k])) {
-         currentChange[k]=0;
-       }
-      }
-    }
-    return !unstableFlag;
-  }
+	boolean checkSolution(double[] currentChange, double[] yPrev) {
+		for (int k = 0; k < currentChange.length; k++) {
+			if (Double.isNaN(currentChange[k])) {
+				if (!Double.isNaN(yPrev[k]) &&!Double.isInfinite(yPrev[k])) {
+					unstableFlag = true;
+				}
+				else if (Double.isInfinite(yPrev[k])) {
+					currentChange[k]=0;
+				}
+			}
+		}
+		return !unstableFlag;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
@@ -276,47 +276,47 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * @see org.simulator.math.odes.DelayValueHolder#computeValue(double, java.lang.String)
 	 */
 	public double computeDelayedValue(double time, String id) throws DerivativeException {
-	  //get interval
-	  double[] timepoints=data.getTimePoints();
-	  int leftIndex=-1;
-	  int rightIndex=-1;
-	  for(int i=0;i!=timepoints.length;i++) {
-	    if (timepoints[i]>=time) {
-	      rightIndex=i;
-	      if ((i>0) && (timepoints[i]>time)) {
-	        leftIndex=i-1;
-	      }
-	      break;
-	    }
-	  }
-	  if ((leftIndex==-1) && (rightIndex==-1)) {
-	    leftIndex=timepoints.length-1;
-	  }
-	  
-	  //get values and do an interpolation if necessary
-	  double leftValue=Double.NaN;
-	  double rightValue=Double.NaN;
-	  
-	  Column c=data.getColumn(id);
-	  if (leftIndex!=-1) {
-	    leftValue=c.getValue(leftIndex);
-	  }
-	  if (rightIndex!=-1) {
-	    rightValue=c.getValue(rightIndex);
-	  }
-	  
-	  if (leftIndex==-1) {
-	    return rightValue;
-	  }
-	  else if (rightIndex==-1) {
-	    return leftValue;
-	  }
-	  else {
-	    return leftValue + (rightValue-leftValue)*((time-timepoints[leftIndex])/(timepoints[rightIndex]-timepoints[leftIndex]));
-	  }
+		//get interval
+		double[] timepoints=data.getTimePoints();
+		int leftIndex=-1;
+		int rightIndex=-1;
+		for(int i=0;i!=timepoints.length;i++) {
+			if (timepoints[i]>=time) {
+				rightIndex=i;
+				if ((i>0) && (timepoints[i]>time)) {
+					leftIndex=i-1;
+				}
+				break;
+			}
+		}
+		if ((leftIndex==-1) && (rightIndex==-1)) {
+			leftIndex=timepoints.length-1;
+		}
+
+		//get values and do an interpolation if necessary
+		double leftValue=Double.NaN;
+		double rightValue=Double.NaN;
+
+		Column c=data.getColumn(id);
+		if (leftIndex!=-1) {
+			leftValue=c.getValue(leftIndex);
+		}
+		if (rightIndex!=-1) {
+			rightValue=c.getValue(rightIndex);
+		}
+
+		if (leftIndex==-1) {
+			return rightValue;
+		}
+		else if (rightIndex==-1) {
+			return leftValue;
+		}
+		else {
+			return leftValue + (rightValue-leftValue)*((time-timepoints[leftIndex])/(timepoints[rightIndex]-timepoints[leftIndex]));
+		}
 	}
 
-  /**
+	/**
 	 * 
 	 * @param DES
 	 * @param t
@@ -332,14 +332,14 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	double computeNextState(DESystem DES, double t, double stepSize,
 			double[] yPrev, double[] change, double[] yTemp, boolean increase, boolean steadyState)
-			throws DerivativeException {
-	  double previousTime=t;
-    computeChange(DES, yPrev, t, stepSize, change, steadyState);
-    checkSolution(change, yPrev);
+					throws DerivativeException {
+		double previousTime=t;
+		computeChange(DES, yPrev, t, stepSize, change, steadyState);
+		checkSolution(change, yPrev);
 		Mathematics.vvAdd(yPrev, change, yTemp);
 		checkNonNegativity(yTemp);
 		if (increase) {
-		  t = BigDecimal.valueOf(stepSize).add(BigDecimal.valueOf(t)).doubleValue();
+			t = BigDecimal.valueOf(stepSize).add(BigDecimal.valueOf(t)).doubleValue();
 		}
 		processEventsAndRules(false, DES, t, previousTime, yTemp);
 		return t;
@@ -492,7 +492,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		if (includeIntermediates && (DES instanceof RichDESystem)) {
 			data.addBlock(((RichDESystem) DES).getAdditionalValueIds());
 			data.getBlock(data.getBlockCount() - 1)
-					.setName("Additional values");
+			.setName("Additional values");
 		}
 		unstableFlag = false;
 		return data;
@@ -527,8 +527,8 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	private boolean noChange(double newValues[], double oldValues[]) {
 		for (int i = 0; i < newValues.length; i++) {
-		  double distance=Math.abs(newValues[i]-oldValues[i]);
-		  if (distance > 1e-12) {
+			double distance=Math.abs(newValues[i]-oldValues[i]);
+			if (distance > 1e-12) {
 				return false;
 			}
 		}
@@ -571,7 +571,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 				time, previousTime, yTemp);
 
 		if (event!=null) {
-		  hasNewEvents=true;
+			hasNewEvents=true;
 		}
 		while ((event != null) && ((event.getLastTimeExecuted()==time) || (event.getFireStatus(time)))) {
 			for (int index: event.getAssignments().keySet()) {
@@ -579,7 +579,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			}
 
 			event = EDES.getNextEventAssignments(
-        time, previousTime, yTemp);
+					time, previousTime, yTemp);
 		}
 		return hasNewEvents;
 
@@ -617,7 +617,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	public boolean processRules(EventDESystem EDES, double time, double[] Ytemp)
 			throws DerivativeException {
-	  return EDES.processAssignmentRules(time, Ytemp);
+		return EDES.processAssignmentRules(time, Ytemp);
 	}
 
 	/* (non-Javadoc)
@@ -681,9 +681,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	public MultiTable solve(DESystem DES, double[] initialValues,
 			double timeBegin, double timeEnd) throws DerivativeException {
-	  if (DES instanceof DelayedDESystem) {
-	    ((DelayedDESystem)DES).registerDelayValueHolder(this);
-	  }
+		if (DES instanceof DelayedDESystem) {
+			((DelayedDESystem)DES).registerDelayValueHolder(this);
+		}
 		this.intervalFactor = 100d / (timeEnd - timeBegin);
 		MultiTable data = initResultMatrix(DES, initialValues, timeBegin,
 				timeEnd);
@@ -715,7 +715,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 					yTemp, true, false);
 			System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 			if (i == 1) {
-			  System.arraycopy(yPrev, 0, result[0], 0, yPrev.length);
+				System.arraycopy(yPrev, 0, result[0], 0, yPrev.length);
 			}
 			firePropertyChange(oldT * intervalFactor, t * intervalFactor);
 
@@ -726,7 +726,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			}
 			additionalResults(DES, t - stepSize, result[i - 1], data, i);
 		}
-		
+
 		return data;
 	}
 
@@ -755,10 +755,10 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	public MultiTable solve(DESystem DES, double[] initialValues,
 			double[] timePoints) throws DerivativeException {
-	  if (DES instanceof DelayedDESystem) {
-      ((DelayedDESystem)DES).registerDelayValueHolder(this);
-    }
-	  MultiTable data = initResultMatrix(DES, initialValues, timePoints);
+		if (DES instanceof DelayedDESystem) {
+			((DelayedDESystem)DES).registerDelayValueHolder(this);
+		}
+		MultiTable data = initResultMatrix(DES, initialValues, timePoints);
 		double result[][] = data.getBlock(0).getData();
 		double change[] = new double[initialValues.length];
 		double yPrev[] = new double[initialValues.length];
@@ -783,26 +783,27 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		// execute events that trigger at 0.0
 		processEvents((EventDESystem) DES, 0.0, 0.0,result[0]);
 		System.arraycopy(result[0], 0, yTemp, 0, result[0].length);
-		
-		for (int i = 1; i < timePoints.length; i++) {
+
+		for (int i = 1; (i < timePoints.length)
+				&& (!Thread.currentThread().isInterrupted()); i++) {
 			firePropertyChange(timePoints[i-1] * intervalFactor, timePoints[i] * intervalFactor);
 
 			h = stepSize;
 
 			// h = h / 10;
 			int steps=inBetweenSteps(timePoints[i - 1],
-        timePoints[i], h);
+					timePoints[i], h);
 			for(int j=1;j<=steps;j++) {
-			  System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
+				System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
 				t = computeNextState(DES, t, h, yPrev, change, yTemp, true, false);
 				if ((i==1) && (j==1)) {
-				  System.arraycopy(yPrev, 0, result[0], 0, yPrev.length);
+					System.arraycopy(yPrev, 0, result[0], 0, yPrev.length);
 				}
 			}
 			h = BigDecimal.valueOf(timePoints[i]).subtract(BigDecimal.valueOf(t)).doubleValue();
 			if (h>1E-14) {
-			  System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
-			  t = computeNextState(DES, t, h, yTemp, change, yTemp, true, false);
+				System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
+				t = computeNextState(DES, t, h, yTemp, change, yTemp, true, false);
 			}
 			System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 			if (fastFlag) {
@@ -813,7 +814,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			}
 
 			additionalResults(DES, t, yTemp, data, i);
-			
+
 			t=timePoints[i];
 
 		}
@@ -825,13 +826,13 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	public MultiTable solve(DESystem DES,
 			MultiTable.Block initConditions, double[] initialValues)
-			throws DerivativeException {
-	  if (DES instanceof DelayedDESystem) {
-      ((DelayedDESystem)DES).registerDelayValueHolder(this);
-    }
+					throws DerivativeException {
+		if (DES instanceof DelayedDESystem) {
+			((DelayedDESystem)DES).registerDelayValueHolder(this);
+		}
 		double[] timePoints = initConditions.getTimePoints();
 		// of items to be simulated, this will cause a problem!
-		
+
 		HashMap<String, Integer> idIndex = new HashMap<String, Integer>();
 		HashSet<String> missingIds = new HashSet<String>();
 		int i, j, k;
@@ -842,41 +843,41 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			}
 			idIndex.put(ids[i], Integer.valueOf(i));
 		}
-		
+
 		for (int col = 0; col < initConditions.getColumnCount(); col++) {
-		  String columnName=initConditions.getColumnIdentifier(col);
-		  if (columnName!=null) {
-		    Integer index=idIndex.get(initConditions.getColumnIdentifier(col));
-		    if (index!=null) {
-		      initialValues[index.intValue()] = initConditions
-            .getValueAt(0, col + 1);
-		    }
-		  }
-    }
-		
+			String columnName=initConditions.getColumnIdentifier(col);
+			if (columnName!=null) {
+				Integer index=idIndex.get(initConditions.getColumnIdentifier(col));
+				if (index!=null) {
+					initialValues[index.intValue()] = initConditions
+							.getValueAt(0, col + 1);
+				}
+			}
+		}
+
 		MultiTable data = initResultMatrix(DES, initialValues, timePoints);
-		
+
 		double[][] result = data.getBlock(0).getData();
 		double[] yTemp = new double[DES.getDimension()];
 		double[] change = new double[DES.getDimension()];
 		double t = timePoints[0];
 		additionalResults(DES, t, result[0], data, 0);
-		for (i = 1; i < timePoints.length; i++) {
+		for (i = 1; (i < timePoints.length) && (!Thread.currentThread().isInterrupted()); i++) {
 			firePropertyChange(timePoints[i-1] * intervalFactor, timePoints[i] * intervalFactor);
 			double h = stepSize;
-      if (!missingIds.isEmpty()) {
-        for (k = 0; k < initConditions.getColumnCount(); k++) {
-          yTemp[idIndex.get(initConditions.getColumnName(k)).intValue()] = initConditions
-              .getValueAt(i - 1, k + 1);
-        }
-        for (String key : missingIds) {
-          k = idIndex.get(key).intValue();
-          yTemp[k] = result[i - 1][k];
-        }
-      } else {
-        System.arraycopy(initConditions.getRow(i - 1), 0, yTemp, 0,
-          yTemp.length);
-      }
+			if (!missingIds.isEmpty()) {
+				for (k = 0; k < initConditions.getColumnCount(); k++) {
+					yTemp[idIndex.get(initConditions.getColumnName(k)).intValue()] = initConditions
+							.getValueAt(i - 1, k + 1);
+				}
+				for (String key : missingIds) {
+					k = idIndex.get(key).intValue();
+					yTemp[k] = result[i - 1][k];
+				}
+			} else {
+				System.arraycopy(initConditions.getRow(i - 1), 0, yTemp, 0,
+						yTemp.length);
+			}
 			for (j = 0; j < inBetweenSteps(timePoints[i - 1], timePoints[i], h); j++) {
 				computeChange(DES, yTemp, t, h, change, false);
 				checkSolution(change, yTemp);
@@ -884,19 +885,19 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 				t = BigDecimal.valueOf(h).add(BigDecimal.valueOf(t)).doubleValue();
 			}
 			h = BigDecimal.valueOf(timePoints[i]).subtract(BigDecimal.valueOf(t)).doubleValue();
-			if (h>1E-14) {
-			  computeChange(DES, yTemp, t, h, change, false);
-			  checkSolution(change);
-			  Mathematics.vvAdd(yTemp, change, yTemp);
+			if (h > 1E-14d) {
+				computeChange(DES, yTemp, t, h, change, false);
+				checkSolution(change);
+				Mathematics.vvAdd(yTemp, change, yTemp);
 			}
 			checkNonNegativity(yTemp);
 			System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 
 			additionalResults(DES, t, yTemp, data, i);
 
- 			t = timePoints[i];
+			t = timePoints[i];
 		}
-		
+
 		return data;
 	}
 
