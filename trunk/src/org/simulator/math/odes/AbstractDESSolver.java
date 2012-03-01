@@ -707,7 +707,8 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		// execute events that trigger at 0.0
 		processEvents((EventDESystem) DES, 0.0, 0.0,result[0]);
 		System.arraycopy(result[0], 0, yTemp, 0, yTemp.length);
-		for (int i = 1; i < result.length; i++) {
+		for (int i = 1; (i < result.length)
+				&& (!Thread.currentThread().isInterrupted()); i++) {
 			double oldT = t;
 			System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
 			t = computeNextState(DES, t, stepSize, yPrev, change,
