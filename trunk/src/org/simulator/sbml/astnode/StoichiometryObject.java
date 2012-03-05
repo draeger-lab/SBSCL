@@ -1,5 +1,5 @@
 /*
- * $Id: StoichiometryObject.java 15:12:31 keller $ $URL:
+ * $Id$ $URL:
  * StoichiometryObject.java $
  * --------------------------------------------------------------------- This
  * file is part of SBMLsimulator, a Java-based simulator for models of
@@ -125,11 +125,11 @@ public class StoichiometryObject {
     // When the unit of reacting species is given mol/volume
     // then it has to be considered in the change rate that should
     // always be only in mol/time
-    if(inConcentration) {
+    if (inConcentration) {
       value = value
           / valueHolder.getCurrentValueOf(compartmentIndex);
     }
-    changeRate[speciesIndex]+=value;
+    changeRate[speciesIndex] += value;
     
   }
   
