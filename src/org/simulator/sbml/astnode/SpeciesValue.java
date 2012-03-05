@@ -56,11 +56,10 @@ public class SpeciesValue extends ASTNodeObject {
     this.zeroSpatialDimensions = zeroSpatialDimensions;
   }
   
-  /*
-   * (non-Javadoc)
-   * 
+  /* (non-Javadoc)
    * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
    */
+  @Override
   protected void computeDoubleValue() {
     double compartmentValue = valueHolder
         .getCurrentValueOf(compartmentPosition);
