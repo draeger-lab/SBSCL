@@ -1,6 +1,6 @@
 /*
- * $Id:  AssignmentRuleObject.java 15:32:42 keller $
- * $URL: AssignmentRuleObject.java $
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsimulator, a Java-based simulator for models of biochemical processes encoded in the modeling language SBML.
  *
