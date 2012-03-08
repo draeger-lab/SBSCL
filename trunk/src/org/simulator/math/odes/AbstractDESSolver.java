@@ -599,10 +599,13 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		if (DES instanceof EventDESystem) {
 			EventDESystem EDES = (EventDESystem) DES;
 			if (EDES.getRuleCount() > 0) {
-				processRules(EDES, t, yTemp);
-			}
+        processRules(EDES, t, yTemp);
+      }
 			if ((forceProcessing || (!this.hasSolverEventProcessing())) && (EDES.getEventCount() > 0)) {
 				change=processEvents(EDES, t, previousTime, yTemp);
+			}
+			if (EDES.getRuleCount() > 0) {
+				processRules(EDES, t, yTemp);
 			}
 		}
 		return change;
