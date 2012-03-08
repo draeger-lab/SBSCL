@@ -881,7 +881,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       /*
        * Compute changes due to rules
        */
-      processRules(astNodeTime, changeRate, this.Y);
+      processRules(astNodeTime, changeRate, this.Y, false);
       
       /*
        * Compute changes due to reactions
@@ -1218,7 +1218,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
      * All other rules
      */
     astNodeTime += 0.01d;
-    processRules(astNodeTime, null, this.Y);
+    processRules(astNodeTime, null, this.Y, true);
     
     /*
      * Process initial assignments a 2nd time because there can be rules
@@ -1229,13 +1229,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     astNodeTime += 0.01d;
     processInitialAssignments(astNodeTime,this.Y);
     
-    boolean changed=true;
-    int counter = 0;
-    while (changed && (counter <= 10)) {
-       astNodeTime += 0.01d;
-       changed=processRules(astNodeTime, null, this.Y);
-       counter++;
-    }
+    astNodeTime += 0.01d;
+    processRules(astNodeTime, null, this.Y, true);
 
     // save the initial values of this system
     System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
@@ -1818,7 +1813,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     throws DerivativeException {
     this.currentTime = t;
     this.astNodeTime += 0.01d;
-    return processRules(t, null, Y);
+    return processRules(t, null, Y, false);
   }
   
   
@@ -1882,8 +1877,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
           obj.processRule(Y, astNodeTime, false);
           newVal = obj.getValue();
           symbolIndex = obj.getIndex();;
-          if ((symbolIndex >= 0) && (compartmentHash.containsValue(symbolIndex))) {
-              updateSpeciesConcentration(symbolIndex, Y, false);
+          if ((symbolIndex >= 0)
+              && (compartmentHash.containsValue(symbolIndex))) {
+            updateSpeciesConcentration(symbolIndex, Y, Y[symbolIndex], newVal, false);
           }
           if (symbolIndex >= 0) {
             this.events[index].addAssignment(symbolIndex, newVal);
@@ -1904,7 +1900,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
           symbolIndex=obj.getIndex();
           if (symbolIndex >= 0) {
             if (compartmentHash.containsValue(symbolIndex)) {
-              updateSpeciesConcentration(symbolIndex, Y, false);
+              updateSpeciesConcentration(symbolIndex, Y, Y[symbolIndex], newVal, false);
             }
             this.events[index].addAssignment(symbolIndex, newVal);
           }
@@ -1947,7 +1943,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * @return
    * @throws SBMLException
    */
-  public boolean processRules(double time, double[] changeRate, double[] Y) throws SBMLException {
+  public boolean processRules(double time, double[] changeRate, double[] Y, boolean initialCalculations) throws SBMLException {
     
     
     boolean changeByAssignmentRules=false;
@@ -1956,8 +1952,22 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
       for (int n = 0; n != nAssignmentRules; n++) {
         intermediateASTNodeTime = - intermediateASTNodeTime;
         for (int i = 0; i != nAssignmentRules; i++) {
-          boolean currentChange = assignmentRulesRoots.get(i).processRule(Y,
+          AssignmentRuleObject currentRuleObject = assignmentRulesRoots.get(i);
+          double oldValue = Double.NaN, newValue = Double.NaN;
+          int index = currentRuleObject.getIndex();
+          if(index >= 0) {
+            oldValue = Y[index];
+          }
+          boolean currentChange = currentRuleObject.processRule(Y,
           intermediateASTNodeTime, true);
+          if(index >= 0) {
+            newValue = Y[index];
+          }
+          
+          if (currentChange && (!initialCalculations) && (index >= 0) && (compartmentHash.containsValue(index))) {
+            updateSpeciesConcentration(index, Y, oldValue, newValue, false);
+          }
+        
           changeByAssignmentRules = changeByAssignmentRules || currentChange;
         }
       }
@@ -2075,7 +2085,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * @param compartmentIndex
    */
   private void updateSpeciesConcentration(int compartmentIndex,
-    double changeRate[], boolean causedByRateRule) {
+    double changeRate[], double oldCompartmentValue, double newCompartmentValue, boolean causedByRateRule) {
     int speciesIndex;
     Species s;
     for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
@@ -2087,7 +2097,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
             changeRate[speciesIndex] = -changeRate[compartmentIndex]
                 * Y[speciesIndex] / Y[compartmentIndex];
           } else {
-            changeRate[speciesIndex] = Y[speciesIndex] / Y[compartmentIndex];
+            changeRate[speciesIndex] = (changeRate[speciesIndex] * oldCompartmentValue) / newCompartmentValue;
           }
           
         }
