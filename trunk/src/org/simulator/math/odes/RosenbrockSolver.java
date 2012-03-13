@@ -44,7 +44,7 @@ import org.simulator.math.MatrixOperations.MatrixException;
  * @version $Rev$
  * @since 0.9
  */
-public class RosenbrockSolver extends AbstractDESSolver {
+public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 
 
 	/**
@@ -102,12 +102,6 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	private double hMax;
 	/** minimum stepsize */
 	private double hMin;
-
-	/** absolute tolerance */
-	private double absTol;
-	/** relative tolerance */
-	private double relTol;
-
 
 	/** the current value of the independent variable */
 	private double t;
@@ -186,24 +180,30 @@ public class RosenbrockSolver extends AbstractDESSolver {
 	 */
 	public RosenbrockSolver(int size, double stepsize) {
 		super(stepsize);
-		init(size,stepsize,2);
+		init(size, stepsize, 2);
 	}
 
-
+	/**
+	 * 
+	 * @param solver
+	 */
 	public RosenbrockSolver(RosenbrockSolver solver) {
 		super(solver);
-		init(solver.getNumEquations(), solver.getStepSize(),2);
-
+		init(solver.getNumEquations(), solver.getStepSize(), 2);
 	}
 
+	/**
+	 * 
+	 * @param size
+	 * @param stepsize
+	 * @param nTimepoints
+	 */
 	private void init(int size, double stepsize, int nTimepoints) {
 		numEqn = size;
 
-		hMin = 1E-14;
+		hMin = 1E-14d;
 		this.setStepSize(stepsize);
-		hMax = Math.min(stepsize,0.1);
-		absTol = 1E-10;
-		relTol = 1E-6;
+		hMax = Math.min(stepsize, 0.1d);
 
 		stop = false;
 		timePoints = new double[nTimepoints]; 
@@ -557,11 +557,13 @@ public class RosenbrockSolver extends AbstractDESSolver {
 		return numEqn;
 	}
 
-	@Override
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.AbstractDESSolver#computeChange(org.simulator.math.odes.DESystem, double[], double, double, double[], boolean)
+	 */
 	public double[] computeChange(DESystem DES, double[] y2, double time,
 			double currentStepSize, double[] change, boolean steadyState) throws DerivativeException {
-		if((y==null) || (y.length==0) || (y.length!=y2.length)) {
-			init(DES.getDimension(),this.getStepSize(),2);
+		if((y == null) || (y.length == 0) || (y.length != y2.length)) {
+			init(DES.getDimension(), this.getStepSize(), 2);
 		}
 		this.hMax = currentStepSize;
 		boolean hasDerivatives = true;
@@ -592,9 +594,10 @@ public class RosenbrockSolver extends AbstractDESSolver {
 			// Restrict relative error tolerance to be at least as large as
 			// 2*eps+RELMIN to avoid limiting precision difficulties arising
 			// from impossible accuracy requests
-			double relMin = 2.0 * eps + RELMIN;
-			if (relTol < relMin)
+			double relMin = 2.0d * eps + RELMIN;
+			if (relTol < relMin) {
 				relTol = relMin;
+			}
 
 			// set t to the initial independent value and y[] to the
 			// initial dependent values
