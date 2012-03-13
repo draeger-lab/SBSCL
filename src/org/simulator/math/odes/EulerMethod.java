@@ -67,22 +67,15 @@ public class EulerMethod extends AbstractDESSolver {
 		super(eulerMethod);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see eva2.tools.math.des.AbstractDESSolver#getName()
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.AbstractDESSolver#getName()
 	 */
-	@Override
 	public String getName() {
 		return "Euler's method";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * eva2.tools.math.des.AbstractDESSolver#computeChange(eva2.tools.math.des
-	 * .DESystem, double[], double, double, double[])
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.AbstractDESSolver#computeChange(org.simulator.math.odes.DESystem, double[], double, double, double[], boolean)
 	 */
 	public double[] computeChange(DESystem DES, double[] yPrev, double t,
 			double stepSize, double[] change, boolean steadyState) throws DerivativeException {
@@ -91,20 +84,18 @@ public class EulerMethod extends AbstractDESSolver {
 		return change;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#clone()
 	 */
 	public EulerMethod clone() {
 		return new EulerMethod(this);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.simulator.math.odes.AbstractDESSolver#hasSolverEventProcessing()
 	 */
-  @Override
-  protected boolean hasSolverEventProcessing() {
-    return false;
-  }
+	protected boolean hasSolverEventProcessing() {
+		return false;
+	}
+
 }

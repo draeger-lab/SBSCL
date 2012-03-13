@@ -38,6 +38,8 @@ public class HighamHall54Solver extends FirstOrderSolver {
 	 */
 	public HighamHall54Solver() {
 	    super();
+	    absTol = 0.5d;
+	    relTol = 0.01d;
 	}
 	
 	/**
@@ -46,6 +48,8 @@ public class HighamHall54Solver extends FirstOrderSolver {
 	 */
 	public HighamHall54Solver(double stepSize) {
 		super(stepSize);
+	    absTol = 0.5d;
+	    relTol = 0.01d;
 	}
 	
 	/**
@@ -55,6 +59,8 @@ public class HighamHall54Solver extends FirstOrderSolver {
 	 */
 	public HighamHall54Solver(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
+	    absTol = 0.5d;
+	    relTol = 0.01d;
 	}
 	
 	/**
@@ -66,29 +72,23 @@ public class HighamHall54Solver extends FirstOrderSolver {
 		this.integrator=solver.getIntegrator();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#clone()
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.FirstOrderSolver#clone()
 	 */
-	@Override
 	public HighamHall54Solver clone() {
 		return new HighamHall54Solver(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#createIntegrator()
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.FirstOrderSolver#createIntegrator()
 	 */
-	@Override
 	protected void createIntegrator() {
-		integrator=new HighamHall54Integrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()),0.5, 0.01);
+		integrator=new HighamHall54Integrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#getName()
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.AbstractDESSolver#getName()
 	 */
-	@Override
 	public String getName() {
 		return "Higham-Hall 54 solver";
 	}

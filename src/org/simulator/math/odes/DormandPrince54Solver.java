@@ -33,6 +33,9 @@ public class DormandPrince54Solver extends FirstOrderSolver {
 	 */
 	private static final long serialVersionUID = -2601862472447650296L;
 	
+	/**
+	 * 
+	 */
 	public DormandPrince54Solver() {
 	    super();
 	}
@@ -63,8 +66,7 @@ public class DormandPrince54Solver extends FirstOrderSolver {
 		super(stepSize, nonnegative);
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#clone()
 	 */
 	@Override
@@ -72,21 +74,20 @@ public class DormandPrince54Solver extends FirstOrderSolver {
 		return new DormandPrince54Solver(this);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#createIntegrator()
 	 */
 	@Override
 	protected void createIntegrator() {
-		integrator=new DormandPrince54Integrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()),0.00001, 0.00001);
+		integrator = new DormandPrince54Integrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#getName()
 	 */
 	@Override
 	public String getName() {
 		return "Dormand-Prince 54 solver";
 	}
+
 }

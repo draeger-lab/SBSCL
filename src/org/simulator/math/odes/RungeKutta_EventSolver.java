@@ -76,14 +76,9 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
 		super(rkEventSolver);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * eva2.tools.math.des.AbstractDESSolver#computeChange(eva2.tools.math.des
-	 * .DESystem, double[], double, double, double[])
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.AbstractDESSolver#computeChange(org.simulator.math.odes.DESystem, double[], double, double, double[], boolean)
 	 */
-	@Override
 	public double[] computeChange(DESystem DES, double[] yTemp, double t,
 			double h, double[] change, boolean steadyState) throws DerivativeException {
 		int dim = DES.getDimension();
@@ -120,32 +115,26 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
 		return change;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see eva2.tools.math.des.AbstractDESSolver#getName()
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.AbstractDESSolver#getName()
 	 */
-	@Override
 	public String getName() {
 		return "4th order Runge-Kutta event solver";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#clone()
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.AbstractDESSolver#clone()
 	 */
-	@Override
 	public RungeKutta_EventSolver clone() {
 		return new RungeKutta_EventSolver(this);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.simulator.math.odes.AbstractDESSolver#hasSolverEventProcessing()
 	 */
-  @Override
-  protected boolean hasSolverEventProcessing() {
-    return false;
-  }
+	@Override
+	protected boolean hasSolverEventProcessing() {
+		return false;
+	}
 
 }

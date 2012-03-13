@@ -25,13 +25,13 @@ import org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegrator;
  * @version $Rev$
  * @since 0.9
  */
-public class AdamsBashforthSolver extends FirstOrderSolver{
+public class AdamsBashforthSolver extends FirstOrderSolver {
 	
-        /**
+	/**
 	 * Generated serial version identifier. 
 	 */
 	private static final long serialVersionUID = -2601862472447650296L;
-
+	
 	/**
 	 * 
 	 */
@@ -45,7 +45,7 @@ public class AdamsBashforthSolver extends FirstOrderSolver{
 	 */
 	public AdamsBashforthSolver(AdamsBashforthSolver adamsSolver) {
 		super(adamsSolver);
-		this.integrator=adamsSolver.getIntegrator();
+		this.integrator = adamsSolver.getIntegrator();
 	}
 	
 	/**
@@ -65,8 +65,7 @@ public class AdamsBashforthSolver extends FirstOrderSolver{
 		super(stepSize, nonnegative);
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#clone()
 	 */
 	@Override
@@ -74,24 +73,20 @@ public class AdamsBashforthSolver extends FirstOrderSolver{
 		return new AdamsBashforthSolver(this);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#createIntegrator()
 	 */
 	@Override
 	public void createIntegrator() {
-		integrator=new AdamsBashforthIntegrator(5,  Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()),0.00001, 0.00001);
+		integrator = new AdamsBashforthIntegrator(5, Math.min(1e-8d, Math.min(1d, getStepSize())), Math.min(1d, getStepSize()), getAbsTol(), getRelTol());
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#getName()
 	 */
 	@Override
 	public String getName() {
 		return "Adams-Bashforth solver";
 	}
-
-	
 
 }

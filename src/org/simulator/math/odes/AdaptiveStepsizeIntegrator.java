@@ -1,0 +1,103 @@
+/*
+ * $Id$
+ * $URL$
+ * ---------------------------------------------------------------------
+ * This file is part of SBMLsimulator, a Java-based simulator for models
+ * of biochemical processes encoded in the modeling language SBML.
+ *
+ * Copyright (C) 2007-2011 by the University of Tuebingen, Germany.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation. A copy of the license
+ * agreement is provided in the file named "LICENSE.txt" included with
+ * this software distribution and also available online as
+ * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
+ * ---------------------------------------------------------------------
+ */
+
+package org.simulator.math.odes;
+
+/**
+ * @author Andreas Drauml;ger
+ * @version $Rev$
+ * @since 1.1
+ */
+public abstract class AdaptiveStepsizeIntegrator extends AbstractDESSolver {
+
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -5411228466445964211L;
+	/**
+	 * Default absolute allowable vectorial tolerance.
+	 */
+	protected double absTol = 0.00001d;
+	/**
+	 * Default relative allowable vectorial tolerance.
+	 */
+	protected double relTol = 0.00001d;
+	
+	/**
+	 * 
+	 */
+	public AdaptiveStepsizeIntegrator() {
+		super();
+	}
+	
+	/**
+	 * 
+	 * @param adaptiveStepSizeIntegrator
+	 */
+	public AdaptiveStepsizeIntegrator(AdaptiveStepsizeIntegrator adaptiveStepSizeIntegrator) {
+		super(adaptiveStepSizeIntegrator);
+		absTol = adaptiveStepSizeIntegrator.getAbsTol();
+		relTol = adaptiveStepSizeIntegrator.getRelTol();
+	}
+
+	/**
+	 * 
+	 * @param stepSize
+	 */
+	public AdaptiveStepsizeIntegrator(double stepSize) {
+		super(stepSize);
+	}
+
+	/**
+	 * 
+	 * @param stepSize
+	 * @param nonnegative
+	 */
+	public AdaptiveStepsizeIntegrator(double stepSize, boolean nonnegative) {
+		super(stepSize, nonnegative);
+	}
+
+	/**
+	 * @return the absTol
+	 */
+	public double getAbsTol() {
+		return absTol;
+	}
+
+	/**
+	 * @return the relTol
+	 */
+	public double getRelTol() {
+		return relTol;
+	}
+
+	/**
+	 * @param absTol the absTol to set
+	 */
+	public void setAbsTol(double absTol) {
+		this.absTol = absTol;
+	}
+
+	/**
+	 * @param relTol the relTol to set
+	 */
+	public void setRelTol(double relTol) {
+		this.relTol = relTol;
+	}
+
+}

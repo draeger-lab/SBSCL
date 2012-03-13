@@ -66,8 +66,7 @@ public class DormandPrince853Solver extends FirstOrderSolver {
 		super(stepSize, nonnegative);
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#clone()
 	 */
 	@Override
@@ -75,17 +74,15 @@ public class DormandPrince853Solver extends FirstOrderSolver {
 		return new DormandPrince853Solver(this);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#createIntegrator()
 	 */
 	@Override
 	protected void createIntegrator() {
-		integrator=new DormandPrince853Integrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()),0.00001, 0.00001);
+		integrator=new DormandPrince853Integrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#getName()
 	 */
 	@Override
