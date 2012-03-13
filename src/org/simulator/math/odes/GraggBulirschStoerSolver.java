@@ -67,27 +67,24 @@ public class GraggBulirschStoerSolver extends FirstOrderSolver {
 		this.integrator=solver.getIntegrator();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#clone()
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.FirstOrderSolver#clone()
 	 */
 	@Override
 	public GraggBulirschStoerSolver clone() {
 		return new GraggBulirschStoerSolver(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#createIntegrator()
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.FirstOrderSolver#createIntegrator()
 	 */
 	@Override
 	protected void createIntegrator() {
-		integrator=new GraggBulirschStoerIntegrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()),0.00001, 0.00001);
+		integrator=new GraggBulirschStoerIntegrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#getName()
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.AbstractDESSolver#getName()
 	 */
 	@Override
 	public String getName() {

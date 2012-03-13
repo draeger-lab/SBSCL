@@ -26,7 +26,7 @@ import org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegrator;
  * @version $Rev$
  * @since 0.9
  */
-public class AdamsMoultonSolver extends FirstOrderSolver{
+public class AdamsMoultonSolver extends FirstOrderSolver {
 
 	/**
 	 * Generated serial version identifier.
@@ -66,8 +66,7 @@ public class AdamsMoultonSolver extends FirstOrderSolver{
 		super(stepSize, nonnegative);
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#clone()
 	 */
 	@Override
@@ -75,17 +74,15 @@ public class AdamsMoultonSolver extends FirstOrderSolver{
 		return new AdamsMoultonSolver(this);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#createIntegrator()
 	 */
 	@Override
 	protected void createIntegrator() {
-		integrator=new AdamsMoultonIntegrator(5, Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), 0.00001, 0.00001);
+		integrator = new AdamsMoultonIntegrator(5, Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#getName()
 	 */
 	@Override
