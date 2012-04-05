@@ -587,7 +587,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * .lang.String)
    */
   public final ASTNodeValue getConstantAvogadro(String name) {
-    nodeValue.setValue(Maths.AVOGADRO);
+    nodeValue.setValue(Maths.AVOGADRO_L3V1);
     return nodeValue;
   }
   
@@ -1149,7 +1149,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
         break;
       
       case NAME_AVOGADRO:
-        value = Maths.AVOGADRO;
+        value = Maths.AVOGADRO_L3V1;
         break;
       case REAL_E:
         value = compileHelp(node.getMantissa(), node.getExponent(),
