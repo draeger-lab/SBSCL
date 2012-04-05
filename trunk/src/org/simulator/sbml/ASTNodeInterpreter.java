@@ -588,7 +588,7 @@ public class ASTNodeInterpreter implements ASTNodeCompiler {
    * .lang.String)
    */
   public final ASTNodeValue getConstantAvogadro(String name) {
-    nodeValue.setValue(Maths.AVOGADRO);
+    nodeValue.setValue(Maths.AVOGADRO_L3V1);
     return nodeValue;
   }
   

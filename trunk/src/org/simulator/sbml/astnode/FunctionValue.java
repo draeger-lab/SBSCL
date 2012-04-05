@@ -25,6 +25,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.CallableSBase;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.SBMLException;
+import org.simulator.sbml.SBMLinterpreter;
 
 /**
  * @author Roland Keller
@@ -76,13 +77,11 @@ public class FunctionValue extends ASTNodeObject {
     
     
   }
-  
-  
-  /*
-   * (non-Javadoc)
-   * 
+
+  /* (non-Javadoc)
    * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
    */
+  @Override
   protected void computeDoubleValue() {
     if (math != null) {
       doubleValue = interpreter.functionDouble(evaluationBlock, variables, children, numChildren, argumentValues, time);
@@ -91,11 +90,10 @@ public class FunctionValue extends ASTNodeObject {
     }
   }
   
-  /*
-   * (non-Javadoc)
-   * 
+  /* (non-Javadoc)
    * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeBooleanValue()
    */
+  @Override
   protected void computeBooleanValue() {
     if (math != null) {
       booleanValue = interpreter.functionBoolean(evaluationBlock, variables, children, argumentValues, time);
@@ -109,8 +107,8 @@ public class FunctionValue extends ASTNodeObject {
    * @param math
    */
   public void setMath(ASTNode math) {
-    this.math=math;
-    this.evaluationBlock=(ASTNodeObject)math.getRightChild().getUserObject();
+    this.math = math;
+    this.evaluationBlock=(ASTNodeObject) math.getRightChild().getUserObject(SBMLinterpreter.TEMP_VALUE);
   }
   
   /**
@@ -129,4 +127,5 @@ public class FunctionValue extends ASTNodeObject {
   public int getIndex(String argumentName) {
     return indexMap.get(argumentName);
   }
+
 }

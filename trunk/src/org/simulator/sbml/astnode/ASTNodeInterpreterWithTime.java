@@ -136,7 +136,7 @@ public class ASTNodeInterpreterWithTime {
     } else if (nsb instanceof Reaction) {
       Reaction r = (Reaction) nsb;
       if (r.isSetKineticLaw()) {
-        ((ASTNodeObject) r.getKineticLaw().getMath().getUserObject())
+        ((ASTNodeObject) r.getKineticLaw().getMath().getUserObject(SBMLinterpreter.TEMP_VALUE))
             .compileDouble(time);
       }
     }
@@ -154,8 +154,7 @@ public class ASTNodeInterpreterWithTime {
     throws SBMLException {
     if (nsb instanceof FunctionDefinition) {
       ASTNode math = ((FunctionDefinition) nsb).getMath();
-      ASTNodeObject rightChild = (ASTNodeObject) math.getRightChild()
-          .getUserObject();
+      ASTNodeObject rightChild = (ASTNodeObject) math.getRightChild().getUserObject(SBMLinterpreter.TEMP_VALUE);
       List<String> variables = new ArrayList<String>(math.getChildCount());
       for (ASTNode child : math.getChildren()) {
         variables.add(compileString(child));

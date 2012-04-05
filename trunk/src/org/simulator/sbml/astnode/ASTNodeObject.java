@@ -24,6 +24,7 @@ import org.sbml.jsbml.CallableSBase;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.util.Maths;
+import org.simulator.sbml.SBMLinterpreter;
 
 /**
  * 
@@ -162,17 +163,17 @@ public class ASTNodeObject {
     this.nodeType=node.getType();
     this.isConstant=false;
     this.alreadyProcessed=false;
-    if(nodeType==ASTNode.Type.REAL) {
+    if (nodeType==ASTNode.Type.REAL) {
       real=node.getReal();
       isInfinite=Double.isInfinite(real);
     }
-    else if(nodeType==ASTNode.Type.INTEGER){
+    else if (nodeType==ASTNode.Type.INTEGER){
       real=node.getInteger();
     }
     else {
       real=Double.NaN;
     }
-    if(node.isSetUnits()) {
+    if (node.isSetUnits()) {
       units=node.getUnits();
     }
     if ((nodeType == Type.REAL) || nodeType == Type.REAL_E) {
@@ -184,22 +185,22 @@ public class ASTNodeObject {
       denominator = node.getDenominator();
     }
     
-    if(node.isName()) {
+    if (node.isName()) {
       name=node.getName();
     }
     
-    this.time=0.0;
-    children=new ArrayList<ASTNodeObject>();
-    if(node!=null) {  
-      for(ASTNode childNode:node.getChildren()) {
-        Object userObject = childNode.getUserObject();
-        if(userObject!=null) {
+    this.time = 0d;
+    children = new ArrayList<ASTNodeObject>();
+    if (node != null) {  
+      for (ASTNode childNode:node.getChildren()) {
+        Object userObject = childNode.getUserObject(SBMLinterpreter.TEMP_VALUE);
+        if (userObject != null) {
           children.add((ASTNodeObject)userObject);
         }
       }
     }
     numChildren=children.size();
-    if(numChildren>0) {
+    if (numChildren>0) {
       leftChild=children.get(0);
       rightChild=children.get(numChildren-1);
     }
@@ -234,7 +235,7 @@ public class ASTNodeObject {
    * @return
    */
   public Object getValue(double time) {
-    if(isDouble) {
+    if (isDouble) {
       return compileDouble(time);
     }
     else {
@@ -249,7 +250,7 @@ public class ASTNodeObject {
    * @return
    */
   public double compileDouble(double time) {
-    if((this.time==time) || (isConstant && alreadyProcessed)) {
+    if ((this.time==time) || (isConstant && alreadyProcessed)) {
       return doubleValue;
     }
     else {
@@ -268,7 +269,7 @@ public class ASTNodeObject {
    * @return
    */
   public boolean compileBoolean(double time) {
-    if((this.time==time) || (isConstant && alreadyProcessed)) {
+    if ((this.time==time) || (isConstant && alreadyProcessed)) {
       return booleanValue;
     }
     else {
@@ -347,7 +348,7 @@ public class ASTNodeObject {
         doubleValue = Math.E;
         break;
       case NAME_AVOGADRO:
-        doubleValue = Maths.AVOGADRO;
+        doubleValue = Maths.AVOGADRO_L3V1;
         break;
       case REAL_E:
         doubleValue = interpreter.compile(mantissa, exponent,
@@ -519,7 +520,7 @@ public class ASTNodeObject {
           booleanValue = interpreter.lambdaBoolean(children, time);
           break;
         default:
-          booleanValue=false;
+          booleanValue = false;
           break;
       }
     }
@@ -529,7 +530,7 @@ public class ASTNodeObject {
    * @return
    */
   public boolean isName() {
-    if(node!=null) {
+    if (node!=null) {
       return node.isName();
     }
     else {
@@ -542,7 +543,7 @@ public class ASTNodeObject {
    * @return
    */
   public String getName() {
-    if(node!=null) {
+    if (node != null) {
       return node.getName();
     }
     else {

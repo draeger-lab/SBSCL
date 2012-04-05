@@ -17,6 +17,7 @@ package org.simulator.sbml.astnode;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
+import org.simulator.sbml.SBMLinterpreter;
 
 /**
  * 
@@ -25,7 +26,14 @@ import org.sbml.jsbml.Reaction;
  * @since 1.0
  */
 public class ReactionValue extends ASTNodeObject {
+	
+  /**
+   * 
+   */
   protected Reaction r;
+  /**
+   * 
+   */
   protected ASTNodeObject kineticLawUserObject;
   
   /**
@@ -39,21 +47,21 @@ public class ReactionValue extends ASTNodeObject {
     super(interpreter, node);
     this.r = r;
     if (r.isSetKineticLaw()) {
-      this.kineticLawUserObject = (ASTNodeObject) r.getKineticLaw().getMath()
-          .getUserObject();
+      this.kineticLawUserObject = (ASTNodeObject) r.getKineticLaw().getMath().getUserObject(SBMLinterpreter.TEMP_VALUE);
     } else {
       this.kineticLawUserObject = null;
     }
   }
   
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
    */
+  @Override
   protected void computeDoubleValue() {
     doubleValue = Double.NaN;
     if (kineticLawUserObject != null) {
       doubleValue = kineticLawUserObject.compileDouble(time);
     }
   }
+
 }
