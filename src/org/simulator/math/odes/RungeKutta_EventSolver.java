@@ -45,7 +45,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
 	transient protected double[] kHelp;
 
 	/**
-	 * 
+	 * default constructor
 	 */
 	public RungeKutta_EventSolver() {
 		super();
@@ -62,14 +62,14 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
 	/**
 	 * 
 	 * @param stepSize
-	 * @param nonnegative
-	 */
+	 * @param the nonnegative flag of the super class @see org.sbml.simulator.math.odes.AbstractDESSolver
+   */
 	public RungeKutta_EventSolver(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
 	}
 	
 	/**
-	 * 
+	 * clone constructor
 	 * @param rkEventSolver
 	 */
 	public RungeKutta_EventSolver(RungeKutta_EventSolver rkEventSolver) {
@@ -132,7 +132,6 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
 	/* (non-Javadoc)
 	 * @see org.simulator.math.odes.AbstractDESSolver#hasSolverEventProcessing()
 	 */
-	@Override
 	protected boolean hasSolverEventProcessing() {
 		return false;
 	}

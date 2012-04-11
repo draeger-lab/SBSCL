@@ -45,7 +45,7 @@ public interface DESystem extends Serializable, FirstOrderDifferentialEquations 
 
 	/**
 	 * 
-	 * @return
+	 * @return flag that is true, if events or rules are contained in the system
 	 */
   public boolean containsEventsOrRules();
 

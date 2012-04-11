@@ -21,7 +21,7 @@ package org.simulator.math.odes;
 import org.apache.commons.math.ode.nonstiff.HighamHall54Integrator;
 
 /**
- * 
+ * This class is a wrapper for the Higham-Hall-54 solver in the Apache Math Library.
  * @author Roland Keller
  * @version $Rev$
  * @since 0.9
@@ -34,7 +34,7 @@ public class HighamHall54Solver extends FirstOrderSolver {
 	private static final long serialVersionUID = -2601862472447650296L;
 	
 	/**
-	 * 
+	 * default constructor
 	 */
 	public HighamHall54Solver() {
 	    super();
@@ -55,8 +55,8 @@ public class HighamHall54Solver extends FirstOrderSolver {
 	/**
 	 * 
 	 * @param stepSize
-	 * @param nonnegative
-	 */
+	 * @param the nonnegative flag of the super class @see org.sbml.simulator.math.odes.AbstractDESSolver
+   */
 	public HighamHall54Solver(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
 	    absTol = 0.5d;
@@ -64,7 +64,7 @@ public class HighamHall54Solver extends FirstOrderSolver {
 	}
 	
 	/**
-	 * 
+	 * clone constructor
 	 * @param dormandPrinceSolver
 	 */
 	public HighamHall54Solver(HighamHall54Solver solver) {

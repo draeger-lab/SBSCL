@@ -22,7 +22,7 @@ import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.sbml.EventInProcess;
 
 /**
- * This Class represents an event-driven DES
+ * This Class represents an event-driven differential equation system
  * 
  * @author Alexander D&ouml;rr
  * @author Andreas Dr&auml;ger
@@ -53,7 +53,7 @@ public interface EventDESystem extends DESystem {
 	 *            The current simulation time.
 	 * @param Y
 	 *            The current change of the system.
-	 * @return 
+	 * @return flag that is true if there has been a change in the Y vector caused by the rules.
 	 * @throws DerivativeException
 	 */
 	public boolean processAssignmentRules(double t, double Y[])
@@ -75,7 +75,7 @@ public interface EventDESystem extends DESystem {
 			throws DerivativeException;
 
 	/**
-	 * @return
+	 * @return flag that is true, if the change vector is always zero in the system.
 	 */
 	public boolean getNoDerivatives();
 

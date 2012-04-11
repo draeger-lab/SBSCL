@@ -21,6 +21,7 @@ import java.io.Serializable;
 import org.apache.commons.math.ode.DerivativeException;
 
 /**
+ * This interface describes a value holder that can compute values with delay.
  * @author Roland Keller
  * @version $Rev$
  */
@@ -28,8 +29,9 @@ public interface DelayValueHolder extends Serializable {
   
   /**
    * 
-   * @param time
-   * @param id
+   * @param the current time
+   * @param the id of the delayed value
+   * @return the value computed
    * @throws DerivativeException
    */
   public double computeDelayedValue(double time, String id) throws DerivativeException;

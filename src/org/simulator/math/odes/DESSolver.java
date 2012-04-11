@@ -42,7 +42,7 @@ public interface DESSolver extends Serializable {
 
   /**
 	 * 
-	 * @return
+	 * @return the cloned solver
 	 */
 	public DESSolver clone();
   
@@ -58,7 +58,7 @@ public interface DESSolver extends Serializable {
 	/**
 	 * Obtain the currently set integration step size.
 	 * 
-	 * @return
+	 * @return the step size
 	 */
 	public double getStepSize();
 
@@ -67,7 +67,7 @@ public interface DESSolver extends Serializable {
    * originate from a {@link RichDESystem} are included into the
    * {@link MultiTable} that contains the result of a numerical integration.
    * 
-   * @return
+   * @return the flag
    */
 	public boolean isIncludeIntermediates();
 
@@ -75,7 +75,7 @@ public interface DESSolver extends Serializable {
 	 * Method to check whether the solution of the numerical integration
 	 * procedure contains {@link Double.NaN} values.
 	 * 
-	 * @return
+	 * @return the unstable flag
 	 */
 	public boolean isUnstable();
 
@@ -103,16 +103,20 @@ public interface DESSolver extends Serializable {
 	public void setStepSize(double stepSize);
 
 	/**
-	 * Solves the {@link DESystem} from the begin time till the end time
-	 * according to the given step size.
-	 * 
-	 * @param DES
-	 * @param initialValues
-	 * @param timeBegin
-	 * @param timeEnd
-	 * @return
-	 * @throws DerivativeException
-	 */
+   * Solves the given differential equation system 
+   * 
+   * @param DES
+   *            The differential equation system to be solved.
+   * @param initialValues
+   *            Return value at the start point.
+   * @param timeBegin
+   *            
+   * @param timeEnd
+   *            
+   * @return A matrix containing the simulation results
+   * @throws DerivativeException
+   *             if something's wrong...
+   */
 	public MultiTable solve(DESystem DES, double[] initialValues,
 			double timeBegin, double timeEnd) throws DerivativeException;
 	
@@ -122,7 +126,7 @@ public interface DESSolver extends Serializable {
 	 * 
 	 * @param DES
 	 *            The differential equation system to be solved.
-	 * @param initalValues
+	 * @param initialValues
 	 *            Return value at the start point.
 	 * @param x
 	 *            Start argument.
@@ -140,15 +144,19 @@ public interface DESSolver extends Serializable {
 			double h, int steps) throws DerivativeException;
 	
 	/**
-	 * Solves the given {@link DESystem} at the given time points using the
-	 * currently set integration step size and the given initial values.
-	 * 
-	 * @param DES
-	 * @param initialvalue
-	 * @param timepoints
-	 * @return
-	 * @throws DerivativeException
-	 */
+   * Solves the given differential equation system with the step size h and
+   * the number of steps as given starting at the value x.
+   * 
+   * @param DES
+   *            The differential equation system to be solved.
+   * @param initialValues
+   *            Return value at the start point.
+   * @param timepoints
+   *           The timepoints for which the result should be returned 
+   * @return A matrix containing the simulation results.
+   * @throws DerivativeException
+   *             if something's wrong...
+   */
 	public MultiTable solve(DESystem DES, double[] initialvalue,
 			double[] timepoints) throws DerivativeException;
 	

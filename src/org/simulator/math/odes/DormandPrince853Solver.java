@@ -21,7 +21,7 @@ package org.simulator.math.odes;
 import org.apache.commons.math.ode.nonstiff.DormandPrince853Integrator;
 
 /**
- * 
+ * This class is a wrapper for the Dormand-Prince-853 solver in the Apache Math Library.
  * @author Roland Keller
  * @version $Rev$
  * @since 0.9
@@ -34,14 +34,14 @@ public class DormandPrince853Solver extends FirstOrderSolver {
 	private static final long serialVersionUID = -2601862472447650296L;
 	
 	/**
-	 * 
+	 * default constructor
 	 */
 	public DormandPrince853Solver() {
 	    super();
 	}
 	
 	/**
-	 * 
+	 * clone constructor
 	 * @param dormandPrinceSolver
 	 */
 	public DormandPrince853Solver(DormandPrince853Solver princeSolver) {
@@ -60,8 +60,8 @@ public class DormandPrince853Solver extends FirstOrderSolver {
 	/**
 	 * 
 	 * @param stepSize
-	 * @param nonnegative
-	 */
+	 * @param the nonnegative flag of the super class @see org.sbml.simulator.math.odes.AbstractDESSolver
+   */
 	public DormandPrince853Solver(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
 	}
@@ -69,7 +69,6 @@ public class DormandPrince853Solver extends FirstOrderSolver {
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#clone()
 	 */
-	@Override
 	public DormandPrince853Solver clone() {
 		return new DormandPrince853Solver(this);
 	}
@@ -77,7 +76,6 @@ public class DormandPrince853Solver extends FirstOrderSolver {
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#createIntegrator()
 	 */
-	@Override
 	protected void createIntegrator() {
 		integrator=new DormandPrince853Integrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
 	}
@@ -85,7 +83,6 @@ public class DormandPrince853Solver extends FirstOrderSolver {
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#getName()
 	 */
-	@Override
 	public String getName() {
 		return "Dormand-Prince 853 solver";
 	}
