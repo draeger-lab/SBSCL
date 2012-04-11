@@ -21,7 +21,7 @@ package org.simulator.math.odes;
 import org.apache.commons.math.ode.nonstiff.GraggBulirschStoerIntegrator;
 
 /**
- * 
+ * This class is a wrapper for the Gragg-Bulirsch-Stoer solver in the Apache Math Library.
  * @author Roland Keller
  * @version $Rev$
  * @since 0.9
@@ -34,7 +34,7 @@ public class GraggBulirschStoerSolver extends FirstOrderSolver {
 	private static final long serialVersionUID = -2601862472447650296L;
 	
 	/**
-	 * 
+	 * default constructor
 	 */
 	public GraggBulirschStoerSolver() {
 	    super();
@@ -51,15 +51,15 @@ public class GraggBulirschStoerSolver extends FirstOrderSolver {
 	/**
 	 * 
 	 * @param stepSize
-	 * @param nonnegative
-	 */
+	 * @param the nonnegative flag of the super class @see org.sbml.simulator.math.odes.AbstractDESSolver
+   */
 	public GraggBulirschStoerSolver(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
 		
 	}
 	
 	/**
-	 * 
+	 * clone constructor
 	 * @param graggBulirschStoerSolver
 	 */
 	public GraggBulirschStoerSolver(GraggBulirschStoerSolver solver) {
@@ -70,7 +70,6 @@ public class GraggBulirschStoerSolver extends FirstOrderSolver {
 	/* (non-Javadoc)
 	 * @see org.simulator.math.odes.FirstOrderSolver#clone()
 	 */
-	@Override
 	public GraggBulirschStoerSolver clone() {
 		return new GraggBulirschStoerSolver(this);
 	}
@@ -78,7 +77,6 @@ public class GraggBulirschStoerSolver extends FirstOrderSolver {
 	/* (non-Javadoc)
 	 * @see org.simulator.math.odes.FirstOrderSolver#createIntegrator()
 	 */
-	@Override
 	protected void createIntegrator() {
 		integrator=new GraggBulirschStoerIntegrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
 	}
@@ -86,7 +84,6 @@ public class GraggBulirschStoerSolver extends FirstOrderSolver {
 	/* (non-Javadoc)
 	 * @see org.simulator.math.odes.AbstractDESSolver#getName()
 	 */
-	@Override
 	public String getName() {
 		return "Gragg-Bulirsch-Stoer solver";
 	}

@@ -18,6 +18,7 @@
 package org.simulator.math.odes;
 
 /**
+ * This interface describes differential equation systems with fast processes.
  * @author Andreas Dr&auml;ger
  * @author Alexander D&ouml;rr
  * @date 2010-09-27
@@ -28,13 +29,14 @@ public interface FastProcessDESystem extends DESystem {
 
 	/**
 	 * 
-	 * @return
+	 * @return flag that is true if fast processes are contained.
 	 */
 	public boolean containsFastProcesses();
 
 	/**
 	 * 
-	 * @param isProcessing
+	 * @param setFastProcessComputation
+	 *           Should there be a splitting of fast and slow reactions in the simulation?
 	 */
 	public void setFastProcessComputation(boolean isProcessing);
 	

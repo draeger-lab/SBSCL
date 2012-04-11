@@ -23,6 +23,7 @@ import org.simulator.math.Mathematics;
 
 
 /**
+ * In this class the Euler method for integration a differential equation system is implemented.
  * @author Andreas Dr&auml;ger
  * @date 14:37:21, 2010-08-03
  * @version $Rev$
@@ -36,7 +37,7 @@ public class EulerMethod extends AbstractDESSolver {
 	private static final long serialVersionUID = 9094797527506196715L;
 
 	/**
-	 * 
+	 * default constructor
 	 */
 	public EulerMethod() {
 		super();
@@ -53,14 +54,14 @@ public class EulerMethod extends AbstractDESSolver {
 	/**
 	 * 
 	 * @param stepSize
-	 * @param nonnegative
-	 */
+	 * @param the nonnegative flag of the super class @see org.sbml.simulator.math.odes.AbstractDESSolver
+   */
 	public EulerMethod(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
 	}
 
 	/**
-	 * 
+	 * clone constructor
 	 * @param eulerMethod
 	 */
 	public EulerMethod(EulerMethod eulerMethod) {

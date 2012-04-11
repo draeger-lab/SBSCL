@@ -21,7 +21,7 @@ package org.simulator.math.odes;
 import org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegrator;
 
 /**
- * 
+ * This class is a wrapper for the Adams-Moulton solver in the Apache Math Library.
  * @author Roland Keller
  * @version $Rev$
  * @since 0.9
@@ -41,7 +41,7 @@ public class AdamsMoultonSolver extends FirstOrderSolver {
 	}
 	
 	/**
-	 * 
+	 * clone constructor
 	 * @param adamsSolver
 	 */
 	public AdamsMoultonSolver(AdamsMoultonSolver adamsSolver) {
@@ -60,8 +60,8 @@ public class AdamsMoultonSolver extends FirstOrderSolver {
 	/**
 	 * 
 	 * @param stepSize
-	 * @param nonnegative
-	 */
+	 * @param the nonnegative flag of the super class @see org.sbml.simulator.math.odes.AbstractDESSolver
+   */
 	public AdamsMoultonSolver(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
 	}
@@ -69,7 +69,6 @@ public class AdamsMoultonSolver extends FirstOrderSolver {
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#clone()
 	 */
-	@Override
 	public AdamsMoultonSolver clone() {
 		return new AdamsMoultonSolver(this);
 	}
@@ -77,7 +76,6 @@ public class AdamsMoultonSolver extends FirstOrderSolver {
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#createIntegrator()
 	 */
-	@Override
 	protected void createIntegrator() {
 		integrator = new AdamsMoultonIntegrator(5, Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
 	}
