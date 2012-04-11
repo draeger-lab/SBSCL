@@ -20,7 +20,7 @@ package org.simulator.math.odes;
 import org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegrator;
 
 /**
- * 
+ * This class is a wrapper for the Adams-Bashforth solver in the Apache Math Library.
  * @author Roland Keller
  * @version $Rev$
  * @since 0.9
@@ -33,14 +33,14 @@ public class AdamsBashforthSolver extends FirstOrderSolver {
 	private static final long serialVersionUID = -2601862472447650296L;
 	
 	/**
-	 * 
+	 * default constructor
 	 */
 	public AdamsBashforthSolver() {
 	    super();
 	}
 	
 	/**
-	 * 
+	 * Clone constructor
 	 * @param adamsSolver
 	 */
 	public AdamsBashforthSolver(AdamsBashforthSolver adamsSolver) {
@@ -59,7 +59,7 @@ public class AdamsBashforthSolver extends FirstOrderSolver {
 	/**
 	 * 
 	 * @param stepSize
-	 * @param nonnegative
+	 * @param the nonnegative flag of the super class @see org.sbml.simulator.math.odes.AbstractDESSolver
 	 */
 	public AdamsBashforthSolver(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
@@ -68,7 +68,6 @@ public class AdamsBashforthSolver extends FirstOrderSolver {
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#clone()
 	 */
-	@Override
 	public AdamsBashforthSolver clone() {
 		return new AdamsBashforthSolver(this);
 	}
@@ -76,7 +75,6 @@ public class AdamsBashforthSolver extends FirstOrderSolver {
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#createIntegrator()
 	 */
-	@Override
 	public void createIntegrator() {
 		integrator = new AdamsBashforthIntegrator(5, Math.min(1e-8d, Math.min(1d, getStepSize())), Math.min(1d, getStepSize()), getAbsTol(), getRelTol());
 	}
@@ -84,7 +82,6 @@ public class AdamsBashforthSolver extends FirstOrderSolver {
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#getName()
 	 */
-	@Override
 	public String getName() {
 		return "Adams-Bashforth solver";
 	}

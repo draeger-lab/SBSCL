@@ -27,7 +27,7 @@ import org.apache.commons.math.util.FastMath;
 import org.simulator.math.Mathematics;
 
 /**
- * 
+ * This class is the superclass of the wrapper classes for the solvers of the Apache Math library.
  * @author Roland Keller
  * @version $Rev$
  * @since 0.9
@@ -40,32 +40,31 @@ public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
 	private static final long serialVersionUID = -2671266540106066022L;
 
 	/**
-	 * 
+	 * A logger.
 	 */
 	private static final Logger logger = Logger.getLogger(FirstOrderSolver.class
 			.getName());
 
 	/**
-	 * 
+	 * The result of the integration.
 	 */
 	private double[] integrationResult;
 
 	/**
-	 * 
+	 * The integrator used.
 	 */
 	protected AbstractIntegrator integrator;
 
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#setStepSize(double)
 	 */
-	@Override
 	public void setStepSize(double stepSize) {
 		super.setStepSize(stepSize);
 		createIntegrator();
 	}
 
 	/**
-	 * 
+	 * default constructor
 	 */
 	public FirstOrderSolver() {
 		super();
@@ -84,8 +83,8 @@ public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
 
 	/**
 	 * @param stepSize
-	 * @param nonnegative
-	 */
+	 * @param the nonnegative flag of the super class @see org.sbml.simulator.math.odes.AbstractDESSolver
+   */
 	public FirstOrderSolver(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
 		createIntegrator();
@@ -93,6 +92,7 @@ public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
 	}
 
 	/**
+	 * clone constructor
 	 * @param firstOrderSolver
 	 */
 	public FirstOrderSolver(FirstOrderSolver firstOrderSolver) {
@@ -142,7 +142,7 @@ public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
 	}
 
 	/**
-	 * 
+	 * initialization function of the integrator
 	 */
 	protected abstract void createIntegrator();
 

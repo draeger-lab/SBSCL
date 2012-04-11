@@ -472,7 +472,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		/* (non-Javadoc)
 		 * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
 		 */
-		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 			if (!(aValue instanceof Double)) {
 				throw new IllegalArgumentException(ONLY_DOUBLE_VALUES_ACCEPTED);
@@ -488,7 +487,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
-		@Override
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
 			sb.append(Arrays.toString(getIdentifiers()));
@@ -837,7 +835,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	/* (non-Javadoc)
 	 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
 	 */
-	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		// Maybe we want to change this later
 		return false;
@@ -931,7 +928,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	/* (non-Javadoc)
 	 * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
 	 */
-	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		if (!(aValue instanceof Double)) {
 			throw new IllegalArgumentException(ONLY_DOUBLE_VALUES_ACCEPTED);
@@ -947,7 +943,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
-	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append('[');

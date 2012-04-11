@@ -51,7 +51,7 @@ public class RNG {
   }
   
   /**
-   * 
+   * Generates a random integer between first and second input value.
    * @param low
    * @param high
    * @return

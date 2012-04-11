@@ -34,7 +34,7 @@ import org.simulator.math.odes.MultiTable.Block.Column;
 import org.simulator.sbml.EventInProcess;
 
 /**
- * This Class represents an Solver for event-driven DES
+ * This Class represents an abstract solver for event-driven DES
  * 
  * @author Alexander D&ouml;rr
  * @author Andreas Dr&auml;ger
@@ -154,7 +154,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	}
 
 	/**
-	 * 
+	 * Initialize with given step size and a flag whether or not negative values should be allowed.
 	 * @param stepSize
 	 * @param nonnegative
 	 */
@@ -164,12 +164,12 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	}
 
 	/**
-	 * 
-	 * @param DES
-	 * @param t
-	 * @param yTemp
-	 * @param data
-	 * @param rowIndex
+	 * Compute additional result values
+	 * @param the differential equation system
+	 * @param the current time
+	 * @param the vector yTemp
+	 * @param the data as multi table
+	 * @param the index of the row
 	 * @throws DerivativeException
 	 */
 	protected void additionalResults(DESystem DES, double t, double[] yTemp,
@@ -195,7 +195,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * If option nonnegative is set all elements of the given vector smaller
 	 * than zero are set to zero.
 	 * 
-	 * @param yTemp
+	 * @param the vector yTemp
 	 */
 	private void checkNonNegativity(double[] yTemp) {
 		if (nonnegative) {
@@ -214,6 +214,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * 
 	 * @param currentState
 	 *            The current state of the system during a simulation.
+	 * @return flag that is true if Double.NaN values are contained
 	 */
 	boolean checkSolution(double[] currentState) {
 		for (int k = 0; k < currentState.length; k++) {
@@ -226,11 +227,14 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	}
 
 	/**
-	 * 
-	 * @param currentChange
-	 * @param yPrev
-	 * @return
-	 */
+   * Checks whether or not the given current state contains Double.NaN values.
+   * In this case the solution of the current state is considered unstable and
+   * the corresponding flag of the solver will be set accordingly.
+   * 
+   * @param the current change of the system during a simulation.
+   * @param the previous state of the system 
+   * @return flag that is true if Double.NaN values are contained in the change vector that have not been contained at the corresponding position in the previous state
+   */
 	boolean checkSolution(double[] currentChange, double[] yPrev) {
 		for (int k = 0; k < currentChange.length; k++) {
 			if (Double.isNaN(currentChange[k])) {
@@ -248,7 +252,6 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
-	@Override
 	public abstract AbstractDESSolver clone();
 
 	/**
@@ -318,16 +321,16 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 	/**
 	 * 
-	 * @param DES
-	 * @param t
+	 * @param the differential equation system
+	 * @param the current time
 	 * @param stepSize
-	 * @param yPrev
-	 * @param change
-	 * @param yTemp
+	 * @param the previous y vector
+	 * @param the change vector
+	 * @param the current y vector to be filled
 	 * @param increase
 	 *            whether or not to increase the given time by the given step
 	 *            size.
-	 * @return The time increased by the step size
+	 * @return the time increased by the step size
 	 * @throws DerivativeException
 	 */
 	double computeNextState(DESystem DES, double t, double stepSize,
@@ -347,10 +350,10 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 	/**
 	 * 
-	 * @param DES
-	 * @param result
-	 * @param timeBegin
-	 * @return
+	 * @param the differential equation system
+	 * @param the result vector
+	 * @param the current time
+	 * @return the computed steady state 
 	 * @throws DerivativeException
 	 */
 	private double[] computeSteadyState(FastProcessDESystem DES,
@@ -505,8 +508,8 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		return includeIntermediates;
 	}
 
-	/**
-	 * @return the nonnegative
+  /**
+	 * @return the nonnegative flag
 	 */
 	public boolean isNonnegative() {
 		return nonnegative;
@@ -555,12 +558,11 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	/**
 	 * Processes sudden changes in the system due to events in the EDES
 	 * 
-	 * @param EDES
-	 * @param time
-	 * @param Ytemp
-	 * @param change
-	 * @return
-	 * 
+	 * @param the differential equation system with events
+	 * @param the current time
+	 * @param the time this function has been called previously
+	 * @param the vector Ytemp
+	 * @return a flag that is true if an event has been fired
 	 * @throws DerivativeException
 	 */
 	public boolean processEvents(EventDESystem EDES, double time, double previousTime, double[] yTemp)
@@ -586,13 +588,15 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	}
 
 	/**
-	 * 
-	 * @param DES
-	 * @param t
-	 * @param yTemp
-	 * @param change
-	 * @throws DerivativeException
-	 */
+	 * Function for processing the events and rules at a certain time step.
+	 * @param flag that is true if the events should be processed even if the solver has its own event processing 
+   * @param the differential equation system with events
+   * @param the current time
+   * @param the time this function has been called previously
+   * @param the vector Ytemp
+   * @return a flag that is true if there has been a change caused by a rule or an event has been fired
+   * @throws DerivativeException
+	*/ 
 	public boolean processEventsAndRules(boolean forceProcessing, DESystem DES, double t, double previousTime, double yTemp[])
 			throws DerivativeException {
 		boolean change=false;
@@ -612,12 +616,13 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	}
 
 	/**
-	 * @param EDES
-	 * @param time
-	 * @param Ytemp
-	 * @return
-	 * @throws DerivativeException
-	 */
+   * Function for processing the rules at a certain time step.
+   * @param the differential equation system with events
+   * @param the current time
+   * @param the vector Ytemp
+   * @return a flag that is true if there has been a change caused by a rule
+   * @throws DerivativeException
+  */ 
 	public boolean processRules(EventDESystem EDES, double time, double[] Ytemp)
 			throws DerivativeException {
 		return EDES.processAssignmentRules(time, Ytemp);
@@ -673,14 +678,11 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 	/**
 	 * 
-	 * @param DES
+	 * @param differential equation system
 	 * @param initialValues
 	 * @param timeBegin
 	 * @param timeEnd
-	 * @param includeTimes
-	 *            Switch to whether or not include a time column in the
-	 *            resulting matrix.
-	 * @return
+	 * @return result as multi table
 	 */
 	public MultiTable solve(DESystem DES, double[] initialValues,
 			double timeBegin, double timeEnd) throws DerivativeException {
@@ -746,16 +748,12 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	}
 
 	/**
-	 * When set to <code>TRUE</code>, <code>includeTimes</code> will make the
-	 * solver to return a matrix with the first column containing the times. By
-	 * default the result of the ODE solver just returns the values for Y.
-	 * 
-	 * @param DES
-	 * @param initialValues
-	 * @param timePoints
-	 *            Sorted time points!!
-	 * @throws Exception
-	 */
+   * 
+   * @param differential equation system
+   * @param initialValues
+   * @param the time points
+   * @return result as a multi table
+   */
 	public MultiTable solve(DESystem DES, double[] initialValues,
 			double[] timePoints) throws DerivativeException {
 		if (DES instanceof DelayedDESystem) {
@@ -870,7 +868,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			double h = stepSize;
 			if (!missingIds.isEmpty()) {
 				for (k = 0; k < initConditions.getColumnCount(); k++) {
-					yTemp[idIndex.get(initConditions.getColumnName(k)).intValue()] = initConditions
+					yTemp[idIndex.get(initConditions.getColumnIdentifier(k)).intValue()] = initConditions
 							.getValueAt(i - 1, k + 1);
 				}
 				for (String key : missingIds) {

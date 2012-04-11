@@ -19,6 +19,7 @@
 package org.simulator.math.odes;
 
 /**
+ * This is an abstract class for solvers with adaptive stepsizes and given relative and absolute tolerances.
  * @author Andreas Drauml;ger
  * @version $Rev$
  * @since 1.1
@@ -32,7 +33,7 @@ public abstract class AdaptiveStepsizeIntegrator extends AbstractDESSolver {
 	/**
 	 * Default absolute allowable vectorial tolerance.
 	 */
-	protected double absTol = 0.00001d;
+	protected double absTol = 0.000000001d;
 	/**
 	 * Default relative allowable vectorial tolerance.
 	 */
@@ -46,7 +47,7 @@ public abstract class AdaptiveStepsizeIntegrator extends AbstractDESSolver {
 	}
 	
 	/**
-	 * 
+	 * clone constructor
 	 * @param adaptiveStepSizeIntegrator
 	 */
 	public AdaptiveStepsizeIntegrator(AdaptiveStepsizeIntegrator adaptiveStepSizeIntegrator) {
@@ -66,35 +67,35 @@ public abstract class AdaptiveStepsizeIntegrator extends AbstractDESSolver {
 	/**
 	 * 
 	 * @param stepSize
-	 * @param nonnegative
+	 * @param the nonnegative flag of the super class @see org.sbml.simulator.math.odes.AbstractDESSolver
 	 */
 	public AdaptiveStepsizeIntegrator(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
 	}
 
 	/**
-	 * @return the absTol
+	 * @return the absolute tolerance
 	 */
 	public double getAbsTol() {
 		return absTol;
 	}
 
 	/**
-	 * @return the relTol
+	 * @return the relative tolerance
 	 */
 	public double getRelTol() {
 		return relTol;
 	}
 
 	/**
-	 * @param absTol the absTol to set
+	 * @param the absolute tolerance to set
 	 */
 	public void setAbsTol(double absTol) {
 		this.absTol = absTol;
 	}
 
 	/**
-	 * @param relTol the relTol to set
+	 * @param the relative tolerance to set
 	 */
 	public void setRelTol(double relTol) {
 		this.relTol = relTol;
