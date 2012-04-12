@@ -28,9 +28,7 @@ import org.simulator.sbml.astnode.AssignmentRuleObject;
 /**
  * <p>
  * This class represents a compilation of all information calculated during
- * simulation concerning events. An EventInProcess especially stands for an
- * event without delay, so it can only has one time of execution and one array
- * of values from trigger time at all.
+ * simulation concerning events. It can also contain the math of the trigger, the priority and the delay. 
  * </p>
  * 
  * @author Alexander D&ouml;rr
@@ -49,8 +47,8 @@ public class EventInProcess {
 	protected LinkedList<Double[]> values;
 	protected Map<Integer,Double> assignments;
   protected ASTNodeObject triggerObject;
-  private ASTNodeObject priorityObject;
-  private ASTNodeObject delayObject;
+  protected ASTNodeObject priorityObject;
+  protected ASTNodeObject delayObject;
   protected List<AssignmentRuleObject> ruleObjects;
   protected boolean useValuesFromTriggerTime;
   protected boolean persistent;
@@ -184,7 +182,7 @@ public class EventInProcess {
 	}
 	
 	/**
-	 * 
+	 * Returns true if the event is supposed to be executed at some time.
 	 * @return
 	 */
   public boolean hasExecutionTime() {
@@ -227,7 +225,7 @@ public class EventInProcess {
 	}
 
 	/**
-	 * 
+	 * Returns the last time the event has been fired.
 	 * @return
 	 */
   public double getLastTimeFired() {
@@ -235,7 +233,7 @@ public class EventInProcess {
   }
   
   /**
-   * 
+   * Returns the last time the event has been executed.
    * @return
    */
   public double getLastTimeExecuted() {
@@ -243,21 +241,21 @@ public class EventInProcess {
   }
 
   /**
-   * 
+   * Refreshes the status of the event regarding the current time.
    * @param currentTime
    */
   public void refresh(double currentTime) {
   }
   
   /**
-   * 
+   * Clears all event assignments.
    */
   public void clearAssignments() {
     assignments.clear();
   }
   
   /**
-   * 
+   * Adds an event assignment.
    * @param index
    * @param value
    */
@@ -266,7 +264,7 @@ public class EventInProcess {
   }
   
   /**
-   * 
+   * Returns all event assignments as a map.
    * @return
    */
   public Map<Integer,Double> getAssignments() {
@@ -274,7 +272,7 @@ public class EventInProcess {
   }
 
   /**
-   * 
+   * Sets the math of the trigger to a specific ASTNodeObject.
    * @param userObject
    */
   public void setTriggerObject(ASTNodeObject triggerObject) {
@@ -283,14 +281,14 @@ public class EventInProcess {
   
   /**
    * 
-   * @return
+   * @return the trigger object of the event as an ASTNodeObject
    */
   public ASTNodeObject getTriggerObject() {
     return triggerObject;
   }
 
   /**
-   * 
+   * Sets the math of the priority to a specific ASTNodeObject.
    * @param userObject
    */
   public void setPriorityObject(ASTNodeObject priorityObject) {
@@ -299,14 +297,14 @@ public class EventInProcess {
   
   /**
    * 
-   * @return
+   * @return the priority object of the event as an ASTNodeObject
    */
   public ASTNodeObject getPriorityObject() {
     return priorityObject;
   }
 
   /**
-   * 
+   * Sets the math of the delay to a specific ASTNodeObject.
    * @param userObject
    */
   public void setDelayObject(ASTNodeObject delayObject) {
@@ -315,14 +313,14 @@ public class EventInProcess {
   
   /**
    * 
-   * @return
+   * @return the delay object of the event as an ASTNodeObject (null if there is no delay)
    */
   public ASTNodeObject getDelayObject() {
     return delayObject;
   }
 
   /**
-   * 
+   * Adds the math of an assignment rule as an AssignmentRuleObject.
    * @param assignmentRuleObject
    */
   public void addRuleObject(AssignmentRuleObject assignmentRuleObject) {
@@ -334,22 +332,22 @@ public class EventInProcess {
   
   /**
    * 
-   * @return
+   * @return the list of the assignment rules as AssignmentRuleObjects
    */
   public List<AssignmentRuleObject> getRuleObjects() {
     return ruleObjects;
   }
 
   /**
-   * 
-   * @return
+   * Returns true if the values of the assignments are calculated at the trigger time of the event, otherwise false.
+   * @return 
    */
   public boolean getUseValuesFromTriggerTime() {
     return useValuesFromTriggerTime;
   }
   
   /**
-   * 
+   * Sets the useValuesFromTriggerTime value of the event.
    * @param useValuesFromTriggerTime
    */
   public void setUseValuesFromTriggerTime(boolean useValuesFromTriggerTime) {
@@ -359,7 +357,7 @@ public class EventInProcess {
 
   /**
    * 
-   * @return
+   * @return the number of assignments of the event
    */
   public int getNumEventAssignments() {
     return ruleObjects.size();
@@ -367,18 +365,22 @@ public class EventInProcess {
 
   /**
    * 
-   * @return
+   * @return the persistent flag of the event.
    */
   public boolean getPersistent() {
     return persistent;
   }
   
+  /**
+   * Sets the persistent flag of the event.
+   * @param persistent
+   */
   public void setPersistent(boolean persistent) {
     this.persistent=persistent;
   }
 
   /**
-   * 
+   * Clears the assignment rule objects.
    */
   public void clearRuleObjects() {
     if(ruleObjects!=null) {

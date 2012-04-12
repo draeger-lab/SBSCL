@@ -43,49 +43,56 @@ import org.simulator.math.odes.DelayValueHolder;
 public interface ValueHolder extends DelayValueHolder, Serializable {
 
     /**
+     * Returns the size of the compartment with the given id.
      * @param id
      * @return
      */
     public double getCurrentCompartmentSize(String id);
 
     /**
+     * Returns the size of the compartment of the species with the given id.
      * @param speciesId
      * @return
      */
     public double getCurrentCompartmentValueOf(String speciesId);
 
     /**
+     * Returns the value of the parameter with the given id.
      * @param id
      * @return
      */
     public double getCurrentParameterValue(String id);
 
     /**
+     * Returns the value of the species with the given id.
      * @param id
      * @return
      */
     public double getCurrentSpeciesValue(String id);
 
     /**
+     * Returns the value of the stoichiometry of the species reference with the given id.
      * @param id
      * @return
      */
     public double getCurrentStoichiometry(String id);
 
     /**
+     * Returns the current simulation time.
      * @param time
      * @return
      */
     public double getCurrentTime();
 
     /**
+     * Returns the current value of the SBase with the given id.
      * @param id
      * @return
      */
     public double getCurrentValueOf(String id);
     
     /**
-     * 
+     * Returns the current value of the Y vector at the given position.
      * @param position
      * @return
      */
