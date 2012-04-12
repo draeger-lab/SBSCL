@@ -42,7 +42,7 @@ import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
 import org.sbml.jsbml.util.compilers.ASTNodeValue;
 
 /**
- * This class is a more efficient implementation of an ASTNodeCompiler. 
+ * This class is a more efficient implementation of an {@linkASTNodeCompiler}. 
  * @author Roland Keller
  * @author Andreas Dr&auml;ger
  * @version $Rev: 12 $
