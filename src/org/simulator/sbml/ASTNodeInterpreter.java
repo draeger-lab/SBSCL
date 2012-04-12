@@ -41,6 +41,7 @@ import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
 import org.sbml.jsbml.util.compilers.ASTNodeValue;
 
 /**   
+ * This class is an implementation of an ASTNodeCompiler. 
  * @author Roland Keller    
  * @author Andreas Dr&auml;ger    
  * @version $Rev$   
@@ -56,14 +57,17 @@ public class ASTNodeInterpreter implements ASTNodeCompiler {
   private Map<String, Double> funcArgs;
   
   /**
-     * 
-     */
+   * The value holder that is used for calculating the values
+   */
   private ValueHolder valueHolder;
   
+  /**
+   * Field for saving intermediate values
+   */
   private ASTNodeValue nodeValue;
   
   /**
-   * 
+   * Constructs an interpreter with a special value holder.
    * @param valueHolder
    */
   public ASTNodeInterpreter(ValueHolder valueHolder) {
@@ -1027,6 +1031,11 @@ public class ASTNodeInterpreter implements ASTNodeCompiler {
     return nodeValue;
   }
   
+  /**
+   * 
+   * @param value
+   * @return
+   */
   public final String toString(ASTNode value) {
     return value.toString();
   }

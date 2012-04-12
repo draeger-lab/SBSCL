@@ -42,6 +42,7 @@ import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
 import org.sbml.jsbml.util.compilers.ASTNodeValue;
 
 /**
+ * This class is a more efficient implementation of an ASTNodeCompiler. 
  * @author Roland Keller
  * @author Andreas Dr&auml;ger
  * @version $Rev: 12 $
@@ -61,17 +62,22 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
   private Map<String, Double> funcArgs;
   
   /**
-     * 
-     */
+   * The value holder that is used for calculating the values.
+   */
   private ValueHolder valueHolder;
   
+  /**
+   * Field for saving intermediate values.
+   */
   private ASTNodeValue nodeValue;
   
-  
+  /**
+   * Field for saving the currently processed variable.
+   */
   private CallableSBase variable;
   
   /**
-   * 
+   * Constructs an interpreter with a specific value holder.
    * @param valueHolder
    */
   public EfficientASTNodeInterpreter(ValueHolder valueHolder) {
@@ -1065,6 +1071,12 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
     return nodeValue;
   }
   
+  /**
+   * Compiles an ASTNode to a double value.
+   * @param the ASTNode
+   * @return the interpreted double value
+   * @throws SBMLException
+   */
   public double compileDouble(ASTNode node) throws SBMLException {
     double value = Double.NaN;
     switch (node.getType()) {
@@ -1550,6 +1562,12 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
     return Maths.arctanh(compileDouble(node));
   }
   
+  /**
+   * Compiles an ASTNode to a boolean value.
+   * @param the ASTNode
+   * @return the interpreted boolean value
+   * @throws SBMLException
+   */
   public boolean compileBoolean(ASTNode node) throws SBMLException {
     boolean value = false;
     

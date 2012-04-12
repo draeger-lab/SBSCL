@@ -24,8 +24,7 @@ import java.util.LinkedList;
  * <p>
  * This class represents a compilation of all information calculated during
  * simulation concerning events. An EventInProcessWithDelay especially stands
- * for an event with delay, so it can has multiple times of execution and
- * therefore multiple arrays of values from trigger time.
+ * for an event with delay.
  * </p>
  * 
  * @author Alexander D&ouml;rr
@@ -121,10 +120,10 @@ public class EventInProcessWithDelay extends EventInProcess {
 
 	}
 
-	/**
-   * 
-   * @param currentTime
-   */
+	/*
+	 * (non-Javadoc)
+	 * @see org.simulator.sbml.EventInProcess#refresh(double)
+	 */
   public void refresh(double currentTime) {
     if(lastTimeFired>currentTime) {
       this.execTimes.pollLast();

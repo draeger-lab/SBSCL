@@ -75,14 +75,14 @@ public class AlgebraicRuleConverter {
 		/**
 		 * Returns the subterm
 		 * 
-		 * @return
+		 * @return 
 		 */
 		public ASTNode getNode() {
 			return node;
 		}
 
 		/**
-		 * Returns a boolean whether the subterm has to be negativ or not
+		 * Returns a boolean whether the subterm has to be negative or not
 		 * 
 		 * @return
 		 */
