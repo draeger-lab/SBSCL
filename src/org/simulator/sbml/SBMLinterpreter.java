@@ -79,7 +79,7 @@ import org.simulator.sbml.astnode.StoichiometryObject;
 /**
  * <p>
  * This DifferentialEquationSystem takes a model in SBML format and maps it to a
- * data structure that is understood by the {@link AbstractDESSolver} of EvA2.
+ * data structure that is understood by the {@link AbstractDESSolver}.
  * Therefore, this class implements all necessary functions expected by SBML.
  * </p>
  * 
@@ -142,7 +142,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   private EventInProcess events[];
   
   /**
-   * 
+   * This set stores the priorities of the currently processed events.
    */
   private HashSet<Double> priorities;
   
@@ -223,119 +223,115 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   private List<Integer> delayedEvents;
   
   /**
-   * 
+   * Node interpreter for interpreting MathML objects.
    */
   private EfficientASTNodeInterpreter nodeInterpreter;
   
   /**
-   * 
+   * Map for faster access to species.
    */
   private Map<String, Species> speciesMap;
   
   /**
-   * 
+   * Species with the unit given in mol/volume for which it has to be considered that the change rate should always be only in mol/time
    */
   private Set<String> inConcentration;
   
-  /**
-   * 
-   */
-  private int level;
   
   /**
-   * 
+   * List of kinetic laws given as ASTNodeObjects
    */
   private List<ASTNodeObject> kineticLawRoots;
   
   /**
-   * 
+   * List of all occuring ASTNodes
    */
   private List<ASTNode> nodes;
   
   /**
-   * 
+   * Node interpreter taking the time into consideration
    */
   private ASTNodeInterpreterWithTime nodeInterpreterWithTime;
   
   /**
-   * 
+   * List of all occuring stoichiometries
    */
   private List<StoichiometryObject> stoichiometries;
   
   /**
-   * 
+   * Size of the list of stoichiometries (for time-saving)
    */
   private int stoichiometriesSize;
   
   /**
-   * 
+   * Array that stores which reactions are fast
    */
   private boolean[] reactionFast;
   
   /**
-   * 
+   * Array that stores which reactions are reversible
    */
   private boolean[] reactionReversible;
 
   /**
-   * 
+   * List of the assignment rules (as AssignmentRuleObjects)
    */
   private List<AssignmentRuleObject> assignmentRulesRoots;
 
   /**
-   * 
+   * List of the rate rules (as RateRuleObjects)
    */
   private List<RateRuleObject> rateRulesRoots;
   
   /**
-   * 
+   * Current time for the ASTNode processing (not equal to the simulation time!)
    */
   private double astNodeTime;
 
   /**
-   * 
+   * Value holder for computation of delayed values
    */
   private DelayValueHolder delayValueHolder;
 
   /**
-   * 
+   * List which is used for choosing the next event to process
    */
   private List<Integer> highOrderEvents;
 
   /**
-   * 
+   * Array of the conversionFactors given (default value: 1)
    */
   private double[] conversionFactors;
   
   /**
-   * 
+   * Flag which stores whether the model contains any events
    */
   private boolean modelHasEvents;
 
   /**
-   * 
+   * Number of rate rules
    */
   private int nRateRules;
 
   /**
-   * 
+   * Number of assignment rules
    */
   private int nAssignmentRules;
 
   /**
-   * 
+   * Number of constraints
    */
   private int nConstraints;
 
   
   /**
-   * 
+   * List of the initial assignments (as AssignmentRuleObjects)
    */
   private List<AssignmentRuleObject> initialAssignmentRoots;
 
   
   /**
-   * 
+   * Flag which is true if no changes (in rate rules and kinetic laws) are occuring in the model
    */
   private boolean noDerivatives;
   
@@ -364,7 +360,6 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     this.stoichiometricCoefHash = new HashMap<String, Double>();
     this.nodeInterpreter = new EfficientASTNodeInterpreter(this);
     this.nodeInterpreterWithTime = new ASTNodeInterpreterWithTime(this);
-    this.level = model.getLevel();
     this.astNodeTime=0d;
     this.priorities = new HashSet<Double>();
     this.highOrderEvents = new LinkedList<Integer>();
@@ -490,13 +485,6 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     return v;
   }
   
-  /**
-   * 
-   * @return
-   */
-  public EfficientASTNodeInterpreter getASTNodeInterpreter() {
-    return nodeInterpreter;
-  }
   
   /**
    * Checks if the given symbol id refers to a {@link Species} and returns the
@@ -523,10 +511,18 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     return 1d;
   }
   
+  /*
+   * (non-Javadoc)
+   * @see org.simulator.sbml.ValueHolder#getCurrentCompartmentSize(java.lang.String)
+   */
   public double getCurrentCompartmentSize(String id) {
     return Y[symbolHash.get(id)];
   }
   
+  /*
+   * (non-Javadoc)
+   * @see org.simulator.sbml.ValueHolder#getCurrentParameterValue(java.lang.String)
+   */
   public double getCurrentParameterValue(String id) {
     return Y[symbolHash.get(id)];
   }
@@ -945,7 +941,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   }
   
   /**
-   * 
+   * This method initializes the differential equation system for simulation. The user can tell whether the tree of ASTNodes has to be refreshed.
    * @param refreshTree
    * @throws ModelOverdeterminedException
    * @throws SBMLException
@@ -955,7 +951,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   }
   
   /**
-   * 
+   * This method initializes the differential equation system for simulation. The user can tell whether the tree of ASTNodes has to be refreshed and give some default values.
    * @param renewTree
    * @param defaultSpeciesValue
    * @param defaultParameterValue
@@ -1241,7 +1237,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   }
   
   /**
-   * 
+   * Refreshes the syntax tree (e.g. resets the ASTNode time)
    */
   private void refreshSyntaxTree() {
     for (ASTNode node: nodes) {
@@ -1253,7 +1249,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   }
 
   /**
-   * 
+   * Creates the syntax tree and simplifies it.
    */
   private void createSimplifiedSyntaxTree() {
     nodes.clear();
@@ -1266,7 +1262,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   }
   
   /**
-   * 
+   * Includes the math of the events in the syntax tree.
    */
   private void initializeEvents() {
     if (events != null) {
@@ -1319,7 +1315,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   }
 
   /**
-   * 
+   * Includes the math of the kinetic laws in the syntax tree.
    */
   private void initializeKineticLaws() {
     int reactionIndex = 0;
@@ -1343,7 +1339,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
             }
           }
           int srIndex = -1;
-          if (level >= 3) {
+          if (model.getLevel() >= 3) {
             String id = speciesRef.getId();
             if (id != null) {
               if (this.symbolHash.containsKey(id)) {
@@ -1371,7 +1367,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
             }
           }
           int srIndex = -1;
-          if (level >= 3) {
+          if (model.getLevel() >= 3) {
             String id = speciesRef.getId();
             if (id != null) {
               if (this.symbolHash.containsKey(id)) {
@@ -1398,7 +1394,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   }
   
   /**
-   * 
+   * Includes the math of the rules in the syntax tree.
    */
   private void initializeRules() {
     assignmentRulesRoots = new ArrayList<AssignmentRuleObject>();
@@ -1542,11 +1538,14 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   
   
   /**
-   * 
-   * @param node
-   * @return
+   * Creates a copy of an ASTNode or returns an ASTNode that is equal to the presented node.
+   * @param the node to copy
+   * @param flag that is true if it is allowed to return a node that is equal to the given node
+   * @param the function that is currently processed (if any) or null
+   * @param the nodes that already belong to the function
+   * @return the found node
    */
-  private ASTNode copyAST(ASTNode node, boolean mergingPossible, FunctionValue function, List<ASTNode> inFunctionNodes) {
+   private ASTNode copyAST(ASTNode node, boolean mergingPossible, FunctionValue function, List<ASTNode> inFunctionNodes) {
     String nodeString = node.toString();
     ASTNode copiedAST = null;
     if (mergingPossible) {
@@ -1731,9 +1730,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   }
   
   /**
-   * 
-   * @param current
-   * @param node
+   * Checks whether the two given nodes are equal to each other (especially regarding local parameters contained).
+   * @param the first node
+   * @param the second node
    * @return
    */
   private boolean containUnequalLocalParameters(ASTNode node1, ASTNode node2) {
@@ -1797,7 +1796,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   }
   
   /**
-   * 
+   * Chooses an event of a list randomly.
    * @param highOrderEvents
    */
   private void pickRandomEvent(List<Integer> highOrderEvents) {
@@ -1825,8 +1824,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
    * This method creates assignments from the events currently stored in the
    * associated HashMap with respect to their priority.
    * 
-   * @param priorities
-   * @return
+   * @param the priorities
+   * @param the Y vector
+   * @return the event with assignments
    */
   private EventInProcess processNextEvent(HashSet<Double> priorities, double[] Y)
     throws DerivativeException {
@@ -1926,9 +1926,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   }
 
   /**
-   * 
-   * @param time
-   * @param Y
+   * Processes the initial assignments
+   * @param the ASTNode time
+   * @param the Y vector
    * @throws SBMLException
    */
   public void processInitialAssignments(double time, double[] Y) throws SBMLException {
@@ -1940,11 +1940,11 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   }
   
   /**
-   * 
-   * @param time
-   * @param changeRate
-   * @param Y
-   * @return
+   * Processes the rules
+   * @param the current time
+   * @param the changeRate vector
+   * @param the Y vector
+   * @return flag that is true if there has been some change caused by any rule
    * @throws SBMLException
    */
   public boolean processRules(double time, double[] changeRate, double[] Y, boolean initialCalculations) throws SBMLException {
@@ -1975,13 +1975,14 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
           changeByAssignmentRules = changeByAssignmentRules || currentChange;
         }
       }
-    }/*
+    }
+    /*
      * Compute changes due to rules
      */
     
     if (changeRate!=null) {
       for (int i = 0; i != nRateRules; i++) {
-        rateRulesRoots.get(i).processRule(changeRate, this.Y, time);
+        rateRulesRoots.get(i).processRule(changeRate, this.Y, astNodeTime);
       }
     }
     return changeByAssignmentRules;
@@ -2085,12 +2086,15 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   /**
    * Updates the concentration of species due to a change in the size of their
    * compartment
-   * 
-   * @param compartmentIndex
+   * @param the index of the compartment
+   * @param the changeRate vector
+   * @param the old value of the compartment
+   * @param the new value of the compartment
+   * @param flag that is true if a rate rule has set the change rate of the compartment
    */
   private void updateSpeciesConcentration(int compartmentIndex,
     double changeRate[], double oldCompartmentValue, double newCompartmentValue, boolean causedByRateRule) {
-    int speciesIndex;
+  	int speciesIndex;
     Species s;
     for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
       if (entry.getValue() == compartmentIndex) {

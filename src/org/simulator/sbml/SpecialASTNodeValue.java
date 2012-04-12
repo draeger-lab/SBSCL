@@ -30,13 +30,39 @@ import org.sbml.jsbml.util.compilers.ASTNodeValue;
  */
 public class SpecialASTNodeValue extends ASTNodeValue{
 
+	/**
+	 * The double value (if any)
+	 */
   private double doubleValue;
+  
+  /**
+	 * The boolean value (if any)
+	 */
   private boolean booleanValue;
+  
+  /**
+   * Flag that is true if the current object represents a double value
+   */
   private boolean isDouble;
+  
+  /**
+   * Flag that is true if the current object represents a boolean value
+   */
   private boolean isBoolean;
   
+  /**
+   * The node that is connected to the current object
+   */
   private ASTNode node;
+  
+  /**
+   * The current time
+   */
   private double time;
+  
+  /**
+   * The interpreter for calculating the values
+   */
   private EfficientASTNodeInterpreter interpreter;
   
   /**
@@ -50,7 +76,7 @@ public class SpecialASTNodeValue extends ASTNodeValue{
   }
   
   /**
-   * 
+   * Refreshes the object
    */
   private void refreshValues() {
     isDouble=false;
@@ -58,12 +84,13 @@ public class SpecialASTNodeValue extends ASTNodeValue{
   }
   
   /**
-   * @throws SBMLException 
-   * 
+   * Compiles the ASTNode at the current time to a double value.
+   * @param the current time
+   * @return the double value
+   * @throws SBMLException
    */
   public final double compileDouble(double time) throws SBMLException {
     if(this.time==time) {
-      
      return doubleValue;
     }
     else {
@@ -76,8 +103,10 @@ public class SpecialASTNodeValue extends ASTNodeValue{
   }
   
   /**
-   * @throws SBMLException 
-   * 
+   * Compiles the ASTNode at the current time to a boolean value.
+   * @param the current time
+   * @return the double value
+   * @throws SBMLException
    */
   public final boolean compileBoolean(double time) throws SBMLException {
     if(this.time==time) {
