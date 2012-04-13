@@ -20,19 +20,59 @@ import org.sbml.jsbml.Species;
 import org.simulator.sbml.ValueHolder;
 
 /**
+ * This class can compute and store the value of a rule together with the variable of the rule.
  * @author Roland Keller
  * @version $Rev$
  */
 public class RuleObject {
-  protected ASTNodeObject nodeObject;
+  /**
+   * Object that refers to the math of the rule
+   */
+	protected ASTNodeObject nodeObject;
+	
+	/**
+	 * The calculated value of the rul
+	 */
   protected double value;
+  
+  /**
+   * Flag that is true if the variable is referring to a species, otherwise false
+   */
   protected boolean isSpecies;
+  
+  /**
+   * The value holder that stores the current simulation results
+   */
   protected ValueHolder valueHolder;
+  
+  /**
+   * The index of the compartment of the species (if applicable)
+   */
   protected int compartmentIndex;
+  
+  /**
+   * The hasOnlySubstanceUnits attribute of the species (if applicable)
+   */
   protected boolean hasOnlySubstanceUnits;
+  
+  /**
+   * The isSetInitialAmount attribute of the species (if applicable)
+   */
   protected boolean isSetInitialAmount;
+  
+  /**
+   * The isSetInitialConcentration attribute of the species (if applicable)
+   */
   protected boolean isSetInitialConcentration;
+  
+  /**
+   * This flag is true if the variable is a species and its compartment has no spatial dimensions
+   */
   protected boolean hasZeroSpatialDimensions;
+  
+  /**
+   * The index of the variable in the Y vector of the value holder
+   */
   protected int index;
   
   /**
@@ -47,11 +87,12 @@ public class RuleObject {
   }
   
   /**
-   * 
+   * Constructor for rules that refer to a species.
    * @param nodeObject
    * @param index
    * @param sp
    * @param compartmentIndex
+   * @param hasZeroSpatialDimensions
    * @param valueHolder
    */
   public RuleObject(ASTNodeObject nodeObject, int index,
@@ -68,8 +109,9 @@ public class RuleObject {
   }
 
   /**
-   * 
+   * Calculates the math of the rule and returns the new value of the variable.
    * @param time
+   * @return
    */
   protected double processAssignmentVariable(double time) {
     value = nodeObject.compileDouble(time);
@@ -88,7 +130,7 @@ public class RuleObject {
   }
   
   /**
-   * 
+   * Returns the value of the rule.
    * @return
    */
   public double getValue() {
@@ -96,7 +138,7 @@ public class RuleObject {
   }
   
   /**
-   * 
+   * Returns the index of the variable in the Y vector of the value holder.
    * @return
    */
   public int getIndex() {

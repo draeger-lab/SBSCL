@@ -17,16 +17,23 @@
 package org.simulator.sbml.astnode;
 
 import java.util.List;
-import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.Species;
 import org.simulator.sbml.ValueHolder;
 
 /**
+ * This class can compute and store the value of a rate rule together with the variable of the rule.
  * @author Roland Keller
  * @version $Rev$
  */
 public class RateRuleObject extends RuleObject{
-  private boolean isCompartment;
+  /**
+   * Is the variable a compartment?
+   */
+	private boolean isCompartment;
+	
+	/**
+	 * The indexes in the Y vector of the value holder of the species that the compartment contains (if applicable)
+	 */
   private List<Integer> speciesIndices;
   
   /**
@@ -40,11 +47,12 @@ public class RateRuleObject extends RuleObject{
 
   
   /**
-   * 
+   * Constructor for a rule with a species as variable
    * @param nodeObject
    * @param index
    * @param sp
    * @param compartmentIndex
+   * @param hasZeroSpatialDimensions
    * @param valueHolder
    */
   public RateRuleObject(ASTNodeObject nodeObject, int index,
@@ -53,7 +61,7 @@ public class RateRuleObject extends RuleObject{
   }
   
   /**
-   * 
+   * Constructor for a rule with a compartment as variable
    * @param nodeObject
    * @param index
    * @param speciesIndices
@@ -67,10 +75,10 @@ public class RateRuleObject extends RuleObject{
   }
   
   /**
-   * 
+   * Processes the rule and saves the new value of the corresponding variable in the changeRate vector. 
    * @param changeRate
+   * @param Y
    * @param time
-   * @throws SBMLException
    */
   public void processRule(double[] changeRate, double[] Y, double time) {
     changeRate[index] = processAssignmentVariable(time);

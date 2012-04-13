@@ -18,12 +18,19 @@ package org.simulator.sbml.astnode;
 import org.sbml.jsbml.ASTNode;
 
 /**
+ * This class computes and stores values of variables occuring in a function. 
  * @author Roland Keller
  * @version $Rev$
  */
 public class NamedValue extends ASTNodeObject {
-
+	/**
+	 * The function the variable occurs in
+	 */
   private FunctionValue function;
+  
+  /**
+   * The index of the variable in the arguments array of the corresponding FunctionValue.
+   */
   private int index;
   
   /**

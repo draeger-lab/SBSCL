@@ -25,13 +25,16 @@ import org.sbml.jsbml.util.TreeNodeChangeListener;
 
 
 /**
- * 
+ * This class computes and stores values of ASTNodes that refer to a local parameter.
  * @author Roland Keller
  * @version $Rev: 22 $
  * @since 1.0
  */
 public class LocalParameterValue extends ASTNodeObject implements TreeNodeChangeListener {
-  protected LocalParameter lp;
+  /**
+   * The corresponding local parameter
+   */
+	protected LocalParameter lp;
 
   /**
    * 
