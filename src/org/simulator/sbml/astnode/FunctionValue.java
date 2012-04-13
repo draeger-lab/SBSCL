@@ -28,20 +28,41 @@ import org.sbml.jsbml.SBMLException;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
+ * This class computes and stores values of ASTNodes that refer to the application of a function definition.
  * @author Roland Keller
  * @version $Rev$
  */
 public class FunctionValue extends ASTNodeObject {
-  protected ASTNodeObject evaluationBlock;
+  /**
+   * The value of the evaluation block of the function stored in an ASTNodeObject.
+   */
+	protected ASTNodeObject evaluationBlock;
+	
+	/**
+	 * The variables of the function
+	 */
   protected List<String> variables;
+  
+  /**
+   * The current values of the function arguments.
+   */
   protected double[] argumentValues;
+  
+  /**
+   * A map for storing the indexes of the arguments in the array argumentValues.
+   */
   protected Map<String,Integer> indexMap;
+  
+  /**
+   * The math of the function definition.
+   */
   protected ASTNode math;
   
   /**
    * 
-   * @param interpreter
-   * @param node
+   * @param the interpreter
+   * @param the corresponding ASTNode
+   * @param the variables of the function as ASTNodes
    */
   public FunctionValue(ASTNodeInterpreterWithTime interpreter,
     ASTNode node, List<ASTNode> variableNodes) {
@@ -81,7 +102,6 @@ public class FunctionValue extends ASTNodeObject {
   /* (non-Javadoc)
    * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
    */
-  @Override
   protected void computeDoubleValue() {
     if (math != null) {
       doubleValue = interpreter.functionDouble(evaluationBlock, variables, children, numChildren, argumentValues, time);
@@ -93,7 +113,6 @@ public class FunctionValue extends ASTNodeObject {
   /* (non-Javadoc)
    * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeBooleanValue()
    */
-  @Override
   protected void computeBooleanValue() {
     if (math != null) {
       booleanValue = interpreter.functionBoolean(evaluationBlock, variables, children, argumentValues, time);
@@ -103,7 +122,7 @@ public class FunctionValue extends ASTNodeObject {
   }
   
   /**
-   * 
+   * Sets the math and evaluation block of the function definition.
    * @param math
    */
   public void setMath(ASTNode math) {
@@ -112,7 +131,7 @@ public class FunctionValue extends ASTNodeObject {
   }
   
   /**
-   * 
+   * Returns the values of the arguments.
    * @return
    */
   public double[] getArgumentValues() {
@@ -120,7 +139,7 @@ public class FunctionValue extends ASTNodeObject {
   }
   
   /**
-   * 
+   * Returns the index of a specific argument.
    * @param argumentName
    * @return
    */

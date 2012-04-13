@@ -21,18 +21,29 @@ import org.sbml.jsbml.SpeciesReference;
 import org.simulator.sbml.ValueHolder;
 
 /**
+ * This class computes and stores values of ASTNodes that refer to a species reference.
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
  */
 public class SpeciesReferenceValue extends ASTNodeObject {
 
+	/**
+	 * The value holder that stores the current simulation values
+	 */
   private ValueHolder valueHolder;
+  
+  /**
+   * The id of the species reference
+   */
   private String id;
 
   /**
+   * 
    * @param interpreter
    * @param node
+   * @param sr
+   * @param valueHolder
    */
   public SpeciesReferenceValue(ASTNodeInterpreterWithTime interpreter,
     ASTNode node, SpeciesReference sr, ValueHolder valueHolder) {

@@ -23,11 +23,19 @@ import org.sbml.jsbml.Species;
 import org.simulator.sbml.ValueHolder;
 
 /**
+ * This class can compute and store the value of an AssignmentRule together with the variable of the rule.
  * @author Roland Keller
  * @version $Rev$
  */
 public class AssignmentRuleObject extends RuleObject{
-  private String speciesReferenceID;
+  /**
+   * The id of the species reference the rule is referring to (if applicable)
+   */
+	private String speciesReferenceID;
+	
+	/**
+	 * The map of the values of the species references that are contained in rules
+	 */
   private Map<String,Double> stoichiometricCoefHash;
 
   
@@ -41,7 +49,7 @@ public class AssignmentRuleObject extends RuleObject{
   }
 
   /**
-   * 
+   * Constructor for rules that refer to a species reference
    * @param nodeObject
    * @param speciesReferenceID
    * @param stoichiometricCoefHash
@@ -54,11 +62,12 @@ public class AssignmentRuleObject extends RuleObject{
   }
   
   /**
-   * 
+   * Constructor for rules that refer to a species
    * @param nodeObject
    * @param index
    * @param sp
    * @param compartmentIndex
+   * @param hasZeroSpatialDimensions
    * @param valueHolder
    */
   public AssignmentRuleObject(ASTNodeObject nodeObject, int index,
@@ -67,9 +76,11 @@ public class AssignmentRuleObject extends RuleObject{
   }
 
   /**
-   * 
+   * Processes the rule and saves the new value of the corresponding variable in the Y vector if changeY is set to true.
    * @param Y
    * @param time
+   * @param changeY
+   * @return Has there been a change in the Y vector caused by the rule?
    */
   public boolean processRule(double[] Y, double time, boolean changeY) {
     processAssignmentVariable(time);
@@ -95,7 +106,7 @@ public class AssignmentRuleObject extends RuleObject{
   }
   
   /**
-   * 
+   * Returns the id of the species reference (if present), null otherwise.
    * @return
    */
   public String getSpeciesReferenceID() {

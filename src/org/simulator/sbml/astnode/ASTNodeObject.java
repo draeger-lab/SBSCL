@@ -27,128 +27,129 @@ import org.sbml.jsbml.util.Maths;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
- * 
+ * This class can compute and store the interpreted value (double or boolean) of an ASTNode at the current time. A new computation is only done if the time has changed.
+ * So the computation is time-efficient.
  * @author Roland Keller
  * @version $Rev: 22 $
  * @since 1.0
  */
 public class ASTNodeObject {
   /**
-   * 
+   * The time of the last computation
    */
   protected double time;
   
   /**
-   * 
+   * Flag that is true if the value of the ASTNode is constant.
    */
   protected boolean isConstant;
   
   /**
-   * 
+   * Flag that is true if the value is positive/negative infinity
    */
   protected boolean isInfinite;
   
   /**
-   * 
+   * Boolean value of the node (if the type of the value is boolean)
    */
   protected boolean booleanValue;
   
   /**
-   * 
+   * Double value of the node (if the type of the value is double)
    */
   protected double doubleValue;
   
   /**
-   * 
+   * Flag that is true if the value has double as type and false if the value is boolean
    */
   protected boolean isDouble;
   
   
   /**
-   * 
+   * The ASTNode this object is referring to
    */
   protected ASTNode node;
   
   /**
-   * 
+   * The node type of the corresponding ASTNode
    */
   protected ASTNode.Type nodeType;
   
   
   /**
-   * 
+   * The ASTNodeObjects of the child nodes of the corresponding ASTNode
    */
   protected List<ASTNodeObject> children;
   
   /**
-   * 
+   * The ASTNodeObject of the left child of the corresponding ASTNode
    */
   protected ASTNodeObject leftChild;
   
   /**
-   * 
+   * The ASTNodeObject of the right child of the corresponding ASTNode
    */
   protected ASTNodeObject rightChild;
   
   /**
-   * 
+   * The name of the corresponding ASTNode
    */
   protected String name;
   
   /**
-   * 
+   * The number of children of the corresponding ASTNode
    */
   protected int numChildren;
 
   /**
-   * 
+   * Flag that tells whether a calculation of the value has already been done (important in the case of constant values)
    */
   protected boolean alreadyProcessed;
   
   /**
-   * 
+   * The interpreter for calculating the value
    */
   protected ASTNodeInterpreterWithTime interpreter;
   
   /**
-   * 
+   * The real value of the corresponding ASTNode
    */
   protected double real;
   
   /**
-   * 
+   * The mantissa of the corresponding ASTNode
    */
   protected double mantissa;
   
   /**
-   * 
+   * The exponent of the corresponding ASTNode
    */
   protected int exponent;
   
   /**
-   * 
+   * The numerator of the corresponding ASTNode
    */
   protected int numerator;
   
   /**
-   * 
+   * The denominator of the corresponding ASTNode
    */
   protected int denominator;
   
   /**
-   * 
+   * The units of the corresponding ASTNode
    */
   protected String units;
   
   /**
-   * 
+   * Resets the node
    */
   public void reset() {
     alreadyProcessed=false;
   }
   
   /**
-   * 
+   * A logger
    */
   public static final Logger logger = Logger.getLogger(ASTNodeObject.class.getName());
   
@@ -208,7 +209,7 @@ public class ASTNodeObject {
   
   /**
    * 
-   * @return
+   * @return the time of the last computation of the value
    */
   public double getTime() {
     return time;
@@ -216,6 +217,7 @@ public class ASTNodeObject {
   
   /**
    * 
+   * @param time
    */
   public void setTime(double time) {
     this.time=time;
@@ -223,6 +225,7 @@ public class ASTNodeObject {
   
   /**
    * 
+   * @return constant value?
    */
   public boolean getConstant() {
     return isConstant;
@@ -230,7 +233,7 @@ public class ASTNodeObject {
   
   
   /**
-   * 
+   * Returns the value as an object (double or boolean)
    * @param time
    * @return
    */
@@ -244,9 +247,8 @@ public class ASTNodeObject {
   }
   
   /**
-   * 
+   * Computes the double value if the time has changed and otherwise returns the already computed value
    * @param time
-   * @param forceCalculation
    * @return
    */
   public double compileDouble(double time) {
@@ -264,7 +266,7 @@ public class ASTNodeObject {
   
   
   /**
-   * 
+   * Computes the boolean value if the time has changed and otherwise returns the already computed value
    * @param time
    * @return
    */
@@ -283,7 +285,7 @@ public class ASTNodeObject {
   
 
   /**
-   * 
+   * Computes the double value of the node.
    */
   protected void computeDoubleValue() {
     switch (nodeType) {
@@ -470,7 +472,7 @@ public class ASTNodeObject {
   }
   
   /**
-   * 
+   * Computes the boolean value of the node.
    */
   protected void computeBooleanValue() {
     switch (nodeType) {
@@ -526,7 +528,7 @@ public class ASTNodeObject {
     }
 
   /**
-   * 
+   * Returns true if the corresponding ASTNode is of type name.
    * @return
    */
   public boolean isName() {
@@ -539,7 +541,7 @@ public class ASTNodeObject {
   }
 
   /**
-   * 
+   * Returns the name of the corresponding ASTNode.
    * @return
    */
   public String getName() {
