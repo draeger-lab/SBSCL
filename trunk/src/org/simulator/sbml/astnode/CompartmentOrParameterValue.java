@@ -20,15 +20,30 @@ import org.sbml.jsbml.Symbol;
 import org.simulator.sbml.ValueHolder;
 
 /**
- * 
+ * This class computes and stores values of ASTNodes that refer to a compartment or a parameter.
  * @author Roland Keller
  * @version $Rev: 22 $
  * @since 1.0
  */
 public class CompartmentOrParameterValue extends ASTNodeObject {
-  protected Symbol sb;
+  /**
+   * The compartment or parameter the corresponding ASTNode is referring to
+   */
+	protected Symbol sb;
+	
+	/**
+	 * The id of the compartment or parameter.
+	 */
   protected String id;
+  
+  /**
+   * The value holder that stores the current simulation results.
+   */
   protected ValueHolder valueHolder;
+  
+  /**
+   * The position of the current compartment/parameter value in the Y vector of the value holder
+   */
   protected int position;
   
   /**
@@ -37,6 +52,7 @@ public class CompartmentOrParameterValue extends ASTNodeObject {
    * @param node
    * @param sb
    * @param valueHolder
+   * @param position
    */
   public CompartmentOrParameterValue(ASTNodeInterpreterWithTime interpreter, ASTNode node,
     Symbol sb, ValueHolder valueHolder, int position) {

@@ -19,20 +19,55 @@ import org.sbml.jsbml.Species;
 import org.simulator.sbml.ValueHolder;
 
 /**
- * 
+ * This class computes and stores values of ASTNodes that refer to a species.
  * @author Roland Keller
  * @version $Rev: 22 $
  * @since 1.0
  */
 public class SpeciesValue extends ASTNodeObject {
-  protected Species s;
+  /**
+   * The corresponding species
+   */
+	protected Species s;
+	
+	/**
+	 * The id of the species
+	 */
   protected String id;
+  
+  /**
+   * The value holder that stores the current simulation results
+   */
   protected ValueHolder valueHolder;
+  
+  /**
+   * Has the species an initial amount set?
+   */
   protected boolean isSetInitialAmount;
+  
+  /**
+   * The hasOnlySubstanceUnits attribute of the species
+   */
   protected boolean hasOnlySubstanceUnits;
+  
+  /**
+   * Has the species an initial concentration set?
+   */
   protected boolean isSetInitialConcentration;
+  
+  /**
+   * The position of the species value in the Y vector of the value holder
+   */
   protected int position;
+  
+  /**
+   * The position of the compartment value of the species in the Y vector of the value holder
+   */
   protected int compartmentPosition;
+  
+  /**
+   * Has the compartment of the species no spatial dimensions?
+   */
   protected boolean zeroSpatialDimensions;
   
   /**
@@ -41,6 +76,9 @@ public class SpeciesValue extends ASTNodeObject {
    * @param node
    * @param s
    * @param valueHolder
+   * @param position
+   * @param compartmentPosition
+   * @param zeroSpatialDimensions
    */
   public SpeciesValue(ASTNodeInterpreterWithTime interpreter, ASTNode node,
     Species s, ValueHolder valueHolder, int position, int compartmentPosition, boolean zeroSpatialDimensions) {
@@ -59,7 +97,6 @@ public class SpeciesValue extends ASTNodeObject {
   /* (non-Javadoc)
    * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
    */
-  @Override
   protected void computeDoubleValue() {
     double compartmentValue = valueHolder
         .getCurrentValueOf(compartmentPosition);

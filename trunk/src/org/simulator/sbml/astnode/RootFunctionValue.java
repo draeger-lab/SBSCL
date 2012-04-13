@@ -19,12 +19,19 @@ package org.simulator.sbml.astnode;
 import org.sbml.jsbml.ASTNode;
 
 /**
+ * This class computes and stores values of ASTNodes that refer to a root function.
  * @author Roland Keller
  * @version $Rev$
  */
 public class RootFunctionValue extends ASTNodeObject{
-
+	/**
+	 * The value of the left child of the corresponding ASTNode (if applicable)
+	 */
   private double leftDoubleValue;
+  
+  /**
+   * This flag is true if the left child of the corresponding ASTNode is numeric.
+   */
   private boolean leftChildrenNumeric;
   
   /**
