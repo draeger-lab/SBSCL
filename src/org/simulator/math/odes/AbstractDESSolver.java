@@ -868,8 +868,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			double h = stepSize;
 			if (!missingIds.isEmpty()) {
 				for (k = 0; k < initConditions.getColumnCount(); k++) {
-					yTemp[idIndex.get(initConditions.getColumnIdentifier(k)).intValue()] = initConditions
-							.getValueAt(i - 1, k + 1);
+					yTemp[idIndex.get(initConditions.getColumnIdentifier(k)).intValue()] = initConditions.getValueAt(i - 1, k + 1);
 				}
 				for (String key : missingIds) {
 					k = idIndex.get(key).intValue();
