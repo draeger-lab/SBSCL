@@ -435,7 +435,7 @@ public class AlgebraicRuleConverter {
 				AlgebraicRule ar = (AlgebraicRule) r;
 
 				ASTNode node = ar.getMath().clone();
-
+				
 				// substitute function definitions
 				if (model.getFunctionDefinitionCount() > 0) {
 					node = substituteFunctions(node, 0);
@@ -593,6 +593,9 @@ public class AlgebraicRuleConverter {
 					variable = null; 
 					if (node.getChild(i).isString()) {
 						variable = node.getChild(i).getVariable();
+						if(variable == null) {
+							variable = model.findNamedSBaseWithDerivedUnit(node.getName());
+						}
 					}
 					if (variable instanceof FunctionDefinition) {
 						nodeHash.put(function.getChild(i).getName(), node
