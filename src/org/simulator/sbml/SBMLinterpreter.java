@@ -360,7 +360,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     this.stoichiometricCoefHash = new HashMap<String, Double>();
     this.nodeInterpreter = new EfficientASTNodeInterpreter(this);
     this.nodeInterpreterWithTime = new ASTNodeInterpreterWithTime(this);
-    this.astNodeTime=0d;
+    this.astNodeTime = 0d;
     this.priorities = new HashSet<Double>();
     this.highOrderEvents = new LinkedList<Integer>();
     
