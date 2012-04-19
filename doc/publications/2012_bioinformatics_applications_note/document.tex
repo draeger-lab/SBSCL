@@ -33,6 +33,8 @@ commentstyle=\ttfamily\itshape\color{forrestgreen}
 % MACROS:
 
 \newcommand{\TODO}[1]{\textcolor{red}{\textbf{#1}}}
+\newcommand{\AbstractDESSolver}{\texttt{AbstractDESSolver}}
+\newcommand{\SBMLinterpreter}{\texttt{SBMLinterpreter}}
 
 \hyphenation{
 % TODO: insert hypens here!
@@ -86,7 +88,7 @@ be freely obtained under the terms of the LGPL 3.1 from the website
 \href{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator}{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator}.
 
 \section{Contact:}
-% TODO: We need a mailing list for this!
+\TODO{We need a mailing list for this}
 \href{mailto:andreas.draeger@uni-tuebingen.de}{andreas.draeger@uni-tuebingen.de}
 
 \section{Supplementary information:}
@@ -98,7 +100,7 @@ Supplementary data are available at Bioinformatics online.
 \section{Introduction}
 
 The modeling language SBML (Systems Biology Markup Language,
-\citealt{Hucka2003}) constitutes an important de facto standard for the
+\citealt{Hucka2003}) constitutes an important \emph{de facto} standard for the
 exchange of biochemical network models.
 SBML defines a set of data structures and provides rules about how to interpret
 and simulate these kinds of models.
@@ -119,8 +121,8 @@ measurement data.
 For model building, simulation, and parameter calibration processes, dedicated
 software implementations are indispensable. We here present a simulator that
 interprets the content of such a model and predicts the dynamic behavior of the
-modelÕs components. It is based on the Javaª library JSBML \citep{Draeger2011b},
-a specifically developed data structure to read and write models from and into
+modelÕs components. It is based on the Java\texttrademark{} library JSBML
+\citep{Draeger2011b}, a specifically developed data structure to read and write models from and into
 SBML files and to deal with their structure in memory.
 
 \TODO{The program SBMLsimulator consists of two parts: Firstly, a generic solver
@@ -135,8 +137,9 @@ Secondly, a graphical and command-line user interface that provides
 a connection to the heuristic optimization framework EvA2 \citep{Kron10EvA2}. The combination
 of SBMLsimulator and EvA2 \citep{Kron10EvA2} estimates the values of all parameters with
 respect to given time-series of metabolite or gene expression values. The
-simulation core will also be integral part of the widely used program
-CellDesigner version 4.2 \citep{Funahashi2003}.
+simulation core has also been integrated into the widely used program
+CellDesigner version 4.2 \citep{Funahashi2003} as an internal simulation
+library.
 
 
 \section{Approach}
@@ -144,14 +147,14 @@ In this API a large collection of differential equation solvers and an
 interpreter for SBML are provided. The solvers and the interpretation of SBML
 are independent of each other.
 
-All the solver classes are derived from the abstract class AbstractDESSolver.
+All the solver classes are derived from the abstract class \AbstractDESSolver.
 The Eulerian and the Runge-Kutta solver are very fast, but not suitable
 for some differential equation systems. Several solvers of the Apache Commons
 Math library are integrated with the help of wrapper classes. The Rosenbrock
-solver is slower than the other solvers, but it can be used for solving stiff differential
-equation systems.
+solver is slower than the other solvers, but it can be used for solving stiff
+differential equation systems.
 
-The class SBMLinterpreter stores and processes a given SBML model. For a given
+The class \SBMLinterpreter{} stores and processes a given SBML model. For a given
 value of the ODE system and a given time it returns the current set of
 derivatives of the variables. 
 
@@ -159,31 +162,25 @@ An extremely important aspect in the interpretation of SBML models is the
 determination of the exact time at which an event occurs, as this can have a
 high influence on the precision of the values of the system variables. We have
 therefore adapted the Rosenbrock solver, which is an integrator with an adaptive
-step size, to a very precise timing of the events. 
+step size, to a very precise timing of the events.
 
 \begin{methods}
 \section{Methods}
 The API contains an efficient interpreter for MathML expressions that are
 contained in kinetic laws, rules and events. The nodes of the syntax tree of
 those expressions depend on the current simulation time and the given values of
-the ODE system. If the time or any of these values has changed, the value of the node has to be
-recalculated. At the beginning of the simulation the syntax trees of all
-kinetic laws, rules and events are restructured and merged to one large tree
-that contains equivalent nodes only once. This leads to a decreasing computation
-time during the simulation.
+the ODE system. If the time or any of these values has changed, the value of
+the node has to be recalculated. At the beginning of the simulation the syntax
+trees of all kinetic laws, rules and events are restructured and merged to one
+large tree that contains equivalent nodes only once. This leads to a decreasing
+computation time during the simulation.
 
-Our implementation has been successfully tested with the SBML test suite and the
-models of the biomodels.net database: With the Rosenbrock solver all models of
-the test suite are simulated correctly and all but 3 models of the
-biomodels.net database can be simulated in acceptable time.
-
-
-
-
-
-\begin{itemize}
-\item for bulleted list, use itemize
-\end{itemize}
+Our implementation has been successfully tested with the SBML test suite (see
+\href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite})
+and the models of the biomodels.net database: With the Rosenbrock solver all
+models of the test suite are simulated correctly and all but three models of the
+\href{http://biomodels.net}{BioModels.net} database \citep{Novere2006a} can be
+simulated in acceptable time.
 
 \TODO{Text Text Text Text Text Text  Text Text Text Text Text Text}
 
@@ -220,8 +217,9 @@ The SBMLsimulator API is an efficient Java tool for the simulation of
 differential equation systems given in SBML. It can be easily integrated in
 larger applications, which display the simulation results or optimize some
 parameters of ODE models. 
-With the given program structure the support of other model formats (CellML
-\TODO{Citation}) can be added by only implementing a interpreter for each format. 
+With the given program structure the support of other model formats (e.g.,
+CellML, \citealt{Lloyd2004}) can be added by only implementing a interpreter for
+each format.
 
 
 \section*{Acknowledgement}
