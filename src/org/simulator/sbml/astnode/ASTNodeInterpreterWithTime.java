@@ -38,7 +38,7 @@ import org.simulator.sbml.ValueHolder;
 /**
  * This class is an efficient ASTNodeInterpreter that takes the time of the
  * calculation into account. It contains functions similar to the
- * {@linkASTNodeCompiler} interface, which have the current time as additional
+ * {@link ASTNodeCompiler} interface, which have the current time as additional
  * argument.
  * 
  * @author Roland Keller
