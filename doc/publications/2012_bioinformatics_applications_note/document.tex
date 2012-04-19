@@ -33,11 +33,11 @@ commentstyle=\ttfamily\itshape\color{forrestgreen}
 % MACROS:
 
 \newcommand{\TODO}[1]{\textcolor{red}{\textbf{#1}}}
-\newcommand{\AbstractDESSolver}{\texttt{AbstractDESSolver}}
-\newcommand{\SBMLinterpreter}{\texttt{SBMLinterpreter}}
+\newcommand{\AbstractDESSolver}{\texttt{Abstract\-DES\-Solver}}
+\newcommand{\SBMLinterpreter}{\texttt{SBML\-interpreter}}
 
 \hyphenation{
-% TODO: insert hypens here!
+  % TODO hypens for regular words
 }
 
 % some nice colors
@@ -51,9 +51,10 @@ commentstyle=\ttfamily\itshape\color{forrestgreen}
 \begin{document}
 \firstpage{1}
 
-\title[SBML Simulation Core Library]{SBML Simulation Core Library: the Java Library for numerical computation with SBML}
-\author[Dr\"ager \textit{et~al.}]{Andreas Dr\"ager\,$^{1,*}$,
-Roland Keller\,$^{1}$, 
+\title[SBML Simulation Core Library]{SBML Simulation Core Library: the Java
+library for numerical computation with SBML} \author[Dr\"ager
+\textit{et~al.}]{%
+Andreas Dr\"ager\,$^{1,*}$, Roland Keller\,$^{1}$, 
 Alexander D\"orr\,$^{1}$,
 Akito Tabira\,$^{2}$,
 Akira Funahashi\,$^{2}$,
@@ -64,8 +65,8 @@ Andreas Zell\,$^1$\footnote{to whom correspondence should be addressed}}
 Tuebingen, T\"ubingen, Germany\\
 $^{2}$Keio University, Graduate School of Science and Technology, Yokohama,
 Japan\\
-$^{3}$European Bioinformatics Institute, Wellcome Trust Genome Campus,
-Hinxton, Cambridge, UK\\}
+\TODO{$^{3}$European Bioinformatics Institute, Wellcome Trust Genome Campus,
+Hinxton, Cambridge, UK\\}}
 
 \history{Received on XXXXX; revised on XXXXX; accepted on XXXXX}
 
@@ -141,8 +142,8 @@ simulation core has also been integrated into the widely used program
 CellDesigner version 4.2 \citep{Funahashi2003} as an internal simulation
 library.
 
-
-\section{Approach}
+\begin{methods}
+\section{Implementation}
 In this API a large collection of differential equation solvers and an
 interpreter for SBML are provided. The solvers and the interpretation of SBML
 are independent of each other.
@@ -164,8 +165,6 @@ high influence on the precision of the values of the system variables. We have
 therefore adapted the Rosenbrock solver, which is an integrator with an adaptive
 step size, to a very precise timing of the events.
 
-\begin{methods}
-\section{Methods}
 The API contains an efficient interpreter for MathML expressions that are
 contained in kinetic laws, rules and events. The nodes of the syntax tree of
 those expressions depend on the current simulation time and the given values of
@@ -174,15 +173,15 @@ the node has to be recalculated. At the beginning of the simulation the syntax
 trees of all kinetic laws, rules and events are restructured and merged to one
 large tree that contains equivalent nodes only once. This leads to a decreasing
 computation time during the simulation.
+\end{methods}
 
+\section{Results}
 Our implementation has been successfully tested with the SBML test suite (see
 \href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite})
 and the models of the biomodels.net database: With the Rosenbrock solver all
 models of the test suite are simulated correctly and all but three models of the
 \href{http://biomodels.net}{BioModels.net} database \citep{Novere2006a} can be
 simulated in acceptable time.
-
-\TODO{Text Text Text Text Text Text  Text Text Text Text Text Text}
 
 %\begin{table}[!t]
 %\processtable{This is table caption\label{Tab:01}}
@@ -193,16 +192,12 @@ simulated in acceptable time.
 %\end{tabular}}{This is a footnote}
 %\end{table}
 
-\end{methods}
+
 
 %\begin{figure}[!tpb]%figure1
 %%\centerline{\includegraphics{fig01.eps}}
 %\caption{Caption, caption.}\label{fig:01}
 %\end{figure}
-
-\section{Discussion}
-
-\TODO{Text Text Text Text Text Text  Text Text Text Text Text Text}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
