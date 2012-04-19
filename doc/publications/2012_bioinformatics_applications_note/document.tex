@@ -140,13 +140,46 @@ CellDesigner version 4.2 \citep{Funahashi2003}.
 
 
 \section{Approach}
+In this API a large collection of differential equation solvers and an
+interpreter for SBML are provided. The solvers and the interpretation of SBML
+are independent of each other.
 
-\TODO{Text Text Text Text Text Text  Text Text Text Text Text Text}
+All the solver classes are derived from the abstract class AbstractDESSolver.
+The Eulerian and the Runge-Kutta solver are very fast, but not suitable
+for some differential equation systems. Several solvers of the Apache Commons
+Math library are integrated with the help of wrapper classes. The Rosenbrock
+solver is slower than the other solvers, but it can be used for solving stiff differential
+equation systems.
+
+The class SBMLinterpreter stores and processes a given SBML model. For a given
+value of the ODE system and the given time it returns the current set of
+derivatives of the variables. 
+
+An extremely important aspect in the interpretation of SBML models is the
+determination of the exact time at which an event occurs, as this can have a
+high influence on the precision of the values of the system variables. We have
+therefore adapted the Rosenbrock solver, which is an integrator with an adaptive
+step size, to a very precise timing of the events. 
 
 \begin{methods}
 \section{Methods}
+The API contains an efficient interpreter for MathML expressions that are
+contained in kinetic laws, rules and events. The nodes of the syntax tree of
+those expressions depend on the current simulation time and the given values of
+the ODE system. If the time or any of these values has changed, the value of the node has to be
+recalculated. At the beginning of the simulation the syntax trees of all
+kinetic laws, rules and events are restructured and merged to one large tree
+that contains equivalent nodes only once. This leads to a decreasing computation
+time during the simulation.
 
-\TODO{Text Text Text Text Text Text  Text Text Text Text Text Text}
+Our implementation has been successfully tested with the SBML test suite and the
+models of the biomodels.net database: With the Rosenbrock solver all models of
+the test suite are simulated correctly and all but 3 models of the
+biomodels.net database can be simulated in acceptable time.
+
+
+
+
 
 \begin{itemize}
 \item for bulleted list, use itemize
@@ -183,8 +216,13 @@ CellDesigner version 4.2 \citep{Funahashi2003}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Conclusion}
-
-\TODO{Text Text Text Text Text Text  Text Text Text Text Text Text}
+The SBMLsimulator API is an efficient Java tool for the simulation of
+differential equation systems given in SBML. It can be easily integrated in
+larger applications, which display the simulation results or optimize some
+parameters of ODE models. 
+With the given program structure the support of other model formats (CellML
+\TODO{Citation}) can be added by only implementing a interpreter for each format. Furthermore, 
+the support of SED-ML \TODO{Citation} should be integrated soon.
 
 
 \section*{Acknowledgement}
