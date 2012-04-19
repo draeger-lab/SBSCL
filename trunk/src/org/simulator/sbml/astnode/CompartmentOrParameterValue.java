@@ -26,25 +26,25 @@ import org.simulator.sbml.ValueHolder;
  * @since 1.0
  */
 public class CompartmentOrParameterValue extends ASTNodeObject {
-  /**
-   * The compartment or parameter the corresponding ASTNode is referring to
-   */
+	/**
+	 * The compartment or parameter the corresponding ASTNode is referring to
+	 */
 	protected Symbol sb;
-	
+
 	/**
 	 * The id of the compartment or parameter.
 	 */
-  protected String id;
+	protected String id;
+
+	/**
+	 * The value holder that stores the current simulation results.
+	 */
+	protected ValueHolder valueHolder;
   
-  /**
-   * The value holder that stores the current simulation results.
-   */
-  protected ValueHolder valueHolder;
-  
-  /**
-   * The position of the current compartment/parameter value in the Y vector of the value holder
-   */
-  protected int position;
+	/**
+	 * The position of the current compartment/parameter value in the Y vector of the value holder
+	 */
+	protected int position;
   
   /**
    * 
@@ -67,11 +67,12 @@ public class CompartmentOrParameterValue extends ASTNodeObject {
     this.position=position;
   }
   
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
    */
+  @Override
   protected void computeDoubleValue() {
     doubleValue=valueHolder.getCurrentValueOf(position);
   }
+
 }

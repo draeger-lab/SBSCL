@@ -18,22 +18,26 @@ package org.simulator.math.odes;
 
 import java.io.Serializable;
 
-import org.apache.commons.math.ode.DerivativeException;
-
 /**
  * This interface describes a value holder that can compute values with delay.
+ * 
  * @author Roland Keller
  * @version $Rev$
  */
 public interface DelayValueHolder extends Serializable {
   
-  /**
-   * 
-   * @param the current time
-   * @param the id of the delayed value
-   * @return the value computed
-   * @throws DerivativeException
-   */
-  public double computeDelayedValue(double time, String id) throws DerivativeException;
+	/**
+	 * Returns the value for the element with the given id at a time point in
+	 * the past, where the time gives the amount of time in the past.
+	 * 
+	 * @param time
+	 *            the time point (in the past) at which the value is to be
+	 *            computed for the element with the given id.
+	 * @param id
+	 *            the id of the delayed value
+	 * @return the computed value for the element with the given identifier at
+	 *         the time point in the past.
+	 */
+	public double computeDelayedValue(double time, String id);
 
 }
