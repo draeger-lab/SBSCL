@@ -278,7 +278,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	/* (non-Javadoc)
 	 * @see org.simulator.math.odes.DelayValueHolder#computeValue(double, java.lang.String)
 	 */
-	public double computeDelayedValue(double time, String id) throws DerivativeException {
+	public double computeDelayedValue(double time, String id) {
 		//get interval
 		double[] timepoints=data.getTimePoints();
 		int leftIndex=-1;
