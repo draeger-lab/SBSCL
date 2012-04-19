@@ -52,6 +52,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.util.StringTools;
+import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.validator.OverdeterminationValidator;
 import org.simulator.math.RNG;
@@ -2195,5 +2196,13 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
   public boolean getNoDerivatives() {
     return this.noDerivatives;
   }
+
+	/**
+	 * Returns the ASTNode interpreter
+	 * @return
+	 */
+	public ASTNodeCompiler getASTNodeInterpreter() {
+		return this.nodeInterpreter;
+	}
   
 }
