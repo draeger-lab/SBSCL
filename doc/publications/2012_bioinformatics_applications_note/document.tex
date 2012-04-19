@@ -30,6 +30,10 @@ commentstyle=\ttfamily\itshape\color{forrestgreen}
 % frameround=ttff
 }
 
+% MACROS:
+
+\newcommand{\TODO}[1]{\textcolor{red}{\textbf{#1}}}
+
 \hyphenation{
 % TODO: insert hypens here!
 }
@@ -51,8 +55,8 @@ Roland Keller\,$^{1}$,
 Alexander D\"orr\,$^{1}$,
 Akito Tabira\,$^{2}$,
 Akira Funahashi\,$^{2}$,
-Nicolas Rodriguez\,$^{3}$,
-Nicolas Le Nov\`{e}re\,$^{3}$ and
+\TODO{Nicolas Rodriguez\,$^{3}$,
+Nicolas Le Nov\`{e}re\,$^{3}$} and
 Andreas Zell\,$^1$\footnote{to whom correspondence should be addressed}}
 \address{$^{1}$Center for Bioinformatics Tuebingen (ZBIT), University of
 Tuebingen, T\"ubingen, Germany\\
@@ -70,16 +74,11 @@ Hinxton, Cambridge, UK\\}
 \begin{abstract}
 
 \section{Motivation:}
-Java\texttrademark{} programming language Text Text  Text Text Text Text Text
-Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text
-Text Text Text Text Text Text Text  Text Text Text Text Text Text Text Text
-Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text
-Text Text Text Text  Text Text Text Text Text.
+Java\texttrademark{} programming language
+\TODO{Text Text Text Text Text Text  Text Text Text Text Text Text}
 
 \section{Results:}
-Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text
-Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text
-Text Text Text Text
+\TODO{Text Text Text Text Text Text  Text Text Text Text Text Text}
 
 \section{Availability:}
 Source code, binaries, and documentation for SBML Simulation Core can
@@ -98,111 +97,82 @@ Supplementary data are available at Bioinformatics online.
 
 \section{Introduction}
 
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text 
-Text Text Text Text Text Text. Figure~\ref{fig:01} shows that the above method 
-Text Text Text Text  Text Text Text Text Text Text  Text Text. 
-\citep{Draeger2011b} bla bla.
+The modeling language SBML (Systems Biology Markup Language,
+\citealt{Hucka2003}) constitutes an important de facto standard for the
+exchange of biochemical network models.
+SBML defines a set of data structures and provides rules about how to interpret
+and simulate these kinds of models.
 
-\begin{equation}
-\sum x+ y =Z\label{eq:01}
-\end{equation}
+A model stored in SBML may combine an ordinary differential equation system,
+which is the basis for numerical simulation, with additional elements such as
+rules and events.  These elements further influence the system. For instance,
+an event takes place if a certain trigger condition becomes true. Whenever this
+happens, event assignments may change the values of model components, such as
+parameter values or compartment sizes. Rules can directly assign new values to
+their objectives, e.g., the concentration of a reacting species.
 
+In many cases, model parameters with uncertain values, such as kinetic
+constants, need to be estimated using heuristic optimization procedures in
+order to minimize the distance between model output and experimental
+measurement data.
 
+For model building, simulation, and parameter calibration processes, dedicated
+software implementations are indispensable. We here present a simulator that
+interprets the content of such a model and predicts the dynamic behavior of the
+modelÕs components. It is based on the Javaª library JSBML \citep{Draeger2011b},
+a specifically developed data structure to read and write models from and into
+SBML files and to deal with their structure in memory.
 
-
+\TODO{The program SBMLsimulator consists of two parts: Firstly, a generic solver
+core library, which is completely decoupled from any graphical user interface and
+can hence easily be integrated as an API (Application Programming Interface)
+into third-party programs. The core can be downloaded at}
+\TODO{Insert Uni Tuebingen website here!}
+\href{http://sourceforge.net/projects/sbml-simulator/}{http://sourceforge.net/projects/sbml-simulator/}
+under the terms of the LGPL Version 3. 
+\TODO{Describe this as a potential application.}
+Secondly, a graphical and command-line user interface that provides
+a connection to the heuristic optimization framework EvA2 \citep{Kron10EvA2}. The combination
+of SBMLsimulator and EvA2 \citep{Kron10EvA2} estimates the values of all parameters with
+respect to given time-series of metabolite or gene expression values. The
+simulation core will also be integral part of the widely used program
+CellDesigner version 4.2 \citep{Funahashi2003}.
 
 
 \section{Approach}
 
-Equation~(\ref{eq:01}) Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text ……
-
+\TODO{Text Text Text Text Text Text  Text Text Text Text Text Text}
 
 \begin{methods}
 \section{Methods}
 
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
+\TODO{Text Text Text Text Text Text  Text Text Text Text Text Text}
 
 \begin{itemize}
 \item for bulleted list, use itemize
-\item for bulleted list, use itemize
-\item for bulleted list, use itemize
 \end{itemize}
 
+\TODO{Text Text Text Text Text Text  Text Text Text Text Text Text}
 
-
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text.
-
-
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-
-
-
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-
-
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-
-
-
-\begin{table}[!t]
-\processtable{This is table caption\label{Tab:01}}
-{\begin{tabular}{llll}\toprule
-head1 & head2 & head3 & head4\\\midrule
-row1 & row1 & row1 & row1\\
-row2 & row2 & row2 & row2\\
-row3 & row3 & row3 & row3\\
-row4 & row4 & row4 & row4\\\botrule
-\end{tabular}}{This is a footnote}
-\end{table}
+%\begin{table}[!t]
+%\processtable{This is table caption\label{Tab:01}}
+%{\begin{tabular}{llll}\toprule
+%head1 & head2 & head3 & head4\\\midrule
+%row1 & row1 & row1 & row1\\
+%row4 & row4 & row4 & row4\\\botrule
+%\end{tabular}}{This is a footnote}
+%\end{table}
 
 \end{methods}
 
-\begin{figure}[!tpb]%figure1
-%\centerline{\includegraphics{fig01.eps}}
-\caption{Caption, caption.}\label{fig:01}
-\end{figure}
-
-\begin{figure}[!tpb]%figure2
-%\centerline{\includegraphics{fig02.eps}}
-\caption{Caption, caption.}\label{fig:02}
-\end{figure}
+%\begin{figure}[!tpb]%figure1
+%%\centerline{\includegraphics{fig01.eps}}
+%\caption{Caption, caption.}\label{fig:01}
+%\end{figure}
 
 \section{Discussion}
 
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text 
-Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method 
-Text Text Text Text  Text Text Text Text Text Text  Text Text. 
-text text text text Text Text Text Text Text Text  Text Text Text Text Text Text
-Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that
-the above method  Text Text Text Text  Text Text Text Text Text Text  Text
-Text.  text text text text Text Text Text Text Text Text  Text Text Text Text.
-
-
-
-
-Table~\ref{Tab:01} shows that Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that
-the above method Text Text. Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that
-the above method Text Text. Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that
-the above method Text Text.
-
-
-
-
-
-
-
+\TODO{Text Text Text Text Text Text  Text Text Text Text Text Text}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,45 +182,18 @@ the above method Text Text.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-
-
-
 \section{Conclusion}
 
-(Table~\ref{Tab:01}) Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.
-
-
-
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-
-
-
-
-
-\begin{enumerate}
-\item this is item, use enumerate
-\item this is item, use enumerate
-\item this is item, use enumerate
-\end{enumerate}
-
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text  Text Text Text Text Text Text  Text Text.  \citealp{Boffelli03} might want to know about  text text text text
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text.
-
-
-
-
-
-
-Text Text Text Text Text Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text. Figure \ref{fig:02} shows that the above method  Text Text Text Text
+\TODO{Text Text Text Text Text Text  Text Text Text Text Text Text}
 
 
 \section*{Acknowledgement}
 
+The authors are grateful to Beky Kotcon, Samantha Mesuro, Daniel Rozenfeld, Anak
+Yodpinyanee, Andres Perez, Eric Doi, Richard Mehlinger, Steven Ehrlich, Martin
+Hunt, George Tucker, Peter Scherpelz, Aaron Becker, Eric Harley, and Chris
+Moore, Harvey Mudd College, Claremont, California, USA, for providing an
+Java implementation of Rosenbrock's numerical ODE solver. 
 
 \paragraph{Funding\textcolon} 
 The Federal Ministry of Education and Research (BMBF, Germany) in the project

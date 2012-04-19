@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.apache.commons.math.ode.DerivativeException;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.CallableSBase;
 import org.sbml.jsbml.Compartment;
@@ -37,7 +36,11 @@ import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sbml.ValueHolder;
 
 /**
- * This class is an efficient ASTNodeInterpreter that takes the time of the calculation into account. It contains functions similar to the {@linkASTNodeCompiler} interface, which have the current time as additional argument.
+ * This class is an efficient ASTNodeInterpreter that takes the time of the
+ * calculation into account. It contains functions similar to the
+ * {@linkASTNodeCompiler} interface, which have the current time as additional
+ * argument.
+ * 
  * @author Roland Keller
  * @version $Rev: 22 $
  * @since 1.0
@@ -46,8 +49,8 @@ public class ASTNodeInterpreterWithTime {
   /**
    * A logger.
    */
-  public static final Logger logger = Logger.getLogger(SBMLinterpreter.class
-      .getName());
+  public static final Logger logger = Logger.getLogger(SBMLinterpreter.class.getName());
+  
   /**
    * This table is necessary to store the values of arguments when a function
    * definition is evaluated. For an identifier of the argument the
@@ -876,23 +879,18 @@ public class ASTNodeInterpreterWithTime {
    * @param x
    * @param delay
    * @param timeUnits
+   * @param time
    * @return
-   * @throws SBMLException
    */
   public final double delay(String delayName, ASTNodeObject x, ASTNodeObject delay,
-    String timeUnits, double time) throws SBMLException {
+    String timeUnits, double time) {
     //TODO: Delay for arbitrary expressions.
     double delayTime = delay.compileDouble(time);
     if(delayTime == 0) {
       return x.compileDouble(time);
     }
-    double valueTime=symbolTime(delayName)- delayTime;
-    try {
-      return valueHolder.computeDelayedValue(valueTime, compileString(x));
-    } catch (DerivativeException e) {
-      return Double.NaN;
-    }
-    
+    double valueTime = symbolTime(delayName) - delayTime;
+    return valueHolder.computeDelayedValue(valueTime, compileString(x));
   }
   
   /**
@@ -1045,4 +1043,5 @@ public class ASTNodeInterpreterWithTime {
     throws SBMLException {
     return (-userObject.compileDouble(time));
   }
+
 }
