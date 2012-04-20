@@ -94,7 +94,7 @@ We here present the SBML Simulation Core library, an exhaustive implementation
 of the SBML standard for numerical calculation and network simulation in form of
 an application programming library for the Java\texttrademark{} programming
 language. This library has been implemented as a community-driven project. Its
-designed has the potential to be extended for the simulation of furhter
+designed has the potential to be extended for the simulation of further
 standard network formats in systems biology. It does not depend on any
 commercial library and is entirely written in Java without the necessity to
 include any platform-dependent wrappers or libraries. To demonstrate its
@@ -138,27 +138,32 @@ order to minimize the distance between model output and experimental
 measurement data.
 
 For model building, simulation, and parameter calibration processes, dedicated
-software implementations are indispensable. We here present a simulator that
-interprets the content of such a model and predicts the dynamic behavior of the
-model’s components. It is based on the Java\texttrademark{} library JSBML
-\citep{Draeger2011b}, a specifically developed data structure to read and write models from and into
-SBML files and to deal with their structure in memory.
+software implementations are indispensable. There are several larger tools with
+a graphical user interface written in Java\texttrademark{}, C or MATLAB that
+fulfil those important requests:
+\citep{Loew2001}, \citep{Myers2009}, \citep{Maiwald2008}, \citep{Hoops2006}, 
+\citep{SBT_Schmidt2006}, \citep{Bergmann06}.
+But it is difficult to integrate the contained simulation routines in other programs.
+The SBML ODE Solver Library \citep{Machne2006}, which is written in C and based
+on the libSBML library \citep{Bornstein2008},  provides such a simulation
+routine. The SUNDIALS package is used for solving the differential equation system given in the model.
 
-\TODO{The program SBMLsimulator consists of two parts: Firstly, a generic solver
-core library, which is completely decoupled from any graphical user interface and
-can hence easily be integrated as an API (Application Programming Interface)
-into third-party programs. The core can be downloaded at}
-\TODO{Insert Uni Tuebingen website here!}
-\href{http://sourceforge.net/projects/sbml-simulator/}{http://sourceforge.net/projects/sbml-simulator/}
-under the terms of the LGPL Version 3. 
+In contrast to that we here present a platform-independent simulation API in
+Java that interprets the content of such a model and predicts the dynamic behavior of the model’s
+components. It is the first simulation routine which is based on the
+Java\texttrademark{} library JSBML \citep{Draeger2011b}, a specifically
+developed data structure to read and write models from and into SBML files and
+to deal with their structure in memory. The API contains an interpreter for the
+SBML model and several different ODE solvers. The generic library is completely
+decoupled from any graphical user interface and can hence easily be integrated as an API (Application Programming Interface) into third-party programs under the terms of the LGPL Version 3.
 \TODO{Describe this as a potential application.}
-Secondly, a graphical and command-line user interface that provides
-a connection to the heuristic optimization framework EvA2 \citep{Kron10EvA2}. The combination
-of SBMLsimulator and EvA2 \citep{Kron10EvA2} estimates the values of all parameters with
-respect to given time-series of metabolite or gene expression values. The
-simulation core has also been integrated into the widely used program
-CellDesigner version 4.2 \citep{Funahashi2003} as an internal simulation
+The SBML simulation core library has already been integrated into the widely
+used program CellDesigner version 4.2 \citep{Funahashi2003} as an internal simulation
 library.
+%Secondly, a graphical and command-line user interface that provides
+%a connection to the heuristic optimization framework EvA2 \citep{Kron10EvA2}.
+% The combination of SBMLsimulator and EvA2 \citep{Kron10EvA2} estimates the values of all parameters with
+%respect to given time-series of metabolite or gene expression values. 
 
 \begin{methods}
 \section{Implementation}
@@ -231,8 +236,8 @@ differential equation systems given in SBML. It can be easily integrated in
 larger applications, which display the simulation results or optimize some
 parameters of ODE models. 
 With the given program structure the support of other model formats (e.g.,
-CellML, \citealt{Lloyd2004}) can be added by only implementing a interpreter for
-each format.
+CellML, \citealt{Lloyd2004}) can be added by only implementing an interpreter
+for each format.
 
 
 \section*{Acknowledgement}
