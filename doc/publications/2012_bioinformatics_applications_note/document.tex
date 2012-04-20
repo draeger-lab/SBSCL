@@ -77,11 +77,29 @@ Hinxton, Cambridge, UK\\}}
 \begin{abstract}
 
 \section{Motivation:}
-Java\texttrademark{} programming language
-\TODO{Text Text Text Text Text Text  Text Text Text Text Text Text}
+The Systems Biology Markup Language (SBML) has been designed as a medium for the
+exchange of quantitative models of biological networks. To this end, SBML
+defines a rich set of methods to specify differential equation systems for
+these networks. As an XML-based standard, however, models encoded in SBML
+require the availability of suitable software implementations in order to
+perform computer simulations and further analyses. Many solvers for SBML have
+been implemented and are available, but the vast majority of these is either
+part of a larger software suite and can therefore not be easily integrated into
+custom programs, or implemented in programing languages, which are either
+platform-dependent or even require a commercial license for their
+execution.
 
 \section{Results:}
-\TODO{Text Text Text Text Text Text  Text Text Text Text Text Text}
+We here present the SBML Simulation Core library, an exhaustive implementation
+of the SBML standard for numerical calculation and network simulation in form of
+an application programming library for the Java\texttrademark{} programming
+language. This library has been implemented as a community-driven project. Its
+designed has the potential to be extended for the simulation of furhter
+standard network formats in systems biology. It does not depend on any
+commercial library and is entirely written in Java without the necessity to
+include any platform-dependent wrappers or libraries. To demonstrate its
+capabilities, it has been benchmarked against the entire SBML Test Suite and
+also been used to simulate all models of the BioModels.net database.
 
 \section{Availability:}
 Source code, binaries, and documentation for SBML Simulation Core can
@@ -152,8 +170,8 @@ All the solver classes are derived from the abstract class \AbstractDESSolver.
 The Eulerian and the Runge-Kutta solver are very fast, but not suitable
 for some differential equation systems. Several solvers of the Apache Commons
 Math library are integrated with the help of wrapper classes. The Rosenbrock
-solver is slower than the other solvers, but it can be used for solving stiff
-differential equation systems.
+solver \citep{Kotcon2011} is slower than the other solvers, but it can be used
+for solving stiff differential equation systems.
 
 The class \SBMLinterpreter{} stores and processes a given SBML model. For a given
 value of the ODE system and a given time it returns the current set of
