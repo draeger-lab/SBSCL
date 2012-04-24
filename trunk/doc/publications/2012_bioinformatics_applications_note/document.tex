@@ -51,8 +51,8 @@ commentstyle=\ttfamily\itshape\color{forrestgreen}
 \begin{document}
 \firstpage{1}
 
-\title[SBML Simulation Core Library]{SBML Simulation Core Library: the Java
-library for numerical computation with SBML} \author[Dr\"ager
+\title[SBML Simulation Core Library]{Simulation Core Library: the Java
+library for numerical computation in systems biology} \author[Dr\"ager
 \textit{et~al.}]{%
 Andreas Dr\"ager\,$^{1,*}$, Roland Keller\,$^{1}$, 
 Alexander D\"orr\,$^{1}$,
@@ -90,11 +90,18 @@ platform-dependent or even require a commercial license for their
 execution.
 
 \section{Results:}
+
+\TODO{The SBML Simulation Core Library provides an efficient and exhaustive
+Java\texttrademark{} implementation of methods to interpret the content of
+models encoded in the Systems Biology Markup Language (SBML) and its numerical
+solution. This library is based on the JSBML project and can be used on every
+operating system for which a Java Virtual Machine is available.}
+
 We here present the SBML Simulation Core library, an exhaustive implementation
 of the SBML standard for numerical calculation and network simulation in form of
 an application programming library for the Java\texttrademark{} programming
 language. This library has been implemented as a community-driven project. Its
-designed has the potential to be extended for the simulation of further
+designe has the potential to be extended for the simulation of further
 standard network formats in systems biology. It does not depend on any
 commercial library and is entirely written in Java without the necessity to
 include any platform-dependent wrappers or libraries. To demonstrate its
@@ -112,7 +119,7 @@ be freely obtained under the terms of the LGPL 3.1 from the website
 
 \section{Supplementary information:}
 % TODO: Provide additional material
-Supplementary data are available at Bioinformatics online.
+Supplementary data is available at Bioinformatics online.
 
 \end{abstract}
 
@@ -137,10 +144,10 @@ constants, need to be estimated using heuristic optimization procedures in
 order to minimize the distance between model output and experimental
 measurement data.
 
-For model building, simulation, and parameter calibration processes, dedicated
-software implementations are indispensable. There are several larger tools with
-a graphical user interface written in Java\texttrademark{}, C or MATLAB that
-fulfil those important requests:
+For model building, simulation, and parameter calibration processes,
+appropriated software implementations are indispensable. There are several
+larger tools with a graphical user interface written in Java\texttrademark{}, C
+or MATLAB that fulfil those important requests:
 \citep{Loew2001}, \citep{Myers2009}, \citep{Maiwald2008}, \citep{Hoops2006}, 
 \citep{SBT_Schmidt2006}, \citep{Bergmann06}.
 But it is difficult to integrate the contained simulation routines in other programs.
@@ -155,11 +162,14 @@ Java\texttrademark{} library JSBML \citep{Draeger2011b}, a specifically
 developed data structure to read and write models from and into SBML files and
 to deal with their structure in memory. The API contains an interpreter for the
 SBML model and several different ODE solvers. The generic library is completely
-decoupled from any graphical user interface and can hence easily be integrated as an API (Application Programming Interface) into third-party programs under the terms of the LGPL Version 3.
+decoupled from any graphical user interface and can hence easily be integrated
+as an API (Application Programming Interface) into third-party programs under
+the terms of the LGPL Version 3.
 \TODO{Describe this as a potential application.}
 The SBML simulation core library has already been integrated into the widely
 used program CellDesigner version 4.2 \citep{Funahashi2003} as an internal simulation
 library.
+\TODO{Mention the stand-alone application SBMLsimulator.}
 %Secondly, a graphical and command-line user interface that provides
 %a connection to the heuristic optimization framework EvA2 \citep{Kron10EvA2}.
 % The combination of SBMLsimulator and EvA2 \citep{Kron10EvA2} estimates the values of all parameters with
@@ -203,8 +213,8 @@ Our implementation has been successfully tested with the SBML test suite (see
 \href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite})
 and the models of the biomodels.net database: With the Rosenbrock solver all
 models of the test suite are simulated correctly and all but three models of the
-\href{http://biomodels.net}{BioModels.net} database \citep{Novere2006a} can be
-simulated in acceptable time.
+\href{http://biomodels.net}{BioModels.net} database \citep{Novere2006a}
+\TODO{can be simulated in acceptable time}.
 
 %\begin{table}[!t]
 %\processtable{This is table caption\label{Tab:01}}
@@ -246,7 +256,8 @@ The authors are grateful to Beky Kotcon, Samantha Mesuro, Daniel Rozenfeld, Anak
 Yodpinyanee, Andres Perez, Eric Doi, Richard Mehlinger, Steven Ehrlich, Martin
 Hunt, George Tucker, Peter Scherpelz, Aaron Becker, Eric Harley, and Chris
 Moore, Harvey Mudd College, Claremont, California, USA, for providing an
-Java implementation of Rosenbrock's numerical ODE solver. 
+Java implementation of Rosenbrock's numerical ODE solver.
+\TODO{Also: Marcel Kronfeld, Michael Ziller, Dieudonn\'e M. Wouamba}
 
 \paragraph{Funding\textcolon} 
 The Federal Ministry of Education and Research (BMBF, Germany) in the project

@@ -1,9 +1,10 @@
-/*
- * --------------------------------------------------------------------- This
- * file is part of SBMLsimulator, a Java-based simulator for models of
+/* $Id$
+ * $URL$
+ * --------------------------------------------------------------------- 
+ * This file is part of Simulation Core Library, a Java-based library of
  * biochemical processes encoded in the modeling language SBML.
  * 
- * Copyright (C) 2007-2011 by the University of Tuebingen, Germany.
+ * Copyright (C) 2007-2012 by the University of Tuebingen, Germany.
  * 
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -42,7 +43,7 @@ import org.simulator.sbml.ValueHolder;
  * argument.
  * 
  * @author Roland Keller
- * @version $Rev: 22 $
+ * @version $Rev$
  * @since 1.0
  */
 public class ASTNodeInterpreterWithTime {
@@ -106,10 +107,8 @@ public class ASTNodeInterpreterWithTime {
    * @param nsb
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double compileDouble(CallableSBase nsb, double time)
-    throws SBMLException {
+  public double compileDouble(CallableSBase nsb, double time) {
     if (nsb instanceof Species) {
       Species s = (Species) nsb;
       String id = s.getId();
@@ -151,10 +150,8 @@ public class ASTNodeInterpreterWithTime {
    * @param nsb
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public boolean compileBoolean(CallableSBase nsb, double time)
-    throws SBMLException {
+  public boolean compileBoolean(CallableSBase nsb, double time) {
     if (nsb instanceof FunctionDefinition) {
       ASTNode math = ((FunctionDefinition) nsb).getMath();
       ASTNodeObject rightChild = (ASTNodeObject) math.getRightChild().getUserObject(SBMLinterpreter.TEMP_VALUE);
@@ -177,11 +174,9 @@ public class ASTNodeInterpreterWithTime {
    * @param values
    * @param time
    * @return
-   * @throws SBMLException
    */
   public double functionDouble(ASTNodeObject rightChild,
-    List<String> variables, List<ASTNodeObject> arguments, int nArguments, double[] values, double time)
-    throws SBMLException {
+    List<String> variables, List<ASTNodeObject> arguments, int nArguments, double[] values, double time) {
     for (int i = 0; i < nArguments; i++) {
       values[i] = arguments.get(i).compileDouble(time);
     }
@@ -220,10 +215,8 @@ public class ASTNodeInterpreterWithTime {
    * @param nodes
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double lambdaDouble(List<ASTNodeObject> nodes, double time)
-    throws SBMLException {
+  public double lambdaDouble(List<ASTNodeObject> nodes, double time) {
     double d[] = new double[Math.max(0, nodes.size() - 1)];
     for (int i = 0; i < nodes.size() - 1; i++) {
       d[i++] = nodes.get(i).compileDouble(time);
@@ -237,10 +230,8 @@ public class ASTNodeInterpreterWithTime {
    * @param nodes
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public boolean lambdaBoolean(List<ASTNodeObject> nodes, double time)
-    throws SBMLException {
+  public boolean lambdaBoolean(List<ASTNodeObject> nodes, double time) {
     double d[] = new double[Math.max(0, nodes.size() - 1)];
     for (int i = 0; i < nodes.size() - 1; i++) {
       d[i++] = nodes.get(i).compileDouble(time);

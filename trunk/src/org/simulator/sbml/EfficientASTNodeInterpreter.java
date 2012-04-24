@@ -1,5 +1,5 @@
 /*
- * $Id: ASTNodeInterpreter.java 12 2011-08-17 14:41:59Z rolandkel $ $URL:
+ * $Id$ $URL:
  * https:/
  * /sbml-simulator.svn.sourceforge.net/svnroot/sbml-simulator/trunk/src/org
  * /sbml/simulator/math/ASTNodeInterpreter.java $
@@ -7,7 +7,7 @@
  * file is part of SBMLsimulator, a Java-based simulator for models of
  * biochemical processes encoded in the modeling language SBML.
  * 
- * Copyright (C) 2007-2011 by the University of Tuebingen, Germany.
+ * Copyright (C) 2007-2012 by the University of Tuebingen, Germany.
  * 
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -45,7 +45,7 @@ import org.sbml.jsbml.util.compilers.ASTNodeValue;
  * This class is a more efficient implementation of an {@linkASTNodeCompiler}. 
  * @author Roland Keller
  * @author Andreas Dr&auml;ger
- * @version $Rev: 12 $
+ * @version $Rev$
  * @since 0.9
  */
 public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
