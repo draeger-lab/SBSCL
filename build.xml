@@ -1,33 +1,123 @@
-<?xml version="1.0"?>
-<project name="FatJar SBMLsimulatorCore_v0.9_full.jar (experimental)" default="main" basedir=".">
-    <!-- this file was created by Fat-Jar Eclipse Plug-in -->
-    <!-- the ANT-Export is in a very early stage, so this -->
-    <!-- is only experimental, ANT 1.6 or above is        -->
-    <!-- required, feedback is always welcome:            -->
-    <!--       http://sourceforge.net/projects/fjep       -->
-    <!-- uncomment the following lines if using ANT outside Eclipse -->
-    <!--
-        <property name="fjepPath" value="reference:file:plugins/net.sf.fjep.fatjar_0.0.31/fatjar.jar"/>
-        <taskdef name="fatjar.build" classname="net.sf.fjep.anttask.FJBuildTask" classpath="${fjepPath}"/>
-        <typedef name="fatjar.manifest" classname="net.sf.fjep.anttask.FJManifestType" classpath="${fjepPath}"/>
-        <typedef name="fatjar.exclude" classname="net.sf.fjep.anttask.FJExcludeType" classpath="${fjepPath}"/>
-        <typedef name="fatjar.jarsource" classname="net.sf.fjep.anttask.FJJarSourceType" classpath="${fjepPath}"/>
-        <typedef name="fatjar.filesource" classname="net.sf.fjep.anttask.FJFileSourceType" classpath="${fjepPath}"/>
-    -->
-    <!-- uncomment the above lines to use ANT outside of Eclipse -->
-    <target name="main">
-        <fatjar.build output="SBMLsimulatorCore_v0.9_full.jar">
-            <fatjar.manifest/>
-            <fatjar.filesource path="/local/draeger/workspace/SBMLsimulatorCore/bin" relpath=""/>
-            <fatjar.jarsource file="/local/draeger/workspace/SBMLsimulatorCore/lib/commons-math-2.2.jar" relpath=""/>
-            <fatjar.jarsource file="/local/draeger/workspace/SBMLsimulatorCore/lib/jsbml-0.8-b2-with-dependencies.jar" relpath=""/>
-            <fatjar.filesource path="/local/draeger/workspace/SBMLsimulatorCore/licenses/lib-licenses/JSBML.txt" relpath="lib-licenses/JSBML.txt"/>
-            <fatjar.filesource path="/local/draeger/workspace/SBMLsimulatorCore/licenses/lib-licenses/Rosenbrock.txt" relpath="lib-licenses/Rosenbrock.txt"/>
-            <fatjar.filesource path="/local/draeger/workspace/SBMLsimulatorCore/licenses/lib-licenses/Commons-math.txt" relpath="lib-licenses/Commons-math.txt"/>
-            <fatjar.filesource path="/local/draeger/workspace/SBMLsimulatorCore/licenses/COPYING.html" relpath="COPYING.html"/>
-            <fatjar.filesource path="/local/draeger/workspace/SBMLsimulatorCore/licenses/COPYING.txt" relpath="COPYING.txt"/>
-            <fatjar.filesource path="/local/draeger/workspace/SBMLsimulatorCore/licenses/License.html" relpath="License.html"/>
-            <fatjar.filesource path="/local/draeger/workspace/SBMLsimulatorCore/licenses/AUTHORS.txt" relpath="AUTHORS.txt"/>
-        </fatjar.build>
-    </target>
+<!-- The java based ANT tool is available from         -->
+<!-- http://jakarta.apache.org/ant                     -->
+           	
+<project name="Simulator Core Library" basedir=".">
+
+  <target name="help">
+    <echo>
+      This is an ANT build script to build a stand-alone JAR for
+	  Simulation Core Library.
+    </echo>
+  </target>
+
+  <!-- define some properties that are used throughout the tasks -->
+  <target name="init">
+  	<echo>
+  	  PLEASE MAKE SURE ALL PATHS ARE CORRECT AND DECIDE IF YOU WANT
+  	  TO USE THE LIB-JARs OR REFERENCED PROJECTS.
+  	</echo>
+  	<tstamp /> <!-- set ${TODAY} and ${TSTAMP} -->
+  		
+    <!-- the base directory of the Simulation Core Library repository -->
+    <property name="base" location="."/>
+  	
+    <!-- the path to the Simulation Core Library sources -->
+  	<property name="src" location="${base}/src"/>
+  	
+  	<!-- the path to the Simulation Core Library sources -->
+  	<property name="doc" location="${base}/doc/api"/>
+  	
+    <!-- the path to the Simulation Core Library binaries -->
+    <property name="classes" location="${base}/bin"/>
+    
+    <!-- the path to the Simulation Core Library libraries -->
+  	<property name="lib" location="${base}/lib"/>
+  	
+  	<property name="appJar" value="${base}/dist/SimulationCoreLibrary"/>
+  	
+  	<property name="version" value="1.1"/>
+
+  </target>
+
+  <!-- puts the application specific classes into application.jar. -->
+  <target name="jar" depends="init">
+    <delete file="${appJar}_v${version}_full.jar"/>
+    <jar jarfile="${appJar}_v${version}_full.jar">
+      <manifest>
+        <attribute name="Main-Class" value="org.simulator.About"/>
+        <attribute name="Built-By" value="Center for Bioinformatics Tuebingen (ZBIT)"/>
+      </manifest>
+    	
+    	<!-- Simulation Core Library Classes -->
+          <fileset dir="${classes}">
+    	      <exclude name="**/package.html"/>
+    	  </fileset>
+    	  <!-- These libraries are required by most classes -->
+          <zipfileset excludes="META-INF/*" src="${lib}/commons-math-2.2.jar"/>
+          <zipfileset excludes="META-INF/*" src="${lib}/jsbml-1.0-incl-libs.jar"/>
+    </jar>
+  </target>
+	
+  <target name="slim_jar" depends="init">
+	    <delete file="${appJar}_v${version}_slim.jar"/>
+	    <jar jarfile="${appJar}_v${version}_slim.jar">
+	      <manifest>
+	        <attribute name="Main-Class" value="org.simulator.About"/>
+	        <attribute name="Built-By" value="Center for Bioinformatics Tuebingen (ZBIT)"/>
+	      </manifest>
+	    	
+	    	<!-- Simulation Core Library Classes -->
+	          <fileset dir="${classes}">
+	    	      <exclude name="**/package.html"/>
+	    	  </fileset>
+	    	<!-- Do not include any third-party libraries -->
+	    </jar>
+	  </target>
+
+  <!-- Removes all that has been built -->
+  <target name="clean" depends="init">
+    <delete file="${appJar}"/>
+    <delete includeemptydirs="true" dir="${classes}"/>
+  </target>
+
+  <target name="uml" depends="init">
+  	<property name="uml.dir" value="${base}/doc/uml"/>
+  	<mkdir dir="${uml.dir}"/>
+    <path id="uml.source.path">
+      <pathelement path="${uml.dir}/"/>
+      <pathelement path="${src}"/>
+    </path>
+	  <javadoc sourcepathref="uml.source.path" packagenames="*" package="true" destdir="${uml.dir}">
+	    <doclet name="org.umlgraph.doclet.UmlGraphDoc" path="${lib}/UMLGraph.jar">
+	      <param name="-inferrel"/>
+	      <param name="-inferdep"/>
+	      <param name="-hide" value="java.*"/>
+	      <param name="-collpackages" value="java.util.*"/>
+	      <param name="-qualify"/>
+	      <param name="-postfixpackage"/>
+	      <param name="-nodefontsize" value="9"/>
+	      <param name="-nodefontpackagesize" value="7"/>
+	      <param name="-link" value="http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/doclet/spec"/>
+	      <param name="-link" value="http://java.sun.com/j2se/1.5/docs/api"/>
+	    </doclet>
+	  </javadoc>
+  	  <apply executable="dot" dest="${uml.dir}" parallel="false">
+  	    <arg value="-Tpdf"/>
+  	    <arg value="-o"/>
+  	    <targetfile/>
+  	    <srcfile/>
+  	    <fileset dir="${uml.dir}" includes="*.dot"/>
+  	    <mapper type="glob" from="*.dot" to="*.png"/>
+  	  </apply>
+	</target>
+
+  <target name="javadoc" description="Creates Javadoc for the Simulation Core Library">
+  	<mkdir dir="${doc}"/>
+		<javadoc sourcepath="${src}"
+      destdir="${doc}/api"
+      packagenames="org.*"
+      footer="Generated ${TODAY}"/>
+  </target>	
+	
+	
 </project>
