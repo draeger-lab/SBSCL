@@ -26,7 +26,7 @@ import org.simulator.sbml.ValueHolder;
  * @version $Rev$
  * @since 1.0
  */
-public class SpeciesReferenceValue extends ASTNodeObject {
+public class SpeciesReferenceValue extends ASTNodeValue {
 
 	/**
 	 * The value holder that stores the current simulation values

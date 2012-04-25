@@ -95,9 +95,9 @@
   	<!-- sourcefiles="${src}/org/simulator/math/odes/DESSolver.java,${src}/org/simulator/math/odes/AbstractDESSolver.java,${src}/org/simulator/math/odes/RungeKutta_EventSolver.java,${src}/org/simulator/math/odes/MultiTable.java,${src}/org/simulator/math/odes/EulerMethod.java,${src}/org/simulator/math/odes/AdaptiveStepsizeIntegrator.java,${src}/org/simulator/math/odes/RosenbrockSolver.java,${src}/org/simulator/math/odes/FirstOrderSolver.java,${src}/org/simulator/math/odes/DormandPrince853Solver.java,${src}/org/simulator/math/odes/DormandPrince54Solver.java,${src}/org/simulator/math/odes/AdamsMoultonSolver.java,${src}/org/simulator/math/odes/AdamsBashforthSolver.java,${src}/org/simulator/math/odes/HighamHall54Solver.java,${src}/org/simulator/math/odes/DelayValueHolder.java,${src}/org/simulator/sbml/SBMLinterpreter.java" -->
 	<javadoc  
 		package="true"
-		sourcepath="src:resources:test"
+		sourcepath="src:resources"
 		additionalparam="-d ${uml.dir}"
-		packagenames="org.simulator.math">
+		packagenames="org.simulator.math.odes,org.simulator.sbml.*">
 		<!-- classpath="${lib}/*.jar" -->
 		<!-- sourcepathref="uml.source.path" -->
 		<!-- destdir="${uml.dir}" -->
@@ -108,9 +108,43 @@
 	  </classpath>
 	  <doclet name="org.umlgraph.doclet.UmlGraph" path="${lib}/UMLGraph.jar">
 	    <!--<param name="-inferrel"/>-->
-	    <!--<param name="-inferdep"/>-->
+	    <param name="-inferdep"/>
 	    <param name="-hide" value="java.*"/>
+	  	<param name="-hide" value="AbstractDESSolver"/>
+	  	<param name="-hide" value="MultiTable"/>
+	  	<param name="-hide" value="Column"/>
+	  	<param name="-hide" value="DESSolver"/>
+	  	<param name="-hide" value="EulerMethod"/>
+	  	<param name="-hide" value="RungeKutta_EventSolver"/>
+	  	<param name="-hide" value="AbstractIntegrator"/>
+	  	<param name="-hide" value="AdamsBashforthSolver"/>
+	  	<param name="-hide" value="AdamsMoultonSolver"/>
+	  	<param name="-hide" value="DormandPrince54Solver"/>
+	  	<param name="-hide" value="DormandPrince853Solver"/>
+	  	<param name="-hide" value="GraggBulirschStoerSolver"/>
+	  	<param name="-hide" value="HighamHall54Solver"/>
+	  	<param name="-hide" value="RosenbrockSolver"/>
+	  	<param name="-hide" value="AdaptiveStepsizeIntegrator"/>
+	  	<param name="-hide" value="FirstOrderSolver"/>
+	  	<param name="-hide" value="Variable"/>
+	  	<param name="-hide" value="MathContainer"/>
+	  	<param name="-hide" value="Rule"/>
+	  	<param name="-hide" value="AssignmentRule"/>
+		<param name="-hide" value="Model"/>
+	  	<param name="-hide" value="Species"/>
+	  	<param name="-hide" value="Reaction"/>
+	  	<param name="-hide" value="Symbol"/>
+	  	<param name="-hide" value="LocalParameter"/>
+	  	<param name="-hide" value="TreeNodeChangeListener"/>
+	  	<param name="-hide" value="CallableSBase"/>
+	  	<param name="-hide" value="Compartment"/>
+	  	<param name="-hide" value="FunctionDefinition"/>
+	  	<param name="-hide" value="EfficientASTNodeInterpreter"/>
+	  	<param name="-hide" value="SpecialASTNodeValue"/>
+	  	<param name="-hide" value="ASTNodeCompiler"/>
+	  	<!--<param name="-hide" value="ASTNode"/>-->
 	    <param name="-collpackages" value="java.util.*"/>
+	  	<param name="-collpackages" value="java.lang.*"/>
 	    <param name="-qualify"/>
 	    <param name="-postfixpackage"/>
 	    <param name="-nodefontsize" value="9"/>

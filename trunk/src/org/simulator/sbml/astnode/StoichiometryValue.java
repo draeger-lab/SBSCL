@@ -35,7 +35,7 @@ import org.simulator.sbml.ValueHolder;
  * @author Roland Keller
  * @version $Rev$
  */
-public class StoichiometryObject {
+public class StoichiometryValue {
 	/**
 	 * The value of the stoichiometry.
 	 */
@@ -47,12 +47,14 @@ public class StoichiometryObject {
 	private double time;
 
 	/**
-	 * The index of the corresponding species in the Y vector of the value holder
+	 * The index of the corresponding species in the Y vector of the value
+	 * holder
 	 */
 	private int speciesIndex;
 
 	/**
-	 * The index of the corresponding species reference in the Y vector of the value holder (if any), -1 if not existing
+	 * The index of the corresponding species reference in the Y vector of the
+	 * value holder (if any), -1 if not existing
 	 */
 	private int speciesRefIndex;
 
@@ -122,13 +124,15 @@ public class StoichiometryObject {
 	private int reactionIndex;
 
 	/**
-	 * This flag is true if the corresponding species is a reactant in the reaction and false if it is a product. 
+	 * This flag is true if the corresponding species is a reactant in the
+	 * reaction and false if it is a product.
 	 */
 	private boolean isReactant;
 
 	/**
-	 * This flag is true if the unit of the species is given in mol/volume, which means that it has to be considered in the change rate that should
-	 * always be only in mol/time
+	 * This flag is <code>true</code> if the unit of the species is given in
+	 * substance per size, which means that it has to be considered in the
+	 * change rate that should always be only in substance per time
 	 */
 	private boolean inConcentration;
 
@@ -152,7 +156,7 @@ public class StoichiometryObject {
 	 * @param isReactant
 	 */
 	@SuppressWarnings("deprecation")
-	public StoichiometryObject(SpeciesReference sr, int speciesIndex,
+	public StoichiometryValue(SpeciesReference sr, int speciesIndex,
 			int speciesRefIndex, int compartmentIndex, Map<String, Double> stoichiometricCoefHash, ValueHolder valueHolder,
 			double[] Y, EfficientASTNodeInterpreter nodeInterpreter, int reactionIndex,
 			Set<String> inConcentrationSet, boolean isReactant) {
@@ -168,7 +172,7 @@ public class StoichiometryObject {
 		this.speciesIndex = speciesIndex;
 		this.speciesRefIndex = speciesRefIndex;
 		this.constantStoichiometry = false;
-		if(sr.isSetConstant()) {
+		if (sr.isSetConstant()) {
 			constantStoichiometry = sr.getConstant();
 		}
 		else if ((!sr.isSetId()) && (!isSetStoichiometryMath)) {
@@ -185,7 +189,7 @@ public class StoichiometryObject {
 			if (s.getConstant()) {
 				this.constantQuantity = true;
 			}
-			if(inConcentrationSet.contains(s.getId())) {
+			if (inConcentrationSet.contains(s.getId())) {
 				inConcentration=true;
 			}
 		}
@@ -199,7 +203,10 @@ public class StoichiometryObject {
 	}
 
 	/**
-	 * Computes the change resulting for the corresponding species in this reaction at the current time and stores it at the correct position in the changeRate array.
+	 * Computes the change resulting for the corresponding {@link Species} in this
+	 * reaction at the current time and stores it at the correct position in the
+	 * changeRate array.
+	 * 
 	 * @param currentTime
 	 * @param changeRate
 	 * @param v
@@ -264,7 +271,7 @@ public class StoichiometryObject {
 				stoichiometrySet=false;
 			} else {
 				stoichiometry = sr.getCalculatedStoichiometry();
-				if(id.equals("")) {
+				if (id.equals("")) {
 					stoichiometrySet=true;
 				}
 				else {
@@ -272,8 +279,6 @@ public class StoichiometryObject {
 				}
 			}
 		}
-
-
 	}
 
 	/**

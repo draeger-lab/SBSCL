@@ -60,10 +60,12 @@ import org.simulator.math.odes.DESystem;
 import org.simulator.math.odes.DelayValueHolder;
 import org.simulator.math.odes.DelayedDESystem;
 import org.simulator.math.odes.EventDESystem;
+import org.simulator.math.odes.EventInProcess;
+import org.simulator.math.odes.EventInProcessWithDelay;
 import org.simulator.math.odes.FastProcessDESystem;
 import org.simulator.math.odes.RichDESystem;
 import org.simulator.sbml.astnode.ASTNodeInterpreterWithTime;
-import org.simulator.sbml.astnode.ASTNodeObject;
+import org.simulator.sbml.astnode.ASTNodeValue;
 import org.simulator.sbml.astnode.AssignmentRuleObject;
 import org.simulator.sbml.astnode.CompartmentOrParameterValue;
 import org.simulator.sbml.astnode.FunctionValue;
@@ -74,7 +76,7 @@ import org.simulator.sbml.astnode.ReactionValue;
 import org.simulator.sbml.astnode.RootFunctionValue;
 import org.simulator.sbml.astnode.SpeciesReferenceValue;
 import org.simulator.sbml.astnode.SpeciesValue;
-import org.simulator.sbml.astnode.StoichiometryObject;
+import org.simulator.sbml.astnode.StoichiometryValue;
 
 /**
  * <p>
@@ -137,8 +139,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	private double currentTime;
 
 	/**
-	 * This array stores for every event an object of EventInProcess that is used
-	 * to handel event processing during simulation
+	 * This array stores for every event an object of {@link EventInProcess} that is used
+	 * to handle event processing during simulation
 	 */
 	private EventInProcess events[];
 
@@ -242,7 +244,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	/**
 	 * List of kinetic laws given as ASTNodeObjects
 	 */
-	private List<ASTNodeObject> kineticLawRoots;
+	private List<ASTNodeValue> kineticLawRoots;
 
 	/**
 	 * List of all occuring ASTNodes
@@ -257,7 +259,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	/**
 	 * List of all occuring stoichiometries
 	 */
-	private List<StoichiometryObject> stoichiometries;
+	private List<StoichiometryValue> stoichiometries;
 
 	/**
 	 * Size of the list of stoichiometries (for time-saving)
@@ -390,8 +392,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		reactionReversible = new boolean[model.getReactionCount()];
 		initialValues = new double[Y.length];
 		nodes = new LinkedList<ASTNode>();
-		kineticLawRoots = new ArrayList<ASTNodeObject>();
-		stoichiometries = new ArrayList<StoichiometryObject>();
+		kineticLawRoots = new ArrayList<ASTNodeValue>();
+		stoichiometries = new ArrayList<StoichiometryValue>();
 		this.init();
 
 	}
@@ -616,14 +618,14 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						events[index].aborted(currentTime);
 						i--;
 					} else {
-						ASTNodeObject priorityObject=events[index].getPriorityObject();
+						ASTNodeValue priorityObject=events[index].getPriorityObject();
 						if (priorityObject != null) {
 							events[index].changePriority(priorityObject.compileDouble(astNodeTime));
 							priorities.add(events[index].getPriority());
 						}
 					}
 				} else {
-					ASTNodeObject priorityObject=events[index].getPriorityObject();
+					ASTNodeValue priorityObject=events[index].getPriorityObject();
 					if (priorityObject != null) {
 						events[index].changePriority(priorityObject.compileDouble(astNodeTime));
 						priorities.add(events[index].getPriority());
@@ -684,7 +686,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					if (!events[i].getFireStatus(currentTime)) {
 						execTime = currentTime;
 						// event has a delay
-						ASTNodeObject delayObject = events[i].getDelayObject();
+						ASTNodeValue delayObject = events[i].getDelayObject();
 						if (delayObject != null) {
 							execTime += delayObject.compileDouble(astNodeTime);
 							if (!delayedEvents.contains(i)) {
@@ -692,7 +694,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 							}
 							hasNewDelayedEvents=true;
 						} else {
-							ASTNodeObject priorityObject = events[i].getPriorityObject();
+							ASTNodeValue priorityObject = events[i].getPriorityObject();
 							if (priorityObject != null) {
 								priority = events[i].getPriorityObject().compileDouble(astNodeTime);
 								priorities.add(priority);
@@ -1242,9 +1244,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 */
 	private void refreshSyntaxTree() {
 		for (ASTNode node: nodes) {
-			((ASTNodeObject) node.getUserObject(TEMP_VALUE)).reset();
+			((ASTNodeValue) node.getUserObject(TEMP_VALUE)).reset();
 		}
-		for (StoichiometryObject s: stoichiometries) {
+		for (StoichiometryValue s: stoichiometries) {
 			s.refresh();
 		}
 	}
@@ -1271,12 +1273,12 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				Event e=model.getEvent(i);
 				events[i].setUseValuesFromTriggerTime(e.getUseValuesFromTriggerTime());
 				events[i].setPersistent(e.getTrigger().getPersistent());
-				events[i].setTriggerObject((ASTNodeObject)copyAST(e.getTrigger().getMath(),true, null, null).getUserObject(TEMP_VALUE));
+				events[i].setTriggerObject((ASTNodeValue)copyAST(e.getTrigger().getMath(),true, null, null).getUserObject(TEMP_VALUE));
 				if (e.getPriority() != null) {
-					events[i].setPriorityObject((ASTNodeObject)copyAST(e.getPriority().getMath(),true, null, null).getUserObject(TEMP_VALUE));
+					events[i].setPriorityObject((ASTNodeValue)copyAST(e.getPriority().getMath(),true, null, null).getUserObject(TEMP_VALUE));
 				}
 				if (e.getDelay() != null) {
-					events[i].setDelayObject((ASTNodeObject)copyAST(e.getDelay().getMath(),true, null, null).getUserObject(TEMP_VALUE));
+					events[i].setDelayObject((ASTNodeValue)copyAST(e.getDelay().getMath(),true, null, null).getUserObject(TEMP_VALUE));
 				}
 
 				events[i].clearRuleObjects();
@@ -1291,19 +1293,19 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 								hasZeroSpatialDimensions=false;
 							}
 							events[i].addRuleObject(new AssignmentRuleObject(
-									(ASTNodeObject) copyAST(as.getMath(), true, null, null)
+									(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 									.getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
 											.getId()), hasZeroSpatialDimensions, this));
 						} else {
 							events[i].addRuleObject(new AssignmentRuleObject(
-									(ASTNodeObject) copyAST(as.getMath(), true, null, null)
+									(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 									.getUserObject(TEMP_VALUE), symbolIndex));
 						}
 					} else if (model.findSpeciesReference(as.getVariable()) != null) {
 						SpeciesReference sr = model.findSpeciesReference(as.getVariable());
 						if (!sr.isConstant()) {
 							events[i].addRuleObject(new AssignmentRuleObject(
-									(ASTNodeObject) copyAST(as.getMath(), true, null, null)
+									(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 									.getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
 						}
 					}
@@ -1323,7 +1325,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		for (Reaction r : model.getListOfReactions()) {
 			KineticLaw kl = r.getKineticLaw();
 			if (kl != null) {
-				ASTNodeObject currentLaw = (ASTNodeObject) copyAST(kl.getMath(),true, null, null)
+				ASTNodeValue currentLaw = (ASTNodeValue) copyAST(kl.getMath(),true, null, null)
 						.getUserObject(TEMP_VALUE);
 				kineticLawRoots.add(currentLaw);
 				kl.getMath().putUserObject(TEMP_VALUE, currentLaw);
@@ -1350,7 +1352,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						}
 
 					}
-					stoichiometries.add(new StoichiometryObject(speciesRef, speciesIndex,
+					stoichiometries.add(new StoichiometryValue(speciesRef, speciesIndex,
 							srIndex, compartmentIndex, stoichiometricCoefHash, this, Y,
 							nodeInterpreter, reactionIndex, inConcentration, true));
 
@@ -1378,7 +1380,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						}
 
 					}
-					stoichiometries.add(new StoichiometryObject(speciesRef, speciesIndex,
+					stoichiometries.add(new StoichiometryValue(speciesRef, speciesIndex,
 							srIndex, compartmentIndex, stoichiometricCoefHash, this, Y,
 							nodeInterpreter, reactionIndex, inConcentration, false));
 
@@ -1386,7 +1388,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
 
 			} else {
-				kineticLawRoots.add(new ASTNodeObject(nodeInterpreterWithTime,
+				kineticLawRoots.add(new ASTNodeValue(nodeInterpreterWithTime,
 						new ASTNode(0d)));
 			}
 			reactionIndex++;
@@ -1417,19 +1419,19 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 							hasZeroSpatialDimensions=false;
 						}
 						assignmentRulesRoots.add(new AssignmentRuleObject(
-								(ASTNodeObject) copyAST(as.getMath(), true, null, null)
+								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
 										.getId()), hasZeroSpatialDimensions, this));
 					} else {
 						assignmentRulesRoots.add(new AssignmentRuleObject(
-								(ASTNodeObject) copyAST(as.getMath(), true, null, null)
+								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), symbolIndex));
 					}
 				} else if (model.findSpeciesReference(as.getVariable()) != null) {
 					SpeciesReference sr = model.findSpeciesReference(as.getVariable());
 					if (!sr.isConstant()) {
 						assignmentRulesRoots.add(new AssignmentRuleObject(
-								(ASTNodeObject) copyAST(as.getMath(), true, null, null)
+								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
 					}
 				}
@@ -1446,7 +1448,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 							hasZeroSpatialDimensions = false;
 						}
 						rateRulesRoots.add(new RateRuleObject(
-								(ASTNodeObject) copyAST(rr.getMath(), true, null, null)
+								(ASTNodeValue) copyAST(rr.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
 										.getId()), hasZeroSpatialDimensions, this));
 					}
@@ -1462,13 +1464,13 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 							}
 						}
 						rateRulesRoots.add(new RateRuleObject(
-								(ASTNodeObject) copyAST(rr.getMath(), true, null, null)
+								(ASTNodeValue) copyAST(rr.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), symbolIndex, speciesIndices, this));
 					}
 
 					else {
 						rateRulesRoots.add(new RateRuleObject(
-								(ASTNodeObject) copyAST(rr.getMath(), true, null, null)
+								(ASTNodeValue) copyAST(rr.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), symbolIndex));
 					}
 				}
@@ -1486,19 +1488,19 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 							hasZeroSpatialDimensions=false;
 						}
 						assignmentRulesRoots.add(new AssignmentRuleObject(
-								(ASTNodeObject) copyAST(as.getMath(), true, null, null)
+								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
 										.getId()), hasZeroSpatialDimensions, this));
 					} else {
 						assignmentRulesRoots.add(new AssignmentRuleObject(
-								(ASTNodeObject) copyAST(as.getMath(), true, null, null)
+								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), symbolIndex));
 					}
 				} else if (model.findSpeciesReference(as.getVariable()) != null) {
 					SpeciesReference sr = model.findSpeciesReference(as.getVariable());
 					if (!sr.isConstant()) {
 						assignmentRulesRoots.add(new AssignmentRuleObject(
-								(ASTNodeObject) copyAST(as.getMath(), true, null, null)
+								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
 					}
 				}
@@ -1517,18 +1519,18 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						hasZeroSpatialDimensions=false;
 					}
 					initialAssignmentRoots.add(new AssignmentRuleObject(
-							(ASTNodeObject) copyAST(iA.getMath(), true, null, null)
+							(ASTNodeValue) copyAST(iA.getMath(), true, null, null)
 							.getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
 									.getId()), hasZeroSpatialDimensions, this));
 				} else {
 					initialAssignmentRoots.add(new AssignmentRuleObject(
-							(ASTNodeObject) copyAST(iA.getMath(), true, null, null)
+							(ASTNodeValue) copyAST(iA.getMath(), true, null, null)
 							.getUserObject(TEMP_VALUE), symbolIndex));
 				}
 			} else if (model.findSpeciesReference(iA.getVariable()) != null) {
 				SpeciesReference sr = model.findSpeciesReference(iA.getVariable());
 				initialAssignmentRoots.add(new AssignmentRuleObject(
-						(ASTNodeObject) copyAST(iA.getMath(), true, null, null)
+						(ASTNodeValue) copyAST(iA.getMath(), true, null, null)
 						.getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
 			}
 		}
@@ -1597,28 +1599,28 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			switch (node.getType()) {
 			case REAL:
 				copiedAST.setValue(node.getReal());
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeObject(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
 						copiedAST));
 				break;
 			case INTEGER:
 				copiedAST.setValue(node.getInteger());
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeObject(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
 						copiedAST));
 				break;
 
 			case RATIONAL:
 				copiedAST.setValue(node.getNumerator(), node.getDenominator());
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeObject(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
 						copiedAST));
 				break;
 			case NAME_TIME:
 				copiedAST.setName(node.getName());
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeObject(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
 						copiedAST));
 				break;
 			case FUNCTION_DELAY:
 				copiedAST.setName(node.getName());
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeObject(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
 						copiedAST));
 				break;
 				/*
@@ -1677,13 +1679,13 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				break;
 
 			case NAME_AVOGADRO:
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeObject(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
 						copiedAST));
 				copiedAST.setName(node.getName());
 				break;
 			case REAL_E:
 				copiedAST.setValue(node.getMantissa(), node.getExponent());
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeObject(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
 						copiedAST));
 
 				break;
@@ -1709,18 +1711,18 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				break;
 			}
 			case FUNCTION_PIECEWISE:
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeObject(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
 						copiedAST));
 				break;
 			case FUNCTION_ROOT:
 				copiedAST.putUserObject(TEMP_VALUE, new RootFunctionValue(nodeInterpreterWithTime,copiedAST));
 				break;
 			case LAMBDA:
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeObject(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
 						copiedAST));
 				break;
 			default:
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeObject(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
 						copiedAST));
 				break;
 			}
@@ -2137,7 +2139,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.DESystem#getNumPositiveValues()
 	 */
-	public int getNumPositiveValues() {
+	public int getPositiveValueCount() {
 		//return numPositives;
 		return 0;
 	}

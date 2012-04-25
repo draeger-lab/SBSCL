@@ -44,7 +44,7 @@ public class AssignmentRuleObject extends RuleObject{
    * @param nodeObject
    * @param index
    */
-  public AssignmentRuleObject(ASTNodeObject nodeObject, int index) {
+  public AssignmentRuleObject(ASTNodeValue nodeObject, int index) {
     super(nodeObject, index);
   }
 
@@ -54,7 +54,7 @@ public class AssignmentRuleObject extends RuleObject{
    * @param speciesReferenceID
    * @param stoichiometricCoefHash
    */
-  public AssignmentRuleObject(ASTNodeObject nodeObject, String speciesReferenceID,
+  public AssignmentRuleObject(ASTNodeValue nodeObject, String speciesReferenceID,
     Map<String, Double> stoichiometricCoefHash) {
     super(nodeObject,-1);
     this.speciesReferenceID = speciesReferenceID;
@@ -70,7 +70,7 @@ public class AssignmentRuleObject extends RuleObject{
    * @param hasZeroSpatialDimensions
    * @param valueHolder
    */
-  public AssignmentRuleObject(ASTNodeObject nodeObject, int index,
+  public AssignmentRuleObject(ASTNodeValue nodeObject, int index,
     Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, ValueHolder valueHolder) {
     super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder);
   }
