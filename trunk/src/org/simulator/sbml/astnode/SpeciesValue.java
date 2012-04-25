@@ -97,8 +97,9 @@ public class SpeciesValue extends ASTNodeValue {
     this.zeroSpatialDimensions = zeroSpatialDimensions;
   }
   
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
+  /*
+   * (non-Javadoc)
+   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
    */
   @Override
   protected void computeDoubleValue() {

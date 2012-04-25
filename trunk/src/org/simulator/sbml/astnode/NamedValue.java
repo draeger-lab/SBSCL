@@ -46,10 +46,10 @@ public class NamedValue extends ASTNodeValue {
     this.index = function.getIndex(node.getName());
   }
   
-  /*
-   * (non-Javadoc)
-   * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
-   */
+ /*
+  * (non-Javadoc)
+  * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+  */
   protected void computeDoubleValue() {
     doubleValue=function.getArgumentValues()[index];
   }

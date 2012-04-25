@@ -65,12 +65,12 @@ import org.simulator.math.odes.FastProcessDESystem;
 import org.simulator.math.odes.RichDESystem;
 import org.simulator.sbml.astnode.ASTNodeInterpreterWithTime;
 import org.simulator.sbml.astnode.ASTNodeValue;
-import org.simulator.sbml.astnode.AssignmentRuleObject;
+import org.simulator.sbml.astnode.AssignmentRuleValue;
 import org.simulator.sbml.astnode.CompartmentOrParameterValue;
 import org.simulator.sbml.astnode.FunctionValue;
 import org.simulator.sbml.astnode.LocalParameterValue;
 import org.simulator.sbml.astnode.NamedValue;
-import org.simulator.sbml.astnode.RateRuleObject;
+import org.simulator.sbml.astnode.RateRuleValue;
 import org.simulator.sbml.astnode.ReactionValue;
 import org.simulator.sbml.astnode.RootFunctionValue;
 import org.simulator.sbml.astnode.SpeciesReferenceValue;
@@ -278,12 +278,12 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	/**
 	 * List of the assignment rules (as AssignmentRuleObjects)
 	 */
-	private List<AssignmentRuleObject> assignmentRulesRoots;
+	private List<AssignmentRuleValue> assignmentRulesRoots;
 
 	/**
 	 * List of the rate rules (as RateRuleObjects)
 	 */
-	private List<RateRuleObject> rateRulesRoots;
+	private List<RateRuleValue> rateRulesRoots;
 
 	/**
 	 * Current time for the ASTNode processing (not equal to the simulation time!)
@@ -329,7 +329,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	/**
 	 * List of the initial assignments (as AssignmentRuleObjects)
 	 */
-	private List<AssignmentRuleObject> initialAssignmentRoots;
+	private List<AssignmentRuleValue> initialAssignmentRoots;
 
 
 	/**
@@ -705,11 +705,11 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						if (events[i].getUseValuesFromTriggerTime()) {
 							// store values from trigger time for later
 							// execution
-							List<AssignmentRuleObject> ruleObjects = events[i].getRuleObjects();
+							List<AssignmentRuleValue> ruleObjects = events[i].getRuleObjects();
 							triggerTimeValues = new Double[ruleObjects.size()];
 							if (ruleObjects!=null) {
 								int j = 0;
-								for (AssignmentRuleObject obj:ruleObjects) {
+								for (AssignmentRuleValue obj:ruleObjects) {
 									obj.processRule(Y, astNodeTime, false);
 									triggerTimeValues[j]=obj.getValue();
 									j++;
@@ -1291,19 +1291,19 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 							if ((c!=null) && (c.getSpatialDimensions()>0)) {
 								hasZeroSpatialDimensions=false;
 							}
-							events[i].addRuleObject(new AssignmentRuleObject(
+							events[i].addRuleObject(new AssignmentRuleValue(
 									(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 									.getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
 											.getId()), hasZeroSpatialDimensions, this));
 						} else {
-							events[i].addRuleObject(new AssignmentRuleObject(
+							events[i].addRuleObject(new AssignmentRuleValue(
 									(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 									.getUserObject(TEMP_VALUE), symbolIndex));
 						}
 					} else if (model.findSpeciesReference(as.getVariable()) != null) {
 						SpeciesReference sr = model.findSpeciesReference(as.getVariable());
 						if (!sr.isConstant()) {
-							events[i].addRuleObject(new AssignmentRuleObject(
+							events[i].addRuleObject(new AssignmentRuleValue(
 									(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 									.getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
 						}
@@ -1399,9 +1399,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * Includes the math of the rules in the syntax tree.
 	 */
 	private void initializeRules() {
-		assignmentRulesRoots = new ArrayList<AssignmentRuleObject>();
-		initialAssignmentRoots = new ArrayList<AssignmentRuleObject>();
-		rateRulesRoots = new ArrayList<RateRuleObject>();
+		assignmentRulesRoots = new ArrayList<AssignmentRuleValue>();
+		initialAssignmentRoots = new ArrayList<AssignmentRuleValue>();
+		rateRulesRoots = new ArrayList<RateRuleValue>();
 		Integer symbolIndex;
 
 		for (int i = 0; i < model.getRuleCount(); i++) {
@@ -1417,19 +1417,19 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						if ((c!=null) && (c.getSpatialDimensions()>0)) {
 							hasZeroSpatialDimensions=false;
 						}
-						assignmentRulesRoots.add(new AssignmentRuleObject(
+						assignmentRulesRoots.add(new AssignmentRuleValue(
 								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
 										.getId()), hasZeroSpatialDimensions, this));
 					} else {
-						assignmentRulesRoots.add(new AssignmentRuleObject(
+						assignmentRulesRoots.add(new AssignmentRuleValue(
 								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), symbolIndex));
 					}
 				} else if (model.findSpeciesReference(as.getVariable()) != null) {
 					SpeciesReference sr = model.findSpeciesReference(as.getVariable());
 					if (!sr.isConstant()) {
-						assignmentRulesRoots.add(new AssignmentRuleObject(
+						assignmentRulesRoots.add(new AssignmentRuleValue(
 								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
 					}
@@ -1446,7 +1446,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						if ((c!=null) && (c.getSpatialDimensions()>0)) {
 							hasZeroSpatialDimensions = false;
 						}
-						rateRulesRoots.add(new RateRuleObject(
+						rateRulesRoots.add(new RateRuleValue(
 								(ASTNodeValue) copyAST(rr.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
 										.getId()), hasZeroSpatialDimensions, this));
@@ -1462,13 +1462,13 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 								}
 							}
 						}
-						rateRulesRoots.add(new RateRuleObject(
+						rateRulesRoots.add(new RateRuleValue(
 								(ASTNodeValue) copyAST(rr.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), symbolIndex, speciesIndices, this));
 					}
 
 					else {
-						rateRulesRoots.add(new RateRuleObject(
+						rateRulesRoots.add(new RateRuleValue(
 								(ASTNodeValue) copyAST(rr.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), symbolIndex));
 					}
@@ -1486,19 +1486,19 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						if ((c != null) && (c.getSpatialDimensions() > 0)) {
 							hasZeroSpatialDimensions=false;
 						}
-						assignmentRulesRoots.add(new AssignmentRuleObject(
+						assignmentRulesRoots.add(new AssignmentRuleValue(
 								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
 										.getId()), hasZeroSpatialDimensions, this));
 					} else {
-						assignmentRulesRoots.add(new AssignmentRuleObject(
+						assignmentRulesRoots.add(new AssignmentRuleValue(
 								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), symbolIndex));
 					}
 				} else if (model.findSpeciesReference(as.getVariable()) != null) {
 					SpeciesReference sr = model.findSpeciesReference(as.getVariable());
 					if (!sr.isConstant()) {
-						assignmentRulesRoots.add(new AssignmentRuleObject(
+						assignmentRulesRoots.add(new AssignmentRuleValue(
 								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
 								.getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
 					}
@@ -1517,18 +1517,18 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					if ((c!=null) && (c.getSpatialDimensions()>0)) {
 						hasZeroSpatialDimensions=false;
 					}
-					initialAssignmentRoots.add(new AssignmentRuleObject(
+					initialAssignmentRoots.add(new AssignmentRuleValue(
 							(ASTNodeValue) copyAST(iA.getMath(), true, null, null)
 							.getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
 									.getId()), hasZeroSpatialDimensions, this));
 				} else {
-					initialAssignmentRoots.add(new AssignmentRuleObject(
+					initialAssignmentRoots.add(new AssignmentRuleValue(
 							(ASTNodeValue) copyAST(iA.getMath(), true, null, null)
 							.getUserObject(TEMP_VALUE), symbolIndex));
 				}
 			} else if (model.findSpeciesReference(iA.getVariable()) != null) {
 				SpeciesReference sr = model.findSpeciesReference(iA.getVariable());
-				initialAssignmentRoots.add(new AssignmentRuleObject(
+				initialAssignmentRoots.add(new AssignmentRuleValue(
 						(ASTNodeValue) copyAST(iA.getMath(), true, null, null)
 						.getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
 			}
@@ -1879,7 +1879,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
 			// event does not use values from trigger time
 			if (!events[index].getUseValuesFromTriggerTime()) {
-				for (AssignmentRuleObject obj: events[index].getRuleObjects()) {
+				for (AssignmentRuleValue obj: events[index].getRuleObjects()) {
 					obj.processRule(Y, astNodeTime, false);
 					newVal = obj.getValue();
 					symbolIndex = obj.getIndex();;
@@ -1899,7 +1899,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				Double[] triggerTimeValues = this.events[index].getValues();
 
 				int j = 0;
-				for (AssignmentRuleObject obj: events[index].getRuleObjects()) {
+				for (AssignmentRuleValue obj: events[index].getRuleObjects()) {
 					//for (int j = 0; j < triggerTimeValues.length; j++) {
 					newVal = triggerTimeValues[j];
 
@@ -1958,7 +1958,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			for (int n = 0; n != nAssignmentRules; n++) {
 				intermediateASTNodeTime = - intermediateASTNodeTime;
 				for (int i = 0; i != nAssignmentRules; i++) {
-					AssignmentRuleObject currentRuleObject = assignmentRulesRoots.get(i);
+					AssignmentRuleValue currentRuleObject = assignmentRulesRoots.get(i);
 					double oldValue = Double.NaN, newValue = Double.NaN;
 					int index = currentRuleObject.getIndex();
 					if(index >= 0) {
@@ -2159,7 +2159,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			double oldTime = currentTime;
 			this.currentTime = time;
 			double value=Double.NaN;
-			for (AssignmentRuleObject r: assignmentRulesRoots) {
+			for (AssignmentRuleValue r: assignmentRulesRoots) {
 				if (r.getIndex() == index) {
 					r.processRule(Y, -astNodeTime -0.01d, false);
 					value=r.getValue();
@@ -2167,7 +2167,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				}
 			}
 			if (Double.isNaN(value)) {
-				for (AssignmentRuleObject i: initialAssignmentRoots) {
+				for (AssignmentRuleValue i: initialAssignmentRoots) {
 					if (i.getIndex() == index) {
 						i.processRule(Y, -astNodeTime - 0.01d, false);
 						value = i.getValue();

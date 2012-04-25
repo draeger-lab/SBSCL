@@ -114,8 +114,9 @@ public class FunctionValue extends ASTNodeValue {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeBooleanValue()
+	/*
+	 * (non-Javadoc)
+	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeBooleanValue()
 	 */
 	@Override
 	protected void computeBooleanValue() {
