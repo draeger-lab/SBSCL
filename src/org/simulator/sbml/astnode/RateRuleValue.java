@@ -25,7 +25,7 @@ import org.simulator.sbml.ValueHolder;
  * @author Roland Keller
  * @version $Rev$
  */
-public class RateRuleObject extends RuleObject{
+public class RateRuleValue extends RuleValue{
   /**
    * Is the variable a compartment?
    */
@@ -41,7 +41,7 @@ public class RateRuleObject extends RuleObject{
    * @param nodeObject
    * @param index
    */
-  public RateRuleObject(ASTNodeValue nodeObject, int index) {
+  public RateRuleValue(ASTNodeValue nodeObject, int index) {
     super(nodeObject, index);
   }
 
@@ -55,7 +55,7 @@ public class RateRuleObject extends RuleObject{
    * @param hasZeroSpatialDimensions
    * @param valueHolder
    */
-  public RateRuleObject(ASTNodeValue nodeObject, int index,
+  public RateRuleValue(ASTNodeValue nodeObject, int index,
     Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, ValueHolder valueHolder) {
     super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder);
   }
@@ -67,7 +67,7 @@ public class RateRuleObject extends RuleObject{
    * @param speciesIndices
    * @param valueHolder
    */
-  public RateRuleObject(ASTNodeValue nodeObject, int index,
+  public RateRuleValue(ASTNodeValue nodeObject, int index,
     List<Integer> speciesIndices, ValueHolder valueHolder) {
     super(nodeObject, index);
     this.isCompartment = true;
