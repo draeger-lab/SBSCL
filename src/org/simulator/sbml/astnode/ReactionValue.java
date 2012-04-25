@@ -54,8 +54,9 @@ public class ReactionValue extends ASTNodeValue {
     }
   }
   
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
+  /*
+   * (non-Javadoc)
+   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
    */
   protected void computeDoubleValue() {
     doubleValue = Double.NaN;
