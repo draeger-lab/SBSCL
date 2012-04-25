@@ -27,7 +27,7 @@ import org.simulator.sbml.ValueHolder;
  * @author Roland Keller
  * @version $Rev$
  */
-public class AssignmentRuleObject extends RuleObject{
+public class AssignmentRuleValue extends RuleValue{
   /**
    * The id of the species reference the rule is referring to (if applicable)
    */
@@ -44,7 +44,7 @@ public class AssignmentRuleObject extends RuleObject{
    * @param nodeObject
    * @param index
    */
-  public AssignmentRuleObject(ASTNodeValue nodeObject, int index) {
+  public AssignmentRuleValue(ASTNodeValue nodeObject, int index) {
     super(nodeObject, index);
   }
 
@@ -54,7 +54,7 @@ public class AssignmentRuleObject extends RuleObject{
    * @param speciesReferenceID
    * @param stoichiometricCoefHash
    */
-  public AssignmentRuleObject(ASTNodeValue nodeObject, String speciesReferenceID,
+  public AssignmentRuleValue(ASTNodeValue nodeObject, String speciesReferenceID,
     Map<String, Double> stoichiometricCoefHash) {
     super(nodeObject,-1);
     this.speciesReferenceID = speciesReferenceID;
@@ -70,7 +70,7 @@ public class AssignmentRuleObject extends RuleObject{
    * @param hasZeroSpatialDimensions
    * @param valueHolder
    */
-  public AssignmentRuleObject(ASTNodeValue nodeObject, int index,
+  public AssignmentRuleValue(ASTNodeValue nodeObject, int index,
     Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, ValueHolder valueHolder) {
     super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder);
   }

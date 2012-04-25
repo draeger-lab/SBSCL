@@ -24,7 +24,7 @@ import org.simulator.sbml.ValueHolder;
  * @author Roland Keller
  * @version $Rev$
  */
-public class RuleObject {
+public class RuleValue {
   /**
    * Object that refers to the math of the rule
    */
@@ -80,7 +80,7 @@ public class RuleObject {
    * @param nodeObject
    * @param index
    */
-  public RuleObject(ASTNodeValue nodeObject, int index) {
+  public RuleValue(ASTNodeValue nodeObject, int index) {
     this.nodeObject = nodeObject;
     this.index = index;
     this.isSpecies = false;
@@ -95,7 +95,7 @@ public class RuleObject {
    * @param hasZeroSpatialDimensions
    * @param valueHolder
    */
-  public RuleObject(ASTNodeValue nodeObject, int index,
+  public RuleValue(ASTNodeValue nodeObject, int index,
     Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, ValueHolder valueHolder) {
     this.nodeObject = nodeObject;
     this.index = index;
