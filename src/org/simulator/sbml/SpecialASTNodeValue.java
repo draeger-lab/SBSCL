@@ -19,16 +19,15 @@ package org.simulator.sbml;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.util.compilers.ASTNodeValue;
 
 /**
- * Run-time efficient implementation of {@link ASTNodeValue}
+ * Run-time efficient implementation of {@link org.sbml.jsbml.util.compilers.ASTNodeValue}
  * 
  * @author Roland Keller
  * @version $Rev$
  * @since 0.9
  */
-public class SpecialASTNodeValue extends ASTNodeValue{
+public class SpecialASTNodeValue extends org.sbml.jsbml.util.compilers.ASTNodeValue {
 
 	/**
 	 * The double value (if any)
@@ -125,7 +124,7 @@ public class SpecialASTNodeValue extends ASTNodeValue{
   
   /*
    * (non-Javadoc)
-   * @see org.sbml.jsbml.util.compilers.ASTNodeValue#getValue()
+   * @see org.sbml.jsbml.util.compilers.org.sbml.jsbml.util.compilers.ASTNodeValue#getValue()
    */
   public Object getValue() {
     if(isDouble) {

@@ -41,7 +41,7 @@ public class RateRuleObject extends RuleObject{
    * @param nodeObject
    * @param index
    */
-  public RateRuleObject(ASTNodeObject nodeObject, int index) {
+  public RateRuleObject(ASTNodeValue nodeObject, int index) {
     super(nodeObject, index);
   }
 
@@ -55,7 +55,7 @@ public class RateRuleObject extends RuleObject{
    * @param hasZeroSpatialDimensions
    * @param valueHolder
    */
-  public RateRuleObject(ASTNodeObject nodeObject, int index,
+  public RateRuleObject(ASTNodeValue nodeObject, int index,
     Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, ValueHolder valueHolder) {
     super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder);
   }
@@ -67,7 +67,7 @@ public class RateRuleObject extends RuleObject{
    * @param speciesIndices
    * @param valueHolder
    */
-  public RateRuleObject(ASTNodeObject nodeObject, int index,
+  public RateRuleObject(ASTNodeValue nodeObject, int index,
     List<Integer> speciesIndices, ValueHolder valueHolder) {
     super(nodeObject, index);
     this.isCompartment = true;

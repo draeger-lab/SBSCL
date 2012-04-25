@@ -27,7 +27,7 @@ import org.simulator.sbml.ValueHolder;
  * @version $Rev$
  * @since 1.0
  */
-public class SpeciesValue extends ASTNodeObject {
+public class SpeciesValue extends ASTNodeValue {
   /**
    * The corresponding species
    */

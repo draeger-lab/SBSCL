@@ -19,7 +19,6 @@ package org.simulator.math.odes;
 
 
 import org.apache.commons.math.ode.DerivativeException;
-import org.simulator.sbml.EventInProcess;
 
 /**
  * This Class represents an event-driven differential equation system

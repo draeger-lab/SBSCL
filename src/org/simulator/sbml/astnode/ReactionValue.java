@@ -25,7 +25,7 @@ import org.simulator.sbml.SBMLinterpreter;
  * @version $Rev$
  * @since 1.0
  */
-public class ReactionValue extends ASTNodeObject {
+public class ReactionValue extends ASTNodeValue {
 	
   /**
    * The corresponding reaction
@@ -35,7 +35,7 @@ public class ReactionValue extends ASTNodeObject {
   /**
    * The object hat refers to the kinetic law of the reaction
    */
-  protected ASTNodeObject kineticLawUserObject;
+  protected ASTNodeValue kineticLawUserObject;
   
   /**
    * 
@@ -48,7 +48,7 @@ public class ReactionValue extends ASTNodeObject {
     super(interpreter, node);
     this.r = r;
     if (r.isSetKineticLaw()) {
-      this.kineticLawUserObject = (ASTNodeObject) r.getKineticLaw().getMath().getUserObject(SBMLinterpreter.TEMP_VALUE);
+      this.kineticLawUserObject = (ASTNodeValue) r.getKineticLaw().getMath().getUserObject(SBMLinterpreter.TEMP_VALUE);
     } else {
       this.kineticLawUserObject = null;
     }

@@ -25,7 +25,7 @@ import org.simulator.sbml.ValueHolder;
  * @version $Rev$
  * @since 1.0
  */
-public class CompartmentOrParameterValue extends ASTNodeObject {
+public class CompartmentOrParameterValue extends ASTNodeValue {
 	/**
 	 * The compartment or parameter the corresponding ASTNode is referring to
 	 */

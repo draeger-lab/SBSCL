@@ -15,14 +15,15 @@
  */
 package org.simulator.sbml.astnode;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.CallableSBase;
 import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.util.Maths;
 import org.simulator.sbml.SBMLinterpreter;
 
@@ -33,7 +34,7 @@ import org.simulator.sbml.SBMLinterpreter;
  * @version $Rev$
  * @since 1.0
  */
-public class ASTNodeObject {
+public class ASTNodeValue {
   /**
    * The time of the last computation
    */
@@ -64,7 +65,6 @@ public class ASTNodeObject {
    */
   protected boolean isDouble;
   
-  
   /**
    * The ASTNode this object is referring to
    */
@@ -75,21 +75,20 @@ public class ASTNodeObject {
    */
   protected ASTNode.Type nodeType;
   
-  
   /**
    * The ASTNodeObjects of the child nodes of the corresponding ASTNode
    */
-  protected List<ASTNodeObject> children;
+  protected List<ASTNodeValue> children;
   
   /**
    * The ASTNodeObject of the left child of the corresponding ASTNode
    */
-  protected ASTNodeObject leftChild;
+  protected ASTNodeValue leftChild;
   
   /**
    * The ASTNodeObject of the right child of the corresponding ASTNode
    */
-  protected ASTNodeObject rightChild;
+  protected ASTNodeValue rightChild;
   
   /**
    * The name of the corresponding ASTNode
@@ -149,37 +148,37 @@ public class ASTNodeObject {
   }
   
   /**
-   * A logger
+   * A {@link Logger} for this class.
    */
-  public static final Logger logger = Logger.getLogger(ASTNodeObject.class.getName());
+  public static final Logger logger = Logger.getLogger(ASTNodeValue.class.getName());
   
   /**
    * 
    * @param interpreter
    * @param node
    */
-  public ASTNodeObject(ASTNodeInterpreterWithTime interpreter, ASTNode node) {
-    this.interpreter=interpreter;
-    this.node=node;
-    this.nodeType=node.getType();
-    this.isConstant=false;
-    this.alreadyProcessed=false;
-    if (nodeType==ASTNode.Type.REAL) {
-      real=node.getReal();
-      isInfinite=Double.isInfinite(real);
+  public ASTNodeValue(ASTNodeInterpreterWithTime interpreter, ASTNode node) {
+    this.interpreter = interpreter;
+    this.node = node;
+    this.nodeType = node.getType();
+    this.isConstant = false;
+    this.alreadyProcessed = false;
+    if (nodeType == ASTNode.Type.REAL) {
+      real = node.getReal();
+      isInfinite = Double.isInfinite(real);
     }
     else if (nodeType==ASTNode.Type.INTEGER){
-      real=node.getInteger();
+      real = node.getInteger();
     }
     else {
-      real=Double.NaN;
+      real = Double.NaN;
     }
     if (node.isSetUnits()) {
-      units=node.getUnits();
+      units = node.getUnits();
     }
     if ((nodeType == Type.REAL) || nodeType == Type.REAL_E) {
-      mantissa=node.getMantissa();
-      exponent=node.getExponent();
+      mantissa = node.getMantissa();
+      exponent = node.getExponent();
     }
     if (nodeType == Type.RATIONAL) {
       numerator = node.getNumerator();
@@ -187,23 +186,23 @@ public class ASTNodeObject {
     }
     
     if (node.isName()) {
-      name=node.getName();
+      name = node.getName();
     }
     
     this.time = 0d;
-    children = new ArrayList<ASTNodeObject>();
+    children = new ArrayList<ASTNodeValue>();
     if (node != null) {  
       for (ASTNode childNode:node.getChildren()) {
         Object userObject = childNode.getUserObject(SBMLinterpreter.TEMP_VALUE);
         if (userObject != null) {
-          children.add((ASTNodeObject)userObject);
+          children.add((ASTNodeValue)userObject);
         }
       }
     }
-    numChildren=children.size();
+    numChildren = children.size();
     if (numChildren>0) {
-      leftChild=children.get(0);
-      rightChild=children.get(numChildren-1);
+      leftChild = children.get(0);
+      rightChild = children.get(numChildren-1);
     }
   }
   
@@ -220,7 +219,7 @@ public class ASTNodeObject {
    * @param time
    */
   public void setTime(double time) {
-    this.time=time;
+    this.time = time;
   }
   
   /**
@@ -254,11 +253,10 @@ public class ASTNodeObject {
   public double compileDouble(double time) {
     if ((this.time==time) || (isConstant && alreadyProcessed)) {
       return doubleValue;
-    }
-    else {
-      isDouble=true;
-      alreadyProcessed=true;
-      this.time=time;
+    } else {
+      isDouble = true;
+      alreadyProcessed = true;
+      this.time = time;
       computeDoubleValue();
     }
     return doubleValue;
@@ -275,8 +273,8 @@ public class ASTNodeObject {
       return booleanValue;
     }
     else {
-      isDouble=false;
-      alreadyProcessed=true;
+      isDouble = false;
+      alreadyProcessed = true;
       this.time = time;
       computeBooleanValue();
     }
@@ -323,11 +321,11 @@ public class ASTNodeObject {
         doubleValue = interpreter.times(children, numChildren, time);
         break;
       case DIVIDE:
-        if (numChildren != 2) { throw new SBMLException(
-          String
-              .format(
-                "Fractions must have one numerator and one denominator, here %s elements are given.",
-                node.getChildCount())); }
+        if (numChildren != 2) { 
+        	throw new SBMLException(MessageFormat.format(
+                "Fractions must have one numerator and one denominator, here {0,number,integer} elements are given.",
+                node.getChildCount())); 
+        }
         doubleValue = interpreter.frac(leftChild, rightChild, time);
         break;
       case RATIONAL:
@@ -513,7 +511,7 @@ public class ASTNodeObject {
           booleanValue = false;
           break;
         case NAME:
-          CallableSBase variable=node.getVariable();
+          CallableSBase variable = node.getVariable();
           if (variable != null) {
             booleanValue = interpreter.compileBoolean(variable, time);
           }
@@ -547,9 +545,9 @@ public class ASTNodeObject {
   public String getName() {
     if (node != null) {
       return node.getName();
-    }
-    else {
+    } else {
       return null;
     }
   }
+
 }

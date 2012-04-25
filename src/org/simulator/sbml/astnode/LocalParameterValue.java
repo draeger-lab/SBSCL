@@ -30,7 +30,7 @@ import org.sbml.jsbml.util.TreeNodeChangeListener;
  * @version $Rev$
  * @since 1.0
  */
-public class LocalParameterValue extends ASTNodeObject implements TreeNodeChangeListener {
+public class LocalParameterValue extends ASTNodeValue implements TreeNodeChangeListener {
 	
 	/**
 	 * The corresponding local parameter

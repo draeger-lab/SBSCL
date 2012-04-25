@@ -31,7 +31,6 @@ import org.apache.commons.math.ode.events.EventException;
 import org.apache.commons.math.ode.events.EventHandler;
 import org.simulator.math.Mathematics;
 import org.simulator.math.odes.MultiTable.Block.Column;
-import org.simulator.sbml.EventInProcess;
 
 /**
  * This Class represents an abstract solver for event-driven DES
