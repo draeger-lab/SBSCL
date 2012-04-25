@@ -15,16 +15,17 @@
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html > .
  * ---------------------------------------------------------------------
  */
-package org.simulator.math.odes;
+package org.simulator.sbml;
 
 import java.util.LinkedList;
+
 
 
 
 /**
  * <p > 
  * This class represents a compilation of all information calculated during
- * simulation concerning events. An EventInProcessWithDelay especially stands
+ * simulation concerning events in SBML. An SBMLEventInProcessWithDelay especially stands
  * for an event with delay.
  * </p > 
  * 
@@ -33,7 +34,7 @@ import java.util.LinkedList;
  * @version $Rev$
  * @since 0.9
  */
-public class EventInProcessWithDelay extends EventInProcess {
+public class SBMLEventInProcessWithDelay extends SBMLEventInProcess {
 
 	/**
 	 * 
@@ -45,19 +46,20 @@ public class EventInProcessWithDelay extends EventInProcess {
 	private LinkedList<Double[] >  previousExecutionValues;
 
 	/**
-	 * Creates a new EventInProcessWithDelay with the given boolean value
+	 * Creates a new SBMLEventInProcessWithDelay with the given boolean value
 	 * indicating whether or not it can fire at time point 0d.
 	 * 
 	 * @param fired
 	 */
-	public EventInProcessWithDelay(boolean fired) {
+	public SBMLEventInProcessWithDelay(boolean fired) {
 		super(fired);
 		previousExecutionTimes = new LinkedList<Double > ();
 		previousExecutionValues = new LinkedList<Double[] > ();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.simulator.sbml.EventInProcess#refresh(boolean)
+	/*
+	 * (non-Javadoc)
+	 * @see org.simulator.math.odes.SBMLEventInProcess#refresh(boolean)
 	 */
 	@Override
 	public void refresh(boolean fired) {
@@ -66,8 +68,9 @@ public class EventInProcessWithDelay extends EventInProcess {
 		previousExecutionValues = new LinkedList<Double[] > ();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.EventInProcess#aborted()
+	/*
+	 * (non-Javadoc)
+	 * @see org.simulator.math.odes.SBMLEventInProcess#aborted(double)
 	 */
 	@Override
 	public void aborted(double time) {
@@ -75,8 +78,9 @@ public class EventInProcessWithDelay extends EventInProcess {
 		values.poll();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.EventInProcess#addValues(java.lang.Double[], double)
+	/*
+	 * (non-Javadoc)
+	 * @see org.simulator.math.odes.SBMLEventInProcess#addValues(java.lang.Double[], double)
 	 */
 	@Override
 	public void addValues(Double[] values, double time) {
@@ -87,8 +91,9 @@ public class EventInProcessWithDelay extends EventInProcess {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.EventInProcess#executed()
+	/*
+	 * (non-Javadoc)
+	 * @see org.simulator.math.odes.SBMLEventInProcess#executed(double)
 	 */
 	@Override
 	public void executed(double time) {
@@ -121,8 +126,9 @@ public class EventInProcessWithDelay extends EventInProcess {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.simulator.sbml.EventInProcess#refresh(double)
+	/*
+	 * (non-Javadoc)
+	 * @see org.simulator.math.odes.SBMLEventInProcess#refresh(double)
 	 */
 	@Override
 	public void refresh(double currentTime) {
