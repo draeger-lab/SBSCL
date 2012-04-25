@@ -197,24 +197,24 @@ library.
     \includegraphics[width=.5\textwidth]{img/DESystems.pdf}
   }
 }
-\caption[Architecture of the Simulation Core Library]{Architecture of the
-Simulation Core Library. Numerical methods are strictly separated from
-differential equation systems. Fig.~\ref{fig:Solvers} displays the unified type
+\caption[Architecture of the Simulation Core Library]{Architecture of
+the Simulation Core Library (slightly simplified). Numerical methods are
+strictly separated from differential equation systems. Fig.~\ref{fig:Solvers} displays the unified type
 hierarchy of all numberical integration methods, which are currently part of the
-library, including solvers from Appache Commons Math library and Rosenbrock's
+library, including solvers from Apache Commons Math library and Rosenbrock's
 method. The class \MultiTable{} stores the results of a simulation within its
 \Block{} data structures. Fig.~\ref{fig:DESystems} shows the interfaces that
 define several special types of the differential equations to be solved by the
 numerical methods. This abstract description makes it possible to describe
-various types of differntial equation systems without directly linking it to a
-particular type of biological networks. The class \SBMLinterpreter{} implments
+various types of differential equation systems without directly linking it to a
+particular type of biological networks. The class \SBMLinterpreter{} implements
 all of these interfaces with respect to the information content of a given SBML
 model. The interpreter causes the main run-time of the integration procedure.
 This is why efficient and clearly organized data structures are required to
-ensure a high performance of the overal library. The interpretation of SBML
+ensure a high performance of the overall library. The interpretation of SBML
 models is therefore organized in the evaluation of events and rules, the
 computation of stoichiometric information, and the computation of the current
-values of all model components.
+values of all model components (such as species and compartments).
 In this way it is possible to pass an instance of an interpreter for a
 particular model system, such as SBML or CellML, to any available solver.}
 \label{fig:Architecture}
