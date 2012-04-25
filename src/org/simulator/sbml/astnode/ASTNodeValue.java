@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.CallableSBase;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.util.Maths;
@@ -176,11 +175,11 @@ public class ASTNodeValue {
     if (node.isSetUnits()) {
       units = node.getUnits();
     }
-    if ((nodeType == Type.REAL) || nodeType == Type.REAL_E) {
+    if ((nodeType == ASTNode.Type.REAL) || (nodeType == ASTNode.Type.REAL_E)) {
       mantissa = node.getMantissa();
       exponent = node.getExponent();
     }
-    if (nodeType == Type.RATIONAL) {
+    if (nodeType == ASTNode.Type.RATIONAL) {
       numerator = node.getNumerator();
       denominator = node.getDenominator();
     }
