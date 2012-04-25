@@ -35,11 +35,11 @@ import org.simulator.sbml.SBMLinterpreter;
  * @author Roland Keller
  * @version $Rev$
  */
-public class FunctionValue extends ASTNodeObject {
+public class FunctionValue extends ASTNodeValue {
 	/**
 	 * The value of the evaluation block of the function stored in an ASTNodeObject.
 	 */
-	protected ASTNodeObject evaluationBlock;
+	protected ASTNodeValue evaluationBlock;
 	
 	/**
 	 * The variables of the function
@@ -132,7 +132,7 @@ public class FunctionValue extends ASTNodeObject {
 	 */
 	public void setMath(ASTNode math) {
 		this.math = math;
-		this.evaluationBlock=(ASTNodeObject) math.getRightChild().getUserObject(SBMLinterpreter.TEMP_VALUE);
+		this.evaluationBlock=(ASTNodeValue) math.getRightChild().getUserObject(SBMLinterpreter.TEMP_VALUE);
 	}
 
 	/**

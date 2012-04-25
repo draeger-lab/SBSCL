@@ -23,7 +23,7 @@ import org.sbml.jsbml.ASTNode;
  * @author Roland Keller
  * @version $Rev$
  */
-public class RootFunctionValue extends ASTNodeObject{
+public class RootFunctionValue extends ASTNodeValue{
 	/**
 	 * The value of the left child of the corresponding ASTNode (if applicable)
 	 */

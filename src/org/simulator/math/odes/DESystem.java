@@ -30,7 +30,6 @@ import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
  * @version $Rev$
  * @since 0.9
  */
-
 public interface DESystem extends Serializable, FirstOrderDifferentialEquations {
 
 	/**
@@ -44,15 +43,19 @@ public interface DESystem extends Serializable, FirstOrderDifferentialEquations 
 	public String[] getIdentifiers();
 
 	/**
+	 * This method is used to check if this differential equation system contains
+	 * any events or rules that would require a special treatment by the numerical
+	 * solver.
 	 * 
-	 * @return flag that is true, if events or rules are contained in the system
+	 * @return flag that is <code>true</code> if any events or rules are contained
+	 *         in the differential equation system.
 	 */
-  public boolean containsEventsOrRules();
+	public boolean containsEventsOrRules();
 
-  /**
-   * 
-   * @return the number of values in Y that have to be positive.
-   */
-  public int getNumPositiveValues();
+	/**
+	 * 
+	 * @return the number of values in Y that have to be positive.
+	 */
+	public int getPositiveValueCount();
 
 }

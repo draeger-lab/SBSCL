@@ -38,7 +38,6 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.util.Maths;
 import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
-import org.sbml.jsbml.util.compilers.ASTNodeValue;
 
 /**
  * This class is a more efficient implementation of an {@linkASTNodeCompiler}. 
@@ -52,8 +51,8 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
   /**
    * A logger.
    */
-  private static final Logger logger = Logger.getLogger(SBMLinterpreter.class
-      .getName());
+  private static final Logger logger = Logger.getLogger(SBMLinterpreter.class.getName());
+  
   /**
    * This table is necessary to store the values of arguments when a function
    * definition is evaluated. For an identifier of the argument the
@@ -69,7 +68,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
   /**
    * Field for saving intermediate values.
    */
-  private ASTNodeValue nodeValue;
+  private org.sbml.jsbml.util.compilers.ASTNodeValue nodeValue;
   
   /**
    * Field for saving the currently processed variable.
@@ -91,42 +90,35 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#abs(org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue abs(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue abs(ASTNode node) throws SBMLException {
     nodeValue.setValue(Math.abs(compileDouble(node)));
     return nodeValue;
   }
   
-  /*
-   * (non-Javadoc)
-   * 
+  /* (non-Javadoc)
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#and(java.util.List)
    */
-  public final ASTNodeValue and(List<ASTNode> nodes) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue and(List<ASTNode> nodes) throws SBMLException {
     for (ASTNode node : nodes) {
       if (!compileBoolean(node)) { return getConstantFalse(); }
     }
     return getConstantTrue();
   }
   
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.sbml.jsbml.util.compilers.ASTNodeCompiler#arccos(org.sbml.jsbml.ASTNode
-   * )
+  /* (non-Javadoc)
+   * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#arccos(org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue arccos(ASTNode value) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue arccos(ASTNode value) throws SBMLException {
     nodeValue.setValue(Math.acos(compileDouble(value)));
     return nodeValue;
   }
   
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * 
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#arccosh(org.sbml.jsbml.
    * ASTNode)
    */
-  public final ASTNodeValue arccosh(ASTNode value) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue arccosh(ASTNode value) throws SBMLException {
     nodeValue.setValue(Maths.arccosh(compileDouble(value)));
     return nodeValue;
   }
@@ -138,7 +130,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#arccot(org.sbml.jsbml.ASTNode
    * )
    */
-  public final ASTNodeValue arccot(ASTNode value) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue arccot(ASTNode value) throws SBMLException {
     double argument = compileDouble(value);
     nodeValue.setValue(Maths.arccot(argument));
     return nodeValue;
@@ -150,7 +142,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#arccoth(org.sbml.jsbml.
    * ASTNode)
    */
-  public final ASTNodeValue arccoth(ASTNode value) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue arccoth(ASTNode value) throws SBMLException {
     nodeValue.setValue(Maths.arccoth(compileDouble(value)));
     return nodeValue;
   }
@@ -162,7 +154,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#arccsc(org.sbml.jsbml.ASTNode
    * )
    */
-  public final ASTNodeValue arccsc(ASTNode value) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue arccsc(ASTNode value) throws SBMLException {
     nodeValue.setValue(Maths.arccsc(compileDouble(value)));
     return nodeValue;
   }
@@ -173,7 +165,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#arccsch(org.sbml.jsbml.
    * ASTNode)
    */
-  public final ASTNodeValue arccsch(ASTNode value) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue arccsch(ASTNode value) throws SBMLException {
     nodeValue.setValue(Maths.arccsch(compileDouble(value)));
     return nodeValue;
   }
@@ -185,7 +177,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#arcsec(org.sbml.jsbml.ASTNode
    * )
    */
-  public final ASTNodeValue arcsec(ASTNode value) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue arcsec(ASTNode value) throws SBMLException {
     nodeValue.setValue(Maths.arcsec(compileDouble(value)));
     return nodeValue;
   }
@@ -196,7 +188,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#arcsech(org.sbml.jsbml.
    * ASTNode)
    */
-  public final ASTNodeValue arcsech(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue arcsech(ASTNode node) throws SBMLException {
     nodeValue.setValue(Maths.arcsech(compileDouble(node)));
     return nodeValue;
   }
@@ -208,7 +200,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#arcsin(org.sbml.jsbml.ASTNode
    * )
    */
-  public final ASTNodeValue arcsin(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue arcsin(ASTNode node) throws SBMLException {
     nodeValue.setValue(Math.asin(compileDouble(node)));
     return nodeValue;
   }
@@ -219,7 +211,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#arcsinh(org.sbml.jsbml.
    * ASTNode)
    */
-  public final ASTNodeValue arcsinh(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue arcsinh(ASTNode node) throws SBMLException {
     nodeValue.setValue(Maths.arcsinh(compileDouble(node)));
     return nodeValue;
   }
@@ -231,7 +223,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#arctan(org.sbml.jsbml.ASTNode
    * )
    */
-  public final ASTNodeValue arctan(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue arctan(ASTNode node) throws SBMLException {
     nodeValue.setValue(Math.atan(compileDouble(node)));
     return nodeValue;
   }
@@ -242,7 +234,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#arctanh(org.sbml.jsbml.
    * ASTNode)
    */
-  public final ASTNodeValue arctanh(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue arctanh(ASTNode node) throws SBMLException {
     nodeValue.setValue(Maths.arctanh(compileDouble(node)));
     return nodeValue;
   }
@@ -253,7 +245,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#ceiling(org.sbml.jsbml.
    * ASTNode)
    */
-  public final ASTNodeValue ceiling(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue ceiling(ASTNode node) throws SBMLException {
     nodeValue.setValue(Math.ceil(compileDouble(node)));
     return nodeValue;
   }
@@ -271,7 +263,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#compile(org.sbml.jsbml.
    * CallableSBase)
    */
-  public ASTNodeValue compile(CallableSBase nsb) throws SBMLException {
+  public org.sbml.jsbml.util.compilers.ASTNodeValue compile(CallableSBase nsb) throws SBMLException {
     String id = nsb.getId();
     if (nsb instanceof Species) {
       Species s = (Species) nsb;
@@ -287,13 +279,13 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
       }
 
       else if (s.isSetInitialConcentration() && s.getHasOnlySubstanceUnits()) {
-        // return new ASTNodeValue(Y[symbolIndex], this);
+        // return new org.sbml.jsbml.util.compilers.ASTNodeValue(Y[symbolIndex], this);
         
         nodeValue.setValue(valueHolder.getCurrentSpeciesValue(id)
             * compartmentValue);
       } else {
         nodeValue.setValue(valueHolder.getCurrentSpeciesValue(id));
-        // return new ASTNodeValue(Y[symbolIndex]
+        // return new org.sbml.jsbml.util.compilers.ASTNodeValue(Y[symbolIndex]
         // / getCompartmentValueOf(nsb.getId()), this);
       }
     }
@@ -344,7 +336,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#compile(org.sbml.jsbml.
    * Compartment)
    */
-  public final ASTNodeValue compile(Compartment c) {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue compile(Compartment c) {
     nodeValue.setValue(valueHolder.getCurrentCompartmentSize(c.getId()));
     return nodeValue;
   }
@@ -355,18 +347,18 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#compile(double, int,
    * java.lang.String)
    */
-  public final ASTNodeValue compile(double mantissa, int exponent, String units) {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue compile(double mantissa, int exponent, String units) {
     nodeValue.setValue(mantissa * Math.pow(10, exponent));
     return nodeValue;
   }
   
-  public final ASTNodeValue compile(double value, String units) {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue compile(double value, String units) {
     // TODO: units!
     nodeValue.setValue(value);
     return nodeValue;
   }
   
-  public final ASTNodeValue compile(int value, String units) {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue compile(int value, String units) {
     // TODO: units!
     nodeValue.setValue(value);
     return nodeValue;
@@ -378,7 +370,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#compile(java.lang.String)
    */
-  public final ASTNodeValue compile(String name) {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue compile(String name) {
     Double funcArg = getFuncArg(name);
     if (funcArg != null) {
       nodeValue.setValue(funcArg);
@@ -396,7 +388,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#cos(org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue cos(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue cos(ASTNode node) throws SBMLException {
     nodeValue.setValue(Math.cos(compileDouble(node)));
     return nodeValue;
   }
@@ -407,7 +399,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#cosh(org.sbml.jsbml.ASTNode )
    */
-  public final ASTNodeValue cosh(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue cosh(ASTNode node) throws SBMLException {
     nodeValue.setValue(Math.cosh(compileDouble(node)));
     return nodeValue;
   }
@@ -418,7 +410,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#cot(org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue cot(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue cot(ASTNode node) throws SBMLException {
     nodeValue.setValue(Maths.cot(compileDouble(node)));
     return nodeValue;
   }
@@ -429,7 +421,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#coth(org.sbml.jsbml.ASTNode )
    */
-  public final ASTNodeValue coth(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue coth(ASTNode node) throws SBMLException {
     nodeValue.setValue(Maths.coth(compileDouble(node)));
     return nodeValue;
   }
@@ -440,7 +432,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#csc(org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue csc(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue csc(ASTNode node) throws SBMLException {
     nodeValue.setValue(Maths.csc(compileDouble(node)));
     return nodeValue;
   }
@@ -451,7 +443,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#csch(org.sbml.jsbml.ASTNode )
    */
-  public final ASTNodeValue csch(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue csch(ASTNode node) throws SBMLException {
     nodeValue.setValue(Maths.csch(compileDouble(node)));
     return nodeValue;
   }
@@ -462,7 +454,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#delay(java.lang.String,
    * org.sbml.jsbml.ASTNode, org.sbml.jsbml.ASTNode, java.lang.String)
    */
-  public final ASTNodeValue delay(String delayName, ASTNode x, ASTNode delay,
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue delay(String delayName, ASTNode x, ASTNode delay,
     String timeUnits) throws SBMLException {
     // TODO Auto-generated method stub
     return null;
@@ -475,7 +467,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#eq(org.sbml.jsbml.ASTNode,
    * org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue eq(ASTNode left, ASTNode right)
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue eq(ASTNode left, ASTNode right)
     throws SBMLException {
     nodeValue.setValue((compileDouble(left) == compileDouble(right)));
     return nodeValue;
@@ -487,7 +479,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#exp(org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue exp(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue exp(ASTNode node) throws SBMLException {
     nodeValue.setValue(Math.exp(compileDouble(node)));
     return nodeValue;
   }
@@ -498,7 +490,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#factorial(org.sbml.jsbml
    * .ASTNode)
    */
-  public final ASTNodeValue factorial(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue factorial(ASTNode node) throws SBMLException {
     nodeValue.setValue(Maths.factorial((int) Math.round(compileDouble(node))));
     return nodeValue;
   }
@@ -510,7 +502,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#floor(org.sbml.jsbml.ASTNode
    * )
    */
-  public final ASTNodeValue floor(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue floor(ASTNode node) throws SBMLException {
     nodeValue.setValue(Math.floor(compileDouble(node)));
     return nodeValue;
   }
@@ -522,7 +514,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#frac(org.sbml.jsbml.ASTNode ,
    * org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue frac(ASTNode left, ASTNode right)
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue frac(ASTNode left, ASTNode right)
     throws SBMLException {
     nodeValue.setValue(compileDouble(left) / compileDouble(right));
     return nodeValue;
@@ -533,7 +525,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * 
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#frac(int, int)
    */
-  public final ASTNodeValue frac(int numerator, int denominator) {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue frac(int numerator, int denominator) {
     nodeValue.setValue((double)numerator / denominator);
     return nodeValue;
   }
@@ -544,7 +536,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#function(org.sbml.jsbml
    * .FunctionDefinition, java.util.List)
    */
-  public final ASTNodeValue function(FunctionDefinition function,
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue function(FunctionDefinition function,
     List<ASTNode> arguments) throws SBMLException {
     ASTNode lambda = function.getMath();
     Hashtable<String, Double> argValues = new Hashtable<String, Double>();
@@ -553,7 +545,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
         compileDouble(arguments.get(i)));
     }
     setFuncArgs(argValues);
-    ASTNodeValue value = lambda.getRightChild().compile(this);
+    org.sbml.jsbml.util.compilers.ASTNodeValue value = lambda.getRightChild().compile(this);
     clearFuncArgs();
     return value;
   }
@@ -565,7 +557,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#function(java.lang.String,
    * java.util.List)
    */
-  public final ASTNodeValue function(String functionDefinitionName,
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue function(String functionDefinitionName,
     List<ASTNode> args) throws SBMLException {
     // can not compile a function without an ASTNode representing its lambda
     // expression
@@ -580,7 +572,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#geq(org.sbml.jsbml.ASTNode,
    * org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue geq(ASTNode nodeleft, ASTNode noderight)
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue geq(ASTNode nodeleft, ASTNode noderight)
     throws SBMLException {
     nodeValue.setValue((compileDouble(nodeleft) >= compileDouble(noderight)));
     return nodeValue;
@@ -592,7 +584,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#getConstantAvogadro(java
    * .lang.String)
    */
-  public final ASTNodeValue getConstantAvogadro(String name) {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue getConstantAvogadro(String name) {
     nodeValue.setValue(Maths.AVOGADRO_L3V1);
     return nodeValue;
   }
@@ -602,7 +594,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * 
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#getConstantE()
    */
-  public final ASTNodeValue getConstantE() {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue getConstantE() {
     nodeValue.setValue(Math.E);
     return nodeValue;
   }
@@ -612,7 +604,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * 
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#getConstantFalse()
    */
-  public final ASTNodeValue getConstantFalse() {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue getConstantFalse() {
     nodeValue.setValue(false);
     return nodeValue;
   }
@@ -622,7 +614,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * 
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#getConstantPi()
    */
-  public final ASTNodeValue getConstantPi() {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue getConstantPi() {
     nodeValue.setValue(Math.PI);
     return nodeValue;
   }
@@ -632,7 +624,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * 
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#getConstantTrue()
    */
-  public final ASTNodeValue getConstantTrue() {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue getConstantTrue() {
     nodeValue.setValue(true);
     return nodeValue;
   }
@@ -654,7 +646,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * 
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#getNegativeInfinity()
    */
-  public final ASTNodeValue getNegativeInfinity() {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue getNegativeInfinity() {
     nodeValue.setValue(Double.NEGATIVE_INFINITY);
     return nodeValue;
   }
@@ -664,7 +656,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * 
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#getPositiveInfinity()
    */
-  public final ASTNodeValue getPositiveInfinity() {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue getPositiveInfinity() {
     nodeValue.setValue(Double.POSITIVE_INFINITY);
     return nodeValue;
   }
@@ -676,7 +668,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#gt(org.sbml.jsbml.ASTNode,
    * org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue gt(ASTNode left, ASTNode right)
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue gt(ASTNode left, ASTNode right)
     throws SBMLException {
     nodeValue.setValue((compileDouble(left) > compileDouble(right)));
     return nodeValue;
@@ -687,13 +679,13 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * 
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#lambda(java.util.List)
    */
-  public final ASTNodeValue lambda(List<ASTNode> nodes) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue lambda(List<ASTNode> nodes) throws SBMLException {
     double d[] = new double[Math.max(0, nodes.size() - 1)];
     for (int i = 0; i < nodes.size() - 1; i++) {
       d[i++] = compileDouble(nodes.get(i));
     }
     // TODO: what happens with d?
-    ASTNodeValue function = nodes.get(nodes.size() - 1).compile(this);
+    org.sbml.jsbml.util.compilers.ASTNodeValue function = nodes.get(nodes.size() - 1).compile(this);
     return function;
   }
   
@@ -704,7 +696,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#leq(org.sbml.jsbml.ASTNode,
    * org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue leq(ASTNode left, ASTNode right)
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue leq(ASTNode left, ASTNode right)
     throws SBMLException {
     nodeValue.setValue((compileDouble(left) <= compileDouble(right)));
     return nodeValue;
@@ -716,7 +708,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#ln(org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue ln(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue ln(ASTNode node) throws SBMLException {
     nodeValue.setValue(Maths.ln(compileDouble(node)));
     return nodeValue;
     
@@ -728,7 +720,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#log(org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue log(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue log(ASTNode node) throws SBMLException {
     nodeValue.setValue(Maths.log(compileDouble(node)));
     return nodeValue;
     
@@ -741,7 +733,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#log(org.sbml.jsbml.ASTNode,
    * org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue log(ASTNode left, ASTNode right)
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue log(ASTNode left, ASTNode right)
     throws SBMLException {
     nodeValue.setValue(Maths.log(compileDouble(right), compileDouble(left)));
     return nodeValue;
@@ -755,7 +747,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#lt(org.sbml.jsbml.ASTNode,
    * org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue lt(ASTNode nodeleft, ASTNode noderight)
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue lt(ASTNode nodeleft, ASTNode noderight)
     throws SBMLException {
     nodeValue.setValue((compileDouble(nodeleft) < compileDouble(noderight)));
     return nodeValue;
@@ -786,7 +778,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * 
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#minus(java.util.List)
    */
-  public final ASTNodeValue minus(List<ASTNode> nodes) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue minus(List<ASTNode> nodes) throws SBMLException {
     double value = 0d;
     if (nodes.size() > 0) {
       value = compileDouble(nodes.get(0));
@@ -805,7 +797,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#neq(org.sbml.jsbml.ASTNode,
    * org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue neq(ASTNode left, ASTNode right)
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue neq(ASTNode left, ASTNode right)
     throws SBMLException {
     nodeValue.setValue(compileDouble(left) != compileDouble(right));
     return nodeValue;
@@ -817,7 +809,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#not(org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue not(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue not(ASTNode node) throws SBMLException {
     return compileBoolean(node) ? getConstantFalse() : getConstantTrue();
   }
   
@@ -826,7 +818,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * 
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#or(java.util.List)
    */
-  public final ASTNodeValue or(List<ASTNode> nodes) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue or(List<ASTNode> nodes) throws SBMLException {
     for (ASTNode node : nodes) {
       if (compileBoolean(node)) { return getConstantTrue(); }
     }
@@ -839,7 +831,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#piecewise(java.util.List)
    */
-  public final ASTNodeValue piecewise(List<ASTNode> nodes) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue piecewise(List<ASTNode> nodes) throws SBMLException {
     int i;
     boolean set = false;
     for (i = 1; i < nodes.size() - 1; i += 2) {
@@ -860,7 +852,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * 
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#plus(java.util.List)
    */
-  public final ASTNodeValue plus(List<ASTNode> nodes) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue plus(List<ASTNode> nodes) throws SBMLException {
     double value = 0d;
     for (ASTNode node : nodes) {
       value += compileDouble(node);
@@ -876,7 +868,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#pow(org.sbml.jsbml.ASTNode,
    * org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue pow(ASTNode left, ASTNode right)
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue pow(ASTNode left, ASTNode right)
     throws SBMLException {
     nodeValue.setValue(Math.pow(compileDouble(left), compileDouble(right)));
     return nodeValue;
@@ -890,7 +882,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#root(org.sbml.jsbml.ASTNode ,
    * org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue root(ASTNode rootExponent, ASTNode radiant)
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue root(ASTNode rootExponent, ASTNode radiant)
     throws SBMLException {
     return root(compileDouble(rootExponent), radiant);
   }
@@ -901,7 +893,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#root(double,
    * org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue root(double rootExponent, ASTNode radiant)
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue root(double rootExponent, ASTNode radiant)
     throws SBMLException {
     nodeValue.setValue(Maths.root(compileDouble(radiant), rootExponent));
     return nodeValue;
@@ -913,7 +905,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#sec(org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue sec(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue sec(ASTNode node) throws SBMLException {
     double argument = compileDouble(node);
     nodeValue.setValue(Maths.sec(argument));
     return nodeValue;
@@ -926,7 +918,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#sech(org.sbml.jsbml.ASTNode )
    */
-  public final ASTNodeValue sech(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue sech(ASTNode node) throws SBMLException {
     nodeValue.setValue(Maths.sech(compileDouble(node)));
     return nodeValue;
     
@@ -945,7 +937,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#sin(org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue sin(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue sin(ASTNode node) throws SBMLException {
     nodeValue.setValue(Math.sin(compileDouble(node)));
     return nodeValue;
   }
@@ -956,7 +948,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#sinh(org.sbml.jsbml.ASTNode )
    */
-  public final ASTNodeValue sinh(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue sinh(ASTNode node) throws SBMLException {
     nodeValue.setValue(Math.sinh(compileDouble(node)));
     return nodeValue;
   }
@@ -967,7 +959,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#sqrt(org.sbml.jsbml.ASTNode )
    */
-  public final ASTNodeValue sqrt(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue sqrt(ASTNode node) throws SBMLException {
     nodeValue.setValue(Math.sqrt(compileDouble(node)));
     return nodeValue;
   }
@@ -978,7 +970,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#symbolTime(java.lang.String )
    */
-  public final ASTNodeValue symbolTime(String timeSymbol) {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue symbolTime(String timeSymbol) {
     nodeValue.setValue(valueHolder.getCurrentTime());
     return nodeValue;
   }
@@ -989,7 +981,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#tan(org.sbml.jsbml.ASTNode)
    */
-  public final ASTNodeValue tan(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue tan(ASTNode node) throws SBMLException {
     nodeValue.setValue(Math.tan(compileDouble(node)));
     return nodeValue;
   }
@@ -1000,7 +992,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * @see
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#tanh(org.sbml.jsbml.ASTNode )
    */
-  public final ASTNodeValue tanh(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue tanh(ASTNode node) throws SBMLException {
     nodeValue.setValue(Math.tanh(compileDouble(node)));
     return nodeValue;
   }
@@ -1010,7 +1002,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * 
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#times(java.util.List)
    */
-  public final ASTNodeValue times(List<ASTNode> nodes) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue times(List<ASTNode> nodes) throws SBMLException {
     int size = nodes.size();
     if (size == 0) {
       nodeValue.setValue(0d);
@@ -1036,7 +1028,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * org.sbml.jsbml.util.compilers.ASTNodeCompiler#uMinus(org.sbml.jsbml.ASTNode
    * )
    */
-  public final ASTNodeValue uMinus(ASTNode node) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue uMinus(ASTNode node) throws SBMLException {
     nodeValue.setValue(-compileDouble(node));
     return nodeValue;
   }
@@ -1046,7 +1038,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * 
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#unknownValue()
    */
-  public final ASTNodeValue unknownValue() throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue unknownValue() throws SBMLException {
     nodeValue.setValue(Double.NaN);
     return nodeValue;
   }
@@ -1056,7 +1048,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * 
    * @see org.sbml.jsbml.util.compilers.ASTNodeCompiler#xor(java.util.List)
    */
-  public final ASTNodeValue xor(List<ASTNode> nodes) throws SBMLException {
+  public final org.sbml.jsbml.util.compilers.ASTNodeValue xor(List<ASTNode> nodes) throws SBMLException {
     boolean value = false;
     for (int i = 0; i < nodes.size(); i++) {
       if (compileBoolean(nodes.get(i))) {
@@ -1363,12 +1355,12 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
       }
 
       else if (s.isSetInitialConcentration() && s.getHasOnlySubstanceUnits()) {
-        // return new ASTNodeValue(Y[symbolIndex], this);
+        // return new org.sbml.jsbml.util.compilers.ASTNodeValue(Y[symbolIndex], this);
         
         return (valueHolder.getCurrentSpeciesValue(id) * compartmentValue);
       } else {
         return valueHolder.getCurrentSpeciesValue(id);
-        // return new ASTNodeValue(Y[symbolIndex]
+        // return new org.sbml.jsbml.util.compilers.ASTNodeValue(Y[symbolIndex]
         // / getCompartmentValueOf(nsb.getId()), this);
       }
     }

@@ -23,7 +23,7 @@ import org.sbml.jsbml.ASTNode;
  * @author Roland Keller
  * @version $Rev$
  */
-public class NamedValue extends ASTNodeObject {
+public class NamedValue extends ASTNodeValue {
 	/**
 	 * The function the variable occurs in
 	 */
