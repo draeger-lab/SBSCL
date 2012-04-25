@@ -1,7 +1,7 @@
 /*
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
- * for efficient numerial simulation of biological models.
+ * for efficient numerical simulation of biological models.
  *
  * Copyright (C) 2007-2012 by the University of Tuebingen, Germany.
  *

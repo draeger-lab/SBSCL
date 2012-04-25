@@ -30,9 +30,9 @@ import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.util.Maths;
+import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
 import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sbml.ValueHolder;
 
@@ -246,10 +246,8 @@ public class ASTNodeInterpreterWithTime {
    * @param nodes
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double piecewise(List<ASTNodeObject> nodes, double time)
-    throws SBMLException {
+  public double piecewise(List<ASTNodeObject> nodes, double time) {
     int i;
     for (i = 1; i < nodes.size() - 1; i += 2) {
       if (nodes.get(i).compileBoolean(time)) { return (nodes.get(i - 1)
@@ -264,9 +262,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double log(ASTNodeObject userObject, double time) throws SBMLException {
+  public double log(ASTNodeObject userObject, double time) {
     return Math.log10(userObject.compileDouble(time));
   }
   
@@ -276,10 +273,8 @@ public class ASTNodeInterpreterWithTime {
    * @param right
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double log(ASTNodeObject left, ASTNodeObject right, double time)
-    throws SBMLException {
+  public double log(ASTNodeObject left, ASTNodeObject right, double time) {
     return Maths.log(right.compileDouble(time), left.compileDouble(time));
   }
   
@@ -289,10 +284,9 @@ public class ASTNodeInterpreterWithTime {
    * @param args
    * @param time
    * @return
-   * @throws SBMLException
    */
   public double functionDouble(String functionDefinitionName,
-    List<ASTNodeObject> args, double time) throws SBMLException {
+    List<ASTNodeObject> args, double time) {
     // can not compile a function without an ASTNode representing its lambda
     // expression
     
@@ -304,10 +298,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double tanh(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double tanh(ASTNodeObject userObject, double time) {
     return Math.tanh(userObject.compileDouble(time));
   }
   
@@ -316,9 +308,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double tan(ASTNodeObject userObject, double time) throws SBMLException {
+  public double tan(ASTNodeObject userObject, double time) {
     return Math.tan(userObject.compileDouble(time));
   }
   
@@ -327,10 +318,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double sinh(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double sinh(ASTNodeObject userObject, double time) {
     return Math.sinh(userObject.compileDouble(time));
   }
   
@@ -339,9 +328,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double sin(ASTNodeObject userObject, double time) throws SBMLException {
+  public double sin(ASTNodeObject userObject, double time) {
     return Math.sin(userObject.compileDouble(time));
   }
   
@@ -350,10 +338,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double sech(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double sech(ASTNodeObject userObject, double time) {
     return Maths.sech(userObject.compileDouble(time));
   }
   
@@ -362,9 +348,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double sec(ASTNodeObject userObject, double time) throws SBMLException {
+  public double sec(ASTNodeObject userObject, double time) {
     double argument = userObject.compileDouble(time);
     return Maths.sec(argument);
   }
@@ -375,10 +360,8 @@ public class ASTNodeInterpreterWithTime {
    * @param radiant
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double root(ASTNodeObject rootExponent, ASTNodeObject radiant,
-    double time) throws SBMLException {
+  public double root(ASTNodeObject rootExponent, ASTNodeObject radiant, double time) {
     return root(rootExponent.compileDouble(time), radiant, time);
   }
   
@@ -388,10 +371,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double root(double rootExponent, ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double root(double rootExponent, ASTNodeObject userObject, double time) {
     return Maths.root(userObject.compileDouble(time), rootExponent);
   }
   
@@ -400,9 +381,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double ln(ASTNodeObject userObject, double time) throws SBMLException {
+  public double ln(ASTNodeObject userObject, double time) {
     return Maths.ln(userObject.compileDouble(time));
   }
   
@@ -411,10 +391,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double floor(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double floor(ASTNodeObject userObject, double time) {
     return Math.floor(userObject.compileDouble(time));
   }
   
@@ -423,10 +401,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double factorial(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double factorial(ASTNodeObject userObject, double time) {
     return Maths.factorial((int) Math.round(userObject.compileDouble(time)));
   }
   
@@ -435,9 +411,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double exp(ASTNodeObject userObject, double time) throws SBMLException {
+  public double exp(ASTNodeObject userObject, double time) {
     return Math.exp(userObject.compileDouble(time));
   }
   
@@ -446,10 +421,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double csch(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double csch(ASTNodeObject userObject, double time) {
     return Maths.csch(userObject.compileDouble(time));
   }
   
@@ -458,9 +431,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double csc(ASTNodeObject userObject, double time) throws SBMLException {
+  public double csc(ASTNodeObject userObject, double time) {
     return Maths.csc(userObject.compileDouble(time));
   }
   
@@ -469,10 +441,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double coth(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double coth(ASTNodeObject userObject, double time) {
     return Maths.coth(userObject.compileDouble(time));
   }
   
@@ -481,9 +451,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double cot(ASTNodeObject userObject, double time) throws SBMLException {
+  public double cot(ASTNodeObject userObject, double time) {
     return Maths.cot(userObject.compileDouble(time));
   }
   
@@ -492,10 +461,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double cosh(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double cosh(ASTNodeObject userObject, double time) {
     return Math.cosh(userObject.compileDouble(time));
   }
   
@@ -504,9 +471,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double cos(ASTNodeObject userObject, double time) throws SBMLException {
+  public double cos(ASTNodeObject userObject, double time) {
     return Math.cos(userObject.compileDouble(time));
   }
   
@@ -515,10 +481,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double ceiling(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double ceiling(ASTNodeObject userObject, double time) {
     return Math.ceil(userObject.compileDouble(time));
   }
   
@@ -527,10 +491,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double arctanh(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double arctanh(ASTNodeObject userObject, double time) {
     return Maths.arctanh(userObject.compileDouble(time));
   }
   
@@ -555,11 +517,9 @@ public class ASTNodeInterpreterWithTime {
    * @param values
    * @param time
    * @return
-   * @throws SBMLException
    */
   public boolean functionBoolean(ASTNodeObject rightChild,
-    List<String> variables, List<ASTNodeObject> arguments, double[] values, double time)
-    throws SBMLException {
+    List<String> variables, List<ASTNodeObject> arguments, double[] values, double time) {
     for (int i = 0; i < arguments.size(); i++) {
       values[i] = arguments.get(i).compileDouble(time);
     }
@@ -573,10 +533,8 @@ public class ASTNodeInterpreterWithTime {
    * @param right
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public boolean lt(ASTNodeObject left, ASTNodeObject right, double time)
-    throws SBMLException {
+  public boolean lt(ASTNodeObject left, ASTNodeObject right, double time) {
     return (left.compileDouble(time) < right.compileDouble(time));
   }
   
@@ -586,10 +544,8 @@ public class ASTNodeInterpreterWithTime {
    * @param right
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public boolean leq(ASTNodeObject left, ASTNodeObject right, double time)
-    throws SBMLException {
+  public boolean leq(ASTNodeObject left, ASTNodeObject right, double time) {
     return (left.compileDouble(time) <= right.compileDouble(time));
   }
   
@@ -599,10 +555,8 @@ public class ASTNodeInterpreterWithTime {
    * @param right
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public boolean neq(ASTNodeObject left, ASTNodeObject right, double time)
-    throws SBMLException {
+  public boolean neq(ASTNodeObject left, ASTNodeObject right, double time) {
     return (left.compileDouble(time) != right.compileDouble(time));
   }
   
@@ -612,10 +566,8 @@ public class ASTNodeInterpreterWithTime {
    * @param right
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public boolean gt(ASTNodeObject left, ASTNodeObject right, double time)
-    throws SBMLException {
+  public boolean gt(ASTNodeObject left, ASTNodeObject right, double time) {
     return (left.compileDouble(time) > right.compileDouble(time));
   }
   
@@ -625,10 +577,8 @@ public class ASTNodeInterpreterWithTime {
    * @param right
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public boolean geq(ASTNodeObject left, ASTNodeObject right, double time)
-    throws SBMLException {
+  public boolean geq(ASTNodeObject left, ASTNodeObject right, double time) {
     return (left.compileDouble(time) >= right.compileDouble(time));
   }
   
@@ -638,10 +588,8 @@ public class ASTNodeInterpreterWithTime {
    * @param right
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public boolean eq(ASTNodeObject left, ASTNodeObject right, double time)
-    throws SBMLException {
+  public boolean eq(ASTNodeObject left, ASTNodeObject right, double time) {
     return (left.compileDouble(time) == right.compileDouble(time));
   }
   
@@ -650,9 +598,8 @@ public class ASTNodeInterpreterWithTime {
    * @param node
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public boolean not(ASTNodeObject node, double time) throws SBMLException {
+  public boolean not(ASTNodeObject node, double time) {
     return node.compileBoolean(time) ? false : true;
   }
   
@@ -661,10 +608,8 @@ public class ASTNodeInterpreterWithTime {
    * @param nodes
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public boolean or(List<ASTNodeObject> nodes, double time)
-    throws SBMLException {
+  public boolean or(List<ASTNodeObject> nodes, double time) {
     for (int i = 0; i < nodes.size(); i++) {
       if (nodes.get(i).compileBoolean(time)) { return true; }
     }
@@ -676,10 +621,8 @@ public class ASTNodeInterpreterWithTime {
    * @param nodes
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public boolean xor(List<ASTNodeObject> nodes, double time)
-    throws SBMLException {
+  public boolean xor(List<ASTNodeObject> nodes, double time) {
     boolean value = false;
     int size = nodes.size();
     for (int i = 0; i < size; i++) {
@@ -699,10 +642,8 @@ public class ASTNodeInterpreterWithTime {
    * @param nodes
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public boolean and(List<ASTNodeObject> nodes, int size, double time)
-    throws SBMLException {
+  public boolean and(List<ASTNodeObject> nodes, int size, double time) {
     for (int i = 0; i < size; i++) {
       if (!(nodes.get(i)).compileBoolean(time)) { return false; }
     }
@@ -714,10 +655,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double arctan(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double arctan(ASTNodeObject userObject, double time) {
     return Math.atan(userObject.compileDouble(time));
   }
   
@@ -726,10 +665,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double arcsinh(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double arcsinh(ASTNodeObject userObject, double time) {
     return Maths.arcsinh(userObject.compileDouble(time));
   }
   
@@ -738,10 +675,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double arcsin(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double arcsin(ASTNodeObject userObject, double time) {
     return Math.asin(userObject.compileDouble(time));
   }
   
@@ -750,10 +685,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double arcsech(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double arcsech(ASTNodeObject userObject, double time) {
     return Maths.arcsech(userObject.compileDouble(time));
   }
   
@@ -762,10 +695,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double arcsec(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double arcsec(ASTNodeObject userObject, double time) {
     return Maths.arcsec(userObject.compileDouble(time));
   }
   
@@ -774,10 +705,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double arccsch(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double arccsch(ASTNodeObject userObject, double time) {
     return Maths.arccsch(userObject.compileDouble(time));
   }
   
@@ -786,22 +715,18 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double arccsc(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double arccsc(ASTNodeObject userObject, double time) {
     return Maths.arccsc(userObject.compileDouble(time));
   }
   
   /**
    * 
-   * @paam userObject
+   * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double arccoth(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double arccoth(ASTNodeObject userObject, double time) {
     return Maths.arccoth(userObject.compileDouble(time));
   }
   
@@ -810,10 +735,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double arccot(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double arccot(ASTNodeObject userObject, double time) {
     double argument = userObject.compileDouble(time);
     return Maths.arccot(argument);
   }
@@ -823,10 +746,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double arccosh(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double arccosh(ASTNodeObject userObject, double time) {
     return Maths.arccosh(userObject.compileDouble(time));
   }
   
@@ -835,10 +756,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double arccos(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double arccos(ASTNodeObject userObject, double time) {
     return Math.acos(userObject.compileDouble(time));
   }
   
@@ -847,9 +766,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double abs(ASTNodeObject userObject, double time) throws SBMLException {
+  public double abs(ASTNodeObject userObject, double time) {
     return Math.abs(userObject.compileDouble(time));
   }
   
@@ -877,7 +795,7 @@ public class ASTNodeInterpreterWithTime {
     String timeUnits, double time) {
     //TODO: Delay for arbitrary expressions.
     double delayTime = delay.compileDouble(time);
-    if(delayTime == 0) {
+    if (delayTime == 0) {
       return x.compileDouble(time);
     }
     double valueTime = symbolTime(delayName) - delayTime;
@@ -900,7 +818,7 @@ public class ASTNodeInterpreterWithTime {
    * @return
    */
   public double frac(int numerator, int denominator) {
-    return ((double)numerator / (double)denominator);
+    return (numerator / ((double) denominator));
   }
   
   /**
@@ -909,10 +827,8 @@ public class ASTNodeInterpreterWithTime {
    * @param right
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double frac(ASTNodeObject left, ASTNodeObject right, double time)
-    throws SBMLException {
+  public double frac(ASTNodeObject left, ASTNodeObject right, double time) {
     return (left.compileDouble(time) / right.compileDouble(time));
   }
   
@@ -922,10 +838,8 @@ public class ASTNodeInterpreterWithTime {
    * @param size
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double times(List<ASTNodeObject> nodes, int size, double time)
-    throws SBMLException {
+  public double times(List<ASTNodeObject> nodes, int size, double time) {
     if (size == 0) {
       return (0d);
     } else {
@@ -944,10 +858,8 @@ public class ASTNodeInterpreterWithTime {
    * @param size
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double minus(List<ASTNodeObject> nodes, int size, double time)
-    throws SBMLException {
+  public double minus(List<ASTNodeObject> nodes, int size, double time) {
     
     double value = 0d;
     if (size > 0) {
@@ -965,10 +877,8 @@ public class ASTNodeInterpreterWithTime {
    * @param size
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double plus(List<ASTNodeObject> nodes, int size, double time)
-    throws SBMLException {
+  public double plus(List<ASTNodeObject> nodes, int size, double time) {
     double value = 0d;
     for (int i = 0; i != size; i++) {
       value += nodes.get(i).compileDouble(time);
@@ -982,16 +892,14 @@ public class ASTNodeInterpreterWithTime {
    * @param right
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double pow(ASTNodeObject left, ASTNodeObject right, double time)
-    throws SBMLException {
+  public double pow(ASTNodeObject left, ASTNodeObject right, double time) {
     double l = left.compileDouble(time);
     double r = right.compileDouble(time);
     double result = Math.pow(Math.abs(l), r);
-    if(l<0) {
-      double sign=Math.pow(-1, r);
-      if(Double.isNaN(sign)) {
+    if (l < 0) {
+      double sign = Math.pow(-1, r);
+      if (Double.isNaN(sign)) {
         sign = -1;
         logger.warning("Power with negative base and non-integer exponent encountered.");
       }
@@ -1016,10 +924,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double sqrt(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double sqrt(ASTNodeObject userObject, double time) {
     return Math.sqrt(userObject.compileDouble(time));
   }
  
@@ -1028,10 +934,8 @@ public class ASTNodeInterpreterWithTime {
    * @param userObject
    * @param time
    * @return
-   * @throws SBMLException
    */
-  public double uMinus(ASTNodeObject userObject, double time)
-    throws SBMLException {
+  public double uMinus(ASTNodeObject userObject, double time) {
     return (-userObject.compileDouble(time));
   }
 

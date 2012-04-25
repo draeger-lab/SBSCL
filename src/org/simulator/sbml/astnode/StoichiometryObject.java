@@ -1,17 +1,18 @@
 /*
- * $Id$ $URL:
- * StoichiometryObject.java $
- * --------------------------------------------------------------------- This
- * file is part of SBMLsimulator, a Java-based simulator for models of
- * biochemical processes encoded in the modeling language SBML.
- * 
+ * $Id$ 
+ * $URL$
+ * ---------------------------------------------------------------------
+ * This file is part of Simulation Core Library, a Java-based library
+ * for efficient numerical simulation of biological models.
+ *
  * Copyright (C) 2007-2012 by the University of Tuebingen, Germany.
- * 
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation. A copy of the license agreement is provided in the file
- * named "LICENSE.txt" included with this software distribution and also
- * available online as <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation. A copy of the license
+ * agreement is provided in the file named "LICENSE.txt" included with
+ * this software distribution and also available online as
+ * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
 package org.simulator.sbml.astnode;
@@ -20,262 +21,266 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.simulator.sbml.EfficientASTNodeInterpreter;
 import org.simulator.sbml.ValueHolder;
 
 /**
- * Computes for a species reference with a stoichiometry occuring in some reaction the stoichiometry and the change of the corresponding species that is caused by the reaction.
+ * Computes for a {@link SpeciesReference} with a stoichiometry occuring in some
+ * {@link Reaction} the stoichiometry and the change of the corresponding
+ * {@link Species} that is caused by the {@link Reaction}.
+ * 
  * @author Roland Keller
  * @version $Rev$
  */
 public class StoichiometryObject {
-  /**
-   * The value of the stoichiometry.
-   */
+	/**
+	 * The value of the stoichiometry.
+	 */
 	private double stoichiometry;
-	
+
 	/**
 	 * The current ASTNode time
 	 */
-  private double time;
-  
-  /**
-   * The index of the corresponding species in the Y vector of the value holder
-   */
-  private int speciesIndex;
-  
-  /**
-   * The index of the corresponding species reference in the Y vector of the value holder (if any), -1 if not existing
-   */
-  private int speciesRefIndex;
-  
-  /**
-   * Is the stoichiometry constant over time?
-   */
-  private boolean constantStoichiometry;
-  
-  /**
-   * Is the corresponding species constant over time?
-   */
-  private boolean constantQuantity;
-  
-  /**
-   * Is the boundaryCondition of the corresponding species set?
-   */
-  private boolean boundaryCondition;
-  
-  /**
-   * Is the StoichiometryMath of the species reference set?
-   */
-  private boolean isSetStoichiometryMath;
-  
-  /**
-   * The index of the compartment of the corresponding species
-   */
-  private int compartmentIndex;
-  
-  /**
-   * The value holder that stores the current simulation results. 
-   */
-  protected ValueHolder valueHolder;
-  
-  /**
-   * The math of the kinetic law of the reaction
-   */
-  private ASTNode math;
-  
-  /**
-   * The id of the species reference
-   */
-  private String id;
-  
-  /**
-   * The species reference
-   */
-  private SpeciesReference sr;
-  
-  /**
-   * The map of the species references that are contained in rules with their values
-   */
-  private Map<String, Double> stoichiometricCoefHash;
-  
-  /**
-   * The Y vector of the value holder
-   */
-  private double[] Y;
-  
-  /**
-   * The node interpreter for calculating the values of the ASTNodes
-   */
-  private EfficientASTNodeInterpreter nodeInterpreter;
-  
-  /**
-   * The index of the reaction in vector v in the computeChange function
-   */
-  private int reactionIndex;
-  
-  /**
-   * This flag is true if the corresponding species is a reactant in the reaction and false if it is a product. 
-   */
-  private boolean isReactant;
-  
-  /**
-   * This flag is true if the unit of the species is given in mol/volume, which means that it has to be considered in the change rate that should
-   * always be only in mol/time
-   */
-  private boolean inConcentration;
-  
-  /**
-   * Has the stoichiometry already been calculated? (important in the case of constant stoichiometry)
-   */
-  private boolean stoichiometrySet;
-  
-  /**
-   * 
-   * @param sr
-   * @param speciesIndex
-   * @param speciesRefIndex
-   * @param compartmentIndex
-   * @param stoichiometricCoefHash
-   * @param valueHolder
-   * @param Y
-   * @param nodeInterpreter
-   * @param reactionIndex
-   * @param inConcentrationSet
-   * @param isReactant
-   */
-  @SuppressWarnings("deprecation")
-  public StoichiometryObject(SpeciesReference sr, int speciesIndex,
-    int speciesRefIndex, int compartmentIndex, Map<String, Double> stoichiometricCoefHash, ValueHolder valueHolder,
-    double[] Y, EfficientASTNodeInterpreter nodeInterpreter, int reactionIndex,
-    Set<String> inConcentrationSet, boolean isReactant) {
-    this.isSetStoichiometryMath = sr.isSetStoichiometryMath();
-    this.valueHolder=valueHolder;
-    this.compartmentIndex=compartmentIndex;
-    if (isSetStoichiometryMath) {
-      math = sr.getStoichiometryMath().getMath();
-    }
-    this.sr = sr;
-    this.reactionIndex = reactionIndex;
-    this.id = sr.getId();
-    this.speciesIndex = speciesIndex;
-    this.speciesRefIndex = speciesRefIndex;
-    this.constantStoichiometry = false;
-    if(sr.isSetConstant()) {
-      constantStoichiometry = sr.getConstant();
-    }
-    else if ((!sr.isSetId()) && (!isSetStoichiometryMath)) {
-      constantStoichiometry = true;
-    }
-    this.boundaryCondition = false;
-    this.constantQuantity = false;
-    this.inConcentration=false;
-    Species s = sr.getSpeciesInstance();
-    if (s != null) {
-      if (s.getBoundaryCondition()) {
-        this.boundaryCondition = true;
-      }
-      if (s.getConstant()) {
-        this.constantQuantity = true;
-      }
-      if(inConcentrationSet.contains(s.getId())) {
-        inConcentration=true;
-      }
-    }
-    this.stoichiometricCoefHash = stoichiometricCoefHash;
-    this.Y = Y;
-    this.nodeInterpreter = nodeInterpreter;
-    this.time = Double.NaN;
-    this.isReactant = isReactant;
-    
-    computeStoichiometricValue();
-  }
-  
-  /**
-   * Computes the change resulting for the corresponding species in this reaction at the current time and stores it at the correct position in the changeRate array.
-   * @param currentTime
-   * @param changeRate
-   * @param v
-   */
-  public void computeChange(double currentTime, double[] changeRate, double[] v) {
-    if ((constantStoichiometry == false) || (stoichiometrySet == false)) {
-      compileDouble(currentTime);
-    }
-    double value;
-    if (constantQuantity || boundaryCondition) {
-      value = 0;
-    } else if (isReactant) {
-      value= - 1 * stoichiometry * v[reactionIndex];
-    } else {
-      value = stoichiometry * v[reactionIndex];
-    }
-    
-    // When the unit of reacting species is given mol/volume
-    // then it has to be considered in the change rate that should
-    // always be only in mol/time
-    if (inConcentration) {
-      value = value
-          / valueHolder.getCurrentValueOf(compartmentIndex);
-    }
-    changeRate[speciesIndex] += value;
-    
-  }
-  
-  /**
-   * Computes the value of the stoichiometry at the current time if it has not been computed yet or is not constant.
-   * @param time
-   * @return
-   */
-  private double compileDouble(double time) {
-    if (this.time != time) {
-      this.time = time;
-      if (!constantStoichiometry || (time <= 0d) || !stoichiometrySet) {
-        computeStoichiometricValue();
-      }
-    }
-    return stoichiometry;
-  }
-  
-  /**
-   * Computes the value of the stoichiometry.
-   */
-  private void computeStoichiometricValue() {
-    if (speciesRefIndex >= 0) {
-      stoichiometry = Y[speciesRefIndex];
-      stoichiometricCoefHash.put(id, stoichiometry);
-      stoichiometrySet=true;
-    } else if (stoichiometricCoefHash != null
-        && stoichiometricCoefHash.containsKey(id)) {
-      stoichiometry = stoichiometricCoefHash.get(id);
-      stoichiometrySet=true;
-    } else {
-      if (isSetStoichiometryMath) {
-        stoichiometry = nodeInterpreter.compileDouble(math);
-        stoichiometrySet=true;
-      } else if ((!sr.isSetStoichiometry()) && (sr.getLevel() >= 3)) {
-        stoichiometry = 1d;
-        stoichiometrySet=false;
-      } else {
-        stoichiometry = sr.getCalculatedStoichiometry();
-        if(id.equals("")) {
-          stoichiometrySet=true;
-        }
-        else {
-          stoichiometrySet=false;
-        }
-      }
-    }
-    
-    
-  }
-  
-  /**
-   * Refreshes the stoichiometry.
-   */
-  public void refresh() {
-    this.computeStoichiometricValue();
-  }
+	private double time;
+
+	/**
+	 * The index of the corresponding species in the Y vector of the value holder
+	 */
+	private int speciesIndex;
+
+	/**
+	 * The index of the corresponding species reference in the Y vector of the value holder (if any), -1 if not existing
+	 */
+	private int speciesRefIndex;
+
+	/**
+	 * Is the stoichiometry constant over time?
+	 */
+	private boolean constantStoichiometry;
+
+	/**
+	 * Is the corresponding species constant over time?
+	 */
+	private boolean constantQuantity;
+
+	/**
+	 * Is the boundaryCondition of the corresponding species set?
+	 */
+	private boolean boundaryCondition;
+
+	/**
+	 * Is the StoichiometryMath of the species reference set?
+	 */
+	private boolean isSetStoichiometryMath;
+
+	/**
+	 * The index of the compartment of the corresponding species
+	 */
+	private int compartmentIndex;
+
+	/**
+	 * The value holder that stores the current simulation results. 
+	 */
+	protected ValueHolder valueHolder;
+
+	/**
+	 * The math of the kinetic law of the reaction
+	 */
+	private ASTNode math;
+
+	/**
+	 * The id of the species reference
+	 */
+	private String id;
+
+	/**
+	 * The species reference
+	 */
+	private SpeciesReference sr;
+
+	/**
+	 * The map of the species references that are contained in rules with their values
+	 */
+	private Map<String, Double> stoichiometricCoefHash;
+
+	/**
+	 * The Y vector of the value holder
+	 */
+	private double[] Y;
+
+	/**
+	 * The node interpreter for calculating the values of the ASTNodes
+	 */
+	private EfficientASTNodeInterpreter nodeInterpreter;
+
+	/**
+	 * The index of the reaction in vector v in the computeChange function
+	 */
+	private int reactionIndex;
+
+	/**
+	 * This flag is true if the corresponding species is a reactant in the reaction and false if it is a product. 
+	 */
+	private boolean isReactant;
+
+	/**
+	 * This flag is true if the unit of the species is given in mol/volume, which means that it has to be considered in the change rate that should
+	 * always be only in mol/time
+	 */
+	private boolean inConcentration;
+
+	/**
+	 * Has the stoichiometry already been calculated? (important in the case of constant stoichiometry)
+	 */
+	private boolean stoichiometrySet;
+
+	/**
+	 * 
+	 * @param sr
+	 * @param speciesIndex
+	 * @param speciesRefIndex
+	 * @param compartmentIndex
+	 * @param stoichiometricCoefHash
+	 * @param valueHolder
+	 * @param Y
+	 * @param nodeInterpreter
+	 * @param reactionIndex
+	 * @param inConcentrationSet
+	 * @param isReactant
+	 */
+	@SuppressWarnings("deprecation")
+	public StoichiometryObject(SpeciesReference sr, int speciesIndex,
+			int speciesRefIndex, int compartmentIndex, Map<String, Double> stoichiometricCoefHash, ValueHolder valueHolder,
+			double[] Y, EfficientASTNodeInterpreter nodeInterpreter, int reactionIndex,
+			Set<String> inConcentrationSet, boolean isReactant) {
+		this.isSetStoichiometryMath = sr.isSetStoichiometryMath();
+		this.valueHolder=valueHolder;
+		this.compartmentIndex=compartmentIndex;
+		if (isSetStoichiometryMath) {
+			math = sr.getStoichiometryMath().getMath();
+		}
+		this.sr = sr;
+		this.reactionIndex = reactionIndex;
+		this.id = sr.getId();
+		this.speciesIndex = speciesIndex;
+		this.speciesRefIndex = speciesRefIndex;
+		this.constantStoichiometry = false;
+		if(sr.isSetConstant()) {
+			constantStoichiometry = sr.getConstant();
+		}
+		else if ((!sr.isSetId()) && (!isSetStoichiometryMath)) {
+			constantStoichiometry = true;
+		}
+		this.boundaryCondition = false;
+		this.constantQuantity = false;
+		this.inConcentration=false;
+		Species s = sr.getSpeciesInstance();
+		if (s != null) {
+			if (s.getBoundaryCondition()) {
+				this.boundaryCondition = true;
+			}
+			if (s.getConstant()) {
+				this.constantQuantity = true;
+			}
+			if(inConcentrationSet.contains(s.getId())) {
+				inConcentration=true;
+			}
+		}
+		this.stoichiometricCoefHash = stoichiometricCoefHash;
+		this.Y = Y;
+		this.nodeInterpreter = nodeInterpreter;
+		this.time = Double.NaN;
+		this.isReactant = isReactant;
+
+		computeStoichiometricValue();
+	}
+
+	/**
+	 * Computes the change resulting for the corresponding species in this reaction at the current time and stores it at the correct position in the changeRate array.
+	 * @param currentTime
+	 * @param changeRate
+	 * @param v
+	 */
+	public void computeChange(double currentTime, double[] changeRate, double[] v) {
+		if ((constantStoichiometry == false) || (stoichiometrySet == false)) {
+			compileDouble(currentTime);
+		}
+		double value;
+		if (constantQuantity || boundaryCondition) {
+			value = 0;
+		} else if (isReactant) {
+			value= - 1 * stoichiometry * v[reactionIndex];
+		} else {
+			value = stoichiometry * v[reactionIndex];
+		}
+
+		// When the unit of reacting species is given mol/volume
+		// then it has to be considered in the change rate that should
+		// always be only in mol/time
+		if (inConcentration) {
+			value = value
+					/ valueHolder.getCurrentValueOf(compartmentIndex);
+		}
+		changeRate[speciesIndex] += value;
+
+	}
+
+	/**
+	 * Computes the value of the stoichiometry at the current time if it has not been computed yet or is not constant.
+	 * @param time
+	 * @return
+	 */
+	private double compileDouble(double time) {
+		if (this.time != time) {
+			this.time = time;
+			if (!constantStoichiometry || (time <= 0d) || !stoichiometrySet) {
+				computeStoichiometricValue();
+			}
+		}
+		return stoichiometry;
+	}
+
+	/**
+	 * Computes the value of the stoichiometry.
+	 */
+	private void computeStoichiometricValue() {
+		if (speciesRefIndex >= 0) {
+			stoichiometry = Y[speciesRefIndex];
+			stoichiometricCoefHash.put(id, stoichiometry);
+			stoichiometrySet=true;
+		} else if (stoichiometricCoefHash != null
+				&& stoichiometricCoefHash.containsKey(id)) {
+			stoichiometry = stoichiometricCoefHash.get(id);
+			stoichiometrySet=true;
+		} else {
+			if (isSetStoichiometryMath) {
+				stoichiometry = nodeInterpreter.compileDouble(math);
+				stoichiometrySet=true;
+			} else if ((!sr.isSetStoichiometry()) && (sr.getLevel() >= 3)) {
+				stoichiometry = 1d;
+				stoichiometrySet=false;
+			} else {
+				stoichiometry = sr.getCalculatedStoichiometry();
+				if(id.equals("")) {
+					stoichiometrySet=true;
+				}
+				else {
+					stoichiometrySet=false;
+				}
+			}
+		}
+
+
+	}
+
+	/**
+	 * Refreshes the stoichiometry.
+	 */
+	public void refresh() {
+		this.computeStoichiometricValue();
+	}
   
 }
