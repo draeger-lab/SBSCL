@@ -36,6 +36,10 @@ commentstyle=\ttfamily\itshape\color{forrestgreen}
 \newcommand{\AbstractDESSolver}{\texttt{Abstract\-DES\-Solver}}
 \newcommand{\OverdeterminationValidator}{\texttt{Overdetermination\-Validator}}
 \newcommand{\SBMLinterpreter}{\texttt{SBML\-interpreter}}
+\newcommand{\FirstOrderSolver}{\texttt{First\-Order\-Solver}}
+\newcommand{\AbstractIntegrator}{\texttt{AbstractIntegrator}}
+\newcommand{\MultiTable}{\texttt{Multi\-Table}}
+\newcommand{\Block}{\texttt{Block}}
 
 \hyphenation{
   % TODO hypens for regular words
@@ -59,14 +63,19 @@ Andreas Dr\"ager\,$^{1,*}$, Roland Keller\,$^{1}$,
 Alexander D\"orr\,$^{1}$,
 Akito Tabira\,$^{2}$,
 Akira Funahashi\,$^{2}$,
-\TODO{Nicolas Rodriguez\,$^{3}$,
-Nicolas Le Nov\`{e}re\,$^{3}$} and
+\TODO{%
+Michael J. Ziller\,$^{3}$
+Nicolas Rodriguez\,$^{4}$,
+Nicolas Le Nov\`{e}re\,$^{4}$} and
 Andreas Zell\,$^1$\footnote{to whom correspondence should be addressed}}
 \address{$^{1}$Center for Bioinformatics Tuebingen (ZBIT), University of
 Tuebingen, T\"ubingen, Germany\\
 $^{2}$Keio University, Graduate School of Science and Technology, Yokohama,
 Japan\\
-\TODO{$^{3}$European Bioinformatics Institute, Wellcome Trust Genome Campus,
+\TODO{%
+$^{3}$Department of Stem Cell and Regenerative Biology, Harvard University,
+Cambridge, MA, United States\\
+$^{4}$European Bioinformatics Institute, Wellcome Trust Genome Campus,
 Hinxton, Cambridge, UK\\}}
 
 \history{Received on XXXXX; revised on XXXXX; accepted on XXXXX}
@@ -78,34 +87,33 @@ Hinxton, Cambridge, UK\\}}
 \begin{abstract}
 
 \section{Motivation:}
-The Systems Biology Markup Language (SBML) has been designed as a medium for the
-exchange of quantitative models of biological networks. To this end, SBML
-defines a rich set of methods to specify differential equation systems for
-these networks. As an XML-based standard, however, models encoded in SBML
-require the availability of suitable software implementations in order to
-perform computer simulations and further analyses. Many solvers for SBML have
-been implemented and are available, but the vast majority of these is either
+Following the aim to make biological phenomena predictable, modeling, 
+simulation, and computer analysis of biological networks has become an integral
+part of modern biological research. XML-based standard description languages
+such as the Systems Biology Markup Language (SBML) or CellML specify rich sets
+of methods for the interpretation of biological network models in terms of a
+differential equation system with additional events and rules.
+Although libraries for reading and manipulating the information content of
+these XML-based languages are available, a multiple-purpose and 
+efficient numerical solver library that has been designed with respect to the
+requirements of biological network models is a crucical prerequisite. 
+The vast majority of available solvers for these systems is either
 part of a larger software suite and can therefore not be easily integrated into
 custom programs, or implemented in programing languages, which are either
 platform-dependent or even require a commercial license for their
 execution.
 
 \section{Results:}
-
-\TODO{The SBML Simulation Core Library provides an efficient and exhaustive
-Java\texttrademark{} implementation of methods to interpret the content of
-models encoded in the Systems Biology Markup Language (SBML) and its numerical
-solution. This library is based on the JSBML project and can be used on every
-operating system for which a Java Virtual Machine is available.}
-
-We here present the SBML Simulation Core library, an exhaustive implementation
-of the SBML standard for numerical calculation and network simulation in form of
-an application programming library for the Java\texttrademark{} programming
-language. This library has been implemented as a community-driven project. Its
-designe has the potential to be extended for the simulation of further
-standard network formats in systems biology. It does not depend on any
-commercial library and is entirely written in Java without the necessity to
-include any platform-dependent wrappers or libraries. To demonstrate its
+The Simulation Core Library provides a large
+collection of numerical solvers and a sophisticated interface hierarchy for the definition of custom
+differential equation systems. It is entirely
+implemented in Java\texttrademark{} without the necessity to
+include any platform-dependent wrappers or libraries, does not depend on any
+commercial library, and can be used on every operating system for which a Java
+Virtual Machine is available.
+It already includes an efficient and exhaustive implementation of methods to
+interpret the content of models encoded in the SBML based on the JSBML project.
+To demonstrate its
 capabilities, it has been benchmarked against the entire SBML Test Suite and
 also been used to simulate all models of the BioModels.net database.
 
@@ -115,7 +123,6 @@ be freely obtained under the terms of the LGPL 3.1 from the website
 \href{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator}{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator}.
 
 \section{Contact:}
-\TODO{We need a mailing list for this}
 \href{mailto:andreas.draeger@uni-tuebingen.de}{andreas.draeger@uni-tuebingen.de}
 
 \section{Supplementary information:}
@@ -178,6 +185,40 @@ library.
 
 \begin{methods}
 \section{Implementation}
+\begin{figure*}
+\centerline{
+  \subfloat[Solvers.]{
+    \label{fig:Solvers}
+    \includegraphics[width=.5\textwidth]{img/Solvers.pdf}
+  }
+  \hfill
+  \subfloat[Differential equation systems.]{
+    \label{fig:DESystems}
+    \includegraphics[width=.5\textwidth]{img/DESystems.pdf}
+  }
+}
+\caption[Architecture of the Simulation Core Library]{Architecture of the
+Simulation Core Library. Numerical methods are strictly separated from
+differential equation systems. Fig.~\ref{fig:Solvers} displays the unified type
+hierarchy of all numberical integration methods, which are currently part of the
+library, including solvers from Appache Commons Math library and Rosenbrock's
+method. The class \MultiTable{} stores the results of a simulation within its
+\Block{} data structures. Fig.~\ref{fig:DESystems} shows the interfaces that
+define several special types of the differential equations to be solved by the
+numerical methods. This abstract description makes it possible to describe
+various types of differntial equation systems without directly linking it to a
+particular type of biological networks. The class \SBMLinterpreter{} implments
+all of these interfaces with respect to the information content of a given SBML
+model. The interpreter causes the main run-time of the integration procedure.
+This is why efficient and clearly organized data structures are required to
+ensure a high performance of the overal library. The interpretation of SBML
+models is therefore organized in the evaluation of events and rules, the
+computation of stoichiometric information, and the computation of the current
+values of all model components.
+In this way it is possible to pass an instance of an interpreter for a
+particular model system, such as SBML or CellML, to any available solver.}
+\label{fig:Architecture}
+\end{figure*}
 In this API a large collection of differential equation solvers and an
 interpreter for SBML are provided. The solvers and the interpretation of SBML
 are independent of each other.
@@ -192,13 +233,14 @@ for solving stiff differential equation systems.
 The class \SBMLinterpreter{} stores and processes a given SBML model. For a given
 value of the ODE system and a given time it returns the current set of
 derivatives of the variables. It is connected to an efficient
-interpreter for MathML expressions that are contained in kinetic laws, rules and events. The nodes of the syntax tree of
-those expressions depend on the current simulation time and the given values of
-the ODE system. If the time or any of these values has changed, the value of
-the node has to be recalculated. At the beginning of the simulation the syntax
-trees of all kinetic laws, rules and events are restructured and merged to one
-large tree that contains equivalent nodes only once. This leads to a decreasing
-computation time during the simulation.
+interpreter for MathML expressions that are contained in kinetic laws, rules
+and events. The nodes of the syntax tree of those expressions depend on the
+current simulation time and the given values of the ODE system. If the time or
+any of these values has changed, the value of the node has to be recalculated.
+At the beginning of the simulation the syntax trees of all kinetic laws, rules
+and events are restructured and merged to one large tree that contains
+equivalent nodes only once. This leads to a decreasing computation time during
+the simulation.
 
 An extremely important aspect in the interpretation of SBML models is the
 determination of the exact time at which an event occurs, as this can have a
@@ -241,13 +283,6 @@ models of the test suite are simulated correctly and all but three models of the
 %\end{table}
 
 
-
-%\begin{figure}[!tpb]%figure1
-%%\centerline{\includegraphics{fig01.eps}}
-%\caption{Caption, caption.}\label{fig:01}
-%\end{figure}
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %     please remove the " % " symbol from \centerline{\includegraphics{fig01.eps}}
@@ -272,7 +307,6 @@ Yodpinyanee, Andres Perez, Eric Doi, Richard Mehlinger, Steven Ehrlich, Martin
 Hunt, George Tucker, Peter Scherpelz, Aaron Becker, Eric Harley, and Chris
 Moore, Harvey Mudd College, Claremont, California, USA, for providing an
 Java implementation of Rosenbrock's numerical ODE solver.
-\TODO{Also: Marcel Kronfeld, Michael Ziller, Dieudonn\'e M. Wouamba}
 
 \paragraph{Funding\textcolon} 
 The Federal Ministry of Education and Research (BMBF, Germany) in the project
