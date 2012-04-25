@@ -1,19 +1,18 @@
 /*
- * $Id$ $URL:
- * https:/
- * /sbml-simulator.svn.sourceforge.net/svnroot/sbml-simulator/trunk/src/org
- * /sbml/simulator/math/ASTNodeInterpreter.java $
- * --------------------------------------------------------------------- This
- * file is part of SBMLsimulator, a Java-based simulator for models of
- * biochemical processes encoded in the modeling language SBML.
- * 
+ * $Id$ 
+ * $URL$
+ * ---------------------------------------------------------------------
+ * This file is part of Simulation Core Library, a Java-based library
+ * for efficient numerical simulation of biological models.
+ *
  * Copyright (C) 2007-2012 by the University of Tuebingen, Germany.
- * 
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation. A copy of the license agreement is provided in the file
- * named "LICENSE.txt" included with this software distribution and also
- * available online as <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation. A copy of the license
+ * agreement is provided in the file named "LICENSE.txt" included with
+ * this software distribution and also available online as
+ * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
 package org.simulator.sbml;
@@ -43,6 +42,7 @@ import org.sbml.jsbml.util.compilers.ASTNodeValue;
 
 /**
  * This class is a more efficient implementation of an {@linkASTNodeCompiler}. 
+ * 
  * @author Roland Keller
  * @author Andreas Dr&auml;ger
  * @version $Rev$

@@ -21,47 +21,49 @@
 package org.simulator.math;
 
 /**
+ * <p>
  * Class used to perform matrix operations, focusing on finding vector solutions
  * to the vector equation F(x) = 0.
- * 
+ * <p>
  * TODO: Add calculation of eigenvectors. This isn't hard to implement as we've
  * already calculated the eigenvalues and this means all we need to do is solve
  * for x in the matrix equation (A-lambda*I)*x = 0. However, if we have complex
  * eigenvalues then we have a problem. Java doesn't have complex number support
  * natively.
- * 
+ * <h1>
  * Class method summary:
- * 
- * --------------------------------------------------------------------------
+ * </h1>
+ * <b>
  * Numerical Methods. Only call these directly if you know what you're doing.
- * --------------------------------------------------------------------------
- * mnewt - Uses a straightforward Newton-Rhapson method to compute the
+ * </b>
+ * <ul>
+ * <li>mnewt - Uses a straightforward Newton-Rhapson method to compute the
  * equilibrium solution iteratively starting at a reasonably close guess.
- * 
- * ludcmp - Performs LU decomposition of a matrix (A = L*U) to prepare it for
+ * </li>
+ * <li>ludcmp - Performs LU decomposition of a matrix (A = L*U) to prepare it for
  * solving the linear equation A*x=B for x.
- * 
- * lubksb - Performs back substitution on an LU decomposed matrix to solve the
+ * </li>
+ * <li>lubksb - Performs back substitution on an LU decomposed matrix to solve the
  * linear equation A*x=B for x.
- * 
- * fdjac - Numerically approximates the jacobian for a system of equations using
+ * </li>
+ * <li>fdjac - Numerically approximates the jacobian for a system of equations using
  * the method of forward differences.
- * 
- * fmin - Not currently used. Computes 1/2 the dot product of a vector function
+ * </li>
+ * <li>fmin - Not currently used. Computes 1/2 the dot product of a vector function
  * with itself at a specified x vector.
+ * </li>
+ * <li>elmhes - Reduces the given matrix to upper Hessenberg form.
+ * </ul>
  * 
- * elmhes - Reduces the given matrix to upper Hessenberg form.
- * 
- * --------------------------------------------------------------------------
- * Utility Functions. Call these methods!.
- * --------------------------------------------------------------------------
- * 
- * 
+ * <h1>
+ * Utility Functions. Call these methods!
+ * </h1>
+ * <p>
  * Notes: The majority of the code in this class comes from Numerical Recipes in
  * C, 2nd Edition. The code was translated from C to Java by Eric Harley. Mostly
  * this amounted to figuring out how to deal with function pointers to user
  * defined functions and re-indexing things starting at 0 instead of 1.
- * 
+ * <p>
  * References: _Numerical Recipies in C_ (2nd Edition) by Press, Teutolsky,
  * Vetterling, and Flannery Cambridge University Press, 1992
  * 

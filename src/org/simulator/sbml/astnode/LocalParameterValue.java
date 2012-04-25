@@ -1,7 +1,7 @@
 /*
  * ---------------------------------------------------------------------
- * This file is part of Simulation Core Library, a Java-based library
- * for efficient numerial simulation of biological models.
+ * This file is part of the Simulation Core Library, a Java-based
+ * library for efficient numerical simulation of biological models.
  *
  * Copyright (C) 2007-2012 by the University of Tuebingen, Germany.
  *
@@ -31,60 +31,57 @@ import org.sbml.jsbml.util.TreeNodeChangeListener;
  * @since 1.0
  */
 public class LocalParameterValue extends ASTNodeObject implements TreeNodeChangeListener {
-  /**
-   * The corresponding local parameter
-   */
+	
+	/**
+	 * The corresponding local parameter
+	 */
 	protected LocalParameter lp;
 
-  /**
-   * 
-   * @param interpreter
-   * @param node
-   * @param lp
-   */
-  public LocalParameterValue(ASTNodeInterpreterWithTime interpreter, ASTNode node,
-    LocalParameter lp) {
-    super(interpreter, node);
-    this.lp=lp;
-    lp.addTreeNodeChangeListener(this);
-    doubleValue=lp.getValue();
-    isDouble=true;
-  }
-  
-  /*
-   * (non-Javadoc)
-   * @see org.sbml.simulator.math.astnode.ASTNodeObject#compileDouble(double)
-   */
-  public double compileDouble(double time) {
-    this.time=time;
-    return doubleValue;
-  }
+	/**
+	 * 
+	 * @param interpreter
+	 * @param node
+	 * @param lp
+	 */
+	public LocalParameterValue(ASTNodeInterpreterWithTime interpreter, ASTNode node,
+			LocalParameter lp) {
+		super(interpreter, node);
+		this.lp = lp;
+		lp.addTreeNodeChangeListener(this);
+		doubleValue=lp.getValue();
+		isDouble=true;
+	}
 
-  /*
-   * (non-Javadoc)
-   * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-   */
-  public void propertyChange(PropertyChangeEvent evt) {
-    String property = evt.getPropertyName();
-    
-    
-    if ("value".equals(property)) {
-      doubleValue = (Double) evt.getNewValue();
-    }
-  }
+	/* (non-Javadoc)
+	 * @see org.sbml.simulator.math.astnode.ASTNodeObject#compileDouble(double)
+	 */
+	@Override
+	public double compileDouble(double time) {
+		this.time=time;
+		return doubleValue;
+	}
 
-  /*
-   * (non-Javadoc)
-   * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeAdded(javax.swing.tree.TreeNode)
-   */
-  public void nodeAdded(TreeNode node) {
-    
-  }
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent evt) {
+		String property = evt.getPropertyName();
 
-  /*
-   * (non-Javadoc)
-   * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeRemoved(javax.swing.tree.TreeNode)
-   */
-  public void nodeRemoved(TreeNode node) {
-  }
+		if ("value".equals(property)) {
+			doubleValue = (Double) evt.getNewValue();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeAdded(javax.swing.tree.TreeNode)
+	 */
+	public void nodeAdded(TreeNode node) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeRemoved(javax.swing.tree.TreeNode)
+	 */
+	public void nodeRemoved(TreeNode node) {
+	}
+
 }

@@ -29,7 +29,7 @@ import org.simulator.math.MatrixOperations;
 import org.simulator.math.MatrixOperations.MatrixException;
 
 /**
- * RosenbrockSolver implements the Rosenbrock method to approximate ODE
+ * An implementation of Rosenbrock's method to approximate ODE
  * solutions.
  * <p>
  * References: William H. Press, Saul A. Teukolsky, William T. Vetterling, and
