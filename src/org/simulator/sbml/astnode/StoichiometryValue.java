@@ -19,8 +19,6 @@ package org.simulator.sbml.astnode;
 
 import java.util.Map;
 import java.util.Set;
-
-import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
@@ -89,11 +87,6 @@ public class StoichiometryValue {
 	protected ValueHolder valueHolder;
 
 	/**
-	 * The math of the kinetic law of the reaction
-	 */
-	private ASTNode math;
-
-	/**
 	 * The id of the species reference
 	 */
 	private String id;
@@ -114,9 +107,9 @@ public class StoichiometryValue {
 	private double[] Y;
 
 	/**
-	 * The node interpreter for calculating the values of the ASTNodes
+	 * The value of the stoichiometry math
 	 */
-	private EfficientASTNodeInterpreter nodeInterpreter;
+	private ASTNodeValue stoichiometryMathValue;
 
 	/**
 	 * The index of the reaction in vector v in the computeChange function
@@ -150,22 +143,18 @@ public class StoichiometryValue {
 	 * @param stoichiometricCoefHash
 	 * @param valueHolder
 	 * @param Y
-	 * @param nodeInterpreter
+	 * @param null
 	 * @param reactionIndex
 	 * @param inConcentrationSet
 	 * @param isReactant
 	 */
-	@SuppressWarnings("deprecation")
 	public StoichiometryValue(SpeciesReference sr, int speciesIndex,
 			int speciesRefIndex, int compartmentIndex, Map<String, Double> stoichiometricCoefHash, ValueHolder valueHolder,
-			double[] Y, EfficientASTNodeInterpreter nodeInterpreter, int reactionIndex,
+			double[] Y, ASTNodeValue stoichiometryMathValue, int reactionIndex,
 			Set<String> inConcentrationSet, boolean isReactant) {
 		this.isSetStoichiometryMath = sr.isSetStoichiometryMath();
 		this.valueHolder=valueHolder;
 		this.compartmentIndex=compartmentIndex;
-		if (isSetStoichiometryMath) {
-			math = sr.getStoichiometryMath().getMath();
-		}
 		this.sr = sr;
 		this.reactionIndex = reactionIndex;
 		this.id = sr.getId();
@@ -195,7 +184,7 @@ public class StoichiometryValue {
 		}
 		this.stoichiometricCoefHash = stoichiometricCoefHash;
 		this.Y = Y;
-		this.nodeInterpreter = nodeInterpreter;
+		this.stoichiometryMathValue = stoichiometryMathValue;
 		this.time = Double.NaN;
 		this.isReactant = isReactant;
 
@@ -264,7 +253,7 @@ public class StoichiometryValue {
 			stoichiometrySet=true;
 		} else {
 			if (isSetStoichiometryMath) {
-				stoichiometry = nodeInterpreter.compileDouble(math);
+				stoichiometry = stoichiometryMathValue.compileDouble(time);
 				stoichiometrySet=true;
 			} else if ((!sr.isSetStoichiometry()) && (sr.getLevel() >= 3)) {
 				stoichiometry = 1d;

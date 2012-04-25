@@ -35,6 +35,7 @@ import org.sbml.jsbml.Assignment;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.CallableSBase;
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.FunctionDefinition;
@@ -244,6 +245,11 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * List of kinetic laws given as ASTNodeObjects
 	 */
 	private List<ASTNodeValue> kineticLawRoots;
+	
+	/**
+	 * List of constraints given as ASTNodeObjects
+	 */
+	private List<ASTNodeValue> constraintRoots;
 
 	/**
 	 * List of all occuring ASTNodes
@@ -279,6 +285,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * List of the assignment rules (as AssignmentRuleObjects)
 	 */
 	private List<AssignmentRuleValue> assignmentRulesRoots;
+	
 
 	/**
 	 * List of the rate rules (as RateRuleObjects)
@@ -555,8 +562,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
 		if ((sr != null) && sr.isSetStoichiometryMath()) {
 			try {
-				return sr.getStoichiometryMath().getMath().compile(nodeInterpreter)
-						.toDouble();
+				return ((ASTNodeValue)sr.getStoichiometryMath().getMath().getUserObject(TEMP_VALUE)).compileDouble(astNodeTime);
 			} catch (SBMLException exc) {
 				logger.log(Level.WARNING, String.format(
 						"Could not compile stoichiometry math of species reference %s.", id),
@@ -896,8 +902,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			 * Check the model's constraints
 			 */
 			for (int i = 0; i < nConstraints; i++) {
-				if (model.getConstraint(i).getMath().compile(nodeInterpreter)
-						.toBoolean()) {
+				if (constraintRoots.get(i).compileBoolean(time)) {
 					listOfContraintsViolations[i].add(Double.valueOf(time));
 				}
 			}
@@ -1209,8 +1214,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				 if (listOfContraintsViolations[i] == null) {
 					 this.listOfContraintsViolations[i] = new LinkedList<Double>();
 				 }
-				 if (model.getConstraint(i).getMath().compile(nodeInterpreter)
-						 .toBoolean()) {
+				 if (constraintRoots.get(i).compileBoolean(astNodeTime)) {
 					 this.listOfContraintsViolations[i].add(Double.valueOf(0d));
 				 }
 			 }
@@ -1259,8 +1263,22 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		stoichiometries.clear();
 
 		initializeKineticLaws();
+		initializeConstraints();
 		initializeRules();
 		initializeEvents();
+	}
+
+	/**
+	 * Includes the math of the constraints in the syntax tree.
+	 */
+	private void initializeConstraints() {
+		constraintRoots = new ArrayList<ASTNodeValue>();
+		for (Constraint c : model.getListOfConstraints()) {
+			ASTNodeValue currentConstraint = (ASTNodeValue) copyAST(c.getMath(),
+				true, null, null).getUserObject(TEMP_VALUE);
+			constraintRoots.add(currentConstraint);
+			c.getMath().putUserObject(TEMP_VALUE, currentConstraint);
+		}
 	}
 
 	/**
@@ -1351,9 +1369,19 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						}
 
 					}
+					//Value for stoichiometry math
+					ASTNodeValue currentMathValue = null;
+					if(speciesRef.isSetStoichiometryMath()) {
+						@SuppressWarnings("deprecation")
+						ASTNode currentMath = speciesRef.getStoichiometryMath().getMath();
+						currentMathValue = (ASTNodeValue) copyAST(currentMath,true, null, null)
+						.getUserObject(TEMP_VALUE);
+						currentMath.putUserObject(TEMP_VALUE, currentMathValue);
+					}
+					
 					stoichiometries.add(new StoichiometryValue(speciesRef, speciesIndex,
 							srIndex, compartmentIndex, stoichiometricCoefHash, this, Y,
-							nodeInterpreter, reactionIndex, inConcentration, true));
+							currentMathValue, reactionIndex, inConcentration, true));
 
 				}
 				for (SpeciesReference speciesRef : r.getListOfProducts()) {
@@ -1379,9 +1407,19 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						}
 
 					}
+				//Value for stoichiometry math
+					ASTNodeValue currentMathValue = null;
+					if(speciesRef.isSetStoichiometryMath()) {
+						@SuppressWarnings("deprecation")
+						ASTNode currentMath = speciesRef.getStoichiometryMath().getMath();
+						currentMathValue = (ASTNodeValue) copyAST(currentMath,true, null, null)
+						.getUserObject(TEMP_VALUE);
+						currentMath.putUserObject(TEMP_VALUE, currentMathValue);
+					}
+					
 					stoichiometries.add(new StoichiometryValue(speciesRef, speciesIndex,
 							srIndex, compartmentIndex, stoichiometricCoefHash, this, Y,
-							nodeInterpreter, reactionIndex, inConcentration, false));
+							currentMathValue, reactionIndex, inConcentration, false));
 
 				}
 
