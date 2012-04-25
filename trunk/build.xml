@@ -87,29 +87,56 @@
       <pathelement path="${uml.dir}/"/>
       <pathelement path="${src}"/>
     </path>
-	  <javadoc sourcepathref="uml.source.path" packagenames="*" package="true" destdir="${uml.dir}">
-	    <doclet name="org.umlgraph.doclet.UmlGraphDoc" path="${lib}/UMLGraph.jar">
-	      <param name="-inferrel"/>
-	      <param name="-inferdep"/>
-	      <param name="-hide" value="java.*"/>
-	      <param name="-collpackages" value="java.util.*"/>
-	      <param name="-qualify"/>
-	      <param name="-postfixpackage"/>
-	      <param name="-nodefontsize" value="9"/>
-	      <param name="-nodefontpackagesize" value="7"/>
-	      <param name="-link" value="http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/doclet/spec"/>
-	      <param name="-link" value="http://java.sun.com/j2se/1.5/docs/api"/>
-	    </doclet>
-	  </javadoc>
-  	  <apply executable="dot" dest="${uml.dir}" parallel="false">
-  	    <arg value="-Tpdf"/>
-  	    <arg value="-o"/>
-  	    <targetfile/>
-  	    <srcfile/>
-  	    <fileset dir="${uml.dir}" includes="*.dot"/>
-  	    <mapper type="glob" from="*.dot" to="*.png"/>
-  	  </apply>
-	</target>
+  	<path id="class.path">
+      <fileset dir="${lib}/">
+        <include name="*.jar"/>
+      </fileset>
+    </path>
+  	<!-- sourcefiles="${src}/org/simulator/math/odes/DESSolver.java,${src}/org/simulator/math/odes/AbstractDESSolver.java,${src}/org/simulator/math/odes/RungeKutta_EventSolver.java,${src}/org/simulator/math/odes/MultiTable.java,${src}/org/simulator/math/odes/EulerMethod.java,${src}/org/simulator/math/odes/AdaptiveStepsizeIntegrator.java,${src}/org/simulator/math/odes/RosenbrockSolver.java,${src}/org/simulator/math/odes/FirstOrderSolver.java,${src}/org/simulator/math/odes/DormandPrince853Solver.java,${src}/org/simulator/math/odes/DormandPrince54Solver.java,${src}/org/simulator/math/odes/AdamsMoultonSolver.java,${src}/org/simulator/math/odes/AdamsBashforthSolver.java,${src}/org/simulator/math/odes/HighamHall54Solver.java,${src}/org/simulator/math/odes/DelayValueHolder.java,${src}/org/simulator/sbml/SBMLinterpreter.java" -->
+	<javadoc  
+		package="true"
+		sourcepath="src:resources:test"
+		additionalparam="-d ${uml.dir}"
+		packagenames="org.simulator.math">
+		<!-- classpath="${lib}/*.jar" -->
+		<!-- sourcepathref="uml.source.path" -->
+		<!-- destdir="${uml.dir}" -->
+	  <classpath>
+	  	<fileset dir="${lib}/">
+	  	  <include name="*.jar"/>
+	  	</fileset>
+	  </classpath>
+	  <doclet name="org.umlgraph.doclet.UmlGraph" path="${lib}/UMLGraph.jar">
+	    <!--<param name="-inferrel"/>-->
+	    <!--<param name="-inferdep"/>-->
+	    <param name="-hide" value="java.*"/>
+	    <param name="-collpackages" value="java.util.*"/>
+	    <param name="-qualify"/>
+	    <param name="-postfixpackage"/>
+	    <param name="-nodefontsize" value="9"/>
+	    <param name="-nodefontpackagesize" value="7"/>
+	    <param name="-link" value="http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/doclet/spec"/>
+	    <param name="-link" value="http://java.sun.com/j2se/1.5/docs/api"/>
+	  </doclet>
+	</javadoc>
+  </target>
+	
+  <target name="uml_as_pdf" depends="uml">
+	<!--<input
+	    message="Please enter the complete path to the dot program:"
+	    addproperty="dot"
+	    defaultvalue="/user/local/bin/dot"
+	/>-->
+  	<property name="dot" value="/usr/local/bin/dot"/>
+  	<apply executable="${dot}" dest="${uml.dir}" parallel="false">
+  	  	  <arg value="-Tpdf"/>
+  	  	  <arg value="-o"/>
+  	  	  <targetfile/>
+  	  	  <srcfile/>
+  	  	  <fileset dir="${uml.dir}" includes="*.dot"/>
+  	  	  <mapper type="glob" from="*.dot" to="*.pdf"/>
+  	</apply>
+  </target>
 
   <target name="javadoc" description="Creates Javadoc for the Simulation Core Library">
   	<mkdir dir="${doc}"/>
