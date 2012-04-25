@@ -67,8 +67,9 @@ public class CompartmentOrParameterValue extends ASTNodeValue {
     this.position=position;
   }
   
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
+  /*
+   * (non-Javadoc)
+   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
    */
   @Override
   protected void computeDoubleValue() {

@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.simulator.math.odes.EventInProcess;
 import org.simulator.sbml.astnode.ASTNodeValue;
-import org.simulator.sbml.astnode.AssignmentRuleObject;
+import org.simulator.sbml.astnode.AssignmentRuleValue;
 
 /**
  * <p>
@@ -43,7 +43,7 @@ public class SBMLEventInProcess extends EventInProcess{
 	protected ASTNodeValue triggerObject;
 	protected ASTNodeValue priorityObject;
 	protected ASTNodeValue delayObject;
-	protected List<AssignmentRuleObject> ruleObjects;
+	protected List<AssignmentRuleValue> ruleObjects;
 	protected boolean useValuesFromTriggerTime;
 	protected boolean persistent;
 
@@ -138,9 +138,9 @@ public class SBMLEventInProcess extends EventInProcess{
 	 * Adds the math of an assignment rule as an AssignmentRuleObject.
 	 * @param assignmentRuleObject
 	 */
-	public void addRuleObject(AssignmentRuleObject assignmentRuleObject) {
+	public void addRuleObject(AssignmentRuleValue assignmentRuleObject) {
 		if (ruleObjects == null) {
-			ruleObjects = new LinkedList<AssignmentRuleObject>();
+			ruleObjects = new LinkedList<AssignmentRuleValue>();
 		}
 		ruleObjects.add(assignmentRuleObject);
 	}
@@ -149,7 +149,7 @@ public class SBMLEventInProcess extends EventInProcess{
 	 * 
 	 * @return the list of the assignment rules as AssignmentRuleObjects
 	 */
-	public List<AssignmentRuleObject> getRuleObjects() {
+	public List<AssignmentRuleValue> getRuleObjects() {
 		return ruleObjects;
 	}
 
