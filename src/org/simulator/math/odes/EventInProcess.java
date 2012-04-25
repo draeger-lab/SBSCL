@@ -2,10 +2,9 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of Simulation Core Library, a Java-based library
- * for efficient numerical simulation of biological models.
+ * This file is part of SBMLsimulator, a Java-based simulator for models of biochemical processes encoded in the modeling language SBML.
  *
- * Copyright (C) 2007-2012 by the University of Tuebingen, Germany.
+ * Copyright (C) 2007-2011 by the University of Tuebingen, Germany.
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,39 +18,25 @@ package org.simulator.math.odes;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-
-import org.simulator.sbml.astnode.ASTNodeValue;
-import org.simulator.sbml.astnode.AssignmentRuleObject;
 
 /**
  * <p>
- * This class represents a compilation of all information calculated during
- * simulation concerning events. It can also contain the math of the trigger, the priority and the delay. 
+ * This class represents a compilation of the values and execution times during
+ * simulation concerning events. 
  * </p>
- * 
- * @author Alexander D&ouml;rr
- * @date 2011-03-04
+ * @author Roland Keller
  * @version $Rev$
- * @since 0.9
  */
 public class EventInProcess {
 
 	protected boolean fired;
-	protected double priority;
 	protected double lastTimeFired;
 	protected double lastTimeRecovered;
 	protected double lastTimeExecuted;
 	protected LinkedList<Double> execTimes;
 	protected LinkedList<Double[]> values;
 	protected Map<Integer,Double> assignments;
-	protected ASTNodeValue triggerObject;
-	protected ASTNodeValue priorityObject;
-	protected ASTNodeValue delayObject;
-	protected List<AssignmentRuleObject> ruleObjects;
-	protected boolean useValuesFromTriggerTime;
-	protected boolean persistent;
 
 	/**
 	 * Creates a new EventInProcess with the given boolean value indicating
@@ -63,7 +48,6 @@ public class EventInProcess {
 		this.fired = fired;
 		this.execTimes = new LinkedList<Double>();
 		this.values = new LinkedList<Double[]>();
-		this.priority = Double.NEGATIVE_INFINITY;
 		this.lastTimeFired=-1;
 		this.lastTimeRecovered = -1;
 		this.lastTimeExecuted = -1;
@@ -78,7 +62,6 @@ public class EventInProcess {
 	  this.fired = fired;
 	  this.execTimes = new LinkedList<Double>();
 	  this.values = new LinkedList<Double[]>();
-	  this.priority = Double.NEGATIVE_INFINITY;
 	  this.lastTimeFired = -1;
 	  this.lastTimeRecovered = -1;
 	  this.lastTimeExecuted = -1;
@@ -106,15 +89,6 @@ public class EventInProcess {
 		this.execTimes.add(time);
 		this.values.add(values);
 
-	}
-
-	/**
-	 * Change the priority.
-	 * 
-	 * @param priority
-	 */
-	public void changePriority(double priority) {
-		this.priority = priority;
 	}
 
 	/**
@@ -161,15 +135,6 @@ public class EventInProcess {
 		  lastTimeFired = -1;
 		  return fired;
 		}
-	}
-
-	/**
-	 * Return the priority of the associated event.
-	 * 
-	 * @return
-	 */
-	public Double getPriority() {
-		return priority;
 	}
 
 	/**
@@ -270,122 +235,5 @@ public class EventInProcess {
 	public Map<Integer,Double> getAssignments() {
 		return assignments;
 	}
-
-	/**
-	 * Sets the math of the trigger to a specific ASTNodeObject.
-	 * @param userObject
-	 */
-	public void setTriggerObject(ASTNodeValue triggerObject) {
-		this.triggerObject = triggerObject;
-	}
-  
-	/**
-	 * 
-	 * @return the trigger object of the event as an ASTNodeObject
-	 */
-	public ASTNodeValue getTriggerObject() {
-		return triggerObject;
-	}
-
-	/**
-	 * Sets the math of the priority to a specific ASTNodeObject.
-	 * @param userObject
-	 */
-	public void setPriorityObject(ASTNodeValue priorityObject) {
-		this.priorityObject = priorityObject;
-	}
-
-	/**
-	 * 
-	 * @return the priority object of the event as an ASTNodeObject
-	 */
-	public ASTNodeValue getPriorityObject() {
-		return priorityObject;
-	}
-
-	/**
-	 * Sets the math of the delay to a specific ASTNodeObject.
-	 * @param userObject
-	 */
-	public void setDelayObject(ASTNodeValue delayObject) {
-		this.delayObject = delayObject;
-	}
-
-	/**
-	 * 
-	 * @return the delay object of the event as an ASTNodeObject (null if there is no delay)
-	 */
-	public ASTNodeValue getDelayObject() {
-		return delayObject;
-	}
-
-	/**
-	 * Adds the math of an assignment rule as an AssignmentRuleObject.
-	 * @param assignmentRuleObject
-	 */
-	public void addRuleObject(AssignmentRuleObject assignmentRuleObject) {
-		if (ruleObjects == null) {
-			ruleObjects = new LinkedList<AssignmentRuleObject>();
-		}
-		ruleObjects.add(assignmentRuleObject);
-	}
-
-	/**
-	 * 
-	 * @return the list of the assignment rules as AssignmentRuleObjects
-	 */
-	public List<AssignmentRuleObject> getRuleObjects() {
-		return ruleObjects;
-	}
-
-	/**
-	 * Returns true if the values of the assignments are calculated at the trigger time of the event, otherwise false.
-	 * @return 
-	 */
-	public boolean getUseValuesFromTriggerTime() {
-		return useValuesFromTriggerTime;
-	}
-
-	/**
-	 * Sets the useValuesFromTriggerTime value of the event.
-	 * @param useValuesFromTriggerTime
-	 */
-	public void setUseValuesFromTriggerTime(boolean useValuesFromTriggerTime) {
-		this.useValuesFromTriggerTime = useValuesFromTriggerTime;
-
-	}
-
-	/**
-	 * 
-	 * @return the number of assignments of the event
-	 */
-	public int getNumEventAssignments() {
-		return ruleObjects.size();
-	}
-
-	/**
-	 * 
-	 * @return the persistent flag of the event.
-	 */
-	public boolean getPersistent() {
-		return persistent;
-	}
-
-	/**
-	 * Sets the persistent flag of the event.
-	 * @param persistent
-	 */
-	public void setPersistent(boolean persistent) {
-		this.persistent = persistent;
-	}
-
-	/**
-	 * Clears the assignment rule objects.
-	 */
-	public void clearRuleObjects() {
-		if (ruleObjects != null) {
-			ruleObjects.clear();
-		}
-	}
-
+	
 }

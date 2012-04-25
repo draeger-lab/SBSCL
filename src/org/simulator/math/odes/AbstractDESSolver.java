@@ -31,6 +31,7 @@ import org.apache.commons.math.ode.events.EventException;
 import org.apache.commons.math.ode.events.EventHandler;
 import org.simulator.math.Mathematics;
 import org.simulator.math.odes.MultiTable.Block.Column;
+import org.simulator.sbml.SBMLEventInProcess;
 
 /**
  * This Class represents an abstract solver for event-driven DES
@@ -571,10 +572,10 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		event = EDES.getNextEventAssignments(
 				time, previousTime, yTemp);
 
-		if (event!=null) {
+		if (event != null) {
 			hasNewEvents=true;
 		}
-		while ((event != null) && ((event.getLastTimeExecuted()==time) || (event.getFireStatus(time)))) {
+		while ((event != null) && ((event.getLastTimeExecuted() == time) || (event.getFireStatus(time)))) {
 			for (int index: event.getAssignments().keySet()) {
 				yTemp[index] = event.getAssignments().get(index);
 			}
