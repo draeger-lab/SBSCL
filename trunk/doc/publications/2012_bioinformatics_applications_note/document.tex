@@ -5,6 +5,7 @@
 \usepackage{subfig}
 \usepackage{listings}
 \usepackage{ifthen}
+\usepackage[english]{babel}
 
 \lstset{language=Java,
 morendkeywords={String, Throwable}
@@ -44,6 +45,8 @@ commentstyle=\ttfamily\itshape\color{forrestgreen}
 \hyphenation{
   % TODO hypens for regular words
   im-ple-men-ta-tions
+  gra-phi-cal
+  bench-mark-ed
 }
 
 % some nice colors
@@ -64,25 +67,21 @@ Andreas Dr\"ager\,$^{1,*}$, Roland Keller\,$^{1}$,
 Alexander D\"orr\,$^{1}$,
 Akito Tabira\,$^{2}$,
 Akira Funahashi\,$^{2}$,
-\TODO{%
 Michael J. Ziller\,$^{3}$
 Nicolas Rodriguez\,$^{4}$,
 Nicolas Le Nov\`{e}re\,$^{4}$
-Michael T. Cooling\,$^{4}$} and
+Michael T. Cooling\,$^{5}$ and
 Andreas Zell\,$^1$\footnote{to whom correspondence should be addressed}}
 \address{$^{1}$Center for Bioinformatics Tuebingen (ZBIT), University of
 Tuebingen, T\"ubingen, Germany\\
 $^{2}$Keio University, Graduate School of Science and Technology, Yokohama,
 Japan\\
-\TODO{%
 $^{3}$Department of Stem Cell and Regenerative Biology, Harvard University,
-Cambridge, %MA, 
-USA\\
+Cambridge, MA, USA\\
 $^{4}$European Bioinformatics Institute, Wellcome Trust Genome Campus,
-Hinxton, %Cambridge, 
-UK\\
-$^{4}$Auckland Bioengineering Institute, University of Auckland, Auckland, New
-Zealand}}
+Hinxton, Cambridge, UK\\
+$^{5}$Auckland Bioengineering Institute, University of Auckland, Auckland, New
+Zealand}
 
 \history{Received on XXXXX; revised on XXXXX; accepted on XXXXX}
 
@@ -100,12 +99,12 @@ The Simulation Core Library is a community-driven project that provides a large
 collection of numerical solvers and a sophisticated interface hierarchy for the
 definition of custom differential equation systems. It is entirely
 implemented in Java\texttrademark{} without the necessity to
-include any platform-dependent wrappers or libraries, and does not depend on any
-commercial library.
+include any platform-dependent wrappers or libraries, and does not depend on
+any commercial library.
 %, and can be used on every operating system for which a JVM
 %is available.
 It already includes an efficient and exhaustive implementation of methods to
-interpret the content of models encoded in SBML based on the JSBML project.
+interpret the content of models encoded in SBML using the JSBML project.
 To demonstrate its capabilities, it has been benchmarked against the entire SBML
 Test Suite and %also been used to simulate 
 all models of the BioModels.net database.
@@ -117,9 +116,9 @@ of the LGPL 3.1 from the website
 \section{Contact:}
 \href{mailto:andreas.draeger@uni-tuebingen.de}{andreas.draeger@uni-tuebingen.de}
 
-\section{Supplementary information:}
+%\section{Supplementary information:}
 % TODO: Provide additional material
-Supplementary data is available at Bioinformatics online.
+%Supplementary data is available at Bioinformatics online.
 
 \end{abstract}
 
@@ -131,25 +130,33 @@ part of modern biological research. XML-based standard description languages
 such as the Systems Biology Markup Language (SBML, \citealt{Hucka2003}) or
 CellML \citep{Lloyd2004} specify rich sets of methods for the interpretation
 of biological network models in terms of a differential equation system with
-additional elements such as events and rules.
+additional elements such as events or rules.
 Libraries for reading and manipulating the information content of
 these XML-based languages are available.
-For model building, simulation, and calibration processes (e.g., the
+For model analysis, simulation, and calibration (e.g., the
 estimation of parameter values), however, a multiple-purpose and 
 efficient numerical solver library that has been designed with respect to the
 requirements of biological network models is a crucial prerequisite.
-The vast majority of available solvers for these systems is either
-part of a larger software suite and can therefore not be easily integrated into
-custom programs, or implemented in programing languages, which are either
-platform-dependent or even require a commercial license for their
-execution.
 
+There are several stand-alone programs with
+graphical user interfaces available that fulfil those important requests, for
+instance, the Virtual Cell \citep{Loew2001}, iBioSim \citep{Myers2009},
+PottersWheel \citep{Maiwald2008}, COPASI \citep{Hoops2006}, SBToolbox2
+\citep{SBT_Schmidt2006}.
+%, or the Systems Biology Workbench with Roadrunner (SBW,
+%\citealt{Bergmann06}). 
+However, The vast majority of the internal solvers for
+these systems is either part of a larger software suite and can therefore not
+be easily integrated into custom programs. Some are implemented in programing
+languages, which are either platform-dependent (e.g., C or C++) or even require
+a commercial license (e.g., MATLAB\texttrademark{}) for their execution.
+%
 %The modeling language SBML (Systems Biology Markup Language,
 %\citealt{Hucka2003}) constitutes an important \emph{de facto} standard for the
 %exchange of biochemical network models.
 %SBML defines a set of data structures and provides rules about how to interpret
 %and simulate these kinds of models.
-
+%
 %Models in systems biology may combine an ordinary differential equation system,
 %which is the basis for numerical simulation, with additional elements such as
 %rules and events.  These elements further influence the system. 
@@ -158,37 +165,21 @@ execution.
 %happens, event assignments may change the values of model components, such as
 %parameter values or compartment sizes. Rules can directly assign new values to
 %their objectives, e.g., the concentration of a reacting species.
+%
+The SBML ODE Solver Library \citep{Machne2006}, which is written in C,
+%and based on the libSBML library \citep{Bornstein2008}, 
+provides such a simulation routine based on the SUNDIALS differential equation
+solver.
 
-There are several stand-alone programs (written in Java, C, or MATLAB) with
-graphical user interfaces available that fulfil those important requests, for
-instance, the Virtual Cell \citep{Loew2001}, iBioSim \citep{Myers2009},
-PottersWheel \citep{Maiwald2008}, COPASI \citep{Hoops2006}, SBToolbox2
-\citep{SBT_Schmidt2006}, or the Systems Biology Workbench with Roadrunner (SBW,
-\citealt{Bergmann06}).
-However, it is difficult to integrate the contained simulation routines into
-other programs.
-The SBML ODE Solver Library \citep{Machne2006}, which is written in C and based
-on the libSBML library \citep{Bornstein2008},  provides such a simulation
-routine. The SUNDIALS package is used for solving the differential equation
-system given in the model.
+In contrast, we here present the platform-independent Simulation Core
+Library. This generic library is completely decoupled from any graphical user
+interface and can hence easily be integrated into third-party programs. The
+It contains several Ordinary Differential Equation (ODE)
+solvers and an interpreter for SBML models. It is the first simulation library
+that is based on the Java library JSBML \citep{Draeger2011b}, a specifically
+developed data structure for reading and writing models from and into SBML
+files and to deal with their structure in memory.
 
-In contrast to that we here present a platform-independent simulation API in
-Java that interprets the content of such a model and predicts the dynamic
-behavior of the model’s components. It is the first simulation routine which is
-based on the Java library JSBML \citep{Draeger2011b}, a specifically
-developed data structure to read and write models from and into SBML files and
-to deal with their structure in memory. The API contains an interpreter for the
-SBML model and several different ODE solvers. The generic library is completely
-decoupled from any graphical user interface and can hence easily be integrated
-as an API (Application Programming Interface) into third-party programs.
-
-\TODO{Describe this as a potential application.}
-The Simulation Core Library has already been integrated into the widely
-used program CellDesigner version 4.2 \citep{Funahashi2003} as an internal simulation
-library. The stand-alone application
-SBMLsimulator\footnote{\url{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator}}
-provides a convenient graphical user interface for the simulation of SBML models
-and uses this library as its computational backend.
 %Secondly, a graphical and command-line user interface that provides
 %a connection to the heuristic optimization framework EvA2 \citep{Kron10EvA2}.
 % The combination of SBMLsimulator and EvA2 \citep{Kron10EvA2} estimates the values of all parameters with
@@ -212,30 +203,36 @@ and uses this library as its computational backend.
 \caption[Architecture of the Simulation Core Library]{Architecture of
 the Simulation Core Library (slightly simplified). Numerical methods are
 strictly separated from differential equation systems. The upper part displays
-the unified type hierarchy of all numberical integration methods, which are currently part of the
-library, including solvers from Apache Commons Math library and Rosenbrock's
-method. The class \MultiTable{} stores the results of a simulation within its
-\Block{} data structures. The middle part shows the interfaces that
-define several special types of the differential equations to be solved by the
-numerical methods. This abstract description makes it possible to describe
-various types of differential equation systems without directly linking it to a
-particular type of biological networks. The class \SBMLinterpreter{} implements
-all of these interfaces with respect to the information content of a given SBML
-model. The interpreter causes the main run-time of the integration procedure.
+the unified type hierarchy of all currently included numberical integration
+methods. The middle part shows the interfaces defining several
+special types of the differential equations to be solved by the numerical
+methods.
+The class \SBMLinterpreter{} (bottom part) implements all of these interfaces
+with respect to the information content of a given SBML model. Similarly, an
+implementation of further data formats can be included into the library.}
+\label{fig:Architecture}
+\end{figure}
+Fig.~\ref{fig:Architecture} displays the architecture of the library. All the
+solver classes are derived from the abstract class \AbstractDESSolver.
+Several solvers of the Apache Commons Math library (version 3.0) are integrated
+with the help of wrapper classes. Numerical methods and the actual differential
+equation systems are strictly separated. The class \MultiTable{} stores the
+results of a simulation within its \Block{} data structures. 
+
+The abstract description of differential equation systems with the help of
+several distinct interfaces makes it possible to describe various types of
+differential equation systems without directly linking it to a particular type
+of biological networks. In this way it is possible to pass an instance of an
+interpreter for a particular model system, such as SBML or CellML, to any
+available solver.
+
+For the evaluation of a biological model a specialized interpreter class is
+required. The interpreter causes the main run-time of the integration procedure.
 This is why efficient and clearly organized data structures are required to
 ensure a high performance of the overall library. The interpretation of SBML
 models is therefore organized in the evaluation of events and rules, the
 computation of stoichiometric information, and the computation of the current
 values of all model components (such as species and compartments).
-In this way it is possible to pass an instance of an interpreter for a
-particular model system, such as SBML or CellML, to any available solver.}
-\label{fig:Architecture}
-\end{figure}
-Fig.~\ref{fig:Architecture} displays the architecture of the library. All the
-solver classes are derived from the abstract class \AbstractDESSolver.
-Several solvers of the Apache Commons Math library are integrated with the help
-of wrapper classes. Numerical methods and the actual differential equation
-systems are strictly separated.
 
 The class responsible for the evaluation of models encoded in SBML is
 \SBMLinterpreter.
@@ -291,29 +288,34 @@ step size. This makes the processing of the events extremely precise.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Results and conclusion}
-The SBML implementation has been successfully tested with the
-SBML test suite (see
-\href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite}):
-Rosenbrock's solver correctly simulates all models. In a further evaluation, it
-solved nearly all (406 of the 409) models from the
-\href{http://biomodels.net}{BioModels.net} database (release 21) \citep{Novere2006a}.
-
+The SBML implementation has been successfully passed the
+SBML Test Suite using the Rosenbrock solver.
+%(see
+%\href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite}):
+Furthermore, it solved nearly all models from the
+\href{http://biomodels.net}{BioModels.net} database (406 of 409 models from
+release 21, \citealp{Novere2006a}).
 Therefore, the Simulation Core Library is an efficient Java tool for the
 simulation of differential equation systems given in systems biology. It can be
-easily integrated in larger applications, which display the simulation results
-or optimize some parameters of ODE models. 
-
-Besides its exisisting SBML implementation, the abstract program structure
-supports the integration of other model formats such as CellML. To this end, it
-is only necessary to implement a suitable interpreter class.
+easily integrated in larger applications.
+The widespread program CellDesigner version~4.2 \citep{Funahashi2003} uses it
+already as one of its simulation libraries.
+The stand-alone application SBMLsimulator (available at
+\href{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator}{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator})
+provides a convenient graphical user interface for the simulation of SBML
+models and uses this library as its computational backend.
+The abstract program structure of the Simulation Core Library supports the
+integration of additional model formats besides its SBML implementation, for
+instance CellML. To this end, it is only necessary to implement a suitable
+interpreter class.
 
 \section*{Acknowledgement}
 
 The authors are grateful to Beky Kotcon, Samantha Mesuro, Daniel Rozenfeld, Anak
 Yodpinyanee, Andres Perez, Eric Doi, Richard Mehlinger, Steven Ehrlich, Martin
 Hunt, George Tucker, Peter Scherpelz, Aaron Becker, Eric Harley, and Chris
-Moore, Harvey Mudd College, Claremont, California, USA, for providing an
-Java implementation of Rosenbrock's numerical ODE solver.
+Moore, Harvey Mudd College, USA, for providing a Java implementation of
+Rosenbrock's method, and to Hannes Planatscher, NMI Reutlingen.
 
 \paragraph{Funding\textcolon} 
 The Federal Ministry of Education and Research (BMBF, Germany) in the project
