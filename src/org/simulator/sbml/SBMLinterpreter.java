@@ -52,7 +52,6 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.util.StringTools;
-import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.validator.OverdeterminationValidator;
 import org.simulator.math.RNG;
@@ -226,11 +225,6 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	private List<Integer> delayedEvents;
 
 	/**
-	 * Node interpreter for interpreting MathML objects.
-	 */
-	private EfficientASTNodeInterpreter nodeInterpreter;
-
-	/**
 	 * Map for faster access to species.
 	 */
 	private Map<String, Species> speciesMap;
@@ -259,7 +253,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	/**
 	 * Node interpreter taking the time into consideration
 	 */
-	private ASTNodeInterpreter nodeInterpreterWithTime;
+	private ASTNodeInterpreter nodeInterpreter;
 
 	/**
 	 * List of all occuring stoichiometries
@@ -367,8 +361,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		this.symbolHash = new HashMap<String, Integer>();
 		this.compartmentHash = new HashMap<String, Integer>();
 		this.stoichiometricCoefHash = new HashMap<String, Double>();
-		this.nodeInterpreter = new EfficientASTNodeInterpreter(this);
-		this.nodeInterpreterWithTime = new ASTNodeInterpreter(this);
+		this.nodeInterpreter = new ASTNodeInterpreter(this);
 		this.astNodeTime = 0d;
 		this.priorities = new HashSet<Double>();
 		this.highOrderEvents = new LinkedList<Integer>();
@@ -1425,7 +1418,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
 
 			} else {
-				kineticLawRoots.add(new ASTNodeValue(nodeInterpreterWithTime,
+				kineticLawRoots.add(new ASTNodeValue(nodeInterpreter,
 						new ASTNode(0d)));
 			}
 			reactionIndex++;
@@ -1636,28 +1629,28 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			switch (node.getType()) {
 			case REAL:
 				copiedAST.setValue(node.getReal());
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
 						copiedAST));
 				break;
 			case INTEGER:
 				copiedAST.setValue(node.getInteger());
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
 						copiedAST));
 				break;
 
 			case RATIONAL:
 				copiedAST.setValue(node.getNumerator(), node.getDenominator());
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
 						copiedAST));
 				break;
 			case NAME_TIME:
 				copiedAST.setName(node.getName());
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
 						copiedAST));
 				break;
 			case FUNCTION_DELAY:
 				copiedAST.setName(node.getName());
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
 						copiedAST));
 				break;
 				/*
@@ -1677,7 +1670,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						for (int i = 0; i != lambda.getChildren().size()-1; i++) {
 							arguments.add(lambda.getChild(i));
 						}
-						FunctionValue functionValue=new FunctionValue(nodeInterpreterWithTime,
+						FunctionValue functionValue=new FunctionValue(nodeInterpreter,
 								copiedAST,arguments);
 						copiedAST.putUserObject(TEMP_VALUE, functionValue);
 						ASTNode mathAST = copyAST(lambda,
@@ -1690,39 +1683,39 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						if ((c!=null) && c.getSpatialDimensions() > 0) {
 							hasZeroSpatialDimensions = false;
 						}
-						copiedAST.putUserObject(TEMP_VALUE, new SpeciesValue(nodeInterpreterWithTime,
+						copiedAST.putUserObject(TEMP_VALUE, new SpeciesValue(nodeInterpreter,
 								copiedAST, sp, this, symbolHash.get(variable
 										.getId()), compartmentHash.get(variable.getId()), hasZeroSpatialDimensions));
 					} else if ((variable instanceof Compartment)
 							|| (variable instanceof Parameter)) {
 						copiedAST.putUserObject(TEMP_VALUE, new CompartmentOrParameterValue(
-								nodeInterpreterWithTime, copiedAST, (Symbol) variable, this, symbolHash
+								nodeInterpreter, copiedAST, (Symbol) variable, this, symbolHash
 								.get(variable.getId())));
 					} else if (variable instanceof LocalParameter) {
 						copiedAST.putUserObject(TEMP_VALUE, new LocalParameterValue(
-								nodeInterpreterWithTime, copiedAST, (LocalParameter) variable));
+								nodeInterpreter, copiedAST, (LocalParameter) variable));
 					} else if (variable instanceof SpeciesReference) {
 						copiedAST.putUserObject(TEMP_VALUE, new SpeciesReferenceValue(
-								nodeInterpreterWithTime, copiedAST,
+								nodeInterpreter, copiedAST,
 								(SpeciesReference) variable, this));
 					} else if (variable instanceof Reaction) {
 						copiedAST.putUserObject(TEMP_VALUE, new ReactionValue(
-								nodeInterpreterWithTime, copiedAST, (Reaction) variable));
+								nodeInterpreter, copiedAST, (Reaction) variable));
 					} 
 				} else {
 					copiedAST.putUserObject(TEMP_VALUE, new NamedValue(
-							nodeInterpreterWithTime, copiedAST, function));
+							nodeInterpreter, copiedAST, function));
 				}
 				break;
 
 			case NAME_AVOGADRO:
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
 						copiedAST));
 				copiedAST.setName(node.getName());
 				break;
 			case REAL_E:
 				copiedAST.setValue(node.getMantissa(), node.getExponent());
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
 						copiedAST));
 
 				break;
@@ -1737,7 +1730,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						for (int i = 0; i != lambda.getChildren().size()-1; i++) {
 							arguments.add(lambda.getChild(i));
 						}
-						FunctionValue functionValue=new FunctionValue(nodeInterpreterWithTime,
+						FunctionValue functionValue=new FunctionValue(nodeInterpreter,
 								copiedAST,arguments);
 						copiedAST.putUserObject(TEMP_VALUE, functionValue);
 						ASTNode mathAST = copyAST(lambda,
@@ -1748,18 +1741,18 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				break;
 			}
 			case FUNCTION_PIECEWISE:
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
 						copiedAST));
 				break;
 			case FUNCTION_ROOT:
-				copiedAST.putUserObject(TEMP_VALUE, new RootFunctionValue(nodeInterpreterWithTime,copiedAST));
+				copiedAST.putUserObject(TEMP_VALUE, new RootFunctionValue(nodeInterpreter,copiedAST));
 				break;
 			case LAMBDA:
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
 						copiedAST));
 				break;
 			default:
-				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreterWithTime,
+				copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
 						copiedAST));
 				break;
 			}
@@ -2237,11 +2230,15 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	}
 
 	/**
-	 * Returns the ASTNode interpreter
+	 * Returns the current reaction velocity of a specific reaction
+	 * @param index of the reaction
 	 * @return
 	 */
-	public ASTNodeCompiler getASTNodeInterpreter() {
-		return this.nodeInterpreter;
+	public double compileReaction(int reactionIndex) {
+		astNodeTime+=0.01;
+		double value = kineticLawRoots.get(reactionIndex).compileDouble(
+			astNodeTime);
+		return value;
 	}
   
 }
