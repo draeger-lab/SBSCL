@@ -96,7 +96,7 @@ differential equation system with additional events and rules.
 Although libraries for reading and manipulating the information content of
 these XML-based languages are available, a multiple-purpose and 
 efficient numerical solver library that has been designed with respect to the
-requirements of biological network models is a crucical prerequisite. 
+requirements of biological network models is a crucial prerequisite. 
 The vast majority of available solvers for these systems is either
 part of a larger software suite and can therefore not be easily integrated into
 custom programs, or implemented in programing languages, which are either
@@ -221,7 +221,8 @@ particular model system, such as SBML or CellML, to any available solver.}
 \end{figure*}
 In this API a large collection of differential equation solvers and an
 interpreter for SBML are provided. The solvers and the interpretation of SBML
-are independent of each other.
+are independent of each other. The architecture of the library is
+displayed in Figure \ref{fig:Architecture}.
 
 All the solver classes are derived from the abstract class \AbstractDESSolver.
 The Eulerian and the Runge-Kutta solver are very fast, but not suitable
@@ -260,8 +261,8 @@ calculates the values for the next time point. After that events
 and rules are processed, that can change the values. The calculated values are
 then the initial values for the next time step. The event processing of the
 Rosenbrock solver is different from that of the other solvers, as it
-is directly integrated in the solver and influences the adaptation of its step
-size. This makes the processing of the events extremely precise.
+is directly integrated in the solver class and influences the adaptation of its
+step size. This makes the processing of the events extremely precise.
 
 \end{methods}
 
