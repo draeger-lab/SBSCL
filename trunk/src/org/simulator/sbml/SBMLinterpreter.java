@@ -64,7 +64,7 @@ import org.simulator.math.odes.EventDESystem;
 import org.simulator.math.odes.EventInProcess;
 import org.simulator.math.odes.FastProcessDESystem;
 import org.simulator.math.odes.RichDESystem;
-import org.simulator.sbml.astnode.ASTNodeInterpreterWithTime;
+import org.simulator.sbml.astnode.ASTNodeInterpreter;
 import org.simulator.sbml.astnode.ASTNodeValue;
 import org.simulator.sbml.astnode.AssignmentRuleValue;
 import org.simulator.sbml.astnode.CompartmentOrParameterValue;
@@ -95,7 +95,7 @@ import org.simulator.sbml.astnode.StoichiometryValue;
  * @since 0.9
  */
 public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
-    FastProcessDESystem, RichDESystem, ValueHolder {
+    FastProcessDESystem, RichDESystem, SBMLValueHolder {
   
 	/**
 	 * A {@link Logger}.
@@ -259,7 +259,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	/**
 	 * Node interpreter taking the time into consideration
 	 */
-	private ASTNodeInterpreterWithTime nodeInterpreterWithTime;
+	private ASTNodeInterpreter nodeInterpreterWithTime;
 
 	/**
 	 * List of all occuring stoichiometries
@@ -368,7 +368,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		this.compartmentHash = new HashMap<String, Integer>();
 		this.stoichiometricCoefHash = new HashMap<String, Double>();
 		this.nodeInterpreter = new EfficientASTNodeInterpreter(this);
-		this.nodeInterpreterWithTime = new ASTNodeInterpreterWithTime(this);
+		this.nodeInterpreterWithTime = new ASTNodeInterpreter(this);
 		this.astNodeTime = 0d;
 		this.priorities = new HashSet<Double>();
 		this.highOrderEvents = new LinkedList<Integer>();

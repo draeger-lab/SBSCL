@@ -40,7 +40,7 @@ public class NamedValue extends ASTNodeValue {
    * @param node
    * @param function
    */
-  public NamedValue(ASTNodeInterpreterWithTime interpreter, ASTNode node, FunctionValue function) {
+  public NamedValue(ASTNodeInterpreter interpreter, ASTNode node, FunctionValue function) {
     super(interpreter, node);
     this.function = function;
     this.index = function.getIndex(node.getName());

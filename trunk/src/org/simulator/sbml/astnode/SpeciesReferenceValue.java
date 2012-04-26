@@ -18,7 +18,7 @@ package org.simulator.sbml.astnode;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.SpeciesReference;
-import org.simulator.sbml.ValueHolder;
+import org.simulator.sbml.SBMLValueHolder;
 
 /**
  * This class computes and stores values of ASTNodes that refer to a species reference.
@@ -31,7 +31,7 @@ public class SpeciesReferenceValue extends ASTNodeValue {
 	/**
 	 * The value holder that stores the current simulation values
 	 */
-  private ValueHolder valueHolder;
+  private SBMLValueHolder valueHolder;
   
   /**
    * The id of the species reference
@@ -45,8 +45,8 @@ public class SpeciesReferenceValue extends ASTNodeValue {
    * @param sr
    * @param valueHolder
    */
-  public SpeciesReferenceValue(ASTNodeInterpreterWithTime interpreter,
-    ASTNode node, SpeciesReference sr, ValueHolder valueHolder) {
+  public SpeciesReferenceValue(ASTNodeInterpreter interpreter,
+    ASTNode node, SpeciesReference sr, SBMLValueHolder valueHolder) {
     super(interpreter, node);
     this.id=sr.getId();
     this.valueHolder=valueHolder;

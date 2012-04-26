@@ -17,7 +17,7 @@
 package org.simulator.sbml.astnode;
 
 import org.sbml.jsbml.Species;
-import org.simulator.sbml.ValueHolder;
+import org.simulator.sbml.SBMLValueHolder;
 
 /**
  * This class can compute and store the value of a rule together with the variable of the rule.
@@ -43,7 +43,7 @@ public class RuleValue {
   /**
    * The value holder that stores the current simulation results
    */
-  protected ValueHolder valueHolder;
+  protected SBMLValueHolder valueHolder;
   
   /**
    * The index of the compartment of the species (if applicable)
@@ -96,7 +96,7 @@ public class RuleValue {
    * @param valueHolder
    */
   public RuleValue(ASTNodeValue nodeObject, int index,
-    Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, ValueHolder valueHolder) {
+    Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder) {
     this.nodeObject = nodeObject;
     this.index = index;
     this.isSpecies = true;
