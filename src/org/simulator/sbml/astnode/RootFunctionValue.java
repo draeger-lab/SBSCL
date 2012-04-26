@@ -39,7 +39,7 @@ public class RootFunctionValue extends ASTNodeValue{
    * @param interpreter
    * @param node
    */
-  public RootFunctionValue(ASTNodeInterpreterWithTime interpreter, ASTNode node) {
+  public RootFunctionValue(ASTNodeInterpreter interpreter, ASTNode node) {
     super(interpreter, node);
     ASTNode left = node.getLeftChild();
     leftChildrenNumeric=false;

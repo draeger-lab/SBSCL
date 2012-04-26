@@ -17,7 +17,7 @@ package org.simulator.sbml.astnode;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Symbol;
-import org.simulator.sbml.ValueHolder;
+import org.simulator.sbml.SBMLValueHolder;
 
 /**
  * This class computes and stores values of ASTNodes that refer to a compartment or a parameter.
@@ -39,7 +39,7 @@ public class CompartmentOrParameterValue extends ASTNodeValue {
 	/**
 	 * The value holder that stores the current simulation results.
 	 */
-	protected ValueHolder valueHolder;
+	protected SBMLValueHolder valueHolder;
   
 	/**
 	 * The position of the current compartment/parameter value in the Y vector of the value holder
@@ -54,8 +54,8 @@ public class CompartmentOrParameterValue extends ASTNodeValue {
    * @param valueHolder
    * @param position
    */
-  public CompartmentOrParameterValue(ASTNodeInterpreterWithTime interpreter, ASTNode node,
-    Symbol sb, ValueHolder valueHolder, int position) {
+  public CompartmentOrParameterValue(ASTNodeInterpreter interpreter, ASTNode node,
+    Symbol sb, SBMLValueHolder valueHolder, int position) {
     super(interpreter, node);
     this.sb = sb;
     this.id=sb.getId();

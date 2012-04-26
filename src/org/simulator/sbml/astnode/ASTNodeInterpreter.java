@@ -34,7 +34,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.util.Maths;
 import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
 import org.simulator.sbml.SBMLinterpreter;
-import org.simulator.sbml.ValueHolder;
+import org.simulator.sbml.SBMLValueHolder;
 
 /**
  * This class is an efficient ASTNodeInterpreter that takes the time of the
@@ -46,7 +46,7 @@ import org.simulator.sbml.ValueHolder;
  * @version $Rev$
  * @since 1.0
  */
-public class ASTNodeInterpreterWithTime {
+public class ASTNodeInterpreter {
   /**
    * A logger.
    */
@@ -62,13 +62,13 @@ public class ASTNodeInterpreterWithTime {
   /**
    * The value holder that stores the current simulation results.
    */
-  private ValueHolder valueHolder;
+  private SBMLValueHolder valueHolder;
   
   /**
    * 
    * @param valueHolder
    */
-  public ASTNodeInterpreterWithTime(ValueHolder valueHolder) {
+  public ASTNodeInterpreter(SBMLValueHolder valueHolder) {
     this.valueHolder = valueHolder;
     this.funcArgs=new HashMap<String,Double>();
   }

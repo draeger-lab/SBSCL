@@ -23,7 +23,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.simulator.sbml.EfficientASTNodeInterpreter;
-import org.simulator.sbml.ValueHolder;
+import org.simulator.sbml.SBMLValueHolder;
 
 /**
  * Computes for a {@link SpeciesReference} with a stoichiometry occuring in some
@@ -84,7 +84,7 @@ public class StoichiometryValue {
 	/**
 	 * The value holder that stores the current simulation results. 
 	 */
-	protected ValueHolder valueHolder;
+	protected SBMLValueHolder valueHolder;
 
 	/**
 	 * The id of the species reference
@@ -149,7 +149,7 @@ public class StoichiometryValue {
 	 * @param isReactant
 	 */
 	public StoichiometryValue(SpeciesReference sr, int speciesIndex,
-			int speciesRefIndex, int compartmentIndex, Map<String, Double> stoichiometricCoefHash, ValueHolder valueHolder,
+			int speciesRefIndex, int compartmentIndex, Map<String, Double> stoichiometricCoefHash, SBMLValueHolder valueHolder,
 			double[] Y, ASTNodeValue stoichiometryMathValue, int reactionIndex,
 			Set<String> inConcentrationSet, boolean isReactant) {
 		this.isSetStoichiometryMath = sr.isSetStoichiometryMath();

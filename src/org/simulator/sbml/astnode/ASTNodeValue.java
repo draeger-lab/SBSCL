@@ -107,7 +107,7 @@ public class ASTNodeValue {
   /**
    * The interpreter for calculating the value
    */
-  protected ASTNodeInterpreterWithTime interpreter;
+  protected ASTNodeInterpreter interpreter;
   
   /**
    * The real value of the corresponding ASTNode
@@ -156,7 +156,7 @@ public class ASTNodeValue {
    * @param interpreter
    * @param node
    */
-  public ASTNodeValue(ASTNodeInterpreterWithTime interpreter, ASTNode node) {
+  public ASTNodeValue(ASTNodeInterpreter interpreter, ASTNode node) {
     this.interpreter = interpreter;
     this.node = node;
     this.nodeType = node.getType();

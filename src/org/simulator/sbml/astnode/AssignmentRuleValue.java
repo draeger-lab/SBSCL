@@ -20,7 +20,7 @@ package org.simulator.sbml.astnode;
 
 import java.util.Map;
 import org.sbml.jsbml.Species;
-import org.simulator.sbml.ValueHolder;
+import org.simulator.sbml.SBMLValueHolder;
 
 /**
  * This class can compute and store the value of an AssignmentRule together with the variable of the rule.
@@ -71,7 +71,7 @@ public class AssignmentRuleValue extends RuleValue{
    * @param valueHolder
    */
   public AssignmentRuleValue(ASTNodeValue nodeObject, int index,
-    Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, ValueHolder valueHolder) {
+    Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder) {
     super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder);
   }
 

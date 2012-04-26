@@ -43,7 +43,7 @@ public class ReactionValue extends ASTNodeValue {
    * @param node
    * @param r
    */
-  public ReactionValue(ASTNodeInterpreterWithTime interpreter, ASTNode node,
+  public ReactionValue(ASTNodeInterpreter interpreter, ASTNode node,
     Reaction r) {
     super(interpreter, node);
     this.r = r;

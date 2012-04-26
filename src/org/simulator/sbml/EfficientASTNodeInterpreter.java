@@ -63,7 +63,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
   /**
    * The value holder that is used for calculating the values.
    */
-  private ValueHolder valueHolder;
+  private SBMLValueHolder valueHolder;
   
   /**
    * Field for saving intermediate values.
@@ -79,7 +79,7 @@ public class EfficientASTNodeInterpreter implements ASTNodeCompiler {
    * Constructs an interpreter with a specific value holder.
    * @param valueHolder
    */
-  public EfficientASTNodeInterpreter(ValueHolder valueHolder) {
+  public EfficientASTNodeInterpreter(SBMLValueHolder valueHolder) {
     this.valueHolder = valueHolder;
     this.nodeValue = new SpecialASTNodeValue(this);
   }
