@@ -28,7 +28,7 @@ import org.sbml.jsbml.SpeciesReference;
 import org.simulator.math.odes.DelayValueHolder;
 
 /**
- * A {@link ValueHolder} is necessary to provide the current values for
+ * A {@link SBMLValueHolder} is necessary to provide the current values for
  * {@link Compartment}s, {@link Species}, {@link Parameter}s, and
  * {@link SpeciesReference}s at simulation time. It also grants access
  * to the current simulation time. In this way, it is possible to separate
@@ -40,7 +40,7 @@ import org.simulator.math.odes.DelayValueHolder;
  * @version $Rev$
  * @since 0.9
  */
-public interface ValueHolder extends DelayValueHolder, Serializable {
+public interface SBMLValueHolder extends DelayValueHolder, Serializable {
 
     /**
      * Returns the size of the compartment with the given id.

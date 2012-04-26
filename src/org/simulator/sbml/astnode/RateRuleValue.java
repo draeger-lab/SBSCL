@@ -18,7 +18,7 @@ package org.simulator.sbml.astnode;
 
 import java.util.List;
 import org.sbml.jsbml.Species;
-import org.simulator.sbml.ValueHolder;
+import org.simulator.sbml.SBMLValueHolder;
 
 /**
  * This class can compute and store the value of a rate rule together with the variable of the rule.
@@ -56,7 +56,7 @@ public class RateRuleValue extends RuleValue{
    * @param valueHolder
    */
   public RateRuleValue(ASTNodeValue nodeObject, int index,
-    Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, ValueHolder valueHolder) {
+    Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder) {
     super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder);
   }
   
@@ -68,7 +68,7 @@ public class RateRuleValue extends RuleValue{
    * @param valueHolder
    */
   public RateRuleValue(ASTNodeValue nodeObject, int index,
-    List<Integer> speciesIndices, ValueHolder valueHolder) {
+    List<Integer> speciesIndices, SBMLValueHolder valueHolder) {
     super(nodeObject, index);
     this.isCompartment = true;
     this.speciesIndices = speciesIndices;

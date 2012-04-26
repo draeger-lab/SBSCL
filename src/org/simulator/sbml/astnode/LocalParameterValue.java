@@ -37,7 +37,7 @@ public class LocalParameterValue extends ASTNodeValue {
 	 * @param node
 	 * @param lp
 	 */
-	public LocalParameterValue(ASTNodeInterpreterWithTime interpreter, ASTNode node,
+	public LocalParameterValue(ASTNodeInterpreter interpreter, ASTNode node,
 			LocalParameter lp) {
 		super(interpreter, node);
 		this.lp = lp;

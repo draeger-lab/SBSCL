@@ -19,7 +19,7 @@ package org.simulator.sbml.astnode;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Species;
-import org.simulator.sbml.ValueHolder;
+import org.simulator.sbml.SBMLValueHolder;
 
 /**
  * This class computes and stores values of ASTNodes that refer to a species.
@@ -41,7 +41,7 @@ public class SpeciesValue extends ASTNodeValue {
   /**
    * The value holder that stores the current simulation results
    */
-  protected ValueHolder valueHolder;
+  protected SBMLValueHolder valueHolder;
   
   /**
    * Has the species an initial amount set?
@@ -83,8 +83,8 @@ public class SpeciesValue extends ASTNodeValue {
    * @param compartmentPosition
    * @param zeroSpatialDimensions
    */
-  public SpeciesValue(ASTNodeInterpreterWithTime interpreter, ASTNode node,
-    Species s, ValueHolder valueHolder, int position, int compartmentPosition, boolean zeroSpatialDimensions) {
+  public SpeciesValue(ASTNodeInterpreter interpreter, ASTNode node,
+    Species s, SBMLValueHolder valueHolder, int position, int compartmentPosition, boolean zeroSpatialDimensions) {
     super(interpreter, node);
     this.s = s;
     this.id = s.getId();

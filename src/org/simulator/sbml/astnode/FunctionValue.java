@@ -67,7 +67,7 @@ public class FunctionValue extends ASTNodeValue {
 	 * @param the corresponding ASTNode
 	 * @param the variables of the function as ASTNodes
 	 */
-	public FunctionValue(ASTNodeInterpreterWithTime interpreter,
+	public FunctionValue(ASTNodeInterpreter interpreter,
 			ASTNode node, List<ASTNode> variableNodes) {
 		super(interpreter, node);
 		CallableSBase variable = node.getVariable();
