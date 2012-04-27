@@ -567,7 +567,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	public boolean processEvents(EventDESystem EDES, double time, double previousTime, double[] yTemp)
 			throws DerivativeException {
 		boolean hasNewEvents=false;
-		EventInProcess event;
+		EventInProgress event;
 		event = EDES.getNextEventAssignments(
 				time, previousTime, yTemp);
 

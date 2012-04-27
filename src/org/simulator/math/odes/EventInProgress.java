@@ -28,7 +28,7 @@ import java.util.Map;
  * @author Roland Keller
  * @version $Rev$
  */
-public class EventInProcess {
+public class EventInProgress {
 
 	protected boolean fired;
 	protected double lastTimeFired;
@@ -44,7 +44,7 @@ public class EventInProcess {
 	 * 
 	 * @param fired
 	 */
-	public EventInProcess(boolean fired) {
+	public EventInProgress(boolean fired) {
 		this.fired = fired;
 		this.execTimes = new LinkedList<Double>();
 		this.values = new LinkedList<Double[]>();

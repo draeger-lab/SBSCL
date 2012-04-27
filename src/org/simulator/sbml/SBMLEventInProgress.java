@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.simulator.math.odes.EventInProcess;
+import org.simulator.math.odes.EventInProgress;
 import org.simulator.sbml.astnode.ASTNodeValue;
 import org.simulator.sbml.astnode.AssignmentRuleValue;
 
@@ -36,7 +36,7 @@ import org.simulator.sbml.astnode.AssignmentRuleValue;
  * @version $Rev$
  * @since 0.9
  */
-public class SBMLEventInProcess extends EventInProcess{
+public class SBMLEventInProgress extends EventInProgress{
 
 	protected double priority;
 	protected Map<Integer,Double> assignments;
@@ -53,7 +53,7 @@ public class SBMLEventInProcess extends EventInProcess{
 	 * 
 	 * @param fired
 	 */
-	public SBMLEventInProcess(boolean fired) {
+	public SBMLEventInProgress(boolean fired) {
 		super(fired);
 		this.priority = Double.NEGATIVE_INFINITY;
 	}

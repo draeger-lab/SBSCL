@@ -60,7 +60,7 @@ import org.simulator.math.odes.DESystem;
 import org.simulator.math.odes.DelayValueHolder;
 import org.simulator.math.odes.DelayedDESystem;
 import org.simulator.math.odes.EventDESystem;
-import org.simulator.math.odes.EventInProcess;
+import org.simulator.math.odes.EventInProgress;
 import org.simulator.math.odes.FastProcessDESystem;
 import org.simulator.math.odes.RichDESystem;
 import org.simulator.sbml.astnode.ASTNodeInterpreter;
@@ -138,10 +138,10 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	private double currentTime;
 
 	/**
-	 * This array stores for every event an object of {@link SBMLEventInProcess} that is used
+	 * This array stores for every event an object of {@link SBMLEventInProgress} that is used
 	 * to handle event processing during simulation
 	 */
-	private SBMLEventInProcess events[];
+	private SBMLEventInProgress events[];
 
 	/**
 	 * This set stores the priorities of the currently processed events.
@@ -577,7 +577,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.EventDESystem#getEventAssignments(double, double[])
 	 */
-	public EventInProcess getNextEventAssignments(double t, double previousTime, double[] Y)
+	public EventInProgress getNextEventAssignments(double t, double previousTime, double[] Y)
 			throws DerivativeException {
 
 		if (!modelHasEvents) {
@@ -1166,7 +1166,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		 if (model.getEventCount() > 0) {
 			 // this.events = new ArrayList<EventWithPriority>();
 			 if (this.events == null) {
-				 this.events = new SBMLEventInProcess[model.getEventCount()];
+				 this.events = new SBMLEventInProgress[model.getEventCount()];
 			 }
 			 this.runningEvents = new LinkedList<Integer>();
 			 this.delayedEvents = new LinkedList<Integer>();
@@ -1812,7 +1812,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 							.getInitialValue());
 				}
 				else {
-					events[i] = new SBMLEventInProcess(model.getEvent(i).getTrigger()
+					events[i] = new SBMLEventInProgress(model.getEvent(i).getTrigger()
 							.getInitialValue());
 				}
 			} else {
@@ -1821,7 +1821,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 							.getInitialValue());
 				}
 				else {
-					events[i] = new SBMLEventInProcessWithDelay(model.getEvent(i).getTrigger()
+					events[i] = new SBMLEventInProgressWithDelay(model.getEvent(i).getTrigger()
 							.getInitialValue());
 				}
 			}
@@ -1861,7 +1861,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * @param the Y vector
 	 * @return the event with assignments
 	 */
-	private SBMLEventInProcess processNextEvent(HashSet<Double> priorities, double[] Y)
+	private SBMLEventInProgress processNextEvent(HashSet<Double> priorities, double[] Y)
 			throws DerivativeException {
 		Integer symbolIndex;
 		double newVal, highestPriority = -1;

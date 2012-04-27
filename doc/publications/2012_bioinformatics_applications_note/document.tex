@@ -63,15 +63,16 @@ commentstyle=\ttfamily\itshape\color{forrestgreen}
 \title[Simulation Core Library]{Simulation Core Library: the Java
 library for numerical computation in systems biology} \author[Dr\"ager
 \textit{et~al.}]{%
-Andreas Dr\"ager\,$^{1,*}$, Roland Keller\,$^{1}$, 
-Alexander D\"orr\,$^{1}$,
-Akito Tabira\,$^{2}$,
+Andreas Dr\"ager\,$^{1,}$\footnote{to whom correspondence should be
+addressed}\hspace{.3em},
+Roland Keller\,$^{1,}$\dag,
+Alexander D\"orr\,$^{1,}$\footnote{Authors with equal
+contribution}\hspace{.3em}, Akito Tabira\,$^{2}$,
 Akira Funahashi\,$^{2}$,
-Michael J. Ziller\,$^{3}$
+Michael J. Ziller\,$^{3}$,
 Nicolas Rodriguez\,$^{4}$,
 Nicolas Le Nov\`{e}re\,$^{4}$
-Michael T. Cooling\,$^{5}$ and
-Andreas Zell\,$^1$\footnote{to whom correspondence should be addressed}}
+Andreas Zell\,$^{1,*}$}
 \address{$^{1}$Center for Bioinformatics Tuebingen (ZBIT), University of
 Tuebingen, T\"ubingen, Germany\\
 $^{2}$Keio University, Graduate School of Science and Technology, Yokohama,
@@ -79,9 +80,7 @@ Japan\\
 $^{3}$Department of Stem Cell and Regenerative Biology, Harvard University,
 Cambridge, MA, USA\\
 $^{4}$European Bioinformatics Institute, Wellcome Trust Genome Campus,
-Hinxton, Cambridge, UK\\
-$^{5}$Auckland Bioengineering Institute, University of Auckland, Auckland, New
-Zealand}
+Hinxton, Cambridge, UK}
 
 \history{Received on XXXXX; revised on XXXXX; accepted on XXXXX}
 
@@ -199,7 +198,7 @@ files and to deal with their structure in memory.
 %    \includegraphics[width=.5\textwidth]{img/SBMLInterpreter.pdf}
 %  }
 %}
-\centering{\includegraphics[width=.5\textwidth]{img/UML_Solvers_and_Systems.pdf}}
+\centering{\includegraphics[width=.5\textwidth]{img/UML_Solvers_and_Systems_1.pdf}}
 \caption[Architecture of the Simulation Core Library]{Architecture of
 the Simulation Core Library (slightly simplified). Numerical methods are
 strictly separated from differential equation systems. The upper part displays
@@ -315,7 +314,8 @@ The authors are grateful to Beky Kotcon, Samantha Mesuro, Daniel Rozenfeld, Anak
 Yodpinyanee, Andres Perez, Eric Doi, Richard Mehlinger, Steven Ehrlich, Martin
 Hunt, George Tucker, Peter Scherpelz, Aaron Becker, Eric Harley, and Chris
 Moore, Harvey Mudd College, USA, for providing a Java implementation of
-Rosenbrock's method, and to Hannes Planatscher, NMI Reutlingen.
+Rosenbrock's method, and to Michael T. Cooling, University of Auckland, New
+Zealand.
 
 \paragraph{Funding\textcolon} 
 The Federal Ministry of Education and Research (BMBF, Germany) in the project
