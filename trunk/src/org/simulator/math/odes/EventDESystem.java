@@ -70,7 +70,7 @@ public interface EventDESystem extends DESystem {
 	 * @return Returns a list with event assignments for the events triggered
 	 * @throws DerivativeException
 	 */
-	public EventInProcess getNextEventAssignments(double t, double previousTime, double Y[])
+	public EventInProgress getNextEventAssignments(double t, double previousTime, double Y[])
 			throws DerivativeException;
 
 	/**

@@ -34,7 +34,7 @@ import java.util.LinkedList;
  * @version $Rev$
  * @since 0.9
  */
-public class SBMLEventInProcessWithDelay extends SBMLEventInProcess {
+public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
 
 	/**
 	 * 
@@ -51,7 +51,7 @@ public class SBMLEventInProcessWithDelay extends SBMLEventInProcess {
 	 * 
 	 * @param fired
 	 */
-	public SBMLEventInProcessWithDelay(boolean fired) {
+	public SBMLEventInProgressWithDelay(boolean fired) {
 		super(fired);
 		previousExecutionTimes = new LinkedList<Double > ();
 		previousExecutionValues = new LinkedList<Double[] > ();
