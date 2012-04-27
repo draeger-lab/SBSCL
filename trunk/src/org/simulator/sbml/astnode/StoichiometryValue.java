@@ -22,7 +22,6 @@ import java.util.Set;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.simulator.sbml.EfficientASTNodeInterpreter;
 import org.simulator.sbml.SBMLValueHolder;
 
 /**
