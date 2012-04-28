@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version2" level="2" version="2">
+  <model id="abc1__1j1__2_3e_4_i_1300826091904">
+    <annotation>
+      <listOfParameterHistories xmlns="http://www.uk.ac.ed.csbe.sbsivisual/parameter/ns">
+        <parameterHistory min="0.0" initialstep="0.1" max="10.0" use="Yes" id="k1"/>
+        <parameterHistory min="0.0" initialstep="0.1" max="10.0" use="Yes" id="k2"/>
+        <parameterHistory min="0.0" initialstep="0.1" max="10.0" use="Yes" id="k_1"/>
+      </listOfParameterHistories>
+      <listOfConfigs xmlns="http://www.uk.ac.ed.csbe.sbsivisual/configpage/ns">
+        <popSize>100</popSize>
+        <MAXRG>5000</MAXRG>
+        <targeted_costfunctionvalue>0.01</targeted_costfunctionvalue>
+        <ckPointFreq>-1</ckPointFreq>
+        <MAXCOST>1000</MAXCOST>
+        <MaxNoChange>100</MaxNoChange>
+        <seed>-1</seed>
+        <mutantProbability>-1.0</mutantProbability>
+        <atol>1.0E-14</atol>
+        <restartFreq>51</restartFreq>
+        <mu>100.0</mu>
+        <reltol>1.0E-4</reltol>
+        <numBest>2</numBest>
+        <printfreq>2</printfreq>
+        <setupType>SobolSelect</setupType>
+        <out_interval>0.01</out_interval>
+        <interval>0.0010</interval>
+        <MaxSimilarity>95</MaxSimilarity>
+        <MAX_NUMGEN>500</MAX_NUMGEN>
+        <sobolseed>-1</sobolseed>
+        <t_init>0.0</t_init>
+        <t_final>10.0</t_final>
+        <verbose>-1</verbose>
+        <maxTimes>100000</maxTimes>
+        <numGen>50</numGen>
+        <PSONumGen>0</PSONumGen>
+      </listOfConfigs>
+    </annotation>
+    <listOfCompartments>
+      <compartment id="Default" name="Default" size="1"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="A" name="A" compartment="Default" initialConcentration="1"/>
+      <species id="B" name="B" compartment="Default" initialConcentration="0"/>
+      <species id="C" name="C" compartment="Default" initialConcentration="0"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="k1" value="1" constant="false"/>
+      <parameter id="k2" value="1" constant="false"/>
+      <parameter id="k_1" value="1" constant="false"/>
+    </listOfParameters>
+    <listOfConstraints>
+      <constraint>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <and/>
+            <apply>
+              <lt/>
+              <ci> k1 </ci>
+              <cn> 10 </cn>
+            </apply>
+            <apply>
+              <gt/>
+              <ci> k1 </ci>
+              <cn> 0 </cn>
+            </apply>
+          </apply>
+        </math>
+      </constraint>
+    </listOfConstraints>
+    <listOfReactions>
+      <reaction id="Reac_1" name="v1Reac" reversible="false">
+        <listOfReactants>
+          <speciesReference species="A"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="B"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <ci> k1 </ci>
+                <ci> A </ci>
+              </apply>
+              <apply>
+                <times/>
+                <ci> k_1 </ci>
+                <ci> B </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Reac_2" name="v2" reversible="false" >
+        <listOfReactants>
+          <speciesReference species="B"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="C"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> k2 </ci>
+              <ci> B </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>
