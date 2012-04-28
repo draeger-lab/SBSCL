@@ -33,6 +33,9 @@
     <!-- the path to the Simulation Core Library libraries -->
   	<property name="lib" location="${base}/lib"/>
   	
+  	<!-- Library folder for non-core stuff ( e.g., SED-ML export support) -->
+  	<property name="ext-lib" location="${base}/ext-lib"/>
+  	
   	<property name="appJar" value="${base}/dist/SimulationCoreLibrary"/>
   	
   	<property name="version" value="1.1"/>
@@ -55,6 +58,17 @@
     	  <!-- These libraries are required by most classes -->
           <zipfileset excludes="META-INF/*" src="${lib}/commons-math-2.2.jar"/>
           <zipfileset excludes="META-INF/*" src="${lib}/jsbml-1.0-incl-libs.jar"/>
+          <!-- These are needed for SED-ML support -->
+           <zipfileset excludes="META-INF/*" src="${ext-lib}/commons-io-1.4.jar"/>
+            <zipfileset excludes="META-INF/*" src="${ext-lib}/jaxen-1.1.1.jar"/>
+            <zipfileset excludes="META-INF/*" src="${ext-lib}/jdom-contrib.jar"/>
+            <zipfileset excludes="META-INF/*" src="${ext-lib}/jdom.jar"/>
+            <zipfileset excludes="META-INF/*" src="${ext-lib}/jlibsedml.jar"/>
+            <zipfileset excludes="META-INF/*" src="${ext-lib}/jmathml.jar"/>
+            <zipfileset excludes="META-INF/*" src="${ext-lib}/xom-1.2.1.jar"/>
+            
+            
+          <!-- End of SEDML support libs -->
     </jar>
   </target>
 	
@@ -97,7 +111,7 @@
 		package="true"
 		sourcepath="src:resources"
 		additionalparam="-d ${uml.dir}"
-		packagenames="org.simulator.math.odes,org.simulator.sbml.*">
+		packagenames="org.simulator.math.odes,org.simulator.sbml.*,org.simulator.sedml">
 		<!-- classpath="${lib}/*.jar" -->
 		<!-- sourcepathref="uml.source.path" -->
 		<!-- destdir="${uml.dir}" -->
