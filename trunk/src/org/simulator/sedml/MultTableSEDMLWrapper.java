@@ -8,6 +8,11 @@ import org.simulator.math.odes.MultiTable.Block.Column;
 /**
  * This class adapts the native results to an interface that the SEDML processor can use
  *  to post-process results.
+ *  This class can be used to access the raw results via the getMultiTable() method.
+ *  <p>
+ *  All methods accessing data access the underlying {@link MultiTable} object. <br/>
+ *  Changes to a {@link MultiTable} object will therefore be visible to this class,
+ *  i.e., it does not make a separate copy of the data.
  * 
  */
 public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
@@ -16,7 +21,11 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 		this.mTable = mTable;
 	}
 
-	public MultiTable getmTable() {
+	/**
+	 * Gets the underlying {@link MultiTable} wrapped by this class.
+	 * @return
+	 */
+	public MultiTable getMultiTable() {
 		return mTable;
 	}
 
