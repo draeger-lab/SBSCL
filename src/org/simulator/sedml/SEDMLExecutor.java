@@ -29,15 +29,17 @@ public class SEDMLExecutor {
 	
 	
 	/**
-	 * 
-	 * @param outputID An id of a SED-ML output element
+	 * EXecutes a SEDML file to produce the specified output. It's up to 
+	 *  clients to ensure a valid {@link InputStream} is open to access the 
+	 *  SED-ML file.
+	 * @param outputID An id of a SED-ML Output element
 	 * @param is A readable {@link InputStream} to the SED-ML 
 	 * @return A {@link MultiTable} of the processed results.
 	 * @throws ExecutionException
 	 * @throws IOException if {@link InputStream} is not readable.
 	 * @throws ExecutionException if execution is not possible
 	 */
-	MultiTable execute (String outputID, InputStream is) throws ExecutionException,
+	public MultiTable execute (String outputID, InputStream is) throws ExecutionException,
 		IOException {
     	//read it with BufferedReader
     	BufferedReader br
@@ -57,7 +59,7 @@ public class SEDMLExecutor {
 		} catch (XMLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new ExecutionException("Error reading SED-ML");
+			throw new ExecutionException("Error reading SED-ML: " + e.getMessage());
 		}
     	SedML sed = doc.getSedMLModel();
     	Output out= sed.getOutputWithId(outputID);
