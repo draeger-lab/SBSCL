@@ -36,7 +36,11 @@ import org.simulator.sbml.SBMLinterpreter;
  *  such as retrieving models, applying changes to models, working out what tasks need to be executed to achieve 
  *  an Output, and post-processing of results.
  *  <p>
- *  Typical usage for this class is demonstrated in the Junit test for this class,
+ *  Typical usage for this class is demonstrated in the JUnit test for this class.<br/>
+ *  
+ * Models can be resolved either from local files, URLs, or BioModels MIRIAM URNs.<br/>
+ * TO resolve models from different sources, see the documentation for <code>AbstractSedmlExecutor</code>
+ * in the jlibsedml library.
  * @author radams
  *
  */
