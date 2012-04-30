@@ -149,7 +149,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 			return new RosenbrockSolver(); // default
 		}
 	}
-	MultiTable processSimulationResults(Output wanted,
+	public MultiTable processSimulationResults(Output wanted,
 			Map<Task, IRawSedmlSimulationResults> res) {
 		// here we post-process the results
 		 SedMLResultsProcesser2 pcsr2 =  new SedMLResultsProcesser2(sedml, wanted);
