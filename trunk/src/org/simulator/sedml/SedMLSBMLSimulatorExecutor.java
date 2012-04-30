@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.jlibsedml.ArchiveComponents;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.Output;
 import org.jlibsedml.SedML;
@@ -13,6 +14,7 @@ import org.jlibsedml.UniformTimeCourse;
 import org.jlibsedml.Variable;
 import org.jlibsedml.VariableSymbol;
 import org.jlibsedml.execution.AbstractSedmlExecutor;
+import org.jlibsedml.execution.ArchiveModelResolver;
 import org.jlibsedml.execution.ExecutionStatusElement;
 import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
 import org.jlibsedml.execution.SedMLResultsProcesser2;
@@ -55,7 +57,18 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		// add extra model resolvers - only FileModelResolver is included by default.
 		addModelResolver(new BioModelsModelsRetriever());
 		addModelResolver(new URLResourceRetriever());
+		
 		// TODO Auto-generated constructor stub
+	}
+	
+	/**
+	 * Enables models to be retrieved from a SED-ML archive format.<br/>
+	 * This method must be called <b>before</b> <code>runSimulations() </code>
+	 *  is called, if a SED-ML archive is to be used as a model source. 
+	 * @param ac A non-null {@link ArchiveComponents} object.
+	 */
+	public void setIsArchive (ArchiveComponents ac) {
+		addModelResolver(new ArchiveModelResolver(ac));
 	}
 
 	/*
