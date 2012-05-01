@@ -233,35 +233,34 @@ values for all model components (such as species and compartments).
 
 For a given state of the ODE system\marginpar(the state includes all variables including time), the class \SBMLinterpreter, responsible for the evaluation of models encoded in SBML returns the current set of
 derivatives of the variables. It is connected to an efficient
-interpreter for MathML expressions that are contained in kinetic laws, rules
-and events. The nodes of the syntax tree of those expressions depend on the
-current simulation time and the given values of the ODE system. If the time or
-any of these values has changed, the value of the node has to be recalculated.
+MathML interpreter of the expressions contained in kinetic laws, rules
+and events. The nodes of the syntax tree for those expressions depend on the
+current state of the ODE system. If the state has changed, the values of the nodes have to be recalculated.
 At the beginning of the simulation the syntax trees of all kinetic laws, rules
-and events are restructured and merged to one large tree that contains
-equivalent nodes only once. This leads to a decreasing computation time during
+and events are restructured and merged to contains
+equivalent nodes only once. This decreases computation time during
 the simulation.
 
 An extremely important aspect in the interpretation of SBML models is the
-determination of the exact time at which an event occurs, as this can have a
-high influence on the precision of the values of the system variables. We have
-therefore adapted the Rosenbrock solver \citep{Kotcon2011}, which is an
+determination of the exact time at which an event occurs, as this can have an
+important influence on the precision of the system variables. We have
+therefore adapted the Rosenbrock solver \citep{Kotcon2011}, an
 integrator with an adaptive step size, to a very precise timing of the events.
 Rosenbrock's method is well-suited even for stiff systems.
 
-Algebraic rules are transferred to assignment rules before the simulation: One
+Algebraic rules are transferred to assignment rules before the simulation\marginpar{This is only valid for polynomes. And for those, assignmentRules should have been used anyway. How do-you proceed for cos(x)=0?}: One
 of the variables contained in an algebraic rule is chosen as the variable of the
-created assignment rule and the equation is solved by this variable. The
+created assignment rule and the equation is solved for this variable.\marginpar{How do-you choose the variable?} The
 \OverdeterminationValidator{} in JSBML helps to ensure that no conflicts occur
 between any of the chosen variables.
 
-The simulation algorithm now proceeds as follows: In each time step the ODE
-solver gets the current set of values of the variables as its initial values and
-calculates the values for the next time point. After that events
-and rules are processed, that can change the values. The calculated values are
-then the initial values for the next time step. The event processing of the
-Rosenbrock solver is different from that of the other solvers, as it
-is directly integrated in the solver class and influences the adaptation of its
+The simulation algorithm then proceeds as follows: for each time step, the ODE
+solver gets the current variable values and
+calculates the values for the next time point. After that, events
+and rules are processed, that can change the values. The calculated values
+then become the initial values for the next time step. The event processing of the
+Rosenbrock solver is different from other solvers, as it
+is directly integrated in the solver class and influences the
 step size. This makes the processing of the events extremely precise.
 \end{methods}
 
@@ -283,25 +282,24 @@ step size. This makes the processing of the events extremely precise.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Results and conclusion}
-The SBML implementation has been successfully passed the
-SBML Test Suite using the Rosenbrock solver.
+The SBML implementation has successfully passed the
+SBML Test Suite.
 %(see
 %\href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite}):
 Furthermore, it solved nearly all models from the
 \href{http://biomodels.net}{BioModels.net} database (406 of 409 models from
 release 21, \citealp{Novere2006a}).
 Therefore, the Simulation Core Library is an efficient Java tool for the
-simulation of differential equation systems given in systems biology. It can be
-easily integrated in larger applications.
-The widespread program CellDesigner version~4.2 \citep{Funahashi2003} uses it
-already as one of its simulation libraries.
+simulation of differential equation systems used in systems biology. It can be
+easily integrated in larger applications. For instance,
+CellDesigner version~4.2 \citep{Funahashi2003} already uses it as one of its simulation libraries.
 The stand-alone application SBMLsimulator (available at
 \href{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator}{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator})
 provides a convenient graphical user interface for the simulation of SBML
-models and uses this library as its computational backend.
+models and uses it as a computational backend.
 The abstract program structure of the Simulation Core Library supports the
 integration of additional model formats besides its SBML implementation, for
-instance CellML. To this end, it is only necessary to implement a suitable
+instance CellML\marginpar{Is this being done?}. To this end, it is only necessary to implement a suitable
 interpreter class.
 
 \section*{Acknowledgement}
