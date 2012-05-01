@@ -136,10 +136,11 @@ estimation of parameter values), is a multiple-purpose and
 efficient numerical solver library that has been designed with the
 requirements of biological network models in mind.
 
-Many stand-alone programs providing these important features come with graphical user interfaces\marginpar{I would avoid naming any software here. Such a list can only be incomplete and is not necessary}\sout{, for
-instance, the Virtual Cell \citep{Loew2001}, iBioSim \citep{Myers2009},
+Many stand-alone programs providing these important features come with graphical user interfaces.
+\marginpar{I would avoid naming any software here. Such a list can only be incomplete and is not necessary}
+\sout{, for instance, the Virtual Cell \citep{Loew2001}, iBioSim \citep{Myers2009},
 PottersWheel \citep{Maiwald2008}, COPASI \citep{Hoops2006}, SBToolbox2
-\citep{SBT_Schmidt2006}}.
+\citep{SBT_Schmidt2006}}
 %, or the Systems Biology Workbench with Roadrunner (SBW,
 %\citealt{Bergmann06}). 
 However, the vast majority of the internal solvers for
@@ -163,10 +164,12 @@ a commercial license (e.g., MATLAB\texttrademark{}) for their execution.
 %parameter values or compartment sizes. Rules can directly assign new values to
 %their objectives, e.g., the concentration of a reacting species.
 %
+
 \sout{The SBML ODE Solver Library \citep{Machne2006}, which is written in C,
 %and based on the libSBML library \citep{Bornstein2008}, 
 provides such a simulation routine based on the SUNDIALS differential equation
-solver.}\marginpar{I would avoid mentioning it here but keep it for the discussion. It makes the current work look like a reimplementation in Java}
+solver.}
+\marginpar{I would avoid mentioning it here but keep it for the discussion. It makes the current work look like a reimplementation in Java}
 
 In contrast, we present here the platform-independent Simulation Core
 Library. This generic library is completely decoupled from any graphical user
@@ -217,23 +220,18 @@ equation systems are strictly separated. The class \MultiTable{} stores the
 results of a simulation within its \Block{} data structures. 
 
 The abstract description of differential equation systems with the help of
-several distinct interfaces makes it possible to describe various types of
-differential equation systems without directly linking it to a particular type
-of biological networks. In this way it is possible to pass an instance of an
-interpreter for a particular model system, such as SBML or CellML, to any
-available solver.
+several distinct interfaces makes possible to decouple it from a particular type
+of biological networks. It is therfore possible to pass an instance of an
+interpreter for a particular model description format to any
+available solver.\marginpar{I would not quote SBML and CellML. CellML is actually not supported at the moment}
 
-For the evaluation of a biological model a specialized interpreter class is
-required. The interpreter causes the main run-time of the integration procedure.
+A specialized interpreter class is required for the evaluation of a biological model. This interpretation is the most time consuming step of the integration procedure.
 This is why efficient and clearly organized data structures are required to
 ensure a high performance of the overall library. The interpretation of SBML
-models is therefore organized in the evaluation of events and rules, the
-computation of stoichiometric information, and the computation of the current
-values of all model components (such as species and compartments).
+models is split between evaluation of events and rules, computation of stoichiometric information, and computation of the current
+values for all model components (such as species and compartments).
 
-The class responsible for the evaluation of models encoded in SBML is
-\SBMLinterpreter.
-For a given value of the ODE system and a given time it returns the current set of
+For a given state of the ODE system\marginpar(the state includes all variables including time), the class \SBMLinterpreter, responsible for the evaluation of models encoded in SBML returns the current set of
 derivatives of the variables. It is connected to an efficient
 interpreter for MathML expressions that are contained in kinetic laws, rules
 and events. The nodes of the syntax tree of those expressions depend on the
