@@ -6,6 +6,7 @@
 \usepackage{listings}
 \usepackage{ifthen}
 \usepackage[english]{babel}
+\usepackage[normalem]{ulem}
 
 \lstset{language=Java,
 morendkeywords={String, Throwable}
@@ -90,9 +91,8 @@ Hinxton, Cambridge, UK}
 
 \begin{abstract}
 \section{Motivation:}
-Dynamic simulation of biological phenomenons belongs to the key aspects of
-research in systems biology. Available implementations of numerical methods,
-however, can often not easily be used as a backend in customized programs.
+Dynamic simulation of biological phenomena are key aspects of
+research in systems biology. However, it is often difficult to use available implementations of numerical methods as a backend for custom-made programs.
 \section{Results:}
 The Simulation Core Library is a community-driven project that provides a large
 collection of numerical solvers and a sophisticated interface hierarchy for the
@@ -106,7 +106,7 @@ It already includes an efficient and exhaustive implementation of methods to
 interpret the content of models encoded in SBML using the JSBML project.
 To demonstrate its capabilities, it has been benchmarked against the entire SBML
 Test Suite and %also been used to simulate 
-all models of the BioModels.net database.
+all models of BioModels Database.
 \section{Availability:}
 Source code, binaries, and documentation can be freely obtained under the terms
 of the LGPL 3.1 from the website
@@ -123,31 +123,29 @@ of the LGPL 3.1 from the website
 
 \section{Introduction}
 
-Following the aim to make biological phenomena predictable, modeling, 
-simulation, and computer analysis of biological networks has become an integral
-part of modern biological research. XML-based standard description languages
+As part of the movement towards predictable biology, modeling, 
+simulation, and computer analysis of biological networks, have become integral
+parts of modern biological research. XML-based standard description formats
 such as the Systems Biology Markup Language (SBML, \citealt{Hucka2003}) or
-CellML \citep{Lloyd2004} specify rich sets of methods for the interpretation
-of biological network models in terms of a differential equation system with
-additional elements such as events or rules.
-Libraries for reading and manipulating the information content of
-these XML-based languages are available.
-For model analysis, simulation, and calibration (e.g., the
-estimation of parameter values), however, a multiple-purpose and 
-efficient numerical solver library that has been designed with respect to the
-requirements of biological network models is a crucial prerequisite.
+CellML \citep{Lloyd2004} provide means to encode biological network models, and interpret them in terms of a differential equation system, with
+additional structures such as discrete events and algebraic equations.
+Software libraries for reading and manipulating the content of
+these formats are available.
+However, a prerequisite for model analysis, simulation, and calibration (e.g., the
+estimation of parameter values), is a multiple-purpose and 
+efficient numerical solver library that has been designed with the
+requirements of biological network models in mind.
 
-There are several stand-alone programs with
-graphical user interfaces available that fulfil those important requests, for
+Many stand-alone programs providing these important features come with graphical user interfaces\marginpar{I would avoid naming any software here. Such a list can only be incomplete and is not necessary}\sout{, for
 instance, the Virtual Cell \citep{Loew2001}, iBioSim \citep{Myers2009},
 PottersWheel \citep{Maiwald2008}, COPASI \citep{Hoops2006}, SBToolbox2
-\citep{SBT_Schmidt2006}.
+\citep{SBT_Schmidt2006}}.
 %, or the Systems Biology Workbench with Roadrunner (SBW,
 %\citealt{Bergmann06}). 
-However, The vast majority of the internal solvers for
-these systems is either part of a larger software suite and can therefore not
+However, the vast majority of the internal solvers for
+these systems is part of a larger software suite and can therefore not
 be easily integrated into custom programs. Some are implemented in programing
-languages, which are either platform-dependent (e.g., C or C++) or even require
+languages which are either platform-dependent (e.g., C or C++) and/or require
 a commercial license (e.g., MATLAB\texttrademark{}) for their execution.
 %
 %The modeling language SBML (Systems Biology Markup Language,
@@ -165,18 +163,18 @@ a commercial license (e.g., MATLAB\texttrademark{}) for their execution.
 %parameter values or compartment sizes. Rules can directly assign new values to
 %their objectives, e.g., the concentration of a reacting species.
 %
-The SBML ODE Solver Library \citep{Machne2006}, which is written in C,
+\sout{The SBML ODE Solver Library \citep{Machne2006}, which is written in C,
 %and based on the libSBML library \citep{Bornstein2008}, 
 provides such a simulation routine based on the SUNDIALS differential equation
-solver.
+solver.}\marginpar{I would avoid mentioning it here but keep it for the discussion. It makes the current work look like a reimplementation in Java}
 
-In contrast, we here present the platform-independent Simulation Core
+In contrast, we present here the platform-independent Simulation Core
 Library. This generic library is completely decoupled from any graphical user
-interface and can hence easily be integrated into third-party programs. The
+interface and can therefore easily be integrated into third-party programs. 
 It contains several Ordinary Differential Equation (ODE)
 solvers and an interpreter for SBML models. It is the first simulation library
-that is based on the Java library JSBML \citep{Draeger2011b}, a specifically
-developed data structure for reading and writing models from and into SBML
+ based on the Java library JSBML \citep{Draeger2011b}, specifically
+developed for reading and writing models from and into SBML
 files and to deal with their structure in memory.
 
 %Secondly, a graphical and command-line user interface that provides
