@@ -51,7 +51,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
    * A list of KISAO Ids corresponding to supported algorithm types in SBMLSimulator.
    *  These are used to determine if we are able to perform the simulation.
    */
-  final static String [] SupportedIDs = new String []{"KISAO:0000033","KISAO:0000030","KISAO:0000087"};
+  final static String [] SupportedIDs = new String []{"KISAO:0000033","KISAO:0000030","KISAO:0000087","KISAO:0000088" };
 	public SedMLSBMLSimulatorExecutor(SedML sedml, Output output) {
 		super(sedml, output);
 		// add extra model resolvers - only FileModelResolver is included by default.
@@ -158,6 +158,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		 // this does not necessarily have time as x-axis - another variable could be  the 
 		 // independent variable.
 		 IProcessedSedMLSimulationResults prRes = pcsr2.getProcessedResult();
+		
 		 
 		 // now we restore a MultiTable from the processed results. This basic example assumes a typical 
 		 // simulation where time = xaxis - otherwise, if output is a Plot, we would need to analyse the x-axis

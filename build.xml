@@ -59,13 +59,13 @@
           <zipfileset excludes="META-INF/*" src="${lib}/commons-math-2.2.jar"/>
           <zipfileset excludes="META-INF/*" src="${lib}/jsbml-1.0-incl-libs.jar"/>
           <!-- These are needed for SED-ML support -->
-           <zipfileset excludes="META-INF/*" src="${ext-lib}/commons-io-1.4.jar"/>
+        <zipfileset excludes="META-INF/*" src="${ext-lib}/commons-io-1.4.jar"/>
             <zipfileset excludes="META-INF/*" src="${ext-lib}/jaxen-1.1.1.jar"/>
             <zipfileset excludes="META-INF/*" src="${ext-lib}/jdom-contrib.jar"/>
             <zipfileset excludes="META-INF/*" src="${ext-lib}/jdom.jar"/>
             <zipfileset excludes="META-INF/*" src="${ext-lib}/jlibsedml.jar"/>
             <zipfileset excludes="META-INF/*" src="${ext-lib}/jmathml.jar"/>
-            <zipfileset excludes="META-INF/*" src="${ext-lib}/xom-1.2.1.jar"/>
+            <zipfileset excludes="META-INF/*" src="${ext-lib}/xom-1.2.1.jar"/> 
             
             
           <!-- End of SEDML support libs -->
