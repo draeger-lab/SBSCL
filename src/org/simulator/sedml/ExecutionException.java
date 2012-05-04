@@ -6,9 +6,9 @@
  * for efficient numerical simulation of biological models.
  *
  * Copyright (C) 2007-2012 jointly by the following organizations:
- * 1. The University of Tuebingen, Germany
- * 2. The Keio University, Japan
- * 3. The Harvard University, USA
+ * 1. University of Tuebingen, Germany
+ * 2. Keio University, Japan
+ * 3. Harvard University, USA
  * 4. The University of Edinburgh
  * 5. EMBL European Bioinformatics Institute (EBML-EBI), Hinxton, UK
  *
