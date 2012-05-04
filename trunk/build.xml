@@ -24,6 +24,12 @@
     <!-- the path to the Simulation Core Library sources -->
   	<property name="src" location="${base}/src"/>
   	
+  	<!-- the path to the test source folder -->
+  	<property name="test" location="${base}/test"/>
+  	
+  	<!-- the path to the resources (also a source folder) -->
+  	<property name="resources" location="${base}/resources"/>
+  	
   	<!-- the path to the Simulation Core Library sources -->
   	<property name="doc" location="${base}/doc/api"/>
   	
@@ -186,13 +192,33 @@
   	</apply>
   </target>
 
-  <target name="javadoc" description="Creates Javadoc for the Simulation Core Library">
+  <target name="javadoc" description="Creates Javadoc for the Simulation Core Library" depends="init">
   	<mkdir dir="${doc}"/>
-		<javadoc sourcepath="${src}"
-      destdir="${doc}/api"
+  	<mkdir dir="${doc}/version_${version}"/>
+    <javadoc
+  	  sourcepath="${src}:${test}:${resources}"
+      destdir="${doc}/api/version_${version}"
       packagenames="org.*"
-      footer="Generated ${TODAY}"/>
+      footer="Generated ${TODAY}"
+      access="protected"
+  	  author="true"
+  	  classpath="lib/ext-lib/jdom.jar:lib/ext-lib/jdom-contrib.jar:lib/commons-math-2.2.jar:lib/ext-lib/jmathml.jar:lib/ext-lib/jaxen-1.1.1.jar:lib/ext-lib/xom-1.2.1.jar:lib/jsbml-1.0-incl-libs.jar:lib/ext-lib/jlibsedml.jar:lib/ext-lib/commons-io-1.4.jar"
+  	  doctitle="Simulation Core Library ${version}"
+  	  nodeprecated="false"
+  	  nodeprecatedlist="false"
+  	  noindex="false"
+  	  nonavbar="false"
+  	  notree="false"
+  	  source="1.5"
+  	  splitindex="true"
+  	  use="true"
+  	  version="true">
+        <link href="http://www.jdom.org/docs/apidocs.1.1/"/>
+        <link href="http://download.oracle.com/javase/6/docs/api/"/>
+        <link href="http://commons.apache.org/io/api-1.4/"/>
+        <link href="http://commons.apache.org/math/api-2.2/"/>
+        <link href="http://sbml.org/Special/Software/JSBML/build/apidocs/"/>
+    </javadoc>
   </target>	
-	
 	
 </project>
