@@ -1,6 +1,16 @@
      SBMLsimulator core NEWS -- History of user-visible changes
 
 ======================================================================
+Version 1.1 (2012-05-04)
+======================================================================
+
+ * New features:
+ 
+ * Changes in this version:
+ 
+ * Bug fixes:
+
+======================================================================
 Version 1.0 (2012-03-01)
 ======================================================================
 
@@ -9,7 +19,7 @@ Version 1.0 (2012-03-01)
  	- MathML expressions with delayed variables are now supported.
  	- Solvers can be canceled while computing.
 
-* Changes in this version:
+ * Changes in this version:
 
   	- Default values are now used for parameters, species and 
   	  compartments, if no values are set.
@@ -17,7 +27,7 @@ Version 1.0 (2012-03-01)
 	  efficient.
 	- The processing of kinetic laws and rules is faster.
 
-* Bug fixes in this version:
+ * Bug fixes in this version:
 
  	- Steady state computations are not in conflict with events any 
  	  more.
