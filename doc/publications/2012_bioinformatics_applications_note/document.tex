@@ -42,6 +42,7 @@ commentstyle=\ttfamily\itshape\color{forrestgreen}
 \newcommand{\AbstractIntegrator}{\texttt{AbstractIntegrator}}
 \newcommand{\MultiTable}{\texttt{Multi\-Table}}
 \newcommand{\Block}{\texttt{Block}}
+\newcommand{\jlibsedml}{\texttt{jlibsedml}}
 
 \hyphenation{
   % TODO hypens for regular words
@@ -289,12 +290,12 @@ is directly integrated in the solver class and influences the
 step size. The time-accurate handling of events and rules leads to very precise
 results of the simulation.
 %
-SED-ML support is enabled by inclusion of the jlibsedml library
+SED-ML support is enabled by inclusion of the \jlibsedml{} library
 (\href{http://www.jlibsedml.org}{http://www.jlibsedml.org}) in the binary
 download. Clients of the the Simulation Core Library can choose to use the
-jlibsedml API directly, or access SED-ML support via  facade classes in the
-\texttt{org.simulation.sedml} package that do not require direct dependencies on
-jlibsedml in their code.
+\jlibsedml{} API directly, or access SED-ML support via  facade classes
+in the \texttt{org.simulator.sedml} package that do not require direct
+dependencies on \jlibsedml{} in their code.
 \end{methods}
 
 %\begin{table}[!t]

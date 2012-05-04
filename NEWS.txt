@@ -6,9 +6,47 @@ Version 1.1 (2012-05-04)
 
  * New features:
  
+   - Support for SED-ML (Simulation Experiment Description
+     Markup Language, Waltemath et al., 2011) to facilitate the re-use
+     and reproduction of simulation experiments by reading and 
+     executing SED-ML files. See the new package org.simulator.sedml
+     and the new test cases in the test folder.
+   
+   - There is now a convenient ant file build.xml that provides several
+     options, such as inclusion of SED-ML support or the automatic
+     creation of UML graphs.
+     
+   - The documentation in JavaDoc has been extensively improved.
+ 
  * Changes in this version:
  
+   - Renamed org.simulator.math.odes.EventInProcess to 
+     org.simulator.math.odes.EventInProgress
+     
+   - Renamed org.simulator.sbml.SBMLEventInProcessWithDelay to
+     org.simulator.sbml.SBMLEventInProgressWithDelay
+     
+   - The separation between the interfaces for arbitrary differential
+     equation systems and SBML-specific implementation has become
+     very strict. The previous release contained some dependency in
+     the event handling to SBML. This has now been resolved by
+     introducing a modified type hierarchy of Event object handling.
+     
+   - The treatment of intermediate results during the evaluation of
+     ASTNodes had to be changed due to changes in the JSBML library. 
+ 
  * Bug fixes:
+
+   - There was a redundant representation of interpreters for SBML-
+     specific ASTNode data types. Now there is only one class for this
+     purpose that works more efficient than the previous ones.
+     
+   - An error in the evaluation of AlgebraicRules was corrected. In
+     some cases the variable was not correctly identified.
+     
+   - In some cases the species concentrations were now updated
+     correctly after changes of the size of their surrounding 
+     compartments. This issue has been fixed now.
 
 ======================================================================
 Version 1.0 (2012-03-01)
