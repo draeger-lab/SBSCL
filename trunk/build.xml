@@ -3,105 +3,233 @@
            	
 <project name="Simulator Core Library" basedir=".">
 
-  <target name="help">
+  <target
+  	name="help"
+  	description="Displays a help text explaining the usage of this ant file and its options.">
+  	
     <echo>
       This is an ANT build script to build a stand-alone JAR for
 	  Simulation Core Library.
     </echo>
   </target>
 
-  <!-- define some properties that are used throughout the tasks -->
-  <target name="init">
+  <target 
+  	name="init"
+  	description="Defines some general properties that are used throughout the tasks">
+  	
   	<echo>
   	  PLEASE MAKE SURE ALL PATHS ARE CORRECT AND DECIDE IF YOU WANT
   	  TO USE THE LIB-JARs OR REFERENCED PROJECTS.
   	</echo>
   	<tstamp /> <!-- set ${TODAY} and ${TSTAMP} -->
-  		
-    <!-- the base directory of the Simulation Core Library repository -->
-    <property name="base" location="."/>
   	
     <!-- the path to the Simulation Core Library sources -->
-  	<property name="src" location="${base}/src"/>
+  	<property name="src" location="${basedir}/src"/>
   	
   	<!-- the path to the test source folder -->
-  	<property name="test" location="${base}/test"/>
+  	<property name="test" location="${basedir}/test"/>
   	
   	<!-- the path to the resources (also a source folder) -->
-  	<property name="resources" location="${base}/resources"/>
+  	<property name="resources" location="${basedir}/resources"/>
   	
   	<!-- the path to the Simulation Core Library sources -->
-  	<property name="doc" location="${base}/doc/api"/>
+  	<property name="doc" location="${basedir}/doc/api"/>
   	
     <!-- the path to the Simulation Core Library binaries -->
-    <property name="classes" location="${base}/bin"/>
+    <property name="classes" location="${basedir}/bin"/>
     
     <!-- the path to the Simulation Core Library libraries -->
-  	<property name="lib" location="${base}/lib"/>
+  	<property name="lib" location="${basedir}/lib"/>
   	
-  	<!-- Library folder for non-core stuff ( e.g., SED-ML export support) -->
-  	<property name="ext-lib" location="${base}/ext-lib"/>
+  	<!-- Library folder for non-core stuff (e.g., SED-ML export support) -->
+  	<property name="ext-lib" location="${lib}/ext-lib"/>
   	
-  	<property name="appJar" value="${base}/dist/SimulationCoreLibrary"/>
+  	<property name="dist" location="${basedir}/dist"/>
+  	
+  	<property name="Name" value="Simulation Core Library"/>
+  	
+  	<property name="JAR_Name" value="SimulationCoreLibrary"/>
+  	
+  	<property name="appJar" value="${dist}/${JAR_Name}"/>
   	
   	<property name="version" value="1.1"/>
+  	
+  	<!-- URL where the most recent version can be obtained -->
+  	<property name="URL" value="https://sourceforge.net/projects/simulation-core/"/>
 
   </target>
 
-  <!-- puts the application specific classes into application.jar. -->
-  <target name="jar" depends="init">
-    <delete file="${appJar}_v${version}_full.jar"/>
-    <jar jarfile="${appJar}_v${version}_full.jar">
+
+  <target
+  	name="jar"
+  	depends="init"
+  	description="Creates a JAR file including all class files and all third-party libraries, but no source files.">
+  	
+    <delete file="${appJar}_v${version}_incl-libs.jar"/>
+    <jar jarfile="${appJar}_v${version}_incl-libs.jar">
       <manifest>
         <attribute name="Main-Class" value="org.simulator.About"/>
-        <attribute name="Built-By" value="Center for Bioinformatics Tuebingen (ZBIT)"/>
+        <attribute name="Built-By" value="${user.name}"/>
+      	<section name="${Name}">
+      	  <attribute name="Specification-Title" value="${Name}"/>
+      	  <attribute name="Specification-Version" value="${version}"/>
+      	  <attribute name="Implementation-Title" value="${Name}"/>
+      	  <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
+      	</section>
       </manifest>
     	
-    	<!-- Simulation Core Library Classes -->
-          <fileset dir="${classes}">
-    	      <exclude name="**/package.html"/>
-    	  </fileset>
-    	  <!-- These libraries are required by most classes -->
-          <zipfileset excludes="META-INF/*" src="${lib}/commons-math-2.2.jar"/>
-          <zipfileset excludes="META-INF/*" src="${lib}/jsbml-1.0-incl-libs.jar"/>
-          <!-- These are needed for SED-ML support -->
-        <zipfileset excludes="META-INF/*" src="${ext-lib}/commons-io-1.4.jar"/>
-            <zipfileset excludes="META-INF/*" src="${ext-lib}/jaxen-1.1.1.jar"/>
-            <zipfileset excludes="META-INF/*" src="${ext-lib}/jdom-contrib.jar"/>
-            <zipfileset excludes="META-INF/*" src="${ext-lib}/jdom.jar"/>
-            <zipfileset excludes="META-INF/*" src="${ext-lib}/jlibsedml.jar"/>
-            <zipfileset excludes="META-INF/*" src="${ext-lib}/jmathml.jar"/>
-            <zipfileset excludes="META-INF/*" src="${ext-lib}/xom-1.2.1.jar"/> 
-            
-            
-          <!-- End of SEDML support libs -->
+      <!-- Simulation Core Library Classes -->
+      <fileset dir="${classes}">
+    	<exclude name="**/package.html"/>
+      </fileset>
+      <fileset dir="${basedir}">
+        <include name="LICENSE.txt"/>
+        <include name="README.txt"/>
+      </fileset>
+      <fileset dir="${basedir}/licenses">
+        <include name="AUTHORS.txt"/>
+      </fileset>
+      
+      <!-- These libraries are required by most classes -->
+      <zipfileset excludes="META-INF/*" src="${lib}/commons-math-2.2.jar"/>
+      <zipfileset excludes="META-INF/*" src="${lib}/jsbml-1.0-incl-libs.jar"/>
+      
+      <!-- These are needed for SED-ML support -->
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/commons-io-1.4.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jaxen-1.1.1.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jdom-contrib.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jdom.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jlibsedml.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jmathml.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/xom-1.2.1.jar"/>  
+      <!-- End of SEDML support libs -->
     </jar>
   </target>
 	
-  <target name="slim_jar" depends="init">
-	    <delete file="${appJar}_v${version}_slim.jar"/>
-	    <jar jarfile="${appJar}_v${version}_slim.jar">
-	      <manifest>
-	        <attribute name="Main-Class" value="org.simulator.About"/>
-	        <attribute name="Built-By" value="Center for Bioinformatics Tuebingen (ZBIT)"/>
-	      </manifest>
-	    	
-	    	<!-- Simulation Core Library Classes -->
-	          <fileset dir="${classes}">
-	    	      <exclude name="**/package.html"/>
-	    	  </fileset>
-	    	<!-- Do not include any third-party libraries -->
-	    </jar>
-	  </target>
+  <target
+  	name="zip"
+  	depends="javadoc"
+  	description="Creates a ZIP file containing all sources, tests, resources, libs, licenses, text files, and api documentation.">
 
-  <!-- Removes all that has been built -->
-  <target name="clean" depends="init">
-    <delete file="${appJar}"/>
+  	<zip destfile="${appJar}_v${version}.zip">
+  	  <zipfileset excludes="*svn*" includes="**/*.java" dir="${src}" prefix="src"/>
+  	  <zipfileset excludes="*svn*" includes="**/*.java" dir="${test}" prefix="test"/>
+  	  <zipfileset excludes="*svn*" includes="**/*.java" dir="${resources}" prefix="resources"/>
+  	  <zipfileset excludes="*svn*" dir="${lib}" includes="**/*.jar" prefix="lib"/>
+  	  <zipfileset excludes="*svn*" dir="${basedir}/licenses" prefix="licenses"/>
+  	  <zipfileset excludes="*svn*" dir="${basedir}" includes="**/*.xml **/*.txt"/>
+  	  <zipfileset excludes="*svn*" dir="${doc}/version_${version}" prefix="doc/api/version_${version}"/>
+  	</zip>
+  	
+  </target>
+	
+  <target
+    name="jar_full"
+    depends="init"
+    description="Creates a JAR file including all class files and all third-party libraries, all package descriptions, and also all source files.">
+
+    <delete file="${appJar}_v${version}_incl-libs_src.jar"/>
+    <jar jarfile="${appJar}_v${version}_incl-libs_src.jar">
+      <manifest>
+        <attribute name="Main-Class" value="org.simulator.About"/>
+        <attribute name="Built-By" value="${user.name}"/>
+      	<section name="${Name}">
+      	  <attribute name="Specification-Title" value="${Name}"/>
+      	  <attribute name="Specification-Version" value="${version}"/>
+      	  <attribute name="Implementation-Title" value="${Name}"/>
+      	  <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
+      	</section>
+        <!--
+        <section name="common/class1.class">
+          <attribute name="Sealed" value="false"/>
+        </section>
+        -->
+      </manifest>
+
+      <!-- Simulation Core Library Classes -->
+      <fileset dir="${classes}" casesensitive="yes">
+      	<include name="**/*.class"/>
+        <include name="**/package.html"/>
+      	<include name="**/*.java"/>
+      </fileset>
+      <fileset dir="${src}" casesensitive="yes">
+        <patternset id="sources">
+          <include name="**/*.java"/>
+        </patternset>
+      </fileset>
+      <fileset dir="${basedir}">
+        <include name="LICENSE.txt"/>
+    	<include name="README.txt"/>
+      </fileset>
+      <fileset dir="${basedir}/licenses">
+        <include name="AUTHORS.txt"/>
+      </fileset>
+    	
+      <!-- These libraries are required by most classes -->
+      <zipfileset excludes="META-INF/*" src="${lib}/commons-math-2.2.jar"/>
+      <zipfileset excludes="META-INF/*" src="${lib}/jsbml-1.0-incl-libs.jar"/>
+
+      <!-- These are needed for SED-ML support -->
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/commons-io-1.4.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jaxen-1.1.1.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jdom-contrib.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jdom.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jlibsedml.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jmathml.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/xom-1.2.1.jar"/>  
+      <!-- End of SEDML support libs -->
+    </jar>
+  	
+  </target>
+
+  <target
+  	name="jar_slim"
+  	depends="init"
+  	description="Bundels only the class files in one JAR library, without any other libraries.">
+  	
+    <delete file="${appJar}_v${version}_slim.jar"/>
+      <jar jarfile="${appJar}_v${version}_slim.jar">
+      	<manifest>
+      	  <attribute name="Main-Class" value="org.simulator.About"/>
+            <attribute name="Built-By" value="${user.name}"/>
+          	<section name="${Name}">
+          	  <attribute name="Specification-Title" value="${Name}"/>
+          	  <attribute name="Specification-Version" value="${version}"/>
+          	  <attribute name="Implementation-Title" value="${Name}"/>
+          	  <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
+          	</section>
+      	</manifest>
+	    	
+      	<!-- Simulation Core Library Classes -->
+        <fileset dir="${classes}">
+          <exclude name="**/package.html"/>
+        </fileset>
+      	<fileset dir="${basedir}">
+      	  <include name="LICENSE.txt"/>
+      	  <include name="README.txt"/>
+      	</fileset>
+      	<fileset dir="${basedir}/licenses">
+          <include name="AUTHORS.txt"/>
+      	</fileset>
+        <!-- Do not include any third-party libraries -->
+    </jar>
+  </target>
+
+  <target 
+  	name="clean"
+  	depends="init"
+  	description="Removes all that has been built">
+    
+  	<delete file="${appJar}"/>
     <delete includeemptydirs="true" dir="${classes}"/>
   </target>
 
-  <target name="uml" depends="init">
-  	<property name="uml.dir" value="${base}/doc/uml"/>
+  <target
+	name="uml"
+  	depends="init"
+  	description="Generates a UML representation of the content of the project in form of a graphviz (*.dot) file that will be stored in doc/uml/graph.dot.">
+
+  	<property name="uml.dir" value="${basedir}/doc/uml"/>
   	<mkdir dir="${uml.dir}"/>
     <path id="uml.source.path">
       <pathelement path="${uml.dir}/"/>
@@ -175,7 +303,11 @@
 	</javadoc>
   </target>
 	
-  <target name="uml_as_pdf" depends="uml">
+  <target
+  	name="uml_as_pdf"
+  	depends="uml"
+  	description="Generates a UML representation of the content of the project as a PDF file that will be stored in doc/uml/graph.pdf.">
+  	
 	<!--<input
 	    message="Please enter the complete path to the dot program:"
 	    addproperty="dot"
@@ -192,7 +324,11 @@
   	</apply>
   </target>
 
-  <target name="javadoc" description="Creates Javadoc for the Simulation Core Library" depends="init">
+  <target 
+  	name="javadoc"
+	description="Creates Javadoc for the Simulation Core Library"
+  	depends="init">
+  	
   	<mkdir dir="${doc}"/>
   	<mkdir dir="${doc}/version_${version}"/>
     <javadoc

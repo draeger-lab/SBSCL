@@ -9,7 +9,7 @@
  * 1. University of Tuebingen, Germany
  * 2. Keio University, Japan
  * 3. Harvard University, USA
- * 4. The University of Edinburgh
+ * 4. The University of Edinburgh, UK
  * 5. EMBL European Bioinformatics Institute (EBML-EBI), Hinxton, UK
  *
  * This library is free software; you can redistribute it and/or modify
