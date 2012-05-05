@@ -1,20 +1,20 @@
-                           ---------------------
-                           SBMLsimulator Authors
-                           ---------------------
+                      -------------------------------
+                      Simulation Core Library Authors
+                      -------------------------------
 
-                           -- Core developers --
+                           -- Main developers --
 
-         Andreas Dr√§ger, University of Tuebingen, Germany,
+         Andreas Dräger, University of Tuebingen, Germany,
            andreas.draeger@uni-tuebingen.de
-         Alexander D√∂rr, University of Tuebingen, Germany,
-           a.doerr@student.uni-tuebingen.de
+         Alexander Dörr, University of Tuebingen, Germany,
+           alexander.doerr@uni-tuebingen.de
          Roland Keller, University of Tuebingen, Germany,
            roland.keller@uni-tuebingen.de
 
 
                       -- Principal investigators -- 
                            
-         Nicolas Le Nov√®re, European Bioinformatics Institute, Wellcome 
+         Nicolas Le Novère, European Bioinformatics Institute, Wellcome 
            Trust Genome Campus, Hinxton, United Kingdom,
            lenov@ebi.ac.uk
          Andreas Zell, University of Tuebingen, Germany,
@@ -26,7 +26,7 @@
          Akira Funahashi, Keio University, Yokohama, Japan,
            funa@bio.keio.ac.jp
          Akito Tabira, Keio University, Yokohama, Japan,
-           funa@bio.keio.ac.jp
+           tabira@fun.bio.keio.ac.jp
          Richard Adams, University of Edinburgh, UK,
            Richard.Adams@ed.ac.uk
          Mike Cooling, University of Auckland, Auckland, New Zealand,
@@ -48,13 +48,13 @@
            
                                -- Alumni --
          
-         Dieudonn√© Motsou Wouamba, University of Tuebingen, Germany,
+         Dieudonné Motsou Wouamba, University of Tuebingen, Germany,
            dwouamba@yahoo.fr
-         Max Zwie√üele, University of Tuebingen, Germany,
+         Max Zwießele, University of Tuebingen, Germany,
            max-benjamin.zwiessele@student.uni-tuebingen.de
          Philip Stevens, University of Tuebingen, Germany,
            philip.stevens@student.uni-tuebingen.de
-         Adrian Schr√∂der, University of Tuebingen, Germany,
+         Adrian Schröder, University of Tuebingen, Germany,
            adrian.schroeder@uni-tuebingen.de
          Marcel Kronfeld, University of Tuebingen, Germany,
            marcel.kronfeld@uni-tuebingen.de           
