@@ -315,28 +315,9 @@ public class ASTNodeValue {
           doubleValue = interpreter.compile(real, units);
         }
         break;
-      case INTEGER:
-        doubleValue = interpreter.compile(real, units);
-        break;
       /*
        * Operators
        */
-      case POWER:
-        doubleValue = interpreter.pow(leftChild, rightChild, time);
-        break;
-      case PLUS:
-        doubleValue = interpreter.plus(children, numChildren, time);
-        break;
-      case MINUS:
-        if (numChildren == 1) {
-          doubleValue = interpreter.uMinus(leftChild, time);
-        } else {
-          doubleValue = interpreter.minus(children, numChildren, time);
-        }
-        break;
-      case TIMES:
-        doubleValue = interpreter.times(children, numChildren, time);
-        break;
       case DIVIDE:
         if (numChildren != 2) { 
         	throw new SBMLException(MessageFormat.format(
@@ -452,9 +433,6 @@ public class ASTNodeValue {
         break;
       case FUNCTION_LN:
         doubleValue = interpreter.ln(leftChild, time);
-        break;
-      case FUNCTION_POWER:
-        doubleValue = interpreter.pow(leftChild, rightChild, time);
         break;
       case FUNCTION_SEC:
         doubleValue = interpreter.sec(leftChild, time);
