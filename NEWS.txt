@@ -1,4 +1,14 @@
      SBMLsimulator core NEWS -- History of user-visible changes
+======================================================================
+Version 1.2 (2012-xx-xx)
+======================================================================
+
+ * New features:
+   
+   - A new pom.xml file has been added to the project in order to
+     support Maven for this library.
+ 
+ * Bug fixes: 
 
 ======================================================================
 Version 1.1 (2012-05-04)
