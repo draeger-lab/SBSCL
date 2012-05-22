@@ -1,6 +1,6 @@
 /*
- * $Id: SBMLinterpreter.java 205 2012-05-05 11:57:39Z andreas-draeger $
- * $URL: http://svn.code.sf.net/p/simulation-core/code/trunk/src/org/simulator/sbml/SBMLinterpreter.java $
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
@@ -101,7 +101,7 @@ import org.simulator.sbml.astnode.TimesValue;
  * @author Roland Keller
  * @author Dieudonn&eacute; Motsou Wouamba
  * @date 2007-09-06
- * @version $Rev: 205 $
+ * @version $Rev$
  * @since 0.9
  */
 public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
@@ -808,7 +808,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	/* (non-Javadoc)
 	 * @see eva2.tools.math.des.RichDESystem#getNumIntermediates()
 	 */
-	public int getNumAdditionalValues() {
+	public int getAdditionalValueCount() {
 		return v.length;
 	}
 
