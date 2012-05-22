@@ -7,6 +7,16 @@ Version 1.2 (2012-xx-xx)
    
    - A new pom.xml file has been added to the project in order to
      support Maven for this library.
+     
+   - The new interface ParameterizedDESystem has been implemented in
+     order to facilitate the change of values for some elements of a
+     differential equation system.
+     
+ * Changes in this version:
+ 
+   - Renamed getNumAdditionalValues in RichDESystem to 
+     getAdditionalValueCount() in order to be compliant to many 
+     other Java classes.
  
  * Bug fixes: 
 
