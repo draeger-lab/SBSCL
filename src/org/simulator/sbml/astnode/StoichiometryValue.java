@@ -24,14 +24,11 @@ package org.simulator.sbml.astnode;
 
 import java.util.Map;
 import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.simulator.sbml.SBMLValueHolder;
 
 /**
  * Computes for a {@link SpeciesReference} with a stoichiometry occuring in some
- * {@link Reaction} the stoichiometry and the change of the corresponding
- * {@link Species} that is caused by the {@link Reaction}.
+ * {@link Reaction} the stoichiometry.
  * 
  * @author Roland Keller
  * @version $Rev: 205 $
@@ -48,41 +45,15 @@ public class StoichiometryValue {
 	private double time;
 
 	/**
-	 * The index of the corresponding species in the Y vector of the value
-	 * holder
-	 */
-	private int speciesIndex;
-
-	/**
 	 * The index of the corresponding species reference in the Y vector of the
 	 * value holder (if any), -1 if not existing
 	 */
 	private int speciesRefIndex;
 
 	/**
-	 * Is the stoichiometry constant over time?
-	 */
-	private boolean constantStoichiometry;
-
-	/**
-	 * Is the corresponding species constant over time?
-	 */
-	private boolean constantQuantity;
-
-	/**
-	 * Is the boundaryCondition of the corresponding species set?
-	 */
-	private boolean boundaryCondition;
-
-	/**
 	 * Is the StoichiometryMath of the species reference set?
 	 */
 	private boolean isSetStoichiometryMath;
-
-	/**
-	 * The value holder that stores the current simulation results. 
-	 */
-	protected SBMLValueHolder valueHolder;
 
 	/**
 	 * The id of the species reference
@@ -110,17 +81,6 @@ public class StoichiometryValue {
 	private ASTNodeValue stoichiometryMathValue;
 
 	/**
-	 * The index of the reaction in vector v in the computeChange function
-	 */
-	private int reactionIndex;
-
-	/**
-	 * This flag is true if the corresponding species is a reactant in the
-	 * reaction and false if it is a product.
-	 */
-	private boolean isReactant;
-
-	/**
 	 * Has the stoichiometry already been calculated? (important in the case of constant stoichiometry)
 	 */
 	private boolean stoichiometrySet;
@@ -139,81 +99,31 @@ public class StoichiometryValue {
 	 * @param inConcentrationSet
 	 * @param isReactant
 	 */
-	public StoichiometryValue(SpeciesReference sr, int speciesIndex,
-			int speciesRefIndex, Map<String, Double> stoichiometricCoefHash, SBMLValueHolder valueHolder,
-			double[] Y, ASTNodeValue stoichiometryMathValue, int reactionIndex,
-			boolean isReactant) {
+	public StoichiometryValue(SpeciesReference sr, 
+			int speciesRefIndex, Map<String, Double> stoichiometricCoefHash, 
+			double[] Y, ASTNodeValue stoichiometryMathValue) {
 		this.isSetStoichiometryMath = sr.isSetStoichiometryMath();
-		this.valueHolder=valueHolder;
 		this.sr = sr;
-		this.reactionIndex = reactionIndex;
 		this.id = sr.getId();
-		this.speciesIndex = speciesIndex;
 		this.speciesRefIndex = speciesRefIndex;
-		this.constantStoichiometry = false;
-		if (sr.isSetConstant()) {
-			constantStoichiometry = sr.getConstant();
-		}
-		else if ((!sr.isSetId()) && (!isSetStoichiometryMath)) {
-			constantStoichiometry = true;
-		}
-		this.boundaryCondition = false;
-		this.constantQuantity = false;
-		Species s = sr.getSpeciesInstance();
-		if (s != null) {
-			if (s.getBoundaryCondition()) {
-				this.boundaryCondition = true;
-			}
-			if (s.getConstant()) {
-				this.constantQuantity = true;
-			}
-		}
 		this.stoichiometricCoefHash = stoichiometricCoefHash;
 		this.Y = Y;
 		this.stoichiometryMathValue = stoichiometryMathValue;
 		this.time = Double.NaN;
-		this.isReactant = isReactant;
 
 		computeStoichiometricValue();
 	}
 
-	/**
-	 * Computes the change resulting for the corresponding {@link Species} in this
-	 * reaction at the current time and stores it at the correct position in the
-	 * changeRate array.
-	 * 
-	 * @param currentTime
-	 * @param changeRate
-	 * @param v
-	 */
-	public void computeChange(double currentTime, double[] changeRate, double[] v) {
-		if ((constantStoichiometry == false) || (stoichiometrySet == false)) {
-			compileDouble(currentTime);
-		}
-		double value;
-		if (constantQuantity || boundaryCondition) {
-			value = 0;
-		} else if (isReactant) {
-			value= - 1 * stoichiometry * v[reactionIndex];
-		} else {
-			value = stoichiometry * v[reactionIndex];
-		}
-
-		changeRate[speciesIndex] += value;
-
-	}
 
 	/**
 	 * Computes the value of the stoichiometry at the current time if it has not been computed yet or is not constant.
 	 * @param time
 	 * @return
 	 */
-	private double compileDouble(double time) {
+	public double compileDouble(double time) {
 		if (this.time != time) {
 			this.time = time;
-			if (!constantStoichiometry || (time <= 0d) || !stoichiometrySet) {
-				computeStoichiometricValue();
-			}
+			computeStoichiometricValue();
 		}
 		return stoichiometry;
 	}
@@ -254,6 +164,22 @@ public class StoichiometryValue {
 	 */
 	public void refresh() {
 		this.computeStoichiometricValue();
+	}
+
+
+	/**
+	 * @return
+	 */
+	public boolean getStoichiometrySet() {
+		return stoichiometrySet;
+	}
+
+
+	/**
+	 * @return
+	 */
+	public double getStoichiometry() {
+		return stoichiometry;
 	}
   
 }

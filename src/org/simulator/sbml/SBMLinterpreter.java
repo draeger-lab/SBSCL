@@ -269,12 +269,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	/**
 	 * List of all occuring stoichiometries
 	 */
-	private StoichiometryValue[] stoichiometries;
-
-	/**
-	 * Size of the list of stoichiometries (for time-saving)
-	 */
-	private int stoichiometriesSize;
+	private StoichiometryValue[] stoichiometryValues;
 
 	/**
 	 * Array that stores which reactions are fast
@@ -358,6 +353,20 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * Contains the compartment indexes of the species in the Y vector.
 	 */
 	private int[] compartmentIndexes;
+
+	private boolean[] stoichiometrySet;
+
+	private boolean[] constantStoichiometry;
+
+	private boolean[] zeroChange;
+
+	private boolean[] isReactant;
+
+	private int[] reactionIndex;
+
+	private int[] speciesIndex;
+
+	private double[] stoichiometry;
 
 	/**
 	 * <p>
@@ -1271,8 +1280,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		for (ASTNode node: nodes) {
 			((ASTNodeValue) node.getUserObject(TEMP_VALUE)).reset();
 		}
-		for (StoichiometryValue s: stoichiometries) {
-			s.refresh();
+		for (int i=0; i!= stoichiometryValues.length; i++) {
+			stoichiometryValues[i].refresh();
+			stoichiometrySet[i] = stoichiometryValues[i].getStoichiometrySet();
 		}
 	}
 
@@ -1358,8 +1368,15 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * Includes the math of the kinetic laws in the syntax tree.
 	 */
 	private void initializeKineticLaws() {
-		int reactionIndex = 0;
+		int reaction = 0;
+		ArrayList<Boolean> isReactantList = new ArrayList<Boolean>();
+		ArrayList<Integer> speciesIndexList = new ArrayList<Integer>();
+		ArrayList<Integer> reactionIndexList = new ArrayList<Integer>();
+		ArrayList<Boolean> zeroChangeList = new ArrayList<Boolean>();
+		ArrayList<Boolean> constantStoichiometryList = new ArrayList<Boolean>();
 		ArrayList<StoichiometryValue> stoichiometriesList = new ArrayList<StoichiometryValue>();
+		
+		
 		ArrayList<ASTNodeValue> kineticLawRootsList = new ArrayList<ASTNodeValue>();
 		for (Reaction r : model.getListOfReactions()) {
 			KineticLaw kl = r.getKineticLaw();
@@ -1393,9 +1410,33 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						currentMath.putUserObject(TEMP_VALUE, currentMathValue);
 					}
 					
-					stoichiometriesList.add(new StoichiometryValue(speciesRef, speciesIndex,
-							srIndex, stoichiometricCoefHash, this, Y,
-							currentMathValue, reactionIndex, true));
+					boolean constantStoichiometry = false;
+					if (speciesRef.isSetConstant()) {
+						constantStoichiometry = speciesRef.getConstant();
+					}
+					else if ((!speciesRef.isSetId()) && (!speciesRef.isSetStoichiometryMath())) {
+						constantStoichiometry = true;
+					}
+					
+					boolean zeroChange = false;
+					Species s = speciesRef.getSpeciesInstance();
+					if (s != null) {
+						if (s.getBoundaryCondition()) {
+							zeroChange = true;
+						}
+						if (s.getConstant()) {
+							zeroChange = true;
+						}
+					}
+					
+					zeroChangeList.add(zeroChange);
+					constantStoichiometryList.add(constantStoichiometry);
+					reactionIndexList.add(reaction);
+					speciesIndexList.add(speciesIndex);
+					isReactantList.add(true);
+					stoichiometriesList.add(new StoichiometryValue(speciesRef, 
+							srIndex, stoichiometricCoefHash, Y,
+							currentMathValue));
 
 				}
 				for (SpeciesReference speciesRef : r.getListOfProducts()) {
@@ -1423,9 +1464,33 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						currentMath.putUserObject(TEMP_VALUE, currentMathValue);
 					}
 					
-					stoichiometriesList.add(new StoichiometryValue(speciesRef, speciesIndex,
-							srIndex, stoichiometricCoefHash, this, Y,
-							currentMathValue, reactionIndex, false));
+					boolean constantStoichiometry = false;
+					if (speciesRef.isSetConstant()) {
+						constantStoichiometry = speciesRef.getConstant();
+					}
+					else if ((!speciesRef.isSetId()) && (!speciesRef.isSetStoichiometryMath())) {
+						constantStoichiometry = true;
+					}
+					
+					boolean zeroChange = false;
+					Species s = speciesRef.getSpeciesInstance();
+					if (s != null) {
+						if (s.getBoundaryCondition()) {
+							zeroChange = true;
+						}
+						if (s.getConstant()) {
+							zeroChange = true;
+						}
+					}
+					
+					zeroChangeList.add(zeroChange);
+					constantStoichiometryList.add(constantStoichiometry);
+					reactionIndexList.add(reaction);
+					speciesIndexList.add(speciesIndex);
+					isReactantList.add(false);
+					stoichiometriesList.add(new StoichiometryValue(speciesRef, 
+							srIndex, stoichiometricCoefHash, Y,
+							currentMathValue));
 
 				}
 
@@ -1434,11 +1499,28 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				kineticLawRootsList.add(new ASTNodeValue(nodeInterpreter,
 						new ASTNode(0d)));
 			}
-			reactionIndex++;
+			reaction++;
 		}
-		stoichiometriesSize = stoichiometriesList.size();
-		stoichiometries = stoichiometriesList.toArray(new StoichiometryValue[stoichiometriesSize]);
+		int stoichiometriesSize = stoichiometriesList.size();
+		stoichiometryValues = stoichiometriesList.toArray(new StoichiometryValue[stoichiometriesSize]);
 		kineticLawRoots = kineticLawRootsList.toArray(new ASTNodeValue[v.length]);
+		isReactant = new boolean[stoichiometriesSize];
+		speciesIndex = new int[stoichiometriesSize];
+		reactionIndex = new int[stoichiometriesSize];
+		zeroChange = new boolean[stoichiometriesSize];
+		constantStoichiometry = new boolean[stoichiometriesSize];
+		stoichiometrySet = new boolean[stoichiometriesSize];
+		stoichiometry = new double[stoichiometriesSize];
+		for(int i=0; i!=stoichiometriesSize; i++) {
+			isReactant[i] = isReactantList.get(i);
+			speciesIndex[i] = speciesIndexList.get(i);
+			reactionIndex[i] = reactionIndexList.get(i);
+			zeroChange[i] = zeroChangeList.get(i);
+			constantStoichiometry[i] = constantStoichiometryList.get(i);
+			stoichiometrySet[i] = stoichiometryValues[i].getStoichiometrySet();
+			stoichiometry[i] = stoichiometryValues[i].getStoichiometry();
+		}
+		
 	}
 
 	/**
@@ -2105,8 +2187,21 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		}
 
 
-		for (int i = 0; i != stoichiometriesSize; i++) {
-			stoichiometries[i].computeChange(astNodeTime, changeRate, v);
+		for (int i = 0; i != stoichiometryValues.length; i++) {
+			if ((constantStoichiometry[i] == false) || (stoichiometrySet[i] == false)) {
+				stoichiometry[i] = stoichiometryValues[i].compileDouble(currentTime);
+				stoichiometrySet[i] = stoichiometryValues[i].getStoichiometrySet();
+			}
+			double value;
+			if (zeroChange[i]) {
+				value = 0;
+			} else if (isReactant[i]) {
+				value= - 1 * stoichiometry[i] * v[reactionIndex[i]];
+			} else {
+				value = stoichiometry[i] * v[reactionIndex[i]];
+			}
+
+			changeRate[speciesIndex[i]] += value;
 		}
 
 		for (int i = 0; i != changeRate.length; i++) {
