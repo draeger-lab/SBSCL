@@ -23,8 +23,6 @@
 package org.simulator.sbml.astnode;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.ASTNode;
