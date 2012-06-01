@@ -241,7 +241,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 	 * @see org.simulator.math.odes.AbstractDESSolver#clone()
 	 */
 	public AbstractDESSolver clone() {
-		return new RosenbrockSolver(this.getNumEquations(),this.getStepSize());
+		return new RosenbrockSolver(this);
 	}
 
 	
