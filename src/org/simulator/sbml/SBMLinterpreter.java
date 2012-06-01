@@ -385,6 +385,20 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 */
 	public SBMLinterpreter(Model model) throws ModelOverdeterminedException,
 	SBMLException {
+		this(model, 0d, 1d, 1d);
+
+	}
+
+	/**
+	 * 
+	 * @param model
+	 * @param defaultSpeciesValue
+	 * @param defaultParameterValue
+	 * @param defaultCompartmentValue
+	 * @throws SBMLException
+	 * @throws ModelOverdeterminedException
+	 */
+	public SBMLinterpreter(Model model,  double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue) throws SBMLException, ModelOverdeterminedException {
 		this.model = model;
 		this.v = new double[this.model.getListOfReactions().size()];
 		this.nConstraints=this.model.getConstraintCount();
@@ -423,8 +437,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		reactionReversible = new boolean[model.getReactionCount()];
 		initialValues = new double[Y.length];
 		nodes = new LinkedList<ASTNode>();
-		this.init();
-
+		this.init(true, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue);
 	}
 
 	/* (non-Javadoc)
