@@ -60,6 +60,10 @@ public class LocalParameterValue extends ASTNodeValue {
 	@Override
 	public double compileDouble(double time) {
 		this.time=time;
+		if(alreadyProcessed == false) {
+			doubleValue = lp.getValue();
+			alreadyProcessed = true;
+		}
 		return doubleValue;
 	}
 

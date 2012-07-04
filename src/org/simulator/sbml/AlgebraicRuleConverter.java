@@ -357,7 +357,7 @@ public class AlgebraicRuleConverter {
 
 				index = variableNodeParent.getParent().getIndex(
 						variableNodeParent);
-				variableNodeParent.getParent().removeChild(index);
+				((ASTNode) variableNodeParent.getParent()).removeChild(index);
 			}
 			// Other child is not -1
 			else {
