@@ -1801,6 +1801,18 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				CallableSBase variable = node.getVariable();
 				if ((variable==null) && (function==null)) {
 					variable = model.findQuantity(node.getName());
+					if ((variable==null) && (function==null)) {
+						String id = node.getName();
+						for(Reaction r: model.getListOfReactions()) {
+							KineticLaw kl = r.getKineticLaw();
+							for(LocalParameter lp: kl.getListOfLocalParameters()) {
+								if(lp.getId().equals(id)) {
+									variable = lp;
+									break;
+								}
+							}
+						}
+					}
 				}
 				if (variable != null) {
 					copiedAST.setVariable(variable);
