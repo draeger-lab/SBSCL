@@ -1,6 +1,6 @@
 /*
- * $Id: LocalParameterValue.java 205 2012-05-05 11:57:39Z andreas-draeger $
- * $URL: http://svn.code.sf.net/p/simulation-core/code/trunk/src/org/simulator/sbml/astnode/LocalParameterValue.java $
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
@@ -28,7 +28,7 @@ import org.sbml.jsbml.LocalParameter;
 /**
  * This class computes and stores values of ASTNodes that refer to a local parameter.
  * @author Roland Keller
- * @version $Rev: 205 $
+ * @version $Rev$
  * @since 1.0
  */
 public class LocalParameterValue extends ASTNodeValue {
@@ -50,7 +50,6 @@ public class LocalParameterValue extends ASTNodeValue {
 		this.lp = lp;
 		doubleValue=lp.getValue();
 		isDouble=true;
-		isConstant = true;
 	}
 
 	/*
@@ -60,10 +59,6 @@ public class LocalParameterValue extends ASTNodeValue {
 	@Override
 	public double compileDouble(double time) {
 		this.time=time;
-		if(alreadyProcessed == false) {
-			doubleValue = lp.getValue();
-			alreadyProcessed = true;
-		}
 		return doubleValue;
 	}
 

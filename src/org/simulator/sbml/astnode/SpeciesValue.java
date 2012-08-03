@@ -1,6 +1,6 @@
 /*
- * $Id: SpeciesValue.java 205 2012-05-05 11:57:39Z andreas-draeger $
- * $URL: http://svn.code.sf.net/p/simulation-core/code/trunk/src/org/simulator/sbml/astnode/SpeciesValue.java $
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
@@ -29,7 +29,7 @@ import org.simulator.sbml.SBMLValueHolder;
 /**
  * This class computes and stores values of ASTNodes that refer to a species.
  * @author Roland Keller
- * @version $Rev: 205 $
+ * @version $Rev$
  * @since 1.0
  */
 public class SpeciesValue extends ASTNodeValue {
@@ -107,30 +107,21 @@ public class SpeciesValue extends ASTNodeValue {
    * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
    */
   @Override
-	protected void computeDoubleValue() {
-		if (isSetInitialAmount && !hasOnlySubstanceUnits) {
-			double compartmentValue = valueHolder
-					.getCurrentValueOf(compartmentPosition);
-			if ((compartmentValue == 0d) || zeroSpatialDimensions) {
-				doubleValue = valueHolder.getCurrentValueOf(position);
-			} else {
-				doubleValue = valueHolder.getCurrentValueOf(position)
-						/ compartmentValue;
-
-			}
-		} else if (isSetInitialConcentration && hasOnlySubstanceUnits) {
-			double compartmentValue = valueHolder
-					.getCurrentValueOf(compartmentPosition);
-			if ((compartmentValue == 0d) || zeroSpatialDimensions) {
-				doubleValue = valueHolder.getCurrentValueOf(position);
-			} else {
-				doubleValue = valueHolder.getCurrentValueOf(position)
-						* compartmentValue;
-			}
-		} else {
-			doubleValue = valueHolder.getCurrentValueOf(position);
-
-		}
-	}
+  protected void computeDoubleValue() {
+    double compartmentValue = valueHolder
+        .getCurrentValueOf(compartmentPosition);
+    if ((compartmentValue == 0d) || zeroSpatialDimensions) {
+      doubleValue = valueHolder.getCurrentValueOf(position);
+    } else if (isSetInitialAmount && !hasOnlySubstanceUnits) {
+      doubleValue = valueHolder.getCurrentValueOf(position) / compartmentValue;
+      
+    }
+    else if (isSetInitialConcentration && hasOnlySubstanceUnits) {
+      doubleValue = valueHolder.getCurrentValueOf(position) * compartmentValue;
+    } else {
+      doubleValue = valueHolder.getCurrentValueOf(position);
+      
+    }
+  }
   
 }

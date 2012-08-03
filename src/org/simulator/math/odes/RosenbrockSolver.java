@@ -1,6 +1,6 @@
 /*
- * $Id: RosenbrockSolver.java 168 2012-04-25 05:34:32Z andreas-draeger $
- * $URL: http://svn.code.sf.net/p/simulation-core/code/trunk/src/org/simulator/math/odes/RosenbrockSolver.java $
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of ODE Toolkit: a free application for solving
  * systems of ordinary differential equations.
@@ -41,7 +41,7 @@ import org.simulator.math.MatrixOperations.MatrixException;
  * 
  * @author Chris Moore
  * @author Roland Keller
- * @version $Rev: 168 $
+ * @version $Rev$
  * @since 0.9
  */
 public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
@@ -201,7 +201,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 
 		hMin = 1E-14d;
 		this.setStepSize(stepsize);
-		hMax = Math.min(stepsize, 1d);
+		hMax = Math.min(stepsize, 0.1d);
 
 		stop = false;
 		timePoints = new double[nTimepoints]; 
@@ -241,7 +241,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 	 * @see org.simulator.math.odes.AbstractDESSolver#clone()
 	 */
 	public AbstractDESSolver clone() {
-		return new RosenbrockSolver(this);
+		return new RosenbrockSolver(this.getNumEquations(),this.getStepSize());
 	}
 
 	

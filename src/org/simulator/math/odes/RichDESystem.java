@@ -79,6 +79,6 @@ public interface RichDESystem extends DESystem {
 	 * @return The number of intermediate values that are computed in each time
 	 *         step.
 	 */
-	public int getAdditionalValueCount();
+	public int getNumAdditionalValues();
 
 }

@@ -119,16 +119,16 @@ all models of BioModels Database.
 \section{Availability:}
 Source code, binaries, and documentation can be freely obtained under the terms
 of the LGPL version~3 from the website
-\href{http://sourceforge.net/projects/simulation-core/}{http://sourceforge.net/projects/simulation-core/}.
+\TODO{\href{https://sourceforge.net/projects/simulation-core}{https://sourceforge.net/projects/simulation-core}}.
 \section{Contact:}
-\href{mailto:simulation-core-development@lists.sourceforge.net}{simulation-core-development@lists.sourceforge.net}
+\TODO{\href{mailto:andreas.draeger@uni-tuebingen.de}{andreas.draeger@uni-tuebingen.de}}
 %
 %\section{Supplementary information:}
 % TODO: Provide additional material
 %Supplementary data is available at Bioinformatics online.
 \end{abstract}
 
-%%%\vspace{-.25cm}
+\vspace{-.25cm}
 \section{Introduction}
 
 As part of the movement towards quantitative biology, modeling, 
@@ -188,8 +188,7 @@ This generic library is completely decoupled from any graphical user interface
 and can therefore easily be integrated into third-party programs.
 It comprises several Ordinary Differential Equation (ODE)
 solvers and an interpreter for SBML models. It is the first simulation library
-based on JSBML \citep{Draeger2011b}. 
-% the Java library JSBML 
+based on the Java library JSBML \citep{Draeger2011b}.
 %
 %Secondly, a graphical and command-line user interface that provides
 %a connection to the heuristic optimization framework EvA2 \citep{Kron10EvA2}.
@@ -219,14 +218,14 @@ experiments by executing SED-ML files.
 \caption[Architecture of the Simulation Core Library]{Architecture of
 the Simulation Core Library (simplified). Numerical methods are
 strictly separated from differential equation systems. The upper part displays
-the unified type hierarchy of all currently included numerical integration
+the unified type hierarchy of all currently included numberical integration
 methods. The middle part shows the interfaces defining several
 special types of the differential equations to be solved by the numerical
 methods.
 The class \SBMLinterpreter{} (bottom part) implements all of these interfaces
 with respect to the information content of a given SBML model. Similarly, an
 implementation of further data formats can be included into the
-library.}%\vspace{-.6cm}}
+library.\vspace{-.6cm}}
 \label{fig:Architecture}
 \end{figure}
 All the solver classes are derived from the abstract class \AbstractDESSolver{}
@@ -264,7 +263,7 @@ and events are restructured and merged to contain equivalent nodes only once.
 This significantly decreases the computation time during the simulation.
 %
 An important aspect in the interpretation of SBML models is the
-determination of the exact time at which an event occurs, as this influences
+determination of the exact time at which an event occurs, as as this influences
 the precision of the system's variables. We therefore adjusted the Rosenbrock
 solver \citep{Kotcon2011}, an integrator with an adaptive step size, to a very
 precise timing of the events.
@@ -358,7 +357,7 @@ The Federal Ministry of Education and Research (BMBF, Germany) in the project
 Virtual Liver (grant number 0315756).
 
 \paragraph{Conflict of Interest\textcolon} none declared.
-\vspace{-.05cm}
+\vspace{-.25cm}
 
 \begin{thebibliography}{}
 

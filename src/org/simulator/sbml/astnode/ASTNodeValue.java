@@ -1,6 +1,6 @@
 /*
- * $Id: ASTNodeValue.java 205 2012-05-05 11:57:39Z andreas-draeger $
- * $URL: http://svn.code.sf.net/p/simulation-core/code/trunk/src/org/simulator/sbml/astnode/ASTNodeValue.java $
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
@@ -23,6 +23,8 @@
 package org.simulator.sbml.astnode;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.ASTNode;
@@ -35,7 +37,7 @@ import org.simulator.sbml.SBMLinterpreter;
  * This class can compute and store the interpreted value (double or boolean) of an ASTNode at the current time. A new computation is only done if the time has changed.
  * So the computation is time-efficient.
  * @author Roland Keller
- * @version $Rev: 205 $
+ * @version $Rev$
  * @since 1.0
  */
 public class ASTNodeValue {
@@ -82,7 +84,7 @@ public class ASTNodeValue {
   /**
    * The ASTNodeObjects of the child nodes of the corresponding ASTNode
    */
-  protected ASTNodeValue[] children;
+  protected List<ASTNodeValue> children;
   
   /**
    * The ASTNodeObject of the left child of the corresponding ASTNode
@@ -170,11 +172,9 @@ public class ASTNodeValue {
     if (nodeType == ASTNode.Type.REAL) {
       real = node.getReal();
       isInfinite = Double.isInfinite(real);
-      isConstant = true;
     }
     else if (nodeType==ASTNode.Type.INTEGER){
       real = node.getInteger();
-      isConstant = true;
     }
     else {
       real = Double.NaN;
@@ -189,7 +189,6 @@ public class ASTNodeValue {
     if (nodeType == ASTNode.Type.RATIONAL) {
       numerator = node.getNumerator();
       denominator = node.getDenominator();
-      isConstant = true;
     }
     
     if (node.isName()) {
@@ -197,20 +196,19 @@ public class ASTNodeValue {
     }
     
     this.time = 0d;
-    children = new ASTNodeValue[node.getChildCount()];
+    children = new ArrayList<ASTNodeValue>();
     if (node != null) {  
-      for (int i=0; i!= node.getChildCount(); i++) {
-        ASTNode childNode = node.getChild(i);
-    	  Object userObject = childNode.getUserObject(SBMLinterpreter.TEMP_VALUE);
+      for (ASTNode childNode:node.getChildren()) {
+        Object userObject = childNode.getUserObject(SBMLinterpreter.TEMP_VALUE);
         if (userObject != null) {
-          children[i]=(ASTNodeValue)userObject;
+          children.add((ASTNodeValue)userObject);
         }
       }
     }
-    numChildren = node.getChildCount();
+    numChildren = children.size();
     if (numChildren>0) {
-      leftChild = children[0];
-      rightChild = children[numChildren-1];
+      leftChild = children.get(0);
+      rightChild = children.get(numChildren-1);
     }
   }
   
@@ -238,13 +236,6 @@ public class ASTNodeValue {
     return isConstant;
   }
   
-  /**
-   * 
-   * @return The corresponding ASTNode
-   */
-  public ASTNode getNode() {
-	  return node;
-  }
   
   /**
    * Returns the value as an object (double or boolean)
@@ -313,9 +304,28 @@ public class ASTNodeValue {
           doubleValue = interpreter.compile(real, units);
         }
         break;
+      case INTEGER:
+        doubleValue = interpreter.compile(real, units);
+        break;
       /*
        * Operators
        */
+      case POWER:
+        doubleValue = interpreter.pow(leftChild, rightChild, time);
+        break;
+      case PLUS:
+        doubleValue = interpreter.plus(children, numChildren, time);
+        break;
+      case MINUS:
+        if (numChildren == 1) {
+          doubleValue = interpreter.uMinus(leftChild, time);
+        } else {
+          doubleValue = interpreter.minus(children, numChildren, time);
+        }
+        break;
+      case TIMES:
+        doubleValue = interpreter.times(children, numChildren, time);
+        break;
       case DIVIDE:
         if (numChildren != 2) { 
         	throw new SBMLException(MessageFormat.format(
@@ -431,6 +441,9 @@ public class ASTNodeValue {
         break;
       case FUNCTION_LN:
         doubleValue = interpreter.ln(leftChild, time);
+        break;
+      case FUNCTION_POWER:
+        doubleValue = interpreter.pow(leftChild, rightChild, time);
         break;
       case FUNCTION_SEC:
         doubleValue = interpreter.sec(leftChild, time);

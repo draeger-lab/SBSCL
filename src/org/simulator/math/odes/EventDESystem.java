@@ -52,15 +52,12 @@ public interface EventDESystem extends DESystem {
 	public int getRuleCount();
 
 	/**
-	 * Calculates the changes or assignments that are defined by all rules in the system
-	 * at the given simulation time point.
 	 * 
 	 * @param t
 	 *            The current simulation time.
 	 * @param Y
 	 *            The current change of the system.
-	 * @return flag that is <code>true</code> if there has been a change in the Y vector
-	 *         caused by the rules.
+	 * @return flag that is true if there has been a change in the Y vector caused by the rules.
 	 * @throws DerivativeException
 	 */
 	public boolean processAssignmentRules(double t, double Y[])
@@ -82,8 +79,7 @@ public interface EventDESystem extends DESystem {
 			throws DerivativeException;
 
 	/**
-	 * @return flag that is <code>true</code>, if the change vector is always
-	 *         zero in the system.
+	 * @return flag that is true, if the change vector is always zero in the system.
 	 */
 	public boolean getNoDerivatives();
 

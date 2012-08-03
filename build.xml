@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!-- The java based ANT tool is available from         -->
 <!-- http://jakarta.apache.org/ant                     -->
            	
-<project name="Simulation Core Library" basedir=".">
+<project name="Simulator Core Library" basedir=".">
 
   <target
   	name="help"
