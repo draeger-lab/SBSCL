@@ -404,8 +404,9 @@ public class AlgebraicRuleConverter {
 				remainOnSide = false;
 				nestingDepth++;
 			}
-
-			evaluateEquation((ASTNode) node.getParent());
+			if(node.getParent() instanceof ASTNode) {
+				evaluateEquation((ASTNode) node.getParent());
+			}
 		}
 
 	}
@@ -621,8 +622,12 @@ public class AlgebraicRuleConverter {
 						}
 					}
 				}
-
-				parent = (ASTNode) node.getParent();
+				if(node.getParent() instanceof ASTNode) {
+					parent = (ASTNode) node.getParent();
+				}
+				else {
+					parent = null;
+				}
 				// Function definition is child
 				if (parent != null) {
 					// System.out.println(parent.getType());
