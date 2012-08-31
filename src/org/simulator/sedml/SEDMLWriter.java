@@ -85,8 +85,7 @@ public class SEDMLWriter  {
 			Element el = new Element("p");
 			el.setText(text);
 			Notes n = new Notes(el);
-			sedml.addNote(n);
-			
+			sedml.setNote(n);
 		}
 		
 		/**

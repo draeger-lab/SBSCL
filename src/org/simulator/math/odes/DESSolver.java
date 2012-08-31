@@ -37,7 +37,7 @@ import org.simulator.math.odes.MultiTable.Block;
  * @version $Rev$
  * @since 0.9 
  */
-public interface DESSolver extends Serializable {
+public interface DESSolver extends Cloneable, Serializable {
 
 	/**
 	 * Add PropertyChangedListener to this Solver
@@ -45,21 +45,21 @@ public interface DESSolver extends Serializable {
 	 */
 	public void addPropertyChangeListener(PropertyChangeListener listener);
 
-  /**
+	/**
 	 * 
 	 * @return the cloned solver
 	 */
 	public DESSolver clone();
-  
-  /**
+
+	/**
 	 * Tell each listener that property value changed. OldValue and newValue are
-	 * the old and current time poit of simulation, respectively.
+	 * the old and current time point of simulation, respectively.
 	 * 
 	 * @param oldValue
 	 * @param newValue
 	 */
 	public void firePropertyChange(double oldValue, double newValue);
-	
+
 	/**
 	 * Obtain the currently set integration step size.
 	 * 
@@ -68,12 +68,12 @@ public interface DESSolver extends Serializable {
 	public double getStepSize();
 
 	/**
-   * If this method returns <code>true</code>, intermediate results that may
-   * originate from a {@link RichDESystem} are included into the
-   * {@link MultiTable} that contains the result of a numerical integration.
-   * 
-   * @return the flag
-   */
+	 * If this method returns <code>true</code>, intermediate results that may
+	 * originate from a {@link RichDESystem} are included into the
+	 * {@link MultiTable} that contains the result of a numerical integration.
+	 * 
+	 * @return the flag
+	 */
 	public boolean isIncludeIntermediates();
 
 	/**
@@ -91,13 +91,13 @@ public interface DESSolver extends Serializable {
 	public void removePropertyChangeListener(PropertyChangeListener listener);
 
 	/**
-   * Allows switching whether or not intermediate results should be included
-   * into the {@link MultiTable} of the result.
-   * 
-   * @param includeIntermediates
-   *        if <code>true</code>, intermediate results are included into the
-   *        result.
-   */
+	 * Allows switching whether or not intermediate results should be included
+	 * into the {@link MultiTable} of the result.
+	 * 
+	 * @param includeIntermediates
+	 *        if <code>true</code>, intermediate results are included into the
+	 *        result.
+	 */
 	public void setIncludeIntermediates(boolean includeIntermediates);
 
 	/**
@@ -108,23 +108,23 @@ public interface DESSolver extends Serializable {
 	public void setStepSize(double stepSize);
 
 	/**
-   * Solves the given differential equation system 
-   * 
-   * @param DES
-   *            The differential equation system to be solved.
-   * @param initialValues
-   *            Return value at the start point.
-   * @param timeBegin
-   *            
-   * @param timeEnd
-   *            
-   * @return A matrix containing the simulation results
-   * @throws DerivativeException
-   *             if something's wrong...
-   */
+	 * Solves the given differential equation system 
+	 * 
+	 * @param DES
+	 *            The differential equation system to be solved.
+	 * @param initialValues
+	 *            Return value at the start point.
+	 * @param timeBegin
+	 *            
+	 * @param timeEnd
+	 *            
+	 * @return A matrix containing the simulation results
+	 * @throws DerivativeException
+	 *             if something's wrong...
+	 */
 	public MultiTable solve(DESystem DES, double[] initialValues,
 			double timeBegin, double timeEnd) throws DerivativeException;
-	
+
 	/**
 	 * Solves the given differential equation system with the step size h and
 	 * the number of steps as given starting at the value x.
@@ -147,24 +147,24 @@ public interface DESSolver extends Serializable {
 	 */
 	public MultiTable solve(DESystem DES, double[] initalValues, double x,
 			double h, int steps) throws DerivativeException;
-	
+
 	/**
-   * Solves the given differential equation system with the step size h and
-   * the number of steps as given starting at the value x.
-   * 
-   * @param DES
-   *            The differential equation system to be solved.
-   * @param initialValues
-   *            Return value at the start point.
-   * @param timepoints
-   *           The timepoints for which the result should be returned 
-   * @return A matrix containing the simulation results.
-   * @throws DerivativeException
-   *             if something's wrong...
-   */
+	 * Solves the given differential equation system with the step size h and
+	 * the number of steps as given starting at the value x.
+	 * 
+	 * @param DES
+	 *            The differential equation system to be solved.
+	 * @param initialValues
+	 *            Return value at the start point.
+	 * @param timepoints
+	 *           The timepoints for which the result should be returned 
+	 * @return A matrix containing the simulation results.
+	 * @throws DerivativeException
+	 *             if something's wrong...
+	 */
 	public MultiTable solve(DESystem DES, double[] initialvalue,
 			double[] timepoints) throws DerivativeException;
-	
+
 	/**
 	 * Solves the given {@link DESystem} using new initial conditions in each
 	 * time step. The given {@link MultiTable} contains the expected
