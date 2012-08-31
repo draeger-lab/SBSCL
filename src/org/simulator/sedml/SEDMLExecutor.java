@@ -49,7 +49,6 @@ import org.simulator.math.odes.MultiTable;
  */
 public class SEDMLExecutor {
 	
-	
 	/**
 	 * EXecutes a SEDML file to produce the specified output. It's up to 
 	 *  clients to ensure a valid {@link InputStream} is open to access the 
@@ -61,7 +60,7 @@ public class SEDMLExecutor {
 	 * @throws IOException if {@link InputStream} is not readable.
 	 * @throws ExecutionException if execution is not possible
 	 */
-	public MultiTable execute (String outputID, InputStream is) throws ExecutionException,
+	public MultiTable execute(String outputID, InputStream is) throws ExecutionException,
 		IOException {
     	//read it with BufferedReader
     	BufferedReader br
@@ -85,7 +84,7 @@ public class SEDMLExecutor {
 		}
     	SedML sed = doc.getSedMLModel();
     	Output out= sed.getOutputWithId(outputID);
-    	if(out == null){
+    	if (out == null) {
     		throw new ExecutionException("No output with id [" + outputID +"]");
     	}
     	SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sed, out);
@@ -93,6 +92,5 @@ public class SEDMLExecutor {
 		Map<Task, IRawSedmlSimulationResults> res = exe.runSimulations();
 		return exe.processSimulationResults(out, res);
 	}
-	
 
 }

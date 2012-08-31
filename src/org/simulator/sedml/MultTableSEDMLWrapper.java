@@ -30,7 +30,7 @@ import org.simulator.math.odes.MultiTable.Block.Column;
 /**
  * This class adapts the native results to an interface that the SEDML processor can use
  *  to post-process results.
- *  This class can be used to access the raw results via the getMultiTable() method.
+ *  This class can be used to access the raw results via the {@link #getMultiTable()} method.
  *  <p>
  *  All methods accessing data access the underlying {@link MultiTable} object. <br/>
  *  Changes to a {@link MultiTable} object will therefore be visible to this class,
@@ -53,7 +53,15 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 		return mTable;
 	}
 
+	/**
+	 * The result table.
+	 */
 	private MultiTable mTable;
+	
+	/* (non-Javadoc)
+	 * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getColumnHeaders()
+	 */
+	//@Override
 	public String[] getColumnHeaders() {
 		String [] hdrs = new String [mTable.getColumnCount()];
 		for (int i=0; i < hdrs.length;i++){
@@ -62,6 +70,10 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 		return hdrs;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getData()
+	 */
+	//@Override
 	public double[][] getData() {
 		double [][] data = new double [mTable.getRowCount()][mTable.getColumnCount()];
 		for (int i = 0; i < mTable.getRowCount();i++){
@@ -74,6 +86,10 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 		return data;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getDataByColumnId(java.lang.String)
+	 */
+	//@Override
 	public Double[] getDataByColumnId(String id) {
 		
 		Double [] rc = new Double[mTable.getRowCount()];
@@ -84,6 +100,10 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 		return rc;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getDataByColumnIndex(int)
+	 */
+	//@Override
 	public Double[] getDataByColumnIndex(int indx) {
 		Double [] rc = new Double[mTable.getRowCount()];
 		Column col = mTable.getColumn(indx);
@@ -93,14 +113,26 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 		return rc;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getIndexByColumnID(java.lang.String)
+	 */
+	//@Override
 	public int getIndexByColumnID(String colID) {
 		return mTable.getColumnIndex(colID);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getNumColumns()
+	 */
+	//@Override
 	public int getNumColumns() {
 		return mTable.getColumnCount();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getNumDataRows()
+	 */
+	//@Override
 	public int getNumDataRows() {
 		return mTable.getRowCount();
 	}
@@ -111,20 +143,34 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 	 * (non-Javadoc)
 	 * @see org.jlibsedml.execution.IRawSedmlSimulationResults#getMappings()
 	 */
+	//@Override
 	public IModel2DataMappings getMappings() {
 		return new IModel2DataMappings() {
 			
+			/* (non-Javadoc)
+			 * @see org.jlibsedml.execution.IModel2DataMappings#hasMappingFor(java.lang.String)
+			 */
+			//@Override
 			public boolean hasMappingFor(String id) {
 				return mTable.getColumn(id)!=null;
 			}
 			
+			/* (non-Javadoc)
+			 * @see org.jlibsedml.execution.IModel2DataMappings#getColumnTitleFor(java.lang.String)
+			 */
+			//@Override
 			public String getColumnTitleFor(String modelID) {
 				return modelID;
 			}
 			
+			/* (non-Javadoc)
+			 * @see org.jlibsedml.execution.IModel2DataMappings#getColumnIndexFor(java.lang.String)
+			 */
+			//@Override
 			public int getColumnIndexFor(String colID) {
 				return mTable.getColumnIndex(colID);
 			}
+			
 		};
 	}
 	
