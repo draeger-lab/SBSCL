@@ -174,15 +174,18 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * @param the vector yTemp
 	 * @param the data as multi table
 	 * @param the index of the row
+	 * @return an array of additional (intermediate) results.
 	 * @throws DerivativeException
 	 */
-	protected void additionalResults(DESystem DES, double t, double[] yTemp,
+	protected double[] additionalResults(DESystem DES, double t, double[] yTemp,
 			MultiTable data, int rowIndex) throws DerivativeException {
 		if (includeIntermediates && (DES instanceof RichDESystem)) {
 			MultiTable.Block block = data.getBlock(1);
-			double v[] = ((RichDESystem) DES).getAdditionalValues(t, yTemp);
-			block.setRowData(rowIndex, v.clone());
+			double v[] = ((RichDESystem) DES).getAdditionalValues(t, yTemp).clone();
+			block.setRowData(rowIndex, v);
+			return v;
 		}
+		return null;
 	}
 
 	/*
@@ -392,7 +395,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.DESSolver#firePropertyChanged(double, double)
 	 */
-	public void firePropertyChange(double oldValue, double newValue) {
+	public void firePropertyChange(double oldValue, double newValue /*, double[] currResult, double[] additionalResult*/) {
 		if (!this.listenerList.isEmpty()) {
 			PropertyChangeEvent evt = new PropertyChangeEvent(this, "progress",
 					oldValue, newValue);
@@ -701,7 +704,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		double yTemp[] = new double[initialValues.length];
 		double yPrev[] = new double[initialValues.length];
 		double t = timeBegin;
-		additionalResults(DES, t, result[0], data, 0);
+		double v[] = additionalResults(DES, t, result[0], data, 0);
 		boolean fastFlag = false;
 
 		if (DES instanceof FastProcessDESystem) {
@@ -714,7 +717,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		}
 
 		// execute events that trigger at 0.0
-		processEvents((EventDESystem) DES, 0.0, 0.0,result[0]);
+		processEvents((EventDESystem) DES, 0d, 0d, result[0]);
 		System.arraycopy(result[0], 0, yTemp, 0, yTemp.length);
 		for (int i = 1; (i < result.length)
 				&& (!Thread.currentThread().isInterrupted()); i++) {
@@ -726,14 +729,14 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			if (i == 1) {
 				System.arraycopy(yPrev, 0, result[0], 0, yPrev.length);
 			}
-			firePropertyChange(oldT * intervalFactor, t * intervalFactor);
 
 			if (fastFlag) {
 				yTemp = computeSteadyState(((FastProcessDESystem) DES),
 						result[i], timeBegin);
 				System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 			}
-			additionalResults(DES, t - stepSize, result[i - 1], data, i);
+			v = additionalResults(DES, t - stepSize, result[i - 1], data, i);
+			firePropertyChange(oldT * intervalFactor, t * intervalFactor);
 		}
 
 		return data;
@@ -774,7 +777,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 		boolean fastFlag = false;
 
-		additionalResults(DES, t, result[0], data, 0);
+		double v[] = additionalResults(DES, t, result[0], data, 0);
 
 		if (DES instanceof FastProcessDESystem) {
 			fastFlag = ((FastProcessDESystem) DES).containsFastProcesses();
@@ -786,13 +789,12 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		}
 
 		// execute events that trigger at 0.0
-		processEvents((EventDESystem) DES, 0.0, 0.0,result[0]);
+		processEvents((EventDESystem) DES, 0d, 0d, result[0]);
 		System.arraycopy(result[0], 0, yTemp, 0, result[0].length);
 
 		for (int i = 1; (i < timePoints.length)
 				&& (!Thread.currentThread().isInterrupted()); i++) {
-			firePropertyChange(timePoints[i-1] * intervalFactor, timePoints[i] * intervalFactor);
-
+			
 			h = stepSize;
 
 			// h = h / 10;
@@ -818,10 +820,10 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 				System.arraycopy(steady, 0, yTemp, 0, yTemp.length);
 			}
 
-			additionalResults(DES, t, yTemp, data, i);
+			v = additionalResults(DES, t, yTemp, data, i);
+			firePropertyChange(timePoints[i-1] * intervalFactor, timePoints[i] * intervalFactor);
 
-			t=timePoints[i];
-
+			t = timePoints[i];
 		}
 		return data;
 	}
@@ -866,9 +868,8 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		double[] yTemp = new double[DES.getDimension()];
 		double[] change = new double[DES.getDimension()];
 		double t = timePoints[0];
-		additionalResults(DES, t, result[0], data, 0);
+		double v[] = additionalResults(DES, t, result[0], data, 0);
 		for (i = 1; (i < timePoints.length) && (!Thread.currentThread().isInterrupted()); i++) {
-			firePropertyChange(timePoints[i-1] * intervalFactor, timePoints[i] * intervalFactor);
 			double h = stepSize;
 			if (!missingIds.isEmpty()) {
 				for (k = 0; k < initConditions.getColumnCount(); k++) {
@@ -897,8 +898,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			checkNonNegativity(yTemp);
 			System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 
-			additionalResults(DES, t, yTemp, data, i);
-
+			v = additionalResults(DES, t, yTemp, data, i);
+			firePropertyChange(timePoints[i-1] * intervalFactor, timePoints[i] * intervalFactor);
+			
 			t = timePoints[i];
 		}
 
