@@ -501,7 +501,7 @@ public class AlgebraicRuleConverter {
 		while (nodes.hasMoreElements()) {
 			subnode = (ASTNode) nodes.nextElement();
 			if (subnode.isString()) {
-				if (subnode.getName() == variable.getId()) {
+				if (subnode.getName().equals(variable.getId())) {
 					variableNodeParent = node;
 					variableNode = subnode;
 				}
