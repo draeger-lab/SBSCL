@@ -1691,7 +1691,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	private ASTNode copyAST(ASTNode node, boolean mergingPossible, FunctionValue function, List<ASTNode> inFunctionNodes) {
 		String nodeString = node.toString();
 		ASTNode copiedAST = null;
-		if (mergingPossible) {
+		if (mergingPossible && (!nodeString.equals("")) && (!nodeString.contains(""))) {
 			//Be careful with local parameters!
 			if (!(node.isName()) || (node.getType() == ASTNode.Type.NAME_TIME) || (node.getType() == ASTNode.Type.NAME_AVOGADRO)
 					|| !((node.getVariable() != null) && (node.getVariable() instanceof LocalParameter))) {
