@@ -846,7 +846,7 @@ public class ASTNodeInterpreter {
    */
   public double times(ASTNodeValue[] children, int size, double time) {
     if (size == 0) {
-      return (0d);
+      return (1d);
     } else {
       double value = 1d;
       
