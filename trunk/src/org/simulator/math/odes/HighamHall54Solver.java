@@ -96,4 +96,12 @@ public class HighamHall54Solver extends FirstOrderSolver {
 	public String getName() {
 		return "Higham-Hall 54 solver";
 	}
+
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
+	 */
+	@Override
+	public int getKISAOTerm() {
+		return -1;
+	}
 }

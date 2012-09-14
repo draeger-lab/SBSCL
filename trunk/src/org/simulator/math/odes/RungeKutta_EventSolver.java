@@ -141,4 +141,12 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
+	 */
+	@Override
+	public int getKISAOTerm() {
+		return 64;
+	}
+
 }
