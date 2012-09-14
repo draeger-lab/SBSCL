@@ -64,7 +64,7 @@ import org.simulator.sbml.SBMLinterpreter;
  *  Typical usage for this class is demonstrated in the JUnit test for this class.<br/>
  *  
  * Models can be resolved either from local files, URLs, or BioModels MIRIAM URNs.<br/>
- * TO resolve models from different sources, see the documentation for <code>AbstractSedmlExecutor</code>
+ * TO resolve models from different sources, see the documentation for {@link AbstractSedmlExecutor}
  * in the jlibsedml library.
  * @author Richard Adams
  * @version $Rev$
@@ -87,9 +87,9 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	
 	/**
 	 * Enables models to be retrieved from a SED-ML archive format.<br/>
-	 * This method must be called <b>before</b> <code>runSimulations() </code>
-	 *  is called, if a SED-ML archive is to be used as a model source. 
-	 * @param ac A non-null {@link ArchiveComponents} object.
+	 * This method must be called <b>before</b> {@link #runSimulations()}
+	 * is called, if a SED-ML archive is to be used as a model source.
+	 * @param ac A non-{@code null} {@link ArchiveComponents} object.
 	 */
 	public void setIsArchive (ArchiveComponents ac) {
 		addModelResolver(new ArchiveModelResolver(ac));

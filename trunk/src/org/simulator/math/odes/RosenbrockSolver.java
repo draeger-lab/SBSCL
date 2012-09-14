@@ -631,8 +631,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 		return change;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.simulator.math.odes.AbstractDESSolver#hasSolverEventProcessing()
 	 */
 	protected boolean hasSolverEventProcessing() {
@@ -642,8 +641,8 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 	/* (non-Javadoc)
 	 * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
 	 */
-	@Override
-	public int getKISAOTerm() {
+	//@Override
+	public int getKiSAOterm() {
 		return -1;
 	}
 

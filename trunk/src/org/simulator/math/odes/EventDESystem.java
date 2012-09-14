@@ -59,7 +59,7 @@ public interface EventDESystem extends DESystem {
 	 *            The current simulation time.
 	 * @param Y
 	 *            The current change of the system.
-	 * @return flag that is <code>true</code> if there has been a change in the Y vector
+	 * @return flag that is {@code true} if there has been a change in the Y vector
 	 *         caused by the rules.
 	 * @throws DerivativeException
 	 */
@@ -82,7 +82,7 @@ public interface EventDESystem extends DESystem {
 			throws DerivativeException;
 
 	/**
-	 * @return flag that is <code>true</code>, if the change vector is always
+	 * @return flag that is {@code true}, if the change vector is always
 	 *         zero in the system.
 	 */
 	public boolean getNoDerivatives();

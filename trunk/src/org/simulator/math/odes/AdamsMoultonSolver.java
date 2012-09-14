@@ -95,8 +95,8 @@ public class AdamsMoultonSolver extends FirstOrderSolver {
 	/* (non-Javadoc)
 	 * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
 	 */
-	@Override
-	public int getKISAOTerm() {
+	//@Override
+	public int getKiSAOterm() {
 		return 280;
 	}
 

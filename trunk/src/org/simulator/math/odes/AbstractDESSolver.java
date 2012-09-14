@@ -111,7 +111,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 	/**
 	 * Initialize with default integration step size and non-negative attribute
-	 * <code>true</code>.
+	 * {@code true}.
 	 */
 	public AbstractDESSolver() {
 		stepSize = 0.01d;
@@ -124,7 +124,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 	/**
 	 * Initialize with default integration step size and non-negative attribute
-	 * <code>true</code>.
+	 * {@code true}.
 	 */
 	public void reset() {
 		stepSize = 0.01d;
