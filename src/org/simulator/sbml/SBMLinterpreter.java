@@ -838,8 +838,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * within a kinetic law).
 	 * 
 	 * @return The total number of model parameters. Note that this number is
-	 *         limited to an <code>int</code> value, whereas the SBML model may
-	 *         contain <code>int</code> values.
+	 *         limited to an {@code int} value, whereas the SBML model may
+	 *         contain {@code int} values.
 	 */
 	public int getParameterCount() {
 		int p = (int) model.getParameterCount();

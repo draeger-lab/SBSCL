@@ -52,7 +52,7 @@ public interface DESystem extends Serializable, FirstOrderDifferentialEquations 
 	 * any events or rules that would require a special treatment by the numerical
 	 * solver.
 	 * 
-	 * @return flag that is <code>true</code> if any events or rules are contained
+	 * @return flag that is {@code true} if any events or rules are contained
 	 *         in the differential equation system.
 	 */
 	public boolean containsEventsOrRules();
