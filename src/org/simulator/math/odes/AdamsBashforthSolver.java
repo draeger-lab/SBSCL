@@ -91,4 +91,12 @@ public class AdamsBashforthSolver extends FirstOrderSolver {
 		return "Adams-Bashforth solver";
 	}
 
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
+	 */
+	@Override
+	public int getKISAOTerm() {
+		return 279;
+	}
+
 }

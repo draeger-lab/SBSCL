@@ -91,4 +91,12 @@ public class DormandPrince853Solver extends FirstOrderSolver {
 		return "Dormand-Prince 853 solver";
 	}
 
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
+	 */
+	@Override
+	public int getKISAOTerm() {
+		return -1;
+	}
+
 }

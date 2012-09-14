@@ -92,4 +92,12 @@ public class AdamsMoultonSolver extends FirstOrderSolver {
 		return "Adams-Moulton solver";
 	}
 
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
+	 */
+	@Override
+	public int getKISAOTerm() {
+		return 280;
+	}
+
 }
