@@ -96,8 +96,8 @@ public class SEDMLWriter  {
 		 * @param start The start time for the desired output
 		 * @param end The simulation end time
 		 * @param stepsize The output step-size
-		 * @param solver An {@link AbstractDESSolver}, not <code>null</code>.
-		 * @param model A {@link Model}, not <code>null</code>
+		 * @param solver An {@link AbstractDESSolver}, not {@code null}.
+		 * @param model A {@link Model}, not {@code null}
 		 * @param modelURI	A URI pointing to the model location
 		 * @param os A writeable, open {@link ObjectStream}
 		 * @throws IOException

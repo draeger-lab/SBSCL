@@ -61,6 +61,14 @@ public interface DESSolver extends Cloneable, Serializable {
 	public void firePropertyChange(double oldValue, double newValue);
 
 	/**
+	 * For details about the Kinetic Simulation Algorithm Ontology (KiSAO) see
+	 * <a href="http://biomodels.net/kisao/">http://biomodels.net/kisao/</a>.
+	 * 
+	 * @return the KiSAO term of the algorithm
+	 */
+	public int getKiSAOterm();
+
+	/**
 	 * Obtain the currently set integration step size.
 	 * 
 	 * @return the step size
@@ -68,7 +76,7 @@ public interface DESSolver extends Cloneable, Serializable {
 	public double getStepSize();
 
 	/**
-	 * If this method returns <code>true</code>, intermediate results that may
+	 * If this method returns {@code true}, intermediate results that may
 	 * originate from a {@link RichDESystem} are included into the
 	 * {@link MultiTable} that contains the result of a numerical integration.
 	 * 
@@ -95,7 +103,7 @@ public interface DESSolver extends Cloneable, Serializable {
 	 * into the {@link MultiTable} of the result.
 	 * 
 	 * @param includeIntermediates
-	 *        if <code>true</code>, intermediate results are included into the
+	 *        if {@code true}, intermediate results are included into the
 	 *        result.
 	 */
 	public void setIncludeIntermediates(boolean includeIntermediates);
@@ -194,10 +202,4 @@ public interface DESSolver extends Cloneable, Serializable {
 			MultiTable.Block timeSeriesInitConditions,
 			double[] initialValues) throws DerivativeException;
 
-	
-	/**
-	 * 
-	 * @return the KISAO term of the algorithm
-	 */
-	public int getKISAOTerm();
 }
