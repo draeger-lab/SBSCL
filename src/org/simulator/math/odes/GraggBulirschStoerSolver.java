@@ -92,4 +92,12 @@ public class GraggBulirschStoerSolver extends FirstOrderSolver {
 		return "Gragg-Bulirsch-Stoer solver";
 	}
 
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
+	 */
+	@Override
+	public int getKISAOTerm() {
+		return -1;
+	}
+
 }

@@ -103,4 +103,12 @@ public class EulerMethod extends AbstractDESSolver {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
+	 */
+	@Override
+	public int getKISAOTerm() {
+		return 261;
+	}
+
 }

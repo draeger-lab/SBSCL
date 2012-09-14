@@ -194,4 +194,10 @@ public interface DESSolver extends Cloneable, Serializable {
 			MultiTable.Block timeSeriesInitConditions,
 			double[] initialValues) throws DerivativeException;
 
+	
+	/**
+	 * 
+	 * @return the KISAO term of the algorithm
+	 */
+	public int getKISAOTerm();
 }
