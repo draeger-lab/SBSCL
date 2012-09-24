@@ -36,6 +36,7 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.simulator.math.odes.AbstractDESSolver;
+import org.simulator.math.odes.DESSolver;
 import org.simulator.math.odes.EulerMethod;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.sbml.SBMLinterpreter;
@@ -71,10 +72,9 @@ public class SimulatorTest {
     
     // Read the model and initialize solver
     Model model = (new SBMLReader()).readSBML(fileName).getModel();
-    AbstractDESSolver solver = new EulerMethod();
+    DESSolver solver = new EulerMethod();
     solver.setStepSize(stepSize);
     SBMLinterpreter interpreter = new SBMLinterpreter(model);
-    solver.setStepSize(stepSize);
     if (solver instanceof AbstractDESSolver) {
       ((AbstractDESSolver) solver).setIncludeIntermediates(false);
     }
