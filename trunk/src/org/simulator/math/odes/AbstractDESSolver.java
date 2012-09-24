@@ -501,8 +501,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		data.getBlock(0).setName("Values");
 		if (includeIntermediates && (DES instanceof RichDESystem)) {
 			data.addBlock(((RichDESystem) DES).getAdditionalValueIds());
-			data.getBlock(data.getBlockCount() - 1)
-			.setName("Additional values");
+			data.getBlock(data.getBlockCount() - 1).setName("Additional values");
 		}
 		unstableFlag = false;
 		return data;
@@ -515,7 +514,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		return includeIntermediates;
 	}
 
-  /**
+	/**
 	 * @return the nonnegative flag
 	 */
 	public boolean isNonnegative() {
