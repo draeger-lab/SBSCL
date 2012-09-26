@@ -102,6 +102,6 @@ public class HighamHall54Solver extends FirstOrderSolver {
 	 */
 	//@Override
 	public int getKiSAOterm() {
-		return -1;
+		return 434;
 	}
 }
