@@ -643,7 +643,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 	 */
 	//@Override
 	public int getKiSAOterm() {
-		return -1;
+		return 33;
 	}
 
 

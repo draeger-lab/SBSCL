@@ -96,7 +96,7 @@ public class DormandPrince54Solver extends FirstOrderSolver {
 	 */
 	//@Override
 	public int getKiSAOterm() {
-		return -1;
+		return 87;
 	}
 
 }
