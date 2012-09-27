@@ -49,9 +49,9 @@ public class SpeciesValue extends ASTNodeValue {
   protected SBMLValueHolder valueHolder;
   
   /**
-   * Has the species an initial amount set?
+   * Is the Y value of the species referring to an amount?
    */
-  protected boolean isSetInitialAmount;
+  protected boolean isAmount;
   
   /**
    * The hasOnlySubstanceUnits attribute of the species
@@ -89,12 +89,12 @@ public class SpeciesValue extends ASTNodeValue {
    * @param zeroSpatialDimensions
    */
   public SpeciesValue(ASTNodeInterpreter interpreter, ASTNode node,
-    Species s, SBMLValueHolder valueHolder, int position, int compartmentPosition, boolean zeroSpatialDimensions) {
+    Species s, SBMLValueHolder valueHolder, int position, int compartmentPosition, boolean zeroSpatialDimensions, boolean isAmount) {
     super(interpreter, node);
     this.s = s;
     this.id = s.getId();
     this.valueHolder = valueHolder;
-    this.isSetInitialAmount = s.isSetInitialAmount();
+    this.isAmount = isAmount;
     this.isSetInitialConcentration = s.isSetInitialConcentration();
     this.hasOnlySubstanceUnits = s.getHasOnlySubstanceUnits();
     this.position = position;
@@ -108,7 +108,7 @@ public class SpeciesValue extends ASTNodeValue {
    */
   @Override
 	protected void computeDoubleValue() {
-		if (isSetInitialAmount && !hasOnlySubstanceUnits) {
+		if (isAmount && !hasOnlySubstanceUnits) {
 			double compartmentValue = valueHolder
 					.getCurrentValueOf(compartmentPosition);
 			if ((compartmentValue == 0d) || zeroSpatialDimensions) {
@@ -118,7 +118,7 @@ public class SpeciesValue extends ASTNodeValue {
 						/ compartmentValue;
 
 			}
-		} else if (isSetInitialConcentration && hasOnlySubstanceUnits) {
+		} else if (!isAmount && hasOnlySubstanceUnits) {
 			double compartmentValue = valueHolder
 					.getCurrentValueOf(compartmentPosition);
 			if ((compartmentValue == 0d) || zeroSpatialDimensions) {
