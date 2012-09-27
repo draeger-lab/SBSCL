@@ -108,6 +108,11 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * 
 	 */
 	private MultiTable data;
+	
+	/**
+	 * A cloned version of this object
+	 */
+	private AbstractDESSolver clonedSolver;
 
 	/**
 	 * Initialize with default integration step size and non-negative attribute
@@ -351,7 +356,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		if (increase) {
 			t = BigDecimal.valueOf(stepSize).add(BigDecimal.valueOf(t)).doubleValue();
 		}
-		processEventsAndRules(false, DES, t, previousTime, yTemp);
+		if(!steadyState) {
+			processEventsAndRules(false, DES, t, previousTime, yTemp);
+		}
 		return t;
 	}
 
@@ -363,7 +370,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * @return the computed steady state 
 	 * @throws DerivativeException
 	 */
-	private double[] computeSteadyState(FastProcessDESystem DES,
+	protected double[] computeSteadyState(FastProcessDESystem DES,
 			double[] result, double timeBegin) throws DerivativeException {
 		double[] oldValues = new double[result.length];
 		double[] newValues = new double[result.length];
@@ -374,10 +381,12 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 		// TODO what if there is oscillation, so no state with no change will be
 		// reached
-		while (!noChange(oldValues, newValues)) {
+		int step=0;
+		while (!noChange(oldValues, newValues, step)) {
 			System.arraycopy(newValues, 0, oldValues, 0, newValues.length);
 			ft = computeNextState(DES, ft, stepSize, oldValues, change,
 					newValues, true, true);
+			step++;
 		}
 		((FastProcessDESystem) DES).setFastProcessComputation(false);
 		return oldValues;
@@ -532,12 +541,16 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * 
 	 * @param newValues
 	 * @param oldValues
+	 * @param step 
 	 * @return
 	 */
-	private boolean noChange(double newValues[], double oldValues[]) {
+	private boolean noChange(double newValues[], double oldValues[], int step) {
 		for (int i = 0; i < newValues.length; i++) {
 			double distance=Math.abs(newValues[i]-oldValues[i]);
 			if (distance > 1e-12) {
+				return false;
+			}
+			if((distance > 0) && (step < 10000)) {
 				return false;
 			}
 		}
@@ -582,6 +595,20 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			hasNewEvents=true;
 		}
 		while ((event != null) && ((event.getLastTimeExecuted() == time) || (event.getFireStatus(time)))) {
+			if ((EDES instanceof FastProcessDESystem)) {
+				FastProcessDESystem FDES = (FastProcessDESystem) EDES;
+				if(FDES.containsFastProcesses()) {
+					double[] yTemp2 = new double[yTemp.length];
+					System.arraycopy(yTemp, 0, yTemp2, 0, yTemp.length);
+					if(clonedSolver == null) {
+						clonedSolver = this.clone();
+					}
+					double[] result = clonedSolver.computeSteadyState(FDES,
+							yTemp2, 0);
+					System.arraycopy(result, 0, yTemp, 0, yTemp.length);
+				}
+			}
+			
 			for (int index: event.getAssignments().keySet()) {
 				yTemp[index] = event.getAssignments().get(index);
 			}
@@ -609,8 +636,8 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		if (DES instanceof EventDESystem) {
 			EventDESystem EDES = (EventDESystem) DES;
 			if (EDES.getRuleCount() > 0) {
-        processRules(EDES, t, yTemp);
-      }
+				processRules(EDES, t, yTemp);
+			}
 			if ((forceProcessing || (!this.hasSolverEventProcessing())) && (EDES.getEventCount() > 0)) {
 				change=processEvents(EDES, t, previousTime, yTemp);
 			}
