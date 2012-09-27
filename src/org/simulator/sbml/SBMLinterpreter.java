@@ -367,6 +367,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	private int[] speciesIndex;
 
 	private double[] stoichiometry;
+	
+	private boolean[] isAmount;
+	
 
 	/**
 	 * <p>
@@ -399,6 +402,20 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * @throws ModelOverdeterminedException
 	 */
 	public SBMLinterpreter(Model model,  double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue) throws SBMLException, ModelOverdeterminedException {
+		this(model, 0d, 1d, 1d, null);
+	}
+	
+	/**
+	 * 
+	 * @param model
+	 * @param defaultSpeciesValue
+	 * @param defaultParameterValue
+	 * @param defaultCompartmentValue
+	 * @param amountHash
+	 * @throws SBMLException
+	 * @throws ModelOverdeterminedException
+	 */
+	public SBMLinterpreter(Model model,  double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue, Map<String,Boolean> amountHash) throws SBMLException, ModelOverdeterminedException {
 		this.model = model;
 		this.v = new double[this.model.getListOfReactions().size()];
 		this.nConstraints=this.model.getConstraintCount();
@@ -425,6 +442,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		}
 		this.Y = new double[model.getCompartmentCount() + model.getSpeciesCount()
 		                    + model.getParameterCount() + speciesReferencesInRateRules];
+		this.isAmount = new boolean[Y.length];
 		this.compartmentIndexes = new int[Y.length];
 		this.conversionFactors = new double[Y.length];
 		this.inConcentrationValues = new boolean[Y.length];
@@ -437,7 +455,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		reactionReversible = new boolean[model.getReactionCount()];
 		initialValues = new double[Y.length];
 		nodes = new LinkedList<ASTNode>();
-		this.init(true, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue);
+		this.init(true, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, amountHash);
 	}
 
 	/* (non-Javadoc)
@@ -998,8 +1016,23 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * @throws ModelOverdeterminedException
 	 * @throws SBMLException
 	 */
-	@SuppressWarnings("unchecked")
 	public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue) throws ModelOverdeterminedException, SBMLException {
+		init(renewTree, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, null);
+	}
+
+	/**
+	 * This method initializes the differential equation system for simulation. The user can tell whether the tree of ASTNodes has to be refreshed, give some default values and state whether a species is seen as an amount or a concentration.
+	 * @param renewTree
+	 * @param defaultSpeciesValue
+	 * @param defaultParameterValue
+	 * @param defaultCompartmentValue
+	 * @param amountHash
+	 * @throws ModelOverdeterminedException
+	 * @throws SBMLException
+	 */
+	@SuppressWarnings("unchecked")
+	public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue, Map<String,Boolean> amountHash) throws ModelOverdeterminedException, SBMLException {
+		
 		int i;
 		symbolHash.clear();
 		compartmentHash.clear();
@@ -1072,8 +1105,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		  */
 		 for (i = 0; i < model.getSpeciesCount(); i++) {
 			 Species s = model.getSpecies(i);
-			 if (!s.getBoundaryCondition() && !s.isConstant()) {
-				 speciesMap.put(s.getId(), s);
+			 speciesMap.put(s.getId(), s);
+			 if (!s.getBoundaryCondition() && !s.isConstant()) {	 
 				 Parameter convParameter = s.getConversionFactorInstance();
 				 if (convParameter == null) {
 					 convParameter = model.getConversionFactorInstance();
@@ -1094,17 +1127,42 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
 				 s.setHasOnlySubstanceUnits(majority.getHasOnlySubstanceUnits());
 			 }
-
+			 
+			 //determine whether amount or concentration is set
+			 if((amountHash != null)) {
+				 if(amountHash.containsKey(s.getId())) { 
+					 isAmount[yIndex] = amountHash.get(s.getId());
+				 }
+				 else {
+					 isAmount[yIndex] = s.isSetInitialAmount();
+				 }
+			 }
+			 else {
+				 isAmount[yIndex] = s.isSetInitialAmount();
+				 
+			 }
+			 
 			 if (!s.isSetValue()) {
 				 Y[yIndex] = defaultSpeciesValue;
 			 }
 			 else {
 				 if (s.isSetInitialAmount()) {
-					 Y[yIndex] = s.getInitialAmount();
+					 if(isAmount[yIndex]) {
+						 Y[yIndex] = s.getInitialAmount();
+					 }
+					 else {
+						 Y[yIndex] = s.getInitialAmount()/Y[compartmentIndex];
+					 }
 				 } else {
-					 Y[yIndex] = s.getInitialConcentration();
+					 if(!isAmount[yIndex]) {
+						 Y[yIndex] = s.getInitialConcentration();
+					 }
+					 else {
+						 Y[yIndex] = s.getInitialConcentration()*Y[compartmentIndex];
+					 }
 				 }
 			 }
+			 
 			 symbolHash.put(s.getId(), yIndex);
 			 compartmentHash.put(s.getId(), compartmentIndex);
 			 compartmentIndexes[i] = compartmentIndex;
@@ -1168,7 +1226,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				 species = speciesMap.get(speciesID);
 
 				 if (species != null) {
-					 if (species.isSetInitialConcentration()
+					 if (!isAmount[symbolHash.get(speciesID)]
 							 && !species.hasOnlySubstanceUnits()) {
 						 inConcentration.add(speciesID);
 					 }
@@ -1178,7 +1236,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				 speciesID = speciesRef.getSpecies();
 				 species = speciesMap.get(speciesID);
 				 if (species != null) {
-					 if (species.isSetInitialConcentration()
+					 if (!isAmount[symbolHash.get(speciesID)]
 							 && !species.hasOnlySubstanceUnits()) {
 						 inConcentration.add(speciesID);
 					 }
@@ -1200,7 +1258,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		 /*
 		  * Algebraic Rules
 		  */
-		  boolean containsAlgebraicRules = false;
+		 boolean containsAlgebraicRules = false;
 		 for (i = 0; i < (int) model.getRuleCount(); i++) {
 			 if (model.getRule(i).isAlgebraic()) {
 				 containsAlgebraicRules = true;
@@ -1597,8 +1655,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
 							if (entry.getValue() == symbolIndex) {
 								Species s = model.getSpecies(entry.getKey());
-								if (s.isSetInitialConcentration()) {
-									int speciesIndex = symbolHash.get(entry.getKey());
+								int speciesIndex = symbolHash.get(entry.getKey());
+								if ((!isAmount[speciesIndex]) && (!s.isConstant())) {	
 									speciesIndices.add(speciesIndex);
 								}
 							}
@@ -1837,7 +1895,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						}
 						copiedAST.putUserObject(TEMP_VALUE, new SpeciesValue(nodeInterpreter,
 								copiedAST, sp, this, symbolHash.get(variable
-										.getId()), compartmentHash.get(variable.getId()), hasZeroSpatialDimensions));
+										.getId()), compartmentHash.get(variable.getId()), hasZeroSpatialDimensions, isAmount[symbolHash.get(variable.getId())]));
 					} else if ((variable instanceof Compartment)
 							|| (variable instanceof Parameter)) {
 						copiedAST.putUserObject(TEMP_VALUE, new CompartmentOrParameterValue(
@@ -2089,7 +2147,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					symbolIndex=obj.getIndex();
 					if (symbolIndex >= 0) {
 						if (compartmentHash.containsValue(symbolIndex)) {
-							updateSpeciesConcentration(symbolIndex, Y, Y[symbolIndex], newVal, false);
+							updateSpeciesConcentrationAtEvents(symbolIndex, Y, Y[symbolIndex], newVal, index);
 						}
 						this.events[index].addAssignment(symbolIndex, newVal);
 					}
@@ -2156,7 +2214,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					if (currentChange && (!initialCalculations) && (index >= 0) && (compartmentHash.containsValue(index))) {
 						updateSpeciesConcentration(index, Y, oldValue, newValue, false);
 					}
-
+					else if (currentChange && initialCalculations && (index >= 0) && (compartmentHash.containsValue(index))) {
+						refreshSpeciesAmount(index, Y, oldValue, newValue);
+					}
 					changeByAssignmentRules = changeByAssignmentRules || currentChange;
 				}
 			}
@@ -2301,12 +2361,10 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	private void updateSpeciesConcentration(int compartmentIndex,
 			double changeRate[], double oldCompartmentValue, double newCompartmentValue, boolean causedByRateRule) {
 		int speciesIndex;
-		Species s;
 		for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
 			if (entry.getValue() == compartmentIndex) {
-				s = model.getSpecies(entry.getKey());
-				if (s.isSetInitialConcentration()) {
-					speciesIndex = symbolHash.get(entry.getKey());
+				speciesIndex = symbolHash.get(entry.getKey());
+				if ((!isAmount[speciesIndex]) && (!speciesMap.get(symbolIdentifiers[speciesIndex]).getConstant())) {
 					if (causedByRateRule) {
 						changeRate[speciesIndex] = -changeRate[compartmentIndex]
 								* Y[speciesIndex] / Y[compartmentIndex];
@@ -2314,6 +2372,54 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						changeRate[speciesIndex] = (changeRate[speciesIndex] * oldCompartmentValue) / newCompartmentValue;
 					}
 
+				}
+
+			}
+		}
+
+	}
+	
+	/**
+	 * Updates the amount of a species due to a change in the size of their
+	 * compartment caused by an assignment rule overwriting the initial value 
+	 * @param compartmentIndex
+	 * @param Y
+	 * @param oldCompartmentValue
+	 * @param newCompartmentValue
+	 */
+	private void refreshSpeciesAmount(int compartmentIndex,
+			double Y[], double oldCompartmentValue, double newCompartmentValue) {
+		int speciesIndex;
+		for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
+			if (entry.getValue() == compartmentIndex) {
+				speciesIndex = symbolHash.get(entry.getKey());
+				if ((isAmount[speciesIndex]) && (speciesMap.get(symbolIdentifiers[speciesIndex]).isSetInitialConcentration())) {
+					Y[speciesIndex] = (Y[speciesIndex] / oldCompartmentValue) * newCompartmentValue;
+				}
+
+			}
+		}
+
+	}
+	
+	/**
+	 * Updates the concentration of species due to a change in the size of their
+	 * compartment (at events)
+	 * @param compartmentIndex
+	 * @param Y
+	 * @param oldCompartmentValue
+	 * @param newCompartmentValue
+	 * @param eventIndex
+	 */
+	private void updateSpeciesConcentrationAtEvents(int compartmentIndex,
+			double Y[], double oldCompartmentValue, double newCompartmentValue, int eventIndex) {
+		int speciesIndex;
+		for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
+			if (entry.getValue() == compartmentIndex) {
+				speciesIndex = symbolHash.get(entry.getKey());
+				if ((!isAmount[speciesIndex]) && (!speciesMap.get(symbolIdentifiers[speciesIndex]).getConstant())){
+					Y[speciesIndex] = (Y[speciesIndex] * oldCompartmentValue) / newCompartmentValue;
+					this.events[eventIndex].addAssignment(speciesIndex, Y[speciesIndex]);
 				}
 
 			}
