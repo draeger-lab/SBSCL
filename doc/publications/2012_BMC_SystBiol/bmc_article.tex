@@ -203,9 +203,9 @@ library for numerical computation in systems biology}
 
 \author{%
 Roland Keller$^{1}$\correspondingauthor\email{Roland Keller -
-roland.keller@unituebingen.de}, 
+roland.keller@uni-tuebingen.de}, 
 Alexander D\"orr$^{1}$\correspondingauthor\email{Alexander D\"orr -
-alexander.doerr@unituebingen.de},  
+alexander.doerr@uni-tuebingen.de},  
 Akito Tabira$^{2}$, %\email{Akito Tabira - mythosil_full_throttle@i.softbank.jp}
 Akira Funahashi$^{2}$, %\email{Akira Funahashi - funa@bio.keio.ac.jp}
 Michael J. Ziller$^{3}$, %\email{Michael J. Ziller - michael_ziller@harvard.edu}
@@ -386,8 +386,42 @@ simulation configurations to SED-ML (Simulation Experiment Description Markup La
 \cite{Waltemath2011}), and facilitate the re-use and reproduction of these
 experiments by executing SED-ML files.
 
+\section{Results and discussion}
 
-\section{Implementation}
+\TODO{Fill}
+
+\section{Conclusions}
+The SBML implementation has successfully passed the
+SBML Test Suite (version 2.0.2).
+%(see
+%\href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite}):
+Furthermore, it solved 99.27\,\% of the models from the
+\href{http://biomodels.net}{BioModels.net} database (release 21,
+\cite{Novere2006a}).
+Therefore, the Simulation Core Library is an efficient Java tool for the
+simulation of differential equation systems used in systems biology. It can be
+easily integrated in larger applications. For instance,
+CellDesigner version~4.2 \cite{Funahashi2003} already uses it as one of its simulation libraries.
+The stand-alone application SBMLsimulator (available at
+\href{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator}{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator})
+provides a convenient graphical user interface for the simulation of SBML
+models and uses it as a computational backend.
+The abstract class structure of the library supports the integration of
+additional model formats, such as CellML, besides its SBML implementation. To
+this end, it is only necessary to implement a suitable interpreter class.
+
+%The SBML ODE Solver Library \cite{Machne2006}, which is written in C,
+%and based on the libSBML library \cite{Bornstein2008}, 
+%provides such a simulation routine based on the SUNDIALS differential equation
+%solver.
+
+By including support for the emerging standard SED-ML, we hope to facilitate the
+exchange, archival and reproduction of simulation experiments performed using
+the Simulation Core Library.
+
+\section{Methods}
+
+\subsection{Implementation}
 
 All the solver classes are derived from the abstract class \AbstractDESSolver{}
 (Fig.~1).
@@ -458,34 +492,10 @@ download. Clients of the the Simulation Core Library can choose to use the
 in the \texttt{org.simulator.sedml} package that do not require direct
 dependencies on \jlibsedml{} in their code.
 
-\section{Results and conclusion}
-The SBML implementation has successfully passed the
-SBML Test Suite (version 2.0.2).
-%(see
-%\href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite}):
-Furthermore, it solved 99.27\,\% of the models from the
-\href{http://biomodels.net}{BioModels.net} database (release 21,
-\cite{Novere2006a}).
-Therefore, the Simulation Core Library is an efficient Java tool for the
-simulation of differential equation systems used in systems biology. It can be
-easily integrated in larger applications. For instance,
-CellDesigner version~4.2 \cite{Funahashi2003} already uses it as one of its simulation libraries.
-The stand-alone application SBMLsimulator (available at
-\href{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator}{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator})
-provides a convenient graphical user interface for the simulation of SBML
-models and uses it as a computational backend.
-The abstract class structure of the library supports the integration of
-additional model formats, such as CellML, besides its SBML implementation. To
-this end, it is only necessary to implement a suitable interpreter class.
 
-%The SBML ODE Solver Library \cite{Machne2006}, which is written in C,
-%and based on the libSBML library \cite{Bornstein2008}, 
-%provides such a simulation routine based on the SUNDIALS differential equation
-%solver.
+\section{Availability of supporting data}
 
-By including support for the emerging standard SED-ML, we hope to facilitate the
-exchange, archival and reproduction of simulation experiments performed using
-the Simulation Core Library.
+\TODO{Website}
 
 \bigskip
 
