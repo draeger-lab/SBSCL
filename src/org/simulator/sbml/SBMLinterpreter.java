@@ -72,6 +72,7 @@ import org.simulator.sbml.astnode.ASTNodeInterpreter;
 import org.simulator.sbml.astnode.ASTNodeValue;
 import org.simulator.sbml.astnode.AssignmentRuleValue;
 import org.simulator.sbml.astnode.CompartmentOrParameterValue;
+import org.simulator.sbml.astnode.DivideValue;
 import org.simulator.sbml.astnode.FunctionValue;
 import org.simulator.sbml.astnode.IntegerValue;
 import org.simulator.sbml.astnode.LocalParameterValue;
@@ -1207,11 +1208,16 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			 reactionFast = new boolean[model.getReactionCount()];
 		 }
 		 int reactionIndex = 0;
+		 boolean slowReactions = false;
+		 boolean fastReactions = false;
 		 for (Reaction r : model.getListOfReactions()) {
 			 reactionFast[reactionIndex] = r.isFast();
 			 reactionReversible[reactionIndex] = r.isReversible();
-			 if (r.isFast() && !hasFastReactions) {
-				 hasFastReactions = true;
+			 if (r.isFast()) {
+				 fastReactions = true;
+			 }
+			 else {
+				 slowReactions = true;
 			 }
 			 if (r.getKineticLaw() != null) {
 				 if (r.getKineticLaw().getListOfLocalParameters().size() > 0) {
@@ -1244,6 +1250,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
 			 }
 			 reactionIndex++;
+		 }
+		 if(fastReactions && slowReactions) {
+			 hasFastReactions = true;
 		 }
 		 
 		 for(i=0; i!= inConcentrationValues.length; i++) {
@@ -1824,6 +1833,10 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				break;
 			case TIMES:
 				copiedAST.putUserObject(TEMP_VALUE, new TimesValue(nodeInterpreter,
+						copiedAST));
+				break;
+			case DIVIDE:
+				copiedAST.putUserObject(TEMP_VALUE, new DivideValue(nodeInterpreter,
 						copiedAST));
 				break;
 			case MINUS:
