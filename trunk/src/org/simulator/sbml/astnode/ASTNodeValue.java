@@ -316,14 +316,6 @@ public class ASTNodeValue {
       /*
        * Operators
        */
-      case DIVIDE:
-        if (numChildren != 2) { 
-        	throw new SBMLException(MessageFormat.format(
-                "Fractions must have one numerator and one denominator, here {0,number,integer} elements are given.",
-                node.getChildCount())); 
-        }
-        doubleValue = interpreter.frac(leftChild, rightChild, time);
-        break;
       case RATIONAL:
         doubleValue = interpreter.frac(numerator, denominator);
         break;
