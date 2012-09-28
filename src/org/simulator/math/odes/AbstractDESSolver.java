@@ -546,11 +546,12 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	private boolean noChange(double newValues[], double oldValues[], int step) {
 		for (int i = 0; i < newValues.length; i++) {
-			double distance=Math.abs(newValues[i]-oldValues[i]);
-			if (distance > 1e-12) {
-				return false;
+			double distance = Math.abs(newValues[i]-oldValues[i]);
+			double relativeDistance = 0;
+			if(!(newValues[i] == 0) || !(oldValues[i] == 0)) {
+				relativeDistance = Math.abs((newValues[i]-oldValues[i])/Math.max(newValues[i],oldValues[i]));
 			}
-			if((distance > 0) && (step < 10000)) {
+			if(((distance > 1E-5) || (relativeDistance > 1E-5)) &&  (step < 10000)) {
 				return false;
 			}
 		}
