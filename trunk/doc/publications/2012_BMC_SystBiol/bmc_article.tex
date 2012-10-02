@@ -321,31 +321,56 @@ approaches.}
 
 As part of the movement towards quantitative biology, modeling, 
 simulation, and computer analysis of biological networks have become integral
-parts of modern biological research. XML-based standard description formats
-such as the Systems Biology Markup Language (SBML, \cite{Hucka2004}) or
-CellML \cite{Lloyd2004} enable encoding of biological network models, and
-interpret them in terms of a differential equation system, with additional
-structures such as discrete events and algebraic equations.
-Software libraries for reading and manipulating the content of
-these formats are available.
-However, a prerequisite for model analysis, simulation, and calibration (e.g., the
-estimation of parameter values), is a multiple-purpose and 
-efficient numerical solver library that has been designed with the
-requirements of biological network models in mind.
+parts of modern biological research. Ambitious national and international
+research projects such as the Virtual Liver Network \cite{Holzhuetter2012}
+strive to derive even organ-wide models of biological systems that include all
+kinds of processes taking place at several levels of detail. Large-scale efforts
+like this require a strong collaboration between various research groups,
+including experimenters and modelers. The exchange, storage, interoperability
+and the possibility to combine models have been recognized as key aspects of
+this endeavor \cite{Liebermeister2009sta}.
 
-Many stand-alone programs providing these features come with
-graphical user interfaces.
-%\marginpar{I would avoid naming any software here. Such a list can only be
-% incomplete and is not necessary} \sout{, for instance, the Virtual Cell \cite{Loew2001}, iBioSim \cite{Myers2009},
-%PottersWheel \cite{Maiwald2008}, COPASI \cite{Hoops2006}, SBToolbox2
-%\cite{SBT_Schmidt2006}}
-%, or the Systems Biology Workbench with Roadrunner (SBW,
-%\cite{Bergmann06}). 
-However, the vast majority of the internal solvers for these systems are part of
-larger software suites and can therefore not be easily integrated into custom
-programs. Some are implemented in programming languages that are either
-platform-dependent (e.g., C or C++) and/or require a commercial license (e.g.,
-MATLAB\texttrademark{}) for their execution.
+XML-based standard description formats \cite{Bray2000} such as the Systems
+Biology Markup Language (SBML, \cite{Hucka2004}) or CellML \cite{Lloyd2004}
+enable encoding of quantitative biological network models.
+To facilitate sharing and reuse of the models, online data bases such as the
+BioModels database \cite{Novere2006a} or the CellML model repository
+\cite{Lloyd2008} provide large collections of published models in various
+formats.
+Software libraries for reading and manipulating the content
+of these formats are also available \cite{Bornstein2008, Miller2010,
+Draeger2011b} and a large variety of programs supports these model formats.
+
+\TODO{Describe and cite genome-scale models and their size. Can our solver also
+work with large-scale models such as HepatoNet1?}
+
+The models encoded in these formats can be interpreted in terms of differential
+equation systems, with additional structures such as discrete events and
+algebraic equations. 
+For efficient model analysis, simulation, and calibration (e.g.,
+the estimation of parameter values) multiple-purpose and efficient numerical
+solver library that has been designed with the requirements of biological
+network models in mind is prerequisite.
+Althought the language specifications of SBML \cite{Hucka2001, Hucka2003,
+Finney2003a, Finney2006, Hucka2007, Hucka2008, Hucka2010a} 
+and CellML \cite{Cuellar2006} describe the semantics of models in these formats
+and their interpretation, the algorithmic implementation is still not
+straightforward. 
+
+Both communities offer standardized and manually derived benchmark test in order
+to evaluate the quality of simulation results, because it has been recognized that in many cases
+different solver implementations lead to divergent results \cite{Bergmann2008}.
+
+In this work we address the question of how to precisely solve models encoded in
+the SBML format, supporting all levels and versions. To this end, we here
+describe a precise solver algorithm. As a reference implementation, we
+introduce an exhaustive implementation in the Java\texttrademark{} programming
+language. The algorithm described in this paper is, however, not limited to any
+particular programing language. It is also important to note that the
+interpretation of these models must be strictly separated from the numerical
+method that solves the implicated differential equation system. In this way, a
+similar approach can also be done for CellML.
+
 %
 %The modeling language SBML (Systems Biology Markup Language,
 %\cite{Hucka2003}) constitutes an important \emph{de facto} standard for the
@@ -362,14 +387,7 @@ MATLAB\texttrademark{}) for their execution.
 %parameter values or compartment sizes. Rules can directly assign new values to
 %their objectives, e.g., the concentration of a reacting species.
 %
-
-%\sout{The SBML ODE Solver Library \cite{Machne2006}, which is written in C,
-%and based on the libSBML library \cite{Bornstein2008}, 
-%provides such a simulation routine based on the SUNDIALS differential equation
-%solver.}
-%\marginpar{I would avoid mentioning it here but keep it for the discussion. It
-% makes the current work look like a reimplementation in Java}
-
+%
 The Simulation Core Library presented here is a platform-independent,
 well-tested alternative.
 This generic library is completely decoupled from any graphical user interface
@@ -426,6 +444,23 @@ events and the priority of the remaining events have to be evaluated again and a
 
 \TODO{Discuss implementation in Java}
 %Why no heap is used for events 
+
+\subsection{Comparison to existing solvers}
+
+Many stand-alone programs providing these features come with
+graphical user interfaces.
+For instance, the Virtual Cell \cite{Loew2001}, iBioSim \cite{Myers2009},
+PottersWheel \cite{Maiwald2008}, COPASI \cite{Hoops2006}, SBToolbox2
+\cite{SBT_Schmidt2006}, or the Systems Biology Workbench with Roadrunner (SBW, \cite{Bergmann06}). 
+However, the vast majority of the internal solvers for these systems are part of
+larger software suites and can therefore not be easily integrated into custom
+programs. Some are implemented in programming languages that are either
+platform-dependent (e.g., C or C++) and/or require a commercial license (e.g.,
+MATLAB\texttrademark{}) for their execution.
+The SBML ODE Solver Library \cite{Machne2006}, which is written in C,
+and based on the libSBML library \cite{Bornstein2008}, 
+provides such a simulation routine based on the SUNDIALS differential equation
+solver.
 
 \section{Conclusions}
 The SBML implementation has successfully passed the
