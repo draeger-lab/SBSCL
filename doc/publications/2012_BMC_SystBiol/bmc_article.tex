@@ -450,6 +450,13 @@ An event with the highest priority is randomly chosen to be executed at this poi
 could be handled in the same manner. However, the assignment of the first event can change the priority or even the trigger of the events that have not been executed yet. Therefore the trigger of non persistent 
 events and the priority of the remaining events have to be evaluated again and another event with the highest priority is chosen. This process repeats itself until no further events to be executed are left.
 
+\subsection{Calculation of the derivatives for a certain time point}
+For given values $x$ at a time point the curring vector of derivatives is calculated as follows: First all derivatives in the vector $x'$ are set to zero. Then the rate rules are processed, which can change $x'$. After that for each reaction the velocity, which depends on $x$, is computed with the help of the syntax graph. Then the derivatives of all species that participate in the current reaction need to be updated.
+
+\subsection{Integrated calculation for a certain time step including event processing}
+The Rosenbrock solver is the solver that can adapt its step size if events are happening. For a certain time begin and time end and a vector $x$ it determines a new vector at a time point that is determined by the current adaptive step size. It refers to the already described calculation of the derivatives for a certain time point in this step.
+
+After that the events and the assignment rules are processed at the new time point. If this last step causes a change in $x$, the adaptive step size is decreased and the calculation is repeated until the minimum step size is reached or the processing of events and rules does not change $x$ any more. So the time at which an event happens is precisely determined.
 
 \TODO{Discuss implementation in Java}
 %Why no heap is used for events 
@@ -556,10 +563,7 @@ new assignment rule with the help of a bipartite matching.
 %AlgebraicRules in the test case are all of the type described here. I am
 %currently not sure if we could solve cos(x) = 0 or similar cases.}
 %
-The simulation algorithm then proceeds as follows: For each time step, the ODE
-solver gets the current variable values and
-calculates the system's state for the next time point. After that, events
-and rules are processed, that can change the values. The modified values then
+The modified values then
 become the initial values for the next time step. The event processing of the
 Rosenbrock solver
 %\sout{is different from other solvers, as it}
