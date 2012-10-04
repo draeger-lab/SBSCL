@@ -797,7 +797,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			if (runningEvents.size() > 0) {
 				return processNextEvent(priorities,this.Y);
 			}
-			// nothing to do
+			// return empty event, so the solver knows that a event with delay has been triggered
 			else if (hasNewDelayedEvents) {
 				this.events[0].clearAssignments();
 				return this.events[0];
@@ -1286,8 +1286,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			 if (this.events == null) {
 				 this.events = new SBMLEventInProgress[model.getEventCount()];
 			 }
-			 this.runningEvents = new LinkedList<Integer>();
-			 this.delayedEvents = new LinkedList<Integer>();
+			 this.runningEvents = new ArrayList<Integer>();
+			 this.delayedEvents = new ArrayList<Integer>();
 			 initEvents();
 			 modelHasEvents = true;
 		 }

@@ -37,11 +37,11 @@ public abstract class AdaptiveStepsizeIntegrator extends AbstractDESSolver {
 	/**
 	 * Default absolute allowable vectorial tolerance.
 	 */
-	protected double absTol = 0.000000001d;
+	protected double absTol = 1E-10d;
 	/**
 	 * Default relative allowable vectorial tolerance.
 	 */
-	protected double relTol = 0.00001d;
+	protected double relTol = 1E-5d;
 	
 	/**
 	 * 
