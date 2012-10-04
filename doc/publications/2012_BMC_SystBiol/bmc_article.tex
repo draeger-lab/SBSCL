@@ -558,9 +558,8 @@ precise timing of the events.
 %\sout{Rosenbrock's method is well-suited even for stiff systems.}
 %
 Algebraic rules are turned into assignment rules before the
-simulation: If the system is not overdetermined, exactly one of the variables
-contained in an algebraic rule can be chosen as the target variable of the
-new assignment rule with the help of a bipartite matching.
+simulation: If the system is not overdetermined, the algebraic rule is converted into an assignment rule.
+This will be done in the following way: A new object of the type \texttt{AssigmentRule} is generated, with the variable determined in the matching set as its variable. The MathML expression of this rule is created via the conversion of a copy of the algebraic rule's expression observing the results of the bipartite matching.
 %\marginpar{This is only valid for polynomes. And for those,
 %assignmentRules should have been used anyway. How do-you proceed for
 %cos(x)=0?: Yes, that's true. People should use assignments there, but the
