@@ -24,9 +24,6 @@ package org.simulator.math;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ResourceBundle;
-
-import de.zbit.util.ResourceManager;
 
 
 /**
@@ -40,11 +37,6 @@ public class Relative_N_Metric extends QualityMeasure {
 	 * Generated serial version identifier.
 	 */
 	private static final long serialVersionUID = 5066304615795368201L;
-	
-	/**
-	 * 
-	 */
-	private static final ResourceBundle bundle = ResourceManager.getBundle("org.sbml.simulator.locales.Simulator");
 	
 	/**
 	 * Is default value NaN? (for faster computation)

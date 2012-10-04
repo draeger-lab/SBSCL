@@ -22,7 +22,6 @@
  */
 package org.simulator.math;
 
-import org.sbml.jsbml.util.StringTools;
 
 /**
  * An implementation of the relative squared error with a default value to avoid
