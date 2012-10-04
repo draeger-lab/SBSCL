@@ -1,6 +1,6 @@
 /*
- * $$Id${file_name} ${time} ${user} $$
- * $$URL${file_name} $$
+ * $Id: RelativeSquaredError.java 246 2012-10-04 14:39:55Z "keller"$
+ * $URL: svn+ssh://svn.code.sf.net/p/simulation-core/code/trunk/src/org/simulator/math/RelativeSquaredError.java$
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
