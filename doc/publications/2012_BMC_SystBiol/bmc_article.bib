@@ -3,6 +3,91 @@
 %  An example of bibtex entries.
 %  Entries taken from BMC instructions for authors page.
 
+@ARTICLE{Liebermeister2010,
+  author = {Liebermeister, Wolfram and Uhlendorf, Jannis and Klipp, Edda},
+  title = {Modular rate laws for enzymatic reactions: thermodynamics, sensitivities,
+	and implementation},
+  journal = {submitted to Bioinformatics},
+  year = {2010},
+  abstract = {Motivation: Standard rate laws are key prerequisites for systematically
+	turning metabolic networks into kinetic models. They should provide
+	simple, general, and biochemically plausible formulas for reaction
+	velocities and elasticity coefficients. At the same time, they have
+	to satisfy various thermodynamic relations that couple the kinetic
+	and thermodynamic constants with the metabolic fluxes and concentrations.
+	
+	Results: We present a family of reversible rate laws designed to describe
+	reactions with arbitrary stoichiometries and various modes of regulation
+	in a modular way. They include mass-action, Michaelis-Menten, and
+	uni-uni reversible Hill kinetics as special cases. Thermodynamically
+	consistent formulations of these rate laws ensure that the kinetic
+	constants will satisfy the thermodynamic Wegscheider conditions and
+	Haldane relationships, guaranteeing that parameter sets obtained
+	from literature mining, fitting, sampling, or optimisation will lead
+	to correct chemical equilibrium states. We show how the chemical
+	potential differences act as a thermodynamic driving force and relate
+	the modular rate laws to the thermodynamickinetic modelling formalism.
+	A reformulation based on parameters called saturation values leads
+	to simple formulas for elasticity and control coefficients, which
+	reflect the role of thermodynamics. In one of the rate laws, the
+	reaction rate directly depends on the reaction affinity, which therefore
+	completely determines the entropy production. To simplify automatic
+	processing of the modular rate laws, we propose a standard syntax
+	and semantic annotations for the Systems Biology Markup Language
+	(SBML). Availability: An online tool for inserting the rate laws
+	into SBML is freely available at www.semanticsbml.org/sbmlfill.
+	
+	Contact wolfram.liebermeister@biologie.hu-berlin.de.
+	
+	Supplementary Information: Details on the implementation in SBML models,
+	an overview of thermodynamic concepts and relations, additional formulas,
+	as well as mathematical proofs are given in the supplementary appendix.}
+}
+
+
+@ARTICLE{Liebermeister2006,
+  author = {Liebermeister, Wolfram and Klipp, Edda},
+  title = {Bringing metabolic networks to life: convenience rate law and thermodynamic
+	constraints},
+  journal = {Theor Biol Med Model},
+  year = {2006},
+  volume = {3},
+  pages = {41},
+  number = {42},
+  month = {December},
+  abstract = {BACKGROUND: Translating a known metabolic network into a dynamic model
+	requires rate laws for all chemical reactions. The mathematical expressions
+	depend on the underlying enzymatic mechanism; they can become quite
+	involved and may contain a large number of parameters. Rate laws
+	and enzyme parameters are still unknown for most enzymes. RESULTS:
+	We introduce a simple and general rate law called "convenience kinetics".
+	It can be derived from a simple random-order enzyme mechanism. Thermodynamic
+	laws can impose dependencies on the kinetic parameters. Hence, to
+	facilitate model fitting and parameter optimisation for large networks,
+	we introduce thermodynamically independent system parameters: their
+	values can be varied independently, without violating thermodynamical
+	constraints. We achieve this by expressing the equilibrium constants
+	either by Gibbs free energies of formation or by a set of independent
+	equilibrium constants. The remaining system parameters are mean turnover
+	rates, generalised Michaelis-Menten constants, and constants for
+	inhibition and activation. All parameters correspond to molecular
+	energies, for instance, binding energies between reactants and enzyme.
+	CONCLUSION: Convenience kinetics can be used to translate a biochemical
+	network--manually or automatically--into a dynamical model with plausible
+	biological properties. It implements enzyme saturation and regulation
+	by activators and inhibitors, covers all possible reaction stoichiometries,
+	and can be specified by a small number of parameters. Its mathematical
+	form makes it especially suitable for parameter estimation and optimisation.
+	Parameter estimates can be easily computed from a least-squares fit
+	to Michaelis-Menten values, turnover rates, equilibrium constants,
+	and other quantities that are routinely measured in enzyme assays
+	and stored in kinetic databases.},
+  doi = {10.1186/1742-4682-3-41},
+  pii = {1742-4682-3-41},
+  pmid = {17173669},
+  url = {http://dx.doi.org/10.1186/1742-4682-3-41}
+}
+
 @ARTICLE{Lloyd2008,
   author = {Lloyd, Catherine M. and Lawson, James R. and Hunter, Peter J. and
 	Nielsen, Poul F.},
