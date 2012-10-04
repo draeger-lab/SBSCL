@@ -461,7 +461,7 @@ The vector $\vec{Q}$ of quantities contains the sizes of the
 compartments $\vec{C}$, amounts (or concentrations) of reacting species
 $\vec{S}$, and the values of all global model parameters $\vec{P}$.
 It should be noted that these models may contain local parameters $\vec{p}$ that
-influence the reaction velocities, but which are not part of the global apramter
+influence the reaction velocities, but which are not part of the global parameter
 vector $\vec{P}$, and hence part of $\vec{Q}$.
 In the general case of Equation~\ref{eq:QuantityValue}, not all species' amounts
 can be computed by integrating the transformation $\mathbf{N}\vec{\nu}$: The
@@ -479,7 +479,7 @@ $\vec{r}(\vec{Q})$ assignment rules.
 An event can directly manipulate the value of a quantity, for instance,
 set the size of a certain compartment to half of its current size, as soon as a
 trigger condition becomes satisfied.
-An assignment rule also influences the asolute value of some model.
+An assignment rule also influences the absolute value of some model.
 A further concept of SBML models are algebraic rules, which are equations that
 must be evaluated to zero at all times during the simulation of the model.
 These rules can be solved to determine the values of quantities, whose values
@@ -495,7 +495,7 @@ In case that the system under study operates at multiple time scales, i.e., it
 contains a fast and a slow sub-system, a separation of the system is necessary
 leading to differential algebraic equations.
 Solving Equation~\ref{eq:QuantityValue} is therefore much more complicated than
-computing the sulution of the simple Equation~\ref{eq:SpeciesChange} alone.
+computing the solution of the simple Equation~\ref{eq:SpeciesChange} alone.
 It should be noted that a strict separation of the interpretation of the model
 and the numerical treatment of the differential equation system is necessary to
 ensure that regular numerical methods can be used to solve
@@ -503,7 +503,7 @@ Equation~\ref{eq:QuantityValue}.
 In order to efficiently compute this solution, multiple pre-processing steps are
 required, such as the conversion of algebraic rules into assignment rules, or
 avoiding repeated re-computation of intermediate results.
-The next sections will give a detailled explanation of the necessary steps to
+The next sections will give a detailed explanation of the necessary steps to
 solve these systems and how to perform their numerical integration with standard
 numerical solvers.
 
@@ -538,7 +538,7 @@ As stated in the SBML specifications, if any equation vertex remains unconnected
 matching as far as possible, the model is considered overdetermined and thus is not a valid SBML model. 
 But if we are indeed looking at a valid SBML model, every assignment rule is converted into an algebraic rule. 
 Therefor the MathML expression in SBML is transformed into an equation with a left-hand side. The left-hand 
-side is represented by the respective variable vertex the reconsidered algebraic rule has been matched to.
+side is represented by the respective variable vertex the considered algebraic rule has been matched to.
 
 
 \subsection{Event handling}
@@ -546,13 +546,13 @@ With the release of SBML Level 3 Version 1, the processing of event has been rai
 complexity. Before 3.1 it was sufficient to determine, when an events triggers and when it is performed 
 due to a possible delay. Since 3.1, only some language elements have been added but with an huge 
 influence on the handling of events. Therefore the crucial part is now to coordinate the execution of events. 
-The order in which events have been processed used to be at programmers discretion, but the it is given 
-by the event's priority. Furthermore there exists the option to cancel an event during the moment its trigger 
+The order in which events have been processed used to be at programmers discretion, but now it is given 
+by the event's priority. Furthermore there exists the option to cancel an event during the interval its trigger 
 has been activated and the time the scheduler picks the event for execution. 
 
-For every time step, the events to be executed is a union of two subsets of the set containing all events.
-On the one hand there are the events whose trigger has been activated at the given time and they are without delay. On the other hand there are events that trigger at some time point before and whose delay reaches till the current time point. For every element of the resulting set of events the priority is evaluated.
-An event with the highest priority is randomly chosen to be executed at this point in time. All other events
+For every time step, the events to be executed are a union of two subsets of the set containing all events.
+On the one hand there are the events whose trigger has been activated at the given time and are without delay. On the other hand there are events that triggered at some time point before and whose delay reaches till the current point in time. For every element of the resulting set of events the priority is evaluated.
+An event with the highest priority is randomly chosen to be executed. All other events
 could be handled in the same manner. However, the assignment of the first event can change the priority or even the trigger of the events that have not been executed yet. Therefore the trigger of non persistent 
 events and the priority of the remaining events have to be evaluated again and another event with the highest priority is chosen. This process repeats itself until no further events to be executed are left.
 
@@ -669,7 +669,7 @@ This will be done in the following way: A new object of the type \texttt{Assigme
 %currently not sure if we could solve cos(x) = 0 or similar cases.}
 %
 
-In the \SBMLinterpreter{} events are represented via an array containing an object of the class \EventInProgress{} for every event in the model. Thereby the distinction between events with and without delays is made. The major difference between both is that an event with delay can trigger multiple times before it is executed. In order to deal with this, the class \SBMLEventInProgressWithDelay{} keeps track of issue. When events trigger more than once before execution, they have to order according to their delay because the delay of the same event can vary.
+In the \SBMLinterpreter{} events are represented via an array containing an object of the class \EventInProgress{} for every event in the model. Thereby the distinction between events with and without delays is made. The major difference between both is that an event with delay can trigger multiple times before it is executed. In order to deal with this, the class \SBMLEventInProgressWithDelay{} keeps track of issue, with the help of a list containing the time points, at which this event has to executed. When events trigger more than once before execution, they have to be ordered according to their delay because the delay of the same event can vary.
 
 When the \SBMLinterpreter{} is processing events with priority, the events with the highest priority 
 are currently stored in list until one of them is selected for execution. One could argue, that all events can
