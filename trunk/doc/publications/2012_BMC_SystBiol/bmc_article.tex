@@ -412,9 +412,9 @@ experiments by executing SED-ML files.
 \TODO{Describe SBML solving algorithm}
 
 \subsection{Initialization}
-At the beginning of the simulation the values of species, parameters and compartments are set to the initial values given in the model. The initial values can also be set later by initial assignments or rules.\\
+At the beginning of the simulation the values of species, parameters and compartments are set to the initial values given in the model. The initial values can also be set later by initial assignments or rules.
 
-All kinetic laws of the reactions, assignment rules, transformed algebraic rules (see below), initial assignments, event assignment rules and rate rules are integrated into a directed acyclic syntax graph. This graph is then a merging of the abstract syntax trees of all those elements. Equivalent elements are only contained once. This significantly decreases the computation time during the simulation.\\
+All kinetic laws of the reactions, assignment rules, transformed algebraic rules (see below), initial assignments, event assignment rules and rate rules are integrated into a directed acyclic syntax graph. This graph is then a merging of the abstract syntax trees of all those elements. Equivalent elements are only contained once. This significantly decreases the computation time during the simulation.
 
 After the creating of the abstract syntax graph, the initial assignments, the assignment rules (including transformed algebraic rules) are processed. So the initial values that are given in rules are also set now.
 
@@ -434,7 +434,6 @@ But if we are indeed looking at a valid SBML model, every assignment rule is con
 Therefor the MathML expression in jSBML is transformed into an equation with a left-hand side. The left-hand 
 side is represented by the respective variable vertex the reconsidered algebraic rule has been matched to.
 
-\subsection{
 
 \subsection{Event handling}
 With the release of SBML Level 3 Version 1, the processing of event has been raised to a higher level of 
