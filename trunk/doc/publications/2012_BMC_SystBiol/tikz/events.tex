@@ -1,0 +1,62 @@
+\documentclass{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\begin{document}
+\pagestyle{empty}
+
+
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, fill=blue!20, 
+    text width=5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=10em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
+    minimum height=2em]
+\tikzstyle{blank} = [coordinate]
+    
+\begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+    \node [cloud] (start) {Start};
+\node [block, below of=start] (init) {running:=()\\processed:=()};
+    \node [block, below of=init] (initLoop) {$i:=1$};
+    \node [decision, below of=initLoop] (alreadyProcessed) {events[i] $\in$ processed $\cup$ running?};
+    \node [decision, below of=alreadyProcessed ,  node distance=3.5cm] (trigger) {trigger\\(events[i])?};
+    \node [block, below of=trigger,  node distance=3.5cm] (updateRunningEvents) {running:=\\running $\cup$ events[i]};
+    \node [block, right of=updateRunningEvents,  node distance=5cm] (increase) {$i:=i+1$};
+    \node [decision, right of=increase, node distance=4cm] (endOfLoop) {$i>\#events$};
+    \node [decision, below of=endOfLoop] (noRunningEvents) {running\\=()?};
+    \node [block, left of=noRunningEvents, node distance=4cm] (chooseEvent) {event:=\\choose(running)};
+   \node [block, left of=chooseEvent, node distance=5cm] (processEvent) {x:=\\process(event)};
+ \node [block, left of=alreadyProcessed, node distance=4cm] (update2) {processed:=processed $\cup$ event}; 
+  \node [block,below of=update2, node distance=5cm] (update1) {running:=running $\setminus$ event};
+  \node [blank,right of=alreadyProcessed, node distance=9cm] (aux) {};
+
+  \node [blank,below of=initLoop, node distance=1.2cm] (aux2) {};
+
+
+    \node [cloud, below of=processEvent, node distance=3cm] (stop) {Stop};
+    % Draw edges
+    \path [line] (start) -- (init);
+    \path [line] (init) -- (initLoop);
+    \path [line] (initLoop) -- (aux2)-- (alreadyProcessed);
+    \path [line] (alreadyProcessed) -- node{yes} (trigger);
+    \path [line] (alreadyProcessed) -| node{no} (increase);
+    \path [line] (trigger) -- node{yes} (updateRunningEvents);
+    \path [line] (trigger) -| node{no} (increase);
+    \path [line] (updateRunningEvents) -- (increase);
+    \path [line] (increase) -- (endOfLoop);
+    \path [line] (endOfLoop) -- node{yes} (noRunningEvents);
+    \path [line] (endOfLoop) -- node{no}(aux)|- (aux2);
+    \path [line] (noRunningEvents) |- node{yes} (stop);
+    \path [line] (noRunningEvents) -- node{no} (chooseEvent);
+    \path [line] (chooseEvent) -- (processEvent);
+    \path [line] (processEvent) -| (update1);
+    \path [line] (update1) -- (update2);
+    \path [line] (update2) |- (initLoop);
+\end{tikzpicture}
+
+
+\end{document}
