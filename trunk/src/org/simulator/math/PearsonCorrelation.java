@@ -24,8 +24,6 @@ package org.simulator.math;
 
 import java.util.Iterator;
 
-import de.zbit.util.ResourceManager;
-
 
 /**
  * @author Roland Keller
@@ -92,20 +90,6 @@ public class PearsonCorrelation extends QualityMeasure {
 		else {
 			return defaultValue;
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.Distance#getName()
-	 */
-	public String getName() {
-		return ResourceManager.getBundle("org.sbml.simulator.locales.Simulator").getString(getClass().getSimpleName());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.Distance#toString()
-	 */
-	public String toString() {
-		return getName();
 	}
 
 }
