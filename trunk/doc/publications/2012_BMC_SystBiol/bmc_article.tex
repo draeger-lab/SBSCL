@@ -148,6 +148,8 @@
 \newcommand{\EventInProgress}{\texttt{Event\-In\-Progress}}
 \newcommand{\SBMLEventInProgressWithDelay}{\texttt{SBML\-Event\-In\-Progress\-With\-Delay}}
 
+% the derivative symbol for differential equations
+\newcommand{\D}{\mathrm{d}}
 
 
 \lstset{language=Java,
@@ -188,8 +190,8 @@ commentstyle=\ttfamily\itshape\color{forrestgreen}
 %%                                          %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title{Simulation Core Library: a Java
-library for numerical computation in systems biology}
+\title{The Simulation Core Algorithm and its implementation for numerical
+computation in systems biology}
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                          %%
@@ -415,12 +417,112 @@ experiments by executing SED-ML files.
 
 \TODO{Describe SBML solving algorithm}
 
+The mathematical structure of a reaction network comprises a stoichiometric
+matrix $\mathbf{N}$, whose rows correspond to the reacting species $\vec{S}$
+within the system, whereas its columns represent the reactions, i.e., bio-transformations,
+in which these species participate.
+The velocities $\vec{\nu}$ of the reactions $\vec{R}$ determine the rate of
+change of the species' amounts:
+\begin{equation}
+\frac{\D}{\D t}\vec{S} = \mathbf{N}\vec{\nu}(\vec{S}, t, \mathbf{W}, \vec{p})\,.
+\label{eq:SpeciesChange}
+\end{equation}
+The parameter vector $\vec{p}$ contains rate constants and other, often
+constant, quantities that influence the reaction velocities.
+According to \cite{Liebermeister2006, Liebermeister2010} the modulation matrix
+$\mathbf{W}$ is defined as a matrix of size $|\vec{R}|\times|\vec{S}|$
+containing the type of the regulatory influences of the species on
+the reactions, e.g., competetive inhibition or physical stimulation.
+Integrating Equation~\ref{eq:SpeciesChange} yields the predicted amounts of the
+species at each time point of interest within the interval $[t_0, t_T]$:
+\begin{equation}
+\vec{S} = \int_{t_0}^{t_T} \mathbf{N}\vec{\nu}(\vec{S}, t, \mathbf{W}, \vec{p})
+\D t\,.
+\end{equation}
+\TODO{The result of this integral is not a vector, but some kind of matrix
+(because of the time interval). How can this be formalized correctly?}
+Depending on the units of the species, the same notation can also express the
+change of the species' concentrations.
+In this simple case, solving the homogeneous ordinary
+differential equation system~\ref{eq:SpeciesChange} can be done in a
+straightforward way using many (numerical) differential equation solvers.
+The non-linear form of the kinetic equations in the vector function $\vec{\nu}$
+constitute the major difficulty for this endeavor and are often the reason why
+an analytical solution of these systems is not possible or very hard to achieve.
+Generally, differential equation systems describing biological networks are,
+however, inhomogenious systems with a higher complexity.
+Systems encoded in SBML can be seen as
+\begin{equation}
+\vec{Q} = \int_{t_0}^{t_T} \mathbf{N}\vec{\nu}(\vec{Q}, t, \mathbf{W},
+\vec{p})\D t + \int_{t_0}^{t_T} \vec{g}(\vec{Q})\D t + \vec{e}(\vec{Q}) + \vec{r}(\vec{Q})\,.
+\label{eq:QuantityValue}
+\end{equation}
+The vector $\vec{Q}$ of quantities contains the sizes of the
+compartments $\vec{C}$, amounts (or concentrations) of reacting species
+$\vec{S}$, and the values of all global model parameters $\vec{P}$.
+It should be noted that these models may contain local parameters $\vec{p}$ that
+influence the reaction velocities, but which are not part of the global apramter
+vector $\vec{P}$, and hence part of $\vec{Q}$.
+In the general case of Equation~\ref{eq:QuantityValue}, not all species' amounts
+can be computed by integrating the transformation $\mathbf{N}\vec{\nu}$: The
+change of some model quantities may be given in form of rate rules (function
+$\vec{g}(\vec{Q})$) that must be integrated separately.
+Species, whose amounts are determined by rate rules, must not participate in any
+reaction and do hence not have a corresponding entry in the stoichiometric
+matrix $\mathbf{N}$.
+Thereby, a rate rule directly gives the rate of change of some quantity:
+\begin{equation}
+\frac{\D}{\D t}\vec{Q} = g(\vec{Q})\,.
+\end{equation}
+In addition, SBML introduces the concept of events $\vec{e}(\vec{Q})$ and
+$\vec{r}(\vec{Q})$ assignment rules.
+An event can directly manipulate the value of a quantity, for instance,
+set the size of a certain compartment to half of its current size, as soon as a
+trigger condition becomes satisfied.
+An assignment rule also influences the asolute value of some model.
+A further concept of SBML models are algebraic rules, which are equations that
+must be evaluated to zero at all times during the simulation of the model.
+These rules can be solved to determine the values of quantities, whose values
+are not determined by other constructs.
+In this way, conservation relations or other complex interrelations can be
+expressed in a very convenient way.
+With the help of a bipartite matching and a subsequent conversion it is possible
+to turn algebraic rules into assignment rules and hence include these into the
+term $\vec{r}(\vec{Q})$.
+Such a transformation, however, requires symbolic computation and is
+hence a complicated endeavor.
+In case that the system under study operates at multiple time scales, i.e., it
+contains a fast and a slow sub-system, a separation of the system is necessary
+leading to differential algebraic equations.
+Solving Equation~\ref{eq:QuantityValue} is therefore much more complicated than
+computing the sulution of the simple Equation~\ref{eq:SpeciesChange} alone.
+It should be noted that a strict separation of the interpretation of the model
+and the numerical treatment of the differential equation system is necessary to
+ensure that regular numerical methods can be used to solve
+Equation~\ref{eq:QuantityValue}.
+In order to efficiently compute this solution, multiple pre-processing steps are
+required, such as the conversion of algebraic rules into assignment rules, or
+avoiding repeated re-computation of intermediate results.
+The next sections will give a detailled explanation of the necessary steps to
+solve these systems and how to perform their numerical integration with standard
+numerical solvers.
+
+
 \subsection{Initialization}
-At the beginning of the simulation the values of species, parameters and compartments are set to the initial values given in the model. The initial values can also be set later by initial assignments or rules.
 
-All kinetic laws of the reactions, assignment rules, transformed algebraic rules (see below), initial assignments, event assignment rules and rate rules are integrated into a directed acyclic syntax graph. This graph is then a merging of the abstract syntax trees of all those elements. Equivalent elements are only contained once. This significantly decreases the computation time during the simulation.
+At the beginning of the simulation the values of species, parameters and
+compartments are set to the initial values given in the model.
+The initial values can also be set later by initial assignments or rules.
+All kinetic laws of the reactions, assignment rules, transformed algebraic
+rules (see below), initial assignments, event assignment rules and rate rules
+are integrated into a directed acyclic syntax graph.
+This graph is then a merging of the abstract syntax trees of all those elements.
+Equivalent elements are only contained once.
+This significantly decreases the computation time during the simulation.
 
-After the creating of the abstract syntax graph, the initial assignments, the assignment rules (including transformed algebraic rules) are processed. So the initial values that are given in rules are also set now.
+After the creating of the abstract syntax graph, the initial assignments, the
+assignment rules (including transformed algebraic rules) are processed.
+So the initial values that are given in rules are also set now.
 
 
 \subsection{Solving algebraic rules}
@@ -429,13 +531,13 @@ of assignment rules. In every equation of an algebraic rule, there should be at 
 whose value is not yet defined through other elements in model. This variable has to be determined 
 for the purpose of interpreting the regarding algebraic rule.
 At first a bipartite graph according to the SBML specifications is generated. This graph is used to 
-compute a matching, using the algorithm from Hopcroft and Karp\cite{hopcroft1973n}. The initial 
-greedy matching is extended with the use of augmenting paths. This process is
+compute a matching, using the algorithm from Hopcroft and Karp
+\cite{hopcroft1973n}. The initial greedy matching is extended with the use of augmenting paths. This process is
 repeated until no more augmenting paths can be found. Per definition, this results in a maximal matching. 
 As stated in the SBML specifications, if any equation vertex remains unconnected after augmenting the 
 matching as far as possible, the model is considered overdetermined and thus is not a valid SBML model. 
 But if we are indeed looking at a valid SBML model, every assignment rule is converted into an algebraic rule. 
-Therefor the MathML expression in jSBML is transformed into an equation with a left-hand side. The left-hand 
+Therefor the MathML expression in SBML is transformed into an equation with a left-hand side. The left-hand 
 side is represented by the respective variable vertex the reconsidered algebraic rule has been matched to.
 
 
