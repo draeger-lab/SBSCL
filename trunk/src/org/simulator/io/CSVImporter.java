@@ -22,10 +22,14 @@
  */
 package org.simulator.io;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -34,10 +38,8 @@ import java.util.logging.Logger;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.UniqueNamedSBase;
 import org.simulator.math.odes.MultiTable;
+import org.simulator.math.odes.MultiTable.Block.Column;
 
-import de.zbit.gui.csv.CSVImporterV2;
-import de.zbit.gui.csv.ExpectedColumn;
-import de.zbit.io.csv.CSVReader;
 
 /**
  * @author Roland Keller
@@ -50,6 +52,7 @@ public class CSVImporter {
 	   */
 	  private static final transient Logger logger = Logger.getLogger(CSVImporter.class.getName());
 	  
+	  private String[] header;
 	
 	/**
 	 * @param model
@@ -59,28 +62,27 @@ public class CSVImporter {
 	 */
 	public MultiTable convert(Model model, String pathname) throws IOException {
 		MultiTable data = new MultiTable();
-		List<ExpectedColumn> cols;
+		List<String> cols;
 		String expectedHeader[];
 
 		if (model != null) {
 			expectedHeader = expectedTableHead(model); // According to the
 														// model: which symbols
-			cols = new ArrayList<ExpectedColumn>(expectedHeader.length + 1);
+			cols = new ArrayList<String>(expectedHeader.length + 1);
 			for (String head : expectedHeader) {
-				cols.add(new ExpectedColumn(head, false));
+				cols.add(head);
 			}
 		} else {
 			expectedHeader = new String[0];
-			cols = new ArrayList<ExpectedColumn>(1);
+			cols = new ArrayList<String>(1);
 		}
-		cols.add(new ExpectedColumn(data.getTimeName(), true));
+		cols.add(data.getTimeName());
 
-		CSVImporterV2 converter = new CSVImporterV2(pathname, cols);
-
+		
 		int i, j, timeColumn;
-		CSVReader reader = converter.getCSVReader();
-		String stringData[][] = reader.getData();
-		timeColumn = reader.getColumn(data.getTimeName());
+		
+		String stringData[][] = read(pathname);
+		timeColumn = 0;
 		if (timeColumn > -1) {
 			double timePoints[] = new double[stringData.length];
 			for (i = 0; i < stringData.length; i++) {
@@ -90,15 +92,15 @@ public class CSVImporter {
 			// exclude time column
 
 			String newHead[] = new String[(int) Math.max(0,
-					reader.getHeader().length - 1)];
+					header.length - 1)];
 
 			Map<String, Integer> nameToColumn = new HashMap<String, Integer>();
 			i = 0;
-			for (String head : reader.getHeader()) {
+			for (String head : header) {
 				if (!head.equalsIgnoreCase(data.getTimeName())) {
 					newHead[i++] = head.trim();
 					nameToColumn.put(newHead[i - 1],
-							reader.getColumnSensitive(head));
+							i);
 				}
 			}
 			data.addBlock(newHead); // alphabetically sorted
@@ -141,6 +143,36 @@ public class CSVImporter {
 
 		} else {
 			logger.fine("The file is not correctly formatted!");
+		}
+		return null;
+	}
+
+	/**
+	 * @param pathname
+	 * @return
+	 * @throws IOException 
+	 */
+	private String[][] read(String pathname) throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(pathname));
+		
+		List<String> lines = new LinkedList<String>();
+		String line = reader.readLine();
+		if(line != null) {
+			header = line.split(",");
+			
+			line = reader.readLine();
+			while(line != null) {
+				lines.add(line);
+				line = reader.readLine();
+			}
+			
+			String[][] result = new String[lines.size()][header.length];
+			int i=0;
+			for(String l: lines) {
+				result[i] = l.split(",");
+				i++;
+			}
+			return result;
 		}
 		return null;
 	}
