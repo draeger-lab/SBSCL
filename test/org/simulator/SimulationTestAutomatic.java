@@ -384,7 +384,7 @@ public class SimulationTestAutomatic {
 		int nModels = 0;
 		AbstractDESSolver solver = new RosenbrockSolver();
 		
-		for (int modelnr = 409; modelnr <= 423; modelnr++) {
+		for (int modelnr = 14; modelnr <= 423; modelnr++) {
 			System.out.println("Biomodel " + modelnr);
 			Model model = null;
 			try {
