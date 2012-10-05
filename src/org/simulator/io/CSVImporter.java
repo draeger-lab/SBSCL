@@ -23,7 +23,6 @@
 package org.simulator.io;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.AbstractList;
@@ -38,7 +37,6 @@ import java.util.logging.Logger;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.UniqueNamedSBase;
 import org.simulator.math.odes.MultiTable;
-import org.simulator.math.odes.MultiTable.Block.Column;
 
 
 /**
