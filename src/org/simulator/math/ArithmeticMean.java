@@ -22,9 +22,6 @@
  */
 package org.simulator.math;
 
-
-
-
 /**
  * @author Roland Keller
  * @version $Rev$

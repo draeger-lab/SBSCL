@@ -24,8 +24,6 @@ package org.simulator.math;
 
 import java.util.Iterator;
 
-
-
 /**
  * An implementation of an n-metric. An n-metric is basically the n-th root of
  * the sum of the distances of every single element in two vectors (arrays),
