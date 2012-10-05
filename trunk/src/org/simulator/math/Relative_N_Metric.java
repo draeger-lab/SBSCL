@@ -25,7 +25,6 @@ package org.simulator.math;
 import java.util.LinkedList;
 import java.util.List;
 
-
 /**
  * @author Roland Keller
  * @version $Rev$
