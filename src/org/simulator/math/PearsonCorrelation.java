@@ -24,7 +24,6 @@ package org.simulator.math;
 
 import java.util.Iterator;
 
-
 /**
  * @author Roland Keller
  * @version $Rev$
