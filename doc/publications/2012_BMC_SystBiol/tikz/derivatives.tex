@@ -1,0 +1,44 @@
+\documentclass{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\begin{document}
+\pagestyle{empty}
+
+
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, fill=blue!20, 
+    text width=5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=14em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
+    minimum height=2em]
+    
+\begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+    \node [cloud] (start) {Start};
+\node [block, below of=start] (init) {x'[i]=0\\for all i};
+    \node [block, below of=init] (rateRules) {x':=ProcessRateRules(x,t)};
+ \node [block, below of=rateRules] (initLoop) {i:=1};
+ \node [block,below of=initLoop] (reaction) {v:=computeReactionVelocity\\(reaction[i], x, graph)};
+\node [block,below of=reaction] (updateX) {x'[speciesIndex]:=\\x'[speciesIndex] + stoich $\cdot$ v\\
+for all species in reaction[i]};
+    \node [block, below of=updateX] (increase) {$i:=i+1$};
+    \node [decision, right of=increase, node distance=8cm] (endOfLoop) {$i>\#reactions$};
+    \node [cloud, below of=increase, node distance=5cm] (stop) {Stop};
+    % Draw edges
+    \path [line] (start) -- (init);
+    \path [line] (init) -- (rateRules);
+    \path [line] (rateRules) -- (initLoop);
+    \path [line] (initLoop) -- (reaction);
+    \path [line] (reaction) -- (updateX);
+    \path [line] (updateX) -- (increase);
+    \path [line] (increase) -- (endOfLoop);
+    \path [line] (endOfLoop) |- node{yes} (stop);
+    \path [line] (endOfLoop) |- node{no} (reaction);
+\end{tikzpicture}
+
+
+\end{document}
