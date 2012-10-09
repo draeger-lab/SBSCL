@@ -569,10 +569,38 @@ After that the events and the assignment rules are processed at the new time poi
 
 \subsection{Application to published models}
 
-Biomodel 206 \cite{Wolf2000}
-Biomodel 390 \cite{Arnold2011}
+To illustrate the capabilities of the Simulation Core Library, two example
+networks from the BioModels database have been selected for simulation:
+Biomodel 206 by Wolf \emph{et al.} \cite{Wolf2000} and
+Biomodel 390 by Arnold and Nikoloski \cite{Arnold2011}.
+
+The model by Wolf \emph{et al.} \cite{Wolf2000} mimics glycolytic oscillations.
+
+\TODO{Describe the precise settings how the simulation was performed: Which
+solver, how many steps, error tolerance etc.}
+
+By comparing a large collection of previous models of the Calvin-Benson
+cycle, Arnold and Nikoloski created a quantitative consensus model that
+comprises eleven species, six reactions, and one assignment rule
+\cite{Arnold2011}.
+All kinetic equations within this model call specialized function definitions.
+\TODO{Figure~XXX} shows the simulation results for this model.
 
 \subsection{Comparison to existing solvers}
+
+We selected all SBML-capable simulation programs, libraries, and frameworks from
+\url{http://sbml.org/SBML_Software_Guide/SBML_Software_Matrix} (October
+8\textsuperscript{th} 2012), which satisfy the following criteria:
+\begin{itemize}
+  \item The last updated version was released after the final release of
+  the specification for SBML Level 3 Version 1 Core, i.e., October
+  6\textsuperscript{th} 2010.
+  \item Open-source software
+  \item No dependency on commercial products that are not freely available
+  (e.g., MATLAB\texttrademark{} or Mathematica\texttrademark)
+  \item Support for SBML Level 3.   
+\end{itemize}
+\TODO{Table~XXX} summarizes the comparison of these programs.
 
 Many stand-alone programs providing these features come with
 graphical user interfaces.
