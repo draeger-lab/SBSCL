@@ -29,12 +29,13 @@
     \node [decision, right of=increase, node distance=4cm] (endOfLoop) {$i>\#events$};
     \node [decision, below of=endOfLoop] (noRunningEvents) {running\\=()?};
     \node [block, left of=noRunningEvents, node distance=4cm] (chooseEvent) {event:=\\choose(running)};
-   \node [block, left of=chooseEvent, node distance=5cm] (processEvent) {x:=\\process(event)};
- \node [block, left of=alreadyProcessed, node distance=4cm] (update2) {processed:=processed $\cup$ event}; 
-  \node [block,below of=update2, node distance=5cm] (update1) {running:=running $\setminus$ event};
-  \node [blank,right of=alreadyProcessed, node distance=9cm] (aux) {};
+    \node [block, left of=chooseEvent, node distance=5cm] (processEvent)
+   {x:=\\process(event)};
+    \node [block, left of=alreadyProcessed, node distance=4cm] (update2)
+ {processed:=processed $\cup$ event}; \node [block,below of=update2, node distance=5cm] (update1) {running:=running $\setminus$ event};
+    \node [blank,right of=alreadyProcessed, node distance=9cm] (aux) {};
 
-  \node [blank,below of=initLoop, node distance=1.2cm] (aux2) {};
+    \node [blank,below of=initLoop, node distance=1.2cm] (aux2) {};
 
 
     \node [cloud, below of=processEvent, node distance=3cm] (stop) {Stop};
