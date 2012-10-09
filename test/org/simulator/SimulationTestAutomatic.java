@@ -212,8 +212,13 @@ public class SimulationTestAutomatic {
 						AbstractDESSolver solver = solvers.get(i);
 						solver.reset();
 						try {
-							double dist = testModel(solver, model, inputData, duration
+							MultiTable solution = testModel(solver, model, inputData, duration
 									/ steps, amountHash);
+							
+							double dist = Double.NaN;
+							if(solution != null) {
+								dist = computeDistance(inputData, solution);
+							}
 							if (dist > 0.1) {
 								logger.log(Level.INFO, sbmlFileType + ": "
 										+ "relative distance for model-" + modelnr
@@ -273,6 +278,13 @@ public class SimulationTestAutomatic {
 		int nModels=0;
 		int correctSimulations=0;
 		AbstractDESSolver solver = new RosenbrockSolver();
+		int[] numberOfModels = new int[6];
+		double[] runningTimes = new double[6];
+		for(int i=0; i!=6; i++) {
+			numberOfModels[i] = 0;
+			runningTimes[i] = 0d;
+		}
+		
 		for (int modelnr = 1; modelnr <= 1123; modelnr++) {
 			System.out.println("model " + modelnr);
 
@@ -333,7 +345,41 @@ public class SimulationTestAutomatic {
 							- timepoints[0];
 					solver.reset();
 					try {
-						double dist=testModel(solver, model, inputData, duration / steps, amountHash);
+						double time1 = System.nanoTime();
+						MultiTable solution = testModel(solver, model, inputData, duration
+								/ steps, amountHash);
+						double time2 = System.nanoTime();
+						
+						if(sbmlFileType.equals("-sbml-l1v2.xml")) {
+							numberOfModels[0]++;
+							runningTimes[0] += (time2 - time1)/1E9;		
+						}
+						else if(sbmlFileType.equals("-sbml-l2v1.xml")) {
+							numberOfModels[1]++;
+							runningTimes[1] += (time2 - time1)/1E9;
+						}
+						else if(sbmlFileType.equals("-sbml-l2v2.xml")) {
+							numberOfModels[2]++;
+							runningTimes[2] += (time2 - time1)/1E9;
+						}
+						else if(sbmlFileType.equals("-sbml-l2v3.xml")) {
+							numberOfModels[3]++;
+							runningTimes[3] += (time2 - time1)/1E9;
+						}
+						else if(sbmlFileType.equals("-sbml-l2v4.xml")) {
+							numberOfModels[4]++;
+							runningTimes[4] += (time2 - time1)/1E9;
+						}
+						else {
+							numberOfModels[5]++;
+							runningTimes[5] += (time2 - time1)/1E9;
+						}		
+						
+						double dist = Double.NaN;
+						if(solution != null) {
+							dist = computeDistance(inputData, solution);
+						}
+						
 						if (dist > 0.1) {
 							logger.log(Level.INFO, sbmlFileType + ": "
 							+ "relative distance for model-" + modelnr
@@ -370,6 +416,24 @@ public class SimulationTestAutomatic {
 		System.out.println("Models with too high distance to experimental data: "+highDistances);
 		System.out.println("Models with errors in simulation: "+errors);
 		System.out.println("Models with correct simulation: "+correctSimulations);
+		
+		System.out.println("L1V2 - models: " + numberOfModels[0]);
+		System.out.println("L1V2 - time: " + runningTimes[0] + " s");
+		
+		System.out.println("L2V1 - models: " + numberOfModels[1]);
+		System.out.println("L2V1 - time: " + runningTimes[1] + " s");
+		
+		System.out.println("L2V2 - models: " + numberOfModels[2]);
+		System.out.println("L2V2 - time: " + runningTimes[2] + " s");
+		
+		System.out.println("L2V3 - models: " + numberOfModels[3]);
+		System.out.println("L2V3 - time: " + runningTimes[3] + " s");
+		
+		System.out.println("L2V4 - models: " + numberOfModels[4]);
+		System.out.println("L2V4 - time: " + runningTimes[4] + " s");
+		
+		System.out.println("L3V1 - models: " + numberOfModels[5]);
+		System.out.println("L3V1 - time: " + runningTimes[5] + " s");
 	}
 	
 	/**
@@ -447,7 +511,7 @@ public class SimulationTestAutomatic {
 	 * @throws SBMLException 
 	 * @throws DerivativeException 
 	 */
-	private static double testModel(AbstractDESSolver solver, Model model,
+	private static MultiTable testModel(AbstractDESSolver solver, Model model,
 			MultiTable inputData, double stepSize, Map<String,Boolean> amountHash) throws SBMLException,
 			ModelOverdeterminedException, DerivativeException {
 		// initialize interpreter
@@ -459,21 +523,30 @@ public class SimulationTestAutomatic {
 			// solve
 			MultiTable solution = solver.solve(interpreter,
 					interpreter.getInitialValues(), inputData.getTimePoints());
-
-			// compute distance
-			QualityMeasure distance = new RelativeEuclideanDistance();
-			double dist = distance.distance(solution, inputData);
 			if (solver.isUnstable()) {
 				logger.warning("unstable!");
-				return Double.NaN;
+				return null;
 			}
-			return dist;
+			return solution;
 		} else {
-			return Double.NaN;
+			return null;
 		}
 
 	}
 	
+	/**
+	 * 
+	 * @param solution
+	 * @param inputData
+	 * @return
+	 */
+	private static double computeDistance(MultiTable solution, MultiTable inputData) {
+		// compute distance
+		QualityMeasure distance = new RelativeEuclideanDistance();
+		double dist = distance.distance(solution, inputData);
+					
+		return dist;
+	}
 	
 	/**
 	 * TEST_CASES must be set to the address of the folder "semantic" in the SBML test suite.
