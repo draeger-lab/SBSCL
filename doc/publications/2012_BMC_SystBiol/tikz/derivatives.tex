@@ -19,11 +19,13 @@
 \begin{tikzpicture}[node distance = 2cm, auto]
     % Place nodes
     \node [cloud] (start) {Start};
-\node [block, below of=start] (init) {x'[i]=0\\for all i};
+    \node [block, below of=start] (init) {x'[i]=0\\for all i};
     \node [block, below of=init] (rateRules) {x':=ProcessRateRules(x,t)};
- \node [block, below of=rateRules] (initLoop) {i:=1};
- \node [block,below of=initLoop] (reaction) {v:=computeReactionVelocity\\(reaction[i], x, graph)};
-\node [block,below of=reaction] (updateX) {x'[speciesIndex]:=\\x'[speciesIndex] + stoich $\cdot$ v\\
+    \node [block, below of=rateRules] (initLoop) {i:=1};
+    \node [block,below of=initLoop] (reaction)
+ {v:=computeReactionVelocity\\(reaction[i], x, graph)};
+    \node [block,below of=reaction] (updateX)
+{x'[speciesIndex]:=\\x'[speciesIndex] + stoich $\cdot$ v\\
 for all species in reaction[i]};
     \node [block, below of=updateX] (increase) {$i:=i+1$};
     \node [decision, right of=increase, node distance=8cm] (endOfLoop) {$i>\#reactions$};
