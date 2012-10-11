@@ -1,17 +1,24 @@
 <html>
-<head>
-<title>Simulation Core Library: Documentation</title>
-</head>
+  <head>
+    <title>Simulation Core Library: Documentation</title>
+  </head>
 
-<body>
+  <body>
+  
 <p>
 <h3>About Simulation Core Library</h3>
-The Java API Simulation Core Library comprises a collection of integrators for differential equation systems combined with an interpreter for the Systems Biology Markup Language (SBML). It is the first simulation library that is based on JSBML. The user can read an SBML model and simulate it with one of the provided integrators. All SBML levels and versions are supported. The library can easily be integrated into other software, such as parameter estimation tools.
+The Java API Simulation Core Library comprises a collection of integrators for differential
+equation systems combined with an interpreter for the Systems Biology Markup Language (SBML). 
+It is the first simulation library that is based on JSBML.
+The user can read an SBML model and simulate it with one of the provided integrators.
+All SBML levels and versions are supported.
+The library can easily be integrated into other software, such as parameter estimation tools.
 </p>
 
 <p>
 <h3>The provided integration models</h3>
-The Rosenbrock solver is best suitable for integrating stiff differential equation systems and also has a precise timing of SBML events. It is taken and adapted from Kotcon et al.. 
+The Rosenbrock solver is best suitable for integrating stiff differential equation systems
+and also has a precise timing of SBML events. It is taken and adapted from Kotcon et al. 
 Several solvers have been taken from the Apache Commons Library and wrapped into our library:
 <ul>
 <li>Adams Bashforth</li>
@@ -22,7 +29,8 @@ Several solvers have been taken from the Apache Commons Library and wrapped into
 <li>Higham Hall 54</li>
 </ul>
 
-The following solvers have been implemented additionally and are fast, but not suitable for all differential equation systems:
+The following solvers have been implemented additionally and are fast, but not suitable for
+all differential equation systems:
 <ul>
 <li>Euler</li>
 <li>Runge Kutta</li>
@@ -31,7 +39,8 @@ The following solvers have been implemented additionally and are fast, but not s
 
 <p>
 <h3>Reading in a model and creating the respective differential equation system</h3>
-A model can be read in by using the SBMLReader class of JSBML. With the model in memory the SBMLinterpreter can create the differential equation system that provides the basis for simulation.
+A model can be read in by using the SBMLReader class of JSBML. With the model in memory the
+SBMLinterpreter can create the differential equation system that provides the basis for simulation.
 </p>
 <p><i>Model model = (new SBMLReader()).readSBML(sbmlfile).getModel();</br>
 
@@ -40,15 +49,15 @@ SBMLinterpreter interpreter = new SBMLinterpreter(model);
 
 <p>
 <h3>Simulation of a differential equation system</h3>
-The created differential equation system can then be simulated with a chosen solver and given time points. The result is stored in a data structure called MultiTable.
+The created differential equation system can then be simulated with a chosen solver and given time points.
+The result is stored in a data structure called MultiTable.
 </p>
 <p><i>
 AbstractDESSolver solver = new RosenbrockSolver();</br>
 
-double[] timePoints = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5}</br>
+double[] timePoints = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5};</br>
 		
-MultiTable solution = solver.solve(interpreter,
-interpreter.getInitialValues(), timePoints);
+MultiTable solution = solver.solve(interpreter, interpreter.getInitialValues(), timePoints);
 </i></p>
 
 <p>
@@ -56,7 +65,5 @@ interpreter.getInitialValues(), timePoints);
 You just have to add the provided jar-file simulation-core-library.jar to your Java project. Then you have access to all classes of the library.
 </p>
 
-</body>
-
-
+  </body>
 </html>
