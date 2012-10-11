@@ -557,12 +557,12 @@ could be handled in the same manner. However, the assignment of the first event 
 events and the priority of the remaining events have to be evaluated again and another event with the highest priority is chosen. This process repeats itself until no further events to be executed are left.
 
 \subsection{Calculation of the derivatives for a certain time point}
-For given values $x$ at a time point the curring vector of derivatives is calculated as follows: First all derivatives in the vector $x'$ are set to zero. Then the rate rules are processed, which can change $x'$. After that for each reaction the velocity, which depends on $x$, is computed with the help of the syntax graph. Then the derivatives of all species that participate in the current reaction need to be updated.
+For given values $\vec{Q}$ at a time point the curring vector of derivatives is calculated as follows: First all derivatives in the vector $\vec{Q}'$ are set to zero. Then the rate rules are processed, which can change $\vec{Q}'$. After that for each reaction the velocity, which depends on $\vec{Q}$, is computed with the help of the syntax graph. Then the derivatives of all species that participate in the current reaction need to be updated.
 
 \subsection{Integrated calculation for a certain time step including event processing}
-The Rosenbrock solver is the solver that can adapt its step size if events are happening. For a certain time begin and time end and a vector $x$ it determines a new vector at a time point that is determined by the current adaptive step size. It refers to the already described calculation of the derivatives for a certain time point in this step.
+The Rosenbrock solver is the solver that can adapt its step size if events are happening. For a certain time begin and time end and a vector $\vec{Q}$ it determines a new vector at a time point that is determined by the current adaptive step size. It refers to the already described calculation of the derivatives for a certain time point in this step.
 
-After that the events and the assignment rules are processed at the new time point. If this last step causes a change in $x$, the adaptive step size is decreased and the calculation is repeated until the minimum step size is reached or the processing of events and rules does not change $x$ any more. So the time at which an event happens is precisely determined.
+After that the events and the assignment rules are processed at the new time point. If this last step causes a change in $\vec{Q}$, the adaptive step size is decreased and the calculation is repeated until the minimum step size is reached or the processing of events and rules does not change $\vec{Q}$ any more. So the time at which an event happens is precisely determined.
 
 \TODO{Discuss implementation in Java}
 %Why no heap is used for events 
