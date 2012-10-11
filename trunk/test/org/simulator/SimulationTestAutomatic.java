@@ -22,6 +22,8 @@
  */
 package org.simulator;
 
+import static org.junit.Assert.assertFalse;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,6 +38,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.math.ode.DerivativeException;
+import org.jlibsedml.Libsedml;
+import org.jlibsedml.Output;
+import org.jlibsedml.SEDMLDocument;
+import org.jlibsedml.SedML;
+import org.jlibsedml.Simulation;
+import org.jlibsedml.XMLException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -51,6 +59,7 @@ import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
+import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
 
 /**
  * @author Andreas Dr&auml;ger
@@ -272,7 +281,7 @@ public class SimulationTestAutomatic {
 	 */
 	private static void testRosenbrockSolver(String file)
 			throws FileNotFoundException, IOException {
-		String sbmlfile, csvfile, configfile;
+		String sbmlfile, csvfile, configfile, sedmlfile;
 		int highDistances=0;
 		int errors=0;
 		int nModels=0;
@@ -331,6 +340,7 @@ public class SimulationTestAutomatic {
 			boolean highDistance=false, errorInSimulation=false;
 			for (String sbmlFileType : sbmlFileTypes) {
 				sbmlfile = path + sbmlFileType;
+				sedmlfile = sbmlfile.replace(".xml", "-sedml.xml");
 				Model model = null;
 				try {
 					model = (new SBMLReader()).readSBML(sbmlfile).getModel();
@@ -338,6 +348,24 @@ public class SimulationTestAutomatic {
 				}
 				if (model != null) {
 					// get timepoints
+					SEDMLDocument doc;
+					SedML sedml = null;
+					SedMLSBMLSimulatorExecutor exe;
+					try {
+						doc = Libsedml.readDocument(new File(sedmlfile));
+						sedml=doc.getSedMLModel();
+						
+					} catch (XMLException e1) {
+						e1.printStackTrace();
+					}
+					
+					if(sedml != null) {
+						Simulation s = sedml.getSimulations().get(0);
+						Output wanted = sedml.getOutputs().get(0);
+						exe = new SedMLSBMLSimulatorExecutor(sedml,wanted);
+						exe.runSimulations();
+						
+					}
 					CSVImporter csvimporter = new CSVImporter();
 					MultiTable inputData = csvimporter.convert(model, csvfile);
 					double[] timepoints = inputData.getTimePoints();
@@ -448,7 +476,7 @@ public class SimulationTestAutomatic {
 		int nModels = 0;
 		AbstractDESSolver solver = new RosenbrockSolver();
 		
-		for (int modelnr = 14; modelnr <= 423; modelnr++) {
+		for (int modelnr = 206; modelnr <= 423; modelnr++) {
 			System.out.println("Biomodel " + modelnr);
 			Model model = null;
 			try {
