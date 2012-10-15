@@ -75,7 +75,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
    * A list of KISAO Ids corresponding to supported algorithm types in SBMLSimulator.
    *  These are used to determine if we are able to perform the simulation.
    */
-  final static String [] SupportedIDs = new String [] {"KISAO:0000033", "KISAO:0000019", "KISAO:0000030", "KISAO:0000087", "KISAO:0000088"};
+  final static String [] SupportedIDs = new String [] {"KISAO:0000033","KISAO:0000030", "KISAO:0000087", "KISAO:0000088", "KISAO:0000019"};
 	public SedMLSBMLSimulatorExecutor(SedML sedml, Output output) {
 		super(sedml, output);
 		// add extra model resolvers - only FileModelResolver is included by default.
