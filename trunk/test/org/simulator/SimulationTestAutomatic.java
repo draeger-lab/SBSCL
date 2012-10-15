@@ -63,6 +63,7 @@ import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
+import org.simulator.sedml.MultTableSEDMLWrapper;
 import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
 
 /**
@@ -505,30 +506,30 @@ public class SimulationTestAutomatic {
 			csvfile = path + "-results.csv";
 			configfile = path + "-settings.txt";
 
-			Properties props = new Properties();
-			props.load(new BufferedReader(new FileReader(configfile)));
-			// int start = Integer.valueOf(props.getProperty("start"));
-			Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
-			String[] amounts = String.valueOf(props.getProperty("amount"))
-					.trim().split(",");
-			String[] concentrations = String.valueOf(
-					props.getProperty("concentration")).split(",");
-			// double absolute = Double.valueOf(props.getProperty("absolute"));
-			// double relative = Double.valueOf(props.getProperty("relative"));
-
-			for (String s : amounts) {
-				s = s.trim();
-				if (!s.equals("")) {
-					amountHash.put(s, true);
-				}
-			}
-
-			for (String s : concentrations) {
-				s = s.trim();
-				if (!s.equals("")) {
-					amountHash.put(s, false);
-				}
-			}
+//			Properties props = new Properties();
+//			props.load(new BufferedReader(new FileReader(configfile)));
+//			// int start = Integer.valueOf(props.getProperty("start"));
+//			Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
+//			String[] amounts = String.valueOf(props.getProperty("amount"))
+//					.trim().split(",");
+//			String[] concentrations = String.valueOf(
+//					props.getProperty("concentration")).split(",");
+//			// double absolute = Double.valueOf(props.getProperty("absolute"));
+//			// double relative = Double.valueOf(props.getProperty("relative"));
+//
+//			for (String s : amounts) {
+//				s = s.trim();
+//				if (!s.equals("")) {
+//					amountHash.put(s, true);
+//				}
+//			}
+//
+//			for (String s : concentrations) {
+//				s = s.trim();
+//				if (!s.equals("")) {
+//					amountHash.put(s, false);
+//				}
+//			}
 
 			String[] sbmlFileTypes = { "-sbml-l1v2.xml", "-sbml-l2v1.xml",
 					"-sbml-l2v2.xml", "-sbml-l2v3.xml", "-sbml-l2v4.xml",
@@ -570,26 +571,38 @@ public class SimulationTestAutomatic {
 									+ ":" + exe.getFailureMessages().get(0));
 							errorInSimulation = true;
 						}
-						SedMLResultsProcesser2 pcsr2 = new SedMLResultsProcesser2(
-								sedml, wanted);
-						pcsr2.process(res);
-
-						// this does not necessarily have time as x-axis -
-						// another variable could be the
-						// independent variable.
-						IProcessedSedMLSimulationResults prRes = pcsr2
-								.getProcessedResult();
-
-						// now we restore a MultiTable from the processed
-						// results. This basic example assumes a typical
-						// simulation where time = xaxis - otherwise, if output
-						// is a Plot, we would need to analyse the x-axis
-						// datagenerators
-						MultiTable mt = createMultiTableFromProcessedResults(
-								wanted, prRes, sedml);
+						
+						MultiTable mt = null;
+						for(Task t: res.keySet()) {
+							mt = ((MultTableSEDMLWrapper) res.get(t)).getMultiTable();
+							break;
+						}
+//						SedMLResultsProcesser2 pcsr2 = new SedMLResultsProcesser2(
+//								sedml, wanted);
+//						pcsr2.process(res);
+//
+//						// this does not necessarily have time as x-axis -
+//						// another variable could be the
+//						// independent variable.
+//						IProcessedSedMLSimulationResults prRes = pcsr2
+//								.getProcessedResult();
+//
+//						// now we restore a MultiTable from the processed
+//						// results. This basic example assumes a typical
+//						// simulation where time = xaxis - otherwise, if output
+//						// is a Plot, we would need to analyse the x-axis
+//						// datagenerators
+//						mt = createMultiTableFromProcessedResults(
+//								wanted, prRes, sedml);
 						CSVImporter csvimporter = new CSVImporter();
 						MultiTable inputData = csvimporter.convert(model,
 								csvfile);
+						String[] currentIdentifiers = mt.getBlock(0).getIdentifiers();
+						String[] correctedIdentifiers = new String[currentIdentifiers.length];
+						for(int i=0; i!= currentIdentifiers.length; i++) {
+							correctedIdentifiers[i] = currentIdentifiers[i].replaceAll("_.*", "");
+						}
+						mt.getBlock(0).setIdentifiers(correctedIdentifiers);
 						double dist = computeDistance(inputData, mt);
 
 						if (sbmlFileType.equals("-sbml-l1v2.xml")) {
