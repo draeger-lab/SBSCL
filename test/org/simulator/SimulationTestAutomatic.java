@@ -483,6 +483,7 @@ public class SimulationTestAutomatic {
 		int errors = 0;
 		int nModels = 0;
 		int correctSimulations = 0;
+		int fileMissing = 0;
 		AbstractDESSolver solver = new RosenbrockSolver();
 		int[] numberOfModels = new int[6];
 		double[] runningTimes = new double[6];
@@ -506,35 +507,35 @@ public class SimulationTestAutomatic {
 			csvfile = path + "-results.csv";
 			configfile = path + "-settings.txt";
 
-//			Properties props = new Properties();
-//			props.load(new BufferedReader(new FileReader(configfile)));
-//			// int start = Integer.valueOf(props.getProperty("start"));
-//			Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
-//			String[] amounts = String.valueOf(props.getProperty("amount"))
-//					.trim().split(",");
-//			String[] concentrations = String.valueOf(
-//					props.getProperty("concentration")).split(",");
-//			// double absolute = Double.valueOf(props.getProperty("absolute"));
-//			// double relative = Double.valueOf(props.getProperty("relative"));
-//
-//			for (String s : amounts) {
-//				s = s.trim();
-//				if (!s.equals("")) {
-//					amountHash.put(s, true);
-//				}
-//			}
-//
-//			for (String s : concentrations) {
-//				s = s.trim();
-//				if (!s.equals("")) {
-//					amountHash.put(s, false);
-//				}
-//			}
+			Properties props = new Properties();
+			props.load(new BufferedReader(new FileReader(configfile)));
+			// int start = Integer.valueOf(props.getProperty("start"));
+			Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
+			String[] amounts = String.valueOf(props.getProperty("amount"))
+					.trim().split(",");
+			String[] concentrations = String.valueOf(
+					props.getProperty("concentration")).split(",");
+			// double absolute = Double.valueOf(props.getProperty("absolute"));
+			// double relative = Double.valueOf(props.getProperty("relative"));
+
+			for (String s : amounts) {
+				s = s.trim();
+				if (!s.equals("")) {
+					amountHash.put(s, true);
+				}
+			}
+
+			for (String s : concentrations) {
+				s = s.trim();
+				if (!s.equals("")) {
+					amountHash.put(s, false);
+				}
+			}
 
 			String[] sbmlFileTypes = { "-sbml-l1v2.xml", "-sbml-l2v1.xml",
 					"-sbml-l2v2.xml", "-sbml-l2v3.xml", "-sbml-l2v4.xml",
 					"-sbml-l3v1.xml" };
-			boolean highDistance = false, errorInSimulation = false;
+			boolean highDistance = false, errorInSimulation = false, missingFile = false;
 			for (String sbmlFileType : sbmlFileTypes) {
 				sbmlfile = path + sbmlFileType;
 				sedmlfile = sbmlfile.replace(".xml", "-sedml.xml");
@@ -553,14 +554,15 @@ public class SimulationTestAutomatic {
 						sedml = doc.getSedMLModel();
 
 					} catch (XMLException e1) {
-						e1.printStackTrace();
+						logger.warning("SED-ML file not found for model " + modelnr);
+						missingFile = true;
 					}
 					if (sedml != null) {
 						String newPath = sbmlfile.replaceFirst(".*:", "file:");
 						newPath = convertAbsoluteFilePathToURI(newPath);
 						sedml.getModels().get(0).setSource(newPath);
 						Output wanted = sedml.getOutputs().get(0);
-						exe = new SedMLSBMLSimulatorExecutor(sedml, wanted);
+						exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, amountHash);
 						double time1 = System.nanoTime();
 						Map<Task, IRawSedmlSimulationResults> res = exe
 								.runSimulations();
@@ -641,10 +643,13 @@ public class SimulationTestAutomatic {
 			if (highDistance) {
 				highDistances++;
 			}
+			if(missingFile) {
+				fileMissing++;
+			}
 			if (errorInSimulation) {
 				errors++;
 			}
-			if ((!highDistance) && (!errorInSimulation)) {
+			if ((!highDistance) && (!errorInSimulation) && (!missingFile)) {
 				correctSimulations++;
 			}
 		}
@@ -653,6 +658,7 @@ public class SimulationTestAutomatic {
 				.println("Models with too high distance to experimental data: "
 						+ highDistances);
 		System.out.println("Models with errors in simulation: " + errors);
+		System.out.println("Models with missing SED-ML file: " + fileMissing);
 		System.out.println("Models with correct simulation: "
 				+ correctSimulations);
 

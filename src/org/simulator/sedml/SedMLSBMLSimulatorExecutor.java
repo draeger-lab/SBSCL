@@ -76,15 +76,31 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
    *  These are used to determine if we are able to perform the simulation.
    */
   final static String [] SupportedIDs = new String [] {"KISAO:0000033","KISAO:0000030", "KISAO:0000087", "KISAO:0000088", "KISAO:0000019"};
-	public SedMLSBMLSimulatorExecutor(SedML sedml, Output output) {
+  
+  /**
+   * Information for SBML interpreter about the species that an amount should be calculated for
+   */
+  private Map<String, Boolean> amountHash;
+  
+  public SedMLSBMLSimulatorExecutor(SedML sedml, Output output) {
 		super(sedml, output);
 		// add extra model resolvers - only FileModelResolver is included by default.
 		addModelResolver(new BioModelsModelsRetriever());
 		addModelResolver(new URLResourceRetriever());
 		
-		// TODO Auto-generated constructor stub
-	}
+  }
 	
+	/**
+	 * @param sedml
+	 * @param wanted
+	 * @param amountHash
+	 */
+	public SedMLSBMLSimulatorExecutor(SedML sedml, Output wanted,
+			Map<String, Boolean> amountHash) {
+		this(sedml, wanted);
+		this.amountHash = amountHash;
+	}
+
 	/**
 	 * Enables models to be retrieved from a SED-ML archive format.<br/>
 	 * This method must be called <b>before</b> {@link #runSimulations()}
@@ -133,7 +149,14 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 			FileUtils.writeStringToFile(tmp, modelStr,"UTF-8");
 			Model model = (new SBMLReader()).readSBML(tmp).getModel();
 			// now run simulation
-			SBMLinterpreter interpreter = new SBMLinterpreter(model);
+			SBMLinterpreter interpreter = null;
+			if(amountHash != null) {
+				interpreter = new SBMLinterpreter(model, 0, 0, 1,
+						amountHash);
+			}
+			else {
+				interpreter = new SBMLinterpreter(model);
+			}
 			solver.setIncludeIntermediates(false);
 			solver.setStepSize((sim.getOutputEndTime() -sim.getOutputStartTime() )/ (sim.getNumberOfPoints()-1));
 			MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(),
