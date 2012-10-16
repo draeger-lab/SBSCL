@@ -25,6 +25,7 @@ package org.simulator.math;
 import java.util.Iterator;
 
 /**
+ * Implementation of the Pearson correlation. 
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0

@@ -23,6 +23,7 @@
 package org.simulator.math;
 
 /**
+ * Class for computation of the Euclidean distance of two vectors.
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
@@ -35,7 +36,7 @@ public class EuclideanDistance extends N_Metric {
 	private static final long serialVersionUID = -2520265250898674233L;
 	
 	/**
-	 * 
+	 * Initializes a new object
 	 */
 	public EuclideanDistance() {
 		super(2d);

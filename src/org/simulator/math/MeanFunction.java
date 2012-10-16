@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * In this class functions for the computation of an overall distance based on the distance values determined for each column of a table are defined.
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
@@ -40,14 +41,16 @@ public abstract class MeanFunction implements Serializable {
 	private static final long serialVersionUID = -7272984374334773096L;
 	
 	/**
-	 * @param values
-	 * @return
+	 * Computes the overall distance
+	 * @param the distance values for the columns
+	 * @return the computed value
 	 */
 	public abstract double computeMean(double... values);
 	
 	/**
-	 * @param values
-	 * @return
+	 * Computes the overall distance
+	 * @param the distance values for the columns
+	 * @return the computed value
 	 */
 	public double computeMean(List<Double> values) {
 		double[] val = new double[values.size()];
@@ -58,8 +61,9 @@ public abstract class MeanFunction implements Serializable {
 	}
 	
 	/**
-	 * @param x
-	 * @return
+	 * Computes the overall distance
+	 * @param the distance values for the columns
+	 * @return the computed value
 	 */
 	public double computeMean(Iterable<? extends Number> values) {
 		List<Double> val = new ArrayList<Double>();

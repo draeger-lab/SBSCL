@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * Computes the relative distance of two vectors based on the {@link N_Metric} distance.
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
@@ -43,12 +44,12 @@ public class Relative_N_Metric extends QualityMeasure {
 	private boolean defaultNaN;
 	
 	/**
-	 * 
+	 * The metric the relative distance is based on.
 	 */
 	protected N_Metric metric;
 
 	/**
-	 * 
+	 * Default constructor
 	 */
 	public Relative_N_Metric() {
 		super(Double.NaN);
@@ -57,7 +58,7 @@ public class Relative_N_Metric extends QualityMeasure {
 	}
 	
 	/**
-	 * 
+	 * Initialization with a certain n
 	 * @param root
 	 */
 	public Relative_N_Metric(double root) {
@@ -67,7 +68,7 @@ public class Relative_N_Metric extends QualityMeasure {
 	}
 
 	/**
-	 * 
+	 * Initialization with a given {@link N_Metric}
 	 * @param metric
 	 */
 	public Relative_N_Metric(N_Metric metric) {
@@ -121,6 +122,7 @@ public class Relative_N_Metric extends QualityMeasure {
 	}
 
 	/**
+	 * Sets n
 	 * @param double1
 	 */
 	public void setRoot(double root) {

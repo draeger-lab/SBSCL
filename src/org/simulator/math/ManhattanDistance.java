@@ -23,6 +23,7 @@
 package org.simulator.math;
 
 /**
+ * Class for computation of the Manhattan distance of two vectors
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
@@ -36,7 +37,7 @@ public class ManhattanDistance extends N_Metric {
 	private static final long serialVersionUID = -7863697829237313786L;
 
 	/**
-	 * 
+	 * Initializes a new distance object
 	 */
 	public ManhattanDistance() {
 		super(1d);
