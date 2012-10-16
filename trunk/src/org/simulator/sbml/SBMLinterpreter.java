@@ -355,20 +355,45 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 */
 	private int[] compartmentIndexes;
 
+	
+	/**
+	 * Are the stoichiometries in the stoichiometry values set?
+	 */
 	private boolean[] stoichiometrySet;
 
+	/**
+	 * Are the stoichiometries in the stoichiometry values constant?
+	 */
 	private boolean[] constantStoichiometry;
 
+	/**
+	 * Is the stoichiometry value referring to a species whose value does not change?
+	 */
 	private boolean[] zeroChange;
 
+	/**
+	 * Is the stoichiometry value referring to a reactant?
+	 */
 	private boolean[] isReactant;
 
+	/**
+	 * The indices of the reactions the stoichiometry values are referring to
+	 */
 	private int[] reactionIndex;
 
+	/**
+	 * The species indices of the stoichiometry values
+	 */
 	private int[] speciesIndex;
 
+	/**
+	 * The current stoichiometries of the stoichiometry values
+	 */
 	private double[] stoichiometry;
 	
+	/**
+	 * Is the SBase in the Y vector an amount?
+	 */
 	private boolean[] isAmount;
 	
 
