@@ -23,6 +23,7 @@
 package org.simulator.math;
 
 /**
+ * Class that computes the arithmetic mean of the given column distances.
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0

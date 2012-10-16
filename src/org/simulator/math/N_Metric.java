@@ -44,7 +44,7 @@ public class N_Metric extends QualityMeasure {
 	private static final long serialVersionUID = -216525074796086162L;
 
 	/**
-	 * 
+	 * The n of the metric.
 	 */
 	protected double root;
 
@@ -114,8 +114,8 @@ public class N_Metric extends QualityMeasure {
 	
 
 	/**
-	 * 
-	 * @return
+	 * Returns the n of the metric.
+	 * @return n
 	 */
 	public double getRoot() {
 		return root;
@@ -133,6 +133,7 @@ public class N_Metric extends QualityMeasure {
 	}
 	
 	/**
+	 * Sets n.
 	 * @param string
 	 */
 	public void setRoot(double root) {

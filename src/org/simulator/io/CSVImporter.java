@@ -40,6 +40,7 @@ import org.simulator.math.odes.MultiTable;
 
 
 /**
+ * This class is for importing CSV files.
  * @author Roland Keller
  * @version $Rev$
  */
@@ -50,12 +51,16 @@ public class CSVImporter {
 	   */
 	  private static final transient Logger logger = Logger.getLogger(CSVImporter.class.getName());
 	  
+	  /**
+	   * The header of the file
+	   */
 	  private String[] header;
 	
 	/**
-	 * @param model
-	 * @param csvfile
-	 * @return
+	 * Function for importing a file and adapting the data to the current model
+	 * @param the current model
+	 * @param the path of the file to import
+	 * @return the data as a multi table
 	 * @throws IOException 
 	 */
 	public MultiTable convert(Model model, String pathname) throws IOException {
