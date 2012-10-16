@@ -28,6 +28,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.SBMLException;
 
 /**
+ * This class computes and stores values of ASTNodes that refer to a division object.
  * @author Roland Keller
  * @version $Rev$
  */

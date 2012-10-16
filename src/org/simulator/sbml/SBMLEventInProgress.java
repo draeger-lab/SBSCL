@@ -43,13 +43,44 @@ import org.simulator.sbml.astnode.AssignmentRuleValue;
  */
 public class SBMLEventInProgress extends EventInProgress{
 
+	/**
+	 * The priority of the event
+	 */
 	protected double priority;
+	
+	/**
+	 * The event assignments
+	 */
 	protected Map<Integer,Double> assignments;
+	
+	/**
+	 * The trigger of the event
+	 */
 	protected ASTNodeValue triggerObject;
+	
+	/**
+	 * The priority math of the event
+	 */
 	protected ASTNodeValue priorityObject;
+	
+	/**
+	 * The delay math of the event
+	 */
 	protected ASTNodeValue delayObject;
+	
+	/**
+	 * The assignment rules of the event
+	 */
 	protected List<AssignmentRuleValue> ruleObjects;
+	
+	/**
+	 * Are the values used from trigger time?
+	 */
 	protected boolean useValuesFromTriggerTime;
+	
+	/**
+	 * The persistent attribute of the event
+	 */
 	protected boolean persistent;
 
 	/**
