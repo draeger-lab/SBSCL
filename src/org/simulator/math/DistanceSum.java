@@ -1,6 +1,6 @@
 /*
- * $Id: NoMean.java 246 2012-10-04 14:39:55Z "keller"$
- * $URL: svn+ssh://svn.code.sf.net/p/simulation-core/code/trunk/src/org/simulator/math/NoMean.java$
+ * $Id: DistanceSum.java 246 2012-10-04 14:39:55Z "keller"$
+ * $URL: svn+ssh://svn.code.sf.net/p/simulation-core/code/trunk/src/org/simulator/math/DistanceSum.java$
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
