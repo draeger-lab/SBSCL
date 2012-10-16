@@ -37,8 +37,8 @@ import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.DESSolver;
-import org.simulator.math.odes.EulerMethod;
 import org.simulator.math.odes.MultiTable;
+import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
@@ -72,7 +72,7 @@ public class SimulatorTest {
     
     // Read the model and initialize solver
     Model model = (new SBMLReader()).readSBML(fileName).getModel();
-    DESSolver solver = new EulerMethod();
+    DESSolver solver = new RosenbrockSolver();
     solver.setStepSize(stepSize);
     SBMLinterpreter interpreter = new SBMLinterpreter(model);
     if (solver instanceof AbstractDESSolver) {
