@@ -31,15 +31,16 @@ import org.simulator.sbml.SBMLValueHolder;
  * @version $Rev$
  */
 public class RuleValue {
-  /**
-   * Object that refers to the math of the rule
-   */
-	protected ASTNodeValue nodeObject;
 	
+	/**
+	 * Object that refers to the math of the rule
+	 */
+	protected ASTNodeValue nodeObject;
+
 	/**
 	 * The calculated value of the rul
 	 */
-  protected double value;
+	protected double value;
   
   /**
    * Flag that is true if the variable is referring to a species, otherwise false

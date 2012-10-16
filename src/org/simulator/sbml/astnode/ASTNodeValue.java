@@ -22,12 +22,10 @@
  */
 package org.simulator.sbml.astnode;
 
-import java.text.MessageFormat;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.CallableSBase;
-import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.util.Maths;
 import org.simulator.sbml.SBMLinterpreter;
 

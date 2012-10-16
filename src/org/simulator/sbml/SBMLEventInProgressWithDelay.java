@@ -42,11 +42,12 @@ import java.util.LinkedList;
 public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
 
 	/**
-	 * 
+	 * The previous times the event has been executed
 	 */
 	private LinkedList<Double >  previousExecutionTimes;
+	
 	/**
-	 * 
+	 * The previous values with which the event has been executed
 	 */
 	private LinkedList<Double[] >  previousExecutionValues;
 
