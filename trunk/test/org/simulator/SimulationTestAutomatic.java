@@ -67,6 +67,7 @@ import org.simulator.sedml.MultTableSEDMLWrapper;
 import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
 
 /**
+ * This class can test the simulation of all models from biomodels.com and from the SBML test suite.
  * @author Andreas Dr&auml;ger
  * @version $$Rev$$
  * @since 1.0
@@ -104,6 +105,13 @@ public class SimulationTestAutomatic {
 	}
 
 	/**
+	 * Input: 1) file with models (from biomodels.org or containing the SBML test suite), 
+	 * 
+	 * 2) "biomodels" (for testing models from biomodels.org) or 
+	 * "all solvers - test suite" (for testing the models of the test suite with all given integrators) or 
+	 * "sedml" (for testing the models of the test suite using the given SED-ML files) or
+	 * nothing (for testing the models of the test suite with the Rosenbrock solver, should produce only successful tests)
+	 * 
 	 * @param args
 	 * @throws IOException
 	 * @throws URISyntaxException
@@ -113,7 +121,7 @@ public class SimulationTestAutomatic {
 		boolean onlyRosenbrock = true;
 		boolean testBiomodels = false;
 		boolean sedML = false;
-		if ((args.length >= 2) && (args[1].equals("all"))) {
+		if ((args.length >= 2) && (args[1].equals("all solvers - test suite"))) {
 			onlyRosenbrock = false;
 		}
 		if ((args.length >= 2) && (args[1].equals("biomodels"))) {
@@ -136,7 +144,13 @@ public class SimulationTestAutomatic {
 			statisticForSolvers(args[0]);
 		}
 	}
-
+	
+	/**
+	 * Computes a statistic for the SBML test suite testing all provided integrators
+	 * @param file
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	private static void statisticForSolvers(String file)
 			throws FileNotFoundException, IOException {
 		String sbmlfile, csvfile, configfile;
@@ -300,7 +314,7 @@ public class SimulationTestAutomatic {
 	}
 
 	/**
-	 * 
+	 * Computes a statistic for the SBML test suite using the Rosenbrock solver as integrator
 	 * @param file
 	 * @throws FileNotFoundException
 	 * @throws IOException
@@ -470,7 +484,7 @@ public class SimulationTestAutomatic {
 	}
 
 	/**
-	 * 
+	 * Computes a statistic for the SBML test suite using the Rosenbrock solver as integrator and the SED-ML files
 	 * @param file
 	 * @throws FileNotFoundException
 	 * @throws IOException
@@ -682,7 +696,7 @@ public class SimulationTestAutomatic {
 	}
 
 	/**
-	 * 
+	 * Tests the models of biomodels.org using the Rosenbrock solver as integrator
 	 * @param file
 	 * @throws FileNotFoundException
 	 * @throws IOException
@@ -746,7 +760,7 @@ public class SimulationTestAutomatic {
 	}
 
 	/**
-	 * 
+	 * Tests one specific model
 	 * @param model
 	 * @param inputData
 	 * @param timepoints
@@ -798,6 +812,7 @@ public class SimulationTestAutomatic {
 	}
 
 	/**
+	 * Tests the models of the SBML test suite using Rosenbrock as integrator
 	 * TEST_CASES must be set to the address of the folder "semantic" in the
 	 * SBML test suite.
 	 * 

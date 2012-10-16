@@ -47,7 +47,7 @@ import org.simulator.math.odes.DormandPrince54Solver;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
- * 
+ * Tests the SEDMLWriter
  * @author Richard Adams
  * @version $Rev$
  * @since 1.1

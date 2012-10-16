@@ -432,12 +432,12 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	}
 	
 	/**
-	 * 
-	 * @param model
-	 * @param defaultSpeciesValue
-	 * @param defaultParameterValue
-	 * @param defaultCompartmentValue
-	 * @param amountHash
+	 * Creates a new SBMLinterpreter
+	 * @param the model to interpret
+	 * @param the default value for species, if no value is given
+	 * @param the default value for parameters, if no value is given
+	 * @param the default value for compartments, if no value is given
+	 * @param a hash that states for the species in the model, whether their amount or their concentration should be computed
 	 * @throws SBMLException
 	 * @throws ModelOverdeterminedException
 	 */
