@@ -146,6 +146,7 @@
 \newcommand{\Block}{\texttt{Block}}
 \newcommand{\jlibsedml}{\texttt{jlibsedml}}
 \newcommand{\EventInProgress}{\texttt{Event\-In\-Progress}}
+\newcommand{\ASTNodeInterpreter}{\texttt{ASTNode\-In\-terpreter}}
 \newcommand{\SBMLEventInProgressWithDelay}{\texttt{SBML\-Event\-In\-Progress\-With\-Delay}}
 
 % the derivative symbol for differential equations
@@ -260,7 +261,7 @@ Reutlingen, Germany}
 
 \begin{abstract}
         % Do not use inserted blank lines (ie \\) until main body of text.
-Dynamic simulation of biological phenomena is a the key aspect of
+Dynamic simulation of biological phenomena is a key aspect of
 research in systems biology. However, it is often difficult to use available
 implementations of numerical methods as a backend for custom-made programs.
 
@@ -680,9 +681,9 @@ For a given state of the ODE system, the class \SBMLinterpreter{}, responsible
 for the evaluation of models encoded in SBML returns the current set of
 time-derivatives of the variables.
 It is connected to an efficient MathML interpreter of the expressions contained
-in kinetic laws, rules and events. The nodes of the syntax tree for those
+in kinetic laws, rules and events (\ASTNodeInterpreter{}). The nodes of the syntax graph for those
 expressions depend on the current state of the ODE system. If the state has
-changed, the values of the nodes have to be recalculated.
+changed, the values of the nodes have to be recalculated (see Results).
 
 %
 An important aspect in the interpretation of SBML models is the
@@ -711,16 +712,16 @@ in a previous section, the execution of one event can influence the priority off
 method to restore the max heap characteristic after extraction is not sufficient any more. Therefore we disregarded the use of other data structures for now.
 %
 
-The simulation algorithm then proceeds as follows: For each time step, the ODE
-solver gets the current variable values and
-calculates the system's state for the next time point. After that, events
-and rules are processed, that can change the values. The modified values then
-become the initial values for the next time step. The event processing of the
-Rosenbrock solver
+%The simulation algorithm then proceeds as follows: For each time step, the ODE
+%solver gets the current variable values and
+%calculates the system's state for the next time point. After that, events
+%and rules are processed, that can change the values. The modified values then
+%become the initial values for the next time step. The event processing of the
+%Rosenbrock solver
 %\sout{is different from other solvers, as it}
-is directly integrated in the solver class and influences the
-step size. The time-accurate handling of events and rules leads to very precise
-results of the simulation.
+%is directly integrated in the solver class and influences the
+%step size. The time-accurate handling of events and rules leads to very precise
+%results of the simulation.
 %
 SED-ML support is enabled by inclusion of the \jlibsedml{} library
 (\href{http://www.jlibsedml.org}{http://www.jlibsedml.org}) in the binary
