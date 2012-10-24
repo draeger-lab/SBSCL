@@ -22,7 +22,6 @@ package org.simulator.math.odes;
 
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 
 import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.Mathematics;
