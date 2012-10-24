@@ -1191,7 +1191,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			 
 			 symbolHash.put(s.getId(), yIndex);
 			 compartmentHash.put(s.getId(), compartmentIndex);
-			 compartmentIndexes[i] = compartmentIndex;
+			 compartmentIndexes[yIndex] = compartmentIndex;
 			 symbolIdentifiers[yIndex] = s.getId();
 			 yIndex++;
 
@@ -2302,10 +2302,6 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				v[reactionIndex] = kineticLawRoots[reactionIndex].compileDouble(
 						time);
 
-			}
-
-			if ((v[reactionIndex] < 0) && !reactionReversible[reactionIndex]) {
-				v[reactionIndex] = 0;
 			}
 		}
 
