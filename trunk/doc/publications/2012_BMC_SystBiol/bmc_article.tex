@@ -542,7 +542,7 @@ matching as far as possible, the model is considered overdetermined and thus is 
 But if we are indeed looking at a valid SBML model, every assignment rule is converted into an algebraic rule. 
 Therefore the MathML expression in SBML is transformed into an equation with a left-hand side. The left-hand 
 side is represented by the respective variable vertex the considered algebraic rule has been matched to.
-The described algorithm is also displayed in Figure 2.
+The described algorithm is also displayed in Figure~2.
 
 
 \subsection{Event handling}
@@ -557,13 +557,13 @@ has been activated and the time the scheduler picks the event for execution.
 For every time step, the events to be executed are a union of two subsets of the set containing all events.
 On the one hand there are the events whose trigger has been activated at the given time and which are without delay. On the other hand there are events that triggered at some time point before and whose delay reaches till the current point in time. For every element of the resulting set of events the priority is evaluated.
 An event with the highest priority is randomly chosen to be executed. All other events
-could be handled in the same manner. However, the assignment of the first event can change the priority or even the trigger of the events that have not been executed yet. Therefore the trigger of non persistent events and the priority of the remaining events have to be evaluated again and another event with the highest priority is chosen. This process repeats itself until no further events to be executed are left. The slightly simplified algorithm for event processing at a specific timepoint is shown in Figure 3.
+could be handled in the same manner. However, the assignment of the first event can change the priority or even the trigger of the events that have not been executed yet. Therefore the trigger of non persistent events and the priority of the remaining events have to be evaluated again and another event with the highest priority is chosen. This process repeats itself until no further events to be executed are left. The slightly simplified algorithm for event processing at a specific timepoint is shown in Figure~3.
 
 \subsection{Calculation of the derivatives for a certain time point}
-For given values $\vec{Q}$ at a time point the curring vector of derivatives is calculated as follows: First all derivatives in the vector $\dot{\vec{Q}}$ are set to zero. Then the rate rules are processed, which can change $\dot{\vec{Q}}$. After that for each reaction the velocity, which depends on $\vec{Q}$, is computed with the help of the syntax graph. Then the derivatives of all species that participate in the current reaction need to be updated (also see Figure 4).
+For given values $\vec{Q}$ at a time point the curring vector of derivatives is calculated as follows: First all derivatives in the vector $\dot{\vec{Q}}$ are set to zero. Then the rate rules are processed, which can change $\dot{\vec{Q}}$. After that for each reaction the velocity, which depends on $\vec{Q}$, is computed with the help of the syntax graph. Then the derivatives of all species that participate in the current reaction need to be updated (also see Figure~4).
 
 \subsection{Integrated calculation for a certain time step including event processing}
-The Rosenbrock solver is the solver that can adapt its step size if events are happening. For a certain time begin and time end and a vector $\vec{Q}$ it determines a new vector at a time point that is determined by the current adaptive step size. It refers to the already described calculation of the derivatives for a certain time point in this step.
+The Rosenbrock solver is the solver that can adapt its step size if events are happening (see Figure~5). For a certain time begin and time end and a vector $\vec{Q}$ it determines a new vector at a time point that is determined by the current adaptive step size. It refers to the already described calculation of the derivatives for a certain time point in this step.
 
 After that the events and the assignment rules are processed at the new time point. If this last step causes a change in $\vec{Q}$, the adaptive step size is decreased and the calculation is repeated until the minimum step size is reached or the processing of events and rules does not change $\vec{Q}$ any more. So the time at which an event happens is precisely determined.
 
@@ -622,12 +622,12 @@ solver.
 
 \section{Conclusions}
 The SBML implementation has successfully passed the
-SBML Test Suite (version 2.0.2).
+SBML Test Suite (version 2.0.2) using Rosenbrock solver.
 %(see
 %\href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite}):
 Furthermore, it solved 99.06\,\% of the models from the
 \href{http://biomodels.net}{BioModels.net} database (release 23,
-\cite{Novere2006a}).
+\cite{Novere2006a}) simulating from $t=0$ to $t=10$ using Rosenbrock solver and a step size of $0.1$.
 Therefore, the Simulation Core Library is an efficient Java tool for the
 simulation of differential equation systems used in systems biology. It can be
 easily integrated in larger applications. For instance,
@@ -657,7 +657,7 @@ the Simulation Core Library.
 section.}
 
 All the solver classes are derived from the abstract class \AbstractDESSolver{}
-(Fig.~1).
+(Fig.~6).
 Several solvers of the Apache Commons Math library (version 3.0) are integrated
 with the help of wrapper classes. Numerical methods and the actual differential
 equation systems are strictly separated. The class \MultiTable{} stores the
@@ -811,7 +811,7 @@ First the vector for saving the derivatives of all quantities $\dot{\vec{Q}}$ is
 
 For a certain time window the Rosenbrock solver always tries to increase the time by the current adaptive step size $s$ and calculates a new vector of quantities $\vec{Q}_{res}$. After a successful step the events and rules of the model are processed. If they cause a change in $\vec{Q}$, $s$ is first decreased and then the Rosenbrock solver calculates another vector $\vec{Q}_{res}$ using this adapted step size. The precision of the event processing is therefore determined by the minimum step size $s_{min}$.
 
-  \subsection*{Figure 1 - Architecture of the Simulation Core Library
+  \subsection*{Figure 6 - Architecture of the Simulation Core Library
   (simplified)}
   
 Numerical methods are strictly separated from differential equation systems. The
@@ -823,9 +823,6 @@ The class \SBMLinterpreter{} (bottom part) implements all of these interfaces
 with respect to the information content of a given SBML model. Similarly, an
 implementation of further data formats can be included into the
 library.
-
-  \subsection*{Figure 2 - Sample figure title}
-      Figure legend text.
 
 
 
