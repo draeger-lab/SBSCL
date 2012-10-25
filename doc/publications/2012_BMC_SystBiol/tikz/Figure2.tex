@@ -20,26 +20,27 @@
 \begin{tikzpicture}[node distance = 2cm, auto]
     % Place nodes
     \node [cloud] (start) {Start};
-\node [block, below of=start] (init) {running:=()\\inactive:=()};
+\node [block, below of=start] (init) {running:=()\\inactive:=(events that triggered last timestep)};
     	\node [block, below of=init ,  node distance=2.5cm](removeEvents) {Remove non-persistent events with false trigger\\from running};
 	
 
 
 	\node [block, below of=removeEvents] (initLoop) {$j:=1$};
 	\node [decision, below of=initLoop ,  node distance=3cm](triggerEvents) {trigger\\(events[j])?};
-	\node [decision, below of=triggerEvents ,  node distance=3.5cm](decision2) {(events[j] not in inactive)?};
-	    \node [block, right of=decision2,  node distance=3.5cm] (updateRunningEvents) {running:=\\running $\cup$ events[j]\\inactive:=inactive $\cup$ event};
+	\node [decision, below of=triggerEvents ,  node distance=3.5cm](decision2) {events[j] in inactive?};
+	    \node [block, below of=decision2,  node distance=3.0cm] (updateRunningEvents) {running:=\\running $\cup$ events[j]\\inactive:=inactive $\cup$ event};
 
-	\node [block,right of=triggerEvents,  node distance=3.5cm] (updateInactive) {inactive:=\\inactive $\setminus$ events[j]};
+	\node [block,right of=triggerEvents,  node distance=5.0cm] (updateInactive) {inactive:=\\inactive $\setminus$ events[j]};
+	\node [blank,right of=updateInactive,  node distance=4.0cm] (aux3) {};
 
     	\node [block, right of=updateRunningEvents,  node distance=5cm] (increase2) {$j:=j+1$};
 
-	    \node [decision, below of=increase2, node distance=4cm] (decision3) {$j>\#events$};
+	    \node [decision, right of=increase2, node distance=4cm] (decision3) {$j>\#events$};
 
     \node [decision, below of=decision3] (noRunningEvents) {running\\=()?};
     \node [block, left of=noRunningEvents, node distance=4cm] (chooseEvent) {event:=\\choose(running)};
     \node [block, left of=chooseEvent, node distance=5cm] (processEvent)
-   {x:=\\process(event)};
+   {process(event)};
     \node [block, left of=triggerEvents, node distance=4cm] (update) {running:=running $\setminus$ event};
     \node [blank,right of=triggerEvents, node distance=1cm] (aux) {};
 
@@ -57,17 +58,17 @@
     \path [line] (triggerEvents) -- node{yes} (decision2);
     \path [line] (updateInactive) -- (increase2);
     \path [line] (decision2) -- node{no} (updateRunningEvents);
-    \path [line] (decision2) -| node{yes} (increase2);
+    \path [line] (decision2) -- node{yes} (increase2);
     \path [line] (increase2) -- (decision3);
 
 
      \path [line] (decision3) -- node{yes} (noRunningEvents);
-    \path [line] (decision3) -- node{no}(aux)|- (aux2);
+    \path [line] (decision3) -- node{no}(aux3)|- (aux2);
     \path [line] (noRunningEvents) |- node{yes} (stop);
     \path [line] (noRunningEvents) -- node{no} (chooseEvent);
     \path [line] (chooseEvent) -- (processEvent);
     \path [line] (processEvent) -| (update);
-    \path [line] (update) |- (initLoop);
+    \path [line] (update) |- (removeEvents);
 \end{tikzpicture}
 
 
