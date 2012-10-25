@@ -23,11 +23,11 @@ text width=14em, text badly centered, node distance=2.5cm, inner sep=4pt,minimum
 \begin{tikzpicture}[node distance = 2cm, auto]
     % Place nodes
 	\node [cloud] (start) {Start};
-	\node [block, below of=start] (init) {$t:=t_{begin}$\qquad $x:=x_{begin}$ \quad $s:=s_0$};
-	\node [io, below of=init] (output) {($x_{res}$, $t_{res}$):=Rosenbrock(t, x, s)};
-	\node [block, below of=output,text width=17em] (pevents) {$x_p$:=ProcessEventsAndRules($x_{res}, t_{res}$)};
-	\node [decision, below of=pevents, node distance=3cm] (xpxres?) {$x_p=x_{res}?$};
-	\node [block, left of=xpxres?, below of=xpxres?, node distance=4cm] (newvalues) {$t:=t_{res}$ \qquad $x:=x_{res}$ \qquad $s:=adapt(s)$ };
+	\node [block, below of=start] (init) {$t:=t_{begin}$\qquad $\vec{Q}:=\vec{Q}_{begin}$ \quad $s:=s_0$};
+	\node [io, below of=init] (output) {($\vec{Q}_{res}$, $t_{res}$):=Rosenbrock(t, $\vec{Q}$, s)};
+	\node [block, below of=output,text width=17em] (pevents) {$\vec{Q}_p$:=\\ProcessEventsAndRules($\vec{Q}_{res}, t_{res}$)};
+	\node [decision, below of=pevents, node distance=3cm] (xpxres?) {$\vec{Q}_p=\vec{Q}_{res}?$};
+	\node [block, left of=xpxres?, below of=xpxres?, node distance=4cm] (newvalues) {$t:=t_{res}$ \qquad $\vec{Q}:=\vec{Q}_{res}$ \qquad $s:=adapt(s)$ };
 	\node [decision, right of=xpxres?, node distance=3.5cm] (larger?) {$s\ge s_{min} \cdot 10$};
 	\node [block, right of=larger?, node distance=3.5cm] (stepsize) {$s:= \frac{s}{10}$};
 
