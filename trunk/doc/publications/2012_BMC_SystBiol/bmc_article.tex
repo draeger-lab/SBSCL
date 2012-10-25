@@ -798,9 +798,9 @@ Germany) in the project Virtual Liver (grant number 0315756).
 
 The first step is to decide whether the model is overdetermined by creating a matching of the variables. If this is not the case, every algebraic rule is solved to the matched variable, which provides the basis for the creation of an equivalent assignment rule.
 
- \subsection*{Figure 2 - Processing of events: algorithm}
+ \subsection*{Figure 2 - Processing of events: simpflified algorithm (without delayed events)}
 
-The list of the events running and the already processed events are saved. In each step the trigger of every event that is not contained in any of the two lists is evaluated. If it is true, it is added to the running events. After the procession of all triggers one event running is chosen, which can be done randomly. This event is then processed and afterwards added to the list of processed events.
+The list of the events running and the inactive events whose trigger is already true are saved. In each iteration first the trigger of running events that are not persistent are checked. If the trigger of such an event has changed to false, it is removed from the list. The next step comprises the evaluation of the triggers of all events. If its trigger changes from false to true, an event is added to the running events. An event with its trigger changed from true to false is removed from the list of inactive events. After the procession of all triggers the event with the highest priority in the list of running events is chosen for execution. This event is then processed and afterwards the triggers of all events have to be evaluated again. The algorithm proceeds until the list of running events is empty.
 
 
   \subsection*{Figure 1 - Architecture of the Simulation Core Library
