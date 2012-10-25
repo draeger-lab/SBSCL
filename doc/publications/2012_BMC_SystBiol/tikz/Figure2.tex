@@ -1,0 +1,74 @@
+\documentclass{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\begin{document}
+\pagestyle{empty}
+
+
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, fill=blue!20, 
+    text width=5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=10em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
+    minimum height=2em]
+\tikzstyle{blank} = [coordinate]
+    
+\begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+    \node [cloud] (start) {Start};
+\node [block, below of=start] (init) {running:=()\\inactive:=()};
+    	\node [block, below of=init ,  node distance=2.5cm](removeEvents) {Remove non-persistent events with false trigger\\from running};
+	
+
+
+	\node [block, below of=removeEvents] (initLoop) {$j:=1$};
+	\node [decision, below of=initLoop ,  node distance=3cm](triggerEvents) {trigger\\(events[j])?};
+	\node [decision, below of=triggerEvents ,  node distance=3.5cm](decision2) {(events[j] not in inactive)?};
+	    \node [block, right of=decision2,  node distance=3.5cm] (updateRunningEvents) {running:=\\running $\cup$ events[j]\\inactive:=inactive $\cup$ event};
+
+	\node [block,right of=triggerEvents,  node distance=3.5cm] (updateInactive) {inactive:=\\inactive $\setminus$ events[j]};
+
+    	\node [block, right of=updateRunningEvents,  node distance=5cm] (increase2) {$j:=j+1$};
+
+	    \node [decision, below of=increase2, node distance=4cm] (decision3) {$j>\#events$};
+
+    \node [decision, below of=decision3] (noRunningEvents) {running\\=()?};
+    \node [block, left of=noRunningEvents, node distance=4cm] (chooseEvent) {event:=\\choose(running)};
+    \node [block, left of=chooseEvent, node distance=5cm] (processEvent)
+   {x:=\\process(event)};
+    \node [block, left of=triggerEvents, node distance=4cm] (update) {running:=running $\setminus$ event};
+    \node [blank,right of=triggerEvents, node distance=1cm] (aux) {};
+
+    \node [blank,below of=initLoop, node distance=1.2cm] (aux2) {};
+
+
+    \node [cloud, below of=processEvent, node distance=3cm] (stop) {Stop};
+    % Draw edges
+    \path [line] (start) -- (init);
+    \path [line] (init) -- (removeEvents);
+   
+    \path [line] (removeEvents) -- (initLoop);
+    \path [line] (initLoop) -- (triggerEvents);
+    \path [line] (triggerEvents) -- node{no} (updateInactive);
+    \path [line] (triggerEvents) -- node{yes} (decision2);
+    \path [line] (updateInactive) -- (increase2);
+    \path [line] (decision2) -- node{no} (updateRunningEvents);
+    \path [line] (decision2) -| node{yes} (increase2);
+    \path [line] (increase2) -- (decision3);
+
+
+     \path [line] (decision3) -- node{yes} (noRunningEvents);
+    \path [line] (decision3) -- node{no}(aux)|- (aux2);
+    \path [line] (noRunningEvents) |- node{yes} (stop);
+    \path [line] (noRunningEvents) -- node{no} (chooseEvent);
+    \path [line] (chooseEvent) -- (processEvent);
+    \path [line] (processEvent) -| (update);
+    \path [line] (update) |- (initLoop);
+\end{tikzpicture}
+
+
+\end{document}
