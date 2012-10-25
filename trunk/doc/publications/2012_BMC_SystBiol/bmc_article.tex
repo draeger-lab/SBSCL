@@ -521,7 +521,7 @@ This graph is then a merging of the abstract syntax trees of all those elements.
 Equivalent elements are only contained once.
 This significantly decreases the computation time during the simulation.
 
-After the creating of the abstract syntax graph, the initial assignments, the
+After the creating of the abstract syntax graph, the initial assignments, and the
 assignment rules (including transformed algebraic rules) are processed.
 So the initial values that are given in rules are also set now.
 
@@ -530,7 +530,7 @@ So the initial values that are given in rules are also set now.
 In order to deal with algebraic rules in a SBML model, they have to be rewritten in terms
 of assignment rules. In every equation of an algebraic rule, there should be at least one variable, 
 whose value is not yet defined through other elements in model. This variable has to be determined 
-for the purpose of interpreting the regarding algebraic rule.
+for the purpose of interpreting the regarding algebraic rule. 
 At first a bipartite graph according to the SBML specifications is generated. This graph is used to 
 compute a matching, using the algorithm from Hopcroft and Karp
 \cite{hopcroft1973n}. The initial greedy matching is extended with the use of augmenting paths. This process is
@@ -538,8 +538,9 @@ repeated until no more augmenting paths can be found. Per definition, this resul
 As stated in the SBML specifications, if any equation vertex remains unconnected after augmenting the 
 matching as far as possible, the model is considered overdetermined and thus is not a valid SBML model. 
 But if we are indeed looking at a valid SBML model, every assignment rule is converted into an algebraic rule. 
-Therefor the MathML expression in SBML is transformed into an equation with a left-hand side. The left-hand 
+Therefore the MathML expression in SBML is transformed into an equation with a left-hand side. The left-hand 
 side is represented by the respective variable vertex the considered algebraic rule has been matched to.
+The described algorithm is also displayed in Figure 1.
 
 
 \subsection{Event handling}
@@ -552,7 +553,7 @@ by the event's priority. Furthermore there exists the option to cancel an event 
 has been activated and the time the scheduler picks the event for execution. 
 
 For every time step, the events to be executed are a union of two subsets of the set containing all events.
-On the one hand there are the events whose trigger has been activated at the given time and are without delay. On the other hand there are events that triggered at some time point before and whose delay reaches till the current point in time. For every element of the resulting set of events the priority is evaluated.
+On the one hand there are the events whose trigger has been activated at the given time and which are without delay. On the other hand there are events that triggered at some time point before and whose delay reaches till the current point in time. For every element of the resulting set of events the priority is evaluated.
 An event with the highest priority is randomly chosen to be executed. All other events
 could be handled in the same manner. However, the assignment of the first event can change the priority or even the trigger of the events that have not been executed yet. Therefore the trigger of non persistent 
 events and the priority of the remaining events have to be evaluated again and another event with the highest priority is chosen. This process repeats itself until no further events to be executed are left.
@@ -793,6 +794,15 @@ Germany) in the project Virtual Liver (grant number 0315756).
 %% Do not use \listoffigures as most will included as separate files
 
 \section*{Figures}
+ \subsection*{Figure 1 - Algorithm for transforming algebraic rules to assignment rules}
+
+The first step is to decide whether the model is overdetermined by creating a matching of the variables. If this is not the case, every algebraic rule is solved to the matched variable, which provides the basis for the creation of an equivalent assignment rule.
+
+ \subsection*{Figure 2 - Processing of events: algorithm}
+
+The list of the events running and the already processed events are saved. In each step the trigger of every event that is not contained in any of the two lists is evaluated. If it is true, it is added to the running events. After the procession of all triggers one event running is chosen, which can be done randomly. This event is then processed and afterwards added to the list of processed events.
+
+
   \subsection*{Figure 1 - Architecture of the Simulation Core Library
   (simplified)}
   
