@@ -138,6 +138,8 @@
 
 \newcommand{\TODO}[1]{\textcolor{red}{\textbf{#1}}}
 \newcommand{\AbstractDESSolver}{\texttt{Abstract\-DES\-Solver}}
+\newcommand{\AlgebraicRule}{\texttt{Algebraic\-Rule}}
+\newcommand{\AssignmentRule}{\texttt{Assignment\-Rule}}
 \newcommand{\OverdeterminationValidator}{\texttt{Overdetermination\-Validator}}
 \newcommand{\SBMLinterpreter}{\texttt{SBML\-interpreter}}
 \newcommand{\FirstOrderSolver}{\texttt{First\-Order\-Solver}}
@@ -540,7 +542,7 @@ matching as far as possible, the model is considered overdetermined and thus is 
 But if we are indeed looking at a valid SBML model, every assignment rule is converted into an algebraic rule. 
 Therefore the MathML expression in SBML is transformed into an equation with a left-hand side. The left-hand 
 side is represented by the respective variable vertex the considered algebraic rule has been matched to.
-The described algorithm is also displayed in Figure 1.
+The described algorithm is also displayed in Figure 2.
 
 
 \subsection{Event handling}
@@ -555,11 +557,10 @@ has been activated and the time the scheduler picks the event for execution.
 For every time step, the events to be executed are a union of two subsets of the set containing all events.
 On the one hand there are the events whose trigger has been activated at the given time and which are without delay. On the other hand there are events that triggered at some time point before and whose delay reaches till the current point in time. For every element of the resulting set of events the priority is evaluated.
 An event with the highest priority is randomly chosen to be executed. All other events
-could be handled in the same manner. However, the assignment of the first event can change the priority or even the trigger of the events that have not been executed yet. Therefore the trigger of non persistent 
-events and the priority of the remaining events have to be evaluated again and another event with the highest priority is chosen. This process repeats itself until no further events to be executed are left.
+could be handled in the same manner. However, the assignment of the first event can change the priority or even the trigger of the events that have not been executed yet. Therefore the trigger of non persistent events and the priority of the remaining events have to be evaluated again and another event with the highest priority is chosen. This process repeats itself until no further events to be executed are left. The slightly simplified algorithm for event processing at a specific timepoint is shown in Figure 3.
 
 \subsection{Calculation of the derivatives for a certain time point}
-For given values $\vec{Q}$ at a time point the curring vector of derivatives is calculated as follows: First all derivatives in the vector $\vec{Q}'$ are set to zero. Then the rate rules are processed, which can change $\vec{Q}'$. After that for each reaction the velocity, which depends on $\vec{Q}$, is computed with the help of the syntax graph. Then the derivatives of all species that participate in the current reaction need to be updated.
+For given values $\vec{Q}$ at a time point the curring vector of derivatives is calculated as follows: First all derivatives in the vector $\dot{\vec{Q}}$ are set to zero. Then the rate rules are processed, which can change $\dot{\vec{Q}}$. After that for each reaction the velocity, which depends on $\vec{Q}$, is computed with the help of the syntax graph. Then the derivatives of all species that participate in the current reaction need to be updated (also see Figure 4).
 
 \subsection{Integrated calculation for a certain time step including event processing}
 The Rosenbrock solver is the solver that can adapt its step size if events are happening. For a certain time begin and time end and a vector $\vec{Q}$ it determines a new vector at a time point that is determined by the current adaptive step size. It refers to the already described calculation of the derivatives for a certain time point in this step.
@@ -794,14 +795,21 @@ Germany) in the project Virtual Liver (grant number 0315756).
 %% Do not use \listoffigures as most will included as separate files
 
 \section*{Figures}
- \subsection*{Figure 1 - Algorithm for transforming algebraic rules to assignment rules}
+ \subsection*{Figure 2 - Algorithm for transforming algebraic rules to assignment rules}
 
 The first step is to decide whether the model is overdetermined by creating a matching of the variables. If this is not the case, every algebraic rule is solved to the matched variable, which provides the basis for the creation of an equivalent assignment rule.
 
- \subsection*{Figure 2 - Processing of events: simpflified algorithm (without delayed events)}
+ \subsection*{Figure 3 - Processing of events: simpflified algorithm (without delayed events)}
 
 The list of the events running and the inactive events whose trigger is already true are saved. In each iteration first the trigger of running events that are not persistent are checked. If the trigger of such an event has changed to false, it is removed from the list. The next step comprises the evaluation of the triggers of all events. If its trigger changes from false to true, an event is added to the running events. An event with its trigger changed from true to false is removed from the list of inactive events. After the procession of all triggers the event with the highest priority in the list of running events is chosen for execution. This event is then processed and afterwards the triggers of all events have to be evaluated again. The algorithm proceeds until the list of running events is empty.
 
+ \subsection*{Figure 4 - Calculation of the derivatives at a specific timepoint}
+
+First the vector for saving the derivatives of all quantities $\dot{\vec{Q}}$ is set to the null vector. Then the rate rules of the model are processed, which can change $\dot{\vec{Q}}$. After that for every reaction its velocity $v$ is computed. The derivatives of the species of the currently processed reaction are updated in each step adding the product of the stoichiometry and the reaction velocity.
+
+ \subsection*{Figure 5 - Integrated calculation of new values for a time step including event processing}
+
+For a certain time window the Rosenbrock solver always tries to increase the time by the current adaptive step size $s$ and calculates a new vector of quantities $\vec{Q}_{res}$. After a successful step the events and rules of the model are processed. If they cause a change in $\vec{Q}$, $s$ is first decreased and then the Rosenbrock solver calculates another vector $\vec{Q}_{res}$ using this adapted step size. The precision of the event processing is therefore determined by the minimum step size $s_{min}$.
 
   \subsection*{Figure 1 - Architecture of the Simulation Core Library
   (simplified)}
