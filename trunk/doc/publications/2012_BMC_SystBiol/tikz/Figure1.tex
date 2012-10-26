@@ -5,56 +5,43 @@
 \usetikzlibrary{shapes,arrows}
 \begin{document}
 \pagestyle{empty}
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm,
+  thick,main node/.style={circle,fill=blue!20,draw,font=\sffamily\Large\bfseries}]
 
+  \node[main node] (r1) {$r_{1}$};
+  \node[main node] (r2) [right of=r1, node distance = 6.5cm] {$r_{2}$};
+  
+  \node[main node] (minus1) [below of=r1] {$-$};
+  \node[main node] (times1) [node distance = 3cm] [below left of=minus1] {$\cdot$};
+  \node[main node] (kass1) [below left of=times1] {$k_{ass1}$};
+\node[main node]  [font=\small] (F16BP) [below right of=times1] {[F16BP]};
 
-% Define block styles
-\tikzstyle{decision} = [diamond, draw, fill=blue!20, 
-    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
-\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
-    text width=8em, text centered, rounded corners, minimum height=4em]
-\tikzstyle{line} = [draw, -latex']
-\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
-    minimum height=2em]
-\tikzstyle{io} = [trapezium,trapezium left angle=70,trapezium right angle=-70,minimum height=0.6cm, draw, fill=blue!20, 
-text width=8em, text badly centered, node distance=3cm, inner sep=0pt,minimum height=2em]
+\node[main node] (times2)  [node distance = 3cm] [below right of=minus1] {$\cdot$};
+\node[main node] (kdiss1) [below left of=times2] {$k_{diss1}$};
+\node[main node]  [font=\small] [node distance = 4cm] (GA3P) [below of=times2] {[GA3P]};
+\node[main node]  [font=\small] (DHAP) [below right of=times2] {[DHAP]};
 
-    
-\begin{tikzpicture}[node distance = 2cm, auto]
-    % Place nodes
-	\node [cloud] (start) {Start};
-	\node [block, below of=start] (graph) {Create bipartite graph and greedy matching};
-	\node [block, below of=graph] (findpaths) {Find augmenting paths};
-	\node [decision, below of=findpaths] (matching?) {At least one path available?};
-	\node [block, left of=matching?, node distance=4.5cm] (augment) {Augment matching};
-	\node [decision, below of=matching?, node distance=3.5cm] (overdetermined?) {Model ovedetermined?};
-	\node [block, below of=overdetermined?, node distance=3cm] (i0) {i:=0};
-	\node [block, right of=overdetermined?, node distance=4.5cm] (exception) {Throw exception};
-	\node [block, below of=i0, node distance=2.5cm] (solve) {Solve i-th algebraic rule according to matching};
-	\node [block, left of=solve, node distance=4.5cm] (i++) {i:=i+1};
-	\node [io, below of=solve, node distance=2cm] (newassignment) {New assignment rule};
+  \node[main node] (minus2) [below of=r2] {$-$};
+\node[main node] (times3) [node distance = 3cm] [below left of=minus2] {$\cdot$};
+  \node[main node] (kass2) [below right of=times3] {$k_{ass2}$};
 
-	\node [decision, below of=newassignment, node distance=2cm] (rulesleft?) {i=\#algebraic rules?};
-	\node [cloud, below of=rulesleft?, node distance=2.5cm] (stop) {Stop};
-
-
-	\path [line] (start) -- (graph);
-	\path [line] (graph) -- (findpaths);
-	\path [line] (findpaths) -- (matching?);
-	\path [line] (matching?) -- node {Yes}(augment);		
-	\path [line] (augment) |- (findpaths);
-	\path [line] (matching?) -- node {No} (overdetermined?);
-	\path [line] (overdetermined?) -- node {No} (i0);
-	\path [line] (overdetermined?) -- node {Yes}(exception);
-	\path [line] (i0) -- (solve);
-	\path [line] (i++) -- (solve);
-	\path [line] (solve) -- (newassignment);
-
-	\path [line] (newassignment) -- (rulesleft?);
-	\path [line] (rulesleft?) -| node {No} (i++);
-	\path [line] (rulesleft?) -- node {Yes} (stop);
-	\path [line] (exception) |- (stop);
-
-\end{tikzpicture}
-
-
+\node[main node] (times4)[node distance = 3cm] [below right of=minus2] {$\cdot$};
+\node[main node] (kdiss2) [below right of=times4] {$k_{diss2}$};
+ \path[every node/.style={font=\sffamily\small}]
+    (r1) edge (minus1)
+    (minus1) edge (times1)
+    (minus1) edge (times2)
+    (times1) edge (kass1)
+   (times1) edge (F16BP)
+(times2) edge (kdiss1)
+   (times2) edge (GA3P)
+  (times2) edge (DHAP)
+  (r2) edge (minus2)
+    (minus2) edge (times3)
+    (minus2) edge (times4)
+ (times3) edge (kass2)
+   (times3) edge (DHAP)
+ (times4) edge (kdiss2)
+   (times4) edge (GA3P);
+       \end{tikzpicture}
 \end{document}
