@@ -9,66 +9,51 @@
 
 % Define block styles
 \tikzstyle{decision} = [diamond, draw, fill=blue!20, 
-    text width=5em, text badly centered, node distance=3cm, inner sep=0pt]
+    text width=4.5em, text badly centered, node distance=2cm, inner sep=0pt]
 \tikzstyle{block} = [rectangle, draw, fill=blue!20, 
-    text width=10em, text centered, rounded corners, minimum height=4em]
+    text width=8em, text centered, rounded corners, minimum height=4em]
 \tikzstyle{line} = [draw, -latex']
 \tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
     minimum height=2em]
-\tikzstyle{blank} = [coordinate]
+\tikzstyle{io} = [trapezium,trapezium left angle=70,trapezium right angle=-70,minimum height=0.6cm, draw, fill=blue!20, 
+text width=8em, text badly centered, node distance=3cm, inner sep=0pt,minimum height=2em]
+
     
 \begin{tikzpicture}[node distance = 2cm, auto]
     % Place nodes
-    \node [cloud] (start) {Start};
-\node [block, below of=start] (init) {running:=()\\inactive:=(events that triggered last timestep)};
-    	\node [block, below of=init ,  node distance=2.5cm](removeEvents) {Remove non-persistent events with false trigger\\from running};
-	
+	\node [cloud] (start) {Start};
+	\node [block, below of=start] (graph) {Create bipartite graph and greedy matching};
+	\node [block, below of=graph] (findpaths) {Find augmenting paths};
+	\node [decision, below of=findpaths] (matching?) {At least one path available?};
+	\node [block, left of=matching?, node distance=4.5cm] (augment) {Augment matching};
+	\node [decision, below of=matching?, node distance=3.5cm] (overdetermined?) {Model ovedetermined?};
+	\node [block, below of=overdetermined?, node distance=3cm] (i0) {i:=0};
+	\node [block, right of=overdetermined?, node distance=4.5cm] (exception) {Throw exception};
+	\node [block, below of=i0, node distance=2.5cm] (solve) {Solve i-th algebraic rule according to matching};
+	\node [block, left of=solve, node distance=4.5cm] (i++) {i:=i+1};
+	\node [io, below of=solve, node distance=2cm] (newassignment) {New assignment rule};
+
+	\node [decision, below of=newassignment, node distance=2cm] (rulesleft?) {i=\#algebraic rules?};
+	\node [cloud, below of=rulesleft?, node distance=2.5cm] (stop) {Stop};
 
 
-	\node [block, below of=removeEvents] (initLoop) {$j:=1$};
-	\node [decision, below of=initLoop ,  node distance=3cm](triggerEvents) {trigger\\(events[j])?};
-	\node [decision, below of=triggerEvents ,  node distance=3.5cm](decision2) {events[j] in inactive?};
-	    \node [block, below of=decision2,  node distance=3.0cm] (updateRunningEvents) {running:=\\running $\cup$ events[j]\\inactive:=inactive $\cup$ event};
+	\path [line] (start) -- (graph);
+	\path [line] (graph) -- (findpaths);
+	\path [line] (findpaths) -- (matching?);
+	\path [line] (matching?) -- node {Yes}(augment);		
+	\path [line] (augment) |- (findpaths);
+	\path [line] (matching?) -- node {No} (overdetermined?);
+	\path [line] (overdetermined?) -- node {No} (i0);
+	\path [line] (overdetermined?) -- node {Yes}(exception);
+	\path [line] (i0) -- (solve);
+	\path [line] (i++) -- (solve);
+	\path [line] (solve) -- (newassignment);
 
-	\node [block,right of=triggerEvents,  node distance=5.0cm] (updateInactive) {inactive:=\\inactive $\setminus$ events[j]};
-	\node [blank,right of=updateInactive,  node distance=4.0cm] (aux3) {};
+	\path [line] (newassignment) -- (rulesleft?);
+	\path [line] (rulesleft?) -| node {No} (i++);
+	\path [line] (rulesleft?) -- node {Yes} (stop);
+	\path [line] (exception) |- (stop);
 
-    	\node [block, right of=updateRunningEvents,  node distance=5cm] (increase2) {$j:=j+1$};
-
-	    \node [decision, right of=increase2, node distance=4cm] (decision3) {$j>\#events$};
-
-    \node [decision, below of=decision3] (noRunningEvents) {running\\=()?};
-    \node [block, left of=noRunningEvents, node distance=4cm] (chooseEvent) {event:=\\choose(running)};
-    \node [block, left of=chooseEvent, node distance=5cm] (processEvent)
-   {process(event)};
-    \node [block, left of=triggerEvents, node distance=4cm] (update) {running:=running $\setminus$ event};
-    \node [blank,right of=triggerEvents, node distance=1cm] (aux) {};
-
-    \node [blank,below of=initLoop, node distance=1.2cm] (aux2) {};
-
-
-    \node [cloud, below of=processEvent, node distance=3cm] (stop) {Stop};
-    % Draw edges
-    \path [line] (start) -- (init);
-    \path [line] (init) -- (removeEvents);
-   
-    \path [line] (removeEvents) -- (initLoop);
-    \path [line] (initLoop) -- (triggerEvents);
-    \path [line] (triggerEvents) -- node{no} (updateInactive);
-    \path [line] (triggerEvents) -- node{yes} (decision2);
-    \path [line] (updateInactive) -- (increase2);
-    \path [line] (decision2) -- node{no} (updateRunningEvents);
-    \path [line] (decision2) -- node{yes} (increase2);
-    \path [line] (increase2) -- (decision3);
-
-
-     \path [line] (decision3) -- node{yes} (noRunningEvents);
-    \path [line] (decision3) -- node{no}(aux3)|- (aux2);
-    \path [line] (noRunningEvents) |- node{yes} (stop);
-    \path [line] (noRunningEvents) -- node{no} (chooseEvent);
-    \path [line] (chooseEvent) -- (processEvent);
-    \path [line] (processEvent) -| (update);
-    \path [line] (update) |- (removeEvents);
 \end{tikzpicture}
 
 
