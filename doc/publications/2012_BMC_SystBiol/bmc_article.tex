@@ -520,8 +520,7 @@ All kinetic laws of the reactions, assignment rules, transformed algebraic
 rules (see below), initial assignments, event assignment rules and rate rules
 are integrated into a directed acyclic syntax graph.
 This graph is then a merging of the abstract syntax trees of all those elements.
-Equivalent elements are only contained once.
-This significantly decreases the computation time during the simulation.
+Equivalent elements are only contained once. This significantly decreases the computation time during the simulation. An example for such a syntax graph is given in Figure~1.
 
 After the creating of the abstract syntax graph, the initial assignments, and the
 assignment rules (including transformed algebraic rules) are processed.
@@ -622,7 +621,7 @@ solver.
 
 \section{Conclusions}
 The SBML implementation has successfully passed the
-SBML Test Suite (version 2.0.2) using Rosenbrock solver.
+SBML Test Suite (version 2.0.2) using Rosenbrock solver. The results are shown in Table~2.
 %(see
 %\href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite}):
 Furthermore, it solved 99.06\,\% of the models from the
@@ -795,6 +794,22 @@ Germany) in the project Virtual Liver (grant number 0315756).
 %% Do not use \listoffigures as most will included as separate files
 
 \section*{Figures}
+ \subsection*{Figure 1 - Example for the creation of an abstract syntax graph of a small model}
+
+The model consists of the following reactions:
+\begin{eqnarray*}
+&R_{1}&: F1,6BP \rightleftharpoons DHAP + GA3P\\
+&R_{2}&: DHAP \rightleftharpoons GA3P
+\end{eqnarray*}
+
+The two reactions are part of the glycolysis, the contained molecules are Fructose 1,6-bisphosphate (F1,6BP), Dihydroxyacetone phosphate (DHAP) and Glyceraldehyde 3-phosphate (GA3P). With SBMLsqueezer \cite{Draeger2008} the following mass action kinetics have been created:
+
+\begin{eqnarray*}
+&v(R_{1})&=k_{ass1} \cdot [F16BP] - k_{diss1} \cdot[DHAP] \cdot [GA3P]\\
+&v(R_{2})&=k_{ass2} \cdot [DHAP] - k_{diss2} \cdot[GA3P]
+\end{eqnarray*}
+The nodes for [DHAP] and [GA3P] are only contained in the syntax graph once and connected to more than one multiplication node. It is obvious from the figure that the syntax graph is not a tree.
+
  \subsection*{Figure 2 - Algorithm for transforming algebraic rules to assignment rules}
 
 The first step is to decide whether the model is overdetermined by creating a matching of the variables. If this is not the case, every algebraic rule is solved to the matched variable, which provides the basis for the creation of an equivalent assignment rule.
@@ -852,6 +867,21 @@ library.
         A3 & ..  & .  \\ \hline
       \end{tabular}
       }
+\subsection*{Table 2 - Simulation of the models from the SBML Test Suite (version 2.0.2) using Rosenbrock solver}
+The table shows for all SBML levels and versions the number of tested models and the total running times of the tests. \par \mbox{}
+\par
+    \mbox{
+\begin{tabular} {|c|c|c|c|c|}
+\hline
+Level & Version & Models & Correct simulations & Total running time\\\hline
+1&2&252&252&2.1 s\\ \hline
+2&1&885&885&6.6 s\\ \hline
+2&2&1039&1039&6.4 s\\ \hline
+2&3&1039&1039&6.2 s\\ \hline
+2&4&1041&1041&5.8 s\\ \hline
+3&1&1075&1075&59.8 s\\ \hline
+\end{tabular}
+}
 
 
 
