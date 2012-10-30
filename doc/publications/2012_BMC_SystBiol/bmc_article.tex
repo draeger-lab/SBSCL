@@ -416,7 +416,7 @@ simulation configurations to SED-ML (Simulation Experiment Description Markup La
 \cite{Waltemath2011}), and facilitate the re-use and reproduction of these
 experiments by executing SED-ML files.
 
-\section{Results and discussion}
+\section*{Results and discussion}
 
 \TODO{Describe SBML solving algorithm}
 
@@ -511,7 +511,7 @@ solve these systems and how to perform their numerical integration with standard
 numerical solvers.
 
 
-\subsection{Initialization}
+\subsection*{Initialization}
 
 At the beginning of the simulation the values of species, parameters and
 compartments are set to the initial values given in the model.
@@ -527,7 +527,7 @@ assignment rules (including transformed algebraic rules) are processed.
 So the initial values that are given in rules are also set now.
 
 
-\subsection{Solving algebraic rules}
+\subsection*{Solving algebraic rules}
 In order to deal with algebraic rules in a SBML model, they have to be rewritten in terms
 of assignment rules. In every equation of an algebraic rule, there should be at least one variable, 
 whose value is not yet defined through other elements in model. This variable has to be determined 
@@ -544,7 +544,7 @@ side is represented by the respective variable vertex the considered algebraic r
 The described algorithm is also displayed in Figure~2.
 
 
-\subsection{Event handling}
+\subsection*{Event handling}
 With the release of SBML Level 3 Version 1, the processing of event has been raised to a higher level of 
 complexity. Before 3.1 it was sufficient to determine, when an events triggers and when it is performed 
 due to a possible delay. Since 3.1, only some language elements have been added but with an huge 
@@ -558,10 +558,10 @@ On the one hand there are the events whose trigger has been activated at the giv
 An event with the highest priority is randomly chosen to be executed. All other events
 could be handled in the same manner. However, the assignment of the first event can change the priority or even the trigger of the events that have not been executed yet. Therefore the trigger of non persistent events and the priority of the remaining events have to be evaluated again and another event with the highest priority is chosen. This process repeats itself until no further events to be executed are left. The slightly simplified algorithm for event processing at a specific timepoint is shown in Figure~3.
 
-\subsection{Calculation of the derivatives for a certain time point}
+\subsection*{Calculation of the derivatives for a certain time point}
 For given values $\vec{Q}$ at a time point the curring vector of derivatives is calculated as follows: First all derivatives in the vector $\dot{\vec{Q}}$ are set to zero. Then the rate rules are processed, which can change $\dot{\vec{Q}}$. After that for each reaction the velocity, which depends on $\vec{Q}$, is computed with the help of the syntax graph. Then the derivatives of all species that participate in the current reaction need to be updated (also see Figure~4).
 
-\subsection{Integrated calculation for a certain time step including event processing}
+\subsection*{Integrated calculation for a certain time step including event processing}
 The Rosenbrock solver is the solver that can adapt its step size if events are happening (see Figure~5). For a certain time begin and time end and a vector $\vec{Q}$ it determines a new vector at a time point that is determined by the current adaptive step size. It refers to the already described calculation of the derivatives for a certain time point in this step.
 
 After that the events and the assignment rules are processed at the new time point. If this last step causes a change in $\vec{Q}$, the adaptive step size is decreased and the calculation is repeated until the minimum step size is reached or the processing of events and rules does not change $\vec{Q}$ any more. So the time at which an event happens is precisely determined.
@@ -569,7 +569,7 @@ After that the events and the assignment rules are processed at the new time poi
 \TODO{Discuss implementation in Java}
 %Why no heap is used for events 
 
-\subsection{Application to published models}
+\subsection*{Application to published models}
 
 To illustrate the capabilities of the Simulation Core Library, two example
 networks from the BioModels database have been selected for simulation:
@@ -588,7 +588,7 @@ comprises eleven species, six reactions, and one assignment rule
 All kinetic equations within this model call specialized function definitions.
 \TODO{Figure~XXX} shows the simulation results for this model.
 
-\subsection{Comparison to existing solvers}
+\subsection*{Comparison to existing solvers}
 
 We selected all SBML-capable simulation programs, libraries, and frameworks from
 \url{http://sbml.org/SBML_Software_Guide/SBML_Software_Matrix} (October
@@ -619,7 +619,7 @@ and based on the libSBML library \cite{Bornstein2008},
 provides such a simulation routine based on the SUNDIALS differential equation
 solver.
 
-\section{Conclusions}
+\section*{Conclusions}
 The SBML implementation has successfully passed the
 SBML Test Suite (version 2.0.2) using Rosenbrock solver. The results are shown in Table~2.
 %(see
@@ -648,9 +648,9 @@ By including support for the emerging standard SED-ML, we hope to facilitate the
 exchange, archival and reproduction of simulation experiments performed using
 the Simulation Core Library.
 
-\section{Methods}
+\section*{Methods}
 
-\subsection{Implementation}
+\subsection*{Implementation}
 
 \TODO{Keep Java-specific parts here, extract general algorithm to Results
 section.}
@@ -730,7 +730,7 @@ in the \texttt{org.simulator.sedml} package that do not require direct
 dependencies on \jlibsedml{} in their code.
 
 
-\section{Availability of supporting data}
+\section*{Availability of supporting data}
 
 \TODO{Website}
 
