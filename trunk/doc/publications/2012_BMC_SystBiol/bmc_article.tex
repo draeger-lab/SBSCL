@@ -54,6 +54,7 @@
 \usepackage{ifthen}  % Conditional 
 \usepackage{multicol}   %Columns
 \usepackage[utf8]{inputenc} %unicode support
+\usepackage{pdflscape}
 %\usepackage[applemac]{inputenc} %applemac support if unicode package fails
 %\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
 \urlstyle{rm}
@@ -855,23 +856,22 @@ library.
 \TODO{Replace this table with a comparison table to other tools.}
 
   \subsection*{Table 1 - Other simulators for SBML models}
-    
+    The table shows what SBML elements are supported by other SBML simulation software. Those SBML elements are fast reactions (FR), algebraic rules (AR) and events (EV). Futhermore, we tested for some models of the SBML test suite whether the correct results are produced.
 	\par \mbox{}
-    \par
-    \mbox{
-\begin{small}
-      \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+\begin{landscape}
+      \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
 \hline
-       Name & URL & Publication& Fast Reactions & Algebraic Rules& Events & Model 966	 & Model 988	& Model 1083 & Model 1000 &Programming language	&API access & License & Native data format & Version & Release & Platform & Comments & SED-ML support\\\hline
-BioUML & http://www.biouml.org/ & \cite{Kolpakov2011}, \cite{Kolpakov2006} & & & & No & & & &Java & & open source &DML & 0.9.3 & Nov 03 2011 & Platform independent (Java) & Integrators: JVODE, DormandPrince, Radau5, Euler, Imex & Only in alpha version\\\hline
-COPASI & http://copasi.org/ & \cite{Hoops2006} & No & No & Not every feature supported & Simultaneous events not supported & Fast reactions not supported & Algebraic rules not supported	 & The model uses species reference ids in mathematical expressions. The model can currently not be imported by COPASI.&	C++ with multiple language bindings & Yes &Artistic License & CopasiML & 4.8.0	Dec 20 2011	& Windows, Linux, Mac OS X, Solaris & Deterministic integrator: LSODA	& No\\\hline
-iBioSim & http://www.async.ece.utah.edu/iBioSim/ & \cite{Myers2009} &	& & &No: could not allocate unit def (null) & Yes &  & Yes & Java & ? & ? & iBioSimModel & 2.0.0 & Aug 26 2011 & Fedora 15, Windows, Mac OS > 10.6 & Simulators: Embedded Runge-Kutta-Fehlberg (4,5) method; Embedded Runge-Kutta Prince-Dormand (8,9) method; Implicit 4th order Runge-Kutta at Gaussian points; Gear method m=2; Gear method m=1; Euler method & No\\\hline
-JSim & http://www.physiome.org/jsim/ &  \cite{Beard2012a} & Yes & & &	& & &	Wrong & Java & & open source & MML (Mathematical Modeling Language) & 2.07.0 & Jun 12 2012 & Windows, Linux, Mac OS X && No\\\hline
-JWS Online & http://jjj.biochem.sun.ac.za/index.html & \cite{Olivier2004} & & & & & & & & Java & & & JWS Online Format (*.dat) & & Online program & Supports only SBML Level 1 and Level 2. Models must be uploaded and can only be simulated online; no stand-alone version & No \\\hline
-VCell & http://www.vcell.org/ & \cite{Moraru2008}, \cite{ Loew2001} & Yes & & &Error adding features & Cannot generate math & & No rate rules supported & Java frontend C/C++ server backend & No & open source & VCML	& 5.0.0 & Nov 11 2011 & Platform independent (Java) & Requires internet connection & No\\\hline
+Name 	& FR & AR& EV &Model 966& Model 988& Model 1083 & Model 1000 &Programming language&API access & Version & Platform & Comments & SED-ML support\\\hline
+BioUML & Yes& Yes& Yes& Correct & Correct & Correct & Correct &Java &JavaScript API for parameters fitting &0.9.3 & Platform independent (Java) & Integrators: JVODE, DormandPrince, Radau5, Euler, Imex & Only in alpha version\\\hline
+COPASI &No & No & Not every feature supported &Not correct & Not correct & Not correct& Not correct&	C++ with multiple language bindings & Yes &4.8.0& Windows, Linux, Mac OS X, Solaris & & No\\\hline
+iBioSim &Yes&Yes&Yes&Correct & Correct & Correct & Correct & Java & No&2.0.0 & Fedora 15, Windows, Mac OS > 10.6 && No\\\hline
+JSim & No & Yes & No & Not correct&Not correct& Correct&	Not correct & Java & Yes &2.07.0 & Windows, Linux, Mac OS X && No\\\hline
+JWS Online &No&No&No&Not correct&Not correct&Not correct& Not correct& Java & No&& Online program & Supports only SBML Level 1 and Level 2. & No \\\hline
+LibSBMLSim &Yes& Yes & Yes& Correct&Correct & Correct & Correct & C & Yes &1.0.0 &Windows, Linux, Free BSD, Mac OS X& Only L3, L2V4 supported & No\\\hline
+VCell &Yes& No &Yes&Not correct&Not correct & Not correct & Not correct &Java frontend C/C++ server backend & No & 5.0.0 & Platform independent (Java) & Requires internet connection & No\\\hline
  \end{tabular}
-\end{small}
-      }
+\end{landscape}
+
  %Name & URL & Publication& Fast Reactions & Algebraic Rules& Events & Model 966	 & Model 988	& Model 1083 & Model 1000 &Programming language	&API access & License & Native data format & Version & Release & Platform & Comments & SED-ML support\\\hline
 %BioUML & http://www.biouml.org/ & \cite{Kolpakov2011}, \cite{Kolpakov2006} & & & & No & &&&&Java & & open source &DML & 0.9.3 & Nov 03 2011 & Platform independent (Java) & Integrators: JVODE, DormandPrince, Radau5, Euler, Imex & Only in alpha version\\\hline
 %Cain	1			http://cain.sourceforge.net/									C++ with GUI in wxPython				1.10.0	Sep 27 2011	source code distribution		No
@@ -887,6 +887,8 @@ VCell & http://www.vcell.org/ & \cite{Moraru2008}, \cite{ Loew2001} & Yes & & &E
 %PySCeS	1			http://pysces.sourceforge.net/	Olivier2005								Python		GPL				Windows, Linux	Requires Fortran	
 %SOSlib	1			http://www.tbi.univie.ac.at/~raim/odeSolver/	Machne2006								C	Yes	LGPL	SBML	1.6.0	Dec 17 2005	source code distribution		No
 %SYCAMORE	1			http://sycamore.eml.org/	Weidemann2008											SBML			Online program	Internally uses COPASI for simulation	No
+%LibSBMLSim &http://fun.bio.keio.ac.jp/software/libsbmlsim/& \cite{Moraru2008}, \cite{ Loew2001} & Yes & & &Error adding features & Cannot generate math & & No rate rules supported & Java frontend C/C++ server backend & No & open source & VCML	& 5.0.0 & Nov 11 2011 & Platform independent (Java) & Requires internet connection & 
+
 %VCell & http://www.vcell.org/ & \cite{Moraru2008}, \cite{ Loew2001} & Yes & & &Error adding features & Cannot generate math & & No rate rules supported & Java frontend C/C++ server backend & No & open source & VCML	& 5.0.0 & Nov 11 2011 & Platform independent (Java) & Requires internet connection & No\\\hline
 %XPPAUT	1			http://www.math.pitt.edu/~bard/xpp/xpp.html	Ermentrout2012		
 \subsection*{Table 2 - Simulation of the models from the SBML Test Suite (version 2.0.2) using Rosenbrock solver}
