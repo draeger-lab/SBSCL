@@ -419,8 +419,6 @@ experiments by executing SED-ML files.
 
 \section*{Results and discussion}
 
-\TODO{Describe SBML solving algorithm}
-
 The mathematical structure of a reaction network comprises a stoichiometric
 matrix $\mathbf{N}$, whose rows correspond to the reacting species $\vec{S}$
 within the system, whereas its columns represent the reactions, i.e., bio-transformations,
@@ -443,8 +441,6 @@ species at each time point of interest within the interval $[t_0, t_T]$:
 \vec{S} = \int_{t_0}^{t_T} \mathbf{N}\vec{\nu}(\vec{S}, t, \mathbf{W}, \vec{p})
 \D t\,.
 \end{equation}
-\TODO{The result of this integral is not a vector, but some kind of matrix
-(because of the time interval). How can this be formalized correctly?}
 Depending on the units of the species, the same notation can also express the
 change of the species' concentrations.
 In this simple case, solving the homogeneous ordinary
@@ -518,7 +514,7 @@ At the beginning of the simulation the values of species, parameters and
 compartments are set to the initial values given in the model.
 The initial values can also be set later by initial assignments or rules.
 All kinetic laws of the reactions, assignment rules, transformed algebraic
-rules (see below), initial assignments, event assignment rules and rate rules
+rules (see below), initial assignments, event assignments and rate rules
 are integrated into a directed acyclic syntax graph.
 This graph is then a merging of the abstract syntax trees of all those elements.
 Equivalent elements are only contained once. This significantly decreases the computation time during the simulation. An example for such a syntax graph is given in Figure~1.
@@ -601,15 +597,15 @@ We selected all SBML-capable simulation programs, libraries, and frameworks from
   \item Open-source software
   \item No dependency on commercial products that are not freely available
   (e.g., MATLAB\texttrademark{} or Mathematica\texttrademark)
-  \item Support for SBML Level 3.   
+  \item Support for SBML Level 3.   \TODO{JWS?}
 \end{itemize}
-\TODO{Table~XXX} summarizes the comparison of these programs.
+Table~1a and Table~1b summarize the comparison of these programs. Only three applications pass the four exemplary models (966, 988, 1083, 1000) of the SBML Test Suite (version 2.0.2): iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}. iBioSim does not yet support the simulation of SBML models containing the csymbol delay feature. LibSBMLSim, which is a simulation API written in C, can only read models given in SBML Level 2 Version 4 and SBML Level 3. So BioUML is the only simulation tool that passes all models of the SBML Test Suite for all levels and versions of SBML.
 
-Many stand-alone programs providing these features come with
+Many stand-alone programs providing simulation of SBML come with
 graphical user interfaces.
-For instance, the Virtual Cell \cite{Loew2001}, iBioSim \cite{Myers2009},
+For instance, the Virtual Cell \cite{Loew2001}, JSim \cite{Beard2012a}, iBioSim \cite{Myers2009},
 PottersWheel \cite{Maiwald2008}, COPASI \cite{Hoops2006}, SBToolbox2
-\cite{SBT_Schmidt2006}, or the Systems Biology Workbench with Roadrunner (SBW, \cite{Bergmann06}). 
+\cite{SBT_Schmidt2006}, JWS Online \cite{Olivier2004},or the Systems Biology Workbench with Roadrunner (SBW, \cite{Bergmann06}). 
 However, the vast majority of the internal solvers for these systems are part of
 larger software suites and can therefore not be easily integrated into custom
 programs. Some are implemented in programming languages that are either
@@ -622,10 +618,10 @@ solver.
 
 \section*{Conclusions}
 The SBML implementation has successfully passed the
-SBML Test Suite (version 2.0.2) using Rosenbrock solver. The results are shown in Table~2.
+SBML Test Suite (version 2.0.2) using Rosenbrock solver. The results are shown in Table~2. So BioUML and the Simulation Core Library are the only SBML applications that pass the whole Test Suite for all SBML levels and versions. Compared to BioUML the Simulation Core Library simulates all models of the Test Suite much faster.
 %(see
 %\href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite}):
-Furthermore, it solved 99.06\,\% of the models from the
+Furthermore, Simulation Core Library solved 99.06\,\% of the models from the
 \href{http://biomodels.net}{BioModels.net} database (release 23,
 \cite{Novere2006a}) simulating from $t=0$ to $t=10$ using Rosenbrock solver and a step size of $0.1$.
 Therefore, the Simulation Core Library is an efficient Java tool for the
@@ -652,9 +648,6 @@ the Simulation Core Library.
 \section*{Methods}
 
 \subsection*{Implementation}
-
-\TODO{Keep Java-specific parts here, extract general algorithm to Results
-section.}
 
 All the solver classes are derived from the abstract class \AbstractDESSolver{}
 (Fig.~6).
@@ -852,23 +845,37 @@ library.
 %%
 \section*{Tables}
 
-\TODO{Find criteria for a fair comparison of our approach with others.}
-\TODO{Replace this table with a comparison table to other tools.}
-
-  \subsection*{Table 1 - Other simulators for SBML models}
+  \subsection*{Table 1 a) - Other simulators for SBML models: SBML language support}
     The table shows what SBML elements are supported by other SBML simulation software. Those SBML elements are fast reactions (FR), algebraic rules (AR) and events (EV). Futhermore, we tested for some models of the SBML test suite whether the correct results are produced.
 	\par \mbox{}
 \begin{landscape}
       \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
 \hline
-Name 	& FR & AR& EV &Model 966& Model 988& Model 1083 & Model 1000 &Programming language&API access & Version & Platform & Comments & SED-ML support\\\hline
-BioUML & Yes& Yes& Yes& Correct & Correct & Correct & Correct &Java &JavaScript API for parameters fitting &0.9.3 & Platform independent (Java) & Integrators: JVODE, DormandPrince, Radau5, Euler, Imex & Only in alpha version\\\hline
-COPASI &No & No & Not every feature supported &Not correct & Not correct & Not correct& Not correct&	C++ with multiple language bindings & Yes &4.8.0& Windows, Linux, Mac OS X, Solaris & & No\\\hline
-iBioSim &Yes&Yes&Yes&Correct & Correct & Correct & Correct & Java & No&2.0.0 & Fedora 15, Windows, Mac OS > 10.6 && No\\\hline
-JSim & No & Yes & No & Not correct&Not correct& Correct&	Not correct & Java & Yes &2.07.0 & Windows, Linux, Mac OS X && No\\\hline
-JWS Online &No&No&No&Not correct&Not correct&Not correct& Not correct& Java & No&& Online program & Supports only SBML Level 1 and Level 2. & No \\\hline
-LibSBMLSim &Yes& Yes & Yes& Correct&Correct & Correct & Correct & C & Yes &1.0.0 &Windows, Linux, Free BSD, Mac OS X& Only L3, L2V4 supported & No\\\hline
-VCell &Yes& No &Yes&Not correct&Not correct & Not correct & Not correct &Java frontend C/C++ server backend & No & 5.0.0 & Platform independent (Java) & Requires internet connection & No\\\hline
+Name 	& FR & AR& EV &Model 966& Model 988& Model 1083 & Model 1000 &Comments & SED-ML\\\hline
+BioUML & Yes& Yes& Yes& Correct & Correct & Correct & Correct&& In alpha version\\\hline
+COPASI &No & No & Partial &Not correct & Not correct & Not correct& Not correct&&No\\\hline
+iBioSim &Yes&Yes&Yes&Correct & Correct & Correct & Correct &csymbol delay not supported& No\\\hline
+JSim & No & Yes & No & Not correct&Not correct& Correct&	Not correct && No\\\hline
+JWS Online &No&No&No&Not correct&Not correct&Not correct& Not correct& Supports only SBML Level 1 and Level 2. & No \\\hline
+LibSBMLSim &Yes& Yes & Yes& Correct&Correct & Correct & Correct & Only SBML L 3 and SBML L2 V4 supported & No\\\hline
+VCell &Yes& No &Yes&Not correct&Not correct & Not correct & Not correct & & No\\\hline
+ \end{tabular}
+\end{landscape}
+
+\subsection*{Table 1b) - Other simulators for SBML models: special features}
+    The table shows general properties of the other simulators for SBML.
+	\par \mbox{}
+\begin{landscape}
+      \begin{tabular}{|l|l|l|l|l|l|}
+\hline
+Name 	&Programming language&API access & Version & Platform & Comments \\\hline
+BioUML &Java &JavaScript API&0.9.3 & Platform independent (Java) &\\\hline
+COPASI &	C++ with multiple language bindings & Yes &4.8.0& Windows, Linux, Mac OS X, Solaris &\\\hline
+iBioSim &Java & No&2.0.0 & Fedora 15, Windows, Mac OS $>$ 10.6 &\\\hline
+JSim & Java & Yes &2.07.0 & Windows, Linux, Mac OS X &\\\hline
+JWS Online &Java & No&& Online program & \\\hline
+LibSBMLSim &C & Yes &1.0.0 &Windows, Linux, Free BSD, Mac OS X&\\\hline
+VCell &Java frontend, C/C++ server backend & No & 5.0.0 & Platform independent (Java) & Requires internet connection\\\hline
  \end{tabular}
 \end{landscape}
 
