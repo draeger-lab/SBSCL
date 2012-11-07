@@ -597,14 +597,14 @@ We selected all SBML-capable simulation programs, libraries, and frameworks from
   \item Open-source software
   \item No dependency on commercial products that are not freely available
   (e.g., MATLAB\texttrademark{} or Mathematica\texttrademark)
-  \item Support for SBML Level 3.   \TODO{JWS?}
+  \item Support for SBML Level 3. 
 \end{itemize}
-Table~1a and Table~1b summarize the comparison of these programs. Only three applications pass the four exemplary models (966, 988, 1083, 1000) of the SBML Test Suite (version 2.0.2): iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}. iBioSim does not yet support the simulation of SBML models containing the csymbol delay feature. LibSBMLSim, which is a simulation API written in C, can only read models given in SBML Level 2 Version 4 and SBML Level 3. So BioUML is the only simulation tool that passes all models of the SBML Test Suite for all levels and versions of SBML.
+Table~1a and Table~1b summarize the comparison of six of these programs. Only three applications pass the four exemplary models (966, 988, 1083, 1000) of the SBML Test Suite (version 2.0.2): iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}. iBioSim does not yet support the simulation of SBML models containing the csymbol delay feature. LibSBMLSim, which is a simulation API written in C, can only read models given in SBML Level 2 Version 4 and SBML Level 3. So BioUML is the only simulation tool that passes all models of the SBML Test Suite for all levels and versions of SBML.
 
 Many stand-alone programs providing simulation of SBML come with
 graphical user interfaces.
 For instance, the Virtual Cell \cite{Loew2001}, JSim \cite{Beard2012a}, iBioSim \cite{Myers2009},
-PottersWheel \cite{Maiwald2008}, COPASI \cite{Hoops2006}, SBToolbox2
+PottersWheel \cite{Maiwald2008}, COPASI \cite{Hoops2006}, SYCAMORE \cite{Weidemann2008}, SBToolbox2
 \cite{SBT_Schmidt2006}, JWS Online \cite{Olivier2004},or the Systems Biology Workbench with Roadrunner (SBW, \cite{Bergmann06}). 
 However, the vast majority of the internal solvers for these systems are part of
 larger software suites and can therefore not be easily integrated into custom
@@ -724,9 +724,20 @@ in the \texttt{org.simulator.sedml} package that do not require direct
 dependencies on \jlibsedml{} in their code.
 
 
-\section*{Availability of supporting data}
+\section*{Availability and Requirements}
+The current version of Simulation Core Library is available on the project homepage. Either the source code or a jar file with binaries can be downloaded.
 
-\TODO{Website}
+Project name: Simulation Core Library
+
+Project homepage: http://sourceforge.net/projects/simulation-core/
+
+Operating Systems: Simulation Core Library was successfully tested under Linux, Mac OS X and Windows 7.
+
+Programming Language: Java™
+
+Other Requirements: Java Runtime Environment 1.6
+
+License: LGPL version 3
 
 \bigskip
 
@@ -846,7 +857,7 @@ library.
 \section*{Tables}
 
   \subsection*{Table 1 a) - Other simulators for SBML models: SBML language support}
-    The table shows what SBML elements are supported by other SBML simulation software. Those SBML elements are fast reactions (FR), algebraic rules (AR) and events (EV). Futhermore, we tested for some models of the SBML test suite whether the correct results are produced.
+    The table shows what SBML elements are supported by other SBML simulation software. Those SBML elements are fast reactions (FR), algebraic rules (AR) and events (EV). Futhermore, we tested for some models of the SBML Test Suite whether the correct results are produced.
 	\par \mbox{}
 \begin{landscape}
       \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
@@ -856,7 +867,6 @@ BioUML & Yes& Yes& Yes& Correct & Correct & Correct & Correct&& In alpha version
 COPASI &No & No & Partial &Not correct & Not correct & Not correct& Not correct&&No\\\hline
 iBioSim &Yes&Yes&Yes&Correct & Correct & Correct & Correct &csymbol delay not supported& No\\\hline
 JSim & No & Yes & No & Not correct&Not correct& Correct&	Not correct && No\\\hline
-JWS Online &No&No&No&Not correct&Not correct&Not correct& Not correct& Supports only SBML Level 1 and Level 2. & No \\\hline
 LibSBMLSim &Yes& Yes & Yes& Correct&Correct & Correct & Correct & Only SBML L 3 and SBML L2 V4 supported & No\\\hline
 VCell &Yes& No &Yes&Not correct&Not correct & Not correct & Not correct & & No\\\hline
  \end{tabular}
@@ -873,7 +883,6 @@ BioUML &Java &JavaScript API&0.9.3 & Platform independent (Java) &\\\hline
 COPASI &	C++ with multiple language bindings & Yes &4.8.0& Windows, Linux, Mac OS X, Solaris &\\\hline
 iBioSim &Java & No&2.0.0 & Fedora 15, Windows, Mac OS $>$ 10.6 &\\\hline
 JSim & Java & Yes &2.07.0 & Windows, Linux, Mac OS X &\\\hline
-JWS Online &Java & No&& Online program & \\\hline
 LibSBMLSim &C & Yes &1.0.0 &Windows, Linux, Free BSD, Mac OS X&\\\hline
 VCell &Java frontend, C/C++ server backend & No & 5.0.0 & Platform independent (Java) & Requires internet connection\\\hline
  \end{tabular}
@@ -899,18 +908,18 @@ VCell &Java frontend, C/C++ server backend & No & 5.0.0 & Platform independent (
 %VCell & http://www.vcell.org/ & \cite{Moraru2008}, \cite{ Loew2001} & Yes & & &Error adding features & Cannot generate math & & No rate rules supported & Java frontend C/C++ server backend & No & open source & VCML	& 5.0.0 & Nov 11 2011 & Platform independent (Java) & Requires internet connection & No\\\hline
 %XPPAUT	1			http://www.math.pitt.edu/~bard/xpp/xpp.html	Ermentrout2012		
 \subsection*{Table 2 - Simulation of the models from the SBML Test Suite (version 2.0.2) using Rosenbrock solver}
-The table shows for all SBML levels and versions the number of tested models and the total running times of the tests. \par \mbox{}
+The table shows for all SBML levels and versions the number of tested models and the total running times of the tests. An Intel\textsuperscript{\textregistered} Core\textsuperscript{\texttrademark} i5 CPU with 3.33 GHz  and 4 GB RAM was used with Windows 7 (Version 6.1.7600) as operating system.\par \mbox{}
 \par
     \mbox{
 \begin{tabular} {|c|c|c|c|c|}
 \hline
 Level & Version & Models & Correct simulations & Total running time\\\hline
-1&2&252&252&2.1 s\\ \hline
-2&1&885&885&6.6 s\\ \hline
-2&2&1039&1039&6.4 s\\ \hline
-2&3&1039&1039&6.2 s\\ \hline
-2&4&1041&1041&5.8 s\\ \hline
-3&1&1075&1075&59.8 s\\ \hline
+1&2&252&252&1.1 s\\ \hline
+2&1&885&885&3.6 s\\ \hline
+2&2&1039&1039&3.3 s\\ \hline
+2&3&1039&1039&3.2 s\\ \hline
+2&4&1041&1041&3.2 s\\ \hline
+3&1&1075&1075&34.3 s\\ \hline
 \end{tabular}
 }
 
@@ -924,7 +933,7 @@ Level & Version & Models & Correct simulations & Total running time\\\hline
 
 \section*{Additional Files}
   \subsection*{Additional file 1 --- User Guide}
-    \TODO{Briefly describe the content of the user guide.}
+    The user guide shows how to read in a model and how to conduct a simulation afterwards.
 
 \end{bmcformat}
 \end{document}
