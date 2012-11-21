@@ -16,6 +16,7 @@
 \tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
     minimum height=2em]
     
+\begin{figure}
 \begin{tikzpicture}[node distance = 2cm, auto]
     % Place nodes
     \node [cloud] (start) {Start};
@@ -25,7 +26,7 @@
     \node [block,below of=initLoop] (reaction)
  {v:=computeReactionVelocity\\(reaction[i], $\vec{Q}$, graph)};
     \node [block,below of=reaction] (updateX)
-{$\dot{\vec{Q}}$[speciesIndex]:=\\$\dot{\vec{Q}}$'[speciesIndex] + stoich $\cdot$ v\\
+{$\dot{\vec{Q}}$[speciesIndex]:=\\$\dot{\vec{Q}}$[speciesIndex] + stoich $\cdot$ v\\
 for all species in reaction[i]};
     \node [block, below of=updateX] (increase) {$i:=i+1$};
     \node [decision, right of=increase, node distance=8cm] (endOfLoop) {$i>\#reactions$};
@@ -41,6 +42,6 @@ for all species in reaction[i]};
     \path [line] (endOfLoop) |- node{yes} (stop);
     \path [line] (endOfLoop) |- node{no} (reaction);
 \end{tikzpicture}
-
+\end{figure}
 
 \end{document}
