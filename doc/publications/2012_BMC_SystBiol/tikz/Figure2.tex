@@ -18,13 +18,13 @@
 \tikzstyle{io} = [trapezium,trapezium left angle=70,trapezium right angle=-70,minimum height=0.6cm, draw, fill=blue!20, 
 text width=8em, text badly centered, node distance=3cm, inner sep=0pt,minimum height=2em]
 
-    
+\begin{figure}
 \begin{tikzpicture}[node distance = 2cm, auto]
     % Place nodes
 	\node [cloud] (start) {Start};
 	\node [block, below of=start] (graph) {Create bipartite graph and greedy matching};
 	\node [block, below of=graph] (findpaths) {Find augmenting paths};
-	\node [decision, below of=findpaths] (matching?) {At least one path available?};
+	\node [decision, below of=findpaths, node distance=3cm] (matching?) {At least one path available?};
 	\node [block, left of=matching?, node distance=4.5cm] (augment) {Augment matching};
 	\node [decision, below of=matching?, node distance=3.5cm] (overdetermined?) {Model overdetermined?};
 	\node [block, below of=overdetermined?, node distance=3cm] (i0) {i:=0};
@@ -55,6 +55,7 @@ text width=8em, text badly centered, node distance=3cm, inner sep=0pt,minimum he
 	\path [line] (exception) |- (stop);
 
 \end{tikzpicture}
+\end{figure}
 
 
 \end{document}
