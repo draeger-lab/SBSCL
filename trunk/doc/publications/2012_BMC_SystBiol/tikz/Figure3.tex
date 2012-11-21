@@ -16,7 +16,8 @@
 \tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
     minimum height=2em]
 \tikzstyle{blank} = [coordinate]
-    
+ 
+\begin{figure}   
 \begin{tikzpicture}[node distance = 2cm, auto]
     % Place nodes
     \node [cloud] (start) {Start};
@@ -70,6 +71,6 @@
     \path [line] (processEvent) -| (update);
     \path [line] (update) |- (removeEvents);
 \end{tikzpicture}
-
+\end{figure}
 
 \end{document}
