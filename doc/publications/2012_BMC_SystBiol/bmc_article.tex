@@ -867,18 +867,19 @@ library.
 \section*{Tables}
 
   \subsection*{Table 1 a) - Other simulators for SBML models: SBML language support}
-    The table shows what SBML elements are supported by other SBML simulation software. Those SBML elements are fast reactions (FR), algebraic rules (AR) and events (EV). Futhermore, we tested for some models of the SBML Test Suite whether the correct results are produced.
+    The table shows what SBML elements (fast reactions, algebraic rules, events) are supported by other SBML simulation software and whether all models of the SBML Test Suite are solved correctly. 
 	\par \mbox{}
 \begin{landscape}
       \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
 \hline
-Name 	& FR & AR& EV &Model 966& Model 988& Model 1083 & Model 1000 &Comments & SED-ML\\\hline
-BioUML & Yes& Yes& Yes& Correct & Correct & Correct & Correct&& In alpha version\\\hline
-COPASI &No & No & Partial &Not correct & Not correct & Not correct& Not correct&&No\\\hline
-iBioSim &Yes&Yes&Yes&Correct & Correct & Correct & Correct &csymbol delay not supported& No\\\hline
-JSim & No & Yes & No & Not correct&Not correct& Correct&	Not correct && No\\\hline
-LibSBMLSim &Yes& Yes & Yes& Correct&Correct & Correct & Correct & Only SBML L 3 and SBML L2 V4 supported & No\\\hline
-VCell &Yes& No &Yes&Not correct&Not correct & Not correct & Not correct & & No\\\hline
+Name 	& Fast reactions & Algebraic rules& Events &Complete SBML Test Suite solved correctly&SED-ML\\\hline
+BioUML & Yes& Yes& Yes&Yes&In alpha version\\\hline
+COPASI &No & No & Partial &No&No\\\hline
+iBioSim &Yes&Yes&Yes&No& No\\\hline
+JSim & No & Yes & No &No& No\\\hline
+LibSBMLSim &Yes& Yes & Yes&Only for SBML L 3 and SBML L2 V4& No\\\hline
+VCell &Yes& No &Yes&No& No\\\hline
+Systems Biology Simulation Core Library &Yes& Yes &Yes&Yes& Yes\\\hline
  \end{tabular}
 \end{landscape}
 
@@ -895,6 +896,7 @@ iBioSim &Java & No&2.0.0 & Fedora 15, Windows, Mac OS $>$ 10.6 &\\\hline
 JSim & Java & Yes &2.07.0 & Windows, Linux, Mac OS X &\\\hline
 LibSBMLSim &C & Yes &1.0.0 &Windows, Linux, Free BSD, Mac OS X&\\\hline
 VCell &Java frontend, C/C++ server backend & No & 5.0.0 & Platform independent (Java) & Requires internet connection\\\hline
+Systems Biology Simulation Core Library &Java & Yes & 1.0 & Platform independent (Java) &\\\hline
  \end{tabular}
 \end{landscape}
 
