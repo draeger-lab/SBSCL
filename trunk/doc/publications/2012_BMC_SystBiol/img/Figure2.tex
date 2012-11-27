@@ -2,6 +2,7 @@
 
 \usepackage[latin1]{inputenc}
 \usepackage{tikz}
+\usepackage[papersize={12.3cm,23.5cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
 \usetikzlibrary{shapes,arrows}
 \begin{document}
 \pagestyle{empty}
@@ -33,7 +34,7 @@ text width=8em, text badly centered, node distance=3cm, inner sep=0pt,minimum he
 	\node [block, left of=solve, node distance=4.5cm] (i++) {i:=i+1};
 	\node [io, below of=solve, node distance=2cm] (newassignment) {New assignment rule};
 
-	\node [decision, below of=newassignment, node distance=2cm] (rulesleft?) {i=\#algebraic rules?};
+	\node [decision, below of=newassignment, node distance=2cm] (rulesleft?) {i=\#\\algebraic rules?};
 	\node [cloud, below of=rulesleft?, node distance=2.5cm] (stop) {Stop};
 
 

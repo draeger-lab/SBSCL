@@ -17,8 +17,8 @@
 %%                                     %%
 %% Uses:                               %%
 %% cite.sty, url.sty, bmc_article.cls  %%
-%% ifthen.sty. multicol.sty		   %%
-%%				      	   %%
+%% ifthen.sty. multicol.sty		       %%
+%%				      	               %%
 %%                                     %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -204,9 +204,8 @@ commentstyle=\ttfamily\itshape\color{forrestgreen}
 %%                                          %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title{The Simulation Core Algorithm and its implementation for numerical
-computation in systems biology}
- 
+\title{The systems biology Simulation Core Algorithm and its implementation}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                          %%
 %% Enter the authors here                   %%
@@ -222,10 +221,8 @@ computation in systems biology}
 
 
 \author{%
-Roland Keller$^{1}$\correspondingauthor\email{Roland Keller -
-roland.keller@uni-tuebingen.de}, 
-Alexander D\"orr$^{1}$\correspondingauthor\email{Alexander D\"orr -
-alexander.doerr@uni-tuebingen.de},  
+Roland Keller$^{1}$, %\email{Roland Keller - roland.keller@uni-tuebingen.de}, 
+Alexander D\"orr$^{1}$, %\email{Alexander D\"orr - alexander.doerr@uni-tuebingen.de},  
 Akito Tabira$^{2}$, %\email{Akito Tabira - mythosil_full_throttle@i.softbank.jp}
 Akira Funahashi$^{2}$, %\email{Akira Funahashi - funa@bio.keio.ac.jp}
 Michael J. Ziller$^{3}$, %\email{Michael J. Ziller - michael_ziller@harvard.edu}
@@ -274,29 +271,34 @@ Reutlingen, Germany}
 
 \begin{abstract}
         % Do not use inserted blank lines (ie \\) until main body of text.
-Dynamic simulation of biological phenomena is a key aspect of
-research in systems biology. However, it is often difficult to use available
-implementations of numerical methods as a backend for custom-made programs.
+Dynamic simulation of models describing biological phenomena is a key aspect of
+research in systems biology. 
+This article describes an efficient and exhaustive algorithm to interpret and
+solve the differential equation systems of models encoded in Systems Biology
+Markup Language (SBML) and its implementation as part of the Simulation Core
+Library for numerical computation in systems biology.
 
-The Simulation Core Library is a community-driven project that provides a large
-collection of numerical solvers and a sophisticated interface hierarchy for the
-definition of custom differential equation systems. It is entirely
-implemented in Java\texttrademark{} without the necessity to
-include any platform-dependent wrappers or libraries, and does not depend on
-any commercial licenses.
+This library is a community-driven project that provides a large collection of
+numerical solvers and a sophisticated interface hierarchy
+for the definition of custom differential equation systems. It is hence possible
+to extend this library with additional interpreters for other systems biological
+standard formats.
+The Simulation Core Library is intended to be used as a backend for custom-made
+programs.
+It is entirely implemented in Java\texttrademark, using the JSBML project,
+without the necessity to include any platform-dependent wrappers or libraries,
+and does not depend on any commercial licenses.
 %, and can be used on every operating system for which a JVM
 %is available.
-It already includes an efficient and exhaustive implementation of methods to
-interpret the content of models encoded in SBML using the JSBML project.
 To demonstrate its capabilities, it has been tested with the
 entire SBML Test Suite and %also been used to simulate 
 all models of BioModels Database.
+
 Source code, binaries, and documentation can be freely obtained under the terms
 of the LGPL version~3 from the website
 \href{http://sourceforge.net/projects/simulation-core/}{http://sourceforge.net/projects/simulation-core/}.
-
-Contact:
-\href{mailto:simulation-core-development@lists.sourceforge.net}{simulation-core-development@lists.sourceforge.net}
+Feature requests, bug reports, or any further discussion can be directed to the mailing list
+\href{mailto:simulation-core-development@lists.sourceforge.net}{simulation-core-development@lists.sourceforge.net}.
 %
 %\section{Supplementary information:}
 % TODO: Provide additional material
@@ -336,8 +338,8 @@ Contact:
 %%
 \section*{Background}
 
-\TODO{More explanation why this is needed and comparison to other existing
-approaches.}
+\TODO{Is more explanation why this is needed and comparison to other existing
+approaches necessary?}
 
 As part of the movement towards quantitative biology, modeling, 
 simulation, and computer analysis of biological networks have become integral
@@ -361,7 +363,7 @@ Software libraries for reading and manipulating the content
 of these formats are also available \cite{Bornstein2008, Miller2010,
 Draeger2011b} and a large variety of programs supports these model formats.
 
-\TODO{Describe and cite genome-scale models and their size. Can our solver also
+\TODO{Should we describe and cite genome-scale models and their size. Can our solver also
 work with large-scale models such as HepatoNet1?}
 
 The models encoded in these formats can be interpreted in terms of differential
@@ -375,7 +377,7 @@ Althought the language specifications of SBML \cite{Hucka2001, Hucka2003,
 Finney2003a, Finney2006, Hucka2007, Hucka2008, Hucka2010a} 
 and CellML \cite{Cuellar2006} describe the semantics of models in these formats
 and their interpretation, the algorithmic implementation is still not
-straightforward. 
+straightforward.
 
 Both communities offer standardized and manually derived benchmark test in order
 to evaluate the quality of simulation results, because it has been recognized that in many cases
@@ -389,7 +391,7 @@ language. The algorithm described in this paper is, however, not limited to any
 particular programing language. It is also important to note that the
 interpretation of these models must be strictly separated from the numerical
 method that solves the implicated differential equation system. In this way, a
-similar approach can also be done for CellML.
+similar approach can also be done for CellML or other formats.
 
 %
 %The modeling language SBML (Systems Biology Markup Language,
@@ -409,9 +411,8 @@ similar approach can also be done for CellML.
 %
 %
 The Simulation Core Library presented here is a platform-independent,
-well-tested alternative.
-This generic library is completely decoupled from any graphical user interface
-and can therefore easily be integrated into third-party programs.
+well-tested generic library that is completely decoupled from any graphical
+user interface and can therefore easily be integrated into third-party programs.
 It comprises several Ordinary Differential Equation (ODE)
 solvers and an interpreter for SBML models. It is the first simulation library
 based on JSBML \cite{Draeger2011b}. 
@@ -457,11 +458,12 @@ In this simple case, solving the homogeneous ordinary
 differential equation system~\ref{eq:SpeciesChange} can be done in a
 straightforward way using many (numerical) differential equation solvers.
 The non-linear form of the kinetic equations in the vector function $\vec{\nu}$
-constitute the major difficulty for this endeavor and are often the reason why
+constitutes the major difficulty for this endeavor and is often the reason why
 an analytical solution of these systems is not possible or very hard to achieve.
 Generally, differential equation systems describing biological networks are,
 however, inhomogenious systems with a higher complexity.
-Systems encoded in SBML can be seen as
+Solving systems encoded in SBML can be seen as computing the solution of the following
+equation:
 \begin{equation}
 \vec{Q} = \int_{t_0}^{t_T} \mathbf{N}\vec{\nu}(\vec{Q}, t, \mathbf{W},
 \vec{p})\D t + \int_{t_0}^{t_T} \vec{g}(\vec{Q})\D t + \vec{e}(\vec{Q}) + \vec{r}(\vec{Q})\,.
@@ -472,7 +474,7 @@ compartments $\vec{C}$, amounts (or concentrations) of reacting species
 $\vec{S}$, and the values of all global model parameters $\vec{P}$.
 It should be noted that these models may contain local parameters $\vec{p}$ that
 influence the reaction velocities, but which are not part of the global parameter
-vector $\vec{P}$, and hence part of $\vec{Q}$.
+vector $\vec{P}$, and hence also not part of $\vec{Q}$.
 In the general case of Equation~\ref{eq:QuantityValue}, not all species' amounts
 can be computed by integrating the transformation $\mathbf{N}\vec{\nu}$: The
 change of some model quantities may be given in form of rate rules (function
@@ -491,7 +493,7 @@ set the size of a certain compartment to half of its current size, as soon as a
 trigger condition becomes satisfied.
 An assignment rule also influences the absolute value of some model.
 A further concept of SBML models are algebraic rules, which are equations that
-must be evaluated to zero at all times during the simulation of the model.
+must evaluate to zero at all times during the simulation of the model.
 These rules can be solved to determine the values of quantities, whose values
 are not determined by other constructs.
 In this way, conservation relations or other complex interrelations can be
@@ -504,12 +506,20 @@ hence a complicated endeavor.
 In case that the system under study operates at multiple time scales, i.e., it
 contains a fast and a slow sub-system, a separation of the system is necessary
 leading to differential algebraic equations.
-Solving Equation~\ref{eq:QuantityValue} is therefore much more complicated than
-computing the solution of the simple Equation~\ref{eq:SpeciesChange} alone.
-It should be noted that a strict separation of the interpretation of the model
-and the numerical treatment of the differential equation system is necessary to
-ensure that regular numerical methods can be used to solve
-Equation~\ref{eq:QuantityValue}.
+Some species can be declared to operate at the system's boundaries, assuming a
+constant pool of their amounts or concentrations.
+Care must als be taken with respect to the units of the species, because under
+certain condition division or multiplication with the sizes of their surrounding
+compartments is necessary in order to ensure the consistent interpretation of
+the models. 
+For all these reasons, solving Equation~\ref{eq:QuantityValue} is much more 
+complicated than computing the solution of the simple Equation~\ref{eq:SpeciesChange}
+alone.
+
+From the perspective of software engineering, a strict separation of the 
+interpretation of the model and the numerical treatment of the differential
+equation system is necessary to ensure that regular numerical methods can be used
+to solve Equation~\ref{eq:QuantityValue}.
 In order to efficiently compute this solution, multiple pre-processing steps are
 required, such as the conversion of algebraic rules into assignment rules, or
 avoiding repeated re-computation of intermediate results.
@@ -521,34 +531,37 @@ numerical solvers.
 \subsection*{Initialization}
 
 At the beginning of the simulation the values of species, parameters and
-compartments are set to the initial values given in the model.
-The initial values can also be set later by initial assignments or rules.
+compartments are set to the initial values as given in the model.
 All kinetic laws of the reactions, assignment rules, transformed algebraic
 rules (see below), initial assignments, event assignments and rate rules
 are integrated into a directed acyclic syntax graph.
-This graph is then a merging of the abstract syntax trees of all those elements.
-Equivalent elements are only contained once. This significantly decreases the computation time during the simulation. An example for such a syntax graph is given in Figure~1.
+This graph is hence the result of merging of the abstract syntax trees of
+all those elements.
+Equivalent elements are only contained once.
+This significantly decreases the computation time needed for the
+evaluation of these syntax trees during the simulation.
+An example for such a syntax graph is given in Figure~1.
 
 After the creating of the abstract syntax graph, the initial assignments, and the
 assignment rules (including transformed algebraic rules) are processed.
-So the initial values that are given in rules are also set now.
+Deviating initial values defined by initial assignments and are now assigned.
 
 
 \subsection*{Solving algebraic rules}
-In order to deal with algebraic rules in a SBML model, they have to be rewritten in terms
-of assignment rules. In every equation of an algebraic rule, there should be at least one variable, 
-whose value is not yet defined through other elements in model. This variable has to be determined 
+In order to deal with algebraic rules in an SBML model, these have to be converted to assignment rules.
+In every equation of an algebraic rule, there should be at least one variable, 
+whose value is not yet defined through other equations in model. This variable has to be determined 
 for the purpose of interpreting the regarding algebraic rule. 
-At first a bipartite graph according to the SBML specifications is generated. This graph is used to 
+At first, a bipartite graph according to the SBML specifications is generated. This graph is used to 
 compute a matching, using the algorithm from Hopcroft and Karp
 \cite{hopcroft1973n}. The initial greedy matching is extended with the use of augmenting paths. This process is
 repeated until no more augmenting paths can be found. Per definition, this results in a maximal matching. 
 As stated in the SBML specifications, if any equation vertex remains unconnected after augmenting the 
 matching as far as possible, the model is considered overdetermined and thus is not a valid SBML model. 
 But if we are indeed looking at a valid SBML model, every assignment rule is converted into an algebraic rule. 
-Therefore the MathML expression in SBML is transformed into an equation with a left-hand side. The left-hand 
-side is represented by the respective variable vertex the considered algebraic rule has been matched to.
-The described algorithm is also displayed in Figure~2.
+To this end, the mathematical expression is transformed into an equation with the target variable on its left-hand side.
+The left-hand side is represented by the respective variable vertex, to which the considered algebraic rule has been matched.
+Figure~2 displays the described algorithm in form of a flow chart.
 
 
 \subsection*{Event handling}
@@ -573,7 +586,7 @@ The Rosenbrock solver is the solver that can adapt its step size if events are h
 
 After that the events and the assignment rules are processed at the new time point. If this last step causes a change in $\vec{Q}$, the adaptive step size is decreased and the calculation is repeated until the minimum step size is reached or the processing of events and rules does not change $\vec{Q}$ any more. So the time at which an event happens is precisely determined.
 
-\TODO{Discuss implementation in Java}
+\TODO{Discuss implementation in Java, i.e., explain the result, the Simulation Core Library: Where to download and some other details, performance etc.}
 %Why no heap is used for events 
 
 \subsection*{Application to published models}
@@ -660,7 +673,7 @@ the Simulation Core Library.
 \subsection*{Implementation}
 
 All the solver classes are derived from the abstract class \AbstractDESSolver{}
-(Fig.~6).
+(Figure~6).
 Several solvers of the Apache Commons Math library (version 3.0) are integrated
 with the help of wrapper classes. Numerical methods and the actual differential
 equation systems are strictly separated. The class \MultiTable{} stores the
@@ -743,7 +756,7 @@ Project homepage: http://sourceforge.net/projects/simulation-core/
 
 Operating Systems: Simulation Core Library was successfully tested under Linux, Mac OS X and Windows 7.
 
-Programming Language: Java™
+Programming Language: Java\texttrademark{}
 
 Other Requirements: Java Runtime Environment 1.6
 
@@ -753,7 +766,7 @@ License: LGPL version 3
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Author's contributions}
-   RK and AlD contributed equally.
+RK and AlD contributed equally and declare shared first authorship.
 
     
 
@@ -887,7 +900,7 @@ Systems Biology Simulation Core Library &Yes& Yes &Yes&Yes& Yes\\\hline
     The table shows general properties of the other simulators for SBML.
 	\par \mbox{}
 \begin{landscape}
-      \begin{tabular}{|l|l|l|l|l|l|}
+\begin{tabular}{|l|l|l|l|l|l|}
 \hline
 Name 	&Programming language&API access & Version & Platform & Comments \\\hline
 BioUML &Java &JavaScript API&0.9.3 & Platform independent (Java) &\\\hline
@@ -898,6 +911,7 @@ LibSBMLSim &C & Yes &1.0.0 &Windows, Linux, Free BSD, Mac OS X&\\\hline
 VCell &Java frontend, C/C++ server backend & No & 5.0.0 & Platform independent (Java) & Requires internet connection\\\hline
 Systems Biology Simulation Core Library &Java & Yes & 1.0 & Platform independent (Java) &\\\hline
  \end{tabular}
+ 
 \end{landscape}
 
  %Name & URL & Publication& Fast Reactions & Algebraic Rules& Events & Model 966	 & Model 988	& Model 1083 & Model 1000 &Programming language	&API access & License & Native data format & Version & Release & Platform & Comments & SED-ML support\\\hline
