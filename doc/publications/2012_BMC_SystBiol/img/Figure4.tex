@@ -2,7 +2,7 @@
 
 \usepackage[latin1]{inputenc}
 \usepackage{tikz}
-\usepackage[papersize={12cm,18cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
+\usepackage[papersize={12cm,16cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
 \usetikzlibrary{shapes,arrows}
 \begin{document}
 \pagestyle{empty}
@@ -21,27 +21,22 @@
 \begin{tikzpicture}[node distance = 2cm, auto]
     % Place nodes
     \node [cloud] (start) {Start};
-    \node [block, below of=start] (init) {$\dot{\vec{Q}}$[i]=0\\for all i};
-    \node [block, below of=init] (rateRules) {$\dot{\vec{Q}}$:=ProcessRateRules($\vec{Q}$,t)};
-    \node [block, below of=rateRules] (initLoop) {i:=1};
-    \node [block,below of=initLoop] (reaction)
- {v:=computeReactionVelocity\\(reaction[i], $\vec{Q}$, graph)};
-    \node [block,below of=reaction] (updateX)
-{$\dot{\vec{Q}}$[speciesIndex]:=\\$\dot{\vec{Q}}$[speciesIndex] + stoich $\cdot$ v\\
-for all species in reaction[i]};
-    \node [block, below of=updateX] (increase) {$i:=i+1$};
-    \node [decision, right of=increase, node distance=8cm] (endOfLoop) {$i>\#reactions$};
+    \node [block, below of=start] (rateRules) {$\dot{\vec{Q}} := \vec{g}(\vec{Q}, t)$};
+    \node [block, below of=rateRules] (initLoop) {$i := 1$};
+    \node [block,below of=initLoop] (reaction) {$\nu_i := \mathrm{velocity}(R_i, \vec{Q}, \mathbf{N})$};
+    \node [block,below of=reaction] (updateX) {for each species $s$ in $R_i$:\\$\dot{Q}_s := \dot{Q_s} + n_{is} \cdot \nu_i$};
+    \node [block, below of=updateX] (increase) {$i := i + 1$};
+    \node [decision, right of=increase, node distance=8cm] (endOfLoop) {$i > |R|$};
     \node [cloud, below of=increase, node distance=5cm] (stop) {Stop};
     % Draw edges
-    \path [line] (start) -- (init);
-    \path [line] (init) -- (rateRules);
+    \path [line] (start) -- (rateRules);
     \path [line] (rateRules) -- (initLoop);
     \path [line] (initLoop) -- (reaction);
     \path [line] (reaction) -- (updateX);
     \path [line] (updateX) -- (increase);
     \path [line] (increase) -- (endOfLoop);
-    \path [line] (endOfLoop) |- node{yes} (stop);
-    \path [line] (endOfLoop) |- node{no} (reaction);
+    \path [line] (endOfLoop) |- node{Yes} (stop);
+    \path [line] (endOfLoop) |- node{No} (reaction);
 \end{tikzpicture}
 \end{figure}
 
