@@ -466,7 +466,8 @@ Solving systems encoded in SBML can be seen as computing the solution of the fol
 equation:
 \begin{equation}
 \vec{Q} = \int_{t_0}^{t_T} \mathbf{N}\vec{\nu}(\vec{Q}, t, \mathbf{W},
-\vec{p})\D t + \int_{t_0}^{t_T} \vec{g}(\vec{Q})\D t + \vec{e}(\vec{Q}) + \vec{r}(\vec{Q})\,.
+\vec{p})\D t + \int_{t_0}^{t_T} \vec{g}(\vec{Q}, t)\D t + \vec{e}(\vec{Q}, t) +
+\vec{r}(\vec{Q}, t)\,.
 \label{eq:QuantityValue}
 \end{equation}
 The vector $\vec{Q}$ of quantities contains the sizes of the
@@ -478,16 +479,16 @@ vector $\vec{P}$, and hence also not part of $\vec{Q}$.
 In the general case of Equation~\ref{eq:QuantityValue}, not all species' amounts
 can be computed by integrating the transformation $\mathbf{N}\vec{\nu}$: The
 change of some model quantities may be given in form of rate rules (function
-$\vec{g}(\vec{Q})$) that must be integrated separately.
+$\vec{g}(\vec{Q}, t)$) that must be integrated separately.
 Species, whose amounts are determined by rate rules, must not participate in any
 reaction and do hence not have a corresponding entry in the stoichiometric
 matrix $\mathbf{N}$.
 Thereby, a rate rule directly gives the rate of change of some quantity:
 \begin{equation}
-\frac{\D}{\D t}\vec{Q} = g(\vec{Q})\,.
+\frac{\D}{\D t}\vec{Q} = \vec{g}(\vec{Q}, t)\,.
 \end{equation}
-In addition, SBML introduces the concept of events $\vec{e}(\vec{Q})$ and
-$\vec{r}(\vec{Q})$ assignment rules.
+In addition, SBML introduces the concept of events $\vec{e}(\vec{Q}, t)$ and
+$\vec{r}(\vec{Q}, t)$ assignment rules.
 An event can directly manipulate the value of a quantity, for instance,
 set the size of a certain compartment to half of its current size, as soon as a
 trigger condition becomes satisfied.
@@ -500,7 +501,7 @@ In this way, conservation relations or other complex interrelations can be
 expressed in a very convenient way.
 With the help of a bipartite matching and a subsequent conversion it is possible
 to turn algebraic rules into assignment rules and hence include these into the
-term $\vec{r}(\vec{Q})$.
+term $\vec{r}(\vec{Q}, t)$.
 Such a transformation, however, requires symbolic computation and is
 hence a complicated endeavor.
 In case that the system under study operates at multiple time scales, i.e., it
@@ -565,26 +566,45 @@ Figure~2 displays the described algorithm in form of a flow chart.
 
 
 \subsection*{Event handling}
-With the release of SBML Level 3 Version 1, the processing of event has been raised to a higher level of 
-complexity. Before 3.1 it was sufficient to determine, when an events triggers and when it is performed 
-due to a possible delay. Since 3.1, only some language elements have been added but with an huge 
-influence on the handling of events. Therefore the crucial part is now to coordinate the execution of events. 
-The order in which events have been processed used to be at programmers discretion, but now it is given 
-by the event's priority. Furthermore there exists the option to cancel an event during the interval its trigger 
-has been activated and the time the scheduler picks the event for execution. 
+An event in SBML is a function that is executed depending on whether a trigger condition switches from false to
+true.
+In addition, a delay may postpone the actual execution of the event assignments to a later point in time.
+With the release of SBML Level~3 Version~1, the processing of events has been raised to a higher level of complexity.
+Before 3.1 it was sufficient to determine, when an events triggers and when its assignmens are to be exceuted.
+In 3.1 just a few new language elements have been added but with an huge impact on how to handle events:
+The order in which events have been processed used to be at programmers discretion, but now it is given by the event's priority.
+Coordinating the sequence, in which events are to be executed, has now become the crucial part of event handling. 
+Furthermore, there exists the option to cancel an event during the time since its trigger 
+has been activated and the actual time when the scheduler picks the event for execution.
 
-For every time step, the events to be executed are a union of two subsets of the set containing all events.
-On the one hand there are the events whose trigger has been activated at the given time and which are without delay. On the other hand there are events that triggered at some time point before and whose delay reaches till the current point in time. For every element of the resulting set of events the priority is evaluated.
-An event with the highest priority is randomly chosen to be executed. All other events
-could be handled in the same manner. However, the assignment of the first event can change the priority or even the trigger of the events that have not been executed yet. Therefore the trigger of non persistent events and the priority of the remaining events have to be evaluated again and another event with the highest priority is chosen. This process repeats itself until no further events to be executed are left. The slightly simplified algorithm for event processing at a specific timepoint is shown in Figure~3.
+For every time step, the events to be executed are a union of two subsets of the set of all events.
+On the one hand, there are the events, whose trigger has been activated at the given time and which are to be evaluated without delay.
+On the other hand, there are events that triggered at some time point before, and whose delay reaches till the current point in time.
+For every element of the resulting set of events their priority rule must be evaluated.
+An event with the highest priority is randomly chosen for execution.
+All other events could be handled in the same manner.
+However, the assignment of the first event can change the priority or even the trigger condition of the events that have not yet been executed.
+Therefore, the trigger of non persistent events and the priority of the remaining events have to be evaluated again.
+In this case, another event that has now the highest priority is chosen.
+This process repeats itself until no further events to be executed are left.
+Figure~3 shows the slightly simplified algorithm for event processing at a specific point in time.
 
-\subsection*{Calculation of the derivatives for a certain time point}
-For given values $\vec{Q}$ at a time point the curring vector of derivatives is calculated as follows: First all derivatives in the vector $\dot{\vec{Q}}$ are set to zero. Then the rate rules are processed, which can change $\dot{\vec{Q}}$. After that for each reaction the velocity, which depends on $\vec{Q}$, is computed with the help of the syntax graph. Then the derivatives of all species that participate in the current reaction need to be updated (also see Figure~4).
+\subsection*{Calculation of the derivatives for a certain point in time}
+For given values $\vec{Q}$ at a point in time $t$ the currend vector of derivatives is calculated as follows:
+First all derivatives in the vector $\dot{\vec{Q}}$ are set to zero.
+Then the rate rules are processed, which can change $\dot{\vec{Q}}$.
+After that for each reaction the velocity, which depends on $\vec{Q}$ at time $t$, is computed with the help of the syntax graph.
+Then the derivatives of all species that participate in the current reaction need to be updated (see the flow chart in Figure~4).
 
 \subsection*{Integrated calculation for a certain time step including event processing}
-The Rosenbrock solver is the solver that can adapt its step size if events are happening (see Figure~5). For a certain time begin and time end and a vector $\vec{Q}$ it determines a new vector at a time point that is determined by the current adaptive step size. It refers to the already described calculation of the derivatives for a certain time point in this step.
+The Rosenbrock solver is a solver that can adapt its step size if events are happening (see Figure~5).
+For a certain time begin and time end and a vector $\vec{Q}$ it determines a new vector at a point in time that is determined by the current adaptive step size.
+It refers to the already described calculation of the derivatives for a certain point in time in this step.
 
-After that the events and the assignment rules are processed at the new time point. If this last step causes a change in $\vec{Q}$, the adaptive step size is decreased and the calculation is repeated until the minimum step size is reached or the processing of events and rules does not change $\vec{Q}$ any more. So the time at which an event happens is precisely determined.
+After that the events and the assignment rules are processed at the new point in time.
+If this last step causes a change in $\vec{Q}$, the adaptive step size is decreased and
+the calculation is repeated until the minimum step size is reached or the processing of events and rules does not change $\vec{Q}$ any more.
+Hence, the time, at which an event takes place, is precisely determined.
 
 \TODO{Discuss implementation in Java, i.e., explain the result, the Simulation Core Library: Where to download and some other details, performance etc.}
 %Why no heap is used for events 
@@ -719,7 +739,7 @@ In addition to events, Rules are also treated during integration. Basically, the
 %currently not sure if we could solve cos(x) = 0 or similar cases.}
 %
 
-In the \SBMLinterpreter{} events are represented via an array containing an object of the class \EventInProgress{} for every event in the model. Thereby the distinction between events with and without delays is made. The major difference between both is that an event with delay can trigger multiple times before it is executed. In order to deal with such an issue, the class \SBMLEventInProgressWithDelay{} keeps track of this via the help of a list containing the time points, at which the respective event has to executed. When events trigger more than once before execution, they have to be ordered according to their delay because the delay of the very same event may vary.
+In the \SBMLinterpreter{} events are represented via an array containing an object of the class \EventInProgress{} for every event in the model. Thereby the distinction between events with and without delays is made. The major difference between both is that an event with delay can trigger multiple times before it is executed. In order to deal with such an issue, the class \SBMLEventInProgressWithDelay{} keeps track of this via the help of a list containing the points in time, at which the respective event has to executed. When events trigger more than once before execution, they have to be ordered according to their delay because the delay of the very same event may vary.
 
 When the \SBMLinterpreter{} is processing events with priority, the events with the highest priority 
 are currently stored in list until one of them is selected for execution. One could argue, that all events can
@@ -730,7 +750,7 @@ method to restore the max heap characteristic after extraction is not sufficient
 
 %The simulation algorithm then proceeds as follows: For each time step, the ODE
 %solver gets the current variable values and
-%calculates the system's state for the next time point. After that, events
+%calculates the system's state for the next point in time. After that, events
 %and rules are processed, that can change the values. The modified values then
 %become the initial values for the next time step. The event processing of the
 %Rosenbrock solver
@@ -839,20 +859,35 @@ The two reactions are part of the glycolysis, the contained molecules are Fructo
 The nodes for [DHAP] and [GA3P] are only contained in the syntax graph once and connected to more than one multiplication node. It is obvious from the figure that the syntax graph is not a tree.
 
  \subsection*{Figure 2 - Algorithm for transforming algebraic rules to assignment rules}
-
-The first step is to decide whether the model is overdetermined by creating a matching of the variables. If this is not the case, every algebraic rule is solved to the matched variable, which provides the basis for the creation of an equivalent assignment rule.
+The first step is to decide whether the model is overdetermined by creating a matching of the variables.
+If this is not the case, every algebraic rule is solved to the matched variable,
+which provides the basis for the creation of an equivalent assignment rule.
 
  \subsection*{Figure 3 - Processing of events: simpflified algorithm (without delayed events)}
+The list of the events running and the inactive events whose trigger is already true are saved.
+In each iteration first the trigger of running events that are not persistent are checked.
+If the trigger of such an event has changed to false, it is removed from the list.
+The next step comprises the evaluation of the triggers of all events.
+If its trigger changes from false to true, an event is added to the running events.
+An event with its trigger changed from true to false is removed from the list of inactive events.
+After the procession of all triggers the event with the highest priority in the list of running events is chosen for execution.
+This event is then processed and afterwards the triggers of all events have to be evaluated again.
+The algorithm proceeds until the list of running events is empty.
 
-The list of the events running and the inactive events whose trigger is already true are saved. In each iteration first the trigger of running events that are not persistent are checked. If the trigger of such an event has changed to false, it is removed from the list. The next step comprises the evaluation of the triggers of all events. If its trigger changes from false to true, an event is added to the running events. An event with its trigger changed from true to false is removed from the list of inactive events. After the procession of all triggers the event with the highest priority in the list of running events is chosen for execution. This event is then processed and afterwards the triggers of all events have to be evaluated again. The algorithm proceeds until the list of running events is empty.
-
- \subsection*{Figure 4 - Calculation of the derivatives at a specific timepoint}
-
-First the vector for saving the derivatives of all quantities $\dot{\vec{Q}}$ is set to the null vector. Then the rate rules of the model are processed, which can change $\dot{\vec{Q}}$. After that for every reaction its velocity $v$ is computed. The derivatives of the species of the currently processed reaction are updated in each step adding the product of the stoichiometry and the reaction velocity.
+ \subsection*{Figure 4 - Calculation of the derivatives at a specific point in time}
+First, the vector for saving the derivatives of all quantities $\dot{\vec{Q}}$ is set to the null vector $\vec{0}$.
+Then the rate rules of the model are processed by solving the function $\vec{g}(\vec{Q}, t)$, which can change $\dot{\vec{Q}}$ in some dimensions.
+After that for every reaction $R_i$ its velocity $\nu_i$ is computed.
+The derivatives of each species (with index $s$) participating in the currently processed reaction $R_i$ are updated
+in each step adding the product of the stoichiometry $n_{is}$ and the reaction's velocity $\nu_i$.
 
  \subsection*{Figure 5 - Integrated calculation of new values for a time step including event processing}
-
-For a certain time window the Rosenbrock solver always tries to increase the time by the current adaptive step size $s$ and calculates a new vector of quantities $\vec{Q}_{res}$. After a successful step the events and rules of the model are processed. If they cause a change in $\vec{Q}$, $s$ is first decreased and then the Rosenbrock solver calculates another vector $\vec{Q}_{res}$ using this adapted step size. The precision of the event processing is therefore determined by the minimum step size $s_{min}$.
+For a certain time interval the Rosenbrock solver always tries to increase time $t$ by the current adaptive
+step size $s$ and calculates a new vector of quantities $\vec{Q}_{\mathrm{res}}$.
+After a successful step the events and rules of the model are processed.
+If theese cause a change in $\vec{Q}$, $h$ is first decreased and then the Rosenbrock solver calculates another vector $\vec{Q}_{t}$ using this adapted step size.
+The precision of the event processing is therefore determined by the minimum step size $h_{\min}$.
+The $\mathrm{adapt}$ function is defined by Rosenbrock's method \TODO{cite}.
 
   \subsection*{Figure 6 - Architecture of the Simulation Core Library
   (simplified)}
@@ -970,10 +1005,3 @@ Windows\textsuperscript{\textregistered}~7 (Version 6.1.7600) as operating syste
 
 \end{bmcformat}
 \end{document}
-
-
-
-
-
-
-
