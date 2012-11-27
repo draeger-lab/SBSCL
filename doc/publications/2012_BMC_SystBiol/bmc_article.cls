@@ -38,7 +38,7 @@
 % Corresponding Authors.
 % adds an asterisk * as a marker.
 \def\correspondingauthor{$^*$}
-\def\@corresponding{\footnotesize\correspondingauthor Corresponding author} 
+\def\@corresponding{\footnotesize\correspondingauthor Corresponding author}
 
 
 % Email.
