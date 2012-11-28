@@ -28,13 +28,13 @@ text width=8em, text badly centered, node distance=3cm, inner sep=0pt,minimum he
 	\node [decision, below of=findpaths, node distance=3cm] (matching?) {At least one path available?};
 	\node [block, left of=matching?, node distance=4.5cm] (augment) {Augment matching};
 	\node [decision, below of=matching?, node distance=3.5cm] (overdetermined?) {Model overdetermined?};
-	\node [block, below of=overdetermined?, node distance=3cm] (i0) {i:=0};
+	\node [block, below of=overdetermined?, node distance=3cm] (i0) {$i := 0$};
 	\node [block, right of=overdetermined?, node distance=4.5cm] (exception) {Throw exception};
-	\node [block, below of=i0, node distance=2.5cm] (solve) {Solve i-th algebraic rule according to matching};
-	\node [block, left of=solve, node distance=4.5cm] (i++) {i:=i+1};
+	\node [block, below of=i0, node distance=2.5cm] (solve) {Solve $i$\textsuperscript{th} algebraic rule according to matching};
+	\node [block, left of=solve, node distance=4.5cm] (i++) {$i := i + 1$};
 	\node [io, below of=solve, node distance=2cm] (newassignment) {New assignment rule};
 
-	\node [decision, below of=newassignment, node distance=2cm] (rulesleft?) {i=\#\\algebraic rules?};
+	\node [decision, below of=newassignment, node distance=2cm] (rulesleft?) {More algebraic rules?};
 	\node [cloud, below of=rulesleft?, node distance=2.5cm] (stop) {Stop};
 
 
@@ -57,6 +57,5 @@ text width=8em, text badly centered, node distance=3cm, inner sep=0pt,minimum he
 
 \end{tikzpicture}
 \end{figure}
-
 
 \end{document}
