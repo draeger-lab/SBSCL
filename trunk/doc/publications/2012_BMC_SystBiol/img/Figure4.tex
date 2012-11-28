@@ -21,12 +21,12 @@
 \begin{tikzpicture}[node distance = 2cm, auto]
     % Place nodes
     \node [cloud] (start) {Start};
-    \node [block, below of=start] (rateRules) {$\dot{\vec{Q}} := \vec{g}(\vec{Q}, t)$};
-    \node [block, below of=rateRules] (initLoop) {$i := 1$};
-    \node [block,below of=initLoop] (reaction) {$\nu_i := \mathrm{velocity}(R_i, \vec{Q}, \mathbf{N})$};
-    \node [block,below of=reaction] (updateX) {for each species $s$ in $R_i$:\\$\dot{Q}_s := \dot{Q_s} + n_{is} \cdot \nu_i$};
-    \node [block, below of=updateX] (increase) {$i := i + 1$};
-    \node [decision, right of=increase, node distance=8cm] (endOfLoop) {$i > |R|$};
+    \node [block, below of=start] (rateRules) {Compute all assignment rules:\\$\dot{\vec{Q}} := \vec{g}(\vec{Q}, t)$};
+    \node [block, below of=rateRules] (initLoop) {$j := 1$};
+    \node [block,below of=initLoop] (reaction) {Compute flux $J_j$ through $R_j$:\\$J_j := \nu_j(\vec{Q}, t, \mathbf{N}, \mathbf{W}, \vec{p})$};
+    \node [block,below of=reaction] (updateX) {for each species $i$ in $R_j$:\\$\dot{Q}_i := \dot{Q_i} + n_{ij} \cdot J_j$};
+    \node [block, below of=updateX] (increase) {$j := j + 1$};
+    \node [decision, right of=increase, node distance=8cm] (endOfLoop) {$j > |R|$};
     \node [cloud, below of=increase, node distance=5cm] (stop) {Stop};
     % Draw edges
     \path [line] (start) -- (rateRules);

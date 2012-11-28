@@ -58,6 +58,7 @@
 \usepackage{booktabs}
 \usepackage{color}
 \usepackage[table]{xcolor}
+\usepackage{nicefrac}
 
 \definecolor{royalblue}{cmyk}{.93, .79, 0, 0}
 \definecolor{lightblue}{cmyk}{.10, .017, 0, 0}
@@ -131,6 +132,7 @@
 \usepackage[english]{babel}
 %\usepackage[normalem]{ulem}
 \usepackage{xcolor}
+\usepackage{amsmath}
 
 \hyphenation{
   % TODO hypens for regular words
@@ -161,6 +163,8 @@
 \newcommand{\EventInProgress}{\texttt{Event\-In\-Progress}}
 \newcommand{\ASTNodeInterpreter}{\texttt{ASTNode\-In\-terpreter}}
 \newcommand{\SBMLEventInProgressWithDelay}{\texttt{SBML\-Event\-In\-Progress\-With\-Delay}}
+\newcommand{\true}{\emph{true}}
+\newcommand{\false}{\emph{false}}
 
 % the derivative symbol for differential equations
 \newcommand{\D}{\mathrm{d}}
@@ -437,7 +441,7 @@ in which these species participate.
 The velocities $\vec{\nu}$ of the reactions $\vec{R}$ determine the rate of
 change of the species' amounts:
 \begin{equation}
-\frac{\D}{\D t}\vec{S} = \mathbf{N}\vec{\nu}(\vec{S}, t, \mathbf{W}, \vec{p})\,.
+\frac{\D}{\D t}\vec{S} = \mathbf{N}\vec{\nu}(\vec{S}, t, \mathbf{N}, \mathbf{W}, \vec{p})\,.
 \label{eq:SpeciesChange}
 \end{equation}
 The parameter vector $\vec{p}$ contains rate constants and other, often
@@ -449,7 +453,7 @@ the reactions, e.g., competetive inhibition or physical stimulation.
 Integrating Equation~\ref{eq:SpeciesChange} yields the predicted amounts of the
 species at each time point of interest within the interval $[t_0, t_T]$:
 \begin{equation}
-\vec{S} = \int_{t_0}^{t_T} \mathbf{N}\vec{\nu}(\vec{S}, t, \mathbf{W}, \vec{p})
+\vec{S} = \int_{t_0}^{t_T} \mathbf{N}\vec{\nu}(\vec{S}, t, \mathbf{N}, \mathbf{W}, \vec{p})
 \D t\,.
 \end{equation}
 Depending on the units of the species, the same notation can also express the
@@ -465,8 +469,8 @@ however, inhomogenious systems with a higher complexity.
 Solving systems encoded in SBML can be seen as computing the solution of the following
 equation:
 \begin{equation}
-\vec{Q} = \int_{t_0}^{t_T} \mathbf{N}\vec{\nu}(\vec{Q}, t, \mathbf{W},
-\vec{p})\D t + \int_{t_0}^{t_T} \vec{g}(\vec{Q}, t)\D t + \vec{e}(\vec{Q}, t) +
+\vec{Q} = \int_{t_0}^{t_T} \mathbf{N}\vec{\nu}(\vec{Q}, t, \mathbf{N}, \mathbf{W},
+\vec{p})\D t + \int_{t_0}^{t_T} \vec{g}(\vec{Q}, t)\D t + \vec{f}_E(\vec{Q}, t) +
 \vec{r}(\vec{Q}, t)\,.
 \label{eq:QuantityValue}
 \end{equation}
@@ -475,23 +479,25 @@ compartments $\vec{C}$, amounts (or concentrations) of reacting species
 $\vec{S}$, and the values of all global model parameters $\vec{P}$.
 It should be noted that these models may contain local parameters $\vec{p}$ that
 influence the reaction velocities, but which are not part of the global parameter
-vector $\vec{P}$, and hence also not part of $\vec{Q}$.
+vector $\vec{P}$, and hence also not part of $\vec{Q}$. All vector functions terms
+may involve a delay function, i.e., an expression of the form $\mathrm{delay}(x, \tau)$
+with $\tau > 0$. In this way, it is possible to address values of $x$ computed in
+the earlier integration step at time $t - \tau$, turning Equation~\ref{eq:QuantityValue}
+into a delay differential equation.
 In the general case of Equation~\ref{eq:QuantityValue}, not all species' amounts
 can be computed by integrating the transformation $\mathbf{N}\vec{\nu}$: The
 change of some model quantities may be given in form of rate rules (function
 $\vec{g}(\vec{Q}, t)$) that must be integrated separately.
 Species, whose amounts are determined by rate rules, must not participate in any
-reaction and do hence not have a corresponding entry in the stoichiometric
-matrix $\mathbf{N}$.
-Thereby, a rate rule directly gives the rate of change of some quantity:
-\begin{equation}
-\frac{\D}{\D t}\vec{Q} = \vec{g}(\vec{Q}, t)\,.
-\end{equation}
-In addition, SBML introduces the concept of events $\vec{e}(\vec{Q}, t)$ and
+reaction and do hence have only zero-valued corresponding entries in the
+stoichiometric matrix $\mathbf{N}$.
+Thereby, the rate rule function $\vec{g}(\vec{Q}, t)$ directly gives the rate of
+change of these quantities, and returns 0 for all others.
+In addition, SBML introduces the concept of events $\vec{f}_E(\vec{Q}, t)$ and
 $\vec{r}(\vec{Q}, t)$ assignment rules.
 An event can directly manipulate the value of a quantity, for instance,
-set the size of a certain compartment to half of its current size, as soon as a
-trigger condition becomes satisfied.
+reduce the size of a certain compartment to a certain portion of its current size,
+as soon as a trigger condition becomes satisfied.
 An assignment rule also influences the absolute value of some model.
 A further concept of SBML models are algebraic rules, which are equations that
 must evaluate to zero at all times during the simulation of the model.
@@ -525,8 +531,8 @@ In order to efficiently compute this solution, multiple pre-processing steps are
 required, such as the conversion of algebraic rules into assignment rules, or
 avoiding repeated re-computation of intermediate results.
 The next sections will give a detailed explanation of the necessary steps to
-solve these systems and how to perform their numerical integration with standard
-numerical solvers.
+solve these systems and how to efficiently perform their numerical integration
+with standard numerical solvers.
 
 
 \subsection*{Initialization}
@@ -566,13 +572,13 @@ Figure~2 displays the described algorithm in form of a flow chart.
 
 
 \subsection*{Event handling}
-An event in SBML is a function that is executed depending on whether a trigger condition switches from false to
-true.
-In addition, a delay may postpone the actual execution of the event assignments to a later point in time.
+An event in SBML is a function that is executed depending on whether a trigger condition switches from \false{} to
+\true.
+In addition, a delay may postpone the actual execution of the event's assignments to a later point in time.
 With the release of SBML Level~3 Version~1, the processing of events has been raised to a higher level of complexity.
-Before 3.1 it was sufficient to determine, when an events triggers and when its assignmens are to be exceuted.
+Before 3.1 it was sufficient to determine, when an event triggers and when its assignmens are to be exceuted.
 In 3.1 just a few new language elements have been added but with an huge impact on how to handle events:
-The order in which events have been processed used to be at programmers discretion, but now it is given by the event's priority.
+The order in which events have been processed used to be at programmers discretion, but now it is given by the event's priority element.
 Coordinating the sequence, in which events are to be executed, has now become the crucial part of event handling. 
 Furthermore, there exists the option to cancel an event during the time since its trigger 
 has been activated and the actual time when the scheduler picks the event for execution.
@@ -581,74 +587,74 @@ For every time step, the events to be executed are a union of two subsets of the
 On the one hand, there are the events, whose trigger has been activated at the given time and which are to be evaluated without delay.
 On the other hand, there are events that triggered at some time point before, and whose delay reaches till the current point in time.
 For every element of the resulting set of events their priority rule must be evaluated.
-An event with the highest priority is randomly chosen for execution.
+One event is randomly chosen for execution from all events with the highest priority.
 All other events could be handled in the same manner.
 However, the assignment of the first event can change the priority or even the trigger condition of the events that have not yet been executed.
 Therefore, the trigger of non persistent events and the priority of the remaining events have to be evaluated again.
 In this case, another event that has now the highest priority is chosen.
-This process repeats itself until no further events to be executed are left.
+This process repeats itself until no further events are left to be executed.
 Figure~3 shows the slightly simplified algorithm for event processing at a specific point in time.
 
 \subsection*{Calculation of the derivatives for a certain point in time}
-For given values $\vec{Q}$ at a point in time $t$ the currend vector of derivatives is calculated as follows:
-First all derivatives in the vector $\dot{\vec{Q}}$ are set to zero.
-Then the rate rules are processed, which can change $\dot{\vec{Q}}$.
-After that for each reaction the velocity, which depends on $\vec{Q}$ at time $t$, is computed with the help of the syntax graph.
-Then the derivatives of all species that participate in the current reaction need to be updated (see the flow chart in Figure~4).
+For given values $\vec{Q}$ at a point $t$ in time the current vector of derivatives $\dot{\vec{Q}}$ is calculated as follows:
+First, the rate rules are processed $\dot{\vec{Q}} = \vec{g}(\vec{Q}, t)$. Note that function $\vec{g}$ returns 0 in all dimensions,
+in which no rate rule is defined.
+Second, the velocity $\nu_i$ of each reaction $R_i$ is computed with the help of the unified syntax graph (Figure~1 shows an example of such a graph).
+The velocity functions depend on $\vec{Q}$ at time $t$.
+During the second step the derivatives of all species that participate in the current reaction $R_i$ need to be updated (see the flowchart in Figure~4).
 
 \subsection*{Integrated calculation for a certain time step including event processing}
-The Rosenbrock solver is a solver that can adapt its step size if events are happening (see Figure~5).
-For a certain time begin and time end and a vector $\vec{Q}$ it determines a new vector at a point in time that is determined by the current adaptive step size.
-It refers to the already described calculation of the derivatives for a certain point in time in this step.
+The Rosenbrock solver is a solver that can adapt its step size $h$ if events occur (see Figure~5 for details).
+\TODO{NOT UNDERSTANDABLE: For a certain time interval $[t_{\tau}, t_{\tau + 1}]$ and the current vector $\vec{Q}$ it determines the new value of vector $\vec{Q}$ at a point in time that is determined by the current adaptive step size $h$.
+It refers to the already described calculation of the derivatives for a certain point in time in this step.}
 
-After that the events and the assignment rules are processed at the new point in time.
-If this last step causes a change in $\vec{Q}$, the adaptive step size is decreased and
-the calculation is repeated until the minimum step size is reached or the processing of events and rules does not change $\vec{Q}$ any more.
+After that the events and the assignment rules are processed at the new point in time \TODO{Which point? More precisely!}.
+If the previous step causes a change in $\vec{Q}$, the adaptive step size is decreased by setting $h$ to $\nicefrac{h}{10}$ and
+the calculation is repeated until the minimum step size is reached or the processing of events and rules does not change $\vec{Q}$ anymore.
 Hence, the time, at which an event takes place, is precisely determined.
 
-\TODO{Discuss implementation in Java, i.e., explain the result, the Simulation Core Library: Where to download and some other details, performance etc.}
-%Why no heap is used for events 
+\subsection*{A reference implementation of the algorithm as part of the Simulation Core Library}
+
+The algorithm described above has been implemented in Java\texttrademark{} and included into the Simulation Core Library.
+Figure~6 displays the software architecture of this library.
+The Simulation Core Library has been designed as part of a community project aiming to provide an extensible numerical backend for customized programs for research in computational systems biology.
+The SBML-solving algorithm is based on the data structures provided by the JSBML project \cite{Draeger2008}.
+With the help of wrapper classes, the Appache Commons Math library could be integrated into the project and provides several numerical solvers.
+In addition, the library provides an implementation of the explicit fourth order Runge-Kutta method, Rosenbrock's solver, and Euler's method.
+Each solver has a method to directly access its corresponding KiSAO (Kinetic Simulation Algorithm Ontology) term \cite{Courtot2011}.
+Due to the strict separation between numerical differential equation solvers, and the definition of the actual differential equation system, it is possible to implement support for further community standards, such as CellML \cite{Lloyd2004}.
+Many interfaces, abstract classes, and an exhaustive source code documentation in form of JavaDoc facilitate the customization of the library.
+In order to support the emerging standard MIASE (Minimal Information About a Simulation Experiment) \cite{Waltemath2011a}, the library also provides an interpreter of SED-ML files (Simulation Experiment Description Markup Language) \cite{Waltemath2011}.
+These files allow users to store the details of a simulation, including the selection and all settings of the numerical method, hence facilitating the creation of reproducible results.
+A simulation experiment can also be directly started by passing a SED-ML file to this interpreter.
+For testing purposes, the library contains a sample program that benchmarks the SBML interpreter against the entire SBML Test Suite.
+
 
 \subsection*{Application to published models}
 
-To illustrate the capabilities of the Simulation Core Library, two example
-networks from the BioModels database have been selected for simulation:
-Biomodel 206 by Wolf \emph{et al.} \cite{Wolf2000} and
-Biomodel 390 by Arnold and Nikoloski \cite{Arnold2011}.
+The Simulation Core Library has been tested on all 424 curated models from BioModels database \cite{Novere2006a} (release~23, October 2012).
+As a result, 99.06\,\% of these models could correctly be simulated.
+To illustrate the capabilities of this library, two example networks from this model repository have been arbitrarily selected for simulation:
+Biomodel 206 by Wolf \emph{et al.} \cite{Wolf2000} and Biomodel 390 by Arnold and Nikoloski \cite{Arnold2011}.
 
-The model by Wolf \emph{et al.} \cite{Wolf2000} mimics glycolytic oscillations.
-
-\TODO{Describe the precise settings how the simulation was performed: Which
-solver, how many steps, error tolerance etc.}
+The model by Wolf \emph{et al.} \cite{Wolf2000} mimics glycolytic oscillations that have been observed in yeast cells.
+The model describes how the dynamics propagate through the cellular network. Figure~7 displays the simulation results
+for the intracellular concentrations of 3-phosphogylcerate, ATP, glucose, glyceraldhyde 3-phosphate, and NAD$^+$:
+After an initial phase of approximately 15\,s all metabolites begin a steady-going rhythmic oscillation. 
 
 By comparing a large collection of previous models of the Calvin-Benson
 cycle, Arnold and Nikoloski created a quantitative consensus model that
-comprises eleven species, six reactions, and one assignment rule
-\cite{Arnold2011}.
+comprises eleven species, six reactions, and one assignment rule \cite{Arnold2011}.
 All kinetic equations within this model call specialized function definitions.
-\TODO{Figure~XXX} shows the simulation results for this model.
+Figure~8 shows the simulation results for this model.
+As in the previous test case, the simulation results reproduce the values provided by BioModels database.  
 
-\subsection*{Comparison to existing solvers}
+\subsection*{Comparison to existing solver implementations for SBML}
 
-We selected all SBML-capable simulation programs, libraries, and frameworks from
-\url{http://sbml.org/SBML_Software_Guide/SBML_Software_Matrix} (October
-8\textsuperscript{th} 2012), which satisfy the following criteria:
-\begin{itemize}
-  \item The last updated version was released after the final release of
-  the specification for SBML Level 3 Version 1 Core, i.e., October
-  6\textsuperscript{th} 2010.
-  \item Open-source software
-  \item No dependency on commercial products that are not freely available
-  (e.g., MATLAB\texttrademark{} or Mathematica\texttrademark)
-  \item Support for SBML Level 3. 
-\end{itemize}
-Table~1a and Table~1b summarize the comparison of six of these programs. Only three applications pass the four exemplary models (966, 988, 1083, 1000) of the SBML Test Suite (version 2.0.2): iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}. iBioSim does not yet support the simulation of SBML models containing the csymbol delay feature. LibSBMLSim, which is a simulation API written in C, can only read models given in SBML Level 2 Version 4 and SBML Level 3. So BioUML is the only simulation tool that passes all models of the SBML Test Suite for all levels and versions of SBML.
-
-Many stand-alone programs providing simulation of SBML come with
-graphical user interfaces.
+Many stand-alone programs providing simulation of SBML come with graphical user interfaces.
 For instance, the Virtual Cell \cite{Loew2001}, JSim \cite{Beard2012a}, iBioSim \cite{Myers2009},
 PottersWheel \cite{Maiwald2008}, COPASI \cite{Hoops2006}, SYCAMORE \cite{Weidemann2008}, SBToolbox2
-\cite{SBT_Schmidt2006}, JWS Online \cite{Olivier2004},or the Systems Biology Workbench with Roadrunner (SBW, \cite{Bergmann06}). 
+\cite{SBT_Schmidt2006}, JWS Online \cite{Olivier2004}, or the Systems Biology Workbench with Roadrunner (SBW, \cite{Bergmann06}). 
 However, the vast majority of the internal solvers for these systems are part of
 larger software suites and can therefore not be easily integrated into custom
 programs. Some are implemented in programming languages that are either
@@ -659,20 +665,42 @@ and based on the libSBML library \cite{Bornstein2008},
 provides such a simulation routine based on the SUNDIALS differential equation
 solver.
 
+We therefore selected only those SBML-capable simulation programs, libraries, and frameworks from
+the SBML software matrix\footnote{\url{http://sbml.org/SBML_Software_Guide/SBML_Software_Matrix} (October
+8\textsuperscript{th} 2012)} that satisfy the following criteria:
+\begin{itemize}
+  \item The last updated version was released after the final release of
+  the specification for SBML Level~3 Version~1 Core, i.e., October
+  6\textsuperscript{th} 2010.
+  \item Open-source software
+  \item No dependency on commercial products that are not freely available
+  (e.g., MATLAB\texttrademark{} or Mathematica\texttrademark)
+  \item Support for SBML Level~3. 
+\end{itemize}
+Table~1a and Table~1b summarize the comparison of six of these programs.
+\TODO{Only three applications pass the four exemplary models (966, 988, 1083, 1000) of the SBML Test Suite (version 2.0.2):}
+iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}.
+iBioSim does not yet support the simulation of SBML models containing the csymbol delay feature.
+LibSBMLSim, which is a simulation API written in C, can only read models given in SBML Level~2 Version~4 and SBML Level~3.
+Hence, BioUML is the only simulation tool from this selection that passes all models of the SBML Test Suite for all levels and versions of SBML.
+
 \section*{Conclusions}
 The SBML implementation has successfully passed the
-SBML Test Suite (version 2.0.2) using Rosenbrock solver. The results are shown in Table~2. So BioUML and the Simulation Core Library are the only SBML applications that pass the whole Test Suite for all SBML levels and versions. Compared to BioUML the Simulation Core Library simulates all models of the Test Suite much faster.
+SBML Test Suite (version 2.0.2) using Rosenbrock solver.
+The results are shown in Table~2.
+Our tests indiate that BioUML and the Simulation Core Library are the only SBML applications that pass the entire Test Suite for all SBML levels and versions.
+Compared to BioUML the Simulation Core Library simulates all models of the Test Suite much faster.
 %(see
 %\href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite}):
 Furthermore, Simulation Core Library solved 99.06\,\% of the models from the
 \href{http://biomodels.net}{BioModels.net} database (release 23,
-\cite{Novere2006a}) simulating from $t=0$ to $t=10$ using Rosenbrock solver and a step size of $0.1$.
+\cite{Novere2006a}) simulating from $t = 0$ to $t = 10$ using Rosenbrock solver and a step size of $0.1$.
 Therefore, the Simulation Core Library is an efficient Java tool for the
 simulation of differential equation systems used in systems biology. It can be
-easily integrated in larger applications. For instance,
-CellDesigner version~4.2 \cite{Funahashi2003} already uses it as one of its simulation libraries.
-The stand-alone application SBMLsimulator (available at
-\href{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator}{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator})
+easily integrated into larger customized applications.
+For instance, CellDesigner version~4.2 \cite{Funahashi2003} already uses it as one of its simulation libraries.
+The stand-alone application SBMLsimulator\footnote{SBMLsimulator is available at
+\url{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator}.}
 provides a convenient graphical user interface for the simulation of SBML
 models and uses it as a computational backend.
 The abstract class structure of the library supports the integration of
@@ -731,7 +759,10 @@ solver \cite{Kotcon2011}, an integrator with an adaptive step size, to a very
 precise timing of the events.
 %\sout{Rosenbrock's method is well-suited even for stiff systems.}
 %
-In addition to events, Rules are also treated during integration. Basically, they are Events that occur at every given point in time and are therefore processed in the same manner. For every object of the type \AlgebraicRule{}, a new \AssignmentRule{} object is generated by means of the preceding bipartite matching. They represent only temporary rules, that are incorporated in the simulation process but do not influence the model in the SBML file.
+In addition to events, rules are also treated during integration.
+Basically, \TODO{they are events that occur} at every given point in time and are therefore processed in the same manner.
+For every object of the type \AlgebraicRule{}, a new \AssignmentRule{} object is generated by means of the preceding bipartite matching.
+They represent only temporary rules, that are incorporated in the simulation process but do not influence the model in the SBML file.
 %\marginpar{This is only valid for polynomes. And for those,
 %assignmentRules should have been used anyway. How do-you proceed for
 %cos(x)=0?: Yes, that's true. People should use assignments there, but the
@@ -739,13 +770,19 @@ In addition to events, Rules are also treated during integration. Basically, the
 %currently not sure if we could solve cos(x) = 0 or similar cases.}
 %
 
-In the \SBMLinterpreter{} events are represented via an array containing an object of the class \EventInProgress{} for every event in the model. Thereby the distinction between events with and without delays is made. The major difference between both is that an event with delay can trigger multiple times before it is executed. In order to deal with such an issue, the class \SBMLEventInProgressWithDelay{} keeps track of this via the help of a list containing the points in time, at which the respective event has to executed. When events trigger more than once before execution, they have to be ordered according to their delay because the delay of the very same event may vary.
+In the \SBMLinterpreter{} events are represented via an array containing an object of the class \EventInProgress{} for every event in the model.
+Thereby the distinction between events with and without delays is made.
+The major difference between both is that an event with delay can trigger multiple times before it is executed.
+In order to deal with such an issue, the class \SBMLEventInProgressWithDelay{} keeps track of this via the help of a list containing the points in time, at which the respective event has to executed.
+When events trigger more than once before execution, they have to be ordered according to their delay because the delay of the very same event may vary.
 
 When the \SBMLinterpreter{} is processing events with priority, the events with the highest priority 
 are currently stored in list until one of them is selected for execution. One could argue, that all events can
-be kept in the same data structure, e.\,g. in a binary max heap, where after the extraction of the element with the largest value, the heap is restructured so that that next largest value is at the top. As stated
-in a previous section, the execution of one event can influence the priority off the remaining events. Considering the binary max heap, there is the possibility that many priorities change whereby the standard
-method to restore the max heap characteristic after extraction is not sufficient any more. Therefore we disregarded the use of other data structures for now.
+be kept in the same data structure, e.g., in a binary max heap, where after the extraction of the element with the largest value, the heap is restructured so that that next largest value is at the top.
+As stated in a previous section, the execution of one event can influence the priority off the remaining events.
+Considering the binary max heap, there is the possibility that many priorities change whereby the standard
+method to restore the max heap characteristic after extraction is not sufficient any more.
+Therefore, we disregarded the use of other data structures for now.
 %
 
 %The simulation algorithm then proceeds as follows: For each time step, the ODE
@@ -772,22 +809,23 @@ The current version of Simulation Core Library is available on the project homep
 
 Project name: Simulation Core Library
 
-Project homepage: http://sourceforge.net/projects/simulation-core/
+Project homepage: \url{http://sourceforge.net/projects/simulation-core/}
 
-Operating Systems: Simulation Core Library was successfully tested under Linux, Mac OS X and Windows 7.
+Operating Systems: Simulation Core Library was successfully tested under Linux (Ubuntu \TODO{version ???}), Mac OS X (versions 10.6.8 and 10.8.2) and Windows~7.
 
 Programming Language: Java\texttrademark{}
 
-Other Requirements: Java Runtime Environment 1.6
+Other Requirements: Java Runtime Environment 1.6 or above
 
-License: LGPL version 3
+License: LGPL version~3
 
 \bigskip
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Author's contributions}
 RK and AlD contributed equally and declare shared first authorship.
-
+AnD drafted the first version of the manuscript, initialized and coordinated the project and supervised the work.
+All authors read and approved the final manuscript.
     
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -797,7 +835,8 @@ The authors are grateful to B.~Kotcon, S.~Mesuro, D.~Rozenfeld, A.~Yodpinyanee,
 A.~Perez, E.~Doi, R.~Mehlinger, S.~Ehrlich, M.~Hunt, G.~Tucker, P.~Scherpelz,
 A.~Becker, E.~Harley, and C.~Moore, Harvey Mudd College, USA, for providing a
 Java implementation of Rosenbrock's method, and to Michael T.~Cooling,
-University of Auckland, New Zealand, for fruitful discussion.
+University of Auckland, New Zealand, for fruitful discussion. The authors thank
+D.~M. Wouamba for source code contribution.
 
 This work was funded by the Federal Ministry of Education and Research (BMBF,
 Germany) in the project Virtual Liver (grant number 0315756).
@@ -842,46 +881,59 @@ Germany) in the project Virtual Liver (grant number 0315756).
 %% Do not use \listoffigures as most will included as separate files
 
 \section*{Figures}
- \subsection*{Figure 1 - Example for the creation of an abstract syntax graph of a small model}
 
+\subsection*{Figure 1 - Example for the creation of an abstract syntax graph of a small model}
 The model consists of the following reactions:
-\begin{eqnarray*}
-&R_{1}&: F1,6BP \rightleftharpoons DHAP + GA3P\\
-&R_{2}&: DHAP \rightleftharpoons GA3P
-\end{eqnarray*}
+\begin{center}
+\parbox[c]{.35\textwidth}{\begin{align*}
+R_{1}&:& F1,6BP &\rightleftharpoons DHAP + GA3P\\
+R_{2}&:& DHAP   &\rightleftharpoons GA3P
+\end{align*}}
+\end{center}
+The two reactions are part of the glycolysis, the contained molecules are fructose 1,6-bisphosphate (F1,6BP),
+dihydroxyacetone phosphate (DHAP) and glyceraldehyde 3-phosphate (GA3P).
+Using the program SBMLsqueezer \cite{Draeger2008} the following mass action kinetics have been created:
+\begin{align*}
+\nu(R_{1}) &= k_{+1} \cdot [F16BP] - k_{-1} \cdot[DHAP] \cdot [GA3P]\\
+\nu(R_{2}) &= k_{+2} \cdot [DHAP]  - k_{-2} \cdot[GA3P]
+\end{align*}
+The nodes for [DHAP] and [GA3P] are only contained in the syntax graph once and connected to more than one multiplication node.
+This figure clearly indicates that the syntax graph is not a tree.
 
-The two reactions are part of the glycolysis, the contained molecules are Fructose 1,6-bisphosphate (F1,6BP), Dihydroxyacetone phosphate (DHAP) and Glyceraldehyde 3-phosphate (GA3P). With SBMLsqueezer \cite{Draeger2008} the following mass action kinetics have been created:
-
-\begin{eqnarray*}
-&v(R_{1})&=k_{ass1} \cdot [F16BP] - k_{diss1} \cdot[DHAP] \cdot [GA3P]\\
-&v(R_{2})&=k_{ass2} \cdot [DHAP] - k_{diss2} \cdot[GA3P]
-\end{eqnarray*}
-The nodes for [DHAP] and [GA3P] are only contained in the syntax graph once and connected to more than one multiplication node. It is obvious from the figure that the syntax graph is not a tree.
-
- \subsection*{Figure 2 - Algorithm for transforming algebraic rules to assignment rules}
+\subsection*{Figure 2 - Algorithm for transforming algebraic rules to assignment rules}
 The first step is to decide whether the model is overdetermined by creating a matching of the variables.
 If this is not the case, every algebraic rule is solved to the matched variable,
 which provides the basis for the creation of an equivalent assignment rule.
 
- \subsection*{Figure 3 - Processing of events: simpflified algorithm (without delayed events)}
-The list of the events running and the inactive events whose trigger is already true are saved.
-In each iteration first the trigger of running events that are not persistent are checked.
-If the trigger of such an event has changed to false, it is removed from the list.
+\subsection*{Figure 3 - Processing of events: simpflified algorithm (handling of delayed events omitted)}
+Let $E$ be the set of all events in a model, and $I_E$ be the set of events, whose trigger
+conditions have already been evaluated to \true{} in the previous time step. We refer to elements within
+$I_E$ as \emph{inactive} events. We define the set $A_E$ as the subset of $E$ containing those events,
+whose trigger condition switches from \false{} to \true{} in the current point $t$ in time. At the beginning
+of the event handling, $A_E$ is empty. We call an event \emph{persistent} if it can only be removed from
+$A_E$ under the condition that all of its assignments have been evaluated. This means that a
+\emph{non-persistent} event can be removed from $A_E$ in case that its trigger condition becomes \false{}
+during the evaluation of other events. Here, the function $\mathrm{trig}(e)$ returns 0 or 1 depending 
+on whether or not the trigger condition of the event $e$ is satisfied. Similarly, the function
+$\mathrm{persist}(e)$ returns 0 if event $e$ is not persistent, or 1 otherwise.
+In each iteration the trigger conditions of those active events $a_e \in A_E$ that are not persistent are checked.
+If the trigger condition of such an event has changed from \true{} (1) to \false{} (0), it is removed from $A_E$.
 The next step comprises the evaluation of the triggers of all events.
-If its trigger changes from false to true, an event is added to the running events.
-An event with its trigger changed from true to false is removed from the list of inactive events.
-After the procession of all triggers the event with the highest priority in the list of running events is chosen for execution.
-This event is then processed and afterwards the triggers of all events have to be evaluated again.
-The algorithm proceeds until the list of running events is empty.
+If its trigger changes from \false{} to \true{}, an event is added to the set of active events $A_E$.
+An event with its trigger changed from \true{} to \false{} is removed from the list of inactive events.
+After the procession of all triggers the event $e$ with the highest priority in the set of active events is chosen for execution by the $\mathrm{choose}(A_E)$ function.
+Note that priorities are not always defined, or multiple events may have an identical priority. The $\mathrm{choose}(A_E)$ function is therefore more complex than can be shown in this figure.
+This event is then processed, i.e., all of its assignments are evaluated, and afterwards the triggers of all events in $E$ have to be evaluated again, because of possible mutual influences between the events.
+The algorithm proceeds until the list of acitve events is empty.
 
- \subsection*{Figure 4 - Calculation of the derivatives at a specific point in time}
+\subsection*{Figure 4 - Calculation of the derivatives at a specific point in time}
 First, the vector for saving the derivatives of all quantities $\dot{\vec{Q}}$ is set to the null vector $\vec{0}$.
 Then the rate rules of the model are processed by solving the function $\vec{g}(\vec{Q}, t)$, which can change $\dot{\vec{Q}}$ in some dimensions.
 After that for every reaction $R_i$ its velocity $\nu_i$ is computed.
 The derivatives of each species (with index $s$) participating in the currently processed reaction $R_i$ are updated
 in each step adding the product of the stoichiometry $n_{is}$ and the reaction's velocity $\nu_i$.
 
- \subsection*{Figure 5 - Integrated calculation of new values for a time step including event processing}
+\subsection*{Figure 5 - Integrated calculation of new values for a time step including event processing}
 For a certain time interval the Rosenbrock solver always tries to increase time $t$ by the current adaptive
 step size $s$ and calculates a new vector of quantities $\vec{Q}_{\mathrm{res}}$.
 After a successful step the events and rules of the model are processed.
@@ -889,9 +941,7 @@ If theese cause a change in $\vec{Q}$, $h$ is first decreased and then the Rosen
 The precision of the event processing is therefore determined by the minimum step size $h_{\min}$.
 The $\mathrm{adapt}$ function is defined by Rosenbrock's method \TODO{cite}.
 
-  \subsection*{Figure 6 - Architecture of the Simulation Core Library
-  (simplified)}
-  
+\subsection*{Figure 6 - Architecture of the Simulation Core Library (simplified)}
 Numerical methods are strictly separated from differential equation systems. The
 upper part displays the unified type hierarchy of all currently included numerical integration
 methods. The middle part shows the interfaces defining several
@@ -902,6 +952,15 @@ with respect to the information content of a given SBML model. Similarly, an
 implementation of further data formats can be included into the
 library.
 
+\subsection*{Figure 7 - Simulation of glycolytic oscillations}
+This figure displays the results of a simulation computed with the Simulation Core Library based on model 206 from BioModels database \cite{Novere2006a, Wolf2000}.
+Shown are the changes of the concentration of the most characteristic intracellular metabolites 3-phosphogylcerate, ATP, glucose, glyceraldhyde 3-phosphate, and NAD$^+$ within yeast cells.
+The computation was performed using the \TODO{Describe the precise settings how the simulation was performed: Which solver, how many steps, error tolerance etc.}
+The simulation results obtained by using the algorithm described in this work reproduces the results provided by BioModels database. 
+
+\subsection*{Figure 8 - Simulation of the Calvin-Benson cycle}
+Another example of the capabilities of the Simulation Core Library has been obtained by solving model 390 from BioModels database \cite{Novere2006a, Arnold2011}.
+\TODO{Describe the precise settings how the simulation was performed: Which solver, how many steps, error tolerance etc.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
