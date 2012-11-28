@@ -116,6 +116,20 @@
       <span class="class">MultiTable</span> solution = solver.<span class="method">solve</span>(interpreter, interpreter.<span class="method">getInitialValues</span>(), timePoints);
     </code></pre>
 
+	<h3>Using SED-ML for simulation</h3>
+    <p>
+      The following example shows how to read in a <i>File</i> f (in SED-ML format) and how to run a simulation described in this file afterwards. The simulation results are stored in a <i>MultiTable</i>.
+    </p>
+			
+    <pre><code class="spoiled">
+      <span class="class"> SEDMLDocument</span> doc = Libsedml.<span class="method">readDocument</span>(f);<br/>
+      <span class="class"> SedML</span> sedml = doc.<span class="method">getSBMLModel</span>();<br/>
+       <span class="class"> Output</span> wanted = sedml.<span class="method">getOutputs</span>().<span class="method">get</span>(0);<br/>
+      <span class="class"> SedMLSBMLSimulatorExecutor</span> exe = = <span class="keyword">new</span> <span class="class">SedMLSBMLSimulatorExecutor</span>(sedml, wanted);<br/>
+      <span class="class"> Map<Task, IRawSedmlSimulationResults></span> res = exe.<span class="method">runSimulations</span>();<br/>
+      <span class="class">MultiTable</span> solution = exe.<span class="method">processSimulationResults</span>(wanted, res);<br/>
+    </code></pre>
+    
     <h3>How to integrate Simulation Core Library into your software?</h3>
     <p>
       You just have to add the provided jar-file simulation-core-library.jar to the class path of your Java project.
