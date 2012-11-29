@@ -35,7 +35,7 @@ plot_species <- function(b, indices, names, matrix) {
   for (i in 1:length(indices)) {
     lines(matrix[,1] * 60, matrix[,indices[i]], type="l", col=i+1, lty=1, lwd=2)
   }
-  title("Species in model 206")
+  #title("Species in model 206")
 }
 
 plot_fluxes <- function(b, indices, names, matrix) {
