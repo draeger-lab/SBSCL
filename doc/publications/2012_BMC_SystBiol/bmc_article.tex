@@ -208,7 +208,7 @@ commentstyle=\ttfamily\itshape\color{forrestgreen}
 %%                                          %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title{The systems biology Simulation Core Algorithm and its implementation}
+\title{The Systems Biology Simulation Core Algorithm and its implementation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                          %%
@@ -279,7 +279,7 @@ Dynamic simulation of models describing biological phenomena is a key aspect of
 research in systems biology. 
 This article describes an efficient and exhaustive algorithm to interpret and
 solve the differential equation systems of models encoded in Systems Biology
-Markup Language (SBML) and its implementation as part of the Simulation Core
+Markup Language (SBML) and its implementation as part of the Systems Biology Simulation Core
 Library for numerical computation in systems biology.
 
 This library is a community-driven project that provides a large collection of
@@ -287,7 +287,7 @@ numerical solvers and a sophisticated interface hierarchy
 for the definition of custom differential equation systems. It is hence possible
 to extend this library with additional interpreters for other systems biological
 standard formats.
-The Simulation Core Library is intended to be used as a backend for custom-made
+The Systems Biology Simulation Core Library is intended to be used as a backend for custom-made
 programs.
 It is entirely implemented in Java\texttrademark, using the JSBML project,
 without the necessity to include any platform-dependent wrappers or libraries,
@@ -377,7 +377,7 @@ For efficient model analysis, simulation, and calibration (e.g.,
 the estimation of parameter values) multiple-purpose and efficient numerical
 solver library that has been designed with the requirements of biological
 network models in mind is prerequisite.
-Althought the language specifications of SBML \cite{Hucka2001, Hucka2003,
+Although the language specifications of SBML \cite{Hucka2001, Hucka2003,
 Finney2003a, Finney2006, Hucka2007, Hucka2008, Hucka2010a} 
 and CellML \cite{Cuellar2006} describe the semantics of models in these formats
 and their interpretation, the algorithmic implementation is still not
@@ -414,7 +414,7 @@ similar approach can also be done for CellML or other formats.
 %their objectives, e.g., the concentration of a reacting species.
 %
 %
-The Simulation Core Library presented here is a platform-independent,
+The Systems Biology Simulation Core Library presented here is a platform-independent,
 well-tested generic library that is completely decoupled from any graphical
 user interface and can therefore easily be integrated into third-party programs.
 It comprises several Ordinary Differential Equation (ODE)
@@ -427,7 +427,7 @@ based on JSBML \cite{Draeger2011b}.
 % The combination of SBMLsimulator and EvA2 \cite{Kron10EvA2} estimates the values of all parameters with
 %respect to given time-series of metabolite or gene expression values. 
 %
-Furthermore, the Simulation Core Library contains classes to both export
+Furthermore, the Systems Biology Simulation Core Library contains classes to both export
 simulation configurations to SED-ML (Simulation Experiment Description Markup Language,
 \cite{Waltemath2011}), and facilitate the re-use and reproduction of these
 experiments by executing SED-ML files.
@@ -613,13 +613,13 @@ If the previous step causes a change in $\vec{Q}$, the adaptive step size is dec
 the calculation is repeated until the minimum step size is reached or the processing of events and rules does not change $\vec{Q}$ anymore.
 Hence, the time, at which an event takes place, is precisely determined.
 
-\subsection*{A reference implementation of the algorithm as part of the Simulation Core Library}
+\subsection*{A reference implementation of the algorithm as part of the Systems Biology Simulation Core Library}
 
-The algorithm described above has been implemented in Java\texttrademark{} and included into the Simulation Core Library.
+The algorithm described above has been implemented in Java\texttrademark{} and included into the Systems Biology Simulation Core Library.
 Figure~6 displays the software architecture of this library.
-The Simulation Core Library has been designed as part of a community project aiming to provide an extensible numerical backend for customized programs for research in computational systems biology.
+The Systems Biology Simulation Core Library has been designed as part of a community project aiming to provide an extensible numerical backend for customized programs for research in computational systems biology.
 The SBML-solving algorithm is based on the data structures provided by the JSBML project \cite{Draeger2008}.
-With the help of wrapper classes, the Appache Commons Math library could be integrated into the project and provides several numerical solvers.
+With the help of wrapper classes, the Apache Commons Math library could be integrated into the project and provides several numerical solvers.
 In addition, the library provides an implementation of the explicit fourth order Runge-Kutta method, Rosenbrock's solver, and Euler's method.
 Each solver has a method to directly access its corresponding KiSAO (Kinetic Simulation Algorithm Ontology) term \cite{Courtot2011}.
 Due to the strict separation between numerical differential equation solvers, and the definition of the actual differential equation system, it is possible to implement support for further community standards, such as CellML \cite{Lloyd2004}.
@@ -632,7 +632,7 @@ For testing purposes, the library contains a sample program that benchmarks the 
 
 \subsection*{Application to published models}
 
-The Simulation Core Library has been tested on all 424 curated models from BioModels database \cite{Novere2006a} (release~23, October 2012).
+The Systems Biology Simulation Core Library has been tested on all 424 curated models from BioModels database \cite{Novere2006a} (release~23, October 2012).
 As a result, 99.06\,\% of these models could correctly be simulated.
 To illustrate the capabilities of this library, two example networks from this model repository have been arbitrarily selected for simulation:
 Biomodel 206 by Wolf \emph{et al.} \cite{Wolf2000} and Biomodel 390 by Arnold and Nikoloski \cite{Arnold2011}.
@@ -677,25 +677,26 @@ the SBML software matrix\footnote{\url{http://sbml.org/SBML_Software_Guide/SBML_
   (e.g., MATLAB\texttrademark{} or Mathematica\texttrademark)
   \item Support for SBML Level~3. 
 \end{itemize}
-Table~1a and Table~1b summarize the comparison of six of these programs.
-\TODO{Only three applications pass the four exemplary models (966, 988, 1083, 1000) of the SBML Test Suite (version 2.0.2):}
-iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}.
+Table~1a and Table~1b summarize the comparison of six of these programs and Systems Biology Simulation Core Library.
+Only three other applications support the simulation of models containing events, algebraic rules and fast reactions completely: iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}.
+%\TODO{Only three applications pass the four exemplary models (966, 988, 1083, 1000) of the SBML Test Suite (version 2.0.2):}
+%iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}.
 iBioSim does not yet support the simulation of SBML models containing the csymbol delay feature.
 LibSBMLSim, which is a simulation API written in C, can only read models given in SBML Level~2 Version~4 and SBML Level~3.
-Hence, BioUML is the only simulation tool from this selection that passes all models of the SBML Test Suite for all levels and versions of SBML.
+Hence, besides Systems Biology Simulation Core Library BioUML is the only simulation tool from this selection that passes all models of the SBML Test Suite for all levels and versions of SBML.
 
 \section*{Conclusions}
 The SBML implementation has successfully passed the
 SBML Test Suite (version 2.0.2) using Rosenbrock solver.
-The results are shown in Table~2.
-Our tests indiate that BioUML and the Simulation Core Library are the only SBML applications that pass the entire Test Suite for all SBML levels and versions.
-Compared to BioUML the Simulation Core Library simulates all models of the Test Suite much faster.
+The results are shown in Table~2. All models together can be simulated within seconds, which means that the simulation of one SBML model takes only milliseconds on average. The total simulation time for all models in SBML Level~3 Version~1 is significantly higher than for the models in other SBML levels and versions. This can be explained by the fact that there are some models in SBML level 3 version 1, in which a time-consuming processing of a large number of events is necessary. The simulation of model 966 of the SBML Test Suite, which is only provided in SBML Level~3 Version~1 and contains many events to be processed, takes 21 seconds. This accounts for 60~\% of the total simulation time for the models in SBML Level~3 Version~1. 
+\TODO{Our tests indicate that BioUML, which is a workbench for modelling, simulating and parameter fitting, and the Systems Biology Simulation Core Library are the only SBML applications that pass the entire Test Suite for all SBML levels and versions. So Systems Biology Simulation Core Library is the only API simulation library that supports the whole SBML Test Suite for all SBML levels and versions. }
+%Compared to BioUML the Simulation Core Library simulates all models of the Test Suite much faster.
 %(see
 %\href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite}):
-Furthermore, Simulation Core Library solved 99.06\,\% of the models from the
+Furthermore, Systems Biology Simulation Core Library solved 99.06\,\% of the models from the
 \href{http://biomodels.net}{BioModels.net} database (release 23,
 \cite{Novere2006a}) simulating from $t = 0$ to $t = 10$ using Rosenbrock solver and a step size of $0.1$.
-Therefore, the Simulation Core Library is an efficient Java tool for the
+Therefore, the Systems Biology Simulation Core Library is an efficient Java tool for the
 simulation of differential equation systems used in systems biology. It can be
 easily integrated into larger customized applications.
 For instance, CellDesigner version~4.2 \cite{Funahashi2003} already uses it as one of its simulation libraries.
@@ -714,7 +715,7 @@ this end, it is only necessary to implement a suitable interpreter class.
 
 By including support for the emerging standard SED-ML, we hope to facilitate the
 exchange, archival and reproduction of simulation experiments performed using
-the Simulation Core Library.
+the Systems Biology Simulation Core Library.
 
 \section*{Methods}
 
@@ -798,20 +799,20 @@ Therefore, we disregarded the use of other data structures for now.
 %
 SED-ML support is enabled by inclusion of the \jlibsedml{} library
 (\href{http://www.jlibsedml.org}{http://www.jlibsedml.org}) in the binary
-download. Clients of the the Simulation Core Library can choose to use the
+download. Clients of the the Systems Biology Simulation Core Library can choose to use the
 \jlibsedml{} API directly, or access SED-ML support via  facade classes
 in the \texttt{org.simulator.sedml} package that do not require direct
 dependencies on \jlibsedml{} in their code.
 
 
 \section*{Availability and Requirements}
-The current version of Simulation Core Library is available on the project homepage. Either the source code or a jar file with binaries can be downloaded.
+The current version of Systems Biology Simulation Core Library is available on the project homepage. Either the source code or a jar file with binaries can be downloaded.
 
 Project name: Simulation Core Library
 
 Project homepage: \url{http://sourceforge.net/projects/simulation-core/}
 
-Operating Systems: Simulation Core Library was successfully tested under Linux (Ubuntu \TODO{version ???}), Mac OS X (versions 10.6.8 and 10.8.2) and Windows~7.
+Operating Systems: Systems Biology Simulation Core Library was successfully tested under Linux (Ubuntu \TODO{version ???}), Mac OS X (versions 10.6.8 and 10.8.2) and Windows~7.
 
 Programming Language: Java\texttrademark{}
 
@@ -941,7 +942,7 @@ If theese cause a change in $\vec{Q}$, $h$ is first decreased and then the Rosen
 The precision of the event processing is therefore determined by the minimum step size $h_{\min}$.
 The $\mathrm{adapt}$ function is defined by Rosenbrock's method \TODO{cite}.
 
-\subsection*{Figure 6 - Architecture of the Simulation Core Library (simplified)}
+\subsection*{Figure 6 - Architecture of the Systems Biology Simulation Core Library (simplified)}
 Numerical methods are strictly separated from differential equation systems. The
 upper part displays the unified type hierarchy of all currently included numerical integration
 methods. The middle part shows the interfaces defining several
@@ -953,7 +954,7 @@ implementation of further data formats can be included into the
 library.
 
 \subsection*{Figure 7 - Simulation of glycolytic oscillations}
-This figure displays the results of a simulation computed with the Simulation Core Library based on model 206 from BioModels database \cite{Novere2006a, Wolf2000}.
+This figure displays the results of a simulation computed with the Systems Biology Simulation Core Library based on model 206 from BioModels database \cite{Novere2006a, Wolf2000}.
 Shown are the changes of the concentration of the most characteristic intracellular metabolites 3-phosphogylcerate, ATP, glucose, glyceraldhyde 3-phosphate, and NAD$^+$ within yeast cells.
 The computation was performed using the \TODO{Describe the precise settings how the simulation was performed: Which solver, how many steps, error tolerance etc.}
 The simulation results obtained by using the algorithm described in this work reproduces the results provided by BioModels database. 
