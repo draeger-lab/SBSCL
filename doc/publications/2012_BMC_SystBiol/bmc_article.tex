@@ -59,6 +59,13 @@
 \usepackage{color}
 \usepackage[table]{xcolor}
 \usepackage{nicefrac}
+\usepackage{pifont}
+\usepackage{textcomp}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{upgreek}
+\usepackage{rotating}
+\usepackage{multirow}
 
 \definecolor{royalblue}{cmyk}{.93, .79, 0, 0}
 \definecolor{lightblue}{cmyk}{.10, .017, 0, 0}
@@ -166,6 +173,16 @@
 \newcommand{\true}{\emph{true}}
 \newcommand{\false}{\emph{false}}
 
+\newcommand{\yes}{\ding{51}} %{\parbox[c]{1.3em}{\ding{51}}} %\Large\square\hspace{-.65em}
+\newcommand{\no}{--} %{\parbox[c]{1.3em}{--} %\Large\square\hspace{-.62em}--}
+
+% centered columns with fixed width
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+% right adjusted columns with fixed width
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+% left adjusted columns with fixed width
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
 % the derivative symbol for differential equations
 \newcommand{\D}{\mathrm{d}}
 
@@ -208,7 +225,7 @@ commentstyle=\ttfamily\itshape\color{forrestgreen}
 %%                                          %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title{The Systems Biology Simulation Core Algorithm and its implementation}
+\title{The systems biology simulation core algorithm and its implementation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                          %%
@@ -301,7 +318,7 @@ all models of BioModels Database.
 Source code, binaries, and documentation can be freely obtained under the terms
 of the LGPL version~3 from the website
 \href{http://sourceforge.net/projects/simulation-core/}{http://sourceforge.net/projects/simulation-core/}.
-Feature requests, bug reports, or any further discussion can be directed to the mailing list
+Feature requests, bug reports, contribution, or any further discussion can be directed to the mailing list
 \href{mailto:simulation-core-development@lists.sourceforge.net}{simulation-core-development@lists.sourceforge.net}.
 %
 %\section{Supplementary information:}
@@ -414,7 +431,7 @@ similar approach can also be done for CellML or other formats.
 %their objectives, e.g., the concentration of a reacting species.
 %
 %
-The Systems Biology Simulation Core Library presented here is a platform-independent,
+The Systems Biology Simulation Core Library (SCL) presented here is a platform-independent,
 well-tested generic library that is completely decoupled from any graphical
 user interface and can therefore easily be integrated into third-party programs.
 It comprises several Ordinary Differential Equation (ODE)
@@ -604,11 +621,14 @@ The velocity functions depend on $\vec{Q}$ at time $t$.
 During the second step the derivatives of all species that participate in the current reaction $R_i$ need to be updated (see the flowchart in Figure~4).
 
 \subsection*{Integrated calculation for a certain time step including event processing}
-The Rosenbrock solver is a solver that can adapt its step size $h$ if events occur (see Figure~5 for details).
-\TODO{NOT UNDERSTANDABLE: For a certain time interval $[t_{\tau}, t_{\tau + 1}]$ and the current vector $\vec{Q}$ it determines the new value of vector $\vec{Q}$ at a point in time that is determined by the current adaptive step size $h$.
-It refers to the already described calculation of the derivatives for a certain point in time in this step.}
+The precise calculation of the time, when events are triggered is crucial to ensure exact results of the numerical integration process.
+It could, for instance, happen that an event is triggered at time $t_{\tau}$, which is between the two integration time points $t_{\tau - 1}$ and $t_{\tau + 1}$.
+When processing the events only at time points $t_{\tau - 1}$ and $t_{\tau + 1}$ it might happen that the trigger condition cannot be evaluated to true at neither of these time points. 
+The Rosenbrock solver \cite{Press1993} can adapt its step size $h$ if events occur (see Figure~5 for details).
+For a certain time interval $[t_{\tau - 1}, t_{\tau + 1}]$ and the current vector $\vec{Q}$ Rosenbrock's method determines the new value of vector $\vec{Q}$ at a point in time $t_{\tau - 1} + h$.
+If the error tolerance cannot be ensured, $h$ is reduced and the procedure is repeated.
 
-After that the events and the assignment rules are processed at the new point in time \TODO{Which point? More precisely!}.
+After that the events and the assignment rules are processed at the new point in time $t_{\tau - 1} + h$.
 If the previous step causes a change in $\vec{Q}$, the adaptive step size is decreased by setting $h$ to $\nicefrac{h}{10}$ and
 the calculation is repeated until the minimum step size is reached or the processing of events and rules does not change $\vec{Q}$ anymore.
 Hence, the time, at which an event takes place, is precisely determined.
@@ -638,15 +658,16 @@ To illustrate the capabilities of this library, two example networks from this m
 Biomodel 206 by Wolf \emph{et al.} \cite{Wolf2000} and Biomodel 390 by Arnold and Nikoloski \cite{Arnold2011}.
 
 The model by Wolf \emph{et al.} \cite{Wolf2000} mimics glycolytic oscillations that have been observed in yeast cells.
-The model describes how the dynamics propagate through the cellular network. Figure~7 displays the simulation results
+The model describes how the dynamics propagate through the cellular network. Figure~7a displays the simulation results
 for the intracellular concentrations of 3-phosphogylcerate, ATP, glucose, glyceraldhyde 3-phosphate, and NAD$^+$:
-After an initial phase of approximately 15\,s all metabolites begin a steady-going rhythmic oscillation. 
+After an initial phase of approximately 15\,s all metabolites begin a steady-going rhythmic oscillation.
+Changes in the dynamics of the fluxes through selected reaction channels within this model can be seen in Figure~7b. 
 
 By comparing a large collection of previous models of the Calvin-Benson
 cycle, Arnold and Nikoloski created a quantitative consensus model that
 comprises eleven species, six reactions, and one assignment rule \cite{Arnold2011}.
 All kinetic equations within this model call specialized function definitions.
-Figure~8 shows the simulation results for this model.
+Figure~8 shows the simulation results for the species ribulose 1,5 bisphosphate, ATP,  and ADP within this model.
 As in the previous test case, the simulation results reproduce the values provided by BioModels database.  
 
 \subsection*{Comparison to existing solver implementations for SBML}
@@ -655,13 +676,13 @@ Many stand-alone programs providing simulation of SBML come with graphical user 
 For instance, the Virtual Cell \cite{Loew2001}, JSim \cite{Beard2012a}, iBioSim \cite{Myers2009},
 PottersWheel \cite{Maiwald2008}, COPASI \cite{Hoops2006}, SYCAMORE \cite{Weidemann2008}, SBToolbox2
 \cite{SBT_Schmidt2006}, JWS Online \cite{Olivier2004}, or the Systems Biology Workbench with Roadrunner (SBW, \cite{Bergmann06}). 
-However, the vast majority of the internal solvers for these systems are part of
+The vast majority of the internal solvers for these systems are part of
 larger software suites and can therefore not be easily integrated into custom
 programs. Some are implemented in programming languages that are either
 platform-dependent (e.g., C or C++) and/or require a commercial license (e.g.,
 MATLAB\texttrademark{}) for their execution.
 The SBML ODE Solver Library \cite{Machne2006}, which is written in C,
-and based on the libSBML library \cite{Bornstein2008}, 
+and is based on the libSBML library \cite{Bornstein2008}, 
 provides such a simulation routine based on the SUNDIALS differential equation
 solver.
 
@@ -681,15 +702,21 @@ Table~1a and Table~1b summarize the comparison of six of these programs and Syst
 Only three other applications support the simulation of models containing events, algebraic rules and fast reactions completely: iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}.
 %\TODO{Only three applications pass the four exemplary models (966, 988, 1083, 1000) of the SBML Test Suite (version 2.0.2):}
 %iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}.
-iBioSim does not yet support the simulation of SBML models containing the csymbol delay feature.
+iBioSim does not yet support the simulation of SBML models containing the delay functions, except delayed events.
 LibSBMLSim, which is a simulation API written in C, can only read models given in SBML Level~2 Version~4 and SBML Level~3.
-Hence, besides Systems Biology Simulation Core Library BioUML is the only simulation tool from this selection that passes all models of the SBML Test Suite for all levels and versions of SBML.
+Hence, Systems Biology Simulation Core Library and BioUML are the only simulation tools from this selection that pass all models of the SBML Test Suite for all levels and versions of SBML.
 
 \section*{Conclusions}
 The SBML implementation has successfully passed the
 SBML Test Suite (version 2.0.2) using Rosenbrock solver.
-The results are shown in Table~2. All models together can be simulated within seconds, which means that the simulation of one SBML model takes only milliseconds on average. The total simulation time for all models in SBML Level~3 Version~1 is significantly higher than for the models in other SBML levels and versions. This can be explained by the fact that there are some models in SBML level 3 version 1, in which a time-consuming processing of a large number of events is necessary. The simulation of model 966 of the SBML Test Suite, which is only provided in SBML Level~3 Version~1 and contains many events to be processed, takes 21 seconds. This accounts for 60~\% of the total simulation time for the models in SBML Level~3 Version~1. 
-\TODO{Our tests indicate that BioUML, which is a workbench for modelling, simulating and parameter fitting, and the Systems Biology Simulation Core Library are the only SBML applications that pass the entire Test Suite for all SBML levels and versions. So Systems Biology Simulation Core Library is the only API simulation library that supports the whole SBML Test Suite for all SBML levels and versions. }
+The results are shown in Table~2.
+All models together can be simulated within seconds, which means that the simulation of one SBML model takes only milliseconds on average, using regular desktop computers.
+The total simulation time for all models in SBML Level~3 Version~1 is significantly higher than for the models in other SBML levels and versions.
+This can be explained by the fact that there are some models in SBML level 3 version 1, in which a time-consuming processing of a large number of events is necessary.
+The simulation of model 966 of the SBML Test Suite, which is only provided in SBML Level~3 Version~1 and contains many events to be processed, takes 21 seconds.
+This accounts for 60~\% of the total simulation time for the models in SBML Level~3 Version~1. 
+Our tests indicate that BioUML, which is a workbench for modelling, simulating and parameter fitting, and the Systems Biology Simulation Core Library are the only SBML applications that pass the entire Test Suite for all SBML levels and versions.
+The Systems Biology Simulation Core Library is therefore the only API simulation library that supports the whole SBML Test Suite for all SBML levels and versions.
 %Compared to BioUML the Simulation Core Library simulates all models of the Test Suite much faster.
 %(see
 %\href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite}):
@@ -755,13 +782,13 @@ changed, the values of the nodes have to be recalculated (see Results).
 %
 An important aspect in the interpretation of SBML models is the
 determination of the exact time at which an event occurs, as this influences
-the precision of the system's variables. We therefore adjusted the Rosenbrock
+the precision of the system's variables. To this end, we adjusted the Rosenbrock
 solver \cite{Kotcon2011}, an integrator with an adaptive step size, to a very
 precise timing of the events.
 %\sout{Rosenbrock's method is well-suited even for stiff systems.}
 %
 In addition to events, rules are also treated during integration.
-Basically, \TODO{they are events that occur} at every given point in time and are therefore processed in the same manner.
+Basically, rules are events that occur at every given point in time and are therefore processed in the same manner.
 For every object of the type \AlgebraicRule{}, a new \AssignmentRule{} object is generated by means of the preceding bipartite matching.
 They represent only temporary rules, that are incorporated in the simulation process but do not influence the model in the SBML file.
 %\marginpar{This is only valid for polynomes. And for those,
@@ -812,7 +839,7 @@ Project name: Simulation Core Library
 
 Project homepage: \url{http://sourceforge.net/projects/simulation-core/}
 
-Operating Systems: Systems Biology Simulation Core Library was successfully tested under Linux (Ubuntu \TODO{version ???}), Mac OS X (versions 10.6.8 and 10.8.2) and Windows~7.
+Operating Systems: Systems Biology Simulation Core Library was successfully tested under Linux (Ubuntu version 10.4), Mac OS X (versions 10.6.8 and 10.8.2), and Windows~7.
 
 Programming Language: Java\texttrademark{}
 
@@ -895,8 +922,8 @@ The two reactions are part of the glycolysis, the contained molecules are fructo
 dihydroxyacetone phosphate (DHAP) and glyceraldehyde 3-phosphate (GA3P).
 Using the program SBMLsqueezer \cite{Draeger2008} the following mass action kinetics have been created:
 \begin{align*}
-\nu(R_{1}) &= k_{+1} \cdot [F16BP] - k_{-1} \cdot[DHAP] \cdot [GA3P]\\
-\nu(R_{2}) &= k_{+2} \cdot [DHAP]  - k_{-2} \cdot[GA3P]
+\nu_{R_{1}} &= k_{+1} \cdot [F16BP] - k_{-1} \cdot[DHAP] \cdot [GA3P]\\
+\nu_{R_{2}} &= k_{+2} \cdot [DHAP]  - k_{-2} \cdot[GA3P]
 \end{align*}
 The nodes for [DHAP] and [GA3P] are only contained in the syntax graph once and connected to more than one multiplication node.
 This figure clearly indicates that the syntax graph is not a tree.
@@ -922,8 +949,8 @@ If the trigger condition of such an event has changed from \true{} (1) to \false
 The next step comprises the evaluation of the triggers of all events.
 If its trigger changes from \false{} to \true{}, an event is added to the set of active events $A_E$.
 An event with its trigger changed from \true{} to \false{} is removed from the list of inactive events.
-After the procession of all triggers the event $e$ with the highest priority in the set of active events is chosen for execution by the $\mathrm{choose}(A_E)$ function.
-Note that priorities are not always defined, or multiple events may have an identical priority. The $\mathrm{choose}(A_E)$ function is therefore more complex than can be shown in this figure.
+After the procession of all triggers the event $e$ with the highest priority in the set of active events is chosen for execution by the function $\mathrm{choose}(A_E)$ .
+Note that priorities are not always defined, or multiple events may have an identical priority. The function $\mathrm{choose}(A_E)$ is therefore more complex than can be shown in this figure.
 This event is then processed, i.e., all of its assignments are evaluated, and afterwards the triggers of all events in $E$ have to be evaluated again, because of possible mutual influences between the events.
 The algorithm proceeds until the list of acitve events is empty.
 
@@ -938,7 +965,7 @@ in each step adding the product of the stoichiometry $n_{is}$ and the reaction's
 For a certain time interval the Rosenbrock solver always tries to increase time $t$ by the current adaptive
 step size $s$ and calculates a new vector of quantities $\vec{Q}_{\mathrm{res}}$.
 After a successful step the events and rules of the model are processed.
-If theese cause a change in $\vec{Q}$, $h$ is first decreased and then the Rosenbrock solver calculates another vector $\vec{Q}_{t}$ using this adapted step size.
+If this causes a change in $\vec{Q}$, $h$ is first decreased and then the Rosenbrock solver calculates another vector $\vec{Q}_{t}$ using this adapted step size.
 The precision of the event processing is therefore determined by the minimum step size $h_{\min}$.
 The $\mathrm{adapt}$ function is defined by Rosenbrock's method \TODO{cite}.
 
@@ -955,13 +982,18 @@ library.
 
 \subsection*{Figure 7 - Simulation of glycolytic oscillations}
 This figure displays the results of a simulation computed with the Systems Biology Simulation Core Library based on model 206 from BioModels database \cite{Novere2006a, Wolf2000}.
-Shown are the changes of the concentration of the most characteristic intracellular metabolites 3-phosphogylcerate, ATP, glucose, glyceraldhyde 3-phosphate, and NAD$^+$ within yeast cells.
-The computation was performed using the \TODO{Describe the precise settings how the simulation was performed: Which solver, how many steps, error tolerance etc.}
+Shown are the changes of the concentration (a) of the most characteristic intracellular metabolites 3-phosphogylcerate, ATP, glucose, glyceraldhyde 3-phosphate, and NAD$^+$ within yeast cells.
+Figure 7b displays a selection of the dynamcis of relevant fluxes 
+(\textsc{D}-glucose 6-phosphotransferase, glycerone-phosphate-forming, phosphoglycerate kinase, pyruvate 2-O-phosphotransferase, acetaldehyde forming, ATP biosynthetic process)
+that were computed as intermediate results by the algorithm.
+The computation was performed using the Adams-Moulton solver \cite{Hairer2000} (KiSAO term 280) with 200 integration steps, $10^{-10}$ as absolute error tolerance and $10^{-5}$ as relative error tolerance.
+Due to the importance of feedback regulation the selection of an appropriate numerical solver is of crucial importance for this model.
+Methods without step-size adaptation, such as the fourth order Runge-Kutta algorithm, might only be able to find a high quality solution with an appropriate number of integration steps. 
 The simulation results obtained by using the algorithm described in this work reproduces the results provided by BioModels database. 
 
 \subsection*{Figure 8 - Simulation of the Calvin-Benson cycle}
 Another example of the capabilities of the Simulation Core Library has been obtained by solving model 390 from BioModels database \cite{Novere2006a, Arnold2011}.
-\TODO{Describe the precise settings how the simulation was performed: Which solver, how many steps, error tolerance etc.}
+This model was simulated using Euler's method (KiSAO term 30) with 200 integration steps for the time interval $[0, 35]$ seconds.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -974,59 +1006,83 @@ Another example of the capabilities of the Simulation Core Library has been obta
 %%
 \section*{Tables}
 
-  \subsection*{Table 1 a) - Other simulators for SBML models: SBML language support}
-    The table shows what SBML elements (fast reactions, algebraic rules, events) are supported by other SBML simulation software and whether all models of the SBML Test Suite are solved correctly. 
-	\par \mbox{}
-\begin{landscape}
-      \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
-\hline
-Name 	& Fast reactions & Algebraic rules& Events &Complete SBML Test Suite solved correctly&SED-ML\\\hline
-BioUML & Yes& Yes& Yes&Yes&In alpha version\\\hline
-COPASI &No & No & Partial &No&No\\\hline
-iBioSim &Yes&Yes&Yes&No& No\\\hline
-JSim & No & Yes & No &No& No\\\hline
-LibSBMLSim &Yes& Yes & Yes&Only for SBML L 3 and SBML L2 V4& No\\\hline
-VCell &Yes& No &Yes&No& No\\\hline
-Systems Biology Simulation Core Library &Yes& Yes &Yes&Yes& Yes\\\hline
- \end{tabular}
-\end{landscape}
+\subsection*{Table 1a - Other simulators for SBML models: SBML language support}
+The table shows which SBML elements (fast reactions, algebraic rules, events) are supported by other SBML-capable 
+simulation software and whether all models of the SBML Test Suite can be correctly solved.
+COPASI supports events in SBML, but not all of the current constructs. The library LibSBMLSim can correctly
+solve the SBML Test Suite, but is limited to the versions 3.1 and 2.4 of SBML. In the test suite column, a dash
+means that either not the full test suite can be solved, or the deviation between the given results and the simulation
+exceed the error tolerance \TODO{MORE PRECISE!}. 
 
-\subsection*{Table 1b) - Other simulators for SBML models: special features}
+%\par \mbox{}
+\rowcolors{3}{white}{lightblue}
+\begin{tabular}{lccccccp{2.5cm}}
+\toprule
+Program &
+\multicolumn{3}{c}{SBML elements} & & \\
+\cline{2-4}
+ &
+\multicolumn{1}{C{1.3cm}}{
+  \begin{sideways}Fast\end{sideways}
+  \begin{sideways}reactions\end{sideways}
+ }  & 
+\multicolumn{1}{C{1.3cm}}{
+  \begin{sideways}Algebraic \; \end{sideways}
+  \begin{sideways}rules\end{sideways}
+} & 
+\multicolumn{1}{C{1.3cm}}{
+  \begin{sideways}Events\end{sideways}
+} & &
+  SBML Test Suite
+  & SED-ML &
+  Programming Language \\
+\midrule
+BioUML          & \yes & \yes & \yes    & & \yes        & In $\upalpha$ version & Java \\
+COPASI          & \no  & \no  & (\yes)  & & \no         & \no                   & C++ (plus multiple bindings) \\
+iBioSim         & \yes & \yes & \yes    & & \no         & \no                   & Java \\
+JSim            & \no  & \yes & \no     & & \no         & \no                   & Java \\
+LibSBMLSim      & \yes & \yes & \yes    & & L3 and L2V4 & \no                   & C \\
+VCell           & \yes & \no  & \yes    & & \no         & \no                   & Java frontend, C/C++ server backend \\
+Simulation Core & \yes & \yes & \yes    & & \yes        & \yes                  & Java \\
+\bottomrule
+\end{tabular}
+\rowcolors{1}{white}{white}
+
+\subsection*{Table 1b - Other simulators for SBML models: special features}
     The table shows general properties of the other simulators for SBML.
 	\par \mbox{}
-\begin{landscape}
-\begin{tabular}{|l|l|l|l|l|l|}
-\hline
-Name 	&Programming language&API access & Version & Platform & Comments \\\hline
-BioUML &Java &JavaScript API&0.9.3 & Platform independent (Java) &\\\hline
-COPASI &	C++ with multiple language bindings & Yes &4.8.0& Windows, Linux, Mac OS X, Solaris &\\\hline
-iBioSim &Java & No&2.0.0 & Fedora 15, Windows, Mac OS $>$ 10.6 &\\\hline
-JSim & Java & Yes &2.07.0 & Windows, Linux, Mac OS X &\\\hline
-LibSBMLSim &C & Yes &1.0.0 &Windows, Linux, Free BSD, Mac OS X&\\\hline
-VCell &Java frontend, C/C++ server backend & No & 5.0.0 & Platform independent (Java) & Requires internet connection\\\hline
-Systems Biology Simulation Core Library &Java & Yes & 1.0 & Platform independent (Java) &\\\hline
- \end{tabular}
- 
-\end{landscape}
+\begin{tabular}{lllll}
+\toprule
+Name 	        & API access & Version & Platform & Comments \\
+\midrule
+BioUML          & JavaScript API&0.9.3 & Platform independent (Java) &\\
+COPASI          & \yes &4.8.0& Windows, Linux, Mac OS X, Solaris &\\
+iBioSim         & \no&2.0.0 & Fedora 15, Windows, Mac OS $>$ 10.6 &\\
+JSim            & \yes &2.07.0 & Windows, Linux, Mac OS X &\\
+LibSBMLSim      & \yes &1.0.0 &Windows, Linux, Free BSD, Mac OS X&\\
+VCell           & \no & 5.0.0 & Platform independent (Java) & Requires internet connection\\
+Simulation Core & \yes & 1.0 & Platform independent (Java) &\\
+\bottomrule
+\end{tabular}
 
  %Name & URL & Publication& Fast Reactions & Algebraic Rules& Events & Model 966	 & Model 988	& Model 1083 & Model 1000 &Programming language	&API access & License & Native data format & Version & Release & Platform & Comments & SED-ML support\\\hline
-%BioUML & http://www.biouml.org/ & \cite{Kolpakov2011}, \cite{Kolpakov2006} & & & & No & &&&&Java & & open source &DML & 0.9.3 & Nov 03 2011 & Platform independent (Java) & Integrators: JVODE, DormandPrince, Radau5, Euler, Imex & Only in alpha version\\\hline
-%Cain	1			http://cain.sourceforge.net/									C++ with GUI in wxPython				1.10.0	Sep 27 2011	source code distribution		No
-%CompuCell3D	1			http://www.compucell3d.org/									C++ with Python wrapper	Yes		CC3DML	3.6.2		Windows, Linux, Mac OS X > 10.5.8	Could not open SBML file via GUI	No
-%COPASI & http://copasi.org/ & \cite{Hoops2006} & No & No & Not every feature supported & Simultaneous events not supported & Fast reactions not supported & Algebraic rules not supported	 & The model uses species reference ids in mathematical expressions. The 5model can currently not be imported by COPASI.&	C++ with multiple language bindings & Yes &Artistic License & CopasiML & 4.8.0	Dec 20 2011	& Windows, Linux, Mac OS X, Solaris & Deterministic integrator: LSODA	& No\\\hline
-%GNU MCSim	1			http://www.gnu.org/software/mcsim/									C	Yes	GPL		5.4.0	Jan 29 2011	source code distribution		No
-%iBioSim & http://www.async.ece.utah.edu/iBioSim/ & \cite{Myers2009} &	& & &No: could not allocate unit def (null) & Yes &  & Yes & Java & ? & ? & iBioSimModel & 2.0.0 & Aug 26 2011 & Fedora 15, Windows, Mac OS > 10.6 & Simulators: Embedded Runge-Kutta-Fehlberg (4,5) method; Embedded Runge-Kutta Prince-Dormand (8,9) method; Implicit 4th order Runge-Kutta at Gaussian points; Gear method m=2; Gear method m=1; Euler method & No\\\hline
+%BioUML & http://www.biouml.org/ & \cite{Kolpakov2011}, \cite{Kolpakov2006} & & & & \no & &&&&Java & & open source &DML & 0.9.3 & Nov 03 2011 & Platform independent (Java) & Integrators: JVODE, DormandPrince, Radau5, Euler, Imex & Only in alpha version\\\hline
+%Cain	1			http://cain.sourceforge.net/									C++ with GUI in wxPython				1.10.0	Sep 27 2011	source code distribution		\no
+%CompuCell3D	1			http://www.compucell3d.org/									C++ with Python wrapper	\yes		CC3DML	3.6.2		Windows, Linux, Mac OS X > 10.5.8	Could not open SBML file via GUI	\no
+%COPASI & http://copasi.org/ & \cite{Hoops2006} & \no & \no & Not every feature supported & Simultaneous events not supported & Fast reactions not supported & Algebraic rules not supported	 & The model uses species reference ids in mathematical expressions. The 5model can currently not be imported by COPASI.&	C++ with multiple language bindings & \yes &Artistic License & CopasiML & 4.8.0	Dec 20 2011	& Windows, Linux, Mac OS X, Solaris & Deterministic integrator: LSODA	& \no\\\hline
+%GNU MCSim	1			http://www.gnu.org/software/mcsim/									C	\yes	GPL		5.4.0	Jan 29 2011	source code distribution		\no
+%iBioSim & http://www.async.ece.utah.edu/iBioSim/ & \cite{Myers2009} &	& & &\no: could not allocate unit def (null) & \yes &  & \yes & Java & ? & ? & iBioSimModel & 2.0.0 & Aug 26 2011 & Fedora 15, Windows, Mac OS > 10.6 & Simulators: Embedded Runge-Kutta-Fehlberg (4,5) method; Embedded Runge-Kutta Prince-Dormand (8,9) method; Implicit 4th order Runge-Kutta at Gaussian points; Gear method m=2; Gear method m=1; Euler method & \no\\\hline
 %insilicoIDE	1			http://www.physiome.jp/									C++, Qt			insilicoML	1.4.4	Nov 18 2011	Windows, Linux, FreeBSD, MacOS > 10.5	Import of SBML models hidden under menu entry "Item", no import possible because no reaction upon clicking on import SBML. Two integration methods available: Euler and Runge-Kutta	No
-%JSim & http://www.physiome.org/jsim/ &  \cite{Beard2012a} & Yes & & &	& & &	Wrong & Java & & open source & MML (Mathematical Modeling Language) & 2.07.0 & Jun 12 2012 & Windows, Linux, Mac OS X && No\\\hline
-%JWS Online & http://jjj.biochem.sun.ac.za/index.html & \cite{Olivier2004} & & & & & & & & Java & & & JWS Online Format (*.dat) & & Online program & Supports only SBML Level 1 and Level 2. Models must be uploaded and can only be simulated online; no stand-alone version & No \\\hline
+%JSim & http://www.physiome.org/jsim/ &  \cite{Beard2012a} & \yes & & &	& & &	Wrong & Java & & open source & MML (Mathematical Modeling Language) & 2.07.0 & Jun 12 2012 & Windows, Linux, Mac OS X && \no\\\hline
+%JWS Online & http://jjj.biochem.sun.ac.za/index.html & \cite{Olivier2004} & & & & & & & & Java & & & JWS Online Format (*.dat) & & Online program & Supports only SBML Level 1 and Level 2. Models must be uploaded and can only be simulated online; \no stand-alone version & \no \\\hline
 %MOOSE	1			http://moose.ncbs.res.in/									Python		LGPL			Jan 20 2012	Linux, Windows		
-%NetBuilder	1			http://strc.herts.ac.uk/bio/maria/Apostrophe/									Python	Yes	LGPL	SBML	0.5.0	Sep 03 2011	Windows		
+%NetBuilder	1			http://strc.herts.ac.uk/bio/maria/Apostrophe/									Python	\yes	LGPL	SBML	0.5.0	Sep 03 2011	Windows		
 %PySCeS	1			http://pysces.sourceforge.net/	Olivier2005								Python		GPL				Windows, Linux	Requires Fortran	
-%SOSlib	1			http://www.tbi.univie.ac.at/~raim/odeSolver/	Machne2006								C	Yes	LGPL	SBML	1.6.0	Dec 17 2005	source code distribution		No
-%SYCAMORE	1			http://sycamore.eml.org/	Weidemann2008											SBML			Online program	Internally uses COPASI for simulation	No
-%LibSBMLSim &http://fun.bio.keio.ac.jp/software/libsbmlsim/& \cite{Moraru2008}, \cite{ Loew2001} & Yes & & &Error adding features & Cannot generate math & & No rate rules supported & Java frontend C/C++ server backend & No & open source & VCML	& 5.0.0 & Nov 11 2011 & Platform independent (Java) & Requires internet connection & 
+%SOSlib	1			http://www.tbi.univie.ac.at/~raim/odeSolver/	Machne2006								C	\yes	LGPL	SBML	1.6.0	Dec 17 2005	source code distribution		\no
+%SYCAMORE	1			http://sycamore.eml.org/	Weidemann2008											SBML			Online program	Internally uses COPASI for simulation	\no
+%LibSBMLSim &http://fun.bio.keio.ac.jp/software/libsbmlsim/& \cite{Moraru2008}, \cite{ Loew2001} & \yes & & &Error adding features & Cannot generate math & & \no rate rules supported & Java frontend C/C++ server backend & \no & open source & VCML	& 5.0.0 & Nov 11 2011 & Platform independent (Java) & Requires internet connection & 
 
-%VCell & http://www.vcell.org/ & \cite{Moraru2008}, \cite{ Loew2001} & Yes & & &Error adding features & Cannot generate math & & No rate rules supported & Java frontend C/C++ server backend & No & open source & VCML	& 5.0.0 & Nov 11 2011 & Platform independent (Java) & Requires internet connection & No\\\hline
+%VCell & http://www.vcell.org/ & \cite{Moraru2008}, \cite{ Loew2001} & \yes & & &Error adding features & Cannot generate math & & No rate rules supported & Java frontend C/C++ server backend & \no & open source & VCML	& 5.0.0 & Nov 11 2011 & Platform independent (Java) & Requires internet connection & \no\\\hline
 %XPPAUT	1			http://www.math.pitt.edu/~bard/xpp/xpp.html	Ermentrout2012		
 \subsection*{Table 2 - Simulation of the models from the SBML Test Suite (version 2.0.2) using Rosenbrock solver}
 The table shows for all SBML levels and versions the number of tested models and the total running times of the tests.
@@ -1058,10 +1114,6 @@ Windows\textsuperscript{\textregistered}~7 (Version 6.1.7600) as operating syste
 %% Additional Files              %%
 %%                               %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section*{Additional Files}
-  \subsection*{Additional file 1 --- User Guide}
-    The user guide shows how to read in a model and how to conduct a simulation afterwards.
 
 \end{bmcformat}
 \end{document}
