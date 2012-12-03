@@ -407,16 +407,19 @@ straightforward.
 Both communities offer standardized and manually derived benchmark test in order
 to evaluate the quality of simulation results, because it has been recognized that in many cases
 different solver implementations lead to divergent results \cite{Bergmann2008}.
-
-In this work we address the question of how to precisely solve models encoded in
-the SBML format, supporting all levels and versions. To this end, we here
-describe a precise solver algorithm. As a reference implementation, we
-introduce an exhaustive implementation in the Java\texttrademark{} programming
+%In this work we address the question of how to precisely solve models encoded in
+%the SBML format, supporting all levels and versions. To this end, we here
+%describe a precise solver algorithm. 
+\TODO{In this work we address the question of how to precisely interpret models encoded in
+the SBML format, supporting all levels and versions. Furthermore, we show how to adapt existing integration 
+routines in order to simulate SBML models. To this end, we here describe a precise interpretation and simulation algorithm. }
+As a reference implementation, we introduce an exhaustive implementation in the Java\texttrademark{} programming
 language. The algorithm described in this paper is, however, not limited to any
 particular programming language. It is also important to note that the
 interpretation of these models must be strictly separated from the numerical
 method that solves the implicated differential equation system. In this way, a
-similar approach can also be done for CellML or other formats.
+similar approach can also be done for CellML or other formats.}
+
 
 %
 %The modeling language SBML (Systems Biology Markup Language,
