@@ -225,7 +225,7 @@ commentstyle=\ttfamily\itshape\color{forrestgreen}
 %%                                          %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title{The systems biology simulation core algorithm and its implementation}
+\title{The systems biology simulation core algorithm}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                          %%
@@ -292,13 +292,17 @@ Reutlingen, Germany}
 
 \begin{abstract}
         % Do not use inserted blank lines (ie \\) until main body of text.
-Dynamic simulation of models describing biological phenomena is a key aspect of
-research in systems biology. 
+\TODO{With the increasing availability of high dimensional time course data for metabolites or genes, the description of dynamical systems by differential equations becomes increasingly popular in systems biology. 
+These differential equation systems are often encoded in Systems Biology Markup Language (SBML). In order to simulate such SBML models, an efficient interpreter for SBML as well as numerical integrators are necessary.  
 This article describes an efficient and exhaustive algorithm to interpret and
-solve the differential equation systems of models encoded in Systems Biology
-Markup Language (SBML) and its implementation as part of the Systems Biology Simulation Core
-Library for numerical computation in systems biology.
-
+solve the differential equation systems of SBML models and its implementation as part of the Systems Biology Simulation Core
+Library for numerical computation in systems biology.}
+%Dynamic simulation of models describing biological phenomena is a key aspect of
+%research in systems biology. 
+%This article describes an efficient and exhaustive algorithm to interpret and
+%solve the differential equation systems of models encoded in Systems Biology
+%Markup Language (SBML) and its implementation as part of the Systems Biology Simulation Core
+%Library for numerical computation in systems biology.
 This library is a community-driven project that provides a large collection of
 numerical solvers and a sophisticated interface hierarchy
 for the definition of custom differential equation systems. It is hence possible
@@ -409,7 +413,7 @@ the SBML format, supporting all levels and versions. To this end, we here
 describe a precise solver algorithm. As a reference implementation, we
 introduce an exhaustive implementation in the Java\texttrademark{} programming
 language. The algorithm described in this paper is, however, not limited to any
-particular programing language. It is also important to note that the
+particular programming language. It is also important to note that the
 interpretation of these models must be strictly separated from the numerical
 method that solves the implicated differential equation system. In this way, a
 similar approach can also be done for CellML or other formats.
@@ -639,7 +643,7 @@ The algorithm described above has been implemented in Java\texttrademark{} and i
 Figure~6 displays the software architecture of this library.
 The Systems Biology Simulation Core Library has been designed as part of a community project aiming to provide an extensible numerical backend for customized programs for research in computational systems biology.
 The SBML-solving algorithm is based on the data structures provided by the JSBML project \cite{Draeger2008}.
-With the help of wrapper classes, the Apache Commons Math library could be integrated into the project and provides several numerical solvers.
+\TODO{We implemented wrapper classes in order to integrate several numerical solvers from the Apache Commons Math library into the project.}
 In addition, the library provides an implementation of the explicit fourth order Runge-Kutta method, Rosenbrock's solver, and Euler's method.
 Each solver has a method to directly access its corresponding KiSAO (Kinetic Simulation Algorithm Ontology) term \cite{Courtot2011}.
 Due to the strict separation between numerical differential equation solvers, and the definition of the actual differential equation system, it is possible to implement support for further community standards, such as CellML \cite{Lloyd2004}.
