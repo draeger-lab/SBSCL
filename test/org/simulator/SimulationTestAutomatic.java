@@ -48,7 +48,6 @@ import org.jlibsedml.VariableSymbol;
 import org.jlibsedml.XMLException;
 import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
-import org.jlibsedml.execution.SedMLResultsProcesser2;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -65,6 +64,7 @@ import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sedml.MultTableSEDMLWrapper;
 import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
+
 
 /**
  * This class can test the simulation of all models from biomodels.com and from the SBML test suite.
@@ -199,7 +199,9 @@ public class SimulationTestAutomatic {
 			props.load(new BufferedReader(new FileReader(configfile)));
 			// int start = Integer.valueOf(props.getProperty("start"));
 			double duration = Double.valueOf(props.getProperty("duration"));
-			double steps = Double.valueOf(props.getProperty("steps"));
+			double start = Double.valueOf(props.getProperty("start"));
+			int steps = Integer.valueOf(props.getProperty("steps"));
+			
 			Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
 			String[] amounts = String.valueOf(props.getProperty("amount"))
 					.trim().split(",");
@@ -247,15 +249,21 @@ public class SimulationTestAutomatic {
 					// get timepoints
 					CSVImporter csvimporter = new CSVImporter();
 					MultiTable inputData = csvimporter.convert(model, csvfile);
-					double[] timepoints = inputData.getTimePoints();
-					duration = timepoints[timepoints.length - 1]
-							- timepoints[0];
+					
+					int points=steps+1;
+					double[] timepoints = new double[points];
+					
+					double current=start;
+					for(int i=0; i!=timepoints.length; i++) {
+						timepoints[i] = Math.max(current, duration + start);
+						current += duration/steps;
+					}
 					for (int i = 0; i != solvers.size(); i++) {
 						AbstractDESSolver solver = solvers.get(i);
 						solver.reset();
 						try {
 							MultiTable solution = testModel(solver, model,
-									inputData, duration / steps, amountHash);
+									timepoints, duration / steps, amountHash);
 
 							double dist = Double.NaN;
 							if (solution != null) {
@@ -354,7 +362,9 @@ public class SimulationTestAutomatic {
 			props.load(new BufferedReader(new FileReader(configfile)));
 			// int start = Integer.valueOf(props.getProperty("start"));
 			double duration = Double.valueOf(props.getProperty("duration"));
-			double steps = Double.valueOf(props.getProperty("steps"));
+			double start = Double.valueOf(props.getProperty("start"));
+			
+			int steps = Integer.valueOf(props.getProperty("steps"));
 			Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
 			String[] amounts = String.valueOf(props.getProperty("amount"))
 					.trim().split(",");
@@ -390,15 +400,25 @@ public class SimulationTestAutomatic {
 				}
 				if (model != null) {
 					CSVImporter csvimporter = new CSVImporter();
-					MultiTable inputData = csvimporter.convert(model, csvfile);
-					double[] timepoints = inputData.getTimePoints();
-					duration = timepoints[timepoints.length - 1]
-							- timepoints[0];
+					MultiTable inputData = null;
+					
+					if(csvfile != null ) {
+						inputData = csvimporter.convert(model, csvfile);
+					}
+					int points=steps+1;
+					double[] timepoints = new double[points];
+					
+					double current=start;
+					for(int i=0; i!=timepoints.length; i++) {
+						timepoints[i] = Math.min(current, duration + start);
+						current += duration/steps;
+					}
+					
 					solver.reset();
 					try {
 						double time1 = System.nanoTime();
 						MultiTable solution = testModel(solver, model,
-								inputData, duration / steps, amountHash);
+								timepoints, duration/ steps, amountHash);
 						double time2 = System.nanoTime();
 
 						if (sbmlFileType.equals("-sbml-l1v2.xml")) {
@@ -422,7 +442,7 @@ public class SimulationTestAutomatic {
 						}
 
 						double dist = Double.NaN;
-						if (solution != null) {
+						if ((solution != null) && (inputData != null)) {
 							dist = computeDistance(inputData, solution);
 						}
 
@@ -432,7 +452,7 @@ public class SimulationTestAutomatic {
 									+ " with solver " + solver.getName());
 							logger.log(Level.INFO, String.valueOf(dist));
 							highDistance = true;
-						} else if (Double.isNaN(dist)) {
+						} else if (Double.isNaN(dist) && (inputData != null)) {
 							errorInSimulation = true;
 						}
 					} catch (DerivativeException e) {
@@ -707,7 +727,7 @@ public class SimulationTestAutomatic {
 		int nModels = 0;
 		AbstractDESSolver solver = new RosenbrockSolver();
 
-		for (int modelnr = 206; modelnr <= 423; modelnr++) {
+		for (int modelnr = 339; modelnr <= 348; modelnr++) {
 			System.out.println("Biomodel " + modelnr);
 			Model model = null;
 			try {
@@ -772,7 +792,7 @@ public class SimulationTestAutomatic {
 	 * @throws DerivativeException
 	 */
 	private static MultiTable testModel(AbstractDESSolver solver, Model model,
-			MultiTable inputData, double stepSize,
+			double[] timePoints, double stepSize,
 			Map<String, Boolean> amountHash) throws SBMLException,
 			ModelOverdeterminedException, DerivativeException {
 		// initialize interpreter
@@ -784,7 +804,7 @@ public class SimulationTestAutomatic {
 
 			// solve
 			MultiTable solution = solver.solve(interpreter,
-					interpreter.getInitialValues(), inputData.getTimePoints());
+					interpreter.getInitialValues(), timePoints);
 			if (solver.isUnstable()) {
 				logger.warning("unstable!");
 				return null;
