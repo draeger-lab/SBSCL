@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -65,17 +66,20 @@ import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sedml.MultTableSEDMLWrapper;
 import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
 
+import de.zbit.io.csv.CSVOptions;
+import de.zbit.io.csv.CSVWriter;
+
 
 /**
- * This class can test the simulation of all models from biomodels.com and from the SBML test suite.
+ * This class can test the simulation of all models from the SBML test suite.
  * @author Andreas Dr&auml;ger
  * @version $$Rev$$
  * @since 1.0
  */
 @SuppressWarnings("unchecked")
-public class SimulationTestAutomatic {
+public class SBMLTestSuiteRunner {
 	private static final Logger logger = Logger
-			.getLogger(SimulationTestAutomatic.class.getName());
+			.getLogger(SBMLTestSuiteRunner.class.getName());
 	/**
 	 * An array of all available ordinary differential equation solvers.
 	 */
@@ -105,10 +109,9 @@ public class SimulationTestAutomatic {
 	}
 
 	/**
-	 * Input: 1) file with models (from biomodels.org or containing the SBML test suite), 
+	 * Input: 1) file with models (containing the SBML test suite), 
 	 * 
-	 * 2) "biomodels" (for testing models from biomodels.org) or 
-	 * "all solvers - test suite" (for testing the models of the test suite with all given integrators) or 
+	 * 2) "all" (for testing the models of the test suite with all given integrators) or 
 	 * "sedml" (for testing the models of the test suite using the given SED-ML files) or
 	 * nothing (for testing the models of the test suite with the Rosenbrock solver, should produce only successful tests)
 	 * 
@@ -119,16 +122,10 @@ public class SimulationTestAutomatic {
 	public static void main(String[] args) throws IOException,
 			URISyntaxException {
 		boolean onlyRosenbrock = true;
-		boolean testBiomodels = false;
 		boolean sedML = false;
-		if ((args.length >= 2) && (args[1].equals("all solvers - test suite"))) {
+		if ((args.length >= 2) && (args[1].equals("all"))) {
 			onlyRosenbrock = false;
 		}
-		if ((args.length >= 2) && (args[1].equals("biomodels"))) {
-			onlyRosenbrock = false;
-			testBiomodels = true;
-		}
-
 		if ((args.length >= 2) && (args[1].equals("sedml"))) {
 			onlyRosenbrock = true;
 			sedML = true;
@@ -138,8 +135,6 @@ public class SimulationTestAutomatic {
 			testRosenbrockSolverWithSEDML(args[0]);
 		} else if (onlyRosenbrock) {
 			testRosenbrockSolver(args[0]);
-		} else if (testBiomodels) {
-			testBiomodels(args[0]);
 		} else {
 			statisticForSolvers(args[0]);
 		}
@@ -350,11 +345,11 @@ public class SimulationTestAutomatic {
 			modelFile.append(modelnr);
 			while (modelFile.length() < 5)
 				modelFile.insert(0, '0');
-			String path = modelFile.toString();
+			String folder = modelFile.toString();
 			modelFile.append('/');
-			modelFile.append(path);
+			modelFile.append(folder);
 			modelFile.insert(0, file);
-			path = modelFile.toString();
+			String path = modelFile.toString();
 			csvfile = path + "-results.csv";
 			configfile = path + "-settings.txt";
 
@@ -402,16 +397,31 @@ public class SimulationTestAutomatic {
 					CSVImporter csvimporter = new CSVImporter();
 					MultiTable inputData = null;
 					
-					if(csvfile != null ) {
+					File f = new File(csvfile);
+					if(f.exists()) {
 						inputData = csvimporter.convert(model, csvfile);
 					}
 					int points=steps+1;
 					double[] timepoints = new double[points];
 					
-					double current=start;
-					for(int i=0; i!=timepoints.length; i++) {
-						timepoints[i] = Math.min(current, duration + start);
-						current += duration/steps;
+					BigDecimal current = new BigDecimal(start);
+					BigDecimal end = new BigDecimal(start).add(new BigDecimal(duration));
+					
+					BigDecimal step = null;
+					try{
+						step = new BigDecimal(duration).divide(new BigDecimal(steps));
+					}
+					catch(ArithmeticException e) {
+						step = null;
+					}
+					if(step == null) {
+						timepoints = inputData.getTimePoints();
+					}
+					else {
+						for(int i=0; i!=timepoints.length; i++) {
+							timepoints[i] = Math.min(current.doubleValue(), end.doubleValue());
+							current = current.add(step);
+						}
 					}
 					
 					solver.reset();
@@ -715,69 +725,7 @@ public class SimulationTestAutomatic {
 		System.out.println("L3V1 - time: " + runningTimes[5] + " s");
 	}
 
-	/**
-	 * Tests the models of biomodels.org using the Rosenbrock solver as integrator
-	 * @param file
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	private static void testBiomodels(String file)
-			throws FileNotFoundException, IOException {
-		int errors = 0;
-		int nModels = 0;
-		AbstractDESSolver solver = new RosenbrockSolver();
-
-		for (int modelnr = 339; modelnr <= 348; modelnr++) {
-			System.out.println("Biomodel " + modelnr);
-			Model model = null;
-			try {
-				String modelFile = "";
-				if (modelnr < 10) {
-					modelFile = file + "BIOMD000000000" + modelnr + ".xml";
-				} else if (modelnr < 100) {
-					modelFile = file + "BIOMD00000000" + modelnr + ".xml";
-				} else {
-					modelFile = file + "BIOMD0000000" + modelnr + ".xml";
-				}
-				model = (new SBMLReader()).readSBML(modelFile).getModel();
-			} catch (Exception e) {
-				model = null;
-				logger.warning("Exception while reading Biomodel " + modelnr);
-				errors++;
-			}
-			if (model != null) {
-				solver.reset();
-				try {
-					SBMLinterpreter interpreter = new SBMLinterpreter(model);
-
-					if ((solver != null) && (interpreter != null)) {
-						solver.setStepSize(0.1);
-
-						// solve
-						solver.solve(interpreter,
-								interpreter.getInitialValues(), 0, 10);
-
-						if (solver.isUnstable()) {
-							logger.warning("unstable!");
-							errors++;
-						}
-					}
-				} catch (DerivativeException e) {
-					logger.warning("Exception in Biomodel " + modelnr);
-					errors++;
-				} catch (ModelOverdeterminedException e) {
-					logger.warning("OverdeterminationException in Biomodel "
-							+ modelnr);
-					errors++;
-				}
-			}
-			nModels++;
-		}
-		System.out.println("Models: " + nModels);
-		System.out.println("Models with errors in simulation: " + errors);
-		System.out.println("Models with correct simulation: "
-				+ (nModels - errors));
-	}
+	
 
 	/**
 	 * Tests one specific model
