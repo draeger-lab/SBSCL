@@ -122,11 +122,11 @@
     </p>
 			
     <pre><code class="spoiled">
-      <span class="class"> SEDMLDocument</span> doc = Libsedml.<span class="method">readDocument</span>(f);<br/>
-      <span class="class"> SedML</span> sedml = doc.<span class="method">getSBMLModel</span>();<br/>
-       <span class="class"> Output</span> wanted = sedml.<span class="method">getOutputs</span>().<span class="method">get</span>(0);<br/>
-      <span class="class"> SedMLSBMLSimulatorExecutor</span> exe = = <span class="keyword">new</span> <span class="class">SedMLSBMLSimulatorExecutor</span>(sedml, wanted);<br/>
-      <span class="class"> Map<Task, IRawSedmlSimulationResults></span> res = exe.<span class="method">runSimulations</span>();<br/>
+      <span class="class">SEDMLDocument</span> doc = Libsedml.<span class="method">readDocument</span>(f);<br/>
+      <span class="class">SedML</span> sedml = doc.<span class="method">getSBMLModel</span>();<br/>
+      <span class="class">Output</span> wanted = sedml.<span class="method">getOutputs</span>().<span class="method">get</span>(0);<br/>
+      <span class="class">SedMLSBMLSimulatorExecutor</span> exe = <span class="keyword">new</span> <span class="class">SedMLSBMLSimulatorExecutor</span>(sedml, wanted);<br/>
+      <span class="class">Map<Task, IRawSedmlSimulationResults></span> res = exe.<span class="method">runSimulations</span>();<br/>
       <span class="class">MultiTable</span> solution = exe.<span class="method">processSimulationResults</span>(wanted, res);<br/>
     </code></pre>
     
