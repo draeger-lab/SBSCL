@@ -51,8 +51,8 @@ public class RNG {
    *
    */
   static {
-    RANDOM_SEED=System.currentTimeMillis();
-    RANDOM=new Random(RANDOM_SEED);
+    RANDOM_SEED = System.currentTimeMillis();
+    RANDOM = new Random(RANDOM_SEED);
   }
   
   /**

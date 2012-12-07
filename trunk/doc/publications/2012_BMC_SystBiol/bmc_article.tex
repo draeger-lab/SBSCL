@@ -705,7 +705,7 @@ the SBML software matrix\footnote{\url{http://sbml.org/SBML_Software_Guide/SBML_
   (e.g., MATLAB\texttrademark{} or Mathematica\texttrademark)
   \item Support for SBML Level~3. 
 \end{itemize}
-Table~1a and Table~1b summarize the comparison of six of these programs and Systems Biology Simulation Core Library.
+Table~1 summarizes the comparison of six of these programs.
 Only three other applications support the simulation of models containing events, algebraic rules and fast reactions completely: iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}.
 %\TODO{Only three applications pass the four exemplary models (966, 988, 1083, 1000) of the SBML Test Suite (version 2.0.2):}
 %iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}.
@@ -1013,7 +1013,7 @@ This model was simulated using Euler's method (KiSAO term 30) with 200 integrati
 %%
 \section*{Tables}
 
-\subsection*{Table 1a - Other simulators for SBML models: SBML language support}
+\subsection*{Table 1 - Other simulators for SBML models: SBML language support}
 The table shows which SBML elements (fast reactions, algebraic rules, events) are supported by other SBML-capable 
 simulation software and whether all models of the SBML Test Suite can be correctly solved.
 COPASI supports events in SBML, but not all of the current constructs. The library LibSBMLSim can correctly
@@ -1022,55 +1022,44 @@ means that either not the full test suite can be solved, or the deviation betwee
 exceed the error tolerance \TODO{MORE PRECISE!}. 
 
 %\par \mbox{}
+\begin{landscape}
 \rowcolors{3}{white}{lightblue}
-\begin{tabular}{lccccccp{2.5cm}}
+\begin{tabular}{p{2cm}lccccC{1cm}C{1.2cm}p{2.5cm}lp{3.3cm}p{2cm}}
 \toprule
 Program &
-\multicolumn{3}{c}{SBML elements} & & \\
-\cline{2-4}
- &
-\multicolumn{1}{C{1.3cm}}{
+Version &
+\multicolumn{3}{C{2.5cm}}{Difficult SBML elements} & 
+  & \multirow{2}{1cm}{SBML Test Suite}
+  & SED-ML 
+  & \multirow{2}{2.5cm}{Programming language}
+  & API access
+  & Platform
+  & Comments \\
+\cline{3-5}
+  & & 
+\multicolumn{1}{C{.68cm}}{
   \begin{sideways}Fast\end{sideways}
   \begin{sideways}reactions\end{sideways}
  }  & 
-\multicolumn{1}{C{1.3cm}}{
+\multicolumn{1}{C{.68cm}}{
   \begin{sideways}Algebraic \; \end{sideways}
   \begin{sideways}rules\end{sideways}
 } & 
-\multicolumn{1}{C{1.3cm}}{
+\multicolumn{1}{C{.68cm}}{
   \begin{sideways}Events\end{sideways}
-} & &
-  SBML Test Suite
-  & SED-ML &
-  Programming Language \\
+} \\
 \midrule
-BioUML          & \yes & \yes & \yes    & & \yes        & In $\upalpha$ version & Java \\
-COPASI          & \no  & \no  & (\yes)  & & \no         & \no                   & C++ (plus multiple bindings) \\
-iBioSim         & \yes & \yes & \yes    & & \no         & \no                   & Java \\
-JSim            & \no  & \yes & \no     & & \no         & \no                   & Java \\
-LibSBMLSim      & \yes & \yes & \yes    & & L3 and L2V4 & \no                   & C \\
-VCell           & \yes & \no  & \yes    & & \no         & \no                   & Java frontend, C/C++ server backend \\
-Simulation Core & \yes & \yes & \yes    & & \yes        & \yes                  & Java \\
+BioUML          & 0.9.3 & \yes & \yes & \yes    & & \yes      & In $\upalpha$ version & Java                                & JavaScript & independent                         &                              \\
+COPASI          & 4.8   & \no  & \no  & (\yes)  & & \no       & \no                   & C++ (plus multiple bindings)        & \yes       & Windows, Linux, Mac OS X, Solaris   &                              \\
+iBioSim         & 2.0   & \yes & \yes & \yes    & & \yes      & \no                   & Java                                & \no        & Fedora 15, Windows, Mac OS $>$ 10.6 &                              \\
+JSim            & 2.07  & \no  & \yes & \no     & & \no       & \no                   & Java                                & \yes       & Windows, Linux, Mac OS X            &                              \\
+LibSBMLSim      & 1.0   & \yes & \yes & \yes    & & L3, L2V4  & \no                   & C                                   & \yes       & Windows, Linux, Free BSD, Mac OS X  &                              \\
+VCell           & 5.0   & \yes & \no  & \yes    & & \no       & \no                   & Java frontend, C/C++ server backend & \no        & independent                         & Internet connection required \\
+Simulation Core & 1.0   & \yes & \yes & \yes    & & \yes      & \yes                  & Java                                & \yes       & independent                         &                              \\
 \bottomrule
 \end{tabular}
 \rowcolors{1}{white}{white}
-
-\subsection*{Table 1b - Other simulators for SBML models: special features}
-    The table shows general properties of the other simulators for SBML.
-	\par \mbox{}
-\begin{tabular}{lllll}
-\toprule
-Name 	        & API access & Version & Platform & Comments \\
-\midrule
-BioUML          & JavaScript API&0.9.3 & Platform independent (Java) &\\
-COPASI          & \yes &4.8.0& Windows, Linux, Mac OS X, Solaris &\\
-iBioSim         & \no&2.0.0 & Fedora 15, Windows, Mac OS $>$ 10.6 &\\
-JSim            & \yes &2.07.0 & Windows, Linux, Mac OS X &\\
-LibSBMLSim      & \yes &1.0.0 &Windows, Linux, Free BSD, Mac OS X&\\
-VCell           & \no & 5.0.0 & Platform independent (Java) & Requires internet connection\\
-Simulation Core & \yes & 1.0 & Platform independent (Java) &\\
-\bottomrule
-\end{tabular}
+\end{landscape}
 
  %Name & URL & Publication& Fast Reactions & Algebraic Rules& Events & Model 966	 & Model 988	& Model 1083 & Model 1000 &Programming language	&API access & License & Native data format & Version & Release & Platform & Comments & SED-ML support\\\hline
 %BioUML & http://www.biouml.org/ & \cite{Kolpakov2011}, \cite{Kolpakov2006} & & & & \no & &&&&Java & & open source &DML & 0.9.3 & Nov 03 2011 & Platform independent (Java) & Integrators: JVODE, DormandPrince, Radau5, Euler, Imex & Only in alpha version\\\hline
