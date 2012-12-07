@@ -66,8 +66,6 @@ import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sedml.MultTableSEDMLWrapper;
 import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
 
-import de.zbit.io.csv.CSVOptions;
-import de.zbit.io.csv.CSVWriter;
 
 
 /**
@@ -115,6 +113,7 @@ public class SBMLTestSuiteRunner {
 	 * "sedml" (for testing the models of the test suite using the given SED-ML files) or
 	 * nothing (for testing the models of the test suite with the Rosenbrock solver, should produce only successful tests)
 	 * 
+	 * 
 	 * @param args
 	 * @throws IOException
 	 * @throws URISyntaxException
@@ -146,7 +145,7 @@ public class SBMLTestSuiteRunner {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	private static void statisticForSolvers(String file)
+	public static void statisticForSolvers(String file)
 			throws FileNotFoundException, IOException {
 		String sbmlfile, csvfile, configfile;
 
@@ -242,17 +241,38 @@ public class SBMLTestSuiteRunner {
 				}
 				if (model != null) {
 					// get timepoints
-					CSVImporter csvimporter = new CSVImporter();
-					MultiTable inputData = csvimporter.convert(model, csvfile);
 					
+					
+					CSVImporter csvimporter = new CSVImporter();
+					MultiTable inputData = null;
+					
+					File f = new File(csvfile);
+					if(f.exists()) {
+						inputData = csvimporter.convert(model, csvfile);
+					}
 					int points=steps+1;
 					double[] timepoints = new double[points];
 					
-					double current=start;
-					for(int i=0; i!=timepoints.length; i++) {
-						timepoints[i] = Math.max(current, duration + start);
-						current += duration/steps;
+					BigDecimal current = new BigDecimal(start);
+					BigDecimal end = new BigDecimal(start).add(new BigDecimal(duration));
+					
+					BigDecimal step = null;
+					try{
+						step = new BigDecimal(duration).divide(new BigDecimal(steps));
 					}
+					catch(ArithmeticException e) {
+						step = null;
+					}
+					if(step == null) {
+						timepoints = inputData.getTimePoints();
+					}
+					else {
+						for(int i=0; i!=timepoints.length; i++) {
+							timepoints[i] = Math.min(current.doubleValue(), end.doubleValue());
+							current = current.add(step);
+						}
+					}
+					
 					for (int i = 0; i != solvers.size(); i++) {
 						AbstractDESSolver solver = solvers.get(i);
 						solver.reset();
@@ -323,7 +343,7 @@ public class SBMLTestSuiteRunner {
 	 * @throws IOException
 	 * @throws URISyntaxException
 	 */
-	private static void testRosenbrockSolver(String file)
+	public static void testRosenbrockSolver(String file)
 			throws FileNotFoundException, IOException, URISyntaxException {
 		String sbmlfile, csvfile, configfile;
 		int highDistances = 0;
@@ -520,7 +540,7 @@ public class SBMLTestSuiteRunner {
 	 * @throws IOException
 	 * @throws URISyntaxException
 	 */
-	private static void testRosenbrockSolverWithSEDML(String file)
+	public static void testRosenbrockSolverWithSEDML(String file)
 			throws FileNotFoundException, IOException, URISyntaxException {
 		String sbmlfile, csvfile, configfile, sedmlfile;
 		int highDistances = 0;
@@ -739,7 +759,7 @@ public class SBMLTestSuiteRunner {
 	 * @throws SBMLException
 	 * @throws DerivativeException
 	 */
-	private static MultiTable testModel(AbstractDESSolver solver, Model model,
+	public static MultiTable testModel(AbstractDESSolver solver, Model model,
 			double[] timePoints, double stepSize,
 			Map<String, Boolean> amountHash) throws SBMLException,
 			ModelOverdeterminedException, DerivativeException {
