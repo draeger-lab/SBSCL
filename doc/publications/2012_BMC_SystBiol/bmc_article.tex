@@ -291,43 +291,49 @@ Reutlingen, Germany}
 
 
 \begin{abstract}
+\TODO{\textbf{Background:}
         % Do not use inserted blank lines (ie \\) until main body of text.
-\TODO{With the increasing availability of high dimensional time course data for metabolites or genes, the description of dynamical systems by differential equations becomes increasingly popular in systems biology. 
-These differential equation systems are often encoded in Systems Biology Markup Language (SBML). In order to simulate such SBML models, an efficient interpreter for SBML as well as numerical integrators are necessary.  
-This article describes an efficient algorithm to interpret and
-solve the differential equation systems of SBML models and its implementation as part of the Systems Biology Simulation Core
-Library for numerical computation in systems biology.}
+With the increasing availability of high dimensional time course data for metabolites, genes, or fluxes
+the description of dynamical systems by differential equation models becomes more and more popular in systems biology.
+%driven by the aim to make biological phenomena predictable. 
+The diversity of modeling aproaches and experimental data requires customized software solutions for very specific tasks.
+Models are often encoded in formats such as SBML (Systems Biology Markup Language), but
+their mathematical structure is very complex and difficult to evaluate due to many special cases.}
+%A flexible interpreter for SBML as well as numerical integrators are hence necessary to solve these models.
+
+\TODO{\textbf{Results:}
+This article describes an efficient algorithm to interpret and solve the differential equation systems of SBML models.
+We begin our consideration with a formal representation of the mathematical form of the models and explain all parts of the algorithm in detail,
+including several pre-processing steps.  
 %Dynamic simulation of models describing biological phenomena is a key aspect of
 %research in systems biology. 
 %This article describes an efficient and exhaustive algorithm to interpret and
 %solve the differential equation systems of models encoded in Systems Biology
 %Markup Language (SBML) and its implementation as part of the Systems Biology Simulation Core
 %Library for numerical computation in systems biology.
-This library is a community-driven project that provides a large collection of
-numerical solvers and a sophisticated interface hierarchy
-for the definition of custom differential equation systems. It is hence possible
-to extend this library with additional interpreters for other systems biological
-standard formats.
-The Systems Biology Simulation Core Library is intended to be used as a backend for custom-made
-programs.
-It is entirely implemented in Java\texttrademark, using the JSBML project,
-without the necessity to include any platform-dependent wrappers or libraries,
-and does not depend on any commercial licenses.
-%, and can be used on every operating system for which a JVM
-%is available.
-To demonstrate its capabilities, it has been tested with the
+We provide a flexible reference implementation of the algorithm as part of the Systems Biology Simulation Core Library,
+which is a community-driven project that provides a large collection of numerical solvers and a sophisticated interface hierarchy
+for the definition of custom differential equation systems. 
+To demonstrate the capabilities of the new algorithm, it has been tested with the
 entire SBML Test Suite and %also been used to simulate 
-all models of BioModels Database.
+all models of BioModels Database.}
 
-Source code, binaries, and documentation can be freely obtained under the terms
-of the LGPL version~3 from the website
-\href{http://sourceforge.net/projects/simulation-core/}{http://sourceforge.net/projects/simulation-core/}.
-Feature requests, bug reports, contribution, or any further discussion can be directed to the mailing list
-\href{mailto:simulation-core-development@lists.sourceforge.net}{simulation-core-development@lists.sourceforge.net}.
 %
 %\section{Supplementary information:}
 % TODO: Provide additional material
-%Supplementary data is available at Bioinformatics online.     
+%Supplementary data is available at Bioinformatics online.
+\TODO{\textbf{Conclusions:}
+The formal description of the mathematics behind the SBML format facilitates the implementation of the algorithm within specifically tailored programs.
+A similar approach would also be possible for further systems biological community formats.
+%The reference implementation (Systems Biology Simulation Core Library) described in this article, reflects this formal structure within its abstract type hierarchy.
+For Java\texttrademark-based programs, this library can be used as a simulation backend, whose abstract type hierarchy allows for customized extension.
+%, and can be used on every operating system for which a JVM
+%is available.
+%
+Source code, binaries, and documentation can be freely obtained under the terms of the LGPL version~3 from the website
+\url{http://sourceforge.net/projects/simulation-core/}.
+Feature requests, bug reports, contribution, or any further discussion can be directed to the mailing list
+\href{mailto:simulation-core-development@lists.sourceforge.net}{simulation-core-development@lists.sourceforge.net}.}
 \end{abstract}
 
 
@@ -368,8 +374,8 @@ approaches necessary?}
 
 As part of the movement towards quantitative biology, modeling, 
 simulation, and computer analysis of biological networks have become integral
-parts of modern biological research. Ambitious national and international
-research projects such as the Virtual Liver Network \cite{Holzhuetter2012}
+parts of modern biological research \TODO{\cite{Macilwain2011}}.
+Ambitious national and international research projects such as the Virtual Liver Network \cite{Holzhuetter2012}
 strive to derive even organ-wide models of biological systems that include all
 kinds of processes taking place at several levels of detail. Large-scale efforts
 like this require a strong collaboration between various research groups,
@@ -395,7 +401,7 @@ The models encoded in these formats can be interpreted in terms of differential
 equation systems, with additional structures such as discrete events and
 algebraic equations. 
 For efficient model analysis, simulation, and calibration (e.g.,
-the estimation of parameter values) multiple-purpose and efficient numerical
+the estimation of parameter values) a multiple-purpose and efficient numerical
 solver library that has been designed with the requirements of biological
 network models in mind is prerequisite.
 Although the language specifications of SBML \cite{Hucka2001, Hucka2003,
@@ -458,6 +464,13 @@ experiments by executing SED-ML files.
 
 \section*{Results and discussion}
 
+\TODO{In order to derive an algorithm for the interpretation of SBML models, it is first necessary to
+take a closer look at the mathematical equations implied by this data format.
+Based on this general description, we will then discuss all necessary steps
+to deduce an algorithm that takes all special cases for the various levels and versions of SBML into account.}
+
+\subsection*{A formal representation of models in systems biology}
+
 The mathematical structure of a reaction network comprises a stoichiometric
 matrix $\mathbf{N}$, whose rows correspond to the reacting species $\vec{S}$
 within the system, whereas its columns represent the reactions, i.e., bio-transformations,
@@ -503,7 +516,7 @@ compartments $\vec{C}$, amounts (or concentrations) of reacting species
 $\vec{S}$, and the values of all global model parameters $\vec{P}$.
 It should be noted that these models may contain local parameters $\vec{p}$ that
 influence the reaction velocities, but which are not part of the global parameter
-vector $\vec{P}$, and hence also not part of $\vec{Q}$. All vector functions terms
+vector $\vec{P}$, and hence also not part of $\vec{Q}$. All vector function terms
 may involve a delay function, i.e., an expression of the form $\mathrm{delay}(x, \tau)$
 with $\tau > 0$. In this way, it is possible to address values of $x$ computed in
 the earlier integration step at time $t - \tau$, turning Equation~\ref{eq:QuantityValue}
@@ -519,10 +532,10 @@ Thereby, the rate rule function $\vec{g}(\vec{Q}, t)$ directly gives the rate of
 change of these quantities, and returns 0 for all others.
 In addition, SBML introduces the concept of events $\vec{f}_E(\vec{Q}, t)$ and
 $\vec{r}(\vec{Q}, t)$ assignment rules.
-An event can directly manipulate the value of a quantity, for instance,
-reduce the size of a certain compartment to a certain portion of its current size,
+An event can directly manipulate the value of several quantities, for instance,
+reduce the size of a compartment to a certain portion of its current size,
 as soon as a trigger condition becomes satisfied.
-An assignment rule also influences the absolute value of some model.
+An assignment rule also influences the absolute value of some quantity.
 A further concept of SBML models are algebraic rules, which are equations that
 must evaluate to zero at all times during the simulation of the model.
 These rules can be solved to determine the values of quantities, whose values
@@ -539,7 +552,7 @@ contains a fast and a slow sub-system, a separation of the system is necessary
 leading to differential algebraic equations.
 Some species can be declared to operate at the system's boundaries, assuming a
 constant pool of their amounts or concentrations.
-Care must als be taken with respect to the units of the species, because under
+Care must also be taken with respect to the units of the species, because under
 certain condition division or multiplication with the sizes of their surrounding
 compartments is necessary in order to ensure the consistent interpretation of
 the models. 
@@ -859,8 +872,9 @@ License: LGPL version~3
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Author's contributions}
 RK and AlD contributed equally and declare shared first authorship.
-AnD drafted the first version of the manuscript, initialized and coordinated the project and supervised the work.
-All authors read and approved the final manuscript.
+AnD drafted the first version of the manuscript, initialized and coordinated the project, and supervised the work.
+RA implemented support for SED-ML.
+All authors contributed to the implementation, read and approved the final manuscript.
     
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
