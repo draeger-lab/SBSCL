@@ -12,13 +12,36 @@ Version 1.2 (2012-xx-xx)
      order to facilitate the change of values for some elements of a
      differential equation system.
      
+   - The user can now decide whether to determine the amount or the
+   	 concentration of a species.
+   	 
+   - A wrapper class for the SBML test suite has been added.
+   
+   - Simulation Core Library now supports all models of the SBML test
+     suite.
+     
+   - Import of CSV files is now possible.
+   
+   - Distance functions for comparison with experimental data
+     are included in the library.
+     
+   - KiSAO terms of integration routines are included.
+     
  * Changes in this version:
  
    - Renamed getNumAdditionalValues in RichDESystem to 
      getAdditionalValueCount() in order to be compliant to many 
      other Java classes.
+     
+   - The processing of the ASTNodes has been improved.
+     
  
  * Bug fixes: 
+   
+   - There was an error in the calculation of the concentration of 
+     some species: Sometimes the amount was not divided by the 
+     appropriate compartment size.
+     
 
 ======================================================================
 Version 1.1 (2012-05-04)
