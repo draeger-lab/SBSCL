@@ -749,14 +749,14 @@ public class SBMLTestSuiteRunner {
 
 	/**
 	 * Tests one specific model
+	 * @param solver
 	 * @param model
-	 * @param inputData
-	 * @param timepoints
-	 * @param sbmlFileType
-	 * @param modelnr
+	 * @param timePoints
 	 * @param stepSize
-	 * @throws ModelOverdeterminedException
+	 * @param amountHash
+	 * @return
 	 * @throws SBMLException
+	 * @throws ModelOverdeterminedException
 	 * @throws DerivativeException
 	 */
 	public static MultiTable testModel(AbstractDESSolver solver, Model model,

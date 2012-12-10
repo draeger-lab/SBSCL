@@ -334,12 +334,12 @@
   	<mkdir dir="${doc}/version_${version}"/>
     <javadoc
   	  sourcepath="${src}:${test}:${resources}"
-      destdir="${doc}/api/version_${version}"
+      destdir="${doc}/version_${version}"
       packagenames="org.*"
       footer="Generated ${TODAY}"
       access="protected"
   	  author="true"
-  	  classpath="lib/ext-lib/jdom.jar:lib/ext-lib/jdom-contrib.jar:lib/commons-math-2.2.jar:lib/ext-lib/jmathml.jar:lib/ext-lib/jaxen-1.1.1.jar:lib/ext-lib/xom-1.2.1.jar:lib/jsbml-1.0-incl-libs.jar:lib/ext-lib/jlibsedml.jar:lib/ext-lib/commons-io-1.4.jar"
+  	  classpath="lib/junit-4.8.jar:lib/ext-lib/jdom.jar:lib/ext-lib/jdom-contrib.jar:lib/commons-math-2.2.jar:lib/ext-lib/jmathml.jar:lib/ext-lib/jaxen-1.1.1.jar:lib/ext-lib/xom-1.2.1.jar:lib/jsbml-1.0-incl-libs.jar:lib/ext-lib/jlibsedml.jar:lib/ext-lib/commons-io-1.4.jar"
   	  doctitle="Simulation Core Library ${version}"
   	  nodeprecated="false"
   	  nodeprecatedlist="false"
@@ -349,12 +349,16 @@
   	  source="1.5"
   	  splitindex="true"
   	  use="true"
+      stylesheetfile="${doc}/javadoc-style.css" 
+      overview="${src}/overview.html"
   	  version="true">
         <link href="http://www.jdom.org/docs/apidocs.1.1/"/>
         <link href="http://download.oracle.com/javase/6/docs/api/"/>
         <link href="http://commons.apache.org/io/api-1.4/"/>
         <link href="http://commons.apache.org/math/api-2.2/"/>
         <link href="http://sbml.org/Special/Software/JSBML/build/apidocs/"/>
+        <link href="http://jaxen.codehaus.org/apidocs/"/>
+        <link href="http://www.xom.nu/apidocs/"/>
     </javadoc>
   </target>	
 	

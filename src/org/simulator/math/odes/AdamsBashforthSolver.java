@@ -64,7 +64,8 @@ public class AdamsBashforthSolver extends FirstOrderSolver {
 	/**
 	 * 
 	 * @param stepSize
-	 * @param the nonnegative flag of the super class @see org.sbml.simulator.math.odes.AbstractDESSolver
+	 * @param nonnegative the nonnegative flag of the super class
+	 * @see AbstractDESSolver
 	 */
 	public AdamsBashforthSolver(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);

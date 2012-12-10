@@ -68,9 +68,12 @@ public class FunctionValue extends ASTNodeValue {
   
 	/**
 	 * 
-	 * @param the interpreter
-	 * @param the corresponding ASTNode
-	 * @param the variables of the function as ASTNodes
+	 * @param interpreter
+	 *            the interpreter
+	 * @param node
+	 *            the corresponding ASTNode
+	 * @param variableNodes
+	 *            the variables of the function as ASTNodes
 	 */
 	public FunctionValue(ASTNodeInterpreter interpreter,
 			ASTNode node, List<ASTNode> variableNodes) {
@@ -119,8 +122,7 @@ public class FunctionValue extends ASTNodeValue {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeBooleanValue()
 	 */
 	@Override

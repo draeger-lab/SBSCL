@@ -52,8 +52,12 @@ public class SBMLTestSuiteWrapper {
 			.getLogger(SBMLTestSuiteWrapper.class.getName());
 
 	/**
-	 * Computes a statistic for the SBML test suite using the Rosenbrock solver as integrator
-	 * @param file
+	 * Computes a statistic for the SBML test suite using the {@link RosenbrockSolver} as integrator
+	 * @param path
+	 * @param modelnr
+	 * @param outputPath
+	 * @param level
+	 * @param version
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 * @throws URISyntaxException

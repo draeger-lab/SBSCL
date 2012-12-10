@@ -40,7 +40,7 @@ public interface FastProcessDESystem extends DESystem {
 
 	/**
 	 * 
-	 * @param setFastProcessComputation
+	 * @param isProcessing
 	 *           Should there be a splitting of fast and slow reactions in the simulation?
 	 */
 	public void setFastProcessComputation(boolean isProcessing);

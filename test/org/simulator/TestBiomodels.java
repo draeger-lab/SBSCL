@@ -46,7 +46,7 @@ public class TestBiomodels {
 	
 	
 	/**
-	 * Tests the models of biomodels.org using the Rosenbrock solver as integrator
+	 * Tests the models of biomodels.org using the {@link RosenbrockSolver} as integrator
 	 * @param file
 	 * @throws FileNotFoundException
 	 * @throws IOException
@@ -111,7 +111,7 @@ public class TestBiomodels {
 	
 	/**
 	 *  
-	 * @param path of file with models (from biomodels.org) 
+	 * @param args path of file with models (from biomodels.org) 
 	 * @throws IOException
 	 * @throws URISyntaxException
 	 */

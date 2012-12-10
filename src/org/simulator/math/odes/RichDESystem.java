@@ -58,8 +58,7 @@ public interface RichDESystem extends DESystem {
 	 * @param Y
 	 *            The result vector from the previous time step.
 	 * @return An array of intermediate results. Simulators should call this
-	 *         method after computation of the next time point ({@see
-	 *         #getValue(double, double[], double[])}) to avoid unnecessary
+	 *         method after computation of the next time point to avoid unnecessary
 	 *         re-computation. Implementing classes should store interesting
 	 *         intermediate results to be accessible in case time and Y are the
 	 *         same values than those just used for the actual computation.

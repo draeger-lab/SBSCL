@@ -84,7 +84,6 @@ public interface SBMLValueHolder extends DelayValueHolder, Serializable {
 
     /**
      * Returns the current simulation time.
-     * @param time
      * @return
      */
     public double getCurrentTime();
