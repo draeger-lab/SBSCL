@@ -55,8 +55,10 @@ public class GraggBulirschStoerSolver extends FirstOrderSolver {
 	/**
 	 * 
 	 * @param stepSize
-	 * @param the nonnegative flag of the super class @see org.sbml.simulator.math.odes.AbstractDESSolver
-   */
+	 *            the nonnegative flag of the super class
+	 * @param nonnegative
+	 * @see AbstractDESSolver
+	 */
 	public GraggBulirschStoerSolver(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
 		
@@ -64,11 +66,11 @@ public class GraggBulirschStoerSolver extends FirstOrderSolver {
 	
 	/**
 	 * clone constructor
-	 * @param graggBulirschStoerSolver
+	 * @param solver
 	 */
 	public GraggBulirschStoerSolver(GraggBulirschStoerSolver solver) {
 		super(solver);
-		this.integrator=solver.getIntegrator();
+		this.integrator = solver.getIntegrator();
 	}
 	
 	/* (non-Javadoc)

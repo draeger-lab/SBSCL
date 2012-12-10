@@ -42,14 +42,14 @@ public abstract class MeanFunction implements Serializable {
 	
 	/**
 	 * Computes the overall distance
-	 * @param the distance values for the columns
+	 * @param values the distance values for the columns
 	 * @return the computed value
 	 */
 	public abstract double computeMean(double... values);
 	
 	/**
 	 * Computes the overall distance
-	 * @param the distance values for the columns
+	 * @param values the distance values for the columns
 	 * @return the computed value
 	 */
 	public double computeMean(List<Double> values) {
@@ -62,7 +62,7 @@ public abstract class MeanFunction implements Serializable {
 	
 	/**
 	 * Computes the overall distance
-	 * @param the distance values for the columns
+	 * @param values the distance values for the columns
 	 * @return the computed value
 	 */
 	public double computeMean(Iterable<? extends Number> values) {

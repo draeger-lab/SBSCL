@@ -164,8 +164,6 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 	
 	/**
 	 * default constructor
-	 * @param size
-	 * @param stepsize
 	 */
 	public RosenbrockSolver() {
 		super();
@@ -243,11 +241,12 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 	public AbstractDESSolver clone() {
 		return new RosenbrockSolver(this);
 	}
-
 	
 	/**
 	 * This function tries to make a time step.
-	 * @param the differential equation system
+	 * 
+	 * @param DES
+	 *            the differential equation system
 	 * @return the error
 	 * @throws DerivativeException
 	 */

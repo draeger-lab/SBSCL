@@ -174,11 +174,17 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 	/**
 	 * Compute additional result values
-	 * @param the differential equation system
-	 * @param the current time
-	 * @param the vector yTemp
-	 * @param the data as multi table
-	 * @param the index of the row
+	 * 
+	 * @param DES
+	 *            the differential equation system
+	 * @param t
+	 *            the current time
+	 * @param yTemp
+	 *            the vector yTemp
+	 * @param data
+	 *            the data as multi table
+	 * @param rowIndex
+	 *            the index of the row
 	 * @return an array of additional (intermediate) results.
 	 * @throws DerivativeException
 	 */
@@ -207,7 +213,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * If option nonnegative is set all elements of the given vector smaller
 	 * than zero are set to zero.
 	 * 
-	 * @param the vector yTemp
+	 * @param yTemp the vector yTemp
 	 */
 	private void checkNonNegativity(double[] yTemp) {
 		if (nonnegative) {
@@ -220,13 +226,13 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	}
 
 	/**
-	 * Checks whether or not the given current state contains Double.NaN values.
+	 * Checks whether or not the given current state contains {@link Double#NaN} values.
 	 * In this case the solution of the current state is considered unstable and
 	 * the corresponding flag of the solver will be set accordingly.
 	 * 
 	 * @param currentState
 	 *            The current state of the system during a simulation.
-	 * @return flag that is true if Double.NaN values are contained
+	 * @return flag that is true if {@link Double#NaN} values are contained
 	 */
 	boolean checkSolution(double[] currentState) {
 		for (int k = 0; k < currentState.length; k++) {
@@ -239,14 +245,19 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	}
 
 	/**
-   * Checks whether or not the given current state contains Double.NaN values.
-   * In this case the solution of the current state is considered unstable and
-   * the corresponding flag of the solver will be set accordingly.
-   * 
-   * @param the current change of the system during a simulation.
-   * @param the previous state of the system 
-   * @return flag that is true if Double.NaN values are contained in the change vector that have not been contained at the corresponding position in the previous state
-   */
+	 * Checks whether or not the given current state contains {@link Double#NaN}
+	 * values. In this case the solution of the current state is considered
+	 * unstable and the corresponding flag of the solver will be set
+	 * accordingly.
+	 * 
+	 * @param currentChange
+	 *            the current change of the system during a simulation.
+	 * @param yPrev
+	 *            the previous state of the system
+	 * @return flag that is true if {@link Double#NaN} values are contained in
+	 *         the change vector that have not been contained at the
+	 *         corresponding position in the previous state
+	 */
 	boolean checkSolution(double[] currentChange, double[] yPrev) {
 		for (int k = 0; k < currentChange.length; k++) {
 			if (Double.isNaN(currentChange[k])) {
@@ -276,8 +287,8 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 *            The current state of the system.
 	 * @param t
 	 *            The current simulation time.
-	 * @param The
-	 *            current integration step size.
+	 * @param stepSize 
+	 *            The current integration step size.
 	 * @param change
 	 *            The vector for the resulting change of the system.
 	 * @param steadyState 
@@ -309,8 +320,8 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		}
 
 		//get values and do an interpolation if necessary
-		double leftValue=Double.NaN;
-		double rightValue=Double.NaN;
+		double leftValue = Double.NaN;
+		double rightValue = Double.NaN;
 
 		Column c=data.getColumn(id);
 		if (leftIndex!=-1) {
@@ -333,15 +344,22 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 	/**
 	 * 
-	 * @param the differential equation system
-	 * @param the current time
+	 * @param DES
+	 *            the differential equation system
+	 * @param t
+	 *            the current time
 	 * @param stepSize
-	 * @param the previous y vector
-	 * @param the change vector
-	 * @param the current y vector to be filled
+	 *            stepSize
+	 * @param yPrev
+	 *            the previous y vector
+	 * @param change
+	 *            the change vector
+	 * @param yTemp
+	 *            the current y vector to be filled
 	 * @param increase
 	 *            whether or not to increase the given time by the given step
 	 *            size.
+	 * @param steadyState
 	 * @return the time increased by the step size
 	 * @throws DerivativeException
 	 */
@@ -364,10 +382,13 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 	/**
 	 * 
-	 * @param the differential equation system
-	 * @param the result vector
-	 * @param the current time
-	 * @return the computed steady state 
+	 * @param DES
+	 *            the differential equation system
+	 * @param result
+	 *            the result vector
+	 * @param timeBegin
+	 *            the current time
+	 * @return the computed steady state
 	 * @throws DerivativeException
 	 */
 	protected double[] computeSteadyState(FastProcessDESystem DES,
@@ -578,10 +599,14 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	/**
 	 * Processes sudden changes in the system due to events in the EDES
 	 * 
-	 * @param the differential equation system with events
-	 * @param the current time
-	 * @param the time this function has been called previously
-	 * @param the vector Ytemp
+	 * @param EDES
+	 *            the differential equation system with events
+	 * @param time
+	 *            the current time
+	 * @param previousTime
+	 *            the time this function has been called previously
+	 * @param yTemp
+	 *            the vector Ytemp
 	 * @return a flag that is true if an event has been fired
 	 * @throws DerivativeException
 	 */
@@ -623,14 +648,22 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 	/**
 	 * Function for processing the events and rules at a certain time step.
-	 * @param flag that is true if the events should be processed even if the solver has its own event processing 
-   * @param the differential equation system with events
-   * @param the current time
-   * @param the time this function has been called previously
-   * @param the vector Ytemp
-   * @return a flag that is true if there has been a change caused by a rule or an event has been fired
-   * @throws DerivativeException
-	*/ 
+	 * 
+	 * @param forceProcessing
+	 *            flag that is true if the events should be processed even if
+	 *            the solver has its own event processing
+	 * @param DES
+	 *            the differential equation system with events
+	 * @param t
+	 *            the current time
+	 * @param previousTime
+	 *            the time this function has been called previously
+	 * @param yTemp
+	 *            the vector Ytemp
+	 * @return a flag that is true if there has been a change caused by a rule
+	 *         or an event has been fired
+	 * @throws DerivativeException
+	 */
 	public boolean processEventsAndRules(boolean forceProcessing, DESystem DES, double t, double previousTime, double yTemp[])
 			throws DerivativeException {
 		boolean change=false;
@@ -650,13 +683,17 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	}
 
 	/**
-   * Function for processing the rules at a certain time step.
-   * @param the differential equation system with events
-   * @param the current time
-   * @param the vector Ytemp
-   * @return a flag that is true if there has been a change caused by a rule
-   * @throws DerivativeException
-  */ 
+	 * Function for processing the rules at a certain time step.
+	 * 
+	 * @param EDES
+	 *            the differential equation system with events
+	 * @param time
+	 *            the current time
+	 * @param Ytemp
+	 *            the vector Ytemp
+	 * @return a flag that is true if there has been a change caused by a rule
+	 * @throws DerivativeException
+	 */
 	public boolean processRules(EventDESystem EDES, double time, double[] Ytemp)
 			throws DerivativeException {
 		return EDES.processAssignmentRules(time, Ytemp);
@@ -782,12 +819,14 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	}
 
 	/**
-   * 
-   * @param differential equation system
-   * @param initialValues
-   * @param the time points
-   * @return result as a multi table
-   */
+	 * 
+	 * @param DES
+	 *            differential equation system
+	 * @param initialValues
+	 * @param timePoints
+	 *            the time points
+	 * @return result as a multi table
+	 */
 	public MultiTable solve(DESystem DES, double[] initialValues,
 			double[] timePoints) throws DerivativeException {
 		if (DES instanceof DelayedDESystem) {

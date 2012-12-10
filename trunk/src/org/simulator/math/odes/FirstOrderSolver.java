@@ -61,6 +61,7 @@ public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#setStepSize(double)
 	 */
+	@Override
 	public void setStepSize(double stepSize) {
 		super.setStepSize(stepSize);
 		createIntegrator();
@@ -86,8 +87,10 @@ public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
 
 	/**
 	 * @param stepSize
-	 * @param the nonnegative flag of the super class @see org.sbml.simulator.math.odes.AbstractDESSolver
-   */
+	 * @param nonnegative
+	 *            the nonnegative flag of the super class
+	 * @see AbstractDESSolver
+	 */
 	public FirstOrderSolver(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
 		createIntegrator();

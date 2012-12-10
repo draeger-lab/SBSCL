@@ -99,7 +99,6 @@ public class Mathematics {
 	 *            a scalar
 	 * @param v
 	 *            an array to be multiplied with s.
-	 * @return a scaled array.
 	 */
 	public static void svMult(double s, double[] v, double[] res) {
 		for (int i = 0; i < v.length; i++) {
@@ -113,7 +112,6 @@ public class Mathematics {
 	 * @param s
 	 * @param v
 	 * @param w
-	 * @return
 	 */
 	public static void  svvAddAndScale(double s, double[] v, double[] w,
 			double[] res) {
@@ -128,7 +126,6 @@ public class Mathematics {
 	 * @param s
 	 * @param v
 	 * @param w
-	 * @return
 	 */
 	public static void svvAddScaled(double s, double[] v, double[] w,
 			double[] res) {
@@ -142,7 +139,6 @@ public class Mathematics {
    * 
    * @param v1
    * @param v2
-   * @return vector addition
    */
   public static void vvAdd(double[] v1, double[] v2, double[] res) {
     vvAddOffs(v1, 0, v2, 0, res, 0, v1.length);
@@ -154,7 +150,6 @@ public class Mathematics {
    * 
    * @param v1
    * @param v2
-   * @return vector addition
    */
   public static void vvAddOffs(double[] v1, int v1Offs, double[] v2,
       int v2Offs, double[] res, int resOffs, int len) {
@@ -181,7 +176,6 @@ public class Mathematics {
 	 * 
 	 * @param a
 	 * @param b
-	 * @return a new vector c = a - b
 	 */
 	public static void vvSub(double[] a, double[] b, double[] res) {
 		for (int i = 0; i < a.length; i++) {

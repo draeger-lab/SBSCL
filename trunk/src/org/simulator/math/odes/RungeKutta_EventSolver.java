@@ -67,8 +67,10 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
 	/**
 	 * 
 	 * @param stepSize
-	 * @param the nonnegative flag of the super class @see org.sbml.simulator.math.odes.AbstractDESSolver
-   */
+	 * @param nonnegative
+	 *            the nonnegative flag of the super class
+	 * @see org.sbml.simulator.math.odes.AbstractDESSolver
+	 */
 	public RungeKutta_EventSolver(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
 	}

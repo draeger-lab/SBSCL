@@ -88,7 +88,6 @@ import org.simulator.sbml.astnode.SpeciesValue;
 import org.simulator.sbml.astnode.StoichiometryValue;
 import org.simulator.sbml.astnode.TimesValue;
 
-
 /**
  * <p>
  * This differential equation system ({@link DESystem}) takes a model in SBML
@@ -432,12 +431,19 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	}
 	
 	/**
-	 * Creates a new SBMLinterpreter
-	 * @param the model to interpret
-	 * @param the default value for species, if no value is given
-	 * @param the default value for parameters, if no value is given
-	 * @param the default value for compartments, if no value is given
-	 * @param a hash that states for the species in the model, whether their amount or their concentration should be computed
+	 * Creates a new {@link SBMLinterpreter}
+	 * 
+	 * @param model
+	 *            the model to interpret
+	 * @param defaultSpeciesValue
+	 *            the default value for species, if no value is given
+	 * @param defaultParameterValue
+	 *            the default value for parameters, if no value is given
+	 * @param defaultCompartmentValue
+	 *            the default value for compartments, if no value is given
+	 * @param amountHash
+	 *            a hash that states for the species in the model, whether their
+	 *            amount or their concentration should be computed
 	 * @throws SBMLException
 	 * @throws ModelOverdeterminedException
 	 */
@@ -580,7 +586,6 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * value of its {@link Compartment} or 1d otherwise
 	 * 
 	 * @param speciesId
-	 * @param val
 	 * @return
 	 */
 	public double getCurrentCompartmentValueOf(String speciesId) {
@@ -1770,14 +1775,19 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		nAssignmentRules = assignmentRulesRoots.size();
 	}
 
-
-
 	/**
-	 * Creates a copy of an ASTNode or returns an ASTNode that is equal to the presented node.
-	 * @param the node to copy
-	 * @param flag that is true if it is allowed to return a node that is equal to the given node
-	 * @param the function that is currently processed (if any) or null
-	 * @param the nodes that already belong to the function
+	 * Creates a copy of an {@link ASTNode} or returns an {@link ASTNode} that
+	 * is equal to the presented node.
+	 * 
+	 * @param node
+	 *            the node to copy
+	 * @param mergingPossible
+	 *            flag that is true if it is allowed to return a node that is
+	 *            equal to the given node
+	 * @param function
+	 *            the function that is currently processed (if any) or null
+	 * @param inFunctionNodes
+	 *            the nodes that already belong to the function
 	 * @return the found node
 	 */
 	private ASTNode copyAST(ASTNode node, boolean mergingPossible, FunctionValue function, List<ASTNode> inFunctionNodes) {
@@ -2011,9 +2021,13 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	}
 
 	/**
-	 * Checks whether the two given nodes are equal to each other (especially regarding local parameters contained).
-	 * @param the first node
-	 * @param the second node
+	 * Checks whether the two given nodes are equal to each other (especially
+	 * regarding local parameters contained).
+	 * 
+	 * @param node1
+	 *            the first node
+	 * @param node2
+	 *            the second node
 	 * @return
 	 */
 	private boolean containUnequalLocalParameters(ASTNode node1, ASTNode node2) {
@@ -2100,13 +2114,14 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		return processRules(t, null, Y, false);
 	}
 
-
 	/**
 	 * This method creates assignments from the events currently stored in the
 	 * associated HashMap with respect to their priority.
 	 * 
-	 * @param the priorities
-	 * @param the Y vector
+	 * @param priorities
+	 *            the priorities
+	 * @param Y
+	 *            the Y vector
 	 * @return the event with assignments
 	 */
 	private SBMLEventInProgress processNextEvent(HashSet<Double> priorities, double[] Y)
@@ -2208,8 +2223,11 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
 	/**
 	 * Processes the initial assignments
-	 * @param the ASTNode time
-	 * @param the Y vector
+	 * 
+	 * @param time
+	 *            the {@link ASTNode} time
+	 * @param Y
+	 *            the Y vector
 	 * @throws SBMLException
 	 */
 	public void processInitialAssignments(double time, double[] Y) throws SBMLException {
@@ -2222,15 +2240,19 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
 	/**
 	 * Processes the rules
-	 * @param the current time
-	 * @param the changeRate vector
-	 * @param the Y vector
-	 * @return flag that is true if there has been some change caused by any rule
+	 * 
+	 * @param time
+	 *            the current time
+	 * @param changeRate
+	 *            the changeRate vector
+	 * @param Y
+	 *            the Y vector
+	 * @param initialCalculations
+	 * @return flag that is true if there has been some change caused by any
+	 *         rule
 	 * @throws SBMLException
 	 */
 	public boolean processRules(double time, double[] changeRate, double[] Y, boolean initialCalculations) throws SBMLException {
-
-
 		boolean changeByAssignmentRules=false;
 		double intermediateASTNodeTime = - astNodeTime;
 		if (Y != null) {
@@ -2386,11 +2408,18 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	/**
 	 * Updates the concentration of species due to a change in the size of their
 	 * compartment
-	 * @param the index of the compartment
-	 * @param the changeRate vector
-	 * @param the old value of the compartment
-	 * @param the new value of the compartment
-	 * @param flag that is true if a rate rule has set the change rate of the compartment
+	 * 
+	 * @param compartmentIndex
+	 *            the index of the compartment
+	 * @param changeRate
+	 *            the changeRate vector
+	 * @param oldCompartmentValue
+	 *            the old value of the compartment
+	 * @param newCompartmentValue
+	 *            the new value of the compartment
+	 * @param causedByRateRule
+	 *            flag that is true if a rate rule has set the change rate of
+	 *            the compartment
 	 */
 	private void updateSpeciesConcentration(int compartmentIndex,
 			double changeRate[], double oldCompartmentValue, double newCompartmentValue, boolean causedByRateRule) {
@@ -2543,9 +2572,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	}
 
 	/**
-	 * Returns the current reaction velocity of a specific reaction
-	 * @param index of the reaction
-	 * @return
+	 * @param reactionIndex
+	 *            index of the reaction
+	 * @return the current reaction velocity of a specific reaction
 	 */
 	public double compileReaction(int reactionIndex) {
 		astNodeTime+=0.01;
