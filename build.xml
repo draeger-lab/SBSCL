@@ -53,7 +53,7 @@
   	
   	<property name="appJar" value="${dist}/${JAR_Name}"/>
   	
-  	<property name="version" value="1.1"/>
+  	<property name="version" value="1.2"/>
   	
   	<!-- URL where the most recent version can be obtained -->
   	<property name="URL" value="https://sourceforge.net/projects/simulation-core/"/>
