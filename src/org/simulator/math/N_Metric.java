@@ -133,8 +133,8 @@ public class N_Metric extends QualityMeasure {
 	}
 	
 	/**
-	 * Sets n.
-	 * @param string
+	 * Sets the root.
+	 * @param root
 	 */
 	public void setRoot(double root) {
 		this.root = root;

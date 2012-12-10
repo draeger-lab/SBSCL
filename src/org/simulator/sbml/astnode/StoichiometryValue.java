@@ -88,16 +88,10 @@ public class StoichiometryValue {
 	/**
 	 * 
 	 * @param sr
-	 * @param speciesIndex
 	 * @param speciesRefIndex
-	 * @param compartmentIndex
 	 * @param stoichiometricCoefHash
-	 * @param valueHolder
 	 * @param Y
-	 * @param null
-	 * @param reactionIndex
-	 * @param inConcentrationSet
-	 * @param isReactant
+	 * @param stoichiometryMathValue
 	 */
 	public StoichiometryValue(SpeciesReference sr, 
 			int speciesRefIndex, Map<String, Double> stoichiometricCoefHash, 

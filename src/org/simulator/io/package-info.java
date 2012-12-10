@@ -22,8 +22,9 @@
  */
 
 /**
+ * Import and export of files.
+ * 
  * @author Roland Keller
- * Import and export of files
  */
 package org.simulator.io;
 

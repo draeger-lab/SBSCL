@@ -124,7 +124,7 @@ public class SBMLEventInProgress extends EventInProgress{
   
 	/**
 	 * Sets the math of the trigger to a specific ASTNodeObject.
-	 * @param userObject
+	 * @param triggerObject
 	 */
 	public void setTriggerObject(ASTNodeValue triggerObject) {
 		this.triggerObject = triggerObject;
@@ -140,7 +140,7 @@ public class SBMLEventInProgress extends EventInProgress{
 
 	/**
 	 * Sets the math of the priority to a specific ASTNodeObject.
-	 * @param userObject
+	 * @param priorityObject
 	 */
 	public void setPriorityObject(ASTNodeValue priorityObject) {
 		this.priorityObject = priorityObject;
@@ -156,7 +156,7 @@ public class SBMLEventInProgress extends EventInProgress{
 
 	/**
 	 * Sets the math of the delay to a specific ASTNodeObject.
-	 * @param userObject
+	 * @param delayObject
 	 */
 	public void setDelayObject(ASTNodeValue delayObject) {
 		this.delayObject = delayObject;

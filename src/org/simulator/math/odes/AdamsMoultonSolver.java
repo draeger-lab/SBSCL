@@ -64,8 +64,10 @@ public class AdamsMoultonSolver extends FirstOrderSolver {
 	/**
 	 * 
 	 * @param stepSize
-	 * @param the nonnegative flag of the super class @see org.sbml.simulator.math.odes.AbstractDESSolver
-   */
+	 * @param nonnegative
+	 *            the nonnegative flag of the super class
+	 * @see AbstractDESSolver
+	 */
 	public AdamsMoultonSolver(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
 	}

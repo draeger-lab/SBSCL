@@ -59,8 +59,10 @@ public class HighamHall54Solver extends FirstOrderSolver {
 	/**
 	 * 
 	 * @param stepSize
-	 * @param the nonnegative flag of the super class @see org.sbml.simulator.math.odes.AbstractDESSolver
-   */
+	 *            the nonnegative flag of the super class
+	 * @param nonnegative
+	 * @see AbstractDESSolver
+	 */
 	public HighamHall54Solver(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
 	    absTol = 0.5d;

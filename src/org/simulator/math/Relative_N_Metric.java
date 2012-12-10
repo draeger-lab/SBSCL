@@ -122,8 +122,8 @@ public class Relative_N_Metric extends QualityMeasure {
 	}
 
 	/**
-	 * Sets n
-	 * @param double1
+	 * Sets the root
+	 * @param root
 	 */
 	public void setRoot(double root) {
 		metric.setRoot(root);

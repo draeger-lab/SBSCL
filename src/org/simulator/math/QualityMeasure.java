@@ -61,7 +61,7 @@ public abstract class QualityMeasure implements Serializable {
 	 */
 	public QualityMeasure() {
 		this.defaultValue = Double.NaN;
-		meanFunction=new ArithmeticMean();
+		meanFunction = new ArithmeticMean();
 	}
 
 	/**
@@ -71,24 +71,24 @@ public abstract class QualityMeasure implements Serializable {
 	 */
 	public QualityMeasure(double defaultValue) {
 		this.defaultValue = defaultValue;
-		meanFunction=new ArithmeticMean();
+		meanFunction = new ArithmeticMean();
 	}
 
 	/**
-	 * Constructor, which allows setting the parameter values for meanFunction and default value.
+	 * Constructor, which allows setting the parameter values for {@link #meanFunction} and {@link #defaultValue}.
 	 * 
 	 * @param defaultValue
 	 * @param meanFunction
 	 */
-	public QualityMeasure(double defaultValue, MeanFunction mean) {
+	public QualityMeasure(double defaultValue, MeanFunction meanFunction) {
 		this.defaultValue = defaultValue;
-		this.meanFunction=mean;
+		this.meanFunction = meanFunction;
 	}
 
 	/**
 	 * This method decides whether or not to consider the given values for the
 	 * computation of a distance. This method checks if both arguments x_i and
-	 * y_i are not {@link Double.NaN} and differ from each other. If other
+	 * y_i are not {@link Double#NaN} and differ from each other. If other
 	 * conditions should be checked, this method can be overridden.
 	 * 
 	 * @param x_i
@@ -105,7 +105,7 @@ public abstract class QualityMeasure implements Serializable {
 	
 	/**
 	 * Returns the distance of the two vectors x and y where the currently set
-	 * root is used. This can be obtained by invoking the {@see getRoot} method.
+	 * root is used.
 	 * It is possible that one matrix contains more columns than the other one.
 	 * If so, the additional values in the bigger matrix are ignored and do not
 	 * contribute to the distance. <code>NaN</code> values do also not
@@ -126,7 +126,7 @@ public abstract class QualityMeasure implements Serializable {
 	 * may be the root in a formal way or a default value to be returned if the
 	 * distance uses a non defined operation. If one array is longer than the
 	 * other one additional values do not contribute to the distance.
-	 * {@link Double.NaN} values are also ignored.
+	 * {@link Double#NaN} values are also ignored.
 	 * 
 	 * @param x
 	 *            an array
@@ -144,7 +144,7 @@ public abstract class QualityMeasure implements Serializable {
 	/**
 	 * 
 	 * @param x
-	 * @param y
+	 * @param expected
 	 * @return
 	 */
 	public double distance(MultiTable x, MultiTable expected) {
@@ -165,7 +165,7 @@ public abstract class QualityMeasure implements Serializable {
 	/**
 	 * 
 	 * @param x
-	 * @param y
+	 * @param expected
 	 * @return
 	 */
 	public double distance(MultiTable.Block x, MultiTable.Block expected) {
@@ -176,12 +176,12 @@ public abstract class QualityMeasure implements Serializable {
 	 * Computes the distance of two matrices as the sum of the distances of each
 	 * row. It is possible that one matrix contains more columns than the other
 	 * one. If so, the additional values in the bigger matrix are ignored and do
-	 * not contribute to the distance. {@link Double.NaN} values do also not
+	 * not contribute to the distance. {@link Double#NaN} values do also not
 	 * contribute to the distance. Only columns with matching identifiers are
 	 * considered for the distance computation.
 	 * 
 	 * @param x
-	 * @param y
+	 * @param expected
 	 * @return
 	 */
 	public ArrayList<Double> getColumnDistances(MultiTable.Block x, MultiTable.Block expected) {

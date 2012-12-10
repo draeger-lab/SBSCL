@@ -86,7 +86,7 @@ public interface DESSolver extends Cloneable, Serializable {
 
 	/**
 	 * Method to check whether the solution of the numerical integration
-	 * procedure contains {@link Double.NaN} values.
+	 * procedure contains {@link Double#NaN} values.
 	 * 
 	 * @return the unstable flag
 	 */
@@ -153,7 +153,7 @@ public interface DESSolver extends Cloneable, Serializable {
 	 * @throws DerivativeException
 	 *             if something's wrong...
 	 */
-	public MultiTable solve(DESystem DES, double[] initalValues, double x,
+	public MultiTable solve(DESystem DES, double[] initialValues, double x,
 			double h, int steps) throws DerivativeException;
 
 	/**
@@ -170,7 +170,7 @@ public interface DESSolver extends Cloneable, Serializable {
 	 * @throws DerivativeException
 	 *             if something's wrong...
 	 */
-	public MultiTable solve(DESystem DES, double[] initialvalue,
+	public MultiTable solve(DESystem DES, double[] initialValues,
 			double[] timepoints) throws DerivativeException;
 
 	/**

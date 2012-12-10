@@ -71,7 +71,8 @@ public abstract class AdaptiveStepsizeIntegrator extends AbstractDESSolver {
 	/**
 	 * 
 	 * @param stepSize
-	 * @param the nonnegative flag of the super class @see org.sbml.simulator.math.odes.AbstractDESSolver
+	 * @param nonnegative the nonnegative flag of the super class
+	 * @see AbstractDESSolver
 	 */
 	public AdaptiveStepsizeIntegrator(double stepSize, boolean nonnegative) {
 		super(stepSize, nonnegative);
@@ -92,14 +93,14 @@ public abstract class AdaptiveStepsizeIntegrator extends AbstractDESSolver {
 	}
 
 	/**
-	 * @param the absolute tolerance to set
+	 * @param absTol the absolute tolerance to set
 	 */
 	public void setAbsTol(double absTol) {
 		this.absTol = absTol;
 	}
 
 	/**
-	 * @param the relative tolerance to set
+	 * @param relTol the relative tolerance to set
 	 */
 	public void setRelTol(double relTol) {
 		this.relTol = relTol;

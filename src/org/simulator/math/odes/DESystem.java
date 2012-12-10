@@ -42,7 +42,7 @@ public interface DESystem extends Serializable, FirstOrderDifferentialEquations 
 	 * dimension of the resulting array of this {@link DESystem}.
 	 * 
 	 * @return An array of {@link String}s which has the same length than the
-	 *         number given by {@link #getDESystemDimension()}. Each
+	 *         number given by {@link #getDimension()}. Each
 	 *         {@link String} describes the content of the given dimension.
 	 */
 	public String[] getIdentifiers();

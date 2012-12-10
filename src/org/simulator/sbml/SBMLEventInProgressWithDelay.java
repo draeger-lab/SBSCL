@@ -25,8 +25,6 @@ package org.simulator.sbml;
 import java.util.LinkedList;
 
 
-
-
 /**
  * <p > 
  * This class represents a compilation of all information calculated during

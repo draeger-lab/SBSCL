@@ -47,21 +47,24 @@ import org.simulator.math.odes.MultiTable;
 public class CSVImporter {
 
 	/**
-	   * A {@link java.util.logging.Logger} for this class.
-	   */
-	  private static final transient Logger logger = Logger.getLogger(CSVImporter.class.getName());
-	  
-	  /**
-	   * The header of the file
-	   */
-	  private String[] header;
-	
+	 * A {@link java.util.logging.Logger} for this class.
+	 */
+	private static final transient Logger logger = Logger.getLogger(CSVImporter.class.getName());
+
+	/**
+	 * The header of the file
+	 */
+	private String[] header;
+
 	/**
 	 * Function for importing a file and adapting the data to the current model
-	 * @param the current model
-	 * @param the path of the file to import
+	 * 
+	 * @param model
+	 *            the current model
+	 * @param pathname
+	 *            the path of the file to import
 	 * @return the data as a multi table
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public MultiTable convert(Model model, String pathname) throws IOException {
 		MultiTable data = new MultiTable();
