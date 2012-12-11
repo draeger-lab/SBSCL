@@ -66,6 +66,7 @@
 \usepackage{upgreek}
 \usepackage{rotating}
 \usepackage{multirow}
+\usepackage[normalem]{ulem}
 
 \definecolor{royalblue}{cmyk}{.93, .79, 0, 0}
 \definecolor{lightblue}{cmyk}{.10, .017, 0, 0}
@@ -249,8 +250,8 @@ Akira Funahashi$^{2}$, %\email{Akira Funahashi - funa@bio.keio.ac.jp}
 Michael J. Ziller$^{3}$, %\email{Michael J. Ziller - michael_ziller@harvard.edu}
 Richard Adams$^{4}$, %\email{Richard Adams - richard.adams@ed.ac.uk}
 Nicolas Rodriguez$^{5}$, %\email{Nicolas Rodriguez - rodrigue@ebi.ac.uk}
-Nicolas Le Nov\`{e}re$^{5}$, %\email{Nicolas Le Nov\`{e}re - nicolas.lenovere@babraham.ac.uk}
-Hannes Planatscher$^{6}$, %\email{Hannes Planatscher - Hannes.Planatscher@nmi.de}
+Nicolas Le Nov\`{e}re$^{6}$, %\email{Nicolas Le Nov\`{e}re - nicolas.lenovere@babraham.ac.uk}
+Hannes Planatscher$^{7}$, %\email{Hannes Planatscher - Hannes.Planatscher@nmi.de}
 Andreas Zell$^{1}$, %\email{Andreas Zell - andreas.zell@uni-tuebingen.de}
 and Andreas Dr\"ager$^{1}$\correspondingauthor\email{Andreas Dr\"ager -
 andreas.draeger@uni-tuebingen.de}%
@@ -273,7 +274,8 @@ Cambridge, MA, USA
 Edinburgh EH9 3JD, UK
 \iid(5)European Bioinformatics Institute, Wellcome Trust Genome Campus, Hinxton,
 Cambridge, UK
-\iid(6)Natural and Medical Sciences Institute at the University of Tuebingen,
+\iid(6)Babraham Institute, Babraham, Cambridge, UK
+\iid(7)Natural and Medical Sciences Institute at the University of Tuebingen,
 Reutlingen, Germany}
 
 \maketitle
@@ -291,19 +293,25 @@ Reutlingen, Germany}
 
 
 \begin{abstract}
-\TODO{\textbf{Background:}
+\textbf{Background:}
         % Do not use inserted blank lines (ie \\) until main body of text.
-With the increasing availability of high dimensional time course data for metabolites, genes, or fluxes
-the description of dynamical systems by differential equation models becomes more and more popular in systems biology.
+With the increasing availability of high dimensional time course data for 
+metabolites, genes, or fluxes the description of dynamical systems by
+differential equation models becomes more and more popular in systems biology.
 %driven by the aim to make biological phenomena predictable. 
-The diversity of modeling aproaches and experimental data requires customized software solutions for very specific tasks.
-Models are often encoded in formats such as SBML (Systems Biology Markup Language), but
-their mathematical structure is very complex and difficult to evaluate due to many special cases.}
+The diversity of modeling aproaches and experimental data requires customized
+software solutions for very specific tasks.
+Models are often encoded in formats such as SBML (Systems Biology Markup
+Language), but
+their mathematical structure is very complex and difficult to evaluate due to
+many special cases.
 %A flexible interpreter for SBML as well as numerical integrators are hence necessary to solve these models.
 
-\TODO{\textbf{Results:}
-This article describes an efficient algorithm to interpret and solve the differential equation systems of SBML models.
-We begin our consideration with a formal representation of the mathematical form of the models and explain all parts of the algorithm in detail,
+\textbf{Results:}
+This article describes an efficient algorithm to interpret and solve the
+differential equation systems of SBML models.
+We begin our consideration with a formal representation of the mathematical form
+of the models and explain all parts of the algorithm in detail,
 including several pre-processing steps.  
 %Dynamic simulation of models describing biological phenomena is a key aspect of
 %research in systems biology. 
@@ -311,29 +319,35 @@ including several pre-processing steps.
 %solve the differential equation systems of models encoded in Systems Biology
 %Markup Language (SBML) and its implementation as part of the Systems Biology Simulation Core
 %Library for numerical computation in systems biology.
-We provide a flexible reference implementation of the algorithm as part of the Systems Biology Simulation Core Library,
-which is a community-driven project that provides a large collection of numerical solvers and a sophisticated interface hierarchy
-for the definition of custom differential equation systems. 
-To demonstrate the capabilities of the new algorithm, it has been tested with the
-entire SBML Test Suite and %also been used to simulate 
-all models of BioModels Database.}
+We provide a flexible reference implementation of the algorithm as part of the
+Systems Biology Simulation Core Library, which is a community-driven project
+that provides a large collection of numerical solvers and a sophisticated
+interface hierarchy for the definition of custom differential equation systems. 
+To demonstrate the capabilities of the new algorithm, it has been tested with
+the entire SBML Test Suite and %also been used to simulate 
+all models of BioModels Database.
 
 %
 %\section{Supplementary information:}
 % TODO: Provide additional material
 %Supplementary data is available at Bioinformatics online.
-\TODO{\textbf{Conclusions:}
-The formal description of the mathematics behind the SBML format facilitates the implementation of the algorithm within specifically tailored programs.
-A similar approach would also be possible for further systems biological community formats.
+\textbf{Conclusions:}
+The formal description of the mathematics behind the SBML format facilitates the
+implementation of the algorithm within specifically tailored programs.
+A similar approach would also be possible for further systems biological
+community formats.
 %The reference implementation (Systems Biology Simulation Core Library) described in this article, reflects this formal structure within its abstract type hierarchy.
-For Java\texttrademark-based programs, this library can be used as a simulation backend, whose abstract type hierarchy allows for customized extension.
+For Java\texttrademark-based programs, this library can be used as a simulation
+backend, whose abstract type hierarchy allows for customized extension.
 %, and can be used on every operating system for which a JVM
 %is available.
 %
-Source code, binaries, and documentation can be freely obtained under the terms of the LGPL version~3 from the website
+Source code, binaries, and documentation can be freely obtained under the terms
+of the LGPL version~3 from the website
 \url{http://sourceforge.net/projects/simulation-core/}.
-Feature requests, bug reports, contribution, or any further discussion can be directed to the mailing list
-\href{mailto:simulation-core-development@lists.sourceforge.net}{simulation-core-development@lists.sourceforge.net}.}
+Feature requests, bug reports, contribution, or any further discussion can be
+directed to the mailing list
+\href{mailto:simulation-core-development@lists.sourceforge.net}{simulation-core-development@lists.sourceforge.net}.
 \end{abstract}
 
 
@@ -369,19 +383,17 @@ Feature requests, bug reports, contribution, or any further discussion can be di
 %%
 \section*{Background}
 
-\TODO{Is more explanation why this is needed and comparison to other existing
-approaches necessary?}
-
 As part of the movement towards quantitative biology, modeling, 
 simulation, and computer analysis of biological networks have become integral
 parts of modern biological research \TODO{\cite{Macilwain2011}}.
-Ambitious national and international research projects such as the Virtual Liver Network \cite{Holzhuetter2012}
-strive to derive even organ-wide models of biological systems that include all
-kinds of processes taking place at several levels of detail. Large-scale efforts
-like this require a strong collaboration between various research groups,
-including experimenters and modelers. The exchange, storage, interoperability
-and the possibility to combine models have been recognized as key aspects of
-this endeavor \cite{Liebermeister2009sta}.
+Ambitious national and international research projects such as the Virtual Liver
+Network \cite{Holzhuetter2012} strive to derive even organ-wide models of
+biological systems that include all kinds of processes taking place at several
+levels of detail.
+Large-scale efforts like this require a strong collaboration between various
+research groups, including experimenters and modelers. The exchange, storage,
+interoperability and the possibility to combine models have been recognized as
+key aspects of this endeavor \cite{Liebermeister2009sta}.
 
 XML-based standard description formats \cite{Bray2000} such as the Systems
 Biology Markup Language (SBML, \cite{Hucka2004}) or CellML \cite{Lloyd2004}
@@ -393,9 +405,6 @@ formats.
 Software libraries for reading and manipulating the content
 of these formats are also available \cite{Bornstein2008, Miller2010,
 Draeger2011b} and a large variety of programs supports these model formats.
-
-\TODO{Should we describe and cite genome-scale models and their size. Can our solver also
-work with large-scale models such as HepatoNet1?}
 
 The models encoded in these formats can be interpreted in terms of differential
 equation systems, with additional structures such as discrete events and
@@ -415,10 +424,10 @@ to evaluate the quality of simulation results, because it has been recognized th
 different solver implementations lead to divergent results \cite{Bergmann2008}.
 %In this work we address the question of how to precisely solve models encoded in
 %the SBML format, supporting all levels and versions. To this end, we here
-%describe a precise solver algorithm. 
+%describe a precise solver algorithm.
 \TODO{In this work we address the question of how to precisely interpret models encoded in
 the SBML format, supporting all levels and versions. Furthermore, we show how to adapt existing integration 
-routines in order to simulate SBML models. To this end, we here describe a precise interpretation and simulation algorithm. }
+routines in order to simulate SBML models. To this end, we here describe a precise interpretation and simulation algorithm.}
 As a reference implementation, we introduce an exhaustive implementation in the Java\texttrademark{} programming
 language. The algorithm described in this paper is, however, not limited to any
 particular programming language. It is also important to note that the
@@ -613,8 +622,8 @@ An event in SBML is a function that is executed depending on whether a trigger c
 \true.
 In addition, a delay may postpone the actual execution of the event's assignments to a later point in time.
 With the release of SBML Level~3 Version~1, the processing of events has been raised to a higher level of complexity.
-Before 3.1 it was sufficient to determine, when an event triggers and when its assignmens are to be exceuted.
-In 3.1 just a few new language elements have been added but with an huge impact on how to handle events:
+Before Level~3 Version~1 it was sufficient to determine, when an event triggers and when its assignmens are to be exceuted.
+In Level~3 Version~1 just a few new language elements have been added but with an huge impact on how to handle events:
 The order in which events have been processed used to be at programmers discretion, but now it is given by the event's priority element.
 Coordinating the sequence, in which events are to be executed, has now become the crucial part of event handling. 
 Furthermore, there exists the option to cancel an event during the time since its trigger 
@@ -672,30 +681,44 @@ For testing purposes, the library contains a sample program that benchmarks the 
 
 \subsection*{Application to published models}
 
-The Systems Biology Simulation Core Library has been tested on all 424 curated models from BioModels database \cite{Novere2006a} (release~23, October 2012).
+The Systems Biology Simulation Core Library has been tested on all 424 curated
+models from BioModels database \cite{Novere2006a} (release~23, October 2012).
 As a result, 99.06\,\% of these models could correctly be simulated.
-To illustrate the capabilities of this library, two example networks from this model repository have been arbitrarily selected for simulation:
-Biomodel 206 by Wolf \emph{et al.} \cite{Wolf2000} and Biomodel 390 by Arnold and Nikoloski \cite{Arnold2011}.
+In the following, we use two models from this repository to illustrate the
+capabilities of this library:
+Biomodel~206 by Wolf \emph{et al.} \cite{Wolf2000} and Biomodel~390 by Arnold 
+and Nikoloski \cite{Arnold2011}.
 
-The model by Wolf \emph{et al.} \cite{Wolf2000} mimics glycolytic oscillations that have been observed in yeast cells.
-The model describes how the dynamics propagate through the cellular network. Figure~7a displays the simulation results
-for the intracellular concentrations of 3-phosphogylcerate, ATP, glucose, glyceraldhyde 3-phosphate, and NAD$^+$:
-After an initial phase of approximately 15\,s all metabolites begin a steady-going rhythmic oscillation.
-Changes in the dynamics of the fluxes through selected reaction channels within this model can be seen in Figure~7b. 
+The model by Wolf \emph{et al.} \cite{Wolf2000} mimics glycolytic oscillations
+that have been observed in yeast cells.
+The model describes how the dynamics propagate through the cellular network.
+Figure~7a displays the simulation results for the intracellular concentrations
+of 3-phosphogylcerate, ATP, glucose, glyceraldhyde 3-phosphate, and NAD$^+$:
+After an initial phase of approximately 15\,s all metabolites begin a
+steady-going rhythmic oscillation.
+Changes in the dynamics of the fluxes through selected reaction channels within
+this model can be seen in Figure~7b. 
 
 By comparing a large collection of previous models of the Calvin-Benson
 cycle, Arnold and Nikoloski created a quantitative consensus model that
-comprises eleven species, six reactions, and one assignment rule \cite{Arnold2011}.
+comprises eleven species, six reactions, and one assignment rule
+\cite{Arnold2011}.
 All kinetic equations within this model call specialized function definitions.
-Figure~8 shows the simulation results for the species ribulose 1,5 bisphosphate, ATP,  and ADP within this model.
-As in the previous test case, the simulation results reproduce the values provided by BioModels database.  
+Figure~8 shows the simulation results for the species ribulose 1,5 bisphosphate,
+ATP,  and ADP within this model.
+As in the previous test case, the simulation results reproduce the values
+provided by BioModels database.  
 
 \subsection*{Comparison to existing solver implementations for SBML}
 
-Many stand-alone programs providing simulation of SBML come with graphical user interfaces.
-For instance, the Virtual Cell \cite{Loew2001}, JSim \cite{Beard2012a}, iBioSim \cite{Myers2009},
-PottersWheel \cite{Maiwald2008}, COPASI \cite{Hoops2006}, SYCAMORE \cite{Weidemann2008}, SBToolbox2
-\cite{SBT_Schmidt2006}, JWS Online \cite{Olivier2004}, or the Systems Biology Workbench with Roadrunner (SBW, \cite{Bergmann06}). 
+\TODO{In order to benchmark our software, we chose similar tools exhibiting features X, Y, Z. They are A (), B (), C ()}
+\TODO{Many stand-alone programs providing simulation of SBML come with graphical user
+interfaces.
+For instance, the Virtual Cell \cite{Loew2001}, JSim \cite{Beard2012a}, iBioSim 
+\cite{Myers2009}, PottersWheel \cite{Maiwald2008}, COPASI \cite{Hoops2006},
+SYCAMORE \cite{Weidemann2008}, SBToolbox2
+\cite{SBT_Schmidt2006}, JWS Online \cite{Olivier2004}, or the Systems Biology
+Workbench with Roadrunner (SBW, \cite{Bergmann06}). 
 The vast majority of the internal solvers for these systems are part of
 larger software suites and can therefore not be easily integrated into custom
 programs. Some are implemented in programming languages that are either
@@ -704,11 +727,12 @@ MATLAB\texttrademark{}) for their execution.
 The SBML ODE Solver Library \cite{Machne2006}, which is written in C,
 and is based on the libSBML library \cite{Bornstein2008}, 
 provides such a simulation routine based on the SUNDIALS differential equation
-solver.
+solver.}
 
-We therefore selected only those SBML-capable simulation programs, libraries, and frameworks from
-the SBML software matrix\footnote{\url{http://sbml.org/SBML_Software_Guide/SBML_Software_Matrix} (October
-8\textsuperscript{th} 2012)} that satisfy the following criteria:
+We therefore selected only those SBML-capable simulation programs, libraries,
+and frameworks from the SBML software
+matrix\footnote{\url{http://sbml.org/SBML_Software_Guide/SBML_Software_Matrix} (October 8\textsuperscript{th} 2012)}
+that satisfy the following criteria:
 \begin{itemize}
   \item The last updated version was released after the final release of
   the specification for SBML Level~3 Version~1 Core, i.e., October
@@ -719,34 +743,52 @@ the SBML software matrix\footnote{\url{http://sbml.org/SBML_Software_Guide/SBML_
   \item Support for SBML Level~3. 
 \end{itemize}
 Table~1 summarizes the comparison of six of these programs.
-Only three other applications support the simulation of models containing events, algebraic rules and fast reactions completely: iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}.
+Only three other applications support the simulation of models containing events, algebraic rules and fast reactions completely:
+iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \cite{Funahashi2012}.
 %\TODO{Only three applications pass the four exemplary models (966, 988, 1083, 1000) of the SBML Test Suite (version 2.0.2):}
 %iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}.
-iBioSim does not yet support the simulation of SBML models containing the delay functions, except delayed events.
-LibSBMLSim, which is a simulation API written in C, can only read models given in SBML Level~2 Version~4 and SBML Level~3.
-Hence, Systems Biology Simulation Core Library and BioUML are the only simulation tools from this selection that pass all models of the SBML Test Suite for all levels and versions of SBML.
+The program iBioSim does not yet support the simulation of SBML models
+containing the delay functions, except delayed events.
+LibSBMLSim, which is a simulation API written in C, can only read models given
+in SBML Level~2 Version~4 and SBML Level~3.
+Hence, Systems Biology Simulation Core Library and BioUML are the only
+simulation tools from this selection that pass all models of the SBML Test Suite
+for all levels and versions of SBML.
 
 \section*{Conclusions}
 The SBML implementation has successfully passed the
 SBML Test Suite (version 2.0.2) using Rosenbrock solver.
 The results are shown in Table~2.
-All models together can be simulated within seconds, which means that the simulation of one SBML model takes only milliseconds on average, using regular desktop computers.
-The total simulation time for all models in SBML Level~3 Version~1 is significantly higher than for the models in other SBML levels and versions.
-This can be explained by the fact that there are some models in SBML level 3 version 1, in which a time-consuming processing of a large number of events is necessary.
-The simulation of model 966 of the SBML Test Suite, which is only provided in SBML Level~3 Version~1 and contains many events to be processed, takes 21 seconds.
-This accounts for 60~\% of the total simulation time for the models in SBML Level~3 Version~1. 
-Our tests indicate that BioUML, which is a workbench for modelling, simulating and parameter fitting, and the Systems Biology Simulation Core Library are the only SBML applications that pass the entire Test Suite for all SBML levels and versions.
-The Systems Biology Simulation Core Library is therefore the only API simulation library that supports the whole SBML Test Suite for all SBML levels and versions.
+All models together can be simulated within seconds, which means that the simulation
+of one SBML model takes only milliseconds on average, using regular desktop computers.
+The total simulation time for all models in SBML Level~3 Version~1 is significantly
+higher than for the models in other SBML levels and versions.
+This can be explained by the fact that there are some models in SBML Level~3 Version~1,
+in which a time-consuming processing of a large number of events is necessary.
+The simulation of model 966 of the SBML Test Suite, which is only provided in
+SBML Level~3 Version~1 and contains many events to be processed, takes 21 seconds.
+This accounts for 60~\% of the total simulation time for the models in SBML
+Level~3 Version~1. 
+Our tests indicate that BioUML, which is a workbench for modelling, simulating
+and parameter fitting, and the Systems Biology Simulation Core Library are the
+only SBML applications that pass the entire Test Suite for all SBML levels and
+versions.
+The Systems Biology Simulation Core Library is therefore the only API simulation
+library that supports the whole SBML Test Suite for all SBML levels and versions.
 %Compared to BioUML the Simulation Core Library simulates all models of the Test Suite much faster.
 %(see
 %\href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite}):
-Furthermore, Systems Biology Simulation Core Library solved 99.06\,\% of the models from the
+Furthermore, Systems Biology Simulation Core Library solved 99.06\,\% of the
+models from the
 \href{http://biomodels.net}{BioModels.net} database (release 23,
-\cite{Novere2006a}) simulating from $t = 0$ to $t = 10$ using Rosenbrock solver and a step size of $0.1$.
-Therefore, the Systems Biology Simulation Core Library is an efficient Java tool for the
+\cite{Novere2006a}) simulating from $t = 0$ to $t = 10$ using Rosenbrock solver
+and a step size of $0.1$.
+Therefore, the Systems Biology Simulation Core Library is an efficient Java tool
+for the
 simulation of differential equation systems used in systems biology. It can be
 easily integrated into larger customized applications.
-For instance, CellDesigner version~4.2 \cite{Funahashi2003} already uses it as one of its simulation libraries.
+For instance, CellDesigner version~4.2 \cite{Funahashi2003} already uses it as
+one of its simulation libraries.
 The stand-alone application SBMLsimulator\footnote{SBMLsimulator is available at
 \url{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator}.}
 provides a convenient graphical user interface for the simulation of SBML
@@ -846,20 +888,24 @@ Therefore, we disregarded the use of other data structures for now.
 %
 SED-ML support is enabled by inclusion of the \jlibsedml{} library
 (\href{http://www.jlibsedml.org}{http://www.jlibsedml.org}) in the binary
-download. Clients of the the Systems Biology Simulation Core Library can choose to use the
-\jlibsedml{} API directly, or access SED-ML support via  facade classes
-in the \texttt{org.simulator.sedml} package that do not require direct
+download. Clients of the the Systems Biology Simulation Core Library can choose
+to use the \jlibsedml{} API directly, or access SED-ML support via  facade
+classes in the \texttt{org.simulator.sedml} package that do not require direct
 dependencies on \jlibsedml{} in their code.
 
 
 \section*{Availability and Requirements}
-The current version of Systems Biology Simulation Core Library is available on the project homepage. Either the source code or a jar file with binaries can be downloaded.
+The current version of Systems Biology Simulation Core Library is available on
+the project homepage. Either the source code or a jar file with binaries can be
+downloaded.
 
 Project name: Simulation Core Library
 
 Project homepage: \url{http://sourceforge.net/projects/simulation-core/}
 
-Operating Systems: Systems Biology Simulation Core Library was successfully tested under Linux (Ubuntu version 10.4), Mac OS X (versions 10.6.8 and 10.8.2), and Windows~7.
+Operating Systems: Systems Biology Simulation Core Library was successfully 
+tested under Linux (Ubuntu version 10.4), Mac OS X (versions 10.6.8 and 10.8.2),
+and Windows~7.
 
 Programming Language: Java\texttrademark{}
 
@@ -871,10 +917,18 @@ License: LGPL version~3
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Author's contributions}
-RK and AlD contributed equally and declare shared first authorship.
-AnD drafted the first version of the manuscript, initialized and coordinated the project, and supervised the work.
+RK and AlD contributed equally, implemented the majority of the source code, and
+declare shared first authorship.
+AnD drafted the first version of the manuscript, initialized and coordinated the
+project, and supervised the work together with AZ.
+MJZ and HP designed and implemented the abstraction scheme between solvers and
+ODE systems.
+NR and NLN designed, implemented, and coordinated the data structures for a
+smooth integration of JSBML.
 RA implemented support for SED-ML.
-All authors contributed to the implementation, read and approved the final manuscript.
+AT and AF incorporated the Simulation Core Library into CellDesigner.
+All authors contributed to the implementation, read and approved the final
+manuscript.
     
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1028,21 +1082,27 @@ This model was simulated using Euler's method (KiSAO term 30) with 200 integrati
 \section*{Tables}
 
 \subsection*{Table 1 - Other simulators for SBML models: SBML language support}
-The table shows which SBML elements (fast reactions, algebraic rules, events) are supported by other SBML-capable 
-simulation software and whether all models of the SBML Test Suite can be correctly solved.
-COPASI supports events in SBML, but not all of the current constructs. The library LibSBMLSim can correctly
-solve the SBML Test Suite, but is limited to the versions 3.1 and 2.4 of SBML. In the test suite column, a dash
-means that \TODO{not the full test suite can be solved, because not all SBML elements are supported.}
+The table shows which SBML elements (fast reactions, algebraic rules, events) 
+are supported by other SBML-capable simulation software and whether all models
+of the SBML Test Suite can be correctly solved.
+COPASI supports events in SBML, but not all of the current constructs.
+The library LibSBMLSim can correctly solve the SBML Test Suite, but is limited
+to SBML Level~3 Version~1 and Level~2 Version~4.
+In the test suite column, a dash means that
+\TODO{not the full test suite can be solved, because not all SBML elements are supported.}
 
 %\par \mbox{}
 \begin{landscape}
 \rowcolors{3}{white}{lightblue}
-\begin{tabular}{p{2cm}lccccC{1cm}C{1.2cm}p{2.5cm}lp{3.3cm}p{2cm}}
+\begin{tabular}{p{2cm}lccccC{1cm}C{1.2cm}p{2.5cm}lp{3.3cm}p{1.7cm}}
 \toprule
 Program &
 Version &
 \multicolumn{3}{C{2.5cm}}{Difficult SBML elements} & 
-  & \multirow{2}{1.5cm}{Full support of SBML Test Suite}
+  & \multirow{2}{1.5cm}{
+    \begin{sideways}Fully SBML Test\end{sideways}
+    \begin{sideways}Suite compliant\end{sideways}
+    }
   & SED-ML 
   & \multirow{2}{2.5cm}{Programming language}
   & API access
