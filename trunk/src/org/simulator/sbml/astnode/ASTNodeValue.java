@@ -214,7 +214,7 @@ public class ASTNodeValue {
   
   /**
    * 
-   * @return the time of the last computation of the value
+   * @return time the time of the last computation of the value
    */
   public double getTime() {
     return time;
@@ -230,7 +230,7 @@ public class ASTNodeValue {
   
   /**
    * 
-   * @return constant value?
+   * @return constant?
    */
   public boolean getConstant() {
     return isConstant;
@@ -238,7 +238,7 @@ public class ASTNodeValue {
   
   /**
    * 
-   * @return The corresponding ASTNode
+   * @return node the corresponding ASTNode
    */
   public ASTNode getNode() {
 	  return node;
@@ -261,7 +261,7 @@ public class ASTNodeValue {
   /**
    * Computes the double value if the time has changed and otherwise returns the already computed value
    * @param time
-   * @return
+   * @return doubleValue the double value of the node
    */
   public double compileDouble(double time) {
     if ((this.time==time) || (isConstant && alreadyProcessed)) {
@@ -279,7 +279,7 @@ public class ASTNodeValue {
   /**
    * Computes the boolean value if the time has changed and otherwise returns the already computed value
    * @param time
-   * @return
+   * @return booleanValue the boolean value of the node
    */
   public boolean compileBoolean(double time) {
     if ((this.time==time) || (isConstant && alreadyProcessed)) {
