@@ -107,12 +107,27 @@ public class SBMLTestSuiteRunner {
 	}
 
 	/**
-	 * Input: 1) file with models (containing the SBML test suite), 
+	 * Commannd-line options for this test program.
 	 * 
-	 * 2) "all" (for testing the models of the test suite with all given integrators) or 
-	 * "sedml" (for testing the models of the test suite using the given SED-ML files) or
-	 * nothing (for testing the models of the test suite with the Rosenbrock solver, should produce only successful tests)
-	 * 
+	 * @author Andreas Dr&auml;ger
+	 * @version $Rev$
+	 * @since 1.2
+	 */
+	public enum Options {
+		all,
+		sedml;
+	}
+	
+	/**
+	 * Input:
+	 * <ol>
+	 * <li>directory with models (containing the SBML test suite),
+	 * <li>{@link Options#all} (for testing the models of the test suite with
+	 * all given integrators) or {@link Options#sedml} (for testing the models
+	 * of the test suite using the given SED-ML files) or nothing (for testing
+	 * the models of the test suite with the {@link RosenbrockSolver} solver,
+	 * should produce only successful tests)
+	 * </ol>
 	 * 
 	 * @param args
 	 * @throws IOException
@@ -122,10 +137,10 @@ public class SBMLTestSuiteRunner {
 			URISyntaxException {
 		boolean onlyRosenbrock = true;
 		boolean sedML = false;
-		if ((args.length >= 2) && (args[1].equals("all"))) {
+		if ((args.length >= 2) && (args[1].equals(Options.all.toString()))) {
 			onlyRosenbrock = false;
 		}
-		if ((args.length >= 2) && (args[1].equals("sedml"))) {
+		if ((args.length >= 2) && (args[1].equals(Options.sedml.toString()))) {
 			onlyRosenbrock = true;
 			sedML = true;
 		}
