@@ -116,7 +116,7 @@ public class SBMLEventInProgress extends EventInProgress{
 	/**
 	 * Return the priority of the associated event.
 	 * 
-	 * @return
+	 * @return priority
 	 */
 	public Double getPriority() {
 		return priority;
@@ -148,7 +148,7 @@ public class SBMLEventInProgress extends EventInProgress{
 
 	/**
 	 * 
-	 * @return the priority object of the event as an ASTNodeObject
+	 * @return priorityObject the priority object of the event as an ASTNodeObject
 	 */
 	public ASTNodeValue getPriorityObject() {
 		return priorityObject;
@@ -164,7 +164,7 @@ public class SBMLEventInProgress extends EventInProgress{
 
 	/**
 	 * 
-	 * @return the delay object of the event as an ASTNodeObject (null if there is no delay)
+	 * @return delayObject the delay object of the event as an ASTNodeObject (null if there is no delay)
 	 */
 	public ASTNodeValue getDelayObject() {
 		return delayObject;
@@ -183,7 +183,7 @@ public class SBMLEventInProgress extends EventInProgress{
 
 	/**
 	 * 
-	 * @return the list of the assignment rules as AssignmentRuleObjects
+	 * @return ruleObjects the list of the assignment rules as AssignmentRuleObjects
 	 */
 	public List<AssignmentRuleValue> getRuleObjects() {
 		return ruleObjects;
@@ -191,7 +191,7 @@ public class SBMLEventInProgress extends EventInProgress{
 
 	/**
 	 * Returns true if the values of the assignments are calculated at the trigger time of the event, otherwise false.
-	 * @return 
+	 * @return useValuesFromTriggerTime
 	 */
 	public boolean getUseValuesFromTriggerTime() {
 		return useValuesFromTriggerTime;
@@ -208,7 +208,7 @@ public class SBMLEventInProgress extends EventInProgress{
 
 	/**
 	 * 
-	 * @return the number of assignments of the event
+	 * @return numAssignments the number of assignments of the event
 	 */
 	public int getNumEventAssignments() {
 		return ruleObjects.size();
@@ -216,7 +216,7 @@ public class SBMLEventInProgress extends EventInProgress{
 
 	/**
 	 * 
-	 * @return the persistent flag of the event.
+	 * @return persistent? the persistent flag of the event.
 	 */
 	public boolean getPersistent() {
 		return persistent;

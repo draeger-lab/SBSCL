@@ -43,8 +43,8 @@ public interface ParameterizedDESystem extends DESystem {
 	 * {@link #getParameterValues()}. Otherwise, the implementation might show
 	 * unexpected behavior.
 	 * 
-	 * @return The number of parameters in the system that influence its
-	 *         behavior.
+	 * @return parameterCount the number of parameters in the system that influence its
+	 *         behavior
 	 * @see #getParameterIdentifiers()
 	 * @see #getParameterValues()
 	 */
@@ -56,7 +56,7 @@ public interface ParameterizedDESystem extends DESystem {
 	 * calculations. This method returns an array of all parameters in the
 	 * {@link ParameterizedDESystem}.
 	 * 
-	 * @return
+	 * @return identifiers
 	 * @see #getParameterCount()
 	 * @see #getParameterValues()
 	 */
@@ -69,8 +69,8 @@ public interface ParameterizedDESystem extends DESystem {
 	 * {@link #getPositiveValueCount()} and also with the number of identifiers
 	 * given by {@link #getParameterIdentifiers()}
 	 * 
-	 * @return The current values of all parameters in the system in form of a
-	 *         double array.
+	 * @return values the current values of all parameters in the system in form of a
+	 *         double array
 	 * 
 	 * @see #getParameterCount()
 	 * @see #getParameterIdentifiers()
@@ -86,7 +86,7 @@ public interface ParameterizedDESystem extends DESystem {
 	 * {@link #getParameterValues()}. Within this array you could change some
 	 * values of interest and subsequently pass the array to this method.
 	 * 
-	 * @param values The new values for all parameters.
+	 * @param values the new values for all parameters.
 	 * @see #getParameterCount()
 	 */
 	public void setParameters(double values[]);

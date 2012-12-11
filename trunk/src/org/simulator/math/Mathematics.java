@@ -38,7 +38,7 @@ public class Mathematics {
    * This method computes the factorial! function.
    *
    * @param n
-   * @return
+   * @return result
    */
   public static final double factorial(double n) {
     if ((n == 0) || (n == 1)) {

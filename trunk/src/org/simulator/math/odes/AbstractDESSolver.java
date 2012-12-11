@@ -749,7 +749,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 	/**
 	 * 
-	 * @param system the differential equation system
+	 * @param DES the differential equation system
 	 * @param initialValues
 	 * @param timeBegin
 	 * @param timeEnd

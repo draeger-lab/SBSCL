@@ -71,7 +71,7 @@ public class HighamHall54Solver extends FirstOrderSolver {
 	
 	/**
 	 * clone constructor
-	 * @param dormandPrinceSolver
+	 * @param solver
 	 */
 	public HighamHall54Solver(HighamHall54Solver solver) {
 		super(solver);

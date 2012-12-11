@@ -59,7 +59,7 @@ public class RNG {
    * Generates a random integer between first and second input value.
    * @param low
    * @param high
-   * @return
+   * @return randomNumber
    */
   public static int randomInt(int low, int high) {
     if (high < low) {

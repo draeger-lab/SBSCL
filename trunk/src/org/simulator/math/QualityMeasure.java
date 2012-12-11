@@ -145,7 +145,7 @@ public abstract class QualityMeasure implements Serializable {
 	 * 
 	 * @param x
 	 * @param expected
-	 * @return
+	 * @return distance the distance between the two tables
 	 */
 	public double distance(MultiTable x, MultiTable expected) {
 		MultiTable left = x;

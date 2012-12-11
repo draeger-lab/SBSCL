@@ -415,7 +415,7 @@ public class AlgebraicRuleConverter {
 	 * Creates a list an assignment rule for every algebraic rule in the given
 	 * model
 	 * 
-	 * @return
+	 * @return rules
 	 */
 	public List<AssignmentRule> getAssignmentRules() {
 		ArrayList<AssignmentRule> assignmentRules = new ArrayList<AssignmentRule>();

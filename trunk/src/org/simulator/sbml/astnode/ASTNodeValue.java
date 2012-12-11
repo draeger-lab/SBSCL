@@ -247,7 +247,7 @@ public class ASTNodeValue {
   /**
    * Returns the value as an object (double or boolean)
    * @param time
-   * @return
+   * @return value the double or boolean value of the node
    */
   public Object getValue(double time) {
     if (isDouble) {
@@ -510,7 +510,7 @@ public class ASTNodeValue {
 
   /**
    * Returns true if the corresponding ASTNode is of type name.
-   * @return
+   * @return name?
    */
   public boolean isName() {
     if (node!=null) {
@@ -523,7 +523,7 @@ public class ASTNodeValue {
 
   /**
    * Returns the name of the corresponding ASTNode.
-   * @return
+   * @return name
    */
   public String getName() {
     if (node != null) {
