@@ -51,7 +51,7 @@ public class PearsonCorrelation extends QualityMeasure {
 	/**
 	 * Constructor, which allows setting the parameter value for default value.
 	 * 
-	 * @param defaultValue
+	 * @param defaultValue the default value
 	 */
 	public PearsonCorrelation(double defaultValue) {
 		super(defaultValue);

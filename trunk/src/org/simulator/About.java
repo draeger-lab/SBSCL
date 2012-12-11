@@ -36,8 +36,8 @@ public class About {
 	 */
 	public static void main(String[] args) {
 		String message = 
-				"This is the Simulation Core Library.\n\n" +
-				"Main authors: Andreas Dr\u00e4ger, Roland Keller, and Alexander D\u00f6rr\n" +
+				"This is the Systems Biology Simulation Core Library.\n\n" +
+				"Main authors: Roland Keller, Alexander D\u00f6rr, and Andreas Dr\u00e4ger\n" +
 				"Copyright \u00A9 2007-2012 jointly by the following organizations:\n" +
 				"1. University of Tuebingen, Germany\n" + 
 				"2. Keio University, Japan\n" + 
@@ -52,7 +52,14 @@ public class About {
 				javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
 			} catch (Throwable t) {
 			}
-			javax.swing.JOptionPane.showMessageDialog(null, message, "About Simulation Core Library", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+			String iconName = "SCL_icon", path = "gui/img/" + iconName + ".png";
+			javax.swing.ImageIcon icon = null;
+			java.net.URL u = About.class.getResource(path);
+			if (u != null) {
+				icon = new javax.swing.ImageIcon(u);
+				javax.swing.UIManager.put(iconName, icon);
+			}
+			javax.swing.JOptionPane.showMessageDialog(null, message, "About Simulation Core Library", javax.swing.JOptionPane.INFORMATION_MESSAGE, icon);
 		} catch (java.awt.HeadlessException exc) {
 			System.out.println(message);
 		}
