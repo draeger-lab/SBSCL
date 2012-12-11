@@ -2302,10 +2302,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * products with their according stoichiometry or stoichiometric math.
 	 * 
 	 * @param velocities
-	 *        An array of reaction velocities at the current time.
-	 * @param Y
-	 * @return An array containing the rates of change for each species in the
+	 *        An array containing the rates of change for each species in the
 	 *         model system of this class.
+	 * @param time
 	 * @throws SBMLException
 	 */
 	protected void processVelocities(double[] changeRate, double time)
