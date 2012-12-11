@@ -473,7 +473,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * @param lastTime
 	 * @param nextTime
 	 * @param stepSize
-	 * @return
+	 * @return steps the number of steps between the given time points
 	 */
 	public int inBetweenSteps(double lastTime, double nextTime, double stepSize) {
 		return (int) (Math.floor((nextTime - lastTime) / stepSize) /* + 1 */);
@@ -485,7 +485,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * @param initialValues
 	 * @param timeBegin
 	 * @param timeEnd
-	 * @return
+	 * @return table the initialized {@link MultiTable}
 	 */
 	protected MultiTable initResultMatrix(DESystem DES,
 			double initialValues[], double timeBegin, double timeEnd) {
@@ -499,7 +499,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * @param initialValues
 	 * @param timeBegin
 	 * @param numSteps
-	 * @return
+	 * @return table the initialized {@link MultiTable}
 	 */
 	protected MultiTable initResultMatrix(DESystem DES,
 			double[] initialValues, double timeBegin, int numSteps) {
@@ -520,7 +520,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * @param DES
 	 * @param initialValues
 	 * @param timePoints
-	 * @return
+	 * @return table the initialized {@link MultiTable}
 	 */
 	protected MultiTable initResultMatrix(DESystem DES,
 			double[] initialValues, double[] timePoints) {
@@ -749,7 +749,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 
 	/**
 	 * 
-	 * @param differential equation system
+	 * @param system the differential equation system
 	 * @param initialValues
 	 * @param timeBegin
 	 * @param timeEnd
