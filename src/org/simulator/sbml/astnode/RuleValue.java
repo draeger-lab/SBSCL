@@ -118,7 +118,7 @@ public class RuleValue {
   /**
    * Calculates the math of the rule and returns the new value of the variable.
    * @param time
-   * @return
+   * @return value the computed value of the variable
    */
   protected double processAssignmentVariable(double time) {
     value = nodeObject.compileDouble(time);
@@ -138,7 +138,7 @@ public class RuleValue {
   
   /**
    * Returns the value of the rule.
-   * @return
+   * @return value
    */
   public double getValue() {
     return value;
@@ -146,7 +146,7 @@ public class RuleValue {
   
   /**
    * Returns the index of the variable in the Y vector of the value holder.
-   * @return
+   * @return index
    */
   public int getIndex() {
     return index;

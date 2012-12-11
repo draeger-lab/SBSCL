@@ -113,7 +113,7 @@ public class AssignmentRuleValue extends RuleValue{
   
   /**
    * Returns the id of the species reference (if present), null otherwise.
-   * @return
+   * @return id
    */
   public String getSpeciesReferenceID() {
     return speciesReferenceID;

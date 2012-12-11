@@ -50,55 +50,55 @@ public interface SBMLValueHolder extends DelayValueHolder, Serializable {
     /**
      * Returns the size of the compartment with the given id.
      * @param id
-     * @return
+     * @return compartmentSize
      */
     public double getCurrentCompartmentSize(String id);
 
     /**
      * Returns the size of the compartment of the species with the given id.
      * @param speciesId
-     * @return
+     * @return compartmentValue
      */
     public double getCurrentCompartmentValueOf(String speciesId);
 
     /**
      * Returns the value of the parameter with the given id.
      * @param id
-     * @return
+     * @return parameterValue
      */
     public double getCurrentParameterValue(String id);
 
     /**
      * Returns the value of the species with the given id.
      * @param id
-     * @return
+     * @return speciesValue
      */
     public double getCurrentSpeciesValue(String id);
 
     /**
      * Returns the value of the stoichiometry of the species reference with the given id.
      * @param id
-     * @return
+     * @return stoichiometry
      */
     public double getCurrentStoichiometry(String id);
 
     /**
      * Returns the current simulation time.
-     * @return
+     * @return time
      */
     public double getCurrentTime();
 
     /**
      * Returns the current value of the SBase with the given id.
      * @param id
-     * @return
+     * @return value
      */
     public double getCurrentValueOf(String id);
     
     /**
      * Returns the current value of the Y vector at the given position.
      * @param position
-     * @return
+     * @return value
      */
     public double getCurrentValueOf(int position);
 

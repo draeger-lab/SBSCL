@@ -47,7 +47,7 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 
 	/**
 	 * Gets the underlying {@link MultiTable} wrapped by this class.
-	 * @return
+	 * @return table
 	 */
 	public MultiTable getMultiTable() {
 		return mTable;

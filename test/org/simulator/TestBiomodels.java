@@ -48,16 +48,18 @@ public class TestBiomodels {
 	/**
 	 * Tests the models of biomodels.org using the {@link RosenbrockSolver} as integrator
 	 * @param file
+	 * @param from
+	 * @param to
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public static void testBiomodels(String file)
+	public static void testBiomodels(String file, int from, int to)
 			throws FileNotFoundException, IOException {
 		int errors = 0;
 		int nModels = 0;
 		AbstractDESSolver solver = new RosenbrockSolver();
 
-		for (int modelnr = 1; modelnr <= 348; modelnr++) {
+		for (int modelnr = from; modelnr <= to; modelnr++) {
 			System.out.println("Biomodel " + modelnr);
 			Model model = null;
 			try {
@@ -110,13 +112,19 @@ public class TestBiomodels {
 	}
 	
 	/**
-	 *  
-	 * @param args path of file with models (from biomodels.org) 
+	 * * Input:
+	 * <ol>
+	 * <li>directory with models (containing the biomodels),
+	 * <li>first model to be simulated,
+	 * <li>last model to be simulated,
+	 * </ol>
+	 * 
+	 * @param args
 	 * @throws IOException
 	 * @throws URISyntaxException
 	 */
 	public static void main(String[] args) throws IOException,
 			URISyntaxException {
-		testBiomodels(args[0]);
+		testBiomodels(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]));
 	}
 }
