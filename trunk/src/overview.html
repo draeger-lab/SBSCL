@@ -135,6 +135,17 @@
       You just have to add the provided jar-file simulation-core-library.jar to the class path of your Java project.
       Then you have access to all classes of the library.
     </p>
+    
+    <h3>Simulation of the models in the SBML test suite</h3>
+    <p>
+      Having Java installed on your operating system you can easily run the simulation of the models in the SBML test suite. You have to 
+      use the following command. TestSuiteDirectory stands for the directory which contains the SBML test suite. The simulation is conducted for the models with
+      numbers from First to Last.
+    </p>
+    <pre><code class="spoiled">
+      	java -jar simulation-core-library.jar TestSuiteDirectory First Last
+    </code></pre>
+
 
   </body>
 </html>
