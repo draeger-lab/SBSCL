@@ -113,7 +113,7 @@ public abstract class QualityMeasure implements Serializable {
 	 * 
 	 * @param x
 	 * @param y
-	 * @return
+	 * @return distance the distance between the two vectors
 	 * @throws IllegalArgumentException
 	 */
 	public double distance(Iterable<? extends Number> x,
@@ -166,7 +166,7 @@ public abstract class QualityMeasure implements Serializable {
 	 * 
 	 * @param x
 	 * @param expected
-	 * @return
+	 * @return distance the distance between the two blocks
 	 */
 	public double distance(MultiTable.Block x, MultiTable.Block expected) {
 		return meanFunction.computeMean(getColumnDistances(x,expected));
@@ -182,7 +182,7 @@ public abstract class QualityMeasure implements Serializable {
 	 * 
 	 * @param x
 	 * @param expected
-	 * @return
+	 * @return columnDistances the list of distances for the columns in the blocks
 	 */
 	public ArrayList<Double> getColumnDistances(MultiTable.Block x, MultiTable.Block expected) {
 		String identifiers[] = x.getIdentifiers();
@@ -200,7 +200,7 @@ public abstract class QualityMeasure implements Serializable {
 	 * Returns the default value that is returned by the distance function in
 	 * cases in which the computation of the distance is not possible.
 	 * 
-	 * @return
+	 * @return defaultValue
 	 */
 	public double getDefaultValue() {
 		return defaultValue;

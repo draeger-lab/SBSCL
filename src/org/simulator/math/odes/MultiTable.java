@@ -96,7 +96,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 			 * Returns the human-readable name for this column if there is any, otherwise
 			 * this will return the same value as {@link #getId()}.
 			 * 
-			 * @return
+			 * @return columnName 
 			 */
 			public String getColumnName() {
 				return ((columnNames != null) && (columnNames[columnIndex] != null)) ? columnNames[columnIndex]
@@ -114,7 +114,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 			
 			/**
 			 * 
-			 * @return
+			 * @return name the name of the column
 			 */
 			public String getName() {
 				return columnNames[columnIndex];
@@ -123,7 +123,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 			/**
 			 * Gives the number of rows in this {@link Column}.
 			 * 
-			 * @return
+			 * @return rowCount the number of rows
 			 */
 			public int getRowCount() {
 				return data.length;
@@ -133,7 +133,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 			 * Access to the given row in this column.
 			 * 
 			 * @param rowIndex
-			 * @return
+			 * @return value the value at the given row
 			 */
 			public double getValue(int rowIndex) {
 				return data[rowIndex][columnIndex];
@@ -660,7 +660,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	/**
 	 * 
 	 * @param index
-	 * @return
+	 * @return block the block at the given position
 	 */
 	public Block getBlock(int index) {
 		return listOfBlocks.get(index);
@@ -668,7 +668,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
 	/**
 	 * 
-	 * @return
+	 * @return blockCount
 	 */
 	public int getBlockCount() {
 		return getNumBlocks();
@@ -677,7 +677,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	/**
 	 * 
 	 * @param column
-	 * @return
+	 * @return column the column at the given position
 	 */
 	public Column getColumn(int column) {
 		if (column > getColumnCount()) {
@@ -714,7 +714,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	 * Returns the index of a column for a given identifier.
 	 * 
 	 * @param identifier
-	 * @return
+	 * @return index the index of the column
 	 */
 	public int getColumnIndex(String identifier) {
 		String id;
@@ -752,7 +752,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	/**
 	 * 
 	 * @param column
-	 * @return
+	 * @return columnIdentifier the identifier of the column at the given position
 	 */
 	public String getColumnIdentifier(int column) {
 		if (column > getColumnCount()) {
@@ -781,7 +781,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	/**
 	 * Gives this {@link MultiTable}'s name.
 	 * 
-	 * @return
+	 * @return name the name of the table
 	 */
 	public String getName() {
 		return name;
@@ -789,7 +789,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
 	/**
 	 * 
-	 * @return
+	 * @return blockCount
 	 */
 	public int getNumBlocks() {
 		return listOfBlocks.size();
@@ -823,7 +823,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	}
 
 	/**
-	 * @return the timePoints
+	 * @return timePoints
 	 */
 	public double[] getTimePoints() {
 		return timePoints;
@@ -848,7 +848,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	/**
 	 * Checks whether an array of time points has been set for this object.
 	 * 
-	 * @return
+	 * @return timePointsSet 
 	 */
 	public boolean isSetTimePoints() {
 		return timePoints != null;
