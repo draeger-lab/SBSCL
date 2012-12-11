@@ -122,6 +122,8 @@ public class SBMLTestSuiteRunner {
 	 * Input:
 	 * <ol>
 	 * <li>directory with models (containing the SBML test suite),
+	 * <li>first model to be simulated,
+	 * <li>last model to be simulated,
 	 * <li>{@link Options#all} (for testing the models of the test suite with
 	 * all given integrators) or {@link Options#sedml} (for testing the models
 	 * of the test suite using the given SED-ML files) or nothing (for testing
@@ -137,30 +139,32 @@ public class SBMLTestSuiteRunner {
 			URISyntaxException {
 		boolean onlyRosenbrock = true;
 		boolean sedML = false;
-		if ((args.length >= 2) && (args[1].equals(Options.all.toString()))) {
+		if ((args.length >= 4) && (args[3].equals(Options.all.toString()))) {
 			onlyRosenbrock = false;
 		}
-		if ((args.length >= 2) && (args[1].equals(Options.sedml.toString()))) {
+		if ((args.length >= 4) && (args[3].equals(Options.sedml.toString()))) {
 			onlyRosenbrock = true;
 			sedML = true;
 		}
 
 		if (onlyRosenbrock && sedML) {
-			testRosenbrockSolverWithSEDML(args[0]);
+			testRosenbrockSolverWithSEDML(args[0], Integer.valueOf(args[1]), Integer.valueOf(args[2]));
 		} else if (onlyRosenbrock) {
-			testRosenbrockSolver(args[0]);
+			testRosenbrockSolver(args[0], Integer.valueOf(args[1]), Integer.valueOf(args[2]));
 		} else {
-			statisticForSolvers(args[0]);
+			statisticForSolvers(args[0], Integer.valueOf(args[1]), Integer.valueOf(args[2]));
 		}
 	}
 	
 	/**
 	 * Computes a statistic for the SBML test suite testing all provided integrators
 	 * @param file
+	 * @param from
+	 * @param to
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public static void statisticForSolvers(String file)
+	public static void statisticForSolvers(String file, int from, int to)
 			throws FileNotFoundException, IOException {
 		String sbmlfile, csvfile, configfile;
 
@@ -188,7 +192,7 @@ public class SBMLTestSuiteRunner {
 			correctSimulations[i] = 0;
 		}
 
-		for (int modelnr = 1; modelnr <= 1123; modelnr++) {
+		for (int modelnr = from; modelnr <= to; modelnr++) {
 			System.out.println("model " + modelnr);
 			nModels++;
 
@@ -354,11 +358,13 @@ public class SBMLTestSuiteRunner {
 	/**
 	 * Computes a statistic for the SBML test suite using the Rosenbrock solver as integrator
 	 * @param file
+	 * @param from
+	 * @param to
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 * @throws URISyntaxException
 	 */
-	public static void testRosenbrockSolver(String file)
+	public static void testRosenbrockSolver(String file, int from, int to)
 			throws FileNotFoundException, IOException, URISyntaxException {
 		String sbmlfile, csvfile, configfile;
 		int highDistances = 0;
@@ -373,7 +379,7 @@ public class SBMLTestSuiteRunner {
 			runningTimes[i] = 0d;
 		}
 
-		for (int modelnr = 1; modelnr <= 1123; modelnr++) {
+		for (int modelnr = from; modelnr <= to; modelnr++) {
 			System.out.println("model " + modelnr);
 
 			StringBuilder modelFile = new StringBuilder();
@@ -551,11 +557,13 @@ public class SBMLTestSuiteRunner {
 	/**
 	 * Computes a statistic for the SBML test suite using the Rosenbrock solver as integrator and the SED-ML files
 	 * @param file
+	 * @param from
+	 * @param to
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 * @throws URISyntaxException
 	 */
-	public static void testRosenbrockSolverWithSEDML(String file)
+	public static void testRosenbrockSolverWithSEDML(String file, int from, int to)
 			throws FileNotFoundException, IOException, URISyntaxException {
 		String sbmlfile, csvfile, configfile, sedmlfile;
 		int highDistances = 0;
@@ -571,7 +579,7 @@ public class SBMLTestSuiteRunner {
 			runningTimes[i] = 0d;
 		}
 
-		for (int modelnr = 1; modelnr <= 1123; modelnr++) {
+		for (int modelnr = from; modelnr <= to; modelnr++) {
 			System.out.println("model " + modelnr);
 
 			StringBuilder modelFile = new StringBuilder();
@@ -769,7 +777,7 @@ public class SBMLTestSuiteRunner {
 	 * @param timePoints
 	 * @param stepSize
 	 * @param amountHash
-	 * @return
+	 * @return result
 	 * @throws SBMLException
 	 * @throws ModelOverdeterminedException
 	 * @throws DerivativeException
@@ -982,7 +990,6 @@ public class SBMLTestSuiteRunner {
 	// id in the SEDML file.
 	private static String findTimeColumn(
 			IProcessedSedMLSimulationResults prRes, Output wanted, SedML sedml) {
-		// TODO Auto-generated method stub
 		List<String> dgIds = wanted.getAllDataGeneratorReferences();
 		for (String dgID : dgIds) {
 			DataGenerator dg = sedml.getDataGeneratorWithId(dgID);

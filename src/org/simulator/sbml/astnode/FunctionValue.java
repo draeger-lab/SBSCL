@@ -145,7 +145,7 @@ public class FunctionValue extends ASTNodeValue {
 
 	/**
 	 * Returns the values of the arguments.
-	 * @return
+	 * @return argumentValues
 	 */
 	public double[] getArgumentValues() {
 		return argumentValues;
@@ -154,7 +154,7 @@ public class FunctionValue extends ASTNodeValue {
 	/**
 	 * Returns the index of a specific argument.
 	 * @param argumentName
-	 * @return
+	 * @return index
 	 */
 	public int getIndex(String argumentName) {
 		return indexMap.get(argumentName);

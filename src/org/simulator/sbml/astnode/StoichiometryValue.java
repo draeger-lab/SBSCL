@@ -112,7 +112,7 @@ public class StoichiometryValue {
 	/**
 	 * Computes the value of the stoichiometry at the current time if it has not been computed yet or is not constant.
 	 * @param time
-	 * @return
+	 * @return doubleValue the value of the stoichiometry
 	 */
 	public double compileDouble(double time) {
 		if (this.time != time) {
@@ -162,7 +162,7 @@ public class StoichiometryValue {
 
 
 	/**
-	 * @return
+	 * @return stoichiometrySet?
 	 */
 	public boolean getStoichiometrySet() {
 		return stoichiometrySet;
@@ -170,7 +170,7 @@ public class StoichiometryValue {
 
 
 	/**
-	 * @return
+	 * @return stoichiometry
 	 */
 	public double getStoichiometry() {
 		return stoichiometry;

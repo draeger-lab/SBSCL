@@ -586,7 +586,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * value of its {@link Compartment} or 1d otherwise
 	 * 
 	 * @param speciesId
-	 * @return
+	 * @return compartmentValue
 	 */
 	public double getCurrentCompartmentValueOf(String speciesId) {
 		Integer compartmentIndex = compartmentHash.get(speciesId);
@@ -918,7 +918,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	/**
 	 * Returns the timepoint where the simulation is currently situated
 	 * 
-	 * @return
+	 * @return time
 	 */
 	public double getCurrentTime() {
 		return currentTime;
@@ -2301,8 +2301,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * running over all reactions and considering all participating reactants and
 	 * products with their according stoichiometry or stoichiometric math.
 	 * 
-	 * @param velocities
-	 *        An array containing the rates of change for each species in the
+	 * @param changeRate An array containing the rates of change for each species in the
 	 *         model system of this class.
 	 * @param time
 	 * @throws SBMLException

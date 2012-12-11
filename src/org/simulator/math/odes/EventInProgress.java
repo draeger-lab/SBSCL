@@ -120,7 +120,7 @@ public class EventInProgress {
 	 * Returns a boolean value indication if the associated event has recently
 	 * been triggered / fired
 	 * 
-	 * @return
+	 * @return fireStatus
 	 */
 	public boolean getFireStatus(double time) {
 		if ((lastTimeFired <= time) && (lastTimeRecovered <= time)) {
@@ -146,7 +146,7 @@ public class EventInProgress {
 	/**
 	 * Return the next time of execution of the associated event.
 	 * 
-	 * @return
+	 * @return time
 	 */
 	public double getTime() {
 		return execTimes.peek();
@@ -154,7 +154,7 @@ public class EventInProgress {
 	
 	/**
 	 * Returns true if the event is supposed to be executed at some time.
-	 * @return
+	 * @return executionTime?
 	 */
   public boolean hasExecutionTime() {
     return execTimes.peek() != null;
@@ -163,7 +163,7 @@ public class EventInProgress {
 	/**
 	 * Return the values used in the next execution of the associated event.
 	 * 
-	 * @return
+	 * @return values
 	 */
 	public Double[] getValues() {
 		return values.peek();
@@ -183,7 +183,7 @@ public class EventInProgress {
 	 * in time
 	 * 
 	 * @param time
-	 * @return
+	 * @return moreArguments?
 	 */
 	public boolean hasMoreAssignments(double time) {
 		
@@ -197,7 +197,7 @@ public class EventInProgress {
 
 	/**
 	 * Returns the last time the event has been fired.
-	 * @return
+	 * @return time
 	 */
 	public double getLastTimeFired() {
 		return lastTimeFired;
@@ -205,7 +205,7 @@ public class EventInProgress {
   
 	/**
 	 * Returns the last time the event has been executed.
-	 * @return
+	 * @return time
 	 */
 	public double getLastTimeExecuted() {
 		return lastTimeExecuted;
@@ -236,7 +236,7 @@ public class EventInProgress {
   
 	/**
 	 * Returns all event assignments as a map.
-	 * @return
+	 * @return assignments
 	 */
 	public Map<Integer,Double> getAssignments() {
 		return assignments;

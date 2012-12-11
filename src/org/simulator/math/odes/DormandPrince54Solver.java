@@ -46,11 +46,11 @@ public class DormandPrince54Solver extends FirstOrderSolver {
 	
 	/**
 	 * clone constructor
-	 * @param dormandPrinceSolver
+	 * @param solver
 	 */
-	public DormandPrince54Solver(DormandPrince54Solver princeSolver) {
-		super(princeSolver);
-		this.integrator=princeSolver.getIntegrator();
+	public DormandPrince54Solver(DormandPrince54Solver solver) {
+		super(solver);
+		this.integrator=solver.getIntegrator();
 	}
 	
 	/**

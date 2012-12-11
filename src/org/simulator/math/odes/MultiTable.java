@@ -278,7 +278,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		 * with the given identifier.
 		 * 
 		 * @param id
-		 * @return
+		 * @return containsColumn?
 		 */
 		public boolean containsColumn(String id) {
 			return idHash.containsKey(id);
@@ -319,7 +319,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		/**
 		 * 
 		 * @param column
-		 * @return
+		 * @return identifier
 		 */
 		public String getColumnIdentifier(int column) {
 			return identifiers[column];
@@ -357,7 +357,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
 		/**
 		 * 
-		 * @return
+		 * @return blockName
 		 */
 		public String getName() {
 			return blockName;
@@ -404,7 +404,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		/**
 		 * Checks whether or not a data matrix has been defined in this object
 		 * 
-		 * @return
+		 * @return dataSet?
 		 */
 		public boolean isSetData() {
 			return data != null;
@@ -628,7 +628,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	/**
 	 * Creates a multi block table only containing the values for the given timepoints (if available)
 	 * @param timepoints
-	 * @return
+	 * @return table the filtered table
 	 */
   public MultiTable filter(double[] timepoints) {
     ArrayList<Integer> rowIndices = new ArrayList<Integer>();
