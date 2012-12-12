@@ -100,7 +100,6 @@ import org.simulator.sbml.astnode.TimesValue;
  * @author Andreas Dr&auml;ger
  * @author Roland Keller
  * @author Dieudonn&eacute; Motsou Wouamba
- * @date 2007-09-06
  * @version $Rev$
  * @since 0.9
  */

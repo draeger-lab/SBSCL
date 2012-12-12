@@ -939,7 +939,7 @@ A.~Perez, E.~Doi, R.~Mehlinger, S.~Ehrlich, M.~Hunt, G.~Tucker, P.~Scherpelz,
 A.~Becker, E.~Harley, and C.~Moore, Harvey Mudd College, USA, for providing a
 Java implementation of Rosenbrock's method, and to Michael T.~Cooling,
 University of Auckland, New Zealand, for fruitful discussion. The authors thank
-D.~M. Wouamba for source code contribution.
+D.~M.~Wouamba, P.~Stevens, and M.~Zwie\ss{}ele for source code contribution.
 
 This work was funded by the Federal Ministry of Education and Research (BMBF,
 Germany) in the project Virtual Liver (grant number 0315756).
@@ -1094,7 +1094,7 @@ In the test suite column, a dash means that
 %\par \mbox{}
 \begin{landscape}
 \rowcolors{3}{white}{lightblue}
-\begin{tabular}{p{2cm}lccccC{1cm}C{1.2cm}p{2.5cm}lp{3.3cm}p{1.7cm}}
+\begin{tabular}{p{2cm}lccccC{1cm}C{1.2cm}p{2.5cm}p{.5cm}lp{3.3cm}p{1.65cm}}
 \toprule
 Program &
 Version &
@@ -1105,6 +1105,7 @@ Version &
     }
   & SED-ML 
   & \multirow{2}{2.5cm}{Programming language}
+  & GUI
   & API access
   & Platform
   & Comments \\
@@ -1120,15 +1121,15 @@ Version &
 } & 
 \multicolumn{1}{C{.68cm}}{
   \begin{sideways}Events\end{sideways}
-} \\
+} \\ 
 \midrule
-BioUML          & 0.9.3 & \yes & \yes & \yes    & & \yes      & In $\upalpha$ version & Java                                & JavaScript & independent                         &                              \\
-COPASI          & 4.8   & \no  & \no  & (\yes)  & & \no       & \no                   & C++ (plus multiple bindings)        & \yes       & Windows, Linux, Mac OS X, Solaris   &                              \\
-iBioSim         & 2.0   & \yes & \yes & \yes    & & \yes      & \no                   & Java                                & \no        & Fedora 15, Windows, Mac OS $>$ 10.6 &                              \\
-JSim            & 2.07  & \no  & \yes & \no     & & \no       & \no                   & Java                                & \yes       & Windows, Linux, Mac OS X            &                              \\
-LibSBMLSim      & 1.0   & \yes & \yes & \yes    & & L3, L2V4  & \no                   & C                                   & \yes       & Windows, Linux, Free BSD, Mac OS X  &                              \\
-VCell           & 5.0   & \yes & \no  & \yes    & & \no       & \no                   & Java frontend, C/C++ server backend & \no        & independent                         & Internet connection required \\
-Simulation Core & 1.0   & \yes & \yes & \yes    & & \yes      & \yes                  & Java                                & \yes       & independent                         &                              \\
+BioUML          & 0.9.3 & \yes & \yes & \yes    & & \yes      & In $\upalpha$ version & Java                                 & \yes & JavaScript & independent                         &                              \\
+COPASI          & 4.8   & \no  & \no  & (\yes)  & & \no       & \no                   & C++ (plus multiple bindings)         & \yes & \yes       & Windows, Linux, Mac OS X, Solaris   &                              \\
+iBioSim         & 2.0   & \yes & \yes & \yes    & & \yes      & \no                   & Java                                 & \yes & \no        & Fedora 15, Windows, Mac OS $>$ 10.6 &                              \\
+JSim            & 2.07  & \no  & \yes & \no     & & \no       & \no                   & Java                                 & \yes & \yes       & Windows, Linux, Mac OS X            &                              \\
+LibSBMLSim      & 1.0   & \yes & \yes & \yes    & & L3, L2V4  & \no                   & C                                    & \no  & \yes       & Windows, Linux, Free BSD, Mac OS X  &                              \\
+VCell           & 5.0   & \yes & \no  & \yes    & & \no       & \no                   & Java frontend, C/C++ server backend  & \yes & \no        & independent                         & Internet connection required \\
+Simulation Core & 1.0   & \yes & \yes & \yes    & & \yes      & \yes                  & Java                                 & \no  & \yes       & independent                         &                              \\
 \bottomrule
 \end{tabular}
 \rowcolors{1}{white}{white}

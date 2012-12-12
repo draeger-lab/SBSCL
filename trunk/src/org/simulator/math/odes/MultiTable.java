@@ -50,7 +50,6 @@ import org.simulator.math.odes.MultiTable.Block.Column;
  * </p>
  * 
  * @author Andreas Dr&auml;ger
- * @date 2010-08-26
  * @version $Rev$
  * @since 0.9
  */
@@ -61,7 +60,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	 * of actual data together with identifiers for each column.
 	 * 
 	 * @author Andreas Dr&auml;ger
-	 * @date 2010-08-31
 	 */
 	public class Block extends AbstractTableModel {
 		
@@ -69,7 +67,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		 * A column of the {@link MultiTable.Block} matrix.
 		 * 
 		 * @author Andreas Dr&aumlg;ger
-		 * @date 2010-08-26
 		 */
 		public class Column implements Iterable<Double> {
 

@@ -30,7 +30,6 @@ import org.apache.commons.math.ode.DerivativeException;
  * 
  * @author Alexander D&ouml;rr
  * @author Andreas Dr&auml;ger
- * @date 2010-02-04
  * @version $Rev$
  * @since 0.9
  */
