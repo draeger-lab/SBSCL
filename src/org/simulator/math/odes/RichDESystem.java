@@ -31,7 +31,6 @@ import org.apache.commons.math.ode.DerivativeException;
  * interest later on.
  * 
  * @author Andreas Dr&auml;ger
- * @date 2010-08-31
  * @version $Rev$
  * @since 0.9
  */

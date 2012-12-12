@@ -31,7 +31,6 @@ import java.util.List;
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
- * @date 2011-03-25
  */
 public abstract class MeanFunction implements Serializable {
 	

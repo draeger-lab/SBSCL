@@ -32,7 +32,6 @@ import org.simulator.math.odes.MultiTable;
  * 
  * @author Roland Keller
  * @author Andreas Dr&auml;ger
- * @date 17.04.2007
  * @version $Rev$
  * @since 1.0
  */

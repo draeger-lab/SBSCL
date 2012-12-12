@@ -24,7 +24,7 @@ package org.simulator.math.odes;
 
 /**
  * This is an abstract class for solvers with adaptive stepsizes and given relative and absolute tolerances.
- * @author Andreas Drauml;ger
+ * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 1.1
  */

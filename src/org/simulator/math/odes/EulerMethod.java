@@ -29,7 +29,6 @@ import org.simulator.math.Mathematics;
 /**
  * In this class the Euler method for integration a differential equation system is implemented.
  * @author Andreas Dr&auml;ger
- * @date 14:37:21, 2010-08-03
  * @version $Rev$
  * @since 0.9
  */

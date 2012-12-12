@@ -31,7 +31,6 @@ import java.util.Iterator;
  * 
  * @author Andreas Dr&auml;ger
  * @author Roland Keller
- * @date 2007-04-17
  * @version $Rev$
  * @since 1.0
  */

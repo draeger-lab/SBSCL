@@ -33,7 +33,6 @@ import org.simulator.math.odes.MultiTable.Block;
  * {@link DESystem}s.
  * 
  * @author Andreas Dr&auml;ger
- * @date Sep 10, 2007
  * @version $Rev$
  * @since 0.9 
  */
