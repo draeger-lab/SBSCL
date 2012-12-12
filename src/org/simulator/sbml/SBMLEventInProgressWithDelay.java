@@ -33,7 +33,6 @@ import java.util.LinkedList;
  * </p > 
  * 
  * @author Alexander D&ouml;rr
- * @date 2011-03-04
  * @version $Rev$
  * @since 0.9
  */

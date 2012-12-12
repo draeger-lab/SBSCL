@@ -46,7 +46,6 @@ import org.simulator.math.odes.MultiTable.Block.Column;
  * @author Hannes Planatscher
  * @author Philip Stevens
  * @author Max Zwie&szlig;ele
- * @date 2010-02-04
  * @version $Rev$
  * @since 0.9
  */

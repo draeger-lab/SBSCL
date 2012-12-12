@@ -63,21 +63,27 @@
   
     <h3>About Simulation Core Library</h3>
     <p>
-      The Java&#8482; API Simulation Core Library comprises a collection of integrators for differential
-      equation systems combined with an interpreter for the Systems Biology Markup Language
+      The Java&#8482; API Simulation Core Library comprises a collection of
+      integrators for differential equation systems combined with an interpreter
+      for the Systems Biology Markup Language
       (<a href="http://sbml.org" target="_blank">SBML</a>). 
-      It is the first simulation library that is based on <a href="http://sbml.org/Software/JSBML/" target="_blank">JSBML</a>.
-      The user can read an SBML model and simulate it with one of the provided numerical integration routines.
-      All SBML levels and versions are supported.
-      The library can easily be integrated into customized software, such as parameter estimation tools.
+      It is the first simulation library that is based on
+      <a href="http://sbml.org/Software/JSBML/" target="_blank">JSBML</a>.
+      The user can read an SBML model and simulate it with one of the provided
+      numerical integration routines. All SBML levels and versions are
+      supported.
+      The library can easily be integrated into customized software, such as
+      parameter estimation tools.
     </p>
 
     <h3>The provided integration methods</h3>
     <p>
-      The Rosenbrock solver is best suitable for integrating stiff differential equation systems
-      and also has a precise timing of SBML events. It is taken and adapted from Kotcon <i>et al.</i> 
+      The Rosenbrock solver is best suitable for integrating stiff differential
+      equation systems and also has a precise timing of SBML events. It is taken
+      and adapted from Kotcon <i>et al.</i> 
       Several solvers have been taken from the
-      <a href="http://commons.apache.org/math/" target="_blank">Apache Commons Math Library</a> and wrapped into our library:
+      <a href="http://commons.apache.org/math/" target="_blank">Apache Commons
+         Math Library</a> and wrapped into our library:
       <ul>
         <li>Adams Bashforth</li>
         <li>Adams Moulton</li>
@@ -87,18 +93,20 @@
         <li>Higham Hall 54</li>
       </ul>
 
-      The following solvers have been implemented additionally and are fast, but not suitable for
-      all differential equation systems:
+      The following solvers have been implemented additionally and are fast, but
+      not suitable for all differential equation systems:
       <ul>
         <li>Euler</li>
         <li>Runge Kutta</li>
       </ul>
     </p>
 
-    <h3>Reading in a model and creating the respective differential equation system</h3>
+    <h3>Reading in a model and creating the respective differential equation 
+        system</h3>
     <p>
-      A model can be read in by using the <i>SBMLReader</i> class of JSBML. With the model in memory the
-      <i>SBMLinterpreter</i> can create the differential equation system that provides the basis for simulation:
+      A model can be read in by using the <i>SBMLReader</i> class of JSBML.
+      With the model in memory the <i>SBMLinterpreter</i> can create the
+      differential equation system that provides the basis for simulation:
     </p>
     <pre><code class="spoiled">
       <span class="class">Model</span> model = (<span class="keyword">new</span> <span class="class">SBMLReader</span>()).<span class="method">readSBML</span>(sbmlfile).<span class="method">getModel()</span>;<br/>
@@ -107,7 +115,8 @@
 
     <h3>Simulation of a differential equation system</h3>
     <p>
-      The created differential equation system can then be simulated with a chosen solver and given time points.
+      The created differential equation system can then be simulated with a
+      chosen solver and given time points.
       The result is stored in a data structure called <i>MultiTable</i>.
     </p>
     <pre><code class="spoiled">
@@ -118,7 +127,9 @@
 
 	<h3>Using SED-ML for simulation</h3>
     <p>
-      The following example shows how to read in a <i>File</i> f (in SED-ML format) and how to run a simulation described in this file afterwards. The simulation results are stored in a <i>MultiTable</i>.
+      The following example shows how to read in a <i>File</i> f (in SED-ML
+      format) and how to run a simulation described in this file afterwards.
+      The simulation results are stored in a <i>MultiTable</i>.
     </p>
 			
     <pre><code class="spoiled">
@@ -136,14 +147,18 @@
       Then you have access to all classes of the library.
     </p>
     
-    <h3>Simulation of the models in the SBML test suite</h3>
+    <h3>Simulation of the models in the SBML Test Suite</h3>
     <p>
-      Having Java installed on your operating system you can easily run the simulation of the models in the SBML test suite. You have to 
-      use the following command. TestSuiteDirectory stands for the directory which contains the SBML test suite. The simulation is conducted for the models with
-      numbers from First to Last.
+      You can run the simulation of the models in the 
+      <a href="http://sbml.org/Facilities/Online_SBML_Test_Suite">SBML Test
+      Suite</a> by using the command below. <i>TestSuiteDirectory</i> denotes
+      the directory containing your copy of the (entire) SBML test suite.
+      The simulation is conducted for the models with numbers from <i>First</i>
+      to <i>Last</i> (these numbers are the indices of the models in the test
+      suite).
     </p>
     <pre><code class="spoiled">
-      	java -jar simulation-core-library.jar TestSuiteDirectory First Last
+      java -cp simulation-core-library.jar SBMLTestSuiteRunner TestSuiteDirectory First Last
     </code></pre>
 
 

@@ -352,13 +352,14 @@
       stylesheetfile="${doc}/javadoc-style.css" 
       overview="${src}/overview.html"
   	  version="true">
-        <link href="http://www.jdom.org/docs/apidocs.1.1/"/>
-        <link href="http://download.oracle.com/javase/6/docs/api/"/>
-        <link href="http://commons.apache.org/io/api-1.4/"/>
-        <link href="http://commons.apache.org/math/api-2.2/"/>
-        <link href="http://sbml.org/Special/Software/JSBML/build/apidocs/"/>
-        <link href="http://jaxen.codehaus.org/apidocs/"/>
-        <link href="http://www.xom.nu/apidocs/"/>
+    	<link href="http://commons.apache.org/io/api-1.4/"/>
+    	<link href="http://commons.apache.org/math/api-2.2/"/>
+    	<link href="http://download.oracle.com/javase/6/docs/api/"/>
+        <link href="http://javasourcecode.org/html/open-source/junit/junit-4.8/"/>
+    	<link href="http://jaxen.codehaus.org/apidocs/"/>
+    	<link href="http://sbml.org/Special/Software/JSBML/latest-stable/build/apidocs/"/>
+    	<link href="http://www.jdom.org/docs/apidocs.1.1/"/>
+    	<link href="http://www.xom.nu/apidocs/"/>
     </javadoc>
   </target>	
 	

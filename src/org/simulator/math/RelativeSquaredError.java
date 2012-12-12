@@ -30,7 +30,6 @@ package org.simulator.math;
  * values.
  * 
  * @author Andreas Dr&auml;ger
- * @date 2007-04-17
  * @version $Rev$
  * @since 1.0
  */

@@ -26,7 +26,6 @@ package org.simulator.math.odes;
  * This interface describes differential equation systems with fast processes.
  * @author Andreas Dr&auml;ger
  * @author Alexander D&ouml;rr
- * @date 2010-09-27
  * @version $Rev$
  * @since 0.9
  */
