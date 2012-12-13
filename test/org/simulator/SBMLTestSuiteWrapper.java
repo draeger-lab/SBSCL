@@ -124,7 +124,6 @@ public class SBMLTestSuiteWrapper {
 			CSVImporter csvimporter = new CSVImporter();
 			MultiTable inputData = csvimporter.convert(model, csvfile);
 
-			int points = steps+1;
 			double[] timepoints = inputData.getTimePoints();
 
 			MultiTable solution = null;
