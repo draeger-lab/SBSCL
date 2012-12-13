@@ -1,6 +1,6 @@
      SBMLsimulator core NEWS -- History of user-visible changes
 ======================================================================
-Version 1.2 (2012-xx-xx)
+Version 1.2 (2012-12-13)
 ======================================================================
 
  * New features:
@@ -15,10 +15,10 @@ Version 1.2 (2012-xx-xx)
    - The user can now decide whether to determine the amount or the
    	 concentration of a species.
    	 
-   - A wrapper class for the SBML test suite has been added.
+   - A wrapper class for the SBML Test Suite has been added.
    
    - Simulation Core Library now supports all models of the SBML test
-     suite.
+     suite (release 23).
      
    - Import of CSV files is now possible.
    
@@ -30,17 +30,19 @@ Version 1.2 (2012-xx-xx)
  * Changes in this version:
  
    - Renamed getNumAdditionalValues in RichDESystem to 
-     getAdditionalValueCount() in order to be compliant to many 
+     getAdditionalValueCount() in order to be compliant with many 
      other Java classes.
      
    - The processing of the ASTNodes has been improved.
-     
+   
+   - The API documentation has been improved.
+
  
  * Bug fixes: 
    
    - There was an error in the calculation of the concentration of 
      some species: Sometimes the amount was not divided by the 
-     appropriate compartment size.
+     associated compartment's size.
      
 
 ======================================================================
