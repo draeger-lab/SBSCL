@@ -31,6 +31,8 @@
  * <p>
  * Classes for storing and interpreting an SBML model. The most important
  * class is SBMLinterpreter that can return the current vector of
- * derivatives to the solver. 
+ * derivatives to the solver.
+ * 
+ * @author Richard Adams
  */
 package org.simulator.sedml;
