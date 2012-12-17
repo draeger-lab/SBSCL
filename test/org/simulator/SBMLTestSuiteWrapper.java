@@ -75,7 +75,7 @@ public class SBMLTestSuiteWrapper {
 		String folder = fileBuilder.toString();
 		fileBuilder.append('/');
 		fileBuilder.append(folder);
-		fileBuilder.insert(0, path);
+		fileBuilder.insert(0, path + "/");
 		String modelFile = fileBuilder.toString();
 		csvfile = modelFile + "-results.csv";
 		configfile = modelFile + "-settings.txt";
@@ -140,7 +140,7 @@ public class SBMLTestSuiteWrapper {
 				solution = null;
 			}
 			if(solution != null) {
-				writeMultiTableToFile(path+"/" + folder + ".csv", variables, solution);
+				writeMultiTableToFile(outputPath+"/" + folder + ".csv", variables, solution);
 			}
 		}
 		else {
