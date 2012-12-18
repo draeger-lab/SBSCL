@@ -25,6 +25,7 @@ package org.simulator.math.odes;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -330,6 +331,10 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			rightValue=c.getValue(rightIndex);
 		}
 
+		if(Double.isNaN(rightValue)) {
+			rightIndex=-1;
+		}
+		
 		if (leftIndex==-1) {
 			return rightValue;
 		}
@@ -524,6 +529,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	protected MultiTable initResultMatrix(DESystem DES,
 			double[] initialValues, double[] timePoints) {
 		double result[][] = new double[timePoints.length][initialValues.length];
+		for(int i=0; i!= result.length; i++) {
+			Arrays.fill(result[i], Double.NaN);
+		}
 		System.arraycopy(initialValues, 0, result[0], 0, initialValues.length);
 		data = new MultiTable(timePoints, result, DES
 				.getIdentifiers());
