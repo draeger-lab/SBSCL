@@ -41,9 +41,17 @@ public interface DelayValueHolder extends Serializable {
 	 *            computed for the element with the given id.
 	 * @param id
 	 *            the id of the delayed value
+	 * @param DES
+	 *            the DESystem
+	 * @param initialValues
+	 * 			  the initialValues of the DES
+	 * @param yIndex
+	 * 			  the index corresponding to the id in the vector of the DES           
+	 *                       
+	 *            
 	 * @return the computed value for the element with the given identifier at
 	 *         the time point in the past.
 	 */
-	public double computeDelayedValue(double time, String id);
+	public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues, int yIndex);
 
 }

@@ -799,12 +799,12 @@ public class ASTNodeInterpreter {
   public final double delay(String delayName, ASTNodeValue x, ASTNodeValue delay,
     String timeUnits, double time) {
     //TODO: Delay for arbitrary expressions.
-    double delayTime = delay.compileDouble(time);
+	double delayTime = delay.compileDouble(time);
     if (delayTime == 0) {
       return x.compileDouble(time);
     }
     double valueTime = symbolTime(delayName) - delayTime;
-    return valueHolder.computeDelayedValue(valueTime, compileString(x));
+    return valueHolder.computeDelayedValue(valueTime, compileString(x), null, null, 0);
   }
   
   /**
