@@ -112,7 +112,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	/**
 	 * A cloned version of this object
 	 */
-	private AbstractDESSolver clonedSolver;
+	protected AbstractDESSolver clonedSolver;
 
 	/**
 	 * Initialize with default integration step size and non-negative attribute
@@ -292,6 +292,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * @param change
 	 *            The vector for the resulting change of the system.
 	 * @param steadyState 
+	 * 
 	 * @return The change.
 	 * @throws Exception
 	 */
@@ -301,7 +302,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	/* (non-Javadoc)
 	 * @see org.simulator.math.odes.DelayValueHolder#computeValue(double, java.lang.String)
 	 */
-	public double computeDelayedValue(double time, String id) {
+	public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues, int yIndex) {
 		//get interval
 		double[] timepoints=data.getTimePoints();
 		int leftIndex=-1;
@@ -311,6 +312,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 				rightIndex=i;
 				if ((i>0) && (timepoints[i]>time)) {
 					leftIndex=i-1;
+				}
+				else if((timepoints[i]==time)) {
+					leftIndex=rightIndex;
 				}
 				break;
 			}
@@ -329,16 +333,43 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		}
 		if (rightIndex!=-1) {
 			rightValue=c.getValue(rightIndex);
+			if(Double.isNaN(rightValue) && Math.abs(time - leftValue) < 10E-12) {
+				rightValue = leftValue;
+			}
 		}
 
 		if(Double.isNaN(rightValue)) {
-			rightIndex=-1;
+			boolean calculated = true;
+			double[] yCopy = new double[initialValues.length];
+			double[] change = new double[initialValues.length];
+			System.arraycopy(initialValues, 0, yCopy, 0, initialValues.length);
+			try {
+				DES.setDelaysIncluded(false);
+				if(clonedSolver == null) {
+					clonedSolver = this.clone();
+					clonedSolver.reset();
+				}
+				clonedSolver.computeChange(DES, yCopy, 0, time, change, false);
+			} catch (DerivativeException e) {
+				rightIndex=-1;
+				calculated = false;
+			}
+			DES.setDelaysIncluded(true);
+			if(calculated) {
+				return yCopy[yIndex] + change[yIndex];
+				
+			}
+			
+			
 		}
 		
 		if (leftIndex==-1) {
 			return rightValue;
 		}
 		else if (rightIndex==-1) {
+			return leftValue;
+		}
+		else if(rightIndex == leftIndex) {
 			return leftValue;
 		}
 		else {
@@ -364,6 +395,8 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 *            whether or not to increase the given time by the given step
 	 *            size.
 	 * @param steadyState
+	 * 
+	 * 
 	 * @return the time increased by the step size
 	 * @throws DerivativeException
 	 */
@@ -579,7 +612,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			if(!(newValues[i] == 0) || !(oldValues[i] == 0)) {
 				relativeDistance = Math.abs((newValues[i]-oldValues[i])/Math.max(newValues[i],oldValues[i]));
 			}
-			if(((distance > 1E-5) || (relativeDistance > 1E-5)) &&  (step < 10000)) {
+			if(((distance > 1E-6) || (relativeDistance > 1E-6)) &&  (step < 10000)) {
 				return false;
 			}
 		}

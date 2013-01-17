@@ -63,4 +63,11 @@ public interface DESystem extends Serializable, FirstOrderDifferentialEquations 
 	 */
 	public int getPositiveValueCount();
 
+	/**
+	 * @param delaysIncluded
+	 * 			Determines whether delay expression should be included in the calculation.
+	 */
+	public void setDelaysIncluded(boolean delaysIncluded);
+	
+
 }
