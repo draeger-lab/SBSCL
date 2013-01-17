@@ -40,6 +40,11 @@ public class AssignmentRuleValue extends RuleValue{
 	private String speciesReferenceID;
 	
 	/**
+	 * Array for saving the old Y value
+	 */
+	private double[] oldY;
+	
+	/**
 	 * The map of the values of the species references that are contained in rules
 	 */
   private Map<String,Double> stoichiometricCoefHash;
@@ -89,9 +94,9 @@ public class AssignmentRuleValue extends RuleValue{
    * @return Has there been a change in the Y vector caused by the rule?
    */
   public boolean processRule(double[] Y, double time, boolean changeY) {
-    processAssignmentVariable(time);
     if(index>=0) {
       double oldValue=Y[index];
+      processAssignmentVariable(time);
       if(changeY) {
         Y[index] = value;
       }
@@ -100,6 +105,7 @@ public class AssignmentRuleValue extends RuleValue{
       }
     }
     else if(speciesReferenceID!=null) {
+      processAssignmentVariable(time);
       Double v=stoichiometricCoefHash.get(speciesReferenceID);
       stoichiometricCoefHash.put(speciesReferenceID, value);
       

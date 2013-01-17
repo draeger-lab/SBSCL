@@ -160,7 +160,16 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 	 */
 	private boolean[] ignoreNaN;
 
+	/**
+	 * Precision for event timing
+	 */
 	private static final double precisionEventsAndRules = 1E-7;
+	
+	/**
+	 * Precision for fast reactions
+	 */
+	private static final double precisionFastReactions = 1E-2;
+	
 	
 	/**
 	 * default constructor
@@ -544,6 +553,26 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 						EventDESystem EDES = (EventDESystem) DES;
 						if ((EDES.getEventCount() > 0) || (EDES.getRuleCount() > 0)) {
 							changed=processEventsAndRules(true, EDES, Math.min(newTime,timeEnd), t, yTemp);
+						}
+					}
+					if ((!changed) && (DES instanceof FastProcessDESystem) && (!steadyState)) {
+						FastProcessDESystem FDES = (FastProcessDESystem) DES;
+						if(FDES.containsFastProcesses()) {
+							double[] yTemp2 = new double[yTemp.length];
+							System.arraycopy(yTemp, 0, yTemp2, 0, yTemp.length);
+							if(clonedSolver == null) {
+								clonedSolver = this.clone();
+							}
+							double[] result = clonedSolver.computeSteadyState(FDES,
+									yTemp2, 0);
+							System.arraycopy(result, 0, yTemp, 0, yTemp.length);
+							for(int i=0; i!=result.length; i++) {
+								if(Math.abs(yTemp[i]-oldY[i])>this.precisionFastReactions) {
+									changed = true;
+									break;
+								}
+							}
+							
 						}
 					}
 

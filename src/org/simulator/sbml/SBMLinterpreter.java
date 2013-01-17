@@ -393,6 +393,11 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * Is the SBase in the Y vector an amount?
 	 */
 	private boolean[] isAmount;
+
+	/**
+	 * Are delays included in the computation?
+	 */
+	private boolean delaysIncluded;
 	
 
 	/**
@@ -457,6 +462,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		this.astNodeTime = 0d;
 		this.priorities = new HashSet<Double>();
 		this.highOrderEvents = new LinkedList<Integer>();
+		this.delaysIncluded = true;
 
 		Map<String, Integer> speciesReferenceToRateRule = new HashMap<String, Integer>();
 		int speciesReferencesInRateRules = 0;
@@ -1088,7 +1094,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			if (rule.isRate()) {
 				RateRule rr = (RateRule) rule;
 				SpeciesReference sr = model.findSpeciesReference(rr.getVariable());
-				if ((sr != null) && sr.isConstant()) {
+				if ((sr != null) && !sr.isConstant()) {
 					speciesReferencesInRateRules++;
 					speciesReferenceToRateRule.put(sr.getId(), k);
 				}
@@ -2110,7 +2116,10 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			throws DerivativeException {
 		this.currentTime = t;
 		this.astNodeTime += 0.01d;
-		return processRules(t, null, Y, false);
+		System.arraycopy(Y, 0, this.Y, 0, Y.length);
+		boolean changed = processRules(t, null, this.Y, false);
+		System.arraycopy(this.Y, 0, Y, 0, Y.length);
+		return changed;
 	}
 
 	/**
@@ -2254,20 +2263,28 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	public boolean processRules(double time, double[] changeRate, double[] Y, boolean initialCalculations) throws SBMLException {
 		boolean changeByAssignmentRules=false;
 		double intermediateASTNodeTime = - astNodeTime;
+		double oldTime = this.currentTime;
 		if (Y != null) {
 			for (int n = 0; n != nAssignmentRules; n++) {
 				intermediateASTNodeTime = - intermediateASTNodeTime;
 				for (int i = 0; i != nAssignmentRules; i++) {
 					AssignmentRuleValue currentRuleObject = assignmentRulesRoots.get(i);
 					double oldValue = Double.NaN, newValue = Double.NaN;
+					double[] oldY = new double[Y.length];
+					System.arraycopy(Y, 0, oldY, 0, Y.length);
 					int index = currentRuleObject.getIndex();
 					if(index >= 0) {
 						oldValue = Y[index];
 					}
 					boolean currentChange = currentRuleObject.processRule(Y,
 							intermediateASTNodeTime, true);
+					this.currentTime = oldTime;
 					if(index >= 0) {
 						newValue = Y[index];
+					}
+					System.arraycopy(oldY, 0, Y, 0, Y.length);
+					if(index != -1) {
+						Y[index] = newValue;
 					}
 
 					if (currentChange && (!initialCalculations) && (index >= 0) && (compartmentHash.containsValue(index))) {
@@ -2520,10 +2537,16 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		this.delayValueHolder = dvh;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.DelayValueHolder#computeDelayedValue(double, java.lang.String)
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.simulator.math.odes.DelayValueHolder#computeDelayedValue(double, java.lang.String, org.simulator.math.odes.DESystem, double[], int)
 	 */
-	public double computeDelayedValue(double time, String id) {
+	public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues, int yIndex) {
+		if(!delaysIncluded) {
+			return this.Y[symbolHash.get(id)];
+		}
+		
 		if ((time < 0d) || ((time >= 0d) && (this.delayValueHolder == null))) {
 			int index = symbolHash.get(id);
 			double oldTime = currentTime;
@@ -2546,7 +2569,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				}
 			}
 			if (Double.isNaN(value)) {
-				value=initialValues[index]; 
+				value=this.initialValues[index]; 
 			}
 			this.currentTime=oldTime;
 			return value;
@@ -2558,7 +2581,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 							return Double.NaN;
 
 		}
-		return this.delayValueHolder.computeDelayedValue(time, id);
+		return this.delayValueHolder.computeDelayedValue(time, id, this, this.initialValues, symbolHash.get(id));
 	}
 
 	/* (non-Javadoc)
@@ -2578,6 +2601,14 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		double value = kineticLawRoots[reactionIndex].compileDouble(
 			astNodeTime);
 		return value;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.DESystem#setDelaysIncluded(boolean)
+	 */
+	@Override
+	public void setDelaysIncluded(boolean delaysIncluded) {
+		this.delaysIncluded = delaysIncluded;
 	}
   
 }
