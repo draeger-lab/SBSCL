@@ -567,7 +567,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 									yTemp2, 0);
 							System.arraycopy(result, 0, yTemp, 0, yTemp.length);
 							for(int i=0; i!=result.length; i++) {
-								if(Math.abs(yTemp[i]-oldY[i])>this.precisionFastReactions) {
+								if(Math.abs(yTemp[i]-oldY[i])>precisionFastReactions) {
 									changed = true;
 									break;
 								}
