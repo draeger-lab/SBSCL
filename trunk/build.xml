@@ -366,7 +366,11 @@
   	  use="true"
       stylesheetfile="${doc}/javadoc-style.css" 
       overview="${src}/overview.html"
-  	  version="true">
+  	  version="true"
+      maxmemory="96m"
+      windowtitle="${Name} ${version}"
+      breakiterator="yes"
+    >
     	<link href="http://commons.apache.org/io/api-1.4/"/>
     	<link href="http://commons.apache.org/math/api-2.2/"/>
     	<link href="http://download.oracle.com/javase/6/docs/api/"/>
