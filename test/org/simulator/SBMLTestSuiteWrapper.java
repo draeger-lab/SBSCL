@@ -144,7 +144,7 @@ public class SBMLTestSuiteWrapper {
 			}
 		}
 		else {
-			logger.warning("The model does not exist");
+			logger.warning("The model "+ modelnr + " does not exist");
 		}
 	}
 
@@ -178,6 +178,7 @@ public class SBMLTestSuiteWrapper {
 				}
 			}
 		}
+		writer.newLine();
 		writer.close();
 	}
 
@@ -190,7 +191,14 @@ public class SBMLTestSuiteWrapper {
 	 * @throws URISyntaxException
 	 */
 	public static void main(String[] args) throws NumberFormatException, FileNotFoundException, IOException, URISyntaxException {
-		testRosenbrockSolver(args[0], Integer.valueOf(args[1]), args[2], Integer.valueOf(args[3]), Integer.valueOf(args[4])); 
+		int begin = Integer.valueOf(args[1]);
+		int end = begin;
+		if(args.length > 5) {
+			end = Integer.valueOf(args[5]);
+		}
+		for(int modelnr = begin; modelnr<=end; modelnr++) {
+			testRosenbrockSolver(args[0], modelnr, args[2], Integer.valueOf(args[3]), Integer.valueOf(args[4])); 
+		}
 	}
 
 }
