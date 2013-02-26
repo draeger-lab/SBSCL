@@ -26,6 +26,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.simulator.math.odes.MultiTable;
+import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
  * This class is the basis of various implementations of distance functions.
@@ -115,8 +116,8 @@ public abstract class QualityMeasure implements Serializable {
 	 * @return distance the distance between the two vectors
 	 * @throws IllegalArgumentException
 	 */
-	public double distance(Iterable<? extends Number> x,
-			Iterable<? extends Number> y) {
+	public double distance(Column x,
+			Column y) {
 		return distance(x, y,defaultValue);
 	}
 
@@ -137,8 +138,8 @@ public abstract class QualityMeasure implements Serializable {
 	 * @return The distance between the two arrays x and y.
 	 * @throws IllegalArgumentException
 	 */
-	public abstract double distance(Iterable<? extends Number> x,
-			Iterable<? extends Number> y,double defaultValue);
+	public abstract double distance(Column x,
+			Column y,double defaultValue);
 
 	/**
 	 * 
