@@ -22,7 +22,8 @@
  */
 package org.simulator.math;
 
-import java.util.Iterator;
+
+import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
  * Implementation of the Pearson correlation. 
@@ -60,10 +61,8 @@ public class PearsonCorrelation extends QualityMeasure {
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.Distance#distance(java.lang.Iterable, java.lang.Iterable, double)
 	 */
-	public double distance(Iterable<? extends Number> x,
-			Iterable<? extends Number> y, double defaultValue) {
-		Iterator<? extends Number> yIterator = y.iterator();
-		
+	public double distance(Column x,
+			Column y, double defaultValue) {
 		MeanFunction meanF = new ArithmeticMean();
 		double meanX = meanF.computeMean(x);
 		double meanY = meanF.computeMean(y);
@@ -72,12 +71,9 @@ public class PearsonCorrelation extends QualityMeasure {
 		double sumXSquared = 0d;
 		double sumYSquared = 0d;
 		
-		for (Number number : x) {
-			if (!yIterator.hasNext()) {
-				break;
-			}
-			double x_i = number.doubleValue();
-			double y_i = yIterator.next().doubleValue();
+		for (int i=0; i != Math.min(x.getRowCount(), y.getRowCount()); i++) {
+			double x_i = x.getValue(i);
+			double y_i = y.getValue(i);
 			sumNumerator+= (x_i-meanX)*(y_i-meanY);
 			sumXSquared+= (x_i-meanX)*(x_i-meanX);
 			sumYSquared+= (y_i-meanY)*(y_i-meanY);
