@@ -22,7 +22,8 @@
  */
 package org.simulator.math;
 
-import java.util.Iterator;
+
+import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
  * An implementation of an n-metric. An n-metric is basically the n-th root of
@@ -86,24 +87,20 @@ public class N_Metric extends QualityMeasure {
 		return Math.pow(Math.abs(x_i - y_i), root);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.Distance#distance(java.lang.Iterable, java.lang.Iterable, double)
+	/*
+	 * 
 	 */
-	public double distance(Iterable<? extends Number> x,
-		Iterable<? extends Number> y, double defaultValue) {
+	public double distance(Column x,
+		Column y, double defaultValue) {
 		if(root == 0d) {
 			return defaultValue;
 		}
 		double d = 0;
 		double x_i;
 		double y_i;
-		Iterator<? extends Number> yIterator = y.iterator();
-		for (Number number : x) {
-			if (!yIterator.hasNext()) {
-				break;
-			}
-			x_i = number.doubleValue();
-			y_i = yIterator.next().doubleValue();
+		for (int i=0; i!= Math.min(x.getRowCount(), y.getRowCount()); i++) {
+			x_i = x.getValue(i);
+			y_i = y.getValue(i);
 			if (computeDistanceFor(x_i, y_i, root, defaultValue)) {
 				d += additiveTerm(x_i, y_i, root, defaultValue);
 			}
@@ -137,6 +134,26 @@ public class N_Metric extends QualityMeasure {
 	 */
 	public void setRoot(double root) {
 		this.root = root;
+	}
+
+	/**
+	 * @param expected
+	 * @param defaultValue
+	 * @return
+	 */
+	public double distanceToZero(Column x, double defaultValue) {
+		if(root == 0d) {
+			return defaultValue;
+		}
+		double d = 0;
+		double x_i;
+		for (int i=0; i!= x.getRowCount(); i++) {
+			x_i = x.getValue(i);
+			if (computeDistanceFor(x_i, 0d, root, defaultValue)) {
+				d += additiveTerm(x_i, 0d, root, defaultValue);
+			}
+		}
+		return overallDistance(d,root,defaultValue);
 	}
 
 
