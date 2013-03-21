@@ -839,7 +839,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 						result[i], timeBegin);
 				System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 			}
-			v = additionalResults(DES, t - stepSize, result[i - 1], data, i);
+			v = additionalResults(DES, t, result[i], data, i);
 			firePropertyChange(oldT * intervalFactor, t * intervalFactor);
 		}
 
