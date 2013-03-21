@@ -511,7 +511,7 @@ change of the species' concentrations.
 In this simple case, solving the homogeneous ordinary
 differential equation system~\ref{eq:SpeciesChange} can be done in a
 straightforward way using many (numerical) differential equation solvers.
-The non-linear form of the kinetic equations in the vector function $\vec{\nu}$
+The \TODO{nonlinear} form of the kinetic equations in the vector function $\vec{\nu}$
 constitutes the major difficulty for this endeavor and is often the reason why
 an analytical solution of these systems is not possible or very hard to achieve.
 Generally, differential equation systems describing biological networks are,
@@ -540,8 +540,8 @@ In the general case of Equation~\ref{eq:QuantityValue}, not all species' amounts
 can be computed by integrating the transformation $\mathbf{N}\vec{\nu}$: The
 change of some model quantities may be given in form of rate rules (function
 $\vec{g}(\vec{Q}, t)$) that must be integrated separately.
-Species, whose amounts are determined by rate rules, must not participate in any
-reaction and do hence have only zero-valued corresponding entries in the
+\TODO{Species whose} amounts are determined by rate rules, must not participate \TODO{in any
+reaction and hence only have} zero-valued corresponding entries in the
 stoichiometric matrix $\mathbf{N}$.
 Thereby, the rate rule function $\vec{g}(\vec{Q}, t)$ directly gives the rate of
 change of these quantities, and returns 0 for all others.
@@ -553,7 +553,7 @@ reduce the size of a compartment to a certain portion of its current size,
 as soon as a trigger condition becomes satisfied.
 An assignment rule also influences the absolute value of some quantity.
 
-A further concept of SBML models are algebraic rules, which are equations that
+\TODO{A further concept in SBML are} algebraic rules, which are equations that
 must evaluate to zero at all times during the simulation of the model.
 These rules can be solved to determine the values of quantities, whose values
 are not determined by other constructs.
@@ -648,13 +648,13 @@ For every element of the resulting set of events their priority rule must be eva
 One event is randomly chosen for execution from all events with the highest priority.
 All other events could be handled in the same manner.
 However, the assignment of the first event can change the priority or even the trigger condition of the events that have not yet been executed.
-Therefore, the trigger of non persistent events and the priority of the remaining events have to be evaluated again.
+Therefore, the trigger of \TODO{nonpersistent} events and the priority of the remaining events have to be evaluated again.
 In this case, another event that has now the highest priority is chosen.
-This process repeats itself until no further events are left to be executed.
+This process \TODO{must be repeated} until no further events are left to be executed.
 Figure~3 shows the slightly simplified algorithm for event processing at a specific point in time.
 
 \subsection*{Integrated calculation for a certain time step including event processing}
-The precise calculation of the time, when events are triggered is crucial to 
+The precise calculation of the \TODO{time when} events are triggered is crucial to 
 ensure exact results of the numerical integration process.
 It could, for instance, happen that an event is triggered at time $t_{\tau}$,
 which is between the two integration time points $t_{\tau - 1}$ and $t_{\tau + 1}$.
@@ -664,26 +664,26 @@ neither of these time points.
 The Rosenbrock solver \cite{Press1993} can adapt its step size $h$ if events
 occur (see Figure~4 for details).
 For a certain time interval $[t_{\tau - 1}, t_{\tau + 1}]$ and the current vector
-$\vec{Q}$ Rosenbrock's method determines the new value of vector $\vec{Q}$ at a
+$\vec{Q}$\TODO{,} Rosenbrock's method determines the new value of vector $\vec{Q}$ at a
 point in time $t_{\tau - 1} + h$.
 If the error tolerance cannot be ensured, $h$ is reduced and the procedure is
 repeated.
 
-After that the events and the assignment rules are processed at the new point in
+After that\TODO{,} the events and the assignment rules are processed at the new point in
 time $t_{\tau - 1} + h$.
 If the previous step causes a change in $\vec{Q}$, the adaptive step size is
 decreased by setting $h$ to $\nicefrac{h}{10}$ and the calculation is repeated
 until the minimum step size is reached or the processing of events and rules
 does not change $\vec{Q}$ anymore.
-Hence, the time, at which an event takes place, is precisely determined.
+Hence, the \TODO{time at which} an event takes place, is precisely determined.
 
 \subsection*{Calculation of the derivatives for a certain point in time}
 For given values $\vec{Q}$ at a point $t$ in time the current vector of derivatives $\dot{\vec{Q}}$ is calculated as follows:
-First, the rate rules are processed $\dot{\vec{Q}} = \vec{g}(\vec{Q}, t)$. Note that function $\vec{g}$ returns 0 in all dimensions,
-in which no rate rule is defined.
+First, the rate rules are processed $\dot{\vec{Q}} = \vec{g}(\vec{Q}, t)$. Note that function $\vec{g}$ returns 0 in all \TODO{dimensions
+in which} no rate rule is defined.
 Second, the velocity $\nu_i$ of each reaction $R_i$ is computed with the help of the unified syntax graph (Figure~1 shows an example of such a graph).
 The velocity functions depend on $\vec{Q}$ at time $t$.
-During the second step the derivatives of all species that participate in the current reaction $R_i$ need to be updated (see the flowchart in Figure~5).
+During the second step\TODO{,} the derivatives of all species that participate in the current reaction $R_i$ need to be updated (see the flowchart in Figure~5).
 
 \subsection*{A reference implementation of the algorithm as part of the Systems
 Biology Simulation Core Library}
@@ -865,7 +865,7 @@ equation systems are strictly separated. The class \MultiTable{} stores the
 results of a simulation within its \Block{} data structures. 
 %
 The abstract description of differential equation systems, with the help of
-several distinct interfaces, makes possible to decouple them from a particular
+several distinct interfaces, makes \TODO{it} possible to decouple them from a particular
 type of biological network. It is therefore possible to pass an instance of an
 interpreter for a respective model description format to any available solver.
 %\marginpar{I would not quote SBML and CellML. CellML is
@@ -1060,7 +1060,7 @@ $I_E$ as \emph{inactive} events. We define the set $A_E$ as the subset of $E$ co
 whose trigger condition switches from \false{} to \true{} in the current point $t$ in time. At the beginning
 of the event handling, $A_E$ is empty. We call an event \emph{persistent} if it can only be removed from
 $A_E$ under the condition that all of its assignments have been evaluated. This means that a
-\emph{non-persistent} event can be removed from $A_E$ in case that its trigger condition becomes \false{}
+\TODO{\emph{nonpersistent}} event can be removed from $A_E$ in case that its trigger condition becomes \false{}
 during the evaluation of other events. Here, the function $\mathrm{trig}(e)$ returns 0 or 1 depending 
 on whether or not the trigger condition of event $e \in E$ is satisfied. Similarly, the function
 $\mathrm{persist}(e)$ returns 0 if event $e$ is not persistent, or 1 otherwise.
