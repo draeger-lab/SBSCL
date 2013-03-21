@@ -92,7 +92,7 @@ public class N_Metric extends QualityMeasure {
 	 */
 	public double distance(Column x,
 		Column y, double defaultValue) {
-		if(root == 0d) {
+		if (root == 0d) {
 			return defaultValue;
 		}
 		double d = 0;
@@ -105,7 +105,7 @@ public class N_Metric extends QualityMeasure {
 				d += additiveTerm(x_i, y_i, root, defaultValue);
 			}
 		}
-		return overallDistance(d,root,defaultValue);
+		return overallDistance(d, root, defaultValue);
 	}
 	
 
