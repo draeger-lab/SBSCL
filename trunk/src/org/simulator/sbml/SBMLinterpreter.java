@@ -574,7 +574,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	public double[] getAdditionalValues(double t, double[] Y)
 			throws DerivativeException {
 		if ((t - currentTime > 1E-15)
-				|| ((Y != this.Y) && !Arrays.equals(Y, this.Y))) {
+				|| ((Y != this.Y) && !Arrays.equals(Y, this.Y)) || (t == 0)) {
 			/*
 			 * We have to compute the system for the given state. But we are not
 			 * interested in the rates of change, but only in the reaction velocities.
