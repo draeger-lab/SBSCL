@@ -379,6 +379,12 @@
     	<link href="http://sbml.org/Special/Software/JSBML/latest-stable/build/apidocs/"/>
     	<link href="http://www.jdom.org/docs/apidocs.1.1/"/>
     	<link href="http://www.xom.nu/apidocs/"/>
+    	
+        <tag name="sbml.deprecated" description="Deprecated in SBML since :"/>
+        <tag name="jsbml.note" description="Note"/>
+        <tag name="jsbml.warning"/>
+    	<tag name="doc.note"  description="Documentation note"/>
+    				
     </javadoc>
   </target>
 	
