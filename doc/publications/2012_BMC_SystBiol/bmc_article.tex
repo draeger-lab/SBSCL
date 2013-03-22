@@ -296,20 +296,20 @@ Reutlingen, Germany}
 \textbf{Background:}
         % Do not use inserted blank lines (ie \\) until main body of text.
 With the increasing availability of high dimensional time course data for 
-metabolites, genes, or fluxes the description of dynamical systems by
-differential equation models becomes more and more popular in systems biology.
+metabolites, genes, \TODO{and} fluxes\TODO{,} the description of dynamical systems by
+differential equation models \TODO{is becoming more} popular in systems biology.
 %driven by the aim to make biological phenomena predictable. 
 Models are often encoded in formats such as SBML (Systems Biology Markup
 Language), whose mathematical structure is very complex and difficult to 
-evaluate due to many special cases.
+evaluate due to many special cases \TODO{of SBML structures}.
 %A flexible interpreter for SBML as well as numerical integrators are hence necessary to solve these models.
 
 \textbf{Results:}
 This article describes an efficient algorithm to interpret and solve 
-differential equation systems in SBML models.
+differential equation systems \TODO{derived from} SBML models.
 We begin our consideration with a formal representation of the mathematical form
 of the models and explain all parts of the algorithm in detail,
-including several pre-processing steps.  
+including several \TODO{preprocessing} steps.  
 %Dynamic simulation of models describing biological phenomena is a key aspect of
 %research in systems biology. 
 %This article describes an efficient and exhaustive algorithm to interpret and
@@ -378,23 +378,23 @@ directed to the mailing list
 %%
 \section*{Background}
 
-As part of the movement towards quantitative biology, modeling, 
+As part of the movement towards quantitative biology, \TODO{the} modeling, 
 simulation, and computer analysis of biological networks have become integral
 parts of modern biological research \cite{Macilwain2011}.
 Ambitious national and international research projects such as the Virtual Liver
 Network \cite{Holzhuetter2012} strive to derive even organ-wide models of
 biological systems that include all kinds of processes taking place at several
 levels of detail.
-Large-scale efforts like this require a strong collaboration between various
+Large-scale efforts like this require \TODO{strong} collaboration between various
 research groups, including experimenters and modelers. The exchange, storage,
 interoperability and the possibility to combine models have been recognized as
 key aspects of this endeavor \cite{Liebermeister2009sta}.
 
 XML-based standard description formats \cite{Bray2000} such as the Systems
-Biology Markup Language (SBML, \cite{Hucka2004}) or CellML \cite{Lloyd2004}
+Biology Markup Language (SBML, \cite{Hucka2004}) \TODO{and} CellML \cite{Lloyd2004}
 enable encoding of quantitative biological network models.
-To facilitate sharing and reuse of the models, online data bases such as the
-BioModels database \cite{Novere2006a} or the CellML model repository
+To facilitate sharing and reuse of the models, online \TODO{databases} such as
+\TODO{BioModels} database \cite{Novere2006a} \TODO{and} the CellML model repository
 \cite{Lloyd2008} provide large collections of published models in various
 formats.
 Software libraries for reading and manipulating the content
@@ -405,19 +405,18 @@ languages.
 The models encoded in these formats can be interpreted in terms of differential
 equation systems, with additional structures such as discrete events and
 algebraic equations. 
-The diversity of modeling aproaches and experimental data often requires
+The diversity of modeling \TODO{approaches} and experimental data often requires
 customized software solutions for very specific tasks.
-For efficient model analysis, simulation, and calibration (e.g.,
-the estimation of parameter values) a multiple-purpose and efficient numerical
-solver library that has been designed with the requirements of biological
-network models in mind is prerequisite.
+\TODO{For efficient analysis, simulation, and calibration (e.g.,
+the estimation of parameter values) of biological network models a multiple-purpose and efficient numerical
+solver library is prerequisite.}
 Although the language specifications of SBML \cite{Hucka2001, Hucka2003,
 Finney2003a, Finney2006, Hucka2007, Hucka2008, Hucka2010a} 
 and CellML \cite{Cuellar2006} describe the semantics of models in these formats
 and their interpretation, the algorithmic implementation is still not
 straightforward.
 
-Both communities offer standardized and manually derived benchmark test in order
+Both communities offer standardized and manually derived benchmark \TODO{tests} in order
 to evaluate the quality of simulation results, because it has been recognized
 that in many cases different solver implementations lead to divergent results
 \cite{Bergmann2008}.
@@ -433,9 +432,9 @@ As a reference implementation, we introduce an exhaustive implementation in the
 Java\texttrademark{} programming language. The algorithm described in this paper
 is, however, not limited to any particular programming language. It is also
 important to note that the interpretation of these models must be strictly
-separated from the numerical method that solves the implicated differential
+separated from the numerical method that solves the \TODO{implied} differential
 equation system. In this way, a similar approach would also be possible for
-further systems biological community formats, such as CellML.
+\TODO{other systems biology} community formats, such as CellML.
 
 
 %
@@ -458,7 +457,7 @@ further systems biological community formats, such as CellML.
 The Systems Biology Simulation Core Library (SCL) presented here is a platform-independent,
 well-tested generic library that is completely decoupled from any graphical
 user interface and can therefore easily be integrated into third-party programs.
-It comprises several Ordinary Differential Equation (ODE)
+It \TODO{is comprised of} several Ordinary Differential Equation (ODE)
 solvers and an interpreter for SBML models. It is the first simulation library
 based on JSBML \cite{Draeger2011b}. 
 % the Java library JSBML 
@@ -470,12 +469,12 @@ based on JSBML \cite{Draeger2011b}.
 %
 Furthermore, the Systems Biology Simulation Core Library contains classes to both export
 simulation configurations to SED-ML (Simulation Experiment Description Markup Language,
-\cite{Waltemath2011}), and facilitate the re-use and reproduction of these
+\cite{Waltemath2011}), and facilitate the \TODO{reuse} and reproduction of these
 experiments by executing SED-ML files.
 
 \section*{Results and discussion}
 
-In order to derive an algorithm for the interpretation of SBML models, it is
+\TODO{In order to derive an algorithm for the interpretation of SBML models in terms of differential equation systems}, it is
 first necessary to take a closer look at the mathematical equations implied by
 this data format.
 Based on this general description, we will then discuss all necessary steps
@@ -559,14 +558,14 @@ These rules can be solved to determine the values of quantities, whose values
 are not determined by other constructs.
 In this way, conservation relations or other complex interrelations can be
 expressed in a very convenient way.
-With the help of a bipartite matching and a subsequent conversion it is possible
+With the help of \TODO{bipartite} matching and a subsequent conversion it is possible
 to turn algebraic rules into assignment rules and hence include these into the
 term $\vec{r}(\vec{Q}, t)$.
 Such a transformation, however, requires symbolic computation and is
 hence a complicated endeavor.
 
 In case that the system under study operates at multiple time scales, i.e., it
-contains a fast and a slow sub-system, a separation of the system is necessary
+contains a fast and a slow \TODO{subsystem}, a separation of the system is necessary
 leading to differential algebraic equations.
 Some species can be declared to operate at the system's boundaries, assuming a
 constant pool of their amounts or concentrations.
