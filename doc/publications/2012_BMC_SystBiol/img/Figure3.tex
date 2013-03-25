@@ -35,7 +35,7 @@
 
     	\node [block, right of=updateRunningEvents,  node distance=5cm] (increase2) {$j := j + 1$};
 
-	    \node [decision, right of=increase2, node distance=4cm] (decision3) {$j > |E|$};
+	    \node [decision, right of=increase2, node distance=4cm] (decision3) {$j > |E|$?};
 
     \node [decision, below of=decision3] (noRunningEvents) {$A_E = \emptyset$?};
     \node [block, left of=noRunningEvents, node distance=4cm] (chooseEvent) {$e := \mathrm{choose}(A_E)$};
