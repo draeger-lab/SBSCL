@@ -55,7 +55,7 @@ text width=14em, text badly centered, node distance=2.5cm, inner sep=4pt,minimum
 	\path [line] (init) -- (output);
 	\path [line] (output) -- (pevents);
 	\path [line] (pevents) -- (xpxres?);
-	\path [line] (xpxres?) -- node {Yes}(aux2)-| (newvalues);
+	\path [line] (xpxres?) -- node [above] {Yes}(aux2)-| (newvalues);
 	\path [line] (xpxres?) -- node {No}(larger?);
 	\path [line] (larger?) |- node {No}(newvalues);
 	\path [line] (larger?) -- node {Yes}(stepsize);
