@@ -16,8 +16,8 @@
 \tikzstyle{line} = [draw, -latex']
 \tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
     minimum height=2em]
-\tikzstyle{io} = [trapezium,trapezium left angle=70,trapezium right angle=-70,minimum height=0.6cm, draw, fill=blue!20, 
-text width=8em, text badly centered, node distance=3cm, inner sep=0pt,minimum height=2em]
+\tikzstyle{io} = [trapezium,trapezium left angle=70, trapezium right angle=-70, minimum height=.8cm, draw, fill=blue!20, 
+text width=8em, text badly centered, node distance=3cm, inner sep=0pt]
 
 \begin{figure}
 \begin{tikzpicture}[node distance = 2cm, auto]
@@ -51,8 +51,8 @@ text width=8em, text badly centered, node distance=3cm, inner sep=0pt,minimum he
 	\path [line] (solve) -- (newassignment);
 
 	\path [line] (newassignment) -- (rulesleft?);
-	\path [line] (rulesleft?) -| node {No} (i++);
-	\path [line] (rulesleft?) -- node {Yes} (stop);
+	\path [line] (rulesleft?) -| node {Yes} (i++);
+	\path [line] (rulesleft?) -- node {No} (stop);
 	\path [line] (exception) |- (stop);
 
 \end{tikzpicture}
