@@ -61,7 +61,7 @@
 
     \path [line] (updateRunningEvents) -- (increase2);
     \path [line] (decision3) -- node{Yes} (noRunningEvents);
-    \path [line] (decision3) -- node{No}(aux3)|- (aux2);
+    \path [line] (decision3) -- node [right, very near start] {No}(aux3)|- (aux2);
     \path [line] (noRunningEvents) |- node{Yes} (stop);
     \path [line] (noRunningEvents) -- node{No} (chooseEvent);
     \path [line] (chooseEvent) -- (processEvent);
