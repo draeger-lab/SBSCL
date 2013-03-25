@@ -1155,7 +1155,8 @@ elements are supported.
 The program iBioSim, for instance, solves the vast majority of the test cases
 correctly, but does not yet support the delay function, except delayed events.
 LibSBMLSim, which is a simulation API written in C, can only read models given
-in SBML Level~2 Version~4 and SBML Level~3.
+in SBML Level~2 Version~4 and SBML Level~3
+\TODO{(indicated by the checkmark in brackets)}.
 Similarly, a dash in the column for events means that not \emph{all} possible
 cases for this language element can be correctly solved.
 COPASI, for instance, supports events in SBML, but not all of the current 
@@ -1166,15 +1167,15 @@ Test Suite across all levels and versions of SBML.
 
 %\par \mbox{}
 \begin{landscape}
-\rowcolors{3}{white}{lightblue}
-\begin{tabular}{p{2cm}lccccC{1cm}C{1.2cm}p{2.5cm}C{.5cm}lp{3.3cm}p{1.65cm}}
+\rowcolors{4}{white}{lightblue}
+\begin{tabular}{p{2cm}lccccC{1cm}C{1.2cm}p{2.5cm}C{.5cm}p{1cm}p{3.3cm}p{1.65cm}}
 \toprule
 Program &
 Version &
-\multicolumn{3}{C{2.5cm}}{Difficult SBML elements} & 
+\multicolumn{3}{C{2.4cm}}{Difficult SBML elements} & 
   & \multirow{2}{1.5cm}{
-    \begin{sideways}Fully SBML Test\end{sideways}
-    \begin{sideways}Suite compliant\end{sideways}
+      \begin{sideways}Fully SBML Test\end{sideways}
+      \begin{sideways}Suite compliant\end{sideways}
     }
   & SED-ML 
   & \multirow{2}{2.5cm}{Programming language}
@@ -1196,13 +1197,13 @@ Version &
   \begin{sideways}Events\end{sideways}
 } \\ 
 \midrule
-BioUML          & 0.9.4 & \yes & \yes & \yes    & & \yes      & In $\upalpha$ version & Java                                 & \yes & JavaScript & independent                         &                              \\
-COPASI          & 4.8   & \no  & \no  & (\yes)  & & \no       & \no                   & C++ (plus multiple bindings)         & \yes & \yes       & Windows, Linux, Mac OS X, Solaris   &                              \\
-iBioSim         & 2.0   & \yes & \yes & \yes    & & \yes      & \no                   & Java                                 & \yes & \no        & Fedora 15, Windows, Mac OS $>$ 10.6 &                              \\
-JSim            & 2.07  & \no  & \yes & \no     & & \no       & \no                   & Java                                 & \yes & \yes       & Windows, Linux, Mac OS X            &                              \\
-LibSBMLSim      & 1.0   & \yes & \yes & \yes    & & L3, L2V4  & \no                   & C                                    & \no  & \yes       & Windows, Linux, Free BSD, Mac OS X  &                              \\
-VCell           & 5.0   & \yes & \no  & \yes    & & \no       & \no                   & Java frontend, C/C++ server backend  & \yes & \no        & independent                         & Internet connection required \\
-Simulation Core & 1.0   & \yes & \yes & \yes    & & \yes      & \yes                  & Java                                 & \no  & \yes       & independent                         &                              \\
+BioUML                         &       0.9.4  & \yes & \yes & \yes    & & \yes      & In $\upalpha$ version & Java                                 & \yes & Java\-Script & independent                              &                              \\
+COPASI                         &       4.8    & \no  & \no  & (\yes)  & & \no       & \no                   & C++ (with multiple bindings)         & \yes & \yes         & Windows, Mac OS X, Linux, Solaris        &                              \\
+iBioSim                        &       2.0    & \yes & \yes & \yes    & & \no       & \no                   & Java                                 & \yes & \no          & Fedora 15, Windows, Mac OS X $\geq$ 10.6 &                              \\
+JSim                           &       2.07   & \no  & \yes & \no     & & \no       & \no                   & Java                                 & \yes & \yes         & Windows, Mac OS X, Linux                 &                              \\
+LibSBMLSim                     &       1.0    & \yes & \yes & \yes    & & (\yes)    & \no                   & C                                    & \no  & \yes         & Windows, Mac OS X, Linux, Free BSD       &                              \\
+VCell                          &       5.0    & \yes & \no  & \yes    & & \no       & \no                   & Java frontend, C/C++ server backend  & \yes & \no          & independent                              & Internet connection required \\
+Simulation Core \TODO{Library} & \TODO{1.2}   & \yes & \yes & \yes    & & \yes      & \yes                  & Java                                 & \no  & \yes         & independent                              &                              \\
 \bottomrule
 \end{tabular}
 \rowcolors{1}{white}{white}
