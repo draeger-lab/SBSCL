@@ -394,7 +394,7 @@ XML-based standard description formats \cite{Bray2000} such as the Systems
 Biology Markup Language (SBML, \cite{Hucka2004}) \TODO{and} CellML \cite{Lloyd2004}
 enable encoding of quantitative biological network models.
 To facilitate sharing and reuse of the models, online \TODO{databases} such as
-\TODO{BioModels} database \cite{Novere2006a} \TODO{and} the CellML model repository
+\TODO{BioModels Database} \cite{Novere2006a} \TODO{and} the CellML model repository
 \cite{Lloyd2008} provide large collections of published models in various
 formats.
 Software libraries for reading and manipulating the content
@@ -593,7 +593,7 @@ with standard numerical solvers.
 
 At the beginning of the simulation the values of species, parameters and
 compartments are set to the initial values as given in the model.
-All kinetic laws of the reactions, assignment rules, transformed algebraic
+All \TODO{rate laws} of the reactions, assignment rules, transformed algebraic
 rules (see below), initial assignments, event assignments and rate rules
 are integrated into one directed acyclic syntax graph.
 This graph is hence the result of merging of the abstract syntax trees 
@@ -606,16 +606,16 @@ graph.
 
 After the creation of the abstract syntax graph, the initial assignments, and the
 assignment rules (including transformed algebraic rules) are processed.
-Deviating initial values defined by initial assignments and are now assigned.
+\TODO{Initial values defined by initial assignments or assignment rules are computed in this step.}
 
 
 \subsection*{Solving algebraic rules}
-In order to deal with algebraic rules in an SBML model, these have to be converted to assignment rules.
-In every equation of an algebraic rule, there should be at least one variable, 
-whose value is not yet defined through other equations in model. This variable has to be determined 
-for the purpose of interpreting the regarding algebraic rule. 
+\TODO{In order to deal with algebraic rules in an SBML model, \TODO{they} are converted to assignment rules.}
+In every equation of an algebraic rule, there should be at least one \TODO{variable 
+whose} value is not yet defined through other equations in \TODO{the} model. This variable has to be determined 
+for the purpose of interpreting the \TODO{algebraic rule}. 
 At first, a bipartite graph according to the SBML specifications is generated. This graph is used to 
-compute a matching, using the algorithm by Hopcroft and Karp
+compute a \TODO{matching using} the algorithm by Hopcroft and Karp
 \cite{hopcroft1973n}. The initial greedy matching is extended with the use of augmenting paths. This process is
 repeated until no more augmenting paths can be found. Per definition, this results in a maximal matching. 
 As stated in the SBML specifications, if any equation vertex remains unconnected after augmenting the 
@@ -627,21 +627,21 @@ Figure~2 displays the described algorithm in form of a flow chart.
 
 
 \subsection*{Event handling}
-An event in SBML is a function that is executed depending on whether a trigger 
+An event in SBML is a \TODO{list of assignments} that is executed depending on whether a trigger 
 condition switches from \false{} to \true.
-In addition, a delay may postpone the actual execution of the event's assignments
-to a later point in time.
+In addition, \TODO{SBML enables modellers to define a delay which may postpone the actual execution of the event's assignments
+to a later point in time.}
 With the release of SBML Level~3 Version~1, the processing of events has been
 raised to a higher level of complexity.
-Before Level~3 Version~1 it was sufficient to determine, when an event triggers and when its assignmens are to be exceuted.
-In Level~3 Version~1 just a few new language elements have been added but with an huge impact on how to handle events:
-The order in which events have been processed used to be at programmers discretion, but now it is given by the event's priority element.
+Before Level~3 Version~1 it was sufficient to determine, when an event triggers and when its \TODO{assignments} are to be \TODO{executed}.
+In Level~3 Version~1 just a few new language elements have been added\TODO{, but these have a huge impact} on how to handle events:
+\TODO{For example} the order in which events have been processed used to be at programmers discretion \TODO{in SBML Level 2}, but \TODO{in Level~3 Version~1} it is given by the event's priority element.
 Coordinating the sequence, in which events are to be executed, has now become the crucial part of event handling. 
 Furthermore, there exists the option to cancel an event during the time since its trigger 
-has been activated and the actual time when the scheduler picks the event for execution.
+has been activated and the actual time when the scheduler picks the event for execution. \TODO{Events that can be cancelled after the activation of their triggers are called nonpersistent.}
 
 For every time step, the events to be executed are a union of two subsets of the set of all events.
-On the one hand, there are the events, whose trigger has been activated at the given time and which are to be evaluated without delay.
+On the one hand, \TODO{there are events whose triggers have} been activated at the given time and which are to be evaluated without delay.
 On the other hand, there are events that triggered at some time point before, and whose delay reaches till the current point in time.
 For every element of the resulting set of events their priority rule must be evaluated.
 One event is randomly chosen for execution from all events with the highest priority.
@@ -677,7 +677,7 @@ does not change $\vec{Q}$ anymore.
 Hence, the \TODO{time at which} an event takes place, is precisely determined.
 
 \subsection*{Calculation of the derivatives for a certain point in time}
-For given values $\vec{Q}$ at a point $t$ in time the current vector of derivatives $\dot{\vec{Q}}$ is calculated as follows:
+For given values $\vec{Q}$ at a point $t$ in time the current vector of derivatives $\dot{\vec{Q}}$ is calculated as follows\TODO{.}
 First, the rate rules are processed $\dot{\vec{Q}} = \vec{g}(\vec{Q}, t)$. Note that function $\vec{g}$ returns 0 in all \TODO{dimensions
 in which} no rate rule is defined.
 Second, the velocity $\nu_i$ of each reaction $R_i$ is computed with the help of the unified syntax graph (Figure~1 shows an example of such a graph).
@@ -704,7 +704,7 @@ Each solver has a method to directly access its corresponding KiSAO (Kinetic
 Simulation Algorithm Ontology) term \cite{Courtot2011}.
 Due to the strict separation between numerical differential equation solvers,
 and the definition of the actual differential equation system, it is possible to
-implement support for further community standards, such as CellML
+implement support for \TODO{other} community standards, such as CellML
 \cite{Lloyd2004}.
 
 In order to support the emerging standard MIASE (Minimal Information About a
@@ -726,11 +726,11 @@ SBML interpreter against the entire SBML Test Suite.
 \subsection*{Application to published models}
 
 The Systems Biology Simulation Core Library has been tested on all 424 curated
-models from BioModels database \cite{Novere2006a} (release~23, October 2012).
+models from \TODO{BioModels Database} \cite{Novere2006a} (release~23, October 2012).
 As a result, 99.06\,\% of these models could be correctly simulated.
 In the following, we use two models from this repository to illustrate the
 capabilities of this library:
-Biomodel~206 by Wolf \emph{et al.} \cite{Wolf2000} and Biomodel~390 by Arnold 
+\TODO{BioModels Database model~\#206} by Wolf \emph{et al.} \cite{Wolf2000} and \TODO{BioModels Database model~\#390} by Arnold 
 and Nikoloski \cite{Arnold2011}.
 
 The model by Wolf \emph{et al.} \cite{Wolf2000} mimics glycolytic oscillations
@@ -751,7 +751,7 @@ All kinetic equations within this model call specialized function definitions.
 Figure~8 shows the simulation results for the species ribulose 1,5 bisphosphate,
 ATP,  and ADP within this model.
 As in the previous test case, the simulation results reproduce the values
-provided by BioModels database.  
+provided by \TODO{BioModels Database}.  
 
 \subsection*{Comparison to existing solver implementations for SBML}
 
@@ -815,7 +815,7 @@ events to be processed.
 The evaluation of this model accounts for 60~\% of the total simulation time for
 the models in SBML Level~3 Version~1.
 Furthermore, the Systems Biology Simulation Core Library solves 99.06\,\% of the
-models from the \href{http://biomodels.net}{BioModels.net} database (release 23,
+models from the \href{http://biomodels.net}{BioModels.net} \TODO{Database} (release 23,
 \cite{Novere2006a}) simulating from $t = 0$ to $t = 10$ using Rosenbrock solver
 and a step size of $0.1$.
 These results suggest the reliability of the simulation algorithm described in
@@ -874,13 +874,13 @@ interpreter for a respective model description format to any available solver.
 %model. 
 This interpretation is the most time consuming step of the integration procedure.
 This is why efficient and clearly organized data structures are required to
-ensure a high performance of the overall library. The interpretation of SBML
+ensure \TODO{that the overall library offers high performance}. The interpretation of SBML
 models is split between evaluation of events and rules, computation of
 stoichiometric information, and computation of the current values for all model
 components (such as species and compartments).
 %
 For a given state of the ODE system, the class \SBMLinterpreter{}, responsible
-for the evaluation of models encoded in SBML returns the current set of
+for the evaluation of models encoded in SBML\TODO{,} returns the current set of
 time-derivatives of the variables.
 It is connected to an efficient MathML interpreter of the expressions contained
 in kinetic laws, rules and events (\ASTNodeInterpreter{}). The nodes of the syntax graph for those
@@ -906,16 +906,16 @@ They represent only temporary rules, that are incorporated in the simulation pro
 %currently not sure if we could solve cos(x) = 0 or similar cases.}
 %
 
-In the \SBMLinterpreter{} events are represented via an array containing an object of the class \EventInProgress{} for every event in the model.
+In the \SBMLinterpreter{} \TODO{class,} events are represented via an array containing an object of the class \EventInProgress{} for every event in the model.
 Thereby the distinction between events with and without delays is made.
 The major difference between both is that an event with delay can trigger multiple times before it is executed.
 In order to deal with such an issue, the class \SBMLEventInProgressWithDelay{} keeps track of this via the help of a list containing the points in time, at which the respective event has to executed.
 When events trigger more than once before execution, they have to be ordered according to their delay because the delay of the very same event may vary.
 
-When the \SBMLinterpreter{} is processing events with priority, the events with the highest priority 
-are currently stored in list until one of them is selected for execution. One could argue, that all events can
-be kept in the same data structure, e.g., in a binary max heap, where after the extraction of the element with the largest value, the heap is restructured so that that next largest value is at the top.
-As stated in the Results section, the execution of one event can influence the priority off the remaining events.
+When the \SBMLinterpreter{} \TODO{class} is processing events with priority, the events with the highest priority 
+are currently stored in \TODO{a} list until one of them is selected for execution. One could \TODO{argue that} all events can
+be kept in the same data structure, e.g., in a binary max heap, \TODO{whereafter} the extraction of the element with the largest value, the heap is restructured so that that next largest value is at the top.
+As stated in the Results section, the execution of one event can influence the priority \TODO{of} the remaining events.
 Considering the binary max heap, there is the possibility that many priorities change whereby the standard
 method to restore the max heap characteristic after extraction is not sufficient any more.
 Therefore, we disregarded the use of other data structures for now.
@@ -1057,7 +1057,7 @@ Let $E$ be the set of all events in a model, and $I_E$ be the set of events, who
 conditions have already been evaluated to \true{} in the previous time step. We refer to elements within
 $I_E$ as \emph{inactive} events. We define the set $A_E$ as the subset of $E$ containing those events,
 whose trigger condition switches from \false{} to \true{} in the current point $t$ in time. At the beginning
-of the event handling, $A_E$ is empty. We call an event \emph{persistent} if it can only be removed from
+of the event handling, $A_E$ is empty. We call an event \emph{persistent}\TODO{,} if it can only be removed from
 $A_E$ under the condition that all of its assignments have been evaluated. This means that a
 \TODO{\emph{nonpersistent}} event can be removed from $A_E$ in case that its trigger condition becomes \false{}
 during the evaluation of other events. Here, the function $\mathrm{trig}(e)$ returns 0 or 1 depending 
@@ -1101,7 +1101,7 @@ library.
 
 \subsection*{Figure 7 - Simulation of glycolytic oscillations}
 This figure displays the results of a simulation computed with the Systems
-Biology Simulation Core Library based on model 206 from BioModels database
+Biology Simulation Core Library based on model 206 from BioModels \TODO{Database}
 \cite{Novere2006a, Wolf2000}.
 Shown are the changes of the concentration (7a) of the most characteristic
 intracellular metabolites 3-phosphogylcerate, ATP, glucose, glyceraldhyde 
@@ -1120,11 +1120,11 @@ Methods without step-size adaptation, such as the fourth order Runge-Kutta
 algorithm (KiSAO term 64), might only be able to find a high quality solution 
 with an appropriate number of integration steps. 
 The simulation results obtained by using the algorithm described in this work
-reproduces the results provided by BioModels database. 
+reproduces the results provided by \TODO{BioModels Database}. 
 
 \subsection*{Figure 8 - Simulation of the Calvin-Benson cycle}
 Another example of the capabilities of the Simulation Core Library has been
-obtained by solving model 390 from BioModels database 
+obtained by solving model 390 from BioModels \TODO{Database} 
 \cite{Novere2006a, Arnold2011}.
 This model was simulated using Euler's method (KiSAO term 30) with 200
 integration steps for the time interval $[0, 35]$ seconds.
