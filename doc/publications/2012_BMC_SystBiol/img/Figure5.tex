@@ -16,6 +16,7 @@
 \tikzstyle{line} = [draw, -latex']
 \tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
     minimum height=2em]
+\tikzstyle{blank} = [coordinate]%[rectangle, text width=0em, text centered, rounded corners, minimum height=0em]
 
 \begin{figure}
 \begin{tikzpicture}[node distance = 2cm, auto]
@@ -26,8 +27,9 @@
     \node [block,below of=initLoop] (reaction) {Compute flux $J_j$ through $R_j$:\\$J_j := \nu_j(\vec{Q}, t, \mathbf{N}, \mathbf{W}, \vec{p})$};
     \node [block,below of=reaction] (updateX) {for each species $i$ in $R_j$:\\$\dot{Q}_i := \dot{Q_i} + n_{ij} \cdot J_j$};
     \node [block, below of=updateX] (increase) {$j := j + 1$};
-    \node [decision, right of=increase, node distance=8cm] (endOfLoop) {$j > |R|$};
-    \node [cloud, below of=increase, node distance=5cm] (stop) {Stop};
+    \node [decision, below of=increase, node distance=2.5cm] (endOfLoop) {$j > |R|$?};
+    \node [cloud, below of=endOfLoop, node distance=2.5cm] (stop) {Stop};
+     \node [blank, right of=endOfLoop, node distance=3.5cm] (aux){};
     % Draw edges
     \path [line] (start) -- (rateRules);
     \path [line] (rateRules) -- (initLoop);
@@ -35,8 +37,8 @@
     \path [line] (reaction) -- (updateX);
     \path [line] (updateX) -- (increase);
     \path [line] (increase) -- (endOfLoop);
-    \path [line] (endOfLoop) |- node{Yes} (stop);
-    \path [line] (endOfLoop) |- node{No} (reaction);
+    \path [line] (endOfLoop) -- node[right]{Yes} (stop);
+    \path [line] (endOfLoop) -- node[very near start] {No} (aux) |- (reaction);
 \end{tikzpicture}
 \end{figure}
 
