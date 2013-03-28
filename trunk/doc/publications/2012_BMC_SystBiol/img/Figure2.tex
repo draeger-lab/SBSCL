@@ -41,22 +41,22 @@
 	\node [cloud, below of=rulesleft?, node distance=2.5cm] (stop) {Stop};
 
 
-	\draw [color = black, line width = 3.25pt, ->, -triangle 60] (start) to (graph);
-	\path [line, thick] (graph) -- (findpaths);
-	\path [line, thick] (findpaths) -- (matching?);
-	\path [line, thick] (matching?) -- node {Yes}(augment);		
-	\path [line, thick] (augment) |- (findpaths);
-	\path [line, thick] (matching?) -- node {No} (overdetermined?);
-	\path [line, thick] (overdetermined?) -- node {No} (i0);
-	\path [line, thick] (overdetermined?) -- node {Yes}(exception);
-	\path [line, thick] (i0) -- (solve);
-	\path [line, thick] (i++) -- (solve);
-	\path [line, thick] (solve) -- (newassignment);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (start) -- (graph);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (graph) -- (findpaths);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (findpaths) -- (matching?);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (matching?) -- node {Yes}(augment);		
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (augment) |- (findpaths);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (matching?) -- node {No} (overdetermined?);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (overdetermined?) -- node {No} (i0);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (overdetermined?) -- node {Yes}(exception);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (i0) -- (solve);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (i++) -- (solve);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (solve) -- (newassignment);
 
-	\path [line, thick] (newassignment) -- (rulesleft?);
-	\path [line, thick] (rulesleft?) -| node {Yes} (i++);
-	\path [line, thick] (rulesleft?) -- node {No} (stop);
-	\path [line, thick] (exception) |- (stop);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (newassignment) -- (rulesleft?);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (rulesleft?) -| node {Yes} (i++);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (rulesleft?) -- node {No} (stop);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (exception) |- (stop);
 
 \end{tikzpicture}
 \end{figure}
