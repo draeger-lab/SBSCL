@@ -44,8 +44,8 @@ public class TimesValue extends ASTNodeValue{
 	 * (non-Javadoc)
 	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
 	 */
-	protected void computeDoubleValue() {
-		doubleValue = interpreter.times(children, numChildren, time);
+	protected void computeDoubleValue(double delay) {
+		doubleValue = interpreter.times(children, numChildren, time, delay);
 	}
 
 }

@@ -121,7 +121,7 @@ public class RuleValue {
    * @return value the computed value of the variable
    */
   protected double processAssignmentVariable(double time) {
-    value = nodeObject.compileDouble(time);
+    value = nodeObject.compileDouble(time, 0d);
     if(isSpecies && !hasZeroSpatialDimensions) {
       double compartmentValue = valueHolder
           .getCurrentValueOf(compartmentIndex);

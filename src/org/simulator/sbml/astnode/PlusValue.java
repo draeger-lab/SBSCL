@@ -43,8 +43,8 @@ public class PlusValue extends ASTNodeValue {
 	 * (non-Javadoc)
 	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
 	 */
-	protected void computeDoubleValue() {
-		doubleValue = interpreter.plus(children, numChildren, time);
+	protected void computeDoubleValue(double delay) {
+		doubleValue = interpreter.plus(children, numChildren, time, delay);
 	}
 
 }

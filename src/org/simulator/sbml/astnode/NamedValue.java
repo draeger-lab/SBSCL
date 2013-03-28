@@ -56,7 +56,7 @@ public class NamedValue extends ASTNodeValue {
   * (non-Javadoc)
   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
   */
-  protected void computeDoubleValue() {
+  protected void computeDoubleValue(double delay) {
     doubleValue=function.getArgumentValues()[index];
   }
   

@@ -43,11 +43,11 @@ public class MinusValue extends ASTNodeValue {
 	 * (non-Javadoc)
 	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
 	 */
-	protected void computeDoubleValue() {
+	protected void computeDoubleValue(double delay) {
 		if (numChildren == 1) {
-			doubleValue = interpreter.uMinus(leftChild, time);
+			doubleValue = interpreter.uMinus(leftChild, time, delay);
 		} else {
-			doubleValue = interpreter.minus(children, numChildren, time);
+			doubleValue = interpreter.minus(children, numChildren, time, delay);
 		}
 	}
 

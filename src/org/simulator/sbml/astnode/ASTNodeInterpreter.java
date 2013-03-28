@@ -94,7 +94,7 @@ public class ASTNodeInterpreter {
    * @param time
    * @return doubleValue the interpreted double value of the node
    */
-  public double compileDouble(String name, double time) {
+  public double compileDouble(String name, double time, double delay) {
     Double funcArg = funcArgs.get(name).doubleValue();
     double value;
     if (funcArg != null) {
@@ -111,9 +111,10 @@ public class ASTNodeInterpreter {
    * 
    * @param nsb
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double compileDouble(CallableSBase nsb, double time) {
+  public double compileDouble(CallableSBase nsb, double time, double delay) {
     if (nsb instanceof Species) {
       Species s = (Species) nsb;
       String id = s.getId();
@@ -144,7 +145,7 @@ public class ASTNodeInterpreter {
       Reaction r = (Reaction) nsb;
       if (r.isSetKineticLaw()) {
         ((ASTNodeValue) r.getKineticLaw().getMath().getUserObject(SBMLinterpreter.TEMP_VALUE))
-            .compileDouble(time);
+            .compileDouble(time, delay);
       }
     }
     return Double.NaN;
@@ -183,9 +184,9 @@ public class ASTNodeInterpreter {
   public double functionDouble(ASTNodeValue rightChild,
     List<String> variables, ASTNodeValue[] children, int nArguments, double[] values, double time) {
     for (int i = 0; i < nArguments; i++) {
-      values[i] = children[i].compileDouble(time);
+      values[i] = children[i].compileDouble(time, 0d);
     }
-    double value = rightChild.compileDouble(time);
+    double value = rightChild.compileDouble(time, 0d);
     return value;
   }
   
@@ -224,10 +225,10 @@ public class ASTNodeInterpreter {
   public double lambdaDouble(ASTNodeValue[] children, double time) {
     double d[] = new double[Math.max(0, children.length - 1)];
     for (int i = 0; i < children.length - 1; i++) {
-      d[i++] = children[i].compileDouble(time);
+      d[i++] = children[i].compileDouble(time, 0d);
     }
     // TODO: what happens with d?
-    return children[children.length - 1].compileDouble(time);
+    return children[children.length - 1].compileDouble(time, 0d);
   }
   
   /**
@@ -239,7 +240,7 @@ public class ASTNodeInterpreter {
   public boolean lambdaBoolean(ASTNodeValue[] children, double time) {
     double d[] = new double[Math.max(0, children.length - 1)];
     for (int i = 0; i < children.length - 1; i++) {
-      d[i++] = children[i].compileDouble(time);
+      d[i++] = children[i].compileDouble(time, 0d);
     }
     // TODO: what happens with d?
     return children[children.length - 1].compileBoolean(time);
@@ -250,15 +251,16 @@ public class ASTNodeInterpreter {
    * 
    * @param children
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double piecewise(ASTNodeValue[] children, double time) {
+  public double piecewise(ASTNodeValue[] children, double time, double delay) {
     int i;
     for (i = 1; i < children.length - 1; i += 2) {
       if (children[i].compileBoolean(time)) { return (children[i - 1]
-          .compileDouble(time)); }
+          .compileDouble(time, delay)); }
     }
-    return children[i - 1].compileDouble(time);
+    return children[i - 1].compileDouble(time, delay);
     
   }
   
@@ -266,10 +268,11 @@ public class ASTNodeInterpreter {
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double log(ASTNodeValue userObject, double time) {
-    return Math.log10(userObject.compileDouble(time));
+  public double log(ASTNodeValue userObject, double time, double delay) {
+    return Math.log10(userObject.compileDouble(time, delay));
   }
   
   /**
@@ -277,10 +280,11 @@ public class ASTNodeInterpreter {
    * @param left
    * @param right
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double log(ASTNodeValue left, ASTNodeValue right, double time) {
-    return Maths.log(right.compileDouble(time), left.compileDouble(time));
+  public double log(ASTNodeValue left, ASTNodeValue right, double time, double delay) {
+    return Maths.log(right.compileDouble(time, delay), left.compileDouble(time, delay));
   }
   
   /**
@@ -302,60 +306,66 @@ public class ASTNodeInterpreter {
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double tanh(ASTNodeValue userObject, double time) {
-    return Math.tanh(userObject.compileDouble(time));
+  public double tanh(ASTNodeValue userObject, double time, double delay) {
+    return Math.tanh(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double tan(ASTNodeValue userObject, double time) {
-    return Math.tan(userObject.compileDouble(time));
+  public double tan(ASTNodeValue userObject, double time, double delay) {
+    return Math.tan(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double sinh(ASTNodeValue userObject, double time) {
-    return Math.sinh(userObject.compileDouble(time));
+  public double sinh(ASTNodeValue userObject, double time, double delay) {
+    return Math.sinh(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double sin(ASTNodeValue userObject, double time) {
-    return Math.sin(userObject.compileDouble(time));
+  public double sin(ASTNodeValue userObject, double time, double delay) {
+    return Math.sin(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double sech(ASTNodeValue userObject, double time) {
-    return Maths.sech(userObject.compileDouble(time));
+  public double sech(ASTNodeValue userObject, double time, double delay) {
+    return Maths.sech(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double sec(ASTNodeValue userObject, double time) {
-    double argument = userObject.compileDouble(time);
+  public double sec(ASTNodeValue userObject, double time, double delay) {
+    double argument = userObject.compileDouble(time, delay);
     return Maths.sec(argument);
   }
   
@@ -364,10 +374,11 @@ public class ASTNodeInterpreter {
    * @param rootExponent
    * @param radiant
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double root(ASTNodeValue rootExponent, ASTNodeValue radiant, double time) {
-    return root(rootExponent.compileDouble(time), radiant, time);
+  public double root(ASTNodeValue rootExponent, ASTNodeValue radiant, double time, double delay) {
+    return root(rootExponent.compileDouble(time, delay), radiant, time, delay);
   }
   
   /**
@@ -375,130 +386,143 @@ public class ASTNodeInterpreter {
    * @param rootExponent
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double root(double rootExponent, ASTNodeValue userObject, double time) {
-    return Maths.root(userObject.compileDouble(time), rootExponent);
+  public double root(double rootExponent, ASTNodeValue userObject, double time, double delay) {
+    return Maths.root(userObject.compileDouble(time, delay), rootExponent);
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double ln(ASTNodeValue userObject, double time) {
-    return Maths.ln(userObject.compileDouble(time));
+  public double ln(ASTNodeValue userObject, double time, double delay) {
+    return Maths.ln(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double floor(ASTNodeValue userObject, double time) {
-    return Math.floor(userObject.compileDouble(time));
+  public double floor(ASTNodeValue userObject, double time, double delay) {
+    return Math.floor(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double factorial(ASTNodeValue userObject, double time) {
-    return Maths.factorial((int) Math.round(userObject.compileDouble(time)));
+  public double factorial(ASTNodeValue userObject, double time, double delay) {
+    return Maths.factorial((int) Math.round(userObject.compileDouble(time, delay)));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double exp(ASTNodeValue userObject, double time) {
-    return Math.exp(userObject.compileDouble(time));
+  public double exp(ASTNodeValue userObject, double time, double delay) {
+    return Math.exp(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double csch(ASTNodeValue userObject, double time) {
-    return Maths.csch(userObject.compileDouble(time));
+  public double csch(ASTNodeValue userObject, double time, double delay) {
+    return Maths.csch(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double csc(ASTNodeValue userObject, double time) {
-    return Maths.csc(userObject.compileDouble(time));
+  public double csc(ASTNodeValue userObject, double time, double delay) {
+    return Maths.csc(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double coth(ASTNodeValue userObject, double time) {
-    return Maths.coth(userObject.compileDouble(time));
+  public double coth(ASTNodeValue userObject, double time, double delay) {
+    return Maths.coth(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double cot(ASTNodeValue userObject, double time) {
-    return Maths.cot(userObject.compileDouble(time));
+  public double cot(ASTNodeValue userObject, double time, double delay) {
+    return Maths.cot(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double cosh(ASTNodeValue userObject, double time) {
-    return Math.cosh(userObject.compileDouble(time));
+  public double cosh(ASTNodeValue userObject, double time, double delay) {
+    return Math.cosh(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double cos(ASTNodeValue userObject, double time) {
-    return Math.cos(userObject.compileDouble(time));
+  public double cos(ASTNodeValue userObject, double time, double delay) {
+    return Math.cos(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double ceiling(ASTNodeValue userObject, double time) {
-    return Math.ceil(userObject.compileDouble(time));
+  public double ceiling(ASTNodeValue userObject, double time, double delay) {
+    return Math.ceil(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double arctanh(ASTNodeValue userObject, double time) {
-    return Maths.arctanh(userObject.compileDouble(time));
+  public double arctanh(ASTNodeValue userObject, double time, double delay) {
+    return Maths.arctanh(userObject.compileDouble(time, delay));
   }
   
   /**
@@ -526,7 +550,7 @@ public class ASTNodeInterpreter {
   public boolean functionBoolean(ASTNodeValue rightChild,
     List<String> variables, ASTNodeValue[] children, double[] values, double time) {
     for (int i = 0; i < children.length; i++) {
-      values[i] = children[i].compileDouble(time);
+      values[i] = children[i].compileDouble(time, 0d);
     }
     boolean value = rightChild.compileBoolean(time);
     return value;
@@ -540,7 +564,7 @@ public class ASTNodeInterpreter {
    * @return booleanValue the interpreted boolean value of the node
    */
   public boolean lt(ASTNodeValue left, ASTNodeValue right, double time) {
-    return (left.compileDouble(time) < right.compileDouble(time));
+    return (left.compileDouble(time, 0d) < right.compileDouble(time, 0d));
   }
   
   /**
@@ -551,7 +575,7 @@ public class ASTNodeInterpreter {
    * @return booleanValue the interpreted boolean value of the node
    */
   public boolean leq(ASTNodeValue left, ASTNodeValue right, double time) {
-    return (left.compileDouble(time) <= right.compileDouble(time));
+    return (left.compileDouble(time, 0d) <= right.compileDouble(time, 0d));
   }
   
   /**
@@ -562,7 +586,7 @@ public class ASTNodeInterpreter {
    * @return booleanValue the interpreted boolean value of the node
    */
   public boolean neq(ASTNodeValue left, ASTNodeValue right, double time) {
-    return (left.compileDouble(time) != right.compileDouble(time));
+    return (left.compileDouble(time, 0d) != right.compileDouble(time, 0d));
   }
   
   /**
@@ -573,7 +597,7 @@ public class ASTNodeInterpreter {
    * @return booleanValue the interpreted boolean value of the node
    */
   public boolean gt(ASTNodeValue left, ASTNodeValue right, double time) {
-    return (left.compileDouble(time) > right.compileDouble(time));
+    return (left.compileDouble(time, 0d) > right.compileDouble(time, 0d));
   }
   
   /**
@@ -584,7 +608,7 @@ public class ASTNodeInterpreter {
    * @return booleanValue the interpreted boolean value of the node
    */
   public boolean geq(ASTNodeValue left, ASTNodeValue right, double time) {
-    return (left.compileDouble(time) >= right.compileDouble(time));
+    return (left.compileDouble(time, 0d) >= right.compileDouble(time, 0d));
   }
   
   /**
@@ -592,10 +616,11 @@ public class ASTNodeInterpreter {
    * @param left
    * @param right
    * @param time
+
    * @return booleanValue the interpreted boolean value of the node
    */
   public boolean eq(ASTNodeValue left, ASTNodeValue right, double time) {
-    return (left.compileDouble(time) == right.compileDouble(time));
+    return (left.compileDouble(time, 0d) == right.compileDouble(time, 0d));
   }
   
   /**
@@ -659,90 +684,99 @@ public class ASTNodeInterpreter {
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double arctan(ASTNodeValue userObject, double time) {
-    return Math.atan(userObject.compileDouble(time));
+  public double arctan(ASTNodeValue userObject, double time, double delay) {
+    return Math.atan(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double arcsinh(ASTNodeValue userObject, double time) {
-    return Maths.arcsinh(userObject.compileDouble(time));
+  public double arcsinh(ASTNodeValue userObject, double time, double delay) {
+    return Maths.arcsinh(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double arcsin(ASTNodeValue userObject, double time) {
-    return Math.asin(userObject.compileDouble(time));
+  public double arcsin(ASTNodeValue userObject, double time, double delay) {
+    return Math.asin(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double arcsech(ASTNodeValue userObject, double time) {
-    return Maths.arcsech(userObject.compileDouble(time));
+  public double arcsech(ASTNodeValue userObject, double time, double delay) {
+    return Maths.arcsech(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double arcsec(ASTNodeValue userObject, double time) {
-    return Maths.arcsec(userObject.compileDouble(time));
+  public double arcsec(ASTNodeValue userObject, double time, double delay) {
+    return Maths.arcsec(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double arccsch(ASTNodeValue userObject, double time) {
-    return Maths.arccsch(userObject.compileDouble(time));
+  public double arccsch(ASTNodeValue userObject, double time, double delay) {
+    return Maths.arccsch(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double arccsc(ASTNodeValue userObject, double time) {
-    return Maths.arccsc(userObject.compileDouble(time));
+  public double arccsc(ASTNodeValue userObject, double time, double delay) {
+    return Maths.arccsc(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double arccoth(ASTNodeValue userObject, double time) {
-    return Maths.arccoth(userObject.compileDouble(time));
+  public double arccoth(ASTNodeValue userObject, double time, double delay) {
+    return Maths.arccoth(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double arccot(ASTNodeValue userObject, double time) {
-    double argument = userObject.compileDouble(time);
+  public double arccot(ASTNodeValue userObject, double time, double delay) {
+    double argument = userObject.compileDouble(time, delay);
     return Maths.arccot(argument);
   }
   
@@ -750,30 +784,33 @@ public class ASTNodeInterpreter {
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double arccosh(ASTNodeValue userObject, double time) {
-    return Maths.arccosh(userObject.compileDouble(time));
+  public double arccosh(ASTNodeValue userObject, double time, double delay) {
+    return Maths.arccosh(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double arccos(ASTNodeValue userObject, double time) {
-    return Math.acos(userObject.compileDouble(time));
+  public double arccos(ASTNodeValue userObject, double time, double delay) {
+    return Math.acos(userObject.compileDouble(time, delay));
   }
   
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double abs(ASTNodeValue userObject, double time) {
-    return Math.abs(userObject.compileDouble(time));
+  public double abs(ASTNodeValue userObject, double time, double delay) {
+    return Math.abs(userObject.compileDouble(time, delay));
   }
   
   /**
@@ -789,30 +826,25 @@ public class ASTNodeInterpreter {
   
   /**
    * 
-   * @param delayName
    * @param x
    * @param delay
    * @param timeUnits
    * @param time
    * @return doubleValue the interpreted double value of the node
    */
-  public final double delay(String delayName, ASTNodeValue x, ASTNodeValue delay,
+  public final double delay(ASTNodeValue x, ASTNodeValue delay,
     String timeUnits, double time) {
-    //TODO: Delay for arbitrary expressions.
-	double delayTime = delay.compileDouble(time);
-    if (delayTime == 0) {
-      return x.compileDouble(time);
-    }
-    double valueTime = symbolTime(delayName) - delayTime;
-    return valueHolder.computeDelayedValue(valueTime, compileString(x), null, null, 0);
+    double delayTime = delay.compileDouble(time, 0d);
+    //double valueTime = symbolTime(delayName) - delayTime;
+    return x.compileDouble(time, delayTime);
+    //return valueHolder.computeDelayedValue(valueTime, compileString(x), null, null, 0);
   }
   
   /**
    * 
-   * @param name
    * @return doubleValue the interpreted double value of the node
    */
-  public double symbolTime(String name) {
+  public double symbolTime() {
     return (valueHolder.getCurrentTime());
   }
   
@@ -831,10 +863,11 @@ public class ASTNodeInterpreter {
    * @param left
    * @param right
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double frac(ASTNodeValue left, ASTNodeValue right, double time) {
-    return (left.compileDouble(time) / right.compileDouble(time));
+  public double frac(ASTNodeValue left, ASTNodeValue right, double time, double delay) {
+    return (left.compileDouble(time, delay) / right.compileDouble(time, delay));
   }
   
   /**
@@ -842,16 +875,17 @@ public class ASTNodeInterpreter {
    * @param children
    * @param size
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double times(ASTNodeValue[] children, int size, double time) {
+  public double times(ASTNodeValue[] children, int size, double time, double delay) {
     if (size == 0) {
       return (1d);
     } else {
       double value = 1d;
       
       for (int i = 0; i != size; i++) {
-        value *= children[i].compileDouble(time);
+        value *= children[i].compileDouble(time, delay);
       }
       return value;
     }
@@ -862,16 +896,17 @@ public class ASTNodeInterpreter {
    * @param children
    * @param size
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double minus(ASTNodeValue[] children, int size, double time) {
+  public double minus(ASTNodeValue[] children, int size, double time, double delay) {
     
     double value = 0d;
     if (size > 0) {
-      value = children[0].compileDouble(time);
+      value = children[0].compileDouble(time, delay);
     }
     for (int i = 1; i < size; i++) {
-      value -= children[i].compileDouble(time);
+      value -= children[i].compileDouble(time, delay);
     }
     return value;
   }
@@ -881,12 +916,13 @@ public class ASTNodeInterpreter {
    * @param children
    * @param size
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double plus(ASTNodeValue[] children, int size, double time) {
+  public double plus(ASTNodeValue[] children, int size, double time, double delay) {
     double value = 0d;
     for (int i = 0; i != size; i++) {
-      value += children[i].compileDouble(time);
+      value += children[i].compileDouble(time, delay);
     }
     return value;
   }
@@ -896,11 +932,12 @@ public class ASTNodeInterpreter {
    * @param left
    * @param right
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double pow(ASTNodeValue left, ASTNodeValue right, double time) {
-    double l = left.compileDouble(time);
-    double r = right.compileDouble(time);
+  public double pow(ASTNodeValue left, ASTNodeValue right, double time, double delay) {
+    double l = left.compileDouble(time, delay);
+    double r = right.compileDouble(time, delay);
     if(r == 2) {
     	return l * l;
     }
@@ -939,20 +976,22 @@ public class ASTNodeInterpreter {
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double sqrt(ASTNodeValue userObject, double time) {
-    return Math.sqrt(userObject.compileDouble(time));
+  public double sqrt(ASTNodeValue userObject, double time, double delay) {
+    return Math.sqrt(userObject.compileDouble(time, delay));
   }
  
   /**
    * 
    * @param userObject
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double uMinus(ASTNodeValue userObject, double time) {
-    return (-userObject.compileDouble(time));
+  public double uMinus(ASTNodeValue userObject, double time, double delay) {
+    return (-userObject.compileDouble(time, delay));
   }
 
 }
