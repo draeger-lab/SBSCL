@@ -65,10 +65,10 @@ public class ReactionValue extends ASTNodeValue {
    * (non-Javadoc)
    * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
    */
-  protected void computeDoubleValue() {
+  protected void computeDoubleValue(double delay) {
     doubleValue = Double.NaN;
     if (kineticLawUserObject != null) {
-      doubleValue = kineticLawUserObject.compileDouble(time);
+      doubleValue = kineticLawUserObject.compileDouble(time, delay);
     }
   }
 

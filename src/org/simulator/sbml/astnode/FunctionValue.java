@@ -114,7 +114,7 @@ public class FunctionValue extends ASTNodeValue {
 	 * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
 	 */
 	@Override
-	protected void computeDoubleValue() {
+	protected void computeDoubleValue(double delay) {
 		if (math != null) {
 			doubleValue = interpreter.functionDouble(evaluationBlock, variables, children, numChildren, argumentValues, time);
 		} else {

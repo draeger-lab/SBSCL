@@ -46,13 +46,13 @@ public class DivideValue extends ASTNodeValue{
 	 * (non-Javadoc)
 	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
 	 */
-	protected void computeDoubleValue() {
+	protected void computeDoubleValue(double delay) {
 		if (numChildren != 2) { 
         	throw new SBMLException(MessageFormat.format(
                 "Fractions must have one numerator and one denominator, here {0,number,integer} elements are given.",
                 node.getChildCount())); 
         }
-        doubleValue = interpreter.frac(leftChild, rightChild, time);
+        doubleValue = interpreter.frac(leftChild, rightChild, time, delay);
 	}
 
 }

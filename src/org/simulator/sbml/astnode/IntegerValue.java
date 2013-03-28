@@ -43,7 +43,7 @@ public class IntegerValue extends ASTNodeValue {
 	 * (non-Javadoc)
 	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
 	 */
-	protected void computeDoubleValue() {
+	protected void computeDoubleValue(double delay) {
 		doubleValue = interpreter.compile(real, units);
 	}
 	

@@ -136,7 +136,7 @@ public class StoichiometryValue {
 			stoichiometrySet=true;
 		} else {
 			if (isSetStoichiometryMath) {
-				stoichiometry = stoichiometryMathValue.compileDouble(time);
+				stoichiometry = stoichiometryMathValue.compileDouble(time, 0d);
 				stoichiometrySet=true;
 			} else if ((!sr.isSetStoichiometry()) && (sr.getLevel() >= 3)) {
 				stoichiometry = 1d;

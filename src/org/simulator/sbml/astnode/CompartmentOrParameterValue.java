@@ -79,8 +79,14 @@ public class CompartmentOrParameterValue extends ASTNodeValue {
    * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
    */
   @Override
-  protected void computeDoubleValue() {
-    doubleValue=valueHolder.getCurrentValueOf(position);
+  protected void computeDoubleValue(double delay) {
+	  if(delay == 0) {
+		  doubleValue = valueHolder.getCurrentValueOf(position);
+	  }
+	  else {
+		 double valueTime = interpreter.symbolTime() - delay;
+		    doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
+	  }
   }
 
 }
