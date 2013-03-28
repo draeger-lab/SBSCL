@@ -163,12 +163,17 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 	/**
 	 * Precision for event timing
 	 */
-	private static final double precisionEventsAndRules = 1E-7;
+	private static final double precisionTimingEventsAndRules = 1E-7;
+	
+	/**
+	 * Precision for fast reaction timing
+	 */
+	private static final double precisionTimingFastReactions = 1E-3;
 	
 	/**
 	 * Precision for fast reactions
 	 */
-	private static final double precisionFastReactions = 1E-2;
+	private static final double precisionFastReactions = 1E-3;
 	
 	
 	/**
@@ -567,7 +572,11 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 									yTemp2, 0);
 							System.arraycopy(result, 0, yTemp, 0, yTemp.length);
 							for(int i=0; i!=result.length; i++) {
-								if(Math.abs(yTemp[i]-oldY[i])>precisionFastReactions) {
+								double difference = Math.abs(yTemp[i]-oldY[i]);
+								if((Math.abs(yTemp[i]) > 1E-10) || (Math.abs(oldY[i]) > 1E-10)) {
+									difference = Math.abs((yTemp[i]-oldY[i])/ Math.max(yTemp[i], oldY[i]));
+								}
+								if((difference > precisionFastReactions) && (h > precisionTimingFastReactions)) {
 									changed = true;
 									break;
 								}
@@ -578,11 +587,11 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 
 					if(changed) {
 						//if(h/10>hMin) {
-							if(h>precisionEventsAndRules)  {
+							if(h>precisionTimingEventsAndRules)  {
 								//h=h/10;
-								h = Math.max(h / 10,precisionEventsAndRules);
-								if(h - precisionEventsAndRules < precisionEventsAndRules) {
-									h = precisionEventsAndRules;
+								h = Math.max(h / 10,precisionTimingEventsAndRules);
+								if(h - precisionTimingEventsAndRules < precisionTimingEventsAndRules) {
+									h = precisionTimingEventsAndRules;
 								}
 								System.arraycopy(oldY, 0, y, 0, numEqn);
 							}
@@ -596,6 +605,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 							}
 					}
 					else {
+						System.arraycopy(yTemp, 0, y, 0, numEqn);
 						t=Math.min(newTime,timeEnd);
 						// change stepsize (see Rodas.f) require 0.2<=hnew/h<=6
 						hAdap = Math.max(fac1,

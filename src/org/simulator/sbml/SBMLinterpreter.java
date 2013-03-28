@@ -2344,7 +2344,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
 		for (int i = 0; i != stoichiometryValues.length; i++) {
 			if ((constantStoichiometry[i] == false) || (stoichiometrySet[i] == false)) {
-				stoichiometry[i] = stoichiometryValues[i].compileDouble(currentTime);
+				stoichiometry[i] = stoichiometryValues[i].compileDouble(time);
 				stoichiometrySet[i] = stoichiometryValues[i].getStoichiometrySet();
 			}
 			double value;
