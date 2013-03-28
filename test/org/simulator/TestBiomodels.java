@@ -56,7 +56,7 @@ public class TestBiomodels {
 		int errors = 0;
 		int nModels = 0;
 		AdaptiveStepsizeIntegrator solver = new RosenbrockSolver();
-		solver.setAbsTol(1E-10);
+		solver.setAbsTol(1E-12);
 		solver.setRelTol(1E-6);
 
 		for (int modelnr = from; modelnr <= to; modelnr++) {
