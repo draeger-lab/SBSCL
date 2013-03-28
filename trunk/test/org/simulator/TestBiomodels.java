@@ -27,11 +27,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
-import org.apache.commons.math.ode.DerivativeException;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.xml.stax.SBMLReader;
-import org.simulator.math.odes.AbstractDESSolver;
+import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
 
@@ -57,7 +55,9 @@ public class TestBiomodels {
 			throws FileNotFoundException, IOException {
 		int errors = 0;
 		int nModels = 0;
-		AbstractDESSolver solver = new RosenbrockSolver();
+		AdaptiveStepsizeIntegrator solver = new RosenbrockSolver();
+		solver.setAbsTol(1E-10);
+		solver.setRelTol(1E-6);
 
 		for (int modelnr = from; modelnr <= to; modelnr++) {
 			System.out.println("Biomodel " + modelnr);
@@ -84,7 +84,7 @@ public class TestBiomodels {
 
 					if ((solver != null) && (interpreter != null)) {
 						solver.setStepSize(0.1);
-
+						
 						// solve
 						solver.solve(interpreter,
 								interpreter.getInitialValues(), 0, 10);
@@ -94,14 +94,10 @@ public class TestBiomodels {
 							errors++;
 						}
 					}
-				} catch (DerivativeException e) {
+				} catch (Exception e) {
 					logger.warning("Exception in Biomodel " + modelnr);
 					errors++;
-				} catch (ModelOverdeterminedException e) {
-					logger.warning("OverdeterminationException in Biomodel "
-							+ modelnr);
-					errors++;
-				}
+				} 
 			}
 			nModels++;
 		}

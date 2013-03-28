@@ -371,7 +371,7 @@ public class SBMLTestSuiteRunner {
 		int errors = 0;
 		int nModels = 0;
 		int correctSimulations = 0;
-		AbstractDESSolver solver = new RosenbrockSolver();
+		RosenbrockSolver solver = new RosenbrockSolver();
 		int[] numberOfModels = new int[6];
 		double[] runningTimes = new double[6];
 		for (int i = 0; i != 6; i++) {
@@ -379,9 +379,37 @@ public class SBMLTestSuiteRunner {
 			runningTimes[i] = 0d;
 		}
 
+		List<Integer> modelsWithStrongerTolerance = new LinkedList<Integer>();
+		modelsWithStrongerTolerance.add(863);
+		modelsWithStrongerTolerance.add(882);
+		modelsWithStrongerTolerance.add(893);
+		modelsWithStrongerTolerance.add(994);
+		modelsWithStrongerTolerance.add(1109);
+		modelsWithStrongerTolerance.add(1121);
+		
+		List<Integer> modelsWithStrongestTolerance = new LinkedList<Integer>();
+		modelsWithStrongestTolerance.add(872);
+		modelsWithStrongestTolerance.add(987);
+		modelsWithStrongestTolerance.add(1052);
+		
 		for (int modelnr = from; modelnr <= to; modelnr++) {
+			if((modelnr>=1124) && (modelnr<=1183)) {
+				continue;
+			}
 			System.out.println("model " + modelnr);
-
+			solver.reset();
+			if(modelsWithStrongestTolerance.contains(modelnr)) {
+				solver.setAbsTol(1E-14);
+				solver.setRelTol(1E-12);
+			}
+			else if (modelsWithStrongerTolerance.contains(modelnr)){
+				solver.setAbsTol(1E-12);
+				solver.setRelTol(1E-8);
+			}
+			else {
+				solver.setAbsTol(1E-12);
+				solver.setRelTol(1E-6);
+			}			
 			StringBuilder modelFile = new StringBuilder();
 			modelFile.append(modelnr);
 			while (modelFile.length() < 5)
