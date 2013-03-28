@@ -2,9 +2,11 @@
 
 \usepackage[latin1]{inputenc}
 \usepackage{tikz}
+\usepackage{scalefnt}
+\usepackage{amssymb}
 \usepackage[papersize={12.3cm,23.5cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
-\usetikzlibrary{shapes,arrows}
 \begin{document}
+\usetikzlibrary{shapes,arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
 \pagestyle{empty}
 
 
@@ -39,7 +41,7 @@
 	\node [cloud, below of=rulesleft?, node distance=2.5cm] (stop) {Stop};
 
 
-	\path [line, thick] (start) -- (graph);
+	\draw [color = black, line width = 3.25pt, ->, -triangle 60] (start) to (graph);
 	\path [line, thick] (graph) -- (findpaths);
 	\path [line, thick] (findpaths) -- (matching?);
 	\path [line, thick] (matching?) -- node {Yes}(augment);		
