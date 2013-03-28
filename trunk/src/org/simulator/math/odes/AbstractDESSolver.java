@@ -442,7 +442,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		int step=0;
 		while (!noChange(oldValues, newValues, step)) {
 			System.arraycopy(newValues, 0, oldValues, 0, newValues.length);
-			ft = computeNextState(DES, ft, stepSize, oldValues, change,
+			ft = computeNextState(DES, ft, stepSize * 1000, oldValues, change,
 					newValues, true, true);
 			step++;
 		}
@@ -609,7 +609,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		for (int i = 0; i < newValues.length; i++) {
 			double distance = Math.abs(newValues[i]-oldValues[i]);
 			double relativeDistance = 0;
-			if(!(newValues[i] == 0) || !(oldValues[i] == 0)) {
+			if((Math.abs(newValues[i]) > 1E-10) || (Math.abs(oldValues[i]) > 1E-10)) {
 				relativeDistance = Math.abs((newValues[i]-oldValues[i])/Math.max(newValues[i],oldValues[i]));
 			}
 			if(((distance > 1E-6) || (relativeDistance > 1E-6)) &&  (step < 10000)) {

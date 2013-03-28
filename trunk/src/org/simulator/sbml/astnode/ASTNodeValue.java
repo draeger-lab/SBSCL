@@ -258,13 +258,18 @@ public class ASTNodeValue {
     }
   }
   
+  public double compileDouble(double time) {
+	  return compileDouble(time, 0);
+  }
+  
   /**
    * Computes the double value if the time has changed and otherwise returns the already computed value
    * @param time
+   * @param delay
    * @return doubleValue the double value of the node
    */
-  public double compileDouble(double time) {
-    if ((this.time==time) || (isConstant && alreadyProcessed)) {
+  public double compileDouble(double time, double delay) {
+    if (((this.time==time) && (delay == 0)) || (isConstant && alreadyProcessed)) {
       return doubleValue;
     } else {
       isDouble = true;
@@ -294,11 +299,19 @@ public class ASTNodeValue {
     return booleanValue;
   }
   
+  /**
+   * Computes the double value of the node.
+   * @param delay
+   */
+  protected void computeDoubleValue() {
+	  computeDoubleValue(0d);
+  }
 
   /**
    * Computes the double value of the node.
+   * @param delay
    */
-  protected void computeDoubleValue() {
+  protected void computeDoubleValue(double delay) {
     switch (nodeType) {
       /*
        * Numbers
