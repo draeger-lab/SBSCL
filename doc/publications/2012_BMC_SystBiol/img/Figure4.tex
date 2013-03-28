@@ -2,9 +2,10 @@
 
 \usepackage[latin1]{inputenc}
 \usepackage{tikz}
+\usepackage{scalefnt}
 \usepackage{amsmath}
-\usepackage[papersize={15.2cm,20cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
-\usetikzlibrary{shapes,arrows}
+\usepackage[papersize={15.5cm,20cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
+\usetikzlibrary{shapes,arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
 \begin{document}
 \pagestyle{empty}
 
@@ -31,56 +32,30 @@ text width=14em, text badly centered, node distance=2.5cm, inner sep=4pt,minimum
 	\node [decision, below of=pevents, node distance=3cm] (xpxres?) {$\vec{Q}_{\mathrm{tmp}} = \vec{Q}_{\mathrm{res}}$?};
 	\node [block, left of=xpxres?, below of=xpxres?, node distance=4cm] (newvalues) {\vspace{-.5cm}\begin{align*}t &:= t_{\mathrm{res}}\\\vec{Q} &:= \vec{Q}_{\mathrm{res}}\\h &:= \mathrm{adapt}(h)\end{align*}};
 	\node [decision, right of=xpxres?, node distance=3.5cm] (larger?) {$h\ge h_{\min} \cdot 10$?};
-	\node [block, right of=larger?, node distance=3.5cm] (stepsize) {$h := \frac{h}{10}$};
+	\node [block, right of=larger?, node distance=3.75cm] (stepsize) {$h := \frac{h}{10}$};
 
 	\node [decision, below of=newvalues, node distance=3cm] (end?) {$t \ge t_{T}$?};
 	\node [cloud, below of=end?, node distance=2.5cm] (stop) {Stop};
 	\node [blank, left of=newvalues] (aux){};
 	\node [blank, left of=xpxres?] (aux2){};
 
-%	\node [decision, below of=findpaths] (matching?) {At least one path available?};
-%	\node [block, left of=matching?, node distance=4.5cm] (augment) {Augment matching};
-%	\node [decision, below of=matching?, node distance=3.5cm] (overdetermined?) {Model ovedetermined?};
-%	\node [block, below of=overdetermined?, node distance=3cm] (i0) {i:=0};
-%	\node [block, right of=overdetermined?, node distance=4.5cm] (exception) {Throw exception};
-%	\node [block, below of=i0, node distance=2.5cm] (solve) {Solve i-th algebraic rule according to matching};
-%	\node [block, left of=solve, node distance=4.5cm] (i++) {i:=i+1};
-%	\node [io, below of=solve, node distance=2cm] (newassignment) {New assignment rule};
-%
-%	\node [decision, below of=newassignment, node distance=2cm] (rulesleft?) {i=\#algebraic rules?};
-%	\node [cloud, below of=rulesleft?, node distance=2.5cm] (stop) {Stop};
 
 
-	\path [line] (start) -- (init);
-	\path [line] (init) -- (output);
-	\path [line] (output) -- (pevents);
-	\path [line] (pevents) -- (xpxres?);
-	\path [line] (xpxres?) -- node [above] {Yes}(aux2)-| (newvalues);
-	\path [line] (xpxres?) -- node {No}(larger?);
-	\path [line] (larger?) |- node {No}(newvalues);
-	\path [line] (larger?) -- node {Yes}(stepsize);
-	\path [line] (stepsize) |- (output);
-	\path [line] (newvalues) -- (end?);
-	\path [line] (end?) -- node {Yes}(stop);
-	\path [line] (end?) -| (aux) |- node {No}(output);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (start) -- (init);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (init) -- (output);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (output) -- (pevents);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (pevents) -- (xpxres?);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (xpxres?) -- node [above] {Yes}(aux2)-| (newvalues);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (xpxres?) -- node  [above,near start] {No}(larger?);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (larger?) |- node {No}(newvalues);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (larger?) -- node [above,near start] {Yes}(stepsize);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (stepsize) |- (output);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (newvalues) -- (end?);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (end?) -- node {Yes}(stop);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (end?) -| (aux) |- node {No}(output);
 
 
 
-%\path [line] (end?) |- node {No})([xshift=-0.5cm,yshift=-0.5cm]newvalues.south west) |- (init);
-%	\path [line] (findpaths) -- (matching?);
-%	\path [line] (matching?) -- node {Yes}(augment);		
-%	\path [line] (augment) |- (findpaths);
-%	\path [line] (matching?) -- node {No} (overdetermined?);
-%	\path [line] (overdetermined?) -- node {No} (i0);
-%	\path [line] (overdetermined?) -- node {Yes}(exception);
-%	\path [line] (i0) -- (solve);
-	%\path [line] (i++) -- (solve);
-%	\path [line] (solve) -- (newassignment);
-
-	%\path [line] (newassignment) -- (rulesleft?);
-	%\path [line] (rulesleft?) -| node {No} (i++);
-	%\path [line] (rulesleft?) -- node {Yes} (stop);
-	%\path [line] (exception) |- (stop);
 
 \end{tikzpicture}
 \end{figure}
