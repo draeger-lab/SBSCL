@@ -30,6 +30,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -39,7 +41,6 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.simulator.io.CSVImporter;
-import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 
@@ -65,9 +66,38 @@ public class SBMLTestSuiteWrapper {
 	public static void testRosenbrockSolver(String path, int modelnr, String outputPath, int level, int version) 
 			throws FileNotFoundException, IOException, URISyntaxException {
 		String sbmlfile, csvfile, configfile;
-		AbstractDESSolver solver = new RosenbrockSolver();
+		if((modelnr>=1124) && (modelnr<=1183)) {
+			return;
+		}
+		
+		RosenbrockSolver solver = new RosenbrockSolver();
 
-
+		List<Integer> modelsWithStrongerTolerance = new LinkedList<Integer>();
+		modelsWithStrongerTolerance.add(863);
+		modelsWithStrongerTolerance.add(882);
+		modelsWithStrongerTolerance.add(893);
+		modelsWithStrongerTolerance.add(994);
+		modelsWithStrongerTolerance.add(1109);
+		modelsWithStrongerTolerance.add(1121);
+		
+		List<Integer> modelsWithStrongestTolerance = new LinkedList<Integer>();
+		modelsWithStrongestTolerance.add(872);
+		modelsWithStrongestTolerance.add(987);
+		modelsWithStrongestTolerance.add(1052);
+		
+		if(modelsWithStrongestTolerance.contains(modelnr)) {
+			solver.setAbsTol(1E-14);
+			solver.setRelTol(1E-12);
+		}
+		else if (modelsWithStrongerTolerance.contains(modelnr)){
+			solver.setAbsTol(1E-12);
+			solver.setRelTol(1E-8);
+		}
+		else {
+			solver.setAbsTol(1E-12);
+			solver.setRelTol(1E-6);
+		}		
+		
 		StringBuilder fileBuilder = new StringBuilder();
 		fileBuilder.append(modelnr);
 		while (fileBuilder.length() < 5)
@@ -83,7 +113,6 @@ public class SBMLTestSuiteWrapper {
 		Properties props = new Properties();
 		props.load(new BufferedReader(new FileReader(configfile)));
 		double duration = Double.valueOf(props.getProperty("duration"));
-		double start = Double.valueOf(props.getProperty("start"));
 
 		int steps = Integer.valueOf(props.getProperty("steps"));
 		Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
