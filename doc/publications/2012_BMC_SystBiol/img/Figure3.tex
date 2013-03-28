@@ -2,9 +2,10 @@
 
 \usepackage[latin1]{inputenc}
 \usepackage{tikz}
+\usepackage{scalefnt}
 \usepackage{amsmath}
 \usepackage[papersize={16.4cm,20.5cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
-\usetikzlibrary{shapes,arrows}
+\usetikzlibrary{shapes,arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
 \begin{document}
 \pagestyle{empty}
 
@@ -46,28 +47,27 @@
     \node [blank,below of=initLoop, node distance=1.2cm] (aux2) {};
     \node [blank,right of=decision2, node distance=2.2cm] (aux4) {};
 
-
     \node [cloud, below of=processEvent, node distance=3cm] (stop) {Stop};
     % Draw edges
-    \path [line] (start) -- (init);
-    \path [line] (init) -- (initLoop);
-    \path [line] (initLoop) -- (triggerEvents);
-    \path [line] (triggerEvents) -- node{No} (updateInactive);
-    \path [line] (triggerEvents) -- node{Yes} (decision2);
-    \path [line] (updateInactive) -- (increase2);
-    \path [line] (decision2) -- node{No} (updateRunningEvents);
-    \path [line] (decision2) -- node{Yes} (aux4) -| (increase2);
-    \path [line] (increase2) -- (decision3);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (start) -- (init);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (init) -- (initLoop);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (initLoop) -- (triggerEvents);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (triggerEvents) -- node{No} (updateInactive);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (triggerEvents) -- node{Yes} (decision2);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (updateInactive) -- (increase2);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (decision2) -- node{No} (updateRunningEvents);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (decision2) -- node{Yes} (aux4) -| (increase2);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (increase2) -- (decision3);
 
-    \path [line] (updateRunningEvents) -- (increase2);
-    \path [line] (decision3) -- node{Yes} (noRunningEvents);
-    \path [line] (decision3) -- node [right, very near start] {No}(aux3)|- (aux2);
-    \path [line] (noRunningEvents) |- node{Yes} (stop);
-    \path [line] (noRunningEvents) -- node{No} (chooseEvent);
-    \path [line] (chooseEvent) -- (processEvent);
-    \path [line] (processEvent) -| (update);
-    \path [line] (update) -- (removeEvents);
-    \path [line] (removeEvents) |- (initLoop);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (updateRunningEvents) -- (increase2);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (decision3) -- node{Yes} (noRunningEvents);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (decision3) -- node [right, very near start] {No}(aux3)|- (aux2);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (noRunningEvents) |- node{Yes} (stop);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (noRunningEvents) -- node{No} (chooseEvent);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (chooseEvent) -- (processEvent);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (processEvent) -| (update);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (update) -- (removeEvents);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (removeEvents) |- (initLoop);
 \end{tikzpicture}
 \end{figure}
 
