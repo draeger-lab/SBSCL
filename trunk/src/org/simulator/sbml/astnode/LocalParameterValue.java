@@ -58,7 +58,7 @@ public class LocalParameterValue extends ASTNodeValue {
 	 * @see org.simulator.sbml.astnode.ASTNodeValue#compileDouble(double)
 	 */
 	@Override
-	public double compileDouble(double time) {
+	public double compileDouble(double time, double delay) {
 		this.time=time;
 		if(alreadyProcessed == false) {
 			doubleValue = lp.getValue();

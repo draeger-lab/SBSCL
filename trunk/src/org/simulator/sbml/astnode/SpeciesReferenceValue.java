@@ -62,7 +62,7 @@ public class SpeciesReferenceValue extends ASTNodeValue {
    * (non-Javadoc)
    * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
    */
-  protected void computeDoubleValue() {
+  protected void computeDoubleValue(double delay) {
     doubleValue = valueHolder.getCurrentStoichiometry(id);
   }
 }

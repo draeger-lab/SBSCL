@@ -64,23 +64,23 @@ public class RootFunctionValue extends ASTNodeValue{
    * (non-Javadoc)
    * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
    */
-  protected void computeDoubleValue() {
+  protected void computeDoubleValue(double delay) {
     if (numChildren == 2) {
       if (leftChildrenNumeric) {
         if (leftDoubleValue == 2) {
-          doubleValue = interpreter.sqrt(rightChild, time);
+          doubleValue = interpreter.sqrt(rightChild, time, delay);
         } else {
-          doubleValue = interpreter.root(leftDoubleValue, rightChild, time);
+          doubleValue = interpreter.root(leftDoubleValue, rightChild, time, delay);
         }
       } else {
         doubleValue = interpreter.root(leftChild,
-          rightChild, time);
+          rightChild, time, delay);
       }
     } else if (numChildren == 1) {
-      doubleValue = interpreter.sqrt(rightChild, time);
+      doubleValue = interpreter.sqrt(rightChild, time, delay);
     } else {
       doubleValue = interpreter.root(leftChild,
-        rightChild, time);
+        rightChild, time, delay);
     }
   }
   

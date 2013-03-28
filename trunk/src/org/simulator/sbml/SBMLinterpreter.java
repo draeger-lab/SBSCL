@@ -652,7 +652,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
 		if ((sr != null) && sr.isSetStoichiometryMath()) {
 			try {
-				return ((ASTNodeValue)sr.getStoichiometryMath().getMath().getUserObject(TEMP_VALUE)).compileDouble(astNodeTime);
+				return ((ASTNodeValue)sr.getStoichiometryMath().getMath().getUserObject(TEMP_VALUE)).compileDouble(astNodeTime, 0d);
 			} catch (SBMLException exc) {
 				logger.log(Level.WARNING, String.format(
 						"Could not compile stoichiometry math of species reference %s.", id),
@@ -715,14 +715,14 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					} else {
 						ASTNodeValue priorityObject=events[index].getPriorityObject();
 						if (priorityObject != null) {
-							events[index].changePriority(priorityObject.compileDouble(astNodeTime));
+							events[index].changePriority(priorityObject.compileDouble(astNodeTime, 0d));
 							priorities.add(events[index].getPriority());
 						}
 					}
 				} else {
 					ASTNodeValue priorityObject=events[index].getPriorityObject();
 					if (priorityObject != null) {
-						events[index].changePriority(priorityObject.compileDouble(astNodeTime));
+						events[index].changePriority(priorityObject.compileDouble(astNodeTime, 0d));
 						priorities.add(events[index].getPriority());
 					}
 				}
@@ -759,7 +759,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
 				if ((events[index].hasExecutionTime()) && (events[index].getTime() <= currentTime) && !aborted) {
 					if (ev.getPriority() != null) {
-						priority = events[index].getPriorityObject().compileDouble(astNodeTime);
+						priority = events[index].getPriorityObject().compileDouble(astNodeTime, 0d);
 
 						if (!priorities.contains(priority)) {
 							priorities.add(priority);
@@ -783,7 +783,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						// event has a delay
 						ASTNodeValue delayObject = events[i].getDelayObject();
 						if (delayObject != null) {
-							execTime += delayObject.compileDouble(astNodeTime);
+							execTime += delayObject.compileDouble(astNodeTime, 0d);
 							if (!delayedEvents.contains(i)) {
 								delayedEvents.add(i);
 							}
@@ -791,7 +791,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						} else {
 							ASTNodeValue priorityObject = events[i].getPriorityObject();
 							if (priorityObject != null) {
-								priority = events[i].getPriorityObject().compileDouble(astNodeTime);
+								priority = events[i].getPriorityObject().compileDouble(astNodeTime, 0d);
 								priorities.add(priority);
 								events[i].changePriority(priority);
 							}
@@ -1948,7 +1948,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						}
 						copiedAST.putUserObject(TEMP_VALUE, new SpeciesValue(nodeInterpreter,
 								copiedAST, sp, this, symbolHash.get(variable
-										.getId()), compartmentHash.get(variable.getId()), hasZeroSpatialDimensions, isAmount[symbolHash.get(variable.getId())]));
+										.getId()), compartmentHash.get(variable.getId()), sp.getCompartment(), hasZeroSpatialDimensions, isAmount[symbolHash.get(variable.getId())]));
 					} else if ((variable instanceof Compartment)
 							|| (variable instanceof Parameter)) {
 						copiedAST.putUserObject(TEMP_VALUE, new CompartmentOrParameterValue(
@@ -2330,13 +2330,13 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			if (hasFastReactions) {
 				if (isProcessingFastReactions == reactionFast[reactionIndex]) {
 					v[reactionIndex] = kineticLawRoots[reactionIndex].compileDouble(
-							time);
+							time, 0d);
 				} else {
 					v[reactionIndex] = 0;
 				}
 			} else {
 				v[reactionIndex] = kineticLawRoots[reactionIndex].compileDouble(
-						time);
+						time, 0d);
 
 			}
 		}
@@ -2599,7 +2599,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	public double compileReaction(int reactionIndex) {
 		astNodeTime+=0.01;
 		double value = kineticLawRoots[reactionIndex].compileDouble(
-			astNodeTime);
+			astNodeTime, 0d);
 		return value;
 	}
 
