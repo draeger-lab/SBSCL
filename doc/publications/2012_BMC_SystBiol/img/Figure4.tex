@@ -4,7 +4,7 @@
 \usepackage{tikz}
 \usepackage{scalefnt}
 \usepackage{amsmath}
-\usepackage[papersize={15.5cm,20cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
+\usepackage[papersize={15.27cm,18cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
 \usetikzlibrary{shapes,arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
 \begin{document}
 \pagestyle{empty}
@@ -35,7 +35,7 @@ text width=14em, text badly centered, node distance=2.5cm, inner sep=4pt,minimum
 	\node [block, right of=larger?, node distance=3.75cm] (stepsize) {$h := \frac{h}{10}$};
 
 	\node [decision, below of=newvalues, node distance=3cm] (end?) {$t \ge t_{T}$?};
-	\node [cloud, below of=end?, node distance=2.5cm] (stop) {Stop};
+	\node [cloud, right of=end?, node distance=4cm] (stop) {Stop};
 	\node [blank, left of=newvalues] (aux){};
 	\node [blank, left of=xpxres?] (aux2){};
 
