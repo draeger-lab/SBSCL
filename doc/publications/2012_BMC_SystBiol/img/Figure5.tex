@@ -3,7 +3,7 @@
 \usepackage[latin1]{inputenc}
 \usepackage{tikz}
 \usepackage{scalefnt}
-\usepackage[papersize={12cm,16cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
+\usepackage[papersize={6.3cm,15.9cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
 \usetikzlibrary{shapes,arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
 \begin{document}
 \pagestyle{empty}
@@ -30,7 +30,7 @@
     \node [block, below of=updateX] (increase) {$j := j + 1$};
     \node [decision, below of=increase, node distance=2.5cm] (endOfLoop) {$j > |R|$?};
     \node [cloud, below of=endOfLoop, node distance=2.5cm] (stop) {Stop};
-     \node [blank, right of=endOfLoop, node distance=3.5cm] (aux){};
+    \node [blank, right of=endOfLoop, node distance=3.5cm] (aux){};
     % Draw edges
     \draw [color = black, line width = 1.0pt, ->, -triangle 60] (start) -- (rateRules);
     \draw [color = black, line width = 1.0pt, ->, -triangle 60] (rateRules) -- (initLoop);
