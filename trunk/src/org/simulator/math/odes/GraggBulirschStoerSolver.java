@@ -84,7 +84,7 @@ public class GraggBulirschStoerSolver extends FirstOrderSolver {
 	 * @see org.simulator.math.odes.FirstOrderSolver#createIntegrator()
 	 */
 	protected void createIntegrator() {
-		integrator=new GraggBulirschStoerIntegrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
+		integrator = new GraggBulirschStoerIntegrator(Math.min(1e-8, Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
 	}
 
 	/* (non-Javadoc)
