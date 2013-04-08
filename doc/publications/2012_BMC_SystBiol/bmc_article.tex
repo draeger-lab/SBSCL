@@ -70,6 +70,7 @@
 \usepackage{xspace}
 \usepackage[printonlyused]{acronym}
 \usepackage[version=3]{mhchem}
+\usepackage[normalem]{ulem}
 
 \definecolor{royalblue}{cmyk}{.93, .79, 0, 0}
 \definecolor{lightblue}{cmyk}{.10, .017, 0, 0}
@@ -220,6 +221,10 @@ commentstyle=\ttfamily\itshape\color{forrestgreen}
 
 \urlstyle{same}
 
+\hyphenation{
+J-SB-ML
+}
+
 % Begin ...
 \begin{document}
 \begin{bmcformat}
@@ -301,16 +306,20 @@ Reutlingen, Germany}
 \textbf{Background:}
         % Do not use inserted blank lines (ie \\) until main body of text.
 With the increasing availability of high dimensional time course data for 
-metabolites, genes, \COR{and} fluxes\COR{,} the description of \TODO{dynamical systems by
-differential equation models} \COR{is becoming more} popular in systems biology.
+metabolites, genes, \COR{and} fluxes\COR{,} the \COR{mathematical} description
+of dynamical systems
+\sout{by differential equation models becomes more and more popular}
+\COR{has become an essential aspect of research}
+in systems biology.
 %driven by the aim to make biological phenomena predictable. 
-Models are often encoded in formats such as \acs{SBML}, whose mathematical
-structure is very complex and difficult to evaluate due to many special cases \COR{of \acs{SBML} structures}.
+Models are often encoded in formats such as \acs{SBML}, whose \sout{mathematical}
+structure is very complex and difficult to evaluate due to many special cases.
 %A flexible interpreter for \acs{SBML} as well as numerical integrators are hence necessary to solve these models.
 
 \textbf{Results:}
-This article describes an efficient algorithm to interpret and solve 
-\TODO{differential equation systems} \COR{derived from} \acs{SBML} models.
+This article describes an efficient algorithm to
+\sout{interpret and} solve \sout{differential equation systems in}
+\acs{SBML} models\COR{, which are interpreted in terms of ordinary differential equation systems}.
 We begin our consideration with a formal representation of the mathematical form
 of the models and explain all parts of the algorithm in detail,
 including several \COR{preprocessing} steps.  
@@ -343,7 +352,7 @@ backend for Java\texttrademark-based programs.
 %is available.
 %
 Source code, binaries, and documentation can be freely obtained under the terms
-of the \acs{LGPL} version~3 from \url{http://simulation-core.sourceforge.net}.
+of the \acs{LGPL} version~3 from \COR{\url{http://simulation-core.sourceforge.net}}.
 Feature requests, bug reports, contribution, or any further discussion can be
 directed to the mailing list
 \href{mailto:simulation-core-development@lists.sourceforge.net}{simulation-core-development@lists.sourceforge.net}.
@@ -388,13 +397,13 @@ Ambitious national and international research projects such as the Virtual Liver
 Network \cite{Holzhuetter2012} strive to derive even organ-wide models of
 biological systems that include all kinds of processes taking place at several
 levels of detail.
-Large-scale efforts like this require \COR{strong} collaboration between various
+Large-scale efforts like this require \COR{intensive} collaboration between various
 research groups, including experimenters and modelers. The exchange, storage,
-interoperability and the possibility to combine models have been recognized as
+interoperability\COR{,} and the possibility to combine models have been recognized as
 key aspects of this endeavor \cite{Liebermeister2009sta}.
 
-XML-based standard description formats \cite{Bray2000} such as the Systems
-Biology Markup Language (\acs{SBML}, \cite{Hucka2004}) \COR{and} CellML \cite{Lloyd2004}
+XML-based standard description formats \cite{Bray2000} such as the
+\acf{SBML} \cite{Hucka2004} \COR{and} CellML \cite{Lloyd2004}
 enable encoding of quantitative biological network models.
 To facilitate sharing and reuse of the models, online \COR{databases} such as
 \COR{BioModels Database} \cite{Novere2006a} \COR{and} the CellML model repository
@@ -402,12 +411,13 @@ To facilitate sharing and reuse of the models, online \COR{databases} such as
 formats.
 Software libraries for reading and manipulating the content
 of these formats are also available \cite{Bornstein2008, Miller2010,
-Draeger2011b} and a large variety of programs supports these model description
-languages.
+Draeger2011b} and a 
+\TODO{large variety of programs supports these model description languages}.
 
-The models encoded in these formats can be interpreted in terms of differential
-equation systems, with additional structures such as discrete events and
-algebraic equations. 
+The models encoded in these formats can be interpreted in terms of 
+\COR{several modeling frameworks, including without limitation}
+differential equation systems, with additional structures such as
+discrete events and algebraic equations.
 The diversity of modeling \COR{approaches} and experimental data often requires
 customized software solutions for very specific tasks.
 \COR{For efficient analysis, simulation, and calibration (e.g.,
@@ -427,12 +437,12 @@ that in many cases different solver implementations lead to divergent results
 %the \acs{SBML} format, supporting all levels and versions. To this end, we here
 %describe a precise solver algorithm.
 In this work we address the question of how to precisely interpret models
-encoded in the \acs{SBML} format. Furthermore, we show how to adapt existing
-integration routines in order to simulate \acs{SBML} models.
+encoded in the \acs{SBML} format \COR{in terms of ordinary differential equation systems}.
+Furthermore, we show how to adapt existing \COR{numerical} integration routines in order to simulate \sout{\acs{SBML}}\COR{these} models.
 To this end, we derive a new algorithm for the \COR{accurate} interpretation and 
 simulation of all currently existing levels and versions of \acs{SBML}.
-As a reference implementation, we introduce an exhaustive implementation in the
-Java\texttrademark{} programming language. The algorithm described in this paper
+\sout{As a reference implementation, w}\COR{W}e introduce an exhaustive \COR{reference} implementation in \sout{the}
+Java\texttrademark{} \sout{programming language}. The algorithm described in this paper
 is, however, not limited to any particular programming language. It is also
 important to note that the interpretation of these models must be strictly
 separated from the numerical method that solves the \COR{implied} differential
@@ -471,14 +481,13 @@ based on JSBML \cite{Draeger2011b}.
 %respect to given time-series of metabolite or gene expression values. 
 %
 Furthermore, the Systems Biology Simulation Core Library contains classes to both export
-simulation configurations to \acf{SED-ML} \cite{Waltemath2011},
+simulation configurations to the \acf{SED-ML} \cite{Waltemath2011},
 and facilitate the \COR{reuse} and reproduction of these experiments by executing \acs{SED-ML} files.
 
 \section*{Results and discussion}
 
-\COR{In order to derive an algorithm for the interpretation of \acs{SBML} models in terms of differential equation systems}, it is
-first necessary to take a closer look at the mathematical equations implied by
-this data format.
+\COR{In order to derive an algorithm for the interpretation of \acs{SBML} models in a differential equation framework},
+it is first necessary to take a closer look at the mathematical equations implied by this data format.
 Based on this general description, we will then discuss all necessary steps
 to deduce an algorithm that takes all special cases for the various levels and
 versions of \acs{SBML} into account.
