@@ -1,0 +1,74 @@
+\documentclass{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage[papersize={16.4cm,20.5cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
+\usetikzlibrary{shapes,arrows}
+\begin{document}
+\pagestyle{empty}
+
+
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, fill=blue!20, 
+    text width=5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=10em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
+    minimum height=2em]
+\tikzstyle{blank} = [coordinate]
+ 
+\begin{figure}   
+\begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+    \node [cloud] (start) {Start};
+    \node [block, below of=start] (init) {\vspace{-.5cm}\begin{align*}A_E &:= \emptyset\\I_E &:= \{e\; |\;  \mathrm{trig}(e) = 1\}\end{align*}};
+	\node [block, below of=init] (initLoop) {$j := 1$};
+	\node [decision, below of=initLoop,  node distance=3cm](triggerEvents) {$\mathrm{trig}(e_j)$?};
+	\node [block, left of=triggerEvents,  node distance=4cm](removeEvents) {$A_E : = A_E \setminus$\\$\{e\;  |\;  \mathrm{trig}(e) = 0\;  \wedge$\\$\mathrm{persist}(e) = 0\}$};
+	\node [decision, below of=triggerEvents ,  node distance=3.5cm](decision2) {$e_j \in I_E$?};
+	\node [block, below of=decision2,  node distance=3.0cm] (updateRunningEvents) {\vspace{-.5cm}\begin{align*}A_E &:= A_E \cup \{e_j\}\\I_E &:= I_E \cup \{e_j\}\end{align*}};
+
+	\node [block,right of=triggerEvents,  node distance=5.0cm] (updateInactive) {$I_E := I_E \setminus \{e_j\}$};
+	\node [blank,right of=updateInactive,  node distance=4.0cm] (aux3) {};
+
+    	\node [block, right of=updateRunningEvents,  node distance=5cm] (increase2) {$j := j + 1$};
+
+	    \node [decision, right of=increase2, node distance=4cm] (decision3) {$j > |E|$};
+
+    \node [decision, below of=decision3] (noRunningEvents) {$A_E = \emptyset$?};
+    \node [block, left of=noRunningEvents, node distance=4cm] (chooseEvent) {$e := \mathrm{choose}(A_E)$};
+    \node [block, left of=chooseEvent, node distance=5cm] (processEvent) {$\mathrm{process}(e)$};
+    \node [block, left of=decision2, node distance=4cm] (update) {$A_E := A_E \setminus \{e\}$};
+    \node [blank,right of=triggerEvents, node distance=1cm] (aux) {};
+
+    \node [blank,below of=initLoop, node distance=1.2cm] (aux2) {};
+    \node [blank,right of=decision2, node distance=2.2cm] (aux4) {};
+
+
+    \node [cloud, below of=processEvent, node distance=3cm] (stop) {Stop};
+    % Draw edges
+    \path [line] (start) -- (init);
+    \path [line] (init) -- (initLoop);
+    \path [line] (initLoop) -- (triggerEvents);
+    \path [line] (triggerEvents) -- node{No} (updateInactive);
+    \path [line] (triggerEvents) -- node{Yes} (decision2);
+    \path [line] (updateInactive) -- (increase2);
+    \path [line] (decision2) -- node{No} (updateRunningEvents);
+    \path [line] (decision2) -- node{Yes} (aux4) -| (increase2);
+    \path [line] (increase2) -- (decision3);
+
+    \path [line] (updateRunningEvents) -- (increase2);
+    \path [line] (decision3) -- node{Yes} (noRunningEvents);
+    \path [line] (decision3) -- node{No}(aux3)|- (aux2);
+    \path [line] (noRunningEvents) |- node{Yes} (stop);
+    \path [line] (noRunningEvents) -- node{No} (chooseEvent);
+    \path [line] (chooseEvent) -- (processEvent);
+    \path [line] (processEvent) -| (update);
+    \path [line] (update) -- (removeEvents);
+    \path [line] (removeEvents) |- (initLoop);
+\end{tikzpicture}
+\end{figure}
+
+\end{document}

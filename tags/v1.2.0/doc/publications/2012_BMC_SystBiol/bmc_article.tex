@@ -1,0 +1,1190 @@
+%% BioMed_Central_Tex_Template_v1.06
+%%                                      %
+%  bmc_article.tex            ver: 1.06 %
+%                                       %
+
+%%IMPORTANT: do not delete the first line of this template
+%%It must be present to enable the BMC Submission system to 
+%%recognise this template!!
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                     %%
+%%  LaTeX template for BioMed Central  %%
+%%     journal article submissions     %%
+%%                                     %%
+%%         <14 August 2007>            %%
+%%                                     %%
+%%                                     %%
+%% Uses:                               %%
+%% cite.sty, url.sty, bmc_article.cls  %%
+%% ifthen.sty. multicol.sty		       %%
+%%				      	               %%
+%%                                     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%	
+%% For instructions on how to fill out this Tex template           %%
+%% document please refer to Readme.pdf and the instructions for    %%
+%% authors page on the biomed central website                      %%
+%% http://www.biomedcentral.com/info/authors/                      %%
+%%                                                                 %%
+%% Please do not use \input{...} to include other tex files.       %%
+%% Submit your LaTeX manuscript as one .tex document.              %%
+%%                                                                 %%
+%% All additional figures and files should be attached             %%
+%% separately and not embedded in the \TeX\ document itself.       %%
+%%                                                                 %%
+%% BioMed Central currently use the MikTex distribution of         %%
+%% TeX for Windows) of TeX and LaTeX.  This is available from      %%
+%% http://www.miktex.org                                           %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\NeedsTeXFormat{LaTeX2e}[1995/12/01]
+\documentclass[10pt]{bmc_article}    
+
+
+
+% Load packages
+\usepackage{cite} % Make references as [1-4], not [1,2,3,4]
+\usepackage{url}  % Formatting web addresses  
+\usepackage{ifthen}  % Conditional 
+\usepackage{multicol}   %Columns
+\usepackage[utf8]{inputenc} %unicode support
+\usepackage{pdflscape}
+\usepackage{booktabs}
+\usepackage{color}
+\usepackage[table]{xcolor}
+\usepackage{nicefrac}
+\usepackage{pifont}
+\usepackage{textcomp}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{upgreek}
+\usepackage{rotating}
+\usepackage{multirow}
+\usepackage[normalem]{ulem}
+
+\definecolor{royalblue}{cmyk}{.93, .79, 0, 0}
+\definecolor{lightblue}{cmyk}{.10, .017, 0, 0}
+\definecolor{darkgreen}{rgb}{0,.7,0}
+\definecolor{darkred}{rgb}{.7,0,0}
+\definecolor{lightgray}{gray}{0.97}
+
+%\usepackage[applemac]{inputenc} %applemac support if unicode package fails
+%\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
+\urlstyle{rm}
+ 
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+%%                                             %%
+%%  If you wish to display your graphics for   %%
+%%  your own use using includegraphic or       %%
+%%  includegraphics, then comment out the      %%
+%%  following two lines of code.               %%   
+%%  NB: These line *must* be included when     %%
+%%  submitting to BMC.                         %% 
+%%  All figure files must be submitted as      %%
+%%  separate graphics through the BMC          %%
+%%  submission process, not included in the    %% 
+%%  submitted article.                         %% 
+%%                                             %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     
+
+
+\def\includegraphic{}
+\def\includegraphics{}
+
+
+
+\setlength{\topmargin}{0.0cm}
+\setlength{\textheight}{21.5cm}
+\setlength{\oddsidemargin}{0cm} 
+\setlength{\textwidth}{16.5cm}
+\setlength{\columnsep}{0.6cm}
+
+\newboolean{publ}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                              %%
+%% You may change the following style settings  %%
+%% Should you wish to format your article       %%
+%% in a publication style for printing out and  %%
+%% sharing with colleagues, but ensure that     %%
+%% before submitting to BMC that the style is   %%
+%% returned to the Review style setting.        %%
+%%                                              %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+
+%Review style settings
+%\newenvironment{bmcformat}{\begin{raggedright}\baselineskip20pt\sloppy\setboolean{publ}{false}}{\end{raggedright}\baselineskip20pt\sloppy}
+
+%Publication style settings
+%\newenvironment{bmcformat}{\fussy\setboolean{publ}{true}}{\fussy}
+
+%New style setting
+\newenvironment{bmcformat}{\baselineskip20pt\sloppy\setboolean{publ}{false}}{\baselineskip20pt\sloppy}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Customized tags and styles
+%
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage[english]{babel}
+%\usepackage[normalem]{ulem}
+\usepackage{xcolor}
+\usepackage{amsmath}
+
+\hyphenation{
+  % TODO hypens for regular words
+  im-ple-men-ta-tions
+  gra-phi-cal
+  bench-mark-ed
+}
+
+% some nice colors
+\definecolor{royalblue}{cmyk}{.93, .79, 0, 0}
+\definecolor{lightblue}{cmyk}{.10, .017, 0, 0}
+\definecolor{forrestgreen}{cmyk}{.76, 0, .76, .45}
+\definecolor{darkred}{rgb}{.7,0,0}
+\definecolor{winered}{cmyk}{0,1,0.331,0.502}
+\definecolor{lightgray}{gray}{0.97}
+
+\newcommand{\TODO}[1]{\textcolor{red}{\textbf{#1}}}
+\newcommand{\AbstractDESSolver}{\texttt{Abstract\-DES\-Solver}}
+\newcommand{\AlgebraicRule}{\texttt{Algebraic\-Rule}}
+\newcommand{\AssignmentRule}{\texttt{Assignment\-Rule}}
+\newcommand{\OverdeterminationValidator}{\texttt{Overdetermination\-Validator}}
+\newcommand{\SBMLinterpreter}{\texttt{SBML\-interpreter}}
+\newcommand{\FirstOrderSolver}{\texttt{First\-Order\-Solver}}
+\newcommand{\AbstractIntegrator}{\texttt{AbstractIntegrator}}
+\newcommand{\MultiTable}{\texttt{Multi\-Table}}
+\newcommand{\Block}{\texttt{Block}}
+\newcommand{\jlibsedml}{\texttt{jlibsedml}}
+\newcommand{\EventInProgress}{\texttt{Event\-In\-Progress}}
+\newcommand{\ASTNodeInterpreter}{\texttt{ASTNode\-In\-terpreter}}
+\newcommand{\SBMLEventInProgressWithDelay}{\texttt{SBML\-Event\-In\-Progress\-With\-Delay}}
+\newcommand{\true}{\emph{true}}
+\newcommand{\false}{\emph{false}}
+
+\newcommand{\yes}{\ding{51}} %{\parbox[c]{1.3em}{\ding{51}}} %\Large\square\hspace{-.65em}
+\newcommand{\no}{--} %{\parbox[c]{1.3em}{--} %\Large\square\hspace{-.62em}--}
+
+% centered columns with fixed width
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+% right adjusted columns with fixed width
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+% left adjusted columns with fixed width
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+% the derivative symbol for differential equations
+\newcommand{\D}{\mathrm{d}}
+
+
+\lstset{language=Java,
+morendkeywords={String, Throwable}
+captionpos=b,
+basicstyle=\scriptsize\ttfamily,%\bfseries
+stringstyle=\color{darkred}\scriptsize\ttfamily,
+keywordstyle=\color{royalblue}\bfseries\ttfamily,
+ndkeywordstyle=\color{forrestgreen},
+numbers=left,
+numberstyle=\scriptsize,
+% backgroundcolor=\color{lightgray},
+breaklines=true,
+tabsize=2,
+frame=single,
+breakatwhitespace=true,
+identifierstyle=\color{black},
+% morecomment=[l][\color{forrestgreen}]{//},
+% morecomment=[s][\color{lightblue}]{/**}{*/},
+% morecomment=[s][\color{forrestgreen}]{/*}{*/},
+commentstyle=\ttfamily\itshape\color{forrestgreen}
+% framexleftmargin=5mm,
+% rulesepcolor=\color{lightgray}
+% frameround=ttff
+}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Begin ...
+\begin{document}
+\begin{bmcformat}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the title of your article here     %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{The systems biology simulation core algorithm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the authors here                   %%
+%%                                          %%
+%% Ensure \and is entered between all but   %%
+%% the last two authors. This will be       %%
+%% replaced by a comma in the final article %%
+%%                                          %%
+%% Ensure there are no trailing spaces at   %% 
+%% the ends of the lines                    %%     	
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\author{%
+Roland Keller$^{1}$, %\email{Roland Keller - roland.keller@uni-tuebingen.de}, 
+Alexander D\"orr$^{1}$, %\email{Alexander D\"orr - alexander.doerr@uni-tuebingen.de},  
+Akito Tabira$^{2}$, %\email{Akito Tabira - mythosil_full_throttle@i.softbank.jp}
+Akira Funahashi$^{2}$, %\email{Akira Funahashi - funa@bio.keio.ac.jp}
+Michael J. Ziller$^{3}$, %\email{Michael J. Ziller - michael_ziller@harvard.edu}
+Richard Adams$^{4}$, %\email{Richard Adams - richard.adams@ed.ac.uk}
+Nicolas Rodriguez$^{5}$, %\email{Nicolas Rodriguez - rodrigue@ebi.ac.uk}
+Nicolas Le Nov\`{e}re$^{6}$, %\email{Nicolas Le Nov\`{e}re - nicolas.lenovere@babraham.ac.uk}
+Hannes Planatscher$^{7}$, %\email{Hannes Planatscher - Hannes.Planatscher@nmi.de}
+Andreas Zell$^{1}$, %\email{Andreas Zell - andreas.zell@uni-tuebingen.de}
+and Andreas Dr\"ager$^{1}$\correspondingauthor\email{Andreas Dr\"ager -
+andreas.draeger@uni-tuebingen.de}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the authors' addresses here        %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\address{%
+\iid(1)Center for Bioinformatics Tuebingen (ZBIT), University of
+Tuebingen, T\"ubingen, Germany
+\iid(2)Keio University, Graduate School of
+Science and Technology, Yokohama, Japan 
+\iid(3)Department of Stem Cell and Regenerative Biology, Harvard University,
+Cambridge, MA, USA
+\iid(4)SynthSys Edinburgh, CH Waddington Building, University of Edinburgh,
+Edinburgh EH9 3JD, UK
+\iid(5)European Bioinformatics Institute, Wellcome Trust Genome Campus, Hinxton,
+Cambridge, UK
+\iid(6)Babraham Institute, Babraham, Cambridge, UK
+\iid(7)Natural and Medical Sciences Institute at the University of Tuebingen,
+Reutlingen, Germany}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% The Abstract begins here                 %%
+%%                                          %%  
+%% Please refer to the Instructions for     %%
+%% authors on http://www.biomedcentral.com  %%
+%% and include the section headings         %%
+%% accordingly for your article type.       %%   
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{abstract}
+\textbf{Background:}
+        % Do not use inserted blank lines (ie \\) until main body of text.
+With the increasing availability of high dimensional time course data for 
+metabolites, genes, or fluxes the description of dynamical systems by
+differential equation models becomes more and more popular in systems biology.
+%driven by the aim to make biological phenomena predictable. 
+The diversity of modeling aproaches and experimental data requires customized
+software solutions for very specific tasks.
+Models are often encoded in formats such as SBML (Systems Biology Markup
+Language), but
+their mathematical structure is very complex and difficult to evaluate due to
+many special cases.
+%A flexible interpreter for SBML as well as numerical integrators are hence necessary to solve these models.
+
+\textbf{Results:}
+This article describes an efficient algorithm to interpret and solve the
+differential equation systems of SBML models.
+We begin our consideration with a formal representation of the mathematical form
+of the models and explain all parts of the algorithm in detail,
+including several pre-processing steps.  
+%Dynamic simulation of models describing biological phenomena is a key aspect of
+%research in systems biology. 
+%This article describes an efficient and exhaustive algorithm to interpret and
+%solve the differential equation systems of models encoded in Systems Biology
+%Markup Language (SBML) and its implementation as part of the Systems Biology Simulation Core
+%Library for numerical computation in systems biology.
+We provide a flexible reference implementation of the algorithm as part of the
+Systems Biology Simulation Core Library, which is a community-driven project
+that provides a large collection of numerical solvers and a sophisticated
+interface hierarchy for the definition of custom differential equation systems. 
+To demonstrate the capabilities of the new algorithm, it has been tested with
+the entire SBML Test Suite and %also been used to simulate 
+all models of BioModels Database.
+
+%
+%\section{Supplementary information:}
+% TODO: Provide additional material
+%Supplementary data is available at Bioinformatics online.
+\textbf{Conclusions:}
+The formal description of the mathematics behind the SBML format facilitates the
+implementation of the algorithm within specifically tailored programs.
+A similar approach would also be possible for further systems biological
+community formats.
+%The reference implementation (Systems Biology Simulation Core Library) described in this article, reflects this formal structure within its abstract type hierarchy.
+For Java\texttrademark-based programs, this library can be used as a simulation
+backend, whose abstract type hierarchy allows for customized extension.
+%, and can be used on every operating system for which a JVM
+%is available.
+%
+Source code, binaries, and documentation can be freely obtained under the terms
+of the LGPL version~3 from the website
+\url{http://sourceforge.net/projects/simulation-core/}.
+Feature requests, bug reports, contribution, or any further discussion can be
+directed to the mailing list
+\href{mailto:simulation-core-development@lists.sourceforge.net}{simulation-core-development@lists.sourceforge.net}.
+\end{abstract}
+
+
+
+\ifthenelse{\boolean{publ}}{\begin{multicols}{2}}{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% The Main Body begins here                %%
+%%                                          %%
+%% Please refer to the instructions for     %%
+%% authors on:                              %%
+%% http://www.biomedcentral.com/info/authors%%
+%% and include the section headings         %%
+%% accordingly for your article type.       %% 
+%%                                          %%
+%% See the Results and Discussion section   %%
+%% for details on how to create sub-sections%%
+%%                                          %%
+%% use \cite{...} to cite references        %%
+%%  \cite{koon} and                         %%
+%%  \cite{oreg,khar,zvai,xjon,schn,pond}    %%
+%%  \nocite{smith,marg,hunn,advi,koha,mouse}%%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%
+%% Background %%
+%%
+\section*{Background}
+
+As part of the movement towards quantitative biology, modeling, 
+simulation, and computer analysis of biological networks have become integral
+parts of modern biological research \TODO{\cite{Macilwain2011}}.
+Ambitious national and international research projects such as the Virtual Liver
+Network \cite{Holzhuetter2012} strive to derive even organ-wide models of
+biological systems that include all kinds of processes taking place at several
+levels of detail.
+Large-scale efforts like this require a strong collaboration between various
+research groups, including experimenters and modelers. The exchange, storage,
+interoperability and the possibility to combine models have been recognized as
+key aspects of this endeavor \cite{Liebermeister2009sta}.
+
+XML-based standard description formats \cite{Bray2000} such as the Systems
+Biology Markup Language (SBML, \cite{Hucka2004}) or CellML \cite{Lloyd2004}
+enable encoding of quantitative biological network models.
+To facilitate sharing and reuse of the models, online data bases such as the
+BioModels database \cite{Novere2006a} or the CellML model repository
+\cite{Lloyd2008} provide large collections of published models in various
+formats.
+Software libraries for reading and manipulating the content
+of these formats are also available \cite{Bornstein2008, Miller2010,
+Draeger2011b} and a large variety of programs supports these model formats.
+
+The models encoded in these formats can be interpreted in terms of differential
+equation systems, with additional structures such as discrete events and
+algebraic equations. 
+For efficient model analysis, simulation, and calibration (e.g.,
+the estimation of parameter values) a multiple-purpose and efficient numerical
+solver library that has been designed with the requirements of biological
+network models in mind is prerequisite.
+Although the language specifications of SBML \cite{Hucka2001, Hucka2003,
+Finney2003a, Finney2006, Hucka2007, Hucka2008, Hucka2010a} 
+and CellML \cite{Cuellar2006} describe the semantics of models in these formats
+and their interpretation, the algorithmic implementation is still not
+straightforward.
+
+Both communities offer standardized and manually derived benchmark test in order
+to evaluate the quality of simulation results, because it has been recognized that in many cases
+different solver implementations lead to divergent results \cite{Bergmann2008}.
+%In this work we address the question of how to precisely solve models encoded in
+%the SBML format, supporting all levels and versions. To this end, we here
+%describe a precise solver algorithm.
+\TODO{In this work we address the question of how to precisely interpret models encoded in
+the SBML format, supporting all levels and versions. Furthermore, we show how to adapt existing integration 
+routines in order to simulate SBML models. To this end, we here describe a precise interpretation and simulation algorithm.}
+As a reference implementation, we introduce an exhaustive implementation in the Java\texttrademark{} programming
+language. The algorithm described in this paper is, however, not limited to any
+particular programming language. It is also important to note that the
+interpretation of these models must be strictly separated from the numerical
+method that solves the implicated differential equation system. In this way, a
+similar approach can also be done for CellML or other formats.
+
+
+%
+%The modeling language SBML (Systems Biology Markup Language,
+%\cite{Hucka2003}) constitutes an important \emph{de facto} standard for the
+%exchange of biochemical network models.
+%SBML defines a set of data structures and provides rules about how to interpret
+%and simulate these kinds of models.
+%
+%Models in systems biology may combine an ordinary differential equation system,
+%which is the basis for numerical simulation, with additional elements such as
+%rules and events.  These elements further influence the system. 
+%For instance,
+%an event takes place if a certain trigger condition becomes true. Whenever this
+%happens, event assignments may change the values of model components, such as
+%parameter values or compartment sizes. Rules can directly assign new values to
+%their objectives, e.g., the concentration of a reacting species.
+%
+%
+The Systems Biology Simulation Core Library (SCL) presented here is a platform-independent,
+well-tested generic library that is completely decoupled from any graphical
+user interface and can therefore easily be integrated into third-party programs.
+It comprises several Ordinary Differential Equation (ODE)
+solvers and an interpreter for SBML models. It is the first simulation library
+based on JSBML \cite{Draeger2011b}. 
+% the Java library JSBML 
+%
+%Secondly, a graphical and command-line user interface that provides
+%a connection to the heuristic optimization framework EvA2 \cite{Kron10EvA2}.
+% The combination of SBMLsimulator and EvA2 \cite{Kron10EvA2} estimates the values of all parameters with
+%respect to given time-series of metabolite or gene expression values. 
+%
+Furthermore, the Systems Biology Simulation Core Library contains classes to both export
+simulation configurations to SED-ML (Simulation Experiment Description Markup Language,
+\cite{Waltemath2011}), and facilitate the re-use and reproduction of these
+experiments by executing SED-ML files.
+
+\section*{Results and discussion}
+
+\TODO{In order to derive an algorithm for the interpretation of SBML models, it is first necessary to
+take a closer look at the mathematical equations implied by this data format.
+Based on this general description, we will then discuss all necessary steps
+to deduce an algorithm that takes all special cases for the various levels and versions of SBML into account.}
+
+\subsection*{A formal representation of models in systems biology}
+
+The mathematical structure of a reaction network comprises a stoichiometric
+matrix $\mathbf{N}$, whose rows correspond to the reacting species $\vec{S}$
+within the system, whereas its columns represent the reactions, i.e., bio-transformations,
+in which these species participate.
+The velocities $\vec{\nu}$ of the reactions $\vec{R}$ determine the rate of
+change of the species' amounts:
+\begin{equation}
+\frac{\D}{\D t}\vec{S} = \mathbf{N}\vec{\nu}(\vec{S}, t, \mathbf{N}, \mathbf{W}, \vec{p})\,.
+\label{eq:SpeciesChange}
+\end{equation}
+The parameter vector $\vec{p}$ contains rate constants and other, often
+constant, quantities that influence the reaction velocities.
+According to \cite{Liebermeister2006, Liebermeister2010} the modulation matrix
+$\mathbf{W}$ is defined as a matrix of size $|\vec{R}|\times|\vec{S}|$
+containing the type of the regulatory influences of the species on
+the reactions, e.g., competetive inhibition or physical stimulation.
+Integrating Equation~\ref{eq:SpeciesChange} yields the predicted amounts of the
+species at each time point of interest within the interval $[t_0, t_T]$:
+\begin{equation}
+\vec{S} = \int_{t_0}^{t_T} \mathbf{N}\vec{\nu}(\vec{S}, t, \mathbf{N}, \mathbf{W}, \vec{p})
+\D t\,.
+\end{equation}
+Depending on the units of the species, the same notation can also express the
+change of the species' concentrations.
+In this simple case, solving the homogeneous ordinary
+differential equation system~\ref{eq:SpeciesChange} can be done in a
+straightforward way using many (numerical) differential equation solvers.
+The non-linear form of the kinetic equations in the vector function $\vec{\nu}$
+constitutes the major difficulty for this endeavor and is often the reason why
+an analytical solution of these systems is not possible or very hard to achieve.
+Generally, differential equation systems describing biological networks are,
+however, inhomogenious systems with a higher complexity.
+Solving systems encoded in SBML can be seen as computing the solution of the following
+equation:
+\begin{equation}
+\vec{Q} = \int_{t_0}^{t_T} \mathbf{N}\vec{\nu}(\vec{Q}, t, \mathbf{N}, \mathbf{W},
+\vec{p})\D t + \int_{t_0}^{t_T} \vec{g}(\vec{Q}, t)\D t + \vec{f}_E(\vec{Q}, t) +
+\vec{r}(\vec{Q}, t)\,.
+\label{eq:QuantityValue}
+\end{equation}
+The vector $\vec{Q}$ of quantities contains the sizes of the
+compartments $\vec{C}$, amounts (or concentrations) of reacting species
+$\vec{S}$, and the values of all global model parameters $\vec{P}$.
+It should be noted that these models may contain local parameters $\vec{p}$ that
+influence the reaction velocities, but which are not part of the global parameter
+vector $\vec{P}$, and hence also not part of $\vec{Q}$. All vector function terms
+may involve a delay function, i.e., an expression of the form $\mathrm{delay}(x, \tau)$
+with $\tau > 0$. In this way, it is possible to address values of $x$ computed in
+the earlier integration step at time $t - \tau$, turning Equation~\ref{eq:QuantityValue}
+into a delay differential equation.
+In the general case of Equation~\ref{eq:QuantityValue}, not all species' amounts
+can be computed by integrating the transformation $\mathbf{N}\vec{\nu}$: The
+change of some model quantities may be given in form of rate rules (function
+$\vec{g}(\vec{Q}, t)$) that must be integrated separately.
+Species, whose amounts are determined by rate rules, must not participate in any
+reaction and do hence have only zero-valued corresponding entries in the
+stoichiometric matrix $\mathbf{N}$.
+Thereby, the rate rule function $\vec{g}(\vec{Q}, t)$ directly gives the rate of
+change of these quantities, and returns 0 for all others.
+In addition, SBML introduces the concept of events $\vec{f}_E(\vec{Q}, t)$ and
+$\vec{r}(\vec{Q}, t)$ assignment rules.
+An event can directly manipulate the value of several quantities, for instance,
+reduce the size of a compartment to a certain portion of its current size,
+as soon as a trigger condition becomes satisfied.
+An assignment rule also influences the absolute value of some quantity.
+A further concept of SBML models are algebraic rules, which are equations that
+must evaluate to zero at all times during the simulation of the model.
+These rules can be solved to determine the values of quantities, whose values
+are not determined by other constructs.
+In this way, conservation relations or other complex interrelations can be
+expressed in a very convenient way.
+With the help of a bipartite matching and a subsequent conversion it is possible
+to turn algebraic rules into assignment rules and hence include these into the
+term $\vec{r}(\vec{Q}, t)$.
+Such a transformation, however, requires symbolic computation and is
+hence a complicated endeavor.
+In case that the system under study operates at multiple time scales, i.e., it
+contains a fast and a slow sub-system, a separation of the system is necessary
+leading to differential algebraic equations.
+Some species can be declared to operate at the system's boundaries, assuming a
+constant pool of their amounts or concentrations.
+Care must also be taken with respect to the units of the species, because under
+certain condition division or multiplication with the sizes of their surrounding
+compartments is necessary in order to ensure the consistent interpretation of
+the models. 
+For all these reasons, solving Equation~\ref{eq:QuantityValue} is much more 
+complicated than computing the solution of the simple Equation~\ref{eq:SpeciesChange}
+alone.
+
+From the perspective of software engineering, a strict separation of the 
+interpretation of the model and the numerical treatment of the differential
+equation system is necessary to ensure that regular numerical methods can be used
+to solve Equation~\ref{eq:QuantityValue}.
+In order to efficiently compute this solution, multiple pre-processing steps are
+required, such as the conversion of algebraic rules into assignment rules, or
+avoiding repeated re-computation of intermediate results.
+The next sections will give a detailed explanation of the necessary steps to
+solve these systems and how to efficiently perform their numerical integration
+with standard numerical solvers.
+
+
+\subsection*{Initialization}
+
+At the beginning of the simulation the values of species, parameters and
+compartments are set to the initial values as given in the model.
+All kinetic laws of the reactions, assignment rules, transformed algebraic
+rules (see below), initial assignments, event assignments and rate rules
+are integrated into a directed acyclic syntax graph.
+This graph is hence the result of merging of the abstract syntax trees of
+all those elements.
+Equivalent elements are only contained once.
+This significantly decreases the computation time needed for the
+evaluation of these syntax trees during the simulation.
+An example for such a syntax graph is given in Figure~1.
+
+After the creating of the abstract syntax graph, the initial assignments, and the
+assignment rules (including transformed algebraic rules) are processed.
+Deviating initial values defined by initial assignments and are now assigned.
+
+
+\subsection*{Solving algebraic rules}
+In order to deal with algebraic rules in an SBML model, these have to be converted to assignment rules.
+In every equation of an algebraic rule, there should be at least one variable, 
+whose value is not yet defined through other equations in model. This variable has to be determined 
+for the purpose of interpreting the regarding algebraic rule. 
+At first, a bipartite graph according to the SBML specifications is generated. This graph is used to 
+compute a matching, using the algorithm from Hopcroft and Karp
+\cite{hopcroft1973n}. The initial greedy matching is extended with the use of augmenting paths. This process is
+repeated until no more augmenting paths can be found. Per definition, this results in a maximal matching. 
+As stated in the SBML specifications, if any equation vertex remains unconnected after augmenting the 
+matching as far as possible, the model is considered overdetermined and thus is not a valid SBML model. 
+But if we are indeed looking at a valid SBML model, every assignment rule is converted into an algebraic rule. 
+To this end, the mathematical expression is transformed into an equation with the target variable on its left-hand side.
+The left-hand side is represented by the respective variable vertex, to which the considered algebraic rule has been matched.
+Figure~2 displays the described algorithm in form of a flow chart.
+
+
+\subsection*{Event handling}
+An event in SBML is a function that is executed depending on whether a trigger condition switches from \false{} to
+\true.
+In addition, a delay may postpone the actual execution of the event's assignments to a later point in time.
+With the release of SBML Level~3 Version~1, the processing of events has been raised to a higher level of complexity.
+Before Level~3 Version~1 it was sufficient to determine, when an event triggers and when its assignmens are to be exceuted.
+In Level~3 Version~1 just a few new language elements have been added but with an huge impact on how to handle events:
+The order in which events have been processed used to be at programmers discretion, but now it is given by the event's priority element.
+Coordinating the sequence, in which events are to be executed, has now become the crucial part of event handling. 
+Furthermore, there exists the option to cancel an event during the time since its trigger 
+has been activated and the actual time when the scheduler picks the event for execution.
+
+For every time step, the events to be executed are a union of two subsets of the set of all events.
+On the one hand, there are the events, whose trigger has been activated at the given time and which are to be evaluated without delay.
+On the other hand, there are events that triggered at some time point before, and whose delay reaches till the current point in time.
+For every element of the resulting set of events their priority rule must be evaluated.
+One event is randomly chosen for execution from all events with the highest priority.
+All other events could be handled in the same manner.
+However, the assignment of the first event can change the priority or even the trigger condition of the events that have not yet been executed.
+Therefore, the trigger of non persistent events and the priority of the remaining events have to be evaluated again.
+In this case, another event that has now the highest priority is chosen.
+This process repeats itself until no further events are left to be executed.
+Figure~3 shows the slightly simplified algorithm for event processing at a specific point in time.
+
+\subsection*{Calculation of the derivatives for a certain point in time}
+For given values $\vec{Q}$ at a point $t$ in time the current vector of derivatives $\dot{\vec{Q}}$ is calculated as follows:
+First, the rate rules are processed $\dot{\vec{Q}} = \vec{g}(\vec{Q}, t)$. Note that function $\vec{g}$ returns 0 in all dimensions,
+in which no rate rule is defined.
+Second, the velocity $\nu_i$ of each reaction $R_i$ is computed with the help of the unified syntax graph (Figure~1 shows an example of such a graph).
+The velocity functions depend on $\vec{Q}$ at time $t$.
+During the second step the derivatives of all species that participate in the current reaction $R_i$ need to be updated (see the flowchart in Figure~4).
+
+\subsection*{Integrated calculation for a certain time step including event processing}
+The precise calculation of the time, when events are triggered is crucial to ensure exact results of the numerical integration process.
+It could, for instance, happen that an event is triggered at time $t_{\tau}$, which is between the two integration time points $t_{\tau - 1}$ and $t_{\tau + 1}$.
+When processing the events only at time points $t_{\tau - 1}$ and $t_{\tau + 1}$ it might happen that the trigger condition cannot be evaluated to true at neither of these time points. 
+The Rosenbrock solver \cite{Press1993} can adapt its step size $h$ if events occur (see Figure~5 for details).
+For a certain time interval $[t_{\tau - 1}, t_{\tau + 1}]$ and the current vector $\vec{Q}$ Rosenbrock's method determines the new value of vector $\vec{Q}$ at a point in time $t_{\tau - 1} + h$.
+If the error tolerance cannot be ensured, $h$ is reduced and the procedure is repeated.
+
+After that the events and the assignment rules are processed at the new point in time $t_{\tau - 1} + h$.
+If the previous step causes a change in $\vec{Q}$, the adaptive step size is decreased by setting $h$ to $\nicefrac{h}{10}$ and
+the calculation is repeated until the minimum step size is reached or the processing of events and rules does not change $\vec{Q}$ anymore.
+Hence, the time, at which an event takes place, is precisely determined.
+
+\subsection*{A reference implementation of the algorithm as part of the Systems Biology Simulation Core Library}
+
+The algorithm described above has been implemented in Java\texttrademark{} and included into the Systems Biology Simulation Core Library.
+Figure~6 displays the software architecture of this library.
+The Systems Biology Simulation Core Library has been designed as part of a community project aiming to provide an extensible numerical backend for customized programs for research in computational systems biology.
+The SBML-solving algorithm is based on the data structures provided by the JSBML project \cite{Draeger2008}.
+\TODO{We implemented wrapper classes in order to integrate several numerical solvers from the Apache Commons Math library into the project.}
+In addition, the library provides an implementation of the explicit fourth order Runge-Kutta method, Rosenbrock's solver, and Euler's method.
+Each solver has a method to directly access its corresponding KiSAO (Kinetic Simulation Algorithm Ontology) term \cite{Courtot2011}.
+Due to the strict separation between numerical differential equation solvers, and the definition of the actual differential equation system, it is possible to implement support for further community standards, such as CellML \cite{Lloyd2004}.
+Many interfaces, abstract classes, and an exhaustive source code documentation in form of JavaDoc facilitate the customization of the library.
+In order to support the emerging standard MIASE (Minimal Information About a Simulation Experiment) \cite{Waltemath2011a}, the library also provides an interpreter of SED-ML files (Simulation Experiment Description Markup Language) \cite{Waltemath2011}.
+These files allow users to store the details of a simulation, including the selection and all settings of the numerical method, hence facilitating the creation of reproducible results.
+A simulation experiment can also be directly started by passing a SED-ML file to this interpreter.
+For testing purposes, the library contains a sample program that benchmarks the SBML interpreter against the entire SBML Test Suite.
+
+
+\subsection*{Application to published models}
+
+The Systems Biology Simulation Core Library has been tested on all 424 curated
+models from BioModels database \cite{Novere2006a} (release~23, October 2012).
+As a result, 99.06\,\% of these models could correctly be simulated.
+In the following, we use two models from this repository to illustrate the
+capabilities of this library:
+Biomodel~206 by Wolf \emph{et al.} \cite{Wolf2000} and Biomodel~390 by Arnold 
+and Nikoloski \cite{Arnold2011}.
+
+The model by Wolf \emph{et al.} \cite{Wolf2000} mimics glycolytic oscillations
+that have been observed in yeast cells.
+The model describes how the dynamics propagate through the cellular network.
+Figure~7a displays the simulation results for the intracellular concentrations
+of 3-phosphogylcerate, ATP, glucose, glyceraldhyde 3-phosphate, and NAD$^+$:
+After an initial phase of approximately 15\,s all metabolites begin a
+steady-going rhythmic oscillation.
+Changes in the dynamics of the fluxes through selected reaction channels within
+this model can be seen in Figure~7b. 
+
+By comparing a large collection of previous models of the Calvin-Benson
+cycle, Arnold and Nikoloski created a quantitative consensus model that
+comprises eleven species, six reactions, and one assignment rule
+\cite{Arnold2011}.
+All kinetic equations within this model call specialized function definitions.
+Figure~8 shows the simulation results for the species ribulose 1,5 bisphosphate,
+ATP,  and ADP within this model.
+As in the previous test case, the simulation results reproduce the values
+provided by BioModels database.  
+
+\subsection*{Comparison to existing solver implementations for SBML}
+
+\TODO{In order to benchmark our software, we chose similar tools exhibiting features X, Y, Z. They are A (), B (), C ()}
+\TODO{Many stand-alone programs providing simulation of SBML come with graphical user
+interfaces.
+For instance, the Virtual Cell \cite{Loew2001}, JSim \cite{Beard2012a}, iBioSim 
+\cite{Myers2009}, PottersWheel \cite{Maiwald2008}, COPASI \cite{Hoops2006},
+SYCAMORE \cite{Weidemann2008}, SBToolbox2
+\cite{SBT_Schmidt2006}, JWS Online \cite{Olivier2004}, or the Systems Biology
+Workbench with Roadrunner (SBW, \cite{Bergmann06}). 
+The vast majority of the internal solvers for these systems are part of
+larger software suites and can therefore not be easily integrated into custom
+programs. Some are implemented in programming languages that are either
+platform-dependent (e.g., C or C++) and/or require a commercial license (e.g.,
+MATLAB\texttrademark{}) for their execution.
+The SBML ODE Solver Library \cite{Machne2006}, which is written in C,
+and is based on the libSBML library \cite{Bornstein2008}, 
+provides such a simulation routine based on the SUNDIALS differential equation
+solver.}
+
+We therefore selected only those SBML-capable simulation programs, libraries,
+and frameworks from the SBML software
+matrix\footnote{\url{http://sbml.org/SBML_Software_Guide/SBML_Software_Matrix} (October 8\textsuperscript{th} 2012)}
+that satisfy the following criteria:
+\begin{itemize}
+  \item The last updated version was released after the final release of
+  the specification for SBML Level~3 Version~1 Core, i.e., October
+  6\textsuperscript{th} 2010.
+  \item Open-source software
+  \item No dependency on commercial products that are not freely available
+  (e.g., MATLAB\texttrademark{} or Mathematica\texttrademark)
+  \item Support for SBML Level~3. 
+\end{itemize}
+Table~1 summarizes the comparison of six of these programs.
+Only three other applications support the simulation of models containing events, algebraic rules and fast reactions completely:
+iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \cite{Funahashi2012}.
+%\TODO{Only three applications pass the four exemplary models (966, 988, 1083, 1000) of the SBML Test Suite (version 2.0.2):}
+%iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}.
+The program iBioSim does not yet support the simulation of SBML models
+containing the delay functions, except delayed events.
+LibSBMLSim, which is a simulation API written in C, can only read models given
+in SBML Level~2 Version~4 and SBML Level~3.
+Hence, Systems Biology Simulation Core Library and BioUML are the only
+simulation tools from this selection that pass all models of the SBML Test Suite
+for all levels and versions of SBML.
+
+\section*{Conclusions}
+The SBML implementation has successfully passed the
+SBML Test Suite (version 2.0.2) using Rosenbrock solver.
+The results are shown in Table~2.
+All models together can be simulated within seconds, which means that the simulation
+of one SBML model takes only milliseconds on average, using regular desktop computers.
+The total simulation time for all models in SBML Level~3 Version~1 is significantly
+higher than for the models in other SBML levels and versions.
+This can be explained by the fact that there are some models in SBML Level~3 Version~1,
+in which a time-consuming processing of a large number of events is necessary.
+The simulation of model 966 of the SBML Test Suite, which is only provided in
+SBML Level~3 Version~1 and contains many events to be processed, takes 21 seconds.
+This accounts for 60~\% of the total simulation time for the models in SBML
+Level~3 Version~1. 
+Our tests indicate that BioUML, which is a workbench for modelling, simulating
+and parameter fitting, and the Systems Biology Simulation Core Library are the
+only SBML applications that pass the entire Test Suite for all SBML levels and
+versions.
+The Systems Biology Simulation Core Library is therefore the only API simulation
+library that supports the whole SBML Test Suite for all SBML levels and versions.
+%Compared to BioUML the Simulation Core Library simulates all models of the Test Suite much faster.
+%(see
+%\href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite}):
+Furthermore, Systems Biology Simulation Core Library solved 99.06\,\% of the
+models from the
+\href{http://biomodels.net}{BioModels.net} database (release 23,
+\cite{Novere2006a}) simulating from $t = 0$ to $t = 10$ using Rosenbrock solver
+and a step size of $0.1$.
+Therefore, the Systems Biology Simulation Core Library is an efficient Java tool
+for the
+simulation of differential equation systems used in systems biology. It can be
+easily integrated into larger customized applications.
+For instance, CellDesigner version~4.2 \cite{Funahashi2003} already uses it as
+one of its simulation libraries.
+The stand-alone application SBMLsimulator\footnote{SBMLsimulator is available at
+\url{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsimulator}.}
+provides a convenient graphical user interface for the simulation of SBML
+models and uses it as a computational backend.
+The abstract class structure of the library supports the integration of
+additional model formats, such as CellML, besides its SBML implementation. To
+this end, it is only necessary to implement a suitable interpreter class.
+
+%The SBML ODE Solver Library \cite{Machne2006}, which is written in C,
+%and based on the libSBML library \cite{Bornstein2008}, 
+%provides such a simulation routine based on the SUNDIALS differential equation
+%solver.
+
+By including support for the emerging standard SED-ML, we hope to facilitate the
+exchange, archival and reproduction of simulation experiments performed using
+the Systems Biology Simulation Core Library.
+
+\section*{Methods}
+
+\subsection*{Implementation}
+
+All the solver classes are derived from the abstract class \AbstractDESSolver{}
+(Figure~6).
+Several solvers of the Apache Commons Math library (version 3.0) are integrated
+with the help of wrapper classes. Numerical methods and the actual differential
+equation systems are strictly separated. The class \MultiTable{} stores the
+results of a simulation within its \Block{} data structures. 
+%
+The abstract description of differential equation systems, with the help of
+several distinct interfaces, makes possible to decouple them from a particular
+type of biological network. It is therefore possible to pass an instance of an
+interpreter for a respective model description format to any available solver.
+%\marginpar{I would not quote SBML and CellML. CellML is
+% actually not supported at the moment}
+%
+%A specialized interpreter class is required for the evaluation of a biological
+%model. 
+This interpretation is the most time consuming step of the integration procedure.
+This is why efficient and clearly organized data structures are required to
+ensure a high performance of the overall library. The interpretation of SBML
+models is split between evaluation of events and rules, computation of
+stoichiometric information, and computation of the current values for all model
+components (such as species and compartments).
+%
+For a given state of the ODE system, the class \SBMLinterpreter{}, responsible
+for the evaluation of models encoded in SBML returns the current set of
+time-derivatives of the variables.
+It is connected to an efficient MathML interpreter of the expressions contained
+in kinetic laws, rules and events (\ASTNodeInterpreter{}). The nodes of the syntax graph for those
+expressions depend on the current state of the ODE system. If the state has
+changed, the values of the nodes have to be recalculated (see Results).
+
+%
+An important aspect in the interpretation of SBML models is the
+determination of the exact time at which an event occurs, as this influences
+the precision of the system's variables. To this end, we adjusted the Rosenbrock
+solver \cite{Kotcon2011}, an integrator with an adaptive step size, to a very
+precise timing of the events.
+%\sout{Rosenbrock's method is well-suited even for stiff systems.}
+%
+In addition to events, rules are also treated during integration.
+Basically, rules are events that occur at every given point in time and are therefore processed in the same manner.
+For every object of the type \AlgebraicRule{}, a new \AssignmentRule{} object is generated by means of the preceding bipartite matching.
+They represent only temporary rules, that are incorporated in the simulation process but do not influence the model in the SBML file.
+%\marginpar{This is only valid for polynomes. And for those,
+%assignmentRules should have been used anyway. How do-you proceed for
+%cos(x)=0?: Yes, that's true. People should use assignments there, but the
+%AlgebraicRules in the test case are all of the type described here. I am
+%currently not sure if we could solve cos(x) = 0 or similar cases.}
+%
+
+In the \SBMLinterpreter{} events are represented via an array containing an object of the class \EventInProgress{} for every event in the model.
+Thereby the distinction between events with and without delays is made.
+The major difference between both is that an event with delay can trigger multiple times before it is executed.
+In order to deal with such an issue, the class \SBMLEventInProgressWithDelay{} keeps track of this via the help of a list containing the points in time, at which the respective event has to executed.
+When events trigger more than once before execution, they have to be ordered according to their delay because the delay of the very same event may vary.
+
+When the \SBMLinterpreter{} is processing events with priority, the events with the highest priority 
+are currently stored in list until one of them is selected for execution. One could argue, that all events can
+be kept in the same data structure, e.g., in a binary max heap, where after the extraction of the element with the largest value, the heap is restructured so that that next largest value is at the top.
+As stated in a previous section, the execution of one event can influence the priority off the remaining events.
+Considering the binary max heap, there is the possibility that many priorities change whereby the standard
+method to restore the max heap characteristic after extraction is not sufficient any more.
+Therefore, we disregarded the use of other data structures for now.
+%
+
+%The simulation algorithm then proceeds as follows: For each time step, the ODE
+%solver gets the current variable values and
+%calculates the system's state for the next point in time. After that, events
+%and rules are processed, that can change the values. The modified values then
+%become the initial values for the next time step. The event processing of the
+%Rosenbrock solver
+%\sout{is different from other solvers, as it}
+%is directly integrated in the solver class and influences the
+%step size. The time-accurate handling of events and rules leads to very precise
+%results of the simulation.
+%
+SED-ML support is enabled by inclusion of the \jlibsedml{} library
+(\href{http://www.jlibsedml.org}{http://www.jlibsedml.org}) in the binary
+download. Clients of the the Systems Biology Simulation Core Library can choose
+to use the \jlibsedml{} API directly, or access SED-ML support via  facade
+classes in the \texttt{org.simulator.sedml} package that do not require direct
+dependencies on \jlibsedml{} in their code.
+
+
+\section*{Availability and Requirements}
+The current version of Systems Biology Simulation Core Library is available on
+the project homepage. Either the source code or a jar file with binaries can be
+downloaded.
+
+Project name: Simulation Core Library
+
+Project homepage: \url{http://sourceforge.net/projects/simulation-core/}
+
+Operating Systems: Systems Biology Simulation Core Library was successfully 
+tested under Linux (Ubuntu version 10.4), Mac OS X (versions 10.6.8 and 10.8.2),
+and Windows~7.
+
+Programming Language: Java\texttrademark{}
+
+Other Requirements: Java Runtime Environment 1.6 or above
+
+License: LGPL version~3
+
+\bigskip
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Author's contributions}
+RK and AlD contributed equally, implemented the majority of the source code, and
+declare shared first authorship.
+AnD drafted the first version of the manuscript, initialized and coordinated the
+project, and supervised the work together with AZ.
+MJZ and HP designed and implemented the abstraction scheme between solvers and
+ODE systems.
+NR and NLN designed, implemented, and coordinated the data structures for a
+smooth integration of JSBML.
+RA implemented support for SED-ML.
+AT and AF incorporated the Simulation Core Library into CellDesigner.
+All authors contributed to the implementation, read and approved the final
+manuscript.
+    
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Acknowledgements}
+  \ifthenelse{\boolean{publ}}{\small}{}
+The authors are grateful to B.~Kotcon, S.~Mesuro, D.~Rozenfeld, A.~Yodpinyanee,
+A.~Perez, E.~Doi, R.~Mehlinger, S.~Ehrlich, M.~Hunt, G.~Tucker, P.~Scherpelz,
+A.~Becker, E.~Harley, and C.~Moore, Harvey Mudd College, USA, for providing a
+Java implementation of Rosenbrock's method, and to Michael T.~Cooling,
+University of Auckland, New Zealand, for fruitful discussion. The authors thank
+D.~M.~Wouamba, P.~Stevens, M.~Zwie\ss{}ele, M.~Kronfeld, and A.~Schr''oder for
+source code contribution and fruitful discussion.
+
+This work was funded by the Federal Ministry of Education and Research (BMBF,
+Germany) in the project Virtual Liver (grant number 0315756).
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                  The Bibliography                       %%
+%%                                                         %%              
+%%  Bmc_article.bst  will be used to                       %%
+%%  create a .BBL file for submission, which includes      %%
+%%  XML structured for BMC.                                %%
+%%  After submission of the .TEX file,                     %%
+%%  you will be prompted to submit your .BBL file.         %%
+%%                                                         %%
+%%                                                         %%
+%%  Note that the displayed Bibliography will not          %% 
+%%  necessarily be rendered by Latex exactly as specified  %%
+%%  in the online Instructions for Authors.                %% 
+%%                                                         %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+{\ifthenelse{\boolean{publ}}{\footnotesize}{\small}
+ \bibliographystyle{bmc_article}  % Style BST file
+  \bibliography{bmc_article} }     % Bibliography file (usually '*.bib' ) 
+
+%%%%%%%%%%%
+
+\ifthenelse{\boolean{publ}}{\end{multicols}}{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                               %%
+%% Figures                       %%
+%%                               %%
+%% NB: this is for captions and  %%
+%% Titles. All graphics must be  %%
+%% submitted separately and NOT  %%
+%% included in the Tex document  %%
+%%                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%
+%% Do not use \listoffigures as most will included as separate files
+
+\section*{Figures}
+
+\subsection*{Figure 1 - Example for the creation of an abstract syntax graph of a small model}
+The model consists of the following reactions:
+\begin{center}
+\parbox[c]{.35\textwidth}{\begin{align*}
+R_{1}&:& F1,6BP &\rightleftharpoons DHAP + GA3P\\
+R_{2}&:& DHAP   &\rightleftharpoons GA3P
+\end{align*}}
+\end{center}
+The two reactions are part of the glycolysis, the contained molecules are fructose 1,6-bisphosphate (F1,6BP),
+dihydroxyacetone phosphate (DHAP) and glyceraldehyde 3-phosphate (GA3P).
+Using the program SBMLsqueezer \cite{Draeger2008} the following mass action kinetics have been created:
+\begin{align*}
+\nu_{R_{1}} &= k_{+1} \cdot [F16BP] - k_{-1} \cdot[DHAP] \cdot [GA3P]\\
+\nu_{R_{2}} &= k_{+2} \cdot [DHAP]  - k_{-2} \cdot[GA3P]
+\end{align*}
+The nodes for [DHAP] and [GA3P] are only contained in the syntax graph once and connected to more than one multiplication node.
+This figure clearly indicates that the syntax graph is not a tree.
+
+\subsection*{Figure 2 - Algorithm for transforming algebraic rules to assignment rules}
+The first step is to decide whether the model is overdetermined by creating a matching of the variables.
+If this is not the case, every algebraic rule is solved to the matched variable,
+which provides the basis for the creation of an equivalent assignment rule.
+
+\subsection*{Figure 3 - Processing of events: simpflified algorithm (handling of delayed events omitted)}
+Let $E$ be the set of all events in a model, and $I_E$ be the set of events, whose trigger
+conditions have already been evaluated to \true{} in the previous time step. We refer to elements within
+$I_E$ as \emph{inactive} events. We define the set $A_E$ as the subset of $E$ containing those events,
+whose trigger condition switches from \false{} to \true{} in the current point $t$ in time. At the beginning
+of the event handling, $A_E$ is empty. We call an event \emph{persistent} if it can only be removed from
+$A_E$ under the condition that all of its assignments have been evaluated. This means that a
+\emph{non-persistent} event can be removed from $A_E$ in case that its trigger condition becomes \false{}
+during the evaluation of other events. Here, the function $\mathrm{trig}(e)$ returns 0 or 1 depending 
+on whether or not the trigger condition of the event $e$ is satisfied. Similarly, the function
+$\mathrm{persist}(e)$ returns 0 if event $e$ is not persistent, or 1 otherwise.
+In each iteration the trigger conditions of those active events $a_e \in A_E$ that are not persistent are checked.
+If the trigger condition of such an event has changed from \true{} (1) to \false{} (0), it is removed from $A_E$.
+The next step comprises the evaluation of the triggers of all events.
+If its trigger changes from \false{} to \true{}, an event is added to the set of active events $A_E$.
+An event with its trigger changed from \true{} to \false{} is removed from the list of inactive events.
+After the procession of all triggers the event $e$ with the highest priority in the set of active events is chosen for execution by the function $\mathrm{choose}(A_E)$ .
+Note that priorities are not always defined, or multiple events may have an identical priority. The function $\mathrm{choose}(A_E)$ is therefore more complex than can be shown in this figure.
+This event is then processed, i.e., all of its assignments are evaluated, and afterwards the triggers of all events in $E$ have to be evaluated again, because of possible mutual influences between the events.
+The algorithm proceeds until the list of acitve events is empty.
+
+\subsection*{Figure 4 - Calculation of the derivatives at a specific point in time}
+First, the vector for saving the derivatives of all quantities $\dot{\vec{Q}}$ is set to the null vector $\vec{0}$.
+Then the rate rules of the model are processed by solving the function $\vec{g}(\vec{Q}, t)$, which can change $\dot{\vec{Q}}$ in some dimensions.
+After that for every reaction $R_i$ its velocity $\nu_i$ is computed.
+The derivatives of each species (with index $s$) participating in the currently processed reaction $R_i$ are updated
+in each step adding the product of the stoichiometry $n_{is}$ and the reaction's velocity $\nu_i$.
+
+\subsection*{Figure 5 - Integrated calculation of new values for a time step including event processing}
+For a certain time interval the Rosenbrock solver always tries to increase time $t$ by the current adaptive
+step size $s$ and calculates a new vector of quantities $\vec{Q}_{\mathrm{res}}$.
+After a successful step the events and rules of the model are processed.
+If this causes a change in $\vec{Q}$, $h$ is first decreased and then the Rosenbrock solver calculates another vector $\vec{Q}_{t}$ using this adapted step size.
+The precision of the event processing is therefore determined by the minimum step size $h_{\min}$.
+The $\mathrm{adapt}$ function is defined by Rosenbrock's method \TODO{cite}.
+
+\subsection*{Figure 6 - Architecture of the Systems Biology Simulation Core Library (simplified)}
+Numerical methods are strictly separated from differential equation systems. The
+upper part displays the unified type hierarchy of all currently included numerical integration
+methods. The middle part shows the interfaces defining several
+special types of the differential equations to be solved by the numerical
+methods.
+The class \SBMLinterpreter{} (bottom part) implements all of these interfaces
+with respect to the information content of a given SBML model. Similarly, an
+implementation of further data formats can be included into the
+library.
+
+\subsection*{Figure 7 - Simulation of glycolytic oscillations}
+This figure displays the results of a simulation computed with the Systems Biology Simulation Core Library based on model 206 from BioModels database \cite{Novere2006a, Wolf2000}.
+Shown are the changes of the concentration (a) of the most characteristic intracellular metabolites 3-phosphogylcerate, ATP, glucose, glyceraldhyde 3-phosphate, and NAD$^+$ within yeast cells.
+Figure 7b displays a selection of the dynamcis of relevant fluxes 
+(\textsc{D}-glucose 6-phosphotransferase, glycerone-phosphate-forming, phosphoglycerate kinase, pyruvate 2-O-phosphotransferase, acetaldehyde forming, ATP biosynthetic process)
+that were computed as intermediate results by the algorithm.
+The computation was performed using the Adams-Moulton solver \cite{Hairer2000} (KiSAO term 280) with 200 integration steps, $10^{-10}$ as absolute error tolerance and $10^{-5}$ as relative error tolerance.
+Due to the importance of feedback regulation the selection of an appropriate numerical solver is of crucial importance for this model.
+Methods without step-size adaptation, such as the fourth order Runge-Kutta algorithm, might only be able to find a high quality solution with an appropriate number of integration steps. 
+The simulation results obtained by using the algorithm described in this work reproduces the results provided by BioModels database. 
+
+\subsection*{Figure 8 - Simulation of the Calvin-Benson cycle}
+Another example of the capabilities of the Simulation Core Library has been obtained by solving model 390 from BioModels database \cite{Novere2006a, Arnold2011}.
+This model was simulated using Euler's method (KiSAO term 30) with 200 integration steps for the time interval $[0, 35]$ seconds.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                               %%
+%% Tables                        %%
+%%                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Use of \listoftables is discouraged.
+%%
+\section*{Tables}
+
+\subsection*{Table 1 - Other simulators for SBML models: SBML language support}
+The table shows which SBML elements (fast reactions, algebraic rules, events) 
+are supported by other SBML-capable simulation software and whether all models
+of the SBML Test Suite can be correctly solved.
+COPASI supports events in SBML, but not all of the current constructs.
+The library LibSBMLSim can correctly solve the SBML Test Suite, but is limited
+to SBML Level~3 Version~1 and Level~2 Version~4.
+In the test suite column, a dash means that
+\TODO{not the full test suite can be solved, because not all SBML elements are supported.}
+
+%\par \mbox{}
+\begin{landscape}
+\rowcolors{3}{white}{lightblue}
+\begin{tabular}{p{2cm}lccccC{1cm}C{1.2cm}p{2.5cm}p{.5cm}lp{3.3cm}p{1.65cm}}
+\toprule
+Program &
+Version &
+\multicolumn{3}{C{2.5cm}}{Difficult SBML elements} & 
+  & \multirow{2}{1.5cm}{
+    \begin{sideways}Fully SBML Test\end{sideways}
+    \begin{sideways}Suite compliant\end{sideways}
+    }
+  & SED-ML 
+  & \multirow{2}{2.5cm}{Programming language}
+  & GUI
+  & API access
+  & Platform
+  & Comments \\
+\cline{3-5}
+  & & 
+\multicolumn{1}{C{.68cm}}{
+  \begin{sideways}Fast\end{sideways}
+  \begin{sideways}reactions\end{sideways}
+ }  & 
+\multicolumn{1}{C{.68cm}}{
+  \begin{sideways}Algebraic \; \end{sideways}
+  \begin{sideways}rules\end{sideways}
+} & 
+\multicolumn{1}{C{.68cm}}{
+  \begin{sideways}Events\end{sideways}
+} \\ 
+\midrule
+BioUML          & 0.9.3 & \yes & \yes & \yes    & & \yes      & In $\upalpha$ version & Java                                 & \yes & JavaScript & independent                         &                              \\
+COPASI          & 4.8   & \no  & \no  & (\yes)  & & \no       & \no                   & C++ (plus multiple bindings)         & \yes & \yes       & Windows, Linux, Mac OS X, Solaris   &                              \\
+iBioSim         & 2.0   & \yes & \yes & \yes    & & \yes      & \no                   & Java                                 & \yes & \no        & Fedora 15, Windows, Mac OS $>$ 10.6 &                              \\
+JSim            & 2.07  & \no  & \yes & \no     & & \no       & \no                   & Java                                 & \yes & \yes       & Windows, Linux, Mac OS X            &                              \\
+LibSBMLSim      & 1.0   & \yes & \yes & \yes    & & L3, L2V4  & \no                   & C                                    & \no  & \yes       & Windows, Linux, Free BSD, Mac OS X  &                              \\
+VCell           & 5.0   & \yes & \no  & \yes    & & \no       & \no                   & Java frontend, C/C++ server backend  & \yes & \no        & independent                         & Internet connection required \\
+Simulation Core & 1.0   & \yes & \yes & \yes    & & \yes      & \yes                  & Java                                 & \no  & \yes       & independent                         &                              \\
+\bottomrule
+\end{tabular}
+\rowcolors{1}{white}{white}
+\end{landscape}
+
+ %Name & URL & Publication& Fast Reactions & Algebraic Rules& Events & Model 966	 & Model 988	& Model 1083 & Model 1000 &Programming language	&API access & License & Native data format & Version & Release & Platform & Comments & SED-ML support\\\hline
+%BioUML & http://www.biouml.org/ & \cite{Kolpakov2011}, \cite{Kolpakov2006} & & & & \no & &&&&Java & & open source &DML & 0.9.3 & Nov 03 2011 & Platform independent (Java) & Integrators: JVODE, DormandPrince, Radau5, Euler, Imex & Only in alpha version\\\hline
+%Cain	1			http://cain.sourceforge.net/									C++ with GUI in wxPython				1.10.0	Sep 27 2011	source code distribution		\no
+%CompuCell3D	1			http://www.compucell3d.org/									C++ with Python wrapper	\yes		CC3DML	3.6.2		Windows, Linux, Mac OS X > 10.5.8	Could not open SBML file via GUI	\no
+%COPASI & http://copasi.org/ & \cite{Hoops2006} & \no & \no & Not every feature supported & Simultaneous events not supported & Fast reactions not supported & Algebraic rules not supported	 & The model uses species reference ids in mathematical expressions. The 5model can currently not be imported by COPASI.&	C++ with multiple language bindings & \yes &Artistic License & CopasiML & 4.8.0	Dec 20 2011	& Windows, Linux, Mac OS X, Solaris & Deterministic integrator: LSODA	& \no\\\hline
+%GNU MCSim	1			http://www.gnu.org/software/mcsim/									C	\yes	GPL		5.4.0	Jan 29 2011	source code distribution		\no
+%iBioSim & http://www.async.ece.utah.edu/iBioSim/ & \cite{Myers2009} &	& & &\no: could not allocate unit def (null) & \yes &  & \yes & Java & ? & ? & iBioSimModel & 2.0.0 & Aug 26 2011 & Fedora 15, Windows, Mac OS > 10.6 & Simulators: Embedded Runge-Kutta-Fehlberg (4,5) method; Embedded Runge-Kutta Prince-Dormand (8,9) method; Implicit 4th order Runge-Kutta at Gaussian points; Gear method m=2; Gear method m=1; Euler method & \no\\\hline
+%insilicoIDE	1			http://www.physiome.jp/									C++, Qt			insilicoML	1.4.4	Nov 18 2011	Windows, Linux, FreeBSD, MacOS > 10.5	Import of SBML models hidden under menu entry "Item", no import possible because no reaction upon clicking on import SBML. Two integration methods available: Euler and Runge-Kutta	No
+%JSim & http://www.physiome.org/jsim/ &  \cite{Beard2012a} & \yes & & &	& & &	Wrong & Java & & open source & MML (Mathematical Modeling Language) & 2.07.0 & Jun 12 2012 & Windows, Linux, Mac OS X && \no\\\hline
+%JWS Online & http://jjj.biochem.sun.ac.za/index.html & \cite{Olivier2004} & & & & & & & & Java & & & JWS Online Format (*.dat) & & Online program & Supports only SBML Level 1 and Level 2. Models must be uploaded and can only be simulated online; \no stand-alone version & \no \\\hline
+%MOOSE	1			http://moose.ncbs.res.in/									Python		LGPL			Jan 20 2012	Linux, Windows		
+%NetBuilder	1			http://strc.herts.ac.uk/bio/maria/Apostrophe/									Python	\yes	LGPL	SBML	0.5.0	Sep 03 2011	Windows		
+%PySCeS	1			http://pysces.sourceforge.net/	Olivier2005								Python		GPL				Windows, Linux	Requires Fortran	
+%SOSlib	1			http://www.tbi.univie.ac.at/~raim/odeSolver/	Machne2006								C	\yes	LGPL	SBML	1.6.0	Dec 17 2005	source code distribution		\no
+%SYCAMORE	1			http://sycamore.eml.org/	Weidemann2008											SBML			Online program	Internally uses COPASI for simulation	\no
+%LibSBMLSim &http://fun.bio.keio.ac.jp/software/libsbmlsim/& \cite{Moraru2008}, \cite{ Loew2001} & \yes & & &Error adding features & Cannot generate math & & \no rate rules supported & Java frontend C/C++ server backend & \no & open source & VCML	& 5.0.0 & Nov 11 2011 & Platform independent (Java) & Requires internet connection & 
+
+%VCell & http://www.vcell.org/ & \cite{Moraru2008}, \cite{ Loew2001} & \yes & & &Error adding features & Cannot generate math & & No rate rules supported & Java frontend C/C++ server backend & \no & open source & VCML	& 5.0.0 & Nov 11 2011 & Platform independent (Java) & Requires internet connection & \no\\\hline
+%XPPAUT	1			http://www.math.pitt.edu/~bard/xpp/xpp.html	Ermentrout2012		
+\subsection*{Table 2 - Simulation of the models from the SBML Test Suite (version 2.0.2) using Rosenbrock solver}
+The table shows for all SBML levels and versions the number of tested models and the total running times of the tests.
+An Intel\textsuperscript{\textregistered} Core\texttrademark{} i5 CPU with 3.33\,GHz  and 4\,GB RAM was used with
+Windows\textsuperscript{\textregistered}~7 (Version 6.1.7600) as operating system.\par \mbox{}
+\par
+    \mbox{
+\rowcolors{2}{white}{lightblue}
+\begin{tabular}{rrrrr}
+\toprule
+\multicolumn{1}{c}{Level} & \multicolumn{1}{c}{Version} &
+\multicolumn{1}{c}{Models} & \multicolumn{1}{c}{Correct simulations} &
+\multicolumn{1}{c}{Total running time (in s)}\\
+\midrule
+1 & 2 &   252 &   252 &  1.1\\
+2 & 1 &   885 &   885 &  3.6\\
+2 & 2 & 1,039 & 1,039 &  3.3\\
+2 & 3 & 1,039 & 1,039 &  3.2\\
+2 & 4 & 1,041 & 1,041 &  3.2\\
+3 & 1 & 1,075 & 1,075 & 34.3\\
+\bottomrule
+\end{tabular}
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                               %%
+%% Additional Files              %%
+%%                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{bmcformat}
+\end{document}

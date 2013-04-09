@@ -1,0 +1,43 @@
+\documentclass{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage{tikz}
+\usepackage[papersize={12cm,16cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
+\usetikzlibrary{shapes,arrows}
+\begin{document}
+\pagestyle{empty}
+
+
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, fill=blue!20, 
+    text width=5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=14em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
+    minimum height=2em]
+    
+\begin{figure}
+\begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+    \node [cloud] (start) {Start};
+    \node [block, below of=start] (rateRules) {Compute all assignment rules:\\$\dot{\vec{Q}} := \vec{g}(\vec{Q}, t)$};
+    \node [block, below of=rateRules] (initLoop) {$j := 1$};
+    \node [block,below of=initLoop] (reaction) {Compute flux $J_j$ through $R_j$:\\$J_j := \nu_j(\vec{Q}, t, \mathbf{N}, \mathbf{W}, \vec{p})$};
+    \node [block,below of=reaction] (updateX) {for each species $i$ in $R_j$:\\$\dot{Q}_i := \dot{Q_i} + n_{ij} \cdot J_j$};
+    \node [block, below of=updateX] (increase) {$j := j + 1$};
+    \node [decision, right of=increase, node distance=8cm] (endOfLoop) {$j > |R|$};
+    \node [cloud, below of=increase, node distance=5cm] (stop) {Stop};
+    % Draw edges
+    \path [line] (start) -- (rateRules);
+    \path [line] (rateRules) -- (initLoop);
+    \path [line] (initLoop) -- (reaction);
+    \path [line] (reaction) -- (updateX);
+    \path [line] (updateX) -- (increase);
+    \path [line] (increase) -- (endOfLoop);
+    \path [line] (endOfLoop) |- node{Yes} (stop);
+    \path [line] (endOfLoop) |- node{No} (reaction);
+\end{tikzpicture}
+\end{figure}
+
+\end{document}

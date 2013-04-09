@@ -1,0 +1,61 @@
+\documentclass{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage{tikz}
+\usepackage[papersize={12.3cm,23.5cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
+\usetikzlibrary{shapes,arrows}
+\begin{document}
+\pagestyle{empty}
+
+
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, fill=blue!20, 
+    text width=4.5em, text badly centered, node distance=2cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=8em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
+    minimum height=2em]
+\tikzstyle{io} = [trapezium,trapezium left angle=70,trapezium right angle=-70,minimum height=0.6cm, draw, fill=blue!20, 
+text width=8em, text badly centered, node distance=3cm, inner sep=0pt,minimum height=2em]
+
+\begin{figure}
+\begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+	\node [cloud] (start) {Start};
+	\node [block, below of=start] (graph) {Create bipartite graph and greedy matching};
+	\node [block, below of=graph] (findpaths) {Find augmenting paths};
+	\node [decision, below of=findpaths, node distance=3cm] (matching?) {At least one path available?};
+	\node [block, left of=matching?, node distance=4.5cm] (augment) {Augment matching};
+	\node [decision, below of=matching?, node distance=3.5cm] (overdetermined?) {Model overdetermined?};
+	\node [block, below of=overdetermined?, node distance=3cm] (i0) {$i := 0$};
+	\node [block, right of=overdetermined?, node distance=4.5cm] (exception) {Throw exception};
+	\node [block, below of=i0, node distance=2.5cm] (solve) {Solve $i$\textsuperscript{th} algebraic rule according to matching};
+	\node [block, left of=solve, node distance=4.5cm] (i++) {$i := i + 1$};
+	\node [io, below of=solve, node distance=2cm] (newassignment) {New assignment rule};
+
+	\node [decision, below of=newassignment, node distance=2cm] (rulesleft?) {More algebraic rules?};
+	\node [cloud, below of=rulesleft?, node distance=2.5cm] (stop) {Stop};
+
+
+	\path [line] (start) -- (graph);
+	\path [line] (graph) -- (findpaths);
+	\path [line] (findpaths) -- (matching?);
+	\path [line] (matching?) -- node {Yes}(augment);		
+	\path [line] (augment) |- (findpaths);
+	\path [line] (matching?) -- node {No} (overdetermined?);
+	\path [line] (overdetermined?) -- node {No} (i0);
+	\path [line] (overdetermined?) -- node {Yes}(exception);
+	\path [line] (i0) -- (solve);
+	\path [line] (i++) -- (solve);
+	\path [line] (solve) -- (newassignment);
+
+	\path [line] (newassignment) -- (rulesleft?);
+	\path [line] (rulesleft?) -| node {No} (i++);
+	\path [line] (rulesleft?) -- node {Yes} (stop);
+	\path [line] (exception) |- (stop);
+
+\end{tikzpicture}
+\end{figure}
+
+\end{document}

@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The java based ANT tool is available from         -->
+<!-- http://jakarta.apache.org/ant                     -->
+           	
+<project name="Simulation Core Library" default="zip" basedir=".">
+
+  <description>
+	This buildfile is used to build various versions for distributing 
+	the Systems Biology Simulation Core Library and to ease the creation
+	of its distribution.
+  </description>
+	
+  <target
+  	name="help"
+  	description="Displays a help text explaining the usage of this ant file and its options.">
+  	
+    <echo>
+      This is an ANT build script to build a stand-alone JAR for
+	  Simulation Core Library.
+    </echo>
+  </target>
+
+  <target 
+  	name="init"
+  	description="Defines some general properties that are used throughout the tasks">
+  	
+  	<echo>
+  	  PLEASE MAKE SURE ALL PATHS ARE CORRECT AND DECIDE IF YOU WANT
+  	  TO USE THE LIB-JARs OR REFERENCED PROJECTS.
+  	</echo>
+  	<tstamp /> <!-- set ${TODAY} and ${TSTAMP} -->
+  	
+    <!-- the path to the Simulation Core Library sources -->
+  	<property name="src" location="${basedir}/src"/>
+  	
+  	<!-- the path to the test source folder -->
+  	<property name="test" location="${basedir}/test"/>
+  	
+  	<!-- the path to the resources (also a source folder) -->
+  	<property name="resources" location="${basedir}/resources"/>
+  	
+  	<!-- the path to the Simulation Core Library sources -->
+  	<property name="doc" location="${basedir}/doc/api"/>
+  	
+    <!-- the path to the Simulation Core Library binaries -->
+    <property name="classes" location="${basedir}/bin"/>
+    
+    <!-- the path to the Simulation Core Library libraries -->
+  	<property name="lib" location="${basedir}/lib"/>
+  	
+  	<!-- Library folder for non-core stuff (e.g., SED-ML export support) -->
+  	<property name="ext-lib" location="${lib}/ext-lib"/>
+  	
+  	<property name="dist" location="${basedir}/dist"/>
+  	
+  	<property name="Name" value="Systems Biology Simulation Core Library"/>
+  	
+  	<property name="JAR_Name" value="SimulationCoreLibrary"/>
+  	
+  	<property name="appJar" value="${dist}/${JAR_Name}"/>
+  	
+  	<property name="version" value="1.2"/>
+  	
+  	<!-- URL where the most recent version can be obtained -->
+  	<property name="URL" value="https://sourceforge.net/projects/simulation-core/"/>
+
+  </target>
+
+
+  <target
+  	name="jar_incl-libs"
+  	depends="init"
+  	description="Creates a JAR file including all class files and all third-party libraries, but no source files.">
+  	
+    <delete file="${appJar}_v${version}_incl-libs.jar"/>
+    <jar jarfile="${appJar}_v${version}_incl-libs.jar">
+      <manifest>
+        <attribute name="Main-Class" value="org.simulator.About"/>
+        <attribute name="Built-By" value="${user.name}"/>
+      	<section name="${Name}">
+      	  <attribute name="Specification-Title" value="${Name}"/>
+      	  <attribute name="Specification-Version" value="${version}"/>
+      	  <attribute name="Implementation-Title" value="${Name}"/>
+      	  <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
+      	</section>
+      </manifest>
+    	
+      <!-- Simulation Core Library Classes -->
+      <fileset dir="${classes}">
+    	<exclude name="**/package.html"/>
+      </fileset>
+      <fileset dir="${basedir}">
+        <include name="LICENSE.txt"/>
+        <include name="README.txt"/>
+      </fileset>
+      <fileset dir="${basedir}/licenses">
+        <include name="AUTHORS.txt"/>
+      </fileset>
+      
+      <!-- These libraries are required by most classes -->
+      <zipfileset excludes="META-INF/*" src="${lib}/commons-math-2.2.jar"/>
+      <zipfileset excludes="META-INF/*" src="${lib}/jsbml-1.0-incl-libs.jar"/>
+      
+      <!-- These are needed for SED-ML support -->
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/commons-io-1.4.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jaxen-1.1.1.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jdom-contrib.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jdom.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jlibsedml.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jmathml.jar"/>
+      <zipfileset excludes="META-INF/*,org/jaxen/**,org/w3c/**" src="${ext-lib}/xom-1.2.1.jar"/>  
+      <!-- End of SEDML support libs -->
+    </jar>
+  	
+  </target>
+	
+  <target
+  	name="zip"
+  	depends="javadoc,jar_incl-libs,jar_slim,jar_incl-libs_and_src"
+  	description="Creates a ZIP file containing all sources, tests, resources, libs, licenses, text files, three different versions of JAR files, and api documentation.">
+	
+  	<delete file="${appJar}_v${version}.zip"/>
+  	<!-- TODO: include publications as soon as accepted -->
+  	<zip destfile="${appJar}_v${version}.zip">
+  	  <zipfileset dir="${src}"              prefix="src"       excludes="*svn*" includes="**/*.java,**/*.html"/>
+  	  <zipfileset dir="${test}"             prefix="test"      excludes="*svn*" includes="**/*.java"/>
+  	  <zipfileset dir="${resources}"        prefix="resources" excludes="*svn*" includes="**/*.java,**/*.png"/>
+  	  <zipfileset dir="${lib}"              prefix="lib"       excludes="*svn*" includes="**/*.jar"/>
+  	  <zipfileset dir="${basedir}/licenses" prefix="licenses"  excludes="*svn*"/>
+  	  <zipfileset dir="${basedir}" excludes="*svn*,${basedir}/files" includes="*.xml *.txt"/>
+  	  <zipfileset dir="${doc}/version_${version}" prefix="doc/api/version_${version}" excludes="*svn*,${doc}/publications,${doc}/posters"/>
+  	  <zipfileset dir="${dist}" prefix="dist/" includes="${JAR_Name}_v${version}_incl-libs.jar"/>
+  	  <zipfileset dir="${dist}" prefix="dist/" includes="${JAR_Name}_v${version}_incl-libs_src.jar"/>
+      <zipfileset dir="${dist}" prefix="dist/" includes="${JAR_Name}_v${version}_slim.jar"/>
+  	</zip>
+  	
+  </target>
+	
+  <target
+    name="jar_incl-libs_and_src"
+    depends="init"
+    description="Creates a JAR file including all class files and all third-party libraries, all package descriptions, and also all source files.">
+
+    <delete file="${appJar}_v${version}_incl-libs_src.jar"/>
+    <jar jarfile="${appJar}_v${version}_incl-libs_src.jar">
+      <manifest>
+        <attribute name="Main-Class" value="org.simulator.About"/>
+        <attribute name="Built-By" value="${user.name}"/>
+      	<section name="${Name}">
+      	  <attribute name="Specification-Title" value="${Name}"/>
+      	  <attribute name="Specification-Version" value="${version}"/>
+      	  <attribute name="Implementation-Title" value="${Name}"/>
+      	  <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
+      	</section>
+        <!--
+        <section name="common/class1.class">
+          <attribute name="Sealed" value="false"/>
+        </section>
+        -->
+      </manifest>
+
+      <!-- Simulation Core Library Classes -->
+      <fileset dir="${classes}" casesensitive="yes">
+      	<include name="**/*.class"/>
+        <include name="**/package.html"/>
+      	<include name="**/*.java"/>
+      	<include name="**/*.png"/>
+      </fileset>
+      <fileset dir="${src}" casesensitive="yes">
+        <patternset id="sources">
+          <include name="**/*.java"/>
+        </patternset>
+      </fileset>
+      <fileset dir="${basedir}">
+        <include name="LICENSE.txt"/>
+    	<include name="README.txt"/>
+      </fileset>
+      <fileset dir="${basedir}/licenses">
+        <include name="AUTHORS.txt"/>
+      </fileset>
+    	
+      <!-- These libraries are required by most classes -->
+      <zipfileset excludes="META-INF/*" src="${lib}/commons-math-2.2.jar"/>
+      <zipfileset excludes="META-INF/*" src="${lib}/jsbml-1.0-incl-libs.jar"/>
+
+      <!-- These are needed for SED-ML support -->
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/commons-io-1.4.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jaxen-1.1.1.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jdom-contrib.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jdom.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jlibsedml.jar"/>
+      <zipfileset excludes="META-INF/*" src="${ext-lib}/jmathml.jar"/>
+      <zipfileset excludes="META-INF/*,org/jaxen/**,org/w3c/**" src="${ext-lib}/xom-1.2.1.jar"/>  
+      <!-- End of SEDML support libs -->
+    </jar>
+
+  </target>
+
+
+  <target
+  	name="jar_slim"
+  	depends="init"
+  	description="Bundels only the class files in one JAR library, without any other libraries.">
+  	
+    <delete file="${appJar}_v${version}_slim.jar"/>
+      <jar jarfile="${appJar}_v${version}_slim.jar">
+      	<manifest>
+      	  <attribute name="Main-Class" value="org.simulator.About"/>
+            <attribute name="Built-By" value="${user.name}"/>
+          	<section name="${Name}">
+          	  <attribute name="Specification-Title" value="${Name}"/>
+          	  <attribute name="Specification-Version" value="${version}"/>
+          	  <attribute name="Implementation-Title" value="${Name}"/>
+          	  <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
+          	</section>
+      	</manifest>
+	    	
+      	<!-- Simulation Core Library Classes -->
+        <fileset dir="${classes}">
+          <exclude name="**/package.html"/>
+        </fileset>
+      	<fileset dir="${basedir}">
+      	  <include name="LICENSE.txt"/>
+      	  <include name="README.txt"/>
+      	</fileset>
+      	<fileset dir="${basedir}/licenses">
+          <include name="AUTHORS.txt"/>
+      	</fileset>
+        <!-- Do not include any third-party libraries -->
+    </jar>
+
+  </target>
+
+  <target 
+  	name="clean"
+  	depends="init"
+  	description="Removes all that has been built">
+    
+  	<delete file="${appJar}"/>
+    <delete includeemptydirs="true" dir="${classes}"/>
+  </target>
+
+  <target
+	name="uml"
+  	depends="init"
+  	description="Generates a UML representation of the content of the project in form of a graphviz (*.dot) file that will be stored in doc/uml/graph.dot.">
+
+  	<property name="uml.dir" value="${basedir}/doc/uml"/>
+  	<mkdir dir="${uml.dir}"/>
+    <path id="uml.source.path">
+      <pathelement path="${uml.dir}/"/>
+      <pathelement path="${src}"/>
+    </path>
+  	<path id="class.path">
+      <fileset dir="${lib}/">
+        <include name="*.jar"/>
+      </fileset>
+    </path>
+  	<!-- sourcefiles="${src}/org/simulator/math/odes/DESSolver.java,${src}/org/simulator/math/odes/AbstractDESSolver.java,${src}/org/simulator/math/odes/RungeKutta_EventSolver.java,${src}/org/simulator/math/odes/MultiTable.java,${src}/org/simulator/math/odes/EulerMethod.java,${src}/org/simulator/math/odes/AdaptiveStepsizeIntegrator.java,${src}/org/simulator/math/odes/RosenbrockSolver.java,${src}/org/simulator/math/odes/FirstOrderSolver.java,${src}/org/simulator/math/odes/DormandPrince853Solver.java,${src}/org/simulator/math/odes/DormandPrince54Solver.java,${src}/org/simulator/math/odes/AdamsMoultonSolver.java,${src}/org/simulator/math/odes/AdamsBashforthSolver.java,${src}/org/simulator/math/odes/HighamHall54Solver.java,${src}/org/simulator/math/odes/DelayValueHolder.java,${src}/org/simulator/sbml/SBMLinterpreter.java" -->
+	<javadoc  
+		package="true"
+		sourcepath="src:resources"
+		additionalparam="-d ${uml.dir}"
+		packagenames="org.simulator.math.odes,org.simulator.sbml.*,org.simulator.sedml">
+		<!-- classpath="${lib}/*.jar" -->
+		<!-- sourcepathref="uml.source.path" -->
+		<!-- destdir="${uml.dir}" -->
+	  <classpath>
+	  	<fileset dir="${lib}/">
+	  	  <include name="*.jar"/>
+	  	</fileset>
+	  </classpath>
+	  <doclet name="org.umlgraph.doclet.UmlGraph" path="${lib}/UMLGraph.jar">
+	    <!--<param name="-inferrel"/>-->
+	    <param name="-inferdep"/>
+	    <param name="-hide" value="java.*"/>
+	  	<param name="-hide" value="AbstractDESSolver"/>
+	  	<param name="-hide" value="MultiTable"/>
+	  	<param name="-hide" value="Column"/>
+	  	<param name="-hide" value="DESSolver"/>
+	  	<param name="-hide" value="EulerMethod"/>
+	  	<param name="-hide" value="RungeKutta_EventSolver"/>
+	  	<param name="-hide" value="AbstractIntegrator"/>
+	  	<param name="-hide" value="AdamsBashforthSolver"/>
+	  	<param name="-hide" value="AdamsMoultonSolver"/>
+	  	<param name="-hide" value="DormandPrince54Solver"/>
+	  	<param name="-hide" value="DormandPrince853Solver"/>
+	  	<param name="-hide" value="GraggBulirschStoerSolver"/>
+	  	<param name="-hide" value="HighamHall54Solver"/>
+	  	<param name="-hide" value="RosenbrockSolver"/>
+	  	<param name="-hide" value="AdaptiveStepsizeIntegrator"/>
+	  	<param name="-hide" value="FirstOrderSolver"/>
+	  	<param name="-hide" value="Variable"/>
+	  	<param name="-hide" value="MathContainer"/>
+	  	<param name="-hide" value="Rule"/>
+	  	<param name="-hide" value="AssignmentRule"/>
+		<param name="-hide" value="Model"/>
+	  	<param name="-hide" value="Species"/>
+	  	<param name="-hide" value="Reaction"/>
+	  	<param name="-hide" value="Symbol"/>
+	  	<param name="-hide" value="LocalParameter"/>
+	  	<param name="-hide" value="TreeNodeChangeListener"/>
+	  	<param name="-hide" value="CallableSBase"/>
+	  	<param name="-hide" value="Compartment"/>
+	  	<param name="-hide" value="FunctionDefinition"/>
+	  	<param name="-hide" value="EfficientASTNodeInterpreter"/>
+	  	<param name="-hide" value="SpecialASTNodeValue"/>
+	  	<param name="-hide" value="ASTNodeCompiler"/>
+	  	<!--<param name="-hide" value="ASTNode"/>-->
+	    <param name="-collpackages" value="java.util.*"/>
+	  	<param name="-collpackages" value="java.lang.*"/>
+	    <param name="-qualify"/>
+	    <param name="-postfixpackage"/>
+	    <param name="-nodefontsize" value="9"/>
+	    <param name="-nodefontpackagesize" value="7"/>
+	    <param name="-link" value="http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/doclet/spec"/>
+	    <param name="-link" value="http://java.sun.com/j2se/1.5/docs/api"/>
+	  </doclet>
+	</javadoc>
+  </target>
+	
+  <target
+  	name="uml_as_pdf"
+  	depends="uml"
+  	description="Generates a UML representation of the content of the project as a PDF file that will be stored in doc/uml/graph.pdf.">
+  	
+	<!--<input
+	    message="Please enter the complete path to the dot program:"
+	    addproperty="dot"
+	    defaultvalue="/user/local/bin/dot"
+	/>-->
+  	<property name="dot" value="/usr/local/bin/dot"/>
+  	<apply executable="${dot}" dest="${uml.dir}" parallel="false">
+  	  	  <arg value="-Tpdf"/>
+  	  	  <arg value="-o"/>
+  	  	  <targetfile/>
+  	  	  <srcfile/>
+  	  	  <fileset dir="${uml.dir}" includes="*.dot"/>
+  	  	  <mapper type="glob" from="*.dot" to="*.pdf"/>
+  	</apply>
+  </target>
+
+  <target 
+  	name="javadoc"
+	description="Creates Javadoc for the ${Name}"
+  	depends="init">
+  	
+  	<mkdir dir="${doc}"/>
+  	<mkdir dir="${doc}/version_${version}"/>
+    <javadoc
+  	  sourcepath="${src}:${test}:${resources}"
+      destdir="${doc}/version_${version}"
+      packagenames="org.*"
+      footer="Generated ${TODAY}"
+      access="protected"
+  	  author="true"
+  	  classpath="lib/junit-4.8.jar:lib/ext-lib/jdom.jar:lib/ext-lib/jdom-contrib.jar:lib/commons-math-2.2.jar:lib/ext-lib/jmathml.jar:lib/ext-lib/jaxen-1.1.1.jar:lib/ext-lib/xom-1.2.1.jar:lib/jsbml-1.0-incl-libs.jar:lib/ext-lib/jlibsedml.jar:lib/ext-lib/commons-io-1.4.jar"
+  	  doctitle="${Name} ${version}"
+  	  nodeprecated="false"
+  	  nodeprecatedlist="false"
+  	  noindex="false"
+  	  nonavbar="false"
+  	  notree="false"
+  	  source="1.5"
+  	  splitindex="true"
+  	  use="true"
+      stylesheetfile="${doc}/javadoc-style.css" 
+      overview="${src}/overview.html"
+  	  version="true">
+    	<link href="http://commons.apache.org/io/api-1.4/"/>
+    	<link href="http://commons.apache.org/math/api-2.2/"/>
+    	<link href="http://download.oracle.com/javase/6/docs/api/"/>
+        <link href="http://javasourcecode.org/html/open-source/junit/junit-4.8/"/>
+    	<link href="http://jaxen.codehaus.org/apidocs/"/>
+    	<link href="http://sbml.org/Special/Software/JSBML/latest-stable/build/apidocs/"/>
+    	<link href="http://www.jdom.org/docs/apidocs.1.1/"/>
+    	<link href="http://www.xom.nu/apidocs/"/>
+    </javadoc>
+  </target>
+	
+</project>
