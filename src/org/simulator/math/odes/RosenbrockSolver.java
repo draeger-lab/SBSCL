@@ -160,21 +160,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 	 */
 	private boolean[] ignoreNaN;
 
-	/**
-	 * Precision for event timing
-	 */
-	private static final double precisionTimingEventsAndRules = 1E-7;
-	
-	/**
-	 * Precision for fast reaction timing
-	 */
-	private static final double precisionTimingFastReactions = 1E-3;
-	
-	/**
-	 * Precision for fast reactions
-	 */
-	private static final double precisionFastReactions = 1E-3;
-	
+	private static final double precisionEventsAndRules = 1E-7;
 	
 	/**
 	 * default constructor
@@ -252,7 +238,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 	/* (non-Javadoc)
 	 * @see org.simulator.math.odes.AbstractDESSolver#clone()
 	 */
-	public RosenbrockSolver clone() {
+	public AbstractDESSolver clone() {
 		return new RosenbrockSolver(this);
 	}
 	
@@ -560,38 +546,14 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 							changed=processEventsAndRules(true, EDES, Math.min(newTime,timeEnd), t, yTemp);
 						}
 					}
-					if ((!changed) && (DES instanceof FastProcessDESystem) && (!steadyState)) {
-						FastProcessDESystem FDES = (FastProcessDESystem) DES;
-						if(FDES.containsFastProcesses()) {
-							double[] yTemp2 = new double[yTemp.length];
-							System.arraycopy(yTemp, 0, yTemp2, 0, yTemp.length);
-							if(clonedSolver == null) {
-								clonedSolver = this.clone();
-							}
-							double[] result = clonedSolver.computeSteadyState(FDES,
-									yTemp2, 0);
-							System.arraycopy(result, 0, yTemp, 0, yTemp.length);
-							for(int i=0; i!=result.length; i++) {
-								double difference = Math.abs(yTemp[i]-oldY[i]);
-								if((Math.abs(yTemp[i]) > 1E-10) || (Math.abs(oldY[i]) > 1E-10)) {
-									difference = Math.abs((yTemp[i]-oldY[i])/ Math.max(yTemp[i], oldY[i]));
-								}
-								if((difference > precisionFastReactions) && (h > precisionTimingFastReactions)) {
-									changed = true;
-									break;
-								}
-							}
-							
-						}
-					}
 
 					if(changed) {
 						//if(h/10>hMin) {
-							if(h>precisionTimingEventsAndRules)  {
+							if(h>precisionEventsAndRules)  {
 								//h=h/10;
-								h = Math.max(h / 10,precisionTimingEventsAndRules);
-								if(h - precisionTimingEventsAndRules < precisionTimingEventsAndRules) {
-									h = precisionTimingEventsAndRules;
+								h = Math.max(h / 10,precisionEventsAndRules);
+								if(h - precisionEventsAndRules < precisionEventsAndRules) {
+									h = precisionEventsAndRules;
 								}
 								System.arraycopy(oldY, 0, y, 0, numEqn);
 							}
@@ -605,7 +567,6 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 							}
 					}
 					else {
-						System.arraycopy(yTemp, 0, y, 0, numEqn);
 						t=Math.min(newTime,timeEnd);
 						// change stepsize (see Rodas.f) require 0.2<=hnew/h<=6
 						hAdap = Math.max(fac1,

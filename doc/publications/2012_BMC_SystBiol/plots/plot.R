@@ -30,21 +30,21 @@ bounds <- function(matrix, indices) {
 }
 
 plot_species <- function(b, indices, names, matrix) {
-  plot(c(b[1,1], b[2,1]) * 60, c(b[1,2], b[2,2]), type="n", xlab="Time in s", ylab=expression(paste("Concentration in ", mmol%.%l^-1)), las=1)
+  plot(c(b[1,1], b[2,1]) * 60, c(b[1,2], b[2,2]), type="n", xlab="Time in s", ylab=expression(paste("Concentration in ", mmol%.%l^-1)))
   legend("topleft", names, col=2:(length(indices)+1), lty=1, lwd=2)
   for (i in 1:length(indices)) {
     lines(matrix[,1] * 60, matrix[,indices[i]], type="l", col=i+1, lty=1, lwd=2)
   }
-  title("Species in model 206")
+  #title("Species in model 206")
 }
 
 plot_fluxes <- function(b, indices, names, matrix) {
-  plot(c(b[1,1], b[2,1]) * 60, c(b[1,2], b[2,2]) / 60, type="n", xlab="Time in s", ylab=expression(paste("Flux in ", mmol%.%s^-1)), las=1)
+  plot(c(b[1,1], b[2,1]) * 60, c(b[1,2], b[2,2]) / 60, type="n", xlab="Time in s", ylab=expression(paste("Flux in ", mmol%.%s^-1)))
   legend("topleft", names, col=2:(length(indices)+1), lty=1, lwd=2)
   for (i in 1:length(indices)) {
     lines(matrix[2:length(matrix[,1]),1] * 60, matrix[2:length(matrix[,indices[i]]),indices[i]] / 60, type="l", col=i+1, lty=1, lwd=2)
   }
-  #title("Fluxes in model 206")
+  title("Fluxes in model 206")
 }
 
 
@@ -90,10 +90,10 @@ dev.off()
 ###### Figure 7a
 
 plot_species <- function(b, indices, names, matrix) {
-  plot(c(b[1,1], b[2,1]) * 60, c(b[1,2], b[2,2]), type="n", xlab="Time in s", ylab=expression(paste("Concentration in ", mmol%.%l^-1)), las=1)
-  legend("topleft", names, col=2:(length(indices)+1), lty=1, lwd=3, ncol=2, bty="n")
+  plot(c(b[1,1], b[2,1]) * 60, c(b[1,2], b[2,2]), type="n", xlab="Time in s", ylab=expression(paste("Concentration in ", mmol%.%l^-1)))
+  legend("topleft", names, col=2:(length(indices)+1), lty=1, lwd=2, ncol=2, bty="n")
   for (i in 1:length(indices)) {
-    lines(matrix[,1] * 60, matrix[,indices[i]], type="l", col=i+1, lty=1, lwd=3)
+    lines(matrix[,1] * 60, matrix[,indices[i]], type="l", col=i+1, lty=1, lwd=2)
   }
   #title("Species in model 206")
 }
@@ -111,10 +111,10 @@ dev.off()
 ###### Figure 7b
 
 plot_fluxes <- function(b, indices, names, matrix) {
-  plot(c(b[1,1], b[2,1]) * 60, c(b[1,2], b[2,2]) / 60, type="n", xlab="Time in s", ylab=expression(paste("Flux in ", mmol%.%s^-1)), las=1)
-  legend("topleft", names, col=2:(length(indices)+1), lty=1, lwd=3, bty="n")
+  plot(c(b[1,1], b[2,1]) * 60, c(b[1,2], b[2,2]) / 60, type="n", xlab="Time in s", ylab=expression(paste("Flux in ", mmol%.%s^-1)))
+  legend("topleft", names, col=2:(length(indices)+1), lty=1, lwd=2, bty="n")
   for (i in 1:length(indices)) {
-    lines(matrix[2:length(matrix[,1]),1] * 60, matrix[2:length(matrix[,indices[i]]),indices[i]] / 60, type="l", col=i+1, lty=1, lwd=3)
+    lines(matrix[2:length(matrix[,1]),1] * 60, matrix[2:length(matrix[,indices[i]]),indices[i]] / 60, type="l", col=i+1, lty=1, lwd=2)
   }
 }
 
@@ -126,31 +126,6 @@ names <- c("D-glucose 6-phosphotransferase", "glycerone-phosphate-forming", "pho
 plot_fluxes(b, indices, names, x)
 dev.off()
 
-############################################################################################
-###### Figure 7 (a and b in one image)
-
-pal <- palette()
-pal[7] <- pal[8]
-palette(pal)
-
-pdf("test.pdf", width=23.4, height=8.3)
-layout(matrix(1:2, ncol=2))
-par(cex=2, mai=c(1.7, 1.7, 0.1, 0.3))
-indices <- c(3, 4, 6, 7, 8)
-names <- c("glucose", "ATP", "glyceraldehyde 3-phosphate", expression(NAD^"+"), "3-phosphoglycerate")
-b <- bounds(x, indices)
-b[2,2] <- 3.6 #3.3
-plot_species(b, indices, names, x)
-mtext("A", line=-1.08, at=-6.15, cex=3)
-
-par(cex=2, mai=c(1.7, 1.9, 0.1, 0.1))
-indices <- c(30:35)
-b <- bounds(x, indices)
-names <- c("D-glucose 6-phosphotransferase", "glycerone-phosphate-forming", "phosphoglycerate kinase", "pyruvate 2-O-phosphotransferase", "acetaldehyde forming", "ATP biosynthetic process")
-plot_fluxes(b, indices, names, x)
-mtext("B", line=-1.08, at=-6.15, cex=3)
-dev.off()
-
 
 ############################################################################################
 
@@ -160,10 +135,10 @@ indices <- c(4, 9, 10)
 names <- c("Ribulose 1,5 bisphosphate", "ATP", "ADP")
 b <- bounds(y, indices)
 plot_species <- function(b, indices, names, matrix) {
-  plot(c(b[1,1], b[2,1]), c(b[1,2], b[2,2]), type="n", xlab="Time in s", ylab=expression(paste("Concentration in ", mmol%.%l^-1)), las=1)
-  legend("topright", names, col=2:(length(indices)+1), lty=1, lwd=3, bty="n")
+  plot(c(b[1,1], b[2,1]), c(b[1,2], b[2,2]), type="n", xlab="Time in s", ylab=expression(paste("Concentration in ", mmol%.%l^-1)))
+  legend("topright", names, col=2:(length(indices)+1), lty=1, lwd=2, bty="n")
   for (i in 1:length(indices)) {
-    lines(matrix[,1], matrix[,indices[i]], type="l", col=i+1, lty=1, lwd=3)
+    lines(matrix[,1], matrix[,indices[i]], type="l", col=i+1, lty=1, lwd=2)
   }
   #title("Species in model 206")
 }

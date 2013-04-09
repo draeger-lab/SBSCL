@@ -5,7 +5,7 @@
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
  *
- * Copyright (C) 2007-2013 jointly by the following organizations:
+ * Copyright (C) 2007-2012 jointly by the following organizations:
  * 1. University of Tuebingen, Germany
  * 2. Keio University, Japan
  * 3. Harvard University, USA
@@ -27,9 +27,11 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
+import org.apache.commons.math.ode.DerivativeException;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.xml.stax.SBMLReader;
-import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
+import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
 
@@ -55,9 +57,7 @@ public class TestBiomodels {
 			throws FileNotFoundException, IOException {
 		int errors = 0;
 		int nModels = 0;
-		AdaptiveStepsizeIntegrator solver = new RosenbrockSolver();
-		solver.setAbsTol(1E-12);
-		solver.setRelTol(1E-6);
+		AbstractDESSolver solver = new RosenbrockSolver();
 
 		for (int modelnr = from; modelnr <= to; modelnr++) {
 			System.out.println("Biomodel " + modelnr);
@@ -84,7 +84,7 @@ public class TestBiomodels {
 
 					if ((solver != null) && (interpreter != null)) {
 						solver.setStepSize(0.1);
-						
+
 						// solve
 						solver.solve(interpreter,
 								interpreter.getInitialValues(), 0, 10);
@@ -94,10 +94,14 @@ public class TestBiomodels {
 							errors++;
 						}
 					}
-				} catch (Exception e) {
+				} catch (DerivativeException e) {
 					logger.warning("Exception in Biomodel " + modelnr);
 					errors++;
-				} 
+				} catch (ModelOverdeterminedException e) {
+					logger.warning("OverdeterminationException in Biomodel "
+							+ modelnr);
+					errors++;
+				}
 			}
 			nModels++;
 		}

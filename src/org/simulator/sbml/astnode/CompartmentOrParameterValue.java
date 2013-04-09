@@ -5,7 +5,7 @@
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
  *
- * Copyright (C) 2007-2013 jointly by the following organizations:
+ * Copyright (C) 2007-2012 jointly by the following organizations:
  * 1. University of Tuebingen, Germany
  * 2. Keio University, Japan
  * 3. Harvard University, USA
@@ -79,14 +79,8 @@ public class CompartmentOrParameterValue extends ASTNodeValue {
    * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
    */
   @Override
-  protected void computeDoubleValue(double delay) {
-	  if(delay == 0) {
-		  doubleValue = valueHolder.getCurrentValueOf(position);
-	  }
-	  else {
-		 double valueTime = interpreter.symbolTime() - delay;
-		    doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
-	  }
+  protected void computeDoubleValue() {
+    doubleValue=valueHolder.getCurrentValueOf(position);
   }
 
 }

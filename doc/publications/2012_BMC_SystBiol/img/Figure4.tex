@@ -2,61 +2,41 @@
 
 \usepackage[latin1]{inputenc}
 \usepackage{tikz}
-\usepackage{scalefnt}
-\usepackage{amsmath}
-\usepackage[papersize={15.27cm,18cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
-\usetikzlibrary{shapes,arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
+\usepackage[papersize={12cm,16cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
+\usetikzlibrary{shapes,arrows}
 \begin{document}
 \pagestyle{empty}
 
 
 % Define block styles
 \tikzstyle{decision} = [diamond, draw, fill=blue!20, 
-    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
+    text width=5em, text badly centered, node distance=3cm, inner sep=0pt]
 \tikzstyle{block} = [rectangle, draw, fill=blue!20, 
-    text width=8em, text centered, minimum height=4em]
+    text width=14em, text centered, rounded corners, minimum height=4em]
 \tikzstyle{line} = [draw, -latex']
 \tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
     minimum height=2em]
-\tikzstyle{io} = [trapezium,trapezium left angle=70,trapezium right angle=-70,minimum height=0.6cm, draw, fill=blue!20, 
-text width=14em, text badly centered, node distance=2.5cm, inner sep=4pt,minimum height=2em]
-\tikzstyle{blank} = [coordinate]%[rectangle, text width=0em, text centered, rounded corners, minimum height=0em]
-
+    
 \begin{figure}
 \begin{tikzpicture}[node distance = 2cm, auto]
     % Place nodes
-	\node [cloud] (start) {Start};
-	\node [block, below of=start] (init) {\vspace{-.5cm}\begin{align*}t &:= t_{0}\\\vec{Q} &:= \vec{Q}_{0}\\h &:= h_0\end{align*}};
-	\node [io, below of=init, text width=15em] (output) {($\vec{Q}_{\mathrm{res}}, t_{\mathrm{res}}) := \mathrm{Rosenbrock}(t, \vec{Q}, h)$};
-	\node [block, below of=output,text width=17em] (pevents) {$\vec{Q}_{\mathrm{tmp}} :=$\\$\vec{Q}_{\mathrm{res}} + \vec{e}(\vec{Q}_{\mathrm{res}}, t_{\mathrm{res}}) + \vec{r}(\vec{Q}_{\mathrm{res}}, t_{\mathrm{res}})$};
-	\node [decision, below of=pevents, node distance=3cm] (xpxres?) {$\vec{Q}_{\mathrm{tmp}} = \vec{Q}_{\mathrm{res}}$?};
-	\node [block, left of=xpxres?, below of=xpxres?, node distance=4cm] (newvalues) {\vspace{-.5cm}\begin{align*}t &:= t_{\mathrm{res}}\\\vec{Q} &:= \vec{Q}_{\mathrm{res}}\\h &:= \mathrm{adapt}(h)\end{align*}};
-	\node [decision, right of=xpxres?, node distance=3.5cm] (larger?) {$h\ge h_{\min} \cdot 10$?};
-	\node [block, right of=larger?, node distance=3.75cm] (stepsize) {$h := \frac{h}{10}$};
-
-	\node [decision, below of=newvalues, node distance=3cm] (end?) {$t \ge t_{T}$?};
-	\node [cloud, right of=end?, node distance=4cm] (stop) {Stop};
-	\node [blank, left of=newvalues] (aux){};
-	\node [blank, left of=xpxres?] (aux2){};
-
-
-
-	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (start) -- (init);
-	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (init) -- (output);
-	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (output) -- (pevents);
-	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (pevents) -- (xpxres?);
-	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (xpxres?) -- node [above] {Yes}(aux2)-| (newvalues);
-	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (xpxres?) -- node  [above,near start] {No}(larger?);
-	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (larger?) |- node {No}(newvalues);
-	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (larger?) -- node [above,near start] {Yes}(stepsize);
-	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (stepsize) |- (output);
-	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (newvalues) -- (end?);
-	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (end?) -- node {Yes}(stop);
-	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (end?) -| (aux) |- node {No}(output);
-
-
-
-
+    \node [cloud] (start) {Start};
+    \node [block, below of=start] (rateRules) {Compute all assignment rules:\\$\dot{\vec{Q}} := \vec{g}(\vec{Q}, t)$};
+    \node [block, below of=rateRules] (initLoop) {$j := 1$};
+    \node [block,below of=initLoop] (reaction) {Compute flux $J_j$ through $R_j$:\\$J_j := \nu_j(\vec{Q}, t, \mathbf{N}, \mathbf{W}, \vec{p})$};
+    \node [block,below of=reaction] (updateX) {for each species $i$ in $R_j$:\\$\dot{Q}_i := \dot{Q_i} + n_{ij} \cdot J_j$};
+    \node [block, below of=updateX] (increase) {$j := j + 1$};
+    \node [decision, right of=increase, node distance=8cm] (endOfLoop) {$j > |R|$};
+    \node [cloud, below of=increase, node distance=5cm] (stop) {Stop};
+    % Draw edges
+    \path [line] (start) -- (rateRules);
+    \path [line] (rateRules) -- (initLoop);
+    \path [line] (initLoop) -- (reaction);
+    \path [line] (reaction) -- (updateX);
+    \path [line] (updateX) -- (increase);
+    \path [line] (increase) -- (endOfLoop);
+    \path [line] (endOfLoop) |- node{Yes} (stop);
+    \path [line] (endOfLoop) |- node{No} (reaction);
 \end{tikzpicture}
 \end{figure}
 

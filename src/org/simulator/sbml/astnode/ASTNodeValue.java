@@ -5,7 +5,7 @@
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
  *
- * Copyright (C) 2007-2013 jointly by the following organizations:
+ * Copyright (C) 2007-2012 jointly by the following organizations:
  * 1. University of Tuebingen, Germany
  * 2. Keio University, Japan
  * 3. Harvard University, USA
@@ -251,7 +251,7 @@ public class ASTNodeValue {
    */
   public Object getValue(double time) {
     if (isDouble) {
-      return compileDouble(time, 0d);
+      return compileDouble(time);
     }
     else {
       return compileBoolean(time);
@@ -261,17 +261,16 @@ public class ASTNodeValue {
   /**
    * Computes the double value if the time has changed and otherwise returns the already computed value
    * @param time
-   * @param delay
    * @return doubleValue the double value of the node
    */
-  public double compileDouble(double time, double delay) {
-    if (((this.time==time) && (delay == 0d)) || (isConstant && alreadyProcessed)) {
+  public double compileDouble(double time) {
+    if ((this.time==time) || (isConstant && alreadyProcessed)) {
       return doubleValue;
     } else {
       isDouble = true;
       alreadyProcessed = true;
       this.time = time;
-      computeDoubleValue(delay);
+      computeDoubleValue();
     }
     return doubleValue;
   }
@@ -294,12 +293,12 @@ public class ASTNodeValue {
     }
     return booleanValue;
   }
+  
 
   /**
    * Computes the double value of the node.
-   * @param delay
    */
-  protected void computeDoubleValue(double delay) {
+  protected void computeDoubleValue() {
     switch (nodeType) {
       /*
        * Numbers
@@ -319,10 +318,10 @@ public class ASTNodeValue {
         doubleValue = interpreter.frac(numerator, denominator);
         break;
       case NAME_TIME:
-        doubleValue = interpreter.symbolTime();
+        doubleValue = interpreter.symbolTime(name);
         break;
       case FUNCTION_DELAY:
-        doubleValue = interpreter.delay(leftChild,
+        doubleValue = interpreter.delay(name, leftChild,
           rightChild, units, time);
         break;
       /*
@@ -346,103 +345,103 @@ public class ASTNodeValue {
        */
       case FUNCTION_LOG:
         if (numChildren == 2) {
-          doubleValue = interpreter.log(leftChild, rightChild, time, delay);
+          doubleValue = interpreter.log(leftChild, rightChild, time);
         } else {
-          doubleValue = interpreter.log(rightChild, time, delay);
+          doubleValue = interpreter.log(rightChild, time);
         }
         break;
       case FUNCTION_ABS:
-        doubleValue = interpreter.abs(rightChild, time, delay);
+        doubleValue = interpreter.abs(rightChild, time);
         break;
       case FUNCTION_ARCCOS:
-        doubleValue = interpreter.arccos(leftChild, time, delay);
+        doubleValue = interpreter.arccos(leftChild, time);
         break;
       case FUNCTION_ARCCOSH:
-        doubleValue = interpreter.arccosh(leftChild, time, delay);
+        doubleValue = interpreter.arccosh(leftChild, time);
         break;
       case FUNCTION_ARCCOT:
-        doubleValue = interpreter.arccot(leftChild, time, delay);
+        doubleValue = interpreter.arccot(leftChild, time);
         break;
       case FUNCTION_ARCCOTH:
-        doubleValue = interpreter.arccoth(leftChild, time, delay);
+        doubleValue = interpreter.arccoth(leftChild, time);
         break;
       case FUNCTION_ARCCSC:
-        doubleValue = interpreter.arccsc(leftChild, time, delay);
+        doubleValue = interpreter.arccsc(leftChild, time);
         break;
       case FUNCTION_ARCCSCH:
-        doubleValue = interpreter.arccsch(leftChild, time, delay);
+        doubleValue = interpreter.arccsch(leftChild, time);
         break;
       case FUNCTION_ARCSEC:
-        doubleValue = interpreter.arcsec(leftChild, time, delay);
+        doubleValue = interpreter.arcsec(leftChild, time);
         break;
       case FUNCTION_ARCSECH:
-        doubleValue = interpreter.arcsech(leftChild, time, delay);
+        doubleValue = interpreter.arcsech(leftChild, time);
         break;
       case FUNCTION_ARCSIN:
-        doubleValue = interpreter.arcsin(leftChild, time, delay);
+        doubleValue = interpreter.arcsin(leftChild, time);
         break;
       case FUNCTION_ARCSINH:
-        doubleValue = interpreter.arcsinh(leftChild, time, delay);
+        doubleValue = interpreter.arcsinh(leftChild, time);
         break;
       case FUNCTION_ARCTAN:
-        doubleValue = interpreter.arctan(leftChild, time, delay);
+        doubleValue = interpreter.arctan(leftChild, time);
         break;
       case FUNCTION_ARCTANH:
-        doubleValue = interpreter.arctanh(leftChild, time, delay);
+        doubleValue = interpreter.arctanh(leftChild, time);
         break;
       case FUNCTION_CEILING:
-        doubleValue = interpreter.ceiling(leftChild, time, delay);
+        doubleValue = interpreter.ceiling(leftChild, time);
         break;
       case FUNCTION_COS:
-        doubleValue = interpreter.cos(leftChild, time, delay);
+        doubleValue = interpreter.cos(leftChild, time);
         break;
       case FUNCTION_COSH:
-        doubleValue = interpreter.cosh(leftChild, time, delay);
+        doubleValue = interpreter.cosh(leftChild, time);
         break;
       case FUNCTION_COT:
-        doubleValue = interpreter.cot(leftChild, time, delay);
+        doubleValue = interpreter.cot(leftChild, time);
         break;
       case FUNCTION_COTH:
-        doubleValue = interpreter.coth(leftChild, time, delay);
+        doubleValue = interpreter.coth(leftChild, time);
         break;
       case FUNCTION_CSC:
-        doubleValue = interpreter.csc(leftChild, time, delay);
+        doubleValue = interpreter.csc(leftChild, time);
         break;
       case FUNCTION_CSCH:
-        doubleValue = interpreter.csch(leftChild, time, delay);
+        doubleValue = interpreter.csch(leftChild, time);
         break;
       case FUNCTION_EXP:
-        doubleValue = interpreter.exp(leftChild, time, delay);
+        doubleValue = interpreter.exp(leftChild, time);
         break;
       case FUNCTION_FACTORIAL:
-        doubleValue = interpreter.factorial(leftChild, time, delay);
+        doubleValue = interpreter.factorial(leftChild, time);
         break;
       case FUNCTION_FLOOR:
-        doubleValue = interpreter.floor(leftChild, time, delay);
+        doubleValue = interpreter.floor(leftChild, time);
         break;
       case FUNCTION_LN:
-        doubleValue = interpreter.ln(leftChild, time, delay);
+        doubleValue = interpreter.ln(leftChild, time);
         break;
       case FUNCTION_SEC:
-        doubleValue = interpreter.sec(leftChild, time, delay);
+        doubleValue = interpreter.sec(leftChild, time);
         break;
       case FUNCTION_SECH:
-        doubleValue = interpreter.sech(leftChild, time, delay);
+        doubleValue = interpreter.sech(leftChild, time);
         break;
       case FUNCTION_SIN:
-        doubleValue = interpreter.sin(leftChild, time, delay);
+        doubleValue = interpreter.sin(leftChild, time);
         break;
       case FUNCTION_SINH:
-        doubleValue = interpreter.sinh(leftChild, time, delay);
+        doubleValue = interpreter.sinh(leftChild, time);
         break;
       case FUNCTION_TAN:
-        doubleValue = interpreter.tan(leftChild, time, delay);
+        doubleValue = interpreter.tan(leftChild, time);
         break;
       case FUNCTION_TANH:
-        doubleValue = interpreter.tanh(leftChild, time, delay);
+        doubleValue = interpreter.tanh(leftChild, time);
         break;
       case FUNCTION_PIECEWISE:
-        doubleValue = interpreter.piecewise(children, time, delay);
+        doubleValue = interpreter.piecewise(children, time);
         break;
       case LAMBDA:
         doubleValue = interpreter.lambdaDouble(children, time);

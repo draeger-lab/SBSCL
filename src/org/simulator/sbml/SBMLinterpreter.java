@@ -5,7 +5,7 @@
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
  *
- * Copyright (C) 2007-2013 jointly by the following organizations:
+ * Copyright (C) 2007-2012 jointly by the following organizations:
  * 1. University of Tuebingen, Germany
  * 2. Keio University, Japan
  * 3. Harvard University, USA
@@ -393,11 +393,6 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * Is the SBase in the Y vector an amount?
 	 */
 	private boolean[] isAmount;
-
-	/**
-	 * Are delays included in the computation?
-	 */
-	private boolean delaysIncluded;
 	
 
 	/**
@@ -462,7 +457,6 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		this.astNodeTime = 0d;
 		this.priorities = new HashSet<Double>();
 		this.highOrderEvents = new LinkedList<Integer>();
-		this.delaysIncluded = true;
 
 		Map<String, Integer> speciesReferenceToRateRule = new HashMap<String, Integer>();
 		int speciesReferencesInRateRules = 0;
@@ -574,7 +568,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	public double[] getAdditionalValues(double t, double[] Y)
 			throws DerivativeException {
 		if ((t - currentTime > 1E-15)
-				|| ((Y != this.Y) && !Arrays.equals(Y, this.Y)) || (t == 0)) {
+				|| ((Y != this.Y) && !Arrays.equals(Y, this.Y))) {
 			/*
 			 * We have to compute the system for the given state. But we are not
 			 * interested in the rates of change, but only in the reaction velocities.
@@ -652,7 +646,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
 		if ((sr != null) && sr.isSetStoichiometryMath()) {
 			try {
-				return ((ASTNodeValue)sr.getStoichiometryMath().getMath().getUserObject(TEMP_VALUE)).compileDouble(astNodeTime, 0d);
+				return ((ASTNodeValue)sr.getStoichiometryMath().getMath().getUserObject(TEMP_VALUE)).compileDouble(astNodeTime);
 			} catch (SBMLException exc) {
 				logger.log(Level.WARNING, String.format(
 						"Could not compile stoichiometry math of species reference %s.", id),
@@ -715,14 +709,14 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					} else {
 						ASTNodeValue priorityObject=events[index].getPriorityObject();
 						if (priorityObject != null) {
-							events[index].changePriority(priorityObject.compileDouble(astNodeTime, 0d));
+							events[index].changePriority(priorityObject.compileDouble(astNodeTime));
 							priorities.add(events[index].getPriority());
 						}
 					}
 				} else {
 					ASTNodeValue priorityObject=events[index].getPriorityObject();
 					if (priorityObject != null) {
-						events[index].changePriority(priorityObject.compileDouble(astNodeTime, 0d));
+						events[index].changePriority(priorityObject.compileDouble(astNodeTime));
 						priorities.add(events[index].getPriority());
 					}
 				}
@@ -759,7 +753,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
 				if ((events[index].hasExecutionTime()) && (events[index].getTime() <= currentTime) && !aborted) {
 					if (ev.getPriority() != null) {
-						priority = events[index].getPriorityObject().compileDouble(astNodeTime, 0d);
+						priority = events[index].getPriorityObject().compileDouble(astNodeTime);
 
 						if (!priorities.contains(priority)) {
 							priorities.add(priority);
@@ -783,7 +777,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						// event has a delay
 						ASTNodeValue delayObject = events[i].getDelayObject();
 						if (delayObject != null) {
-							execTime += delayObject.compileDouble(astNodeTime, 0d);
+							execTime += delayObject.compileDouble(astNodeTime);
 							if (!delayedEvents.contains(i)) {
 								delayedEvents.add(i);
 							}
@@ -791,7 +785,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						} else {
 							ASTNodeValue priorityObject = events[i].getPriorityObject();
 							if (priorityObject != null) {
-								priority = events[i].getPriorityObject().compileDouble(astNodeTime, 0d);
+								priority = events[i].getPriorityObject().compileDouble(astNodeTime);
 								priorities.add(priority);
 								events[i].changePriority(priority);
 							}
@@ -1094,7 +1088,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			if (rule.isRate()) {
 				RateRule rr = (RateRule) rule;
 				SpeciesReference sr = model.findSpeciesReference(rr.getVariable());
-				if ((sr != null) && !sr.isConstant()) {
+				if ((sr != null) && sr.isConstant()) {
 					speciesReferencesInRateRules++;
 					speciesReferenceToRateRule.put(sr.getId(), k);
 				}
@@ -1948,7 +1942,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						}
 						copiedAST.putUserObject(TEMP_VALUE, new SpeciesValue(nodeInterpreter,
 								copiedAST, sp, this, symbolHash.get(variable
-										.getId()), compartmentHash.get(variable.getId()), sp.getCompartment(), hasZeroSpatialDimensions, isAmount[symbolHash.get(variable.getId())]));
+										.getId()), compartmentHash.get(variable.getId()), hasZeroSpatialDimensions, isAmount[symbolHash.get(variable.getId())]));
 					} else if ((variable instanceof Compartment)
 							|| (variable instanceof Parameter)) {
 						copiedAST.putUserObject(TEMP_VALUE, new CompartmentOrParameterValue(
@@ -2116,10 +2110,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			throws DerivativeException {
 		this.currentTime = t;
 		this.astNodeTime += 0.01d;
-		System.arraycopy(Y, 0, this.Y, 0, Y.length);
-		boolean changed = processRules(t, null, this.Y, false);
-		System.arraycopy(this.Y, 0, Y, 0, Y.length);
-		return changed;
+		return processRules(t, null, Y, false);
 	}
 
 	/**
@@ -2263,28 +2254,20 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	public boolean processRules(double time, double[] changeRate, double[] Y, boolean initialCalculations) throws SBMLException {
 		boolean changeByAssignmentRules=false;
 		double intermediateASTNodeTime = - astNodeTime;
-		double oldTime = this.currentTime;
 		if (Y != null) {
 			for (int n = 0; n != nAssignmentRules; n++) {
 				intermediateASTNodeTime = - intermediateASTNodeTime;
 				for (int i = 0; i != nAssignmentRules; i++) {
 					AssignmentRuleValue currentRuleObject = assignmentRulesRoots.get(i);
 					double oldValue = Double.NaN, newValue = Double.NaN;
-					double[] oldY = new double[Y.length];
-					System.arraycopy(Y, 0, oldY, 0, Y.length);
 					int index = currentRuleObject.getIndex();
 					if(index >= 0) {
 						oldValue = Y[index];
 					}
 					boolean currentChange = currentRuleObject.processRule(Y,
 							intermediateASTNodeTime, true);
-					this.currentTime = oldTime;
 					if(index >= 0) {
 						newValue = Y[index];
-					}
-					System.arraycopy(oldY, 0, Y, 0, Y.length);
-					if(index != -1) {
-						Y[index] = newValue;
 					}
 
 					if (currentChange && (!initialCalculations) && (index >= 0) && (compartmentHash.containsValue(index))) {
@@ -2330,13 +2313,13 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			if (hasFastReactions) {
 				if (isProcessingFastReactions == reactionFast[reactionIndex]) {
 					v[reactionIndex] = kineticLawRoots[reactionIndex].compileDouble(
-							time, 0d);
+							time);
 				} else {
 					v[reactionIndex] = 0;
 				}
 			} else {
 				v[reactionIndex] = kineticLawRoots[reactionIndex].compileDouble(
-						time, 0d);
+						time);
 
 			}
 		}
@@ -2344,7 +2327,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
 		for (int i = 0; i != stoichiometryValues.length; i++) {
 			if ((constantStoichiometry[i] == false) || (stoichiometrySet[i] == false)) {
-				stoichiometry[i] = stoichiometryValues[i].compileDouble(time);
+				stoichiometry[i] = stoichiometryValues[i].compileDouble(currentTime);
 				stoichiometrySet[i] = stoichiometryValues[i].getStoichiometrySet();
 			}
 			double value;
@@ -2537,16 +2520,10 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		this.delayValueHolder = dvh;
 	}
 
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.simulator.math.odes.DelayValueHolder#computeDelayedValue(double, java.lang.String, org.simulator.math.odes.DESystem, double[], int)
+	/* (non-Javadoc)
+	 * @see org.simulator.math.odes.DelayValueHolder#computeDelayedValue(double, java.lang.String)
 	 */
-	public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues, int yIndex) {
-		if(!delaysIncluded) {
-			return this.Y[symbolHash.get(id)];
-		}
-		
+	public double computeDelayedValue(double time, String id) {
 		if ((time < 0d) || ((time >= 0d) && (this.delayValueHolder == null))) {
 			int index = symbolHash.get(id);
 			double oldTime = currentTime;
@@ -2569,7 +2546,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				}
 			}
 			if (Double.isNaN(value)) {
-				value=this.initialValues[index]; 
+				value=initialValues[index]; 
 			}
 			this.currentTime=oldTime;
 			return value;
@@ -2581,7 +2558,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 							return Double.NaN;
 
 		}
-		return this.delayValueHolder.computeDelayedValue(time, id, this, this.initialValues, symbolHash.get(id));
+		return this.delayValueHolder.computeDelayedValue(time, id);
 	}
 
 	/* (non-Javadoc)
@@ -2599,15 +2576,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	public double compileReaction(int reactionIndex) {
 		astNodeTime+=0.01;
 		double value = kineticLawRoots[reactionIndex].compileDouble(
-			astNodeTime, 0d);
+			astNodeTime);
 		return value;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.DESystem#setDelaysIncluded(boolean)
-	 */
-	public void setDelaysIncluded(boolean delaysIncluded) {
-		this.delaysIncluded = delaysIncluded;
 	}
   
 }

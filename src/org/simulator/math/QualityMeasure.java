@@ -5,7 +5,7 @@
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
  *
- * Copyright (C) 2007-2013 jointly by the following organizations:
+ * Copyright (C) 2007-2012 jointly by the following organizations:
  * 1. University of Tuebingen, Germany
  * 2. Keio University, Japan
  * 3. Harvard University, USA
@@ -26,7 +26,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.simulator.math.odes.MultiTable;
-import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
  * This class is the basis of various implementations of distance functions.
@@ -116,8 +115,8 @@ public abstract class QualityMeasure implements Serializable {
 	 * @return distance the distance between the two vectors
 	 * @throws IllegalArgumentException
 	 */
-	public double distance(Column x,
-			Column y) {
+	public double distance(Iterable<? extends Number> x,
+			Iterable<? extends Number> y) {
 		return distance(x, y,defaultValue);
 	}
 
@@ -138,8 +137,8 @@ public abstract class QualityMeasure implements Serializable {
 	 * @return The distance between the two arrays x and y.
 	 * @throws IllegalArgumentException
 	 */
-	public abstract double distance(Column x,
-			Column y,double defaultValue);
+	public abstract double distance(Iterable<? extends Number> x,
+			Iterable<? extends Number> y,double defaultValue);
 
 	/**
 	 * 

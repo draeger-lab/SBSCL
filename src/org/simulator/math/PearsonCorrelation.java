@@ -5,7 +5,7 @@
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
  *
- * Copyright (C) 2007-2013 jointly by the following organizations:
+ * Copyright (C) 2007-2012 jointly by the following organizations:
  * 1. University of Tuebingen, Germany
  * 2. Keio University, Japan
  * 3. Harvard University, USA
@@ -22,8 +22,7 @@
  */
 package org.simulator.math;
 
-
-import org.simulator.math.odes.MultiTable.Block.Column;
+import java.util.Iterator;
 
 /**
  * Implementation of the Pearson correlation. 
@@ -61,8 +60,10 @@ public class PearsonCorrelation extends QualityMeasure {
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.Distance#distance(java.lang.Iterable, java.lang.Iterable, double)
 	 */
-	public double distance(Column x,
-			Column y, double defaultValue) {
+	public double distance(Iterable<? extends Number> x,
+			Iterable<? extends Number> y, double defaultValue) {
+		Iterator<? extends Number> yIterator = y.iterator();
+		
 		MeanFunction meanF = new ArithmeticMean();
 		double meanX = meanF.computeMean(x);
 		double meanY = meanF.computeMean(y);
@@ -71,9 +72,12 @@ public class PearsonCorrelation extends QualityMeasure {
 		double sumXSquared = 0d;
 		double sumYSquared = 0d;
 		
-		for (int i=0; i != Math.min(x.getRowCount(), y.getRowCount()); i++) {
-			double x_i = x.getValue(i);
-			double y_i = y.getValue(i);
+		for (Number number : x) {
+			if (!yIterator.hasNext()) {
+				break;
+			}
+			double x_i = number.doubleValue();
+			double y_i = yIterator.next().doubleValue();
 			sumNumerator+= (x_i-meanX)*(y_i-meanY);
 			sumXSquared+= (x_i-meanX)*(x_i-meanX);
 			sumYSquared+= (y_i-meanY)*(y_i-meanY);

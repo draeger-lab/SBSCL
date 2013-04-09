@@ -5,7 +5,7 @@
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
  *
- * Copyright (C) 2007-2013 jointly by the following organizations:
+ * Copyright (C) 2007-2012 jointly by the following organizations:
  * 1. University of Tuebingen, Germany
  * 2. Keio University, Japan
  * 3. Harvard University, USA
@@ -25,7 +25,6 @@ package org.simulator.math.odes;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -112,7 +111,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	/**
 	 * A cloned version of this object
 	 */
-	protected AbstractDESSolver clonedSolver;
+	private AbstractDESSolver clonedSolver;
 
 	/**
 	 * Initialize with default integration step size and non-negative attribute
@@ -292,7 +291,6 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 * @param change
 	 *            The vector for the resulting change of the system.
 	 * @param steadyState 
-	 * 
 	 * @return The change.
 	 * @throws Exception
 	 */
@@ -302,7 +300,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	/* (non-Javadoc)
 	 * @see org.simulator.math.odes.DelayValueHolder#computeValue(double, java.lang.String)
 	 */
-	public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues, int yIndex) {
+	public double computeDelayedValue(double time, String id) {
 		//get interval
 		double[] timepoints=data.getTimePoints();
 		int leftIndex=-1;
@@ -312,9 +310,6 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 				rightIndex=i;
 				if ((i>0) && (timepoints[i]>time)) {
 					leftIndex=i-1;
-				}
-				else if((timepoints[i]==time)) {
-					leftIndex=rightIndex;
 				}
 				break;
 			}
@@ -333,43 +328,12 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		}
 		if (rightIndex!=-1) {
 			rightValue=c.getValue(rightIndex);
-			if(Double.isNaN(rightValue) && Math.abs(time - leftValue) < 10E-12) {
-				rightValue = leftValue;
-			}
 		}
 
-		if(Double.isNaN(rightValue)) {
-			boolean calculated = true;
-			double[] yCopy = new double[initialValues.length];
-			double[] change = new double[initialValues.length];
-			System.arraycopy(initialValues, 0, yCopy, 0, initialValues.length);
-			try {
-				DES.setDelaysIncluded(false);
-				if(clonedSolver == null) {
-					clonedSolver = this.clone();
-					clonedSolver.reset();
-				}
-				clonedSolver.computeChange(DES, yCopy, 0, time, change, false);
-			} catch (DerivativeException e) {
-				rightIndex=-1;
-				calculated = false;
-			}
-			DES.setDelaysIncluded(true);
-			if(calculated) {
-				return yCopy[yIndex] + change[yIndex];
-				
-			}
-			
-			
-		}
-		
 		if (leftIndex==-1) {
 			return rightValue;
 		}
 		else if (rightIndex==-1) {
-			return leftValue;
-		}
-		else if(rightIndex == leftIndex) {
 			return leftValue;
 		}
 		else {
@@ -395,8 +359,6 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 *            whether or not to increase the given time by the given step
 	 *            size.
 	 * @param steadyState
-	 * 
-	 * 
 	 * @return the time increased by the step size
 	 * @throws DerivativeException
 	 */
@@ -442,7 +404,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		int step=0;
 		while (!noChange(oldValues, newValues, step)) {
 			System.arraycopy(newValues, 0, oldValues, 0, newValues.length);
-			ft = computeNextState(DES, ft, stepSize * 1000, oldValues, change,
+			ft = computeNextState(DES, ft, stepSize, oldValues, change,
 					newValues, true, true);
 			step++;
 		}
@@ -562,9 +524,6 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	protected MultiTable initResultMatrix(DESystem DES,
 			double[] initialValues, double[] timePoints) {
 		double result[][] = new double[timePoints.length][initialValues.length];
-		for(int i=0; i!= result.length; i++) {
-			Arrays.fill(result[i], Double.NaN);
-		}
 		System.arraycopy(initialValues, 0, result[0], 0, initialValues.length);
 		data = new MultiTable(timePoints, result, DES
 				.getIdentifiers());
@@ -609,10 +568,10 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		for (int i = 0; i < newValues.length; i++) {
 			double distance = Math.abs(newValues[i]-oldValues[i]);
 			double relativeDistance = 0;
-			if((Math.abs(newValues[i]) > 1E-10) || (Math.abs(oldValues[i]) > 1E-10)) {
+			if(!(newValues[i] == 0) || !(oldValues[i] == 0)) {
 				relativeDistance = Math.abs((newValues[i]-oldValues[i])/Math.max(newValues[i],oldValues[i]));
 			}
-			if(((distance > 1E-6) || (relativeDistance > 1E-6)) &&  (step < 10000)) {
+			if(((distance > 1E-5) || (relativeDistance > 1E-5)) &&  (step < 10000)) {
 				return false;
 			}
 		}
@@ -839,7 +798,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 						result[i], timeBegin);
 				System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 			}
-			v = additionalResults(DES, t, result[i], data, i);
+			v = additionalResults(DES, t - stepSize, result[i - 1], data, i);
 			firePropertyChange(oldT * intervalFactor, t * intervalFactor);
 		}
 

@@ -5,7 +5,7 @@
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
  *
- * Copyright (C) 2007-2013 jointly by the following organizations:
+ * Copyright (C) 2007-2012 jointly by the following organizations:
  * 1. University of Tuebingen, Germany
  * 2. Keio University, Japan
  * 3. Harvard University, USA
@@ -37,11 +37,11 @@ public abstract class AdaptiveStepsizeIntegrator extends AbstractDESSolver {
 	/**
 	 * Default absolute allowable vectorial tolerance.
 	 */
-	protected double absTol = 1E-14d;
+	protected double absTol = 1E-10d;
 	/**
 	 * Default relative allowable vectorial tolerance.
 	 */
-	protected double relTol = 1E-10d;
+	protected double relTol = 1E-5d;
 	
 	/**
 	 * 

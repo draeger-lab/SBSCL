@@ -366,11 +366,7 @@
   	  use="true"
       stylesheetfile="${doc}/javadoc-style.css" 
       overview="${src}/overview.html"
-  	  version="true"
-      maxmemory="96m"
-      windowtitle="${Name} ${version}"
-      breakiterator="yes"
-    >
+  	  version="true">
     	<link href="http://commons.apache.org/io/api-1.4/"/>
     	<link href="http://commons.apache.org/math/api-2.2/"/>
     	<link href="http://download.oracle.com/javase/6/docs/api/"/>
@@ -379,12 +375,6 @@
     	<link href="http://sbml.org/Special/Software/JSBML/latest-stable/build/apidocs/"/>
     	<link href="http://www.jdom.org/docs/apidocs.1.1/"/>
     	<link href="http://www.xom.nu/apidocs/"/>
-    	
-        <tag name="sbml.deprecated" description="Deprecated in SBML since :"/>
-        <tag name="jsbml.note" description="Note"/>
-        <tag name="jsbml.warning"/>
-    	<tag name="doc.note"  description="Documentation note"/>
-    				
     </javadoc>
   </target>
 	

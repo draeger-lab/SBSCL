@@ -2,44 +2,86 @@
 
 \usepackage[latin1]{inputenc}
 \usepackage{tikz}
-\usepackage{scalefnt}
-\usepackage[papersize={6.3cm,15.9cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
-\usetikzlibrary{shapes,arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
+\usepackage{amsmath}
+\usepackage[papersize={15.2cm,20cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
+\usetikzlibrary{shapes,arrows}
 \begin{document}
 \pagestyle{empty}
 
 
 % Define block styles
 \tikzstyle{decision} = [diamond, draw, fill=blue!20, 
-    text width=5em, text badly centered, node distance=3cm, inner sep=0pt]
+    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
 \tikzstyle{block} = [rectangle, draw, fill=blue!20, 
-    text width=14em, text centered, rounded corners, minimum height=4em]
+    text width=8em, text centered, minimum height=4em]
 \tikzstyle{line} = [draw, -latex']
 \tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
     minimum height=2em]
+\tikzstyle{io} = [trapezium,trapezium left angle=70,trapezium right angle=-70,minimum height=0.6cm, draw, fill=blue!20, 
+text width=14em, text badly centered, node distance=2.5cm, inner sep=4pt,minimum height=2em]
 \tikzstyle{blank} = [coordinate]%[rectangle, text width=0em, text centered, rounded corners, minimum height=0em]
 
 \begin{figure}
 \begin{tikzpicture}[node distance = 2cm, auto]
     % Place nodes
-    \node [cloud] (start) {Start};
-    \node [block, below of=start] (rateRules) {Compute all assignment rules:\\$\dot{\vec{Q}} := \vec{g}(\vec{Q}, t)$};
-    \node [block, below of=rateRules] (initLoop) {$j := 1$};
-    \node [block,below of=initLoop] (reaction) {Compute flux $J_j$ through $R_j$:\\$J_j := \nu_j(\vec{Q}, t, \mathbf{N}, \mathbf{W}, \vec{p})$};
-    \node [block,below of=reaction] (updateX) {for each species $i$ in $R_j$:\\$\dot{Q}_i := \dot{Q_i} + n_{ij} \cdot J_j$};
-    \node [block, below of=updateX] (increase) {$j := j + 1$};
-    \node [decision, below of=increase, node distance=2.5cm] (endOfLoop) {$j > |R|$?};
-    \node [cloud, below of=endOfLoop, node distance=2.5cm] (stop) {Stop};
-    \node [blank, right of=endOfLoop, node distance=3.5cm] (aux){};
-    % Draw edges
-    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (start) -- (rateRules);
-    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (rateRules) -- (initLoop);
-    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (initLoop) -- (reaction);
-    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (reaction) -- (updateX);
-    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (updateX) -- (increase);
-    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (increase) -- (endOfLoop);
-    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (endOfLoop) -- node[right]{Yes} (stop);
-    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (endOfLoop) -- node[very near start] {No} (aux) |- (reaction);
+	\node [cloud] (start) {Start};
+	\node [block, below of=start] (init) {\vspace{-.5cm}\begin{align*}t &:= t_{0}\\\vec{Q} &:= \vec{Q}_{0}\\h &:= h_0\end{align*}};
+	\node [io, below of=init, text width=15em] (output) {($\vec{Q}_{\mathrm{res}}, t_{\mathrm{res}}) := \mathrm{Rosenbrock}(t, \vec{Q}, h)$};
+	\node [block, below of=output,text width=17em] (pevents) {$\vec{Q}_{\mathrm{tmp}} :=$\\$\vec{Q}_{\mathrm{res}} + \vec{e}(\vec{Q}_{\mathrm{res}}, t_{\mathrm{res}}) + \vec{r}(\vec{Q}_{\mathrm{res}}, t_{\mathrm{res}})$};
+	\node [decision, below of=pevents, node distance=3cm] (xpxres?) {$\vec{Q}_{\mathrm{tmp}} = \vec{Q}_{\mathrm{res}}$?};
+	\node [block, left of=xpxres?, below of=xpxres?, node distance=4cm] (newvalues) {\vspace{-.5cm}\begin{align*}t &:= t_{\mathrm{res}}\\\vec{Q} &:= \vec{Q}_{\mathrm{res}}\\h &:= \mathrm{adapt}(h)\end{align*}};
+	\node [decision, right of=xpxres?, node distance=3.5cm] (larger?) {$h\ge h_{\min} \cdot 10$?};
+	\node [block, right of=larger?, node distance=3.5cm] (stepsize) {$h := \frac{h}{10}$};
+
+	\node [decision, below of=newvalues, node distance=3cm] (end?) {$t \ge t_{T}$?};
+	\node [cloud, below of=end?, node distance=2.5cm] (stop) {Stop};
+	\node [blank, left of=newvalues] (aux){};
+	\node [blank, left of=xpxres?] (aux2){};
+
+%	\node [decision, below of=findpaths] (matching?) {At least one path available?};
+%	\node [block, left of=matching?, node distance=4.5cm] (augment) {Augment matching};
+%	\node [decision, below of=matching?, node distance=3.5cm] (overdetermined?) {Model ovedetermined?};
+%	\node [block, below of=overdetermined?, node distance=3cm] (i0) {i:=0};
+%	\node [block, right of=overdetermined?, node distance=4.5cm] (exception) {Throw exception};
+%	\node [block, below of=i0, node distance=2.5cm] (solve) {Solve i-th algebraic rule according to matching};
+%	\node [block, left of=solve, node distance=4.5cm] (i++) {i:=i+1};
+%	\node [io, below of=solve, node distance=2cm] (newassignment) {New assignment rule};
+%
+%	\node [decision, below of=newassignment, node distance=2cm] (rulesleft?) {i=\#algebraic rules?};
+%	\node [cloud, below of=rulesleft?, node distance=2.5cm] (stop) {Stop};
+
+
+	\path [line] (start) -- (init);
+	\path [line] (init) -- (output);
+	\path [line] (output) -- (pevents);
+	\path [line] (pevents) -- (xpxres?);
+	\path [line] (xpxres?) -- node {Yes}(aux2)-| (newvalues);
+	\path [line] (xpxres?) -- node {No}(larger?);
+	\path [line] (larger?) |- node {No}(newvalues);
+	\path [line] (larger?) -- node {Yes}(stepsize);
+	\path [line] (stepsize) |- (output);
+	\path [line] (newvalues) -- (end?);
+	\path [line] (end?) -- node {Yes}(stop);
+	\path [line] (end?) -| (aux) |- node {No}(output);
+
+
+
+%\path [line] (end?) |- node {No})([xshift=-0.5cm,yshift=-0.5cm]newvalues.south west) |- (init);
+%	\path [line] (findpaths) -- (matching?);
+%	\path [line] (matching?) -- node {Yes}(augment);		
+%	\path [line] (augment) |- (findpaths);
+%	\path [line] (matching?) -- node {No} (overdetermined?);
+%	\path [line] (overdetermined?) -- node {No} (i0);
+%	\path [line] (overdetermined?) -- node {Yes}(exception);
+%	\path [line] (i0) -- (solve);
+	%\path [line] (i++) -- (solve);
+%	\path [line] (solve) -- (newassignment);
+
+	%\path [line] (newassignment) -- (rulesleft?);
+	%\path [line] (rulesleft?) -| node {No} (i++);
+	%\path [line] (rulesleft?) -- node {Yes} (stop);
+	%\path [line] (exception) |- (stop);
+
 \end{tikzpicture}
 \end{figure}
 

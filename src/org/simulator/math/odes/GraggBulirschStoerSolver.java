@@ -5,7 +5,7 @@
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
  *
- * Copyright (C) 2007-2013 jointly by the following organizations:
+ * Copyright (C) 2007-2012 jointly by the following organizations:
  * 1. University of Tuebingen, Germany
  * 2. Keio University, Japan
  * 3. Harvard University, USA
@@ -84,7 +84,7 @@ public class GraggBulirschStoerSolver extends FirstOrderSolver {
 	 * @see org.simulator.math.odes.FirstOrderSolver#createIntegrator()
 	 */
 	protected void createIntegrator() {
-		integrator = new GraggBulirschStoerIntegrator(Math.min(1e-8, Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
+		integrator=new GraggBulirschStoerIntegrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
 	}
 
 	/* (non-Javadoc)

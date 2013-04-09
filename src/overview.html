@@ -133,7 +133,7 @@
     </p>
 			
     <pre><code class="spoiled">
-      <span class="class">SEDMLDocument</span> doc = <span class="class">Libsedml</span>.<span class="method">readDocument</span>(f);<br/>
+      <span class="class">SEDMLDocument</span> doc = Libsedml.<span class="method">readDocument</span>(f);<br/>
       <span class="class">SedML</span> sedml = doc.<span class="method">getSBMLModel</span>();<br/>
       <span class="class">Output</span> wanted = sedml.<span class="method">getOutputs</span>().<span class="method">get</span>(0);<br/>
       <span class="class">SedMLSBMLSimulatorExecutor</span> exe = <span class="keyword">new</span> <span class="class">SedMLSBMLSimulatorExecutor</span>(sedml, wanted);<br/>
