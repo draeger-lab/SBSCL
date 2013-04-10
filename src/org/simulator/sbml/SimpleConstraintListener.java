@@ -23,54 +23,43 @@
 
 package org.simulator.sbml;
 
-import java.util.EventObject;
+import java.text.MessageFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.sbml.jsbml.Constraint;
 
 /**
- * This class represents the violation of a constraint during simulation.
+ * This class represents a simple listener implementation to process the
+ * violation of {@link Constraint}s during simulation by logging the violation
+ * event in form of a warning.
  * 
  * @author Alexander D&ouml;rr
+ * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 1.3
  */
-public class ConstraintViolationEvent extends EventObject {
-
-	/**
-	 * Generated serial version identifier
-	 */
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * The point in time at which a violation occurred.
-	 */
-	private double violationTime;
-
-	/**
-	 * Creates a new ConstraintViolationEvent for the given constraint and the
-	 * given point in time.
-	 * 
-	 * @param source
-	 * @param violationTime
-	 */
-	public ConstraintViolationEvent(Constraint source, double violationTime) {
-		super(source);
-		this.violationTime = violationTime;
-	}
-
-	/**
-	 * Returns the point in time at which this violation occurred.
-	 * 
-	 * @return
-	 */
-	public double getViolationTime() {
-		return this.violationTime;
-	}
+public class SimpleConstraintListener implements ConstraintListener {
 	
-	@Override
-	public Constraint getSource(){
-		return this.getSource();
-		
+	/**
+	 * A {@link Logger} for this class.
+	 */
+	private static final transient Logger logger = Logger.getLogger(SimpleConstraintListener.class.getName());
+
+	/* (non-Javadoc)
+	 * @see org.simulator.sbml.ContraintListener#processViolation(org.simulator.sbml.ConstraintEvent)
+	 */
+	//@Override
+	public void processViolation(ConstraintEvent evt) {
+		assert evt != null;
+		String constraint = "null", message = "null";
+		// Math must be set, otherwise this event would not have been triggered.
+		constraint = evt.getSource().getMath().toFormula();
+		message = evt.getSource().getMessageString();
+		// TODO: Localize
+		logger.log(Level.WARNING, MessageFormat.format(
+				"[VIOLATION]\t{0} at time {1,number}: {2}",
+				constraint, evt.getTime(), message));
 	}
 
 }

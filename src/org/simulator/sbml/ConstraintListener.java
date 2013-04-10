@@ -23,45 +23,26 @@
 
 package org.simulator.sbml;
 
-import java.text.MessageFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.EventListener;
+
+import org.sbml.jsbml.Constraint;
 
 /**
- * This class represents a listener to process the violation of constraints during simulation.
+ * A listener interface that allows the processing of {@link Constraint}s that
+ * triggered during simulation.
  * 
  * @author Alexander D&ouml;rr
+ * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 1.3
  */
-public class ConstraintViolationListener implements ContraintListener{
-	
-	/**
-	 * A {@link Logger} for this class.
-	 */
-	private static final transient Logger logger = Logger.getLogger(ConstraintViolationListener.class.getName());
+public interface ConstraintListener extends EventListener {
 
 	/**
-	 * 
-	 */
-	public ConstraintViolationListener() {
-		super();
-	}
-	
-	/**
-	 * Processes the given ConstraintViolationEvent.
+	 * Processes the given {@link ConstraintEvent}.
 	 * 
 	 * @param evt
 	 */
-	public void violationOccured(ConstraintViolationEvent evt){
-		String constraint = "null", time = "null", message = "null";;
-		if (evt != null) {
-			constraint = evt.getSource().getMathMLString();
-			time = String.valueOf(evt.getViolationTime());
-			message = evt.getSource().getMessageString();
-			logger.log(Level.WARNING, MessageFormat.format("[VIOLATION]\t{0} at {1} : {2}", constraint, time, message));
-		}
-
-	}
+	public abstract void processViolation(ConstraintEvent evt);
 
 }

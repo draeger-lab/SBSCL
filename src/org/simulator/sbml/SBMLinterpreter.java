@@ -22,6 +22,7 @@
  */
 package org.simulator.sbml;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -56,7 +57,6 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Symbol;
-import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.validator.OverdeterminationValidator;
 import org.simulator.math.RNG;
@@ -169,9 +169,61 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	protected double[] initialValues;
 
 	/**
-	 * A ConstraintViolationListener which deals with violation of constraints during simulation.
-	 */	
-	private ConstraintViolationListener constraintViolationListener;
+	 * A {@link List} of {@link ConstraintListener}, which deal with violation
+	 * of {@link Constraint}s during simulation.
+	 */
+	private List<ConstraintListener> listOfConstraintListeners;
+	
+	/**
+	 * Adds the given {@link ConstraintListener} to this interpreter's list of
+	 * listeners.
+	 * 
+	 * @param listener the element to be added.
+	 * @return {@code true} if this operation was successful, {@code false}
+	 *         otherwise.
+	 * @throws NullPointerException
+	 * @see List#add(Object)
+	 */
+	public boolean addConstraintListener(ConstraintListener listener) {
+		return listOfConstraintListeners.add(listener);
+	}
+	
+	/**
+	 * Removes the given {@link ConstraintListener} from this interpreter.
+	 * 
+	 * @param listener
+	 *            the element to be removed.
+	 * @return {@code true} if this operation was successful, {@code false}
+	 *         otherwise.
+	 * @throws NullPointerException
+	 * @see List#remove(Object)
+	 */
+	public boolean removeConstraintListener(ConstraintListener listener) {
+		return listOfConstraintListeners.remove(listener);
+	}
+	
+	/**
+	 * Removes the {@link ConstraintListener} with the given index from this
+	 * interpreter.
+	 * 
+	 * @param index
+	 *            of the {@link ConstraintListener} to be removed.
+	 * @return {@code true} if this operation was successful, {@code false}
+	 *         otherwise.
+	 * @throws IndexOutOfBoundsException
+	 * @see {@link List#remove(int)}
+	 */
+	public ConstraintListener removeConstraintListener(int index) {
+		return listOfConstraintListeners.remove(index);
+	}
+	
+	/**
+	 * @return the number of {@link ConstraintListener}s currently assigned to
+	 *         this interpreter.
+	 */
+	public int getConstraintListenerCount() {
+		return listOfConstraintListeners.size();
+	}
 
 	/**
 	 * The model to be simulated.
@@ -224,7 +276,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	private boolean hasFastReactions = false;
 
 	/**
-	 * Stores the indices of the events triggered for the current point in time.
+	 * Stores the indices of the {@link Event}s triggered for the current point
+	 * in time.
 	 */
 	private List<Integer> runningEvents;
 
@@ -239,10 +292,10 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	private Map<String, Species> speciesMap;
 
 	/**
-	 * Species with the unit given in mol/volume for which it has to be considered that the change rate should always be only in mol/time
+	 * {@link Species} with the unit given in mol/volume for which it has to be
+	 * considered that the change rate should always be only in mol/time
 	 */
 	private Set<String> inConcentration;
-
 
 	/**
 	 * List of kinetic laws given as ASTNodeObjects
@@ -250,12 +303,12 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	private ASTNodeValue[] kineticLawRoots;
 	
 	/**
-	 * List of constraints given as ASTNodeObjects
+	 * List of constraints given as {@link ASTNodeValue} objects
 	 */
 	private List<ASTNodeValue> constraintRoots;
 
 	/**
-	 * List of all occuring ASTNodes
+	 * List of all occurring {@link ASTNode}s
 	 */
 	private List<ASTNode> nodes;
 
@@ -325,14 +378,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 */
 	private int nAssignmentRules;
 
-	/**
-	 * Number of constraints
-	 */
-	private int nConstraints;
-
 
 	/**
-	 * List of the initial assignments (as AssignmentRuleObjects)
+	 * List of the {@link InitialAssignment} (as {@link AssignmentRuleValue} objects)
 	 */
 	private List<AssignmentRuleValue> initialAssignmentRoots;
 
@@ -417,7 +465,6 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	public SBMLinterpreter(Model model) throws ModelOverdeterminedException,
 	SBMLException {
 		this(model, 0d, 1d, 1d);
-
 	}
 
 	/**
@@ -453,7 +500,6 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	public SBMLinterpreter(Model model,  double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue, Map<String,Boolean> amountHash) throws SBMLException, ModelOverdeterminedException {
 		this.model = model;
 		this.v = new double[this.model.getListOfReactions().size()];
-		this.nConstraints=this.model.getConstraintCount();
 		this.symbolHash = new HashMap<String, Integer>();
 		this.compartmentHash = new HashMap<String, Integer>();
 		this.stoichiometricCoefHash = new HashMap<String, Double>();
@@ -462,6 +508,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		this.priorities = new HashSet<Double>();
 		this.highOrderEvents = new LinkedList<Integer>();
 		this.delaysIncluded = true;
+		this.listOfConstraintListeners = new LinkedList<ConstraintListener>();
 
 		Map<String, Integer> speciesReferenceToRateRule = new HashMap<String, Integer>();
 		int speciesReferencesInRateRules = 0;
@@ -653,8 +700,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			try {
 				return ((ASTNodeValue)sr.getStoichiometryMath().getMath().getUserObject(TEMP_VALUE)).compileDouble(astNodeTime, 0d);
 			} catch (SBMLException exc) {
-				logger.log(Level.WARNING, String.format(
-						"Could not compile stoichiometry math of species reference %s.", id),
+				// TODO: Localize
+				logger.log(Level.WARNING, MessageFormat.format(
+						"Could not compile stoichiometry math of species reference {0}.", id),
 						exc);
 			}
 		} else if (sr != null) {
@@ -895,7 +943,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 *         contain {@code int} values.
 	 */
 	public int getParameterCount() {
-		int p = (int) model.getParameterCount();
+		int p = model.getParameterCount();
 		for (int i = 0; i < model.getReactionCount(); i++) {
 			KineticLaw k = model.getReaction(i).getKineticLaw();
 			if (k != null) {
@@ -981,15 +1029,16 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			 */
 			processVelocities(changeRate, astNodeTime);
 
-
-
 			/*
 			 * Check the model's constraints
 			 */
-			for (int i = 0; i < nConstraints; i++) {
+			for (int i = 0; i < model.getConstraintCount(); i++) {
 				if (constraintRoots.get(i).compileBoolean(time)) {
-					 constraintViolationListener.violationOccured(new ConstraintViolationEvent(model.getConstraint(i), Double.valueOf(time)));
-
+					ConstraintEvent evt = new ConstraintEvent(model.getConstraint(i), Double.valueOf(time));
+					// Notify all listeners about the violation of the current constraint.
+					for (ConstraintListener listener : listOfConstraintListeners) {
+						listener.processViolation(evt);
+					}
 				}
 			}
 
@@ -1034,7 +1083,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	}
 
 	/**
-	 * This method initializes the differential equation system for simulation. The user can tell whether the tree of ASTNodes has to be refreshed.
+	 * This method initializes the differential equation system for simulation.
+	 * The user can tell whether the tree of {@link ASTNode}s has to be refreshed.
+	 * 
 	 * @param refreshTree
 	 * @throws ModelOverdeterminedException
 	 * @throws SBMLException
@@ -1044,7 +1095,10 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	}
 
 	/**
-	 * This method initializes the differential equation system for simulation. The user can tell whether the tree of ASTNodes has to be refreshed and give some default values.
+	 * This method initializes the differential equation system for simulation.
+	 * The user can tell whether the tree of {@link ASTNode}s has to be
+	 * refreshed and give some default values.
+	 * 
 	 * @param renewTree
 	 * @param defaultSpeciesValue
 	 * @param defaultParameterValue
@@ -1057,7 +1111,11 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	}
 
 	/**
-	 * This method initializes the differential equation system for simulation. The user can tell whether the tree of ASTNodes has to be refreshed, give some default values and state whether a species is seen as an amount or a concentration.
+	 * This method initializes the differential equation system for simulation.
+	 * The user can tell whether the tree of {@link ASTNode}s has to be
+	 * refreshed, give some default values and state whether a {@link Species}
+	 * is seen as an amount or a concentration.
+	 * 
 	 * @param renewTree
 	 * @param defaultSpeciesValue
 	 * @param defaultParameterValue
@@ -1066,9 +1124,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * @throws ModelOverdeterminedException
 	 * @throws SBMLException
 	 */
-	@SuppressWarnings("unchecked")
-	public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue, Map<String,Boolean> amountHash) throws ModelOverdeterminedException, SBMLException {
-		
+	public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue, Map<String, Boolean> amountHash) throws ModelOverdeterminedException, SBMLException {
 		int i;
 		symbolHash.clear();
 		compartmentHash.clear();
@@ -1082,7 +1138,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			for (int k = 0; k < model.getRuleCount(); k++) {
 				Rule rule = model.getRule(k);
 				if (rule.isRate()) {
-					noDerivatives=false;
+					noDerivatives = false;
 				}
 			}
 		}
@@ -1165,8 +1221,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			 }
 			 
 			 //determine whether amount or concentration is set
-			 if((amountHash != null)) {
-				 if(amountHash.containsKey(s.getId())) { 
+			 if ((amountHash != null)) {
+				 if (amountHash.containsKey(s.getId())) { 
 					 isAmount[yIndex] = amountHash.get(s.getId());
 				 }
 				 else {
@@ -1183,14 +1239,14 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			 }
 			 else {
 				 if (s.isSetInitialAmount()) {
-					 if(isAmount[yIndex]) {
+					 if (isAmount[yIndex]) {
 						 Y[yIndex] = s.getInitialAmount();
 					 }
 					 else {
 						 Y[yIndex] = s.getInitialAmount()/Y[compartmentIndex];
 					 }
 				 } else {
-					 if(!isAmount[yIndex]) {
+					 if (!isAmount[yIndex]) {
 						 Y[yIndex] = s.getInitialConcentration();
 					 }
 					 else {
@@ -1286,12 +1342,12 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			 }
 			 reactionIndex++;
 		 }
-		 if(fastReactions && slowReactions) {
+		 if (fastReactions && slowReactions) {
 			 hasFastReactions = true;
 		 }
 		 
-		 for(i=0; i!= inConcentrationValues.length; i++) {
-			 if(inConcentration.contains(symbolIdentifiers[i])) {
+		 for (i=0; i!= inConcentrationValues.length; i++) {
+			 if (inConcentration.contains(symbolIdentifiers[i])) {
 				 inConcentrationValues[i] = true;
 			 }
 			 else {
@@ -1303,7 +1359,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		  * Algebraic Rules
 		  */
 		 boolean containsAlgebraicRules = false;
-		 for (i = 0; i < (int) model.getRuleCount(); i++) {
+		 for (i = 0; i < model.getRuleCount(); i++) {
 			 if (model.getRule(i).isAlgebraic()) {
 				 containsAlgebraicRules = true;
 				 break;
@@ -1354,12 +1410,17 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		  * Evaluate Constraints
 		  */
 		 if (model.getConstraintCount() > 0) {
-			 this.constraintViolationListener = new ConstraintViolationListener();
-
+			 // TODO: This is maybe not the best solution because callers can hardly influence that because this init method is called upon creation of this object.
+			 if (getConstraintListenerCount() == 0) {
+				 addConstraintListener(new SimpleConstraintListener());
+			 }
 			 
-			 for (i = 0; i < (int) model.getConstraintCount(); i++) {
+			 for (i = 0; i < model.getConstraintCount(); i++) {
 				 if (constraintRoots.get(i).compileBoolean(astNodeTime)) {
-					 constraintViolationListener.violationOccured(new ConstraintViolationEvent(model.getConstraint(i), 0d));
+					 ConstraintEvent evt = new ConstraintEvent(model.getConstraint(i), 0d);
+					 for (ConstraintListener listener : listOfConstraintListeners) {
+						 listener.processViolation(evt);
+					 }
 				 }
 			 }
 		 }
@@ -1412,7 +1473,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	}
 
 	/**
-	 * Includes the math of the constraints in the syntax tree.
+	 * Includes the math of the {@link Constraint}s in the syntax tree.
 	 */
 	private void initializeConstraints() {
 		constraintRoots = new ArrayList<ASTNodeValue>();
@@ -1515,7 +1576,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					}
 					//Value for stoichiometry math
 					ASTNodeValue currentMathValue = null;
-					if(speciesRef.isSetStoichiometryMath()) {
+					if (speciesRef.isSetStoichiometryMath()) {
 						@SuppressWarnings("deprecation")
 						ASTNode currentMath = speciesRef.getStoichiometryMath().getMath();
 						currentMathValue = (ASTNodeValue) copyAST(currentMath,true, null, null)
@@ -1569,7 +1630,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					}
 				//Value for stoichiometry math
 					ASTNodeValue currentMathValue = null;
-					if(speciesRef.isSetStoichiometryMath()) {
+					if (speciesRef.isSetStoichiometryMath()) {
 						@SuppressWarnings("deprecation")
 						ASTNode currentMath = speciesRef.getStoichiometryMath().getMath();
 						currentMathValue = (ASTNodeValue) copyAST(currentMath,true, null, null)
@@ -1624,7 +1685,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		constantStoichiometry = new boolean[stoichiometriesSize];
 		stoichiometrySet = new boolean[stoichiometriesSize];
 		stoichiometry = new double[stoichiometriesSize];
-		for(int i=0; i!=stoichiometriesSize; i++) {
+		for (int i=0; i!=stoichiometriesSize; i++) {
 			isReactant[i] = isReactantList.get(i);
 			speciesIndex[i] = speciesIndexList.get(i);
 			reactionIndex[i] = reactionIndexList.get(i);
@@ -1845,7 +1906,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			case REAL:
 				double value = node.getReal();
 				int integerValue = (int) value;
-				if (value - integerValue == 0.0) {
+				if (value - integerValue == 0.0d) {
 					copiedAST.setValue(integerValue);
 					copiedAST.putUserObject(TEMP_VALUE, new IntegerValue(nodeInterpreter,
 							copiedAST));
@@ -1912,10 +1973,10 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					variable = model.findQuantity(node.getName());
 					if ((variable==null) && (function==null)) {
 						String id = node.getName();
-						for(Reaction r: model.getListOfReactions()) {
+						for (Reaction r: model.getListOfReactions()) {
 							KineticLaw kl = r.getKineticLaw();
-							for(LocalParameter lp: kl.getListOfLocalParameters()) {
-								if(lp.getId().equals(id)) {
+							for (LocalParameter lp: kl.getListOfLocalParameters()) {
+								if (lp.getId().equals(id)) {
 									variable = lp;
 									break;
 								}
@@ -2271,17 +2332,17 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					double[] oldY = new double[Y.length];
 					System.arraycopy(Y, 0, oldY, 0, Y.length);
 					int index = currentRuleObject.getIndex();
-					if(index >= 0) {
+					if (index >= 0) {
 						oldValue = Y[index];
 					}
 					boolean currentChange = currentRuleObject.processRule(Y,
 							intermediateASTNodeTime, true);
 					this.currentTime = oldTime;
-					if(index >= 0) {
+					if (index >= 0) {
 						newValue = Y[index];
 					}
 					System.arraycopy(oldY, 0, Y, 0, Y.length);
-					if(index != -1) {
+					if (index != -1) {
 						Y[index] = newValue;
 					}
 
@@ -2492,7 +2553,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
 			if (entry.getValue() == compartmentIndex) {
 				speciesIndex = symbolHash.get(entry.getKey());
-				if ((!isAmount[speciesIndex]) && (!speciesMap.get(symbolIdentifiers[speciesIndex]).getConstant())){
+				if ((!isAmount[speciesIndex]) && (!speciesMap.get(symbolIdentifiers[speciesIndex]).getConstant())) {
 					Y[speciesIndex] = (Y[speciesIndex] * oldCompartmentValue) / newCompartmentValue;
 					this.events[eventIndex].addAssignment(speciesIndex, Y[speciesIndex]);
 				}
@@ -2541,7 +2602,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * @see org.simulator.math.odes.DelayValueHolder#computeDelayedValue(double, java.lang.String, org.simulator.math.odes.DESystem, double[], int)
 	 */
 	public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues, int yIndex) {
-		if(!delaysIncluded) {
+		if (!delaysIncluded) {
 			return this.Y[symbolHash.get(id)];
 		}
 		
@@ -2573,10 +2634,11 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			return value;
 		}
 		else if (this.delayValueHolder == null) {
-			logger.warning(String.format(
-					"Cannot access delayed value at time %s for %s.", StringTools
-					.toString(time), id));
-							return Double.NaN;
+			// TODO: Localize
+			logger.warning(MessageFormat.format(
+					"Cannot access delayed value at time {0,number} for {1}.",
+					time, id));
+			return Double.NaN;
 
 		}
 		return this.delayValueHolder.computeDelayedValue(time, id, this, this.initialValues, symbolHash.get(id));
@@ -2595,10 +2657,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * @return the current reaction velocity of a specific reaction
 	 */
 	public double compileReaction(int reactionIndex) {
-		astNodeTime+=0.01;
-		double value = kineticLawRoots[reactionIndex].compileDouble(
-			astNodeTime, 0d);
-		return value;
+		astNodeTime += 0.01d;
+		return kineticLawRoots[reactionIndex].compileDouble(astNodeTime, 0d);
 	}
 
 	/* (non-Javadoc)

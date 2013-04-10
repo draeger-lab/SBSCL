@@ -89,7 +89,6 @@ public class SimulatorTest {
     resultDisplay.setPreferredSize(new Dimension(400, 400));
     JOptionPane.showMessageDialog(null, resultDisplay, "The solution of model "
         + model.getId(), JOptionPane.INFORMATION_MESSAGE);
-  
   }
   
 }
