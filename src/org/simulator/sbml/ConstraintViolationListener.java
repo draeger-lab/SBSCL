@@ -1,6 +1,6 @@
 /*
- * $$Id$$
- * $$URL$$
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
