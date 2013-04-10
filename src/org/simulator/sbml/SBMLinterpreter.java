@@ -169,10 +169,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	protected double[] initialValues;
 
 	/**
-	 * An array, which stores for each constraint the list of times, in which the
-	 * constraint was violated during the simulation.
-	 */
-	protected List<Double>[] listOfContraintsViolations;
+	 * A ConstraintViolationListener which deals with violation of constraints during simulation.
+	 */	
+	private ConstraintViolationListener constraintViolationListener;
 
 	/**
 	 * The model to be simulated.
@@ -989,7 +988,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			 */
 			for (int i = 0; i < nConstraints; i++) {
 				if (constraintRoots.get(i).compileBoolean(time)) {
-					listOfContraintsViolations[i].add(Double.valueOf(time));
+					 constraintViolationListener.violationOccured(new ConstraintViolationEvent(model.getConstraint(i), Double.valueOf(time)));
+
 				}
 			}
 
@@ -1354,14 +1354,12 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		  * Evaluate Constraints
 		  */
 		 if (model.getConstraintCount() > 0) {
-			 this.listOfContraintsViolations = (List<Double>[]) new LinkedList<?>[(int) model
-			                                                                      .getConstraintCount()];
+			 this.constraintViolationListener = new ConstraintViolationListener();
+
+			 
 			 for (i = 0; i < (int) model.getConstraintCount(); i++) {
-				 if (listOfContraintsViolations[i] == null) {
-					 this.listOfContraintsViolations[i] = new LinkedList<Double>();
-				 }
 				 if (constraintRoots.get(i).compileBoolean(astNodeTime)) {
-					 this.listOfContraintsViolations[i].add(Double.valueOf(0d));
+					 constraintViolationListener.violationOccured(new ConstraintViolationEvent(model.getConstraint(i), 0d));
 				 }
 			 }
 		 }
