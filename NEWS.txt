@@ -1,5 +1,18 @@
      Simulation Core NEWS -- History of user-visible changes
 ======================================================================
+Version 1.3 (2013-04-19)
+======================================================================
+
+ * New features:
+   
+   - The violation o fSBML constraints can now be treated using specialized
+     listeners. In this way it has become much easier to customize what should
+     happen in case of unsatisfied constraints during the simulation.
+ 
+ * Bug fixes:
+ 
+   
+======================================================================
 Version 1.2 (2012-12-13)
 ======================================================================
 

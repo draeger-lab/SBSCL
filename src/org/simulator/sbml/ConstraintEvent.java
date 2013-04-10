@@ -23,16 +23,58 @@
 
 package org.simulator.sbml;
 
-import java.util.EventListener;
+import java.util.EventObject;
+
+import org.sbml.jsbml.Constraint;
 
 /**
- * A listener interface that allows the processing of constraints that triggered during simulation.
+ * This class represents the violation of a {@link Constraint} during
+ * simulation.
  * 
  * @author Alexander D&ouml;rr
+ * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 1.3
  */
-public interface ContraintListener extends EventListener{
+public class ConstraintEvent extends EventObject {
 
+	/**
+	 * Generated serial version identifier
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * The point in time, at which a violation occurred.
+	 */
+	private double violationTime;
+
+	/**
+	 * Creates a new {@link ConstraintEvent} for the given {@link Constraint}
+	 * and the given point in time.
+	 * 
+	 * @param source
+	 * @param violationTime
+	 */
+	public ConstraintEvent(Constraint source, double violationTime) {
+		super(source);
+		this.violationTime = violationTime;
+	}
+
+	/**
+	 * Returns the point in time at which this violation occurred.
+	 * 
+	 * @return
+	 */
+	public double getTime() {
+		return this.violationTime;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.util.EventObject#getSource()
+	 */
+	@Override
+	public Constraint getSource(){
+		return (Constraint) super.getSource();
+	}
 
 }
