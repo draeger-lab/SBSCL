@@ -30,7 +30,9 @@
     </echo>
     <tstamp/> <!-- set ${TODAY} and ${TSTAMP} -->
     
-    <!-- the path to the Simulation Core Library sources -->
+    <property name="version" value="1.3"/>
+
+  	<!-- the path to the Simulation Core Library sources -->
     <property name="src" location="${basedir}/src"/>
     
     <!-- the path to the test source folder -->
@@ -59,10 +61,13 @@
     
     <property name="appJar" value="${dist}/${JAR_Name}"/>
     
-    <property name="version" value="1.3"/>
-    
     <!-- URL where the most recent version can be obtained -->
     <property name="URL" value="https://sourceforge.net/projects/simulation-core/"/>
+  	
+  	<path id="classpath">
+  	  <fileset dir="${lib}"         includes="**.jar, **/*.jar, **.zip"/>
+  	  <fileset dir="${ext-lib}"     includes="**.jar, **/*.jar, **.zip"/>
+  	</path>
 
   </target>
 
@@ -339,52 +344,98 @@
     </apply>
   </target>
 
+  <!-- =================================================================== -->
+  <!-- Extracts the current revision number of the project from SVN        -->
+  <!-- =================================================================== -->
+  <target
+    name="svnrevision"
+    depends="init"
+	description="Determines the current SVN revions number and stores it in a variable."
+  >
+    <exec executable="svnversion" outputproperty="repository.revision">
+	  <arg line="-c ${basedir}"/>
+	  <redirector>
+	    <outputfilterchain>
+		  <tokenfilter>
+		    <replaceregex pattern="[0-9]+\:" replace=""/>
+		    <replaceregex pattern="[PM]+" replace=""/>
+		  </tokenfilter>
+		</outputfilterchain>
+      </redirector>
+    </exec>
+	
+  	<echo message="Current revision of ${Name} is ${repository.revision}"/>  	
+	<property name="build.name" value="Revision ${repository.revision} ${TODAY} (Build ${build.number})"/>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates JavaDoc                                                     -->
+  <!-- =================================================================== -->
   <target 
     name="javadoc"
-  description="Creates Javadoc for the ${Name}"
-    depends="init">
+  	depends="init, svnrevision"
+    description="Creates Javadoc for the ${Name}">
     
+  	<property name="doc.location" value="${doc}/version_${version}"/>
+  	
     <mkdir dir="${doc}"/>
-    <mkdir dir="${doc}/version_${version}"/>
+    <mkdir dir="${doc.location}"/>
+  	
     <javadoc
-      sourcepath="${src}:${test}:${resources}"
-      destdir="${doc}/version_${version}"
-      packagenames="org.*"
-      footer="Generated ${TODAY}"
       access="protected"
       author="true"
-      classpath="lib/junit-4.8.jar:lib/ext-lib/jdom.jar:lib/ext-lib/jdom-contrib.jar:lib/commons-math-2.2.jar:lib/ext-lib/jmathml.jar:lib/ext-lib/jaxen-1.1.1.jar:lib/ext-lib/xom-1.2.1.jar:lib/jsbml-1.0-incl-libs.jar:lib/ext-lib/jlibsedml.jar:lib/ext-lib/commons-io-1.4.jar"
+      breakiterator="yes"
+      classpathref="classpath"
+      destdir="${doc.location}"
       doctitle="${Name} ${version}"
+      footer="Generated at ${TODAY}&lt;br/&gt;Version ${version} Revision ${repository.revision}"
+      header="&lt;img src=&quot;resources/SCL_icon.png&quot;/&gt;"
+      maxmemory="96m"
       nodeprecated="false"
       nodeprecatedlist="false"
       noindex="false"
       nonavbar="false"
       notree="false"
-      source="1.5"
-      splitindex="true"
-      use="true"
-      stylesheetfile="${doc}/javadoc-style.css" 
       overview="${src}/overview.html"
+      packagenames="org.*"
+      source="1.5"
+      sourcepath="${src}:${test}:${resources}"
+      splitindex="true"
+      stylesheetfile="${doc}/javadoc-style.css"
+      use="true"
       version="true"
-      maxmemory="96m"
       windowtitle="${Name} ${version}"
-      breakiterator="yes"
     >
-      <link href="http://commons.apache.org/io/api-1.4/"/>
-      <link href="http://commons.apache.org/math/api-2.2/"/>
+    	
+      <link href="http://commons.apache.org/proper/commons-io/javadocs/api-1.4/"/>
+      <link href="http://commons.apache.org/proper/commons-math/javadocs/api-2.2/"/>
       <link href="http://download.oracle.com/javase/6/docs/api/"/>
-        <link href="http://javasourcecode.org/html/open-source/junit/junit-4.8/"/>
+      <link href="http://javasourcecode.org/html/open-source/junit/junit-4.8/"/>
       <link href="http://jaxen.codehaus.org/apidocs/"/>
       <link href="http://sbml.org/Special/Software/JSBML/latest-stable/build/apidocs/"/>
       <link href="http://www.jdom.org/docs/apidocs.1.1/"/>
       <link href="http://www.xom.nu/apidocs/"/>
       
-        <tag name="sbml.deprecated" description="Deprecated in SBML since :"/>
-        <tag name="jsbml.note" description="Note"/>
-        <tag name="jsbml.warning"/>
+      <!-- For JSBML classes:
+      <tag name="sbml.deprecated" description="Deprecated in SBML since: "/>
+      <tag name="jsbml.note" description="Note"/>
+      <tag name="jsbml.warning"/>
       <tag name="doc.note"  description="Documentation note"/>
+      -->
             
     </javadoc>
+  	
+  	<!--
+  	  This is a hack: Actually, the header doesn't allow us to place img
+  	  tags; but we cheat by using HTML codes to hide it :-) This copies the
+  	  icon to the right folder:
+  	-->
+  	<property name="icon.file.src" value="${resources}/org/simulator/gui/img/SCL_icon.png"/>
+  	<property name="icon.file.dest" value="${doc.location}/resources/SCL_icon.png"/>
+  	<echo message="Copying file ${icon.file.src} to file ${icon.file.dest}..."/>
+  	<copy file="${icon.file.src}" tofile="${icon.file.dest}"/>
+ 
   </target>
   
 </project>

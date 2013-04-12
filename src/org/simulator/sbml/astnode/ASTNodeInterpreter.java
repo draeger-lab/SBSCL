@@ -42,8 +42,8 @@ import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sbml.SBMLValueHolder;
 
 /**
- * This class is an efficient ASTNodeInterpreter that takes the time of the
- * calculation into account. It contains functions similar to the
+ * This class is an efficient {@link ASTNodeInterpreter} that takes the time of
+ * the calculation into account. It contains functions similar to the
  * {@link ASTNodeCompiler} interface, which have the current time as additional
  * argument.
  * 
@@ -938,10 +938,10 @@ public class ASTNodeInterpreter {
   public double pow(ASTNodeValue left, ASTNodeValue right, double time, double delay) {
     double l = left.compileDouble(time, delay);
     double r = right.compileDouble(time, delay);
-    if(r == 2) {
+    if (r == 2) {
     	return l * l;
     }
-    else if(r == 3) {
+    else if (r == 3) {
     	return l * l * l;
     }
     if ((l < 0) && (!right.getNode().isInteger())) {

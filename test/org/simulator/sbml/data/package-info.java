@@ -22,7 +22,8 @@
  */
 
 /**
- * This package contains SBML test models.
+ * This package contains <a href="http://sbml.org" target="_blank">SBML</a> test
+ * models.
  * 
  * @version $Rev$
  * @since 1.3

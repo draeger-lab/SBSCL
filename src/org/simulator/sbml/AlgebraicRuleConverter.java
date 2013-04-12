@@ -43,7 +43,7 @@ import org.sbml.jsbml.ASTNode.Type;
 
 /**
  * This class converts the algebraic rules of a model to assignment rules based
- * on the given matching
+ * on the given matching.
  * 
  * @author Alexander D&ouml;rr
  * @version $Rev$
@@ -404,7 +404,7 @@ public class AlgebraicRuleConverter {
 				remainOnSide = false;
 				nestingDepth++;
 			}
-			if(node.getParent() instanceof ASTNode) {
+			if (node.getParent() instanceof ASTNode) {
 				evaluateEquation((ASTNode) node.getParent());
 			}
 		}
@@ -599,7 +599,7 @@ public class AlgebraicRuleConverter {
 					variable = null; 
 					if (node.getChild(i).isString()) {
 						variable = node.getChild(i).getVariable();
-						if(variable == null) {
+						if (variable == null) {
 							variable = model.findNamedSBaseWithDerivedUnit(node.getName());
 						}
 					}
@@ -622,7 +622,7 @@ public class AlgebraicRuleConverter {
 						}
 					}
 				}
-				if(node.getParent() instanceof ASTNode) {
+				if (node.getParent() instanceof ASTNode) {
 					parent = (ASTNode) node.getParent();
 				}
 				else {

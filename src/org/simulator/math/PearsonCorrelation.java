@@ -22,11 +22,11 @@
  */
 package org.simulator.math;
 
-
 import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
  * Implementation of the Pearson correlation. 
+ * 
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
@@ -38,7 +38,7 @@ public class PearsonCorrelation extends QualityMeasure {
 	 */
 	private static final long serialVersionUID = -493779339080103217L;
 
-	
+
 	/**
 	 * Default constructor. This sets the standard value for the parameter as
 	 * given by the getStandardParameter() method. The default value is set to
@@ -58,6 +58,7 @@ public class PearsonCorrelation extends QualityMeasure {
 		super(defaultValue);
 		meanFunction=new ArithmeticMean();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.Distance#distance(java.lang.Iterable, java.lang.Iterable, double)
 	 */
@@ -66,11 +67,11 @@ public class PearsonCorrelation extends QualityMeasure {
 		MeanFunction meanF = new ArithmeticMean();
 		double meanX = meanF.computeMean(x);
 		double meanY = meanF.computeMean(y);
-		
+
 		double sumNumerator = 0d;
 		double sumXSquared = 0d;
 		double sumYSquared = 0d;
-		
+
 		for (int i=0; i != Math.min(x.getRowCount(), y.getRowCount()); i++) {
 			double x_i = x.getValue(i);
 			double y_i = y.getValue(i);
@@ -78,9 +79,9 @@ public class PearsonCorrelation extends QualityMeasure {
 			sumXSquared+= (x_i-meanX)*(x_i-meanX);
 			sumYSquared+= (y_i-meanY)*(y_i-meanY);
 		}
-		
+
 		double denominator=Math.sqrt(sumXSquared*sumYSquared);
-		if(denominator!=0) {
+		if (denominator!=0) {
 			return sumNumerator/denominator;
 		}
 		else {

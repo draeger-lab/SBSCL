@@ -84,7 +84,7 @@ public class FunctionValue extends ASTNodeValue {
 				this.variables=new ArrayList<String>(variableNodes.size());
 				this.indexMap=new HashMap<String,Integer>();
 				int index=0;
-				for(ASTNode argument:variableNodes) {
+				for (ASTNode argument:variableNodes) {
 					String argumentName=interpreter.compileString(argument);
 					variables.add(argumentName);
 					indexMap.put(argumentName, index);

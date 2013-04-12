@@ -266,7 +266,7 @@ public class SBMLTestSuiteRunner {
 					MultiTable inputData = null;
 					
 					File f = new File(csvfile);
-					if(f.exists()) {
+					if (f.exists()) {
 						inputData = csvimporter.convert(model, csvfile);
 					}
 					int points=steps+1;
@@ -282,11 +282,11 @@ public class SBMLTestSuiteRunner {
 					catch(ArithmeticException e) {
 						step = null;
 					}
-					if(step == null) {
+					if (step == null) {
 						timepoints = inputData.getTimePoints();
 					}
 					else {
-						for(int i=0; i!=timepoints.length; i++) {
+						for (int i=0; i!=timepoints.length; i++) {
 							timepoints[i] = Math.min(current.doubleValue(), end.doubleValue());
 							current = current.add(step);
 						}
@@ -393,16 +393,16 @@ public class SBMLTestSuiteRunner {
 		modelsWithStrongestTolerance.add(1052);
 		
 		for (int modelnr = from; modelnr <= to; modelnr++) {
-			if((modelnr>=1124) && (modelnr<=1183)) {
+			if ((modelnr>=1124) && (modelnr<=1183)) {
 				continue;
 			}
 			System.out.println("model " + modelnr);
 			solver.reset();
-			if(modelsWithStrongestTolerance.contains(modelnr)) {
+			if (modelsWithStrongestTolerance.contains(modelnr)) {
 				solver.setAbsTol(1E-14);
 				solver.setRelTol(1E-12);
 			}
-			else if (modelsWithStrongerTolerance.contains(modelnr)){
+			else if (modelsWithStrongerTolerance.contains(modelnr)) {
 				solver.setAbsTol(1E-12);
 				solver.setRelTol(1E-8);
 			}
@@ -467,7 +467,7 @@ public class SBMLTestSuiteRunner {
 					MultiTable inputData = null;
 					
 					File f = new File(csvfile);
-					if(f.exists()) {
+					if (f.exists()) {
 						inputData = csvimporter.convert(model, csvfile);
 					}
 					int points=steps+1;
@@ -483,11 +483,11 @@ public class SBMLTestSuiteRunner {
 					catch(ArithmeticException e) {
 						step = null;
 					}
-					if(step == null) {
+					if (step == null) {
 						timepoints = inputData.getTimePoints();
 					}
 					else {
-						for(int i=0; i!=timepoints.length; i++) {
+						for (int i=0; i!=timepoints.length; i++) {
 							timepoints[i] = Math.min(current.doubleValue(), end.doubleValue());
 							current = current.add(step);
 						}
@@ -690,7 +690,7 @@ public class SBMLTestSuiteRunner {
 						}
 						
 						MultiTable mt = null;
-						for(Task t: res.keySet()) {
+						for (Task t: res.keySet()) {
 							mt = ((MultTableSEDMLWrapper) res.get(t)).getMultiTable();
 							break;
 						}
@@ -716,7 +716,7 @@ public class SBMLTestSuiteRunner {
 								csvfile);
 						String[] currentIdentifiers = mt.getBlock(0).getIdentifiers();
 						String[] correctedIdentifiers = new String[currentIdentifiers.length];
-						for(int i=0; i!= currentIdentifiers.length; i++) {
+						for (int i=0; i!= currentIdentifiers.length; i++) {
 							correctedIdentifiers[i] = currentIdentifiers[i].replaceAll("_.*", "");
 						}
 						mt.getBlock(0).setIdentifiers(correctedIdentifiers);
@@ -758,7 +758,7 @@ public class SBMLTestSuiteRunner {
 			if (highDistance) {
 				highDistances++;
 			}
-			if(missingFile) {
+			if (missingFile) {
 				fileMissing++;
 			}
 			if (errorInSimulation) {

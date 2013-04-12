@@ -75,7 +75,8 @@ public abstract class QualityMeasure implements Serializable {
 	}
 
 	/**
-	 * Constructor, which allows setting the parameter values for {@link #meanFunction} and {@link #defaultValue}.
+	 * Constructor, which allows setting the parameter values for
+	 * {@link #meanFunction} and {@link #defaultValue}.
 	 * 
 	 * @param defaultValue
 	 * @param meanFunction
@@ -189,7 +190,7 @@ public abstract class QualityMeasure implements Serializable {
 		ArrayList<Double> distances= new ArrayList<Double>();
 		
 		for (int i = 0; i < identifiers.length; i++) {
-			if(identifiers[i]!=null && expected.containsColumn(identifiers[i])) {
+			if (identifiers[i]!=null && expected.containsColumn(identifiers[i])) {
 				distances.add(distance(x.getColumn(i), expected.getColumn(identifiers[i])));
 			}
 		}
@@ -230,6 +231,5 @@ public abstract class QualityMeasure implements Serializable {
 	public final void setMeanFunction(MeanFunction meanFunction) {
 	    this.meanFunction = meanFunction;
 	}
-
 
 }

@@ -39,9 +39,12 @@ import org.simulator.math.odes.MultiTable;
 
 
 /**
- * Facade class to provide a jlibsedml-independent means to  execute a SEDML file.
+ * Facade class to provide a
+ * <a href="http://jlibsedml.sourceforge.net" target="_blank">jlibsedml.jar</a>-independent
+ * means to  execute a
+ * <a href="http://sed-ml.org" target="_blank">SED-ML</a> file.
  * Clients can use this class to execute a SEDML file without their code explicitly 
- * using the jlibsedml API.
+ * using the <a href="http://jlibsedml.sourceforge.net" target="_blank">jlibsedml.jar</a> API.
  * 
  * @author Richard Adams
  * @version $Rev$

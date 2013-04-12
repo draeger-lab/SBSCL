@@ -90,10 +90,11 @@ import org.simulator.sbml.astnode.TimesValue;
 
 /**
  * <p>
- * This differential equation system ({@link DESystem}) takes a model in SBML
+ * This differential equation system ({@link DESystem}) takes a model in
+ * <a href="http://sbml.org" target="_blank">SBML</a>
  * format and maps it to a data structure that is understood by the
  * {@link AbstractDESSolver}. Therefore, this class implements all necessary
- * functions expected by SBML.
+ * functions expected by <a href="http://sbml.org" target="_blank">SBML</a>.
  * </p>
  * 
  * @author Alexander D&ouml;rr
@@ -211,7 +212,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * @return {@code true} if this operation was successful, {@code false}
 	 *         otherwise.
 	 * @throws IndexOutOfBoundsException
-	 * @see {@link List#remove(int)}
+	 * @see List#remove(int)
 	 */
 	public ConstraintListener removeConstraintListener(int index) {
 		return listOfConstraintListeners.remove(index);

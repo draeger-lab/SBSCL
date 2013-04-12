@@ -41,8 +41,8 @@ public class ConstraintEvent extends EventObject {
 	/**
 	 * Generated serial version identifier
 	 */
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = -7217087217464285486L;
+	 
 	/**
 	 * The point in time, at which a violation occurred.
 	 */
@@ -53,7 +53,9 @@ public class ConstraintEvent extends EventObject {
 	 * and the given point in time.
 	 * 
 	 * @param source
+	 *            the {@link Constraint}, whose condition has been violated.
 	 * @param violationTime
+	 *            the simulation time, at which the violation occurred.
 	 */
 	public ConstraintEvent(Constraint source, double violationTime) {
 		super(source);
@@ -61,9 +63,7 @@ public class ConstraintEvent extends EventObject {
 	}
 
 	/**
-	 * Returns the point in time at which this violation occurred.
-	 * 
-	 * @return
+	 * @return the point in time at which this violation occurred.
 	 */
 	public double getTime() {
 		return this.violationTime;
@@ -73,7 +73,7 @@ public class ConstraintEvent extends EventObject {
 	 * @see java.util.EventObject#getSource()
 	 */
 	@Override
-	public Constraint getSource(){
+	public Constraint getSource() {
 		return (Constraint) super.getSource();
 	}
 

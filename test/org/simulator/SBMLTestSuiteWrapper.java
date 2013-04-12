@@ -66,7 +66,7 @@ public class SBMLTestSuiteWrapper {
 	public static void testRosenbrockSolver(String path, int modelnr, String outputPath, int level, int version) 
 			throws FileNotFoundException, IOException, URISyntaxException {
 		String sbmlfile, csvfile, configfile;
-		if((modelnr>=1124) && (modelnr<=1183)) {
+		if ((modelnr>=1124) && (modelnr<=1183)) {
 			return;
 		}
 		
@@ -85,11 +85,11 @@ public class SBMLTestSuiteWrapper {
 		modelsWithStrongestTolerance.add(987);
 		modelsWithStrongestTolerance.add(1052);
 		
-		if(modelsWithStrongestTolerance.contains(modelnr)) {
+		if (modelsWithStrongestTolerance.contains(modelnr)) {
 			solver.setAbsTol(1E-14);
 			solver.setRelTol(1E-12);
 		}
-		else if (modelsWithStrongerTolerance.contains(modelnr)){
+		else if (modelsWithStrongerTolerance.contains(modelnr)) {
 			solver.setAbsTol(1E-12);
 			solver.setRelTol(1E-8);
 		}
@@ -168,7 +168,7 @@ public class SBMLTestSuiteWrapper {
 						+ modelnr);
 				solution = null;
 			}
-			if(solution != null) {
+			if (solution != null) {
 				writeMultiTableToFile(outputPath+"/" + folder + ".csv", variables, solution);
 			}
 		}
@@ -222,10 +222,10 @@ public class SBMLTestSuiteWrapper {
 	public static void main(String[] args) throws NumberFormatException, FileNotFoundException, IOException, URISyntaxException {
 		int begin = Integer.valueOf(args[1]);
 		int end = begin;
-		if(args.length > 5) {
+		if (args.length > 5) {
 			end = Integer.valueOf(args[5]);
 		}
-		for(int modelnr = begin; modelnr<=end; modelnr++) {
+		for (int modelnr = begin; modelnr<=end; modelnr++) {
 			testRosenbrockSolver(args[0], modelnr, args[2], Integer.valueOf(args[3]), Integer.valueOf(args[4])); 
 		}
 	}

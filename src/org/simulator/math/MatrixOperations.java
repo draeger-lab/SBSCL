@@ -128,14 +128,14 @@ public class MatrixOperations {
 		double big, dum, sum, temp;
 		double d = 1;
 
-		if((vv==null)||vv.length!=n) {
+		if ((vv==null)||vv.length!=n) {
 		  vv = new double[n];
 		}
 		for (i = 0; i < n; i++) {
 			big = 0.0;
 			for (j = 0; j < n; j++) {
 				temp = a[i][j];
-				if(temp < 0) {
+				if (temp < 0) {
 				  temp *= -1;
 				}
 			  if (temp > big)
@@ -165,7 +165,7 @@ public class MatrixOperations {
 					sum -= a[i][k] * a[k][j];
 				a[i][j] = sum;
 				dum = vv[i] * sum;
-				if(sum < 0) {
+				if (sum < 0) {
 				  dum *= -1;
 				}
 				if (dum >= big) {

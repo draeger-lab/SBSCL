@@ -23,11 +23,16 @@
 package org.simulator.sbml.astnode;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Symbol;
 import org.simulator.sbml.SBMLValueHolder;
 
+import com.sun.javadoc.Parameter;
+
 /**
- * This class computes and stores values of ASTNodes that refer to a compartment or a parameter.
+ * This class computes and stores values of {@link ASTNode}s that refer to a 
+ * {@link Compartment} or a {@link Parameter}.
+ * 
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
@@ -47,46 +52,45 @@ public class CompartmentOrParameterValue extends ASTNodeValue {
 	 * The value holder that stores the current simulation results.
 	 */
 	protected SBMLValueHolder valueHolder;
-  
+
 	/**
 	 * The position of the current compartment/parameter value in the Y vector of the value holder
 	 */
 	protected int position;
-  
-  /**
-   * 
-   * @param interpreter
-   * @param node
-   * @param sb
-   * @param valueHolder
-   * @param position
-   */
-  public CompartmentOrParameterValue(ASTNodeInterpreter interpreter, ASTNode node,
-    Symbol sb, SBMLValueHolder valueHolder, int position) {
-    super(interpreter, node);
-    this.sb = sb;
-    this.id=sb.getId();
-//    if(sb.getConstant()) {
-//      isConstant = true;
-//      doubleValue = sb.getValue();
-//    }
-    this.valueHolder = valueHolder;
-    this.position=position;
-  }
-  
-  /*
-   * (non-Javadoc)
-   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
-   */
-  @Override
-  protected void computeDoubleValue(double delay) {
-	  if(delay == 0) {
-		  doubleValue = valueHolder.getCurrentValueOf(position);
-	  }
-	  else {
-		 double valueTime = interpreter.symbolTime() - delay;
-		    doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
-	  }
-  }
+
+	/**
+	 * 
+	 * @param interpreter
+	 * @param node
+	 * @param sb
+	 * @param valueHolder
+	 * @param position
+	 */
+	public CompartmentOrParameterValue(ASTNodeInterpreter interpreter, ASTNode node,
+			Symbol sb, SBMLValueHolder valueHolder, int position) {
+		super(interpreter, node);
+		this.sb = sb;
+		this.id=sb.getId();
+		//    if (sb.getConstant()) {
+		//      isConstant = true;
+		//      doubleValue = sb.getValue();
+		//    }
+		this.valueHolder = valueHolder;
+		this.position=position;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+	 */
+	@Override
+	protected void computeDoubleValue(double delay) {
+		if (delay == 0) {
+			doubleValue = valueHolder.getCurrentValueOf(position);
+		}
+		else {
+			double valueTime = interpreter.symbolTime() - delay;
+			doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
+		}
+	}
 
 }

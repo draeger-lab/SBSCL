@@ -34,20 +34,17 @@ import javax.swing.table.AbstractTableModel;
 import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
- * <p>
  * This data structure contains the an array of sorted time points and a matrix
  * organized in one column per quantity for which data (measurement or
  * simulation) are gathered. Each row in the matrix corresponds to one time
  * point. Hence, the array of time points must be equal to the number of rows in
  * the matrix. To be able to identify the content of each column, this data
  * structure also contains an array of identifiers for each column.
- * </p>
  * <p>
  * To be displayed in a graphical user interface, this object extends
  * {@link AbstractTableModel}. Note that the access to the elements in this
  * object therefore puts both elements together, i.e., the time column is
  * considered to be the first column in the table.
- * </p>
  * 
  * @author Andreas Dr&auml;ger
  * @version $Rev$
@@ -632,9 +629,9 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	public MultiTable filter(double[] timepoints) {
 		ArrayList<Integer> rowIndices = new ArrayList<Integer>();
 		int i=0;
-		for(double time: timepoints) {
+		for (double time: timepoints) {
 			while((i<this.getTimePoints().length) && (this.getTimePoints()[i]<=time)) {
-				if(this.getTimePoints()[i]==time) {
+				if (this.getTimePoints()[i]==time) {
 					rowIndices.add(i);
 				}
 				i++;
@@ -642,12 +639,12 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		}
 
 		MultiTable filtered= new MultiTable();
-		for(int block=0;block!=this.getBlockCount();block++) {
+		for (int block=0;block!=this.getBlockCount();block++) {
 			filtered.addBlock(this.getBlock(block).getIdentifiers());
 			filtered.getBlock(block).setData(new double[rowIndices.size()][this.getBlock(block).getIdentifiers().length]);
 
 			int rowCounter=0;
-			for(int rowIndex: rowIndices) {
+			for (int rowIndex: rowIndices) {
 				filtered.getBlock(block).setRowData(rowCounter, this.getBlock(block).getRow(rowIndex));
 				rowCounter++;
 			}

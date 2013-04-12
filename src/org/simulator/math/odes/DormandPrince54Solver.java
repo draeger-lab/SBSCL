@@ -25,7 +25,9 @@ package org.simulator.math.odes;
 import org.apache.commons.math.ode.nonstiff.DormandPrince54Integrator;
 
 /**
- * This class is a wrapper for the Dormand-Prince-54 solver in the Apache Math Library.
+ * This class is a wrapper for the Dormand-Prince-54 solver in the 
+ * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
+ * 
  * @author Roland Keller
  * @version $Rev$
  * @since 0.9
