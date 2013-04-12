@@ -99,10 +99,10 @@ public class SEDMLWriterTest {
 	    try{
 	    writer.saveExperimentToSEDML(start,end,stepsize,solver,model,
 	    		SBMLFile.toURI(),fos );
-	    }catch(IOException e){
+	    }catch(IOException e) {
 	    	IoExthrown =true;
 	    }
-	    if(!IoExthrown){
+	    if (!IoExthrown) {
 	    	fail("Should throw IOEXception since OS was closed");
 	    }
 	    

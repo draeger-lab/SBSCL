@@ -27,7 +27,9 @@ import org.sbml.jsbml.SpeciesReference;
 import org.simulator.sbml.SBMLValueHolder;
 
 /**
- * This class computes and stores values of ASTNodes that refer to a species reference.
+ * This class computes and stores values of {@link ASTNode}s that refer to a
+ * {@link SpeciesReference}.
+ * 
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
@@ -37,32 +39,33 @@ public class SpeciesReferenceValue extends ASTNodeValue {
 	/**
 	 * The value holder that stores the current simulation values
 	 */
-  private SBMLValueHolder valueHolder;
-  
-  /**
-   * The id of the species reference
-   */
-  private String id;
+	private SBMLValueHolder valueHolder;
 
-  /**
-   * 
-   * @param interpreter
-   * @param node
-   * @param sr
-   * @param valueHolder
-   */
-  public SpeciesReferenceValue(ASTNodeInterpreter interpreter,
-    ASTNode node, SpeciesReference sr, SBMLValueHolder valueHolder) {
-    super(interpreter, node);
-    this.id=sr.getId();
-    this.valueHolder=valueHolder;
-  }
-  
-  /*
-   * (non-Javadoc)
-   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
-   */
-  protected void computeDoubleValue(double delay) {
-    doubleValue = valueHolder.getCurrentStoichiometry(id);
-  }
+	/**
+	 * The id of the species reference
+	 */
+	private String id;
+
+	/**
+	 * 
+	 * @param interpreter
+	 * @param node
+	 * @param sr
+	 * @param valueHolder
+	 */
+	public SpeciesReferenceValue(ASTNodeInterpreter interpreter,
+			ASTNode node, SpeciesReference sr, SBMLValueHolder valueHolder) {
+		super(interpreter, node);
+		this.id=sr.getId();
+		this.valueHolder=valueHolder;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+	 */
+	@Override
+	protected void computeDoubleValue(double delay) {
+		doubleValue = valueHolder.getCurrentStoichiometry(id);
+	}
+
 }

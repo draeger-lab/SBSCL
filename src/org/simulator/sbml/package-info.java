@@ -22,8 +22,9 @@
  */
 
 /** 
- * Classes for storing and interpreting an SBML model. The most 
- * important class is {@link org.simulator.sbml.SBMLinterpreter}
+ * Classes for storing and interpreting an
+ * <a href="http://sbml.org" target="_blank">SBML</a>
+ * model. The most important class is {@link org.simulator.sbml.SBMLinterpreter}
  * that can return the current vector of derivatives to the solver.
  * <p>
  * One important special case of during the simulation of SBML models is dealing

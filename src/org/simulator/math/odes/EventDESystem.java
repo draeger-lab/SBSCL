@@ -26,7 +26,7 @@ package org.simulator.math.odes;
 import org.apache.commons.math.ode.DerivativeException;
 
 /**
- * This Class represents an event-driven differential equation system
+ * This class represents an event-driven differential equation system
  * 
  * @author Alexander D&ouml;rr
  * @author Andreas Dr&auml;ger

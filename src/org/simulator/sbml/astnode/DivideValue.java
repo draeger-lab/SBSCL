@@ -28,7 +28,9 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.SBMLException;
 
 /**
- * This class computes and stores values of ASTNodes that refer to a division object.
+ * This class computes and stores values of {@link ASTNode}s that refer to a
+ * division object.
+ * 
  * @author Roland Keller
  * @version $Rev$
  */
@@ -42,8 +44,7 @@ public class DivideValue extends ASTNodeValue{
 		super(interpreter, node);
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
 	 */
 	protected void computeDoubleValue(double delay) {

@@ -26,7 +26,9 @@ package org.simulator.math;
 import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
- * Computes the relative distance of two vectors based on the {@link N_Metric} distance.
+ * Computes the relative distance of two vectors based on the {@link N_Metric}
+ * distance.
+ * 
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
@@ -74,7 +76,7 @@ public class Relative_N_Metric extends QualityMeasure {
 	public Relative_N_Metric(N_Metric metric) {
 		super(Double.NaN);
 		this.metric = metric;
-		if(Double.isNaN(metric.getDefaultValue())) {
+		if (Double.isNaN(metric.getDefaultValue())) {
 			defaultNaN = true;
 		}
 		else {
@@ -92,9 +94,9 @@ public class Relative_N_Metric extends QualityMeasure {
 		double denominator2 = metric.distanceToZero(x, defaultValue);
 		if ((denominator != 0) && (denominator2 != 0) ) {
 			return numerator / denominator;
-		} else if((denominator == 0) && (denominator2 == 0)){
+		} else if ((denominator == 0) && (denominator2 == 0)) {
 			return numerator;
-		} else if(defaultNaN) {
+		} else if (defaultNaN) {
 				return numerator;
 		}
 		else {
@@ -103,13 +105,13 @@ public class Relative_N_Metric extends QualityMeasure {
 	}
 
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.QualityMeasure#setDefaultValue(double)
 	 */
+	@Override
 	public void setDefaultValue(double value) {
 		super.setDefaultValue(value);
-		if(Double.isNaN(defaultValue)) {
+		if (Double.isNaN(defaultValue)) {
 			defaultNaN = true;
 		}
 		else {
@@ -124,6 +126,5 @@ public class Relative_N_Metric extends QualityMeasure {
 	public void setRoot(double root) {
 		metric.setRoot(root);
 	}
-
 
 }

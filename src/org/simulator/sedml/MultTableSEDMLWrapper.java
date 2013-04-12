@@ -28,13 +28,15 @@ import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
- * This class adapts the native results to an interface that the SEDML processor can use
- *  to post-process results.
- *  This class can be used to access the raw results via the {@link #getMultiTable()} method.
- *  <p>
- *  All methods accessing data access the underlying {@link MultiTable} object. <br/>
- *  Changes to a {@link MultiTable} object will therefore be visible to this class,
- *  i.e., it does not make a separate copy of the data.
+ * This class adapts the native results to an interface that the
+ * <a href="http://sed-ml.org" target="_blank">SED-ML</a> processor can use
+ * to post-process results.
+ * This class can be used to access the raw results via the {@link #getMultiTable()} method.
+ * <p>
+ * All methods accessing data access the underlying {@link MultiTable} object.<br/>
+ * Changes to a {@link MultiTable} object will therefore be visible to this class,
+ * i.e., it does not make a separate copy of the data.
+ * 
  * @author Richard Adams
  * @version $Rev$
  * @since 1.1
@@ -57,14 +59,14 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 	 * The result table.
 	 */
 	private MultiTable mTable;
-	
+
 	/* (non-Javadoc)
 	 * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getColumnHeaders()
 	 */
 	//@Override
 	public String[] getColumnHeaders() {
 		String [] hdrs = new String [mTable.getColumnCount()];
-		for (int i=0; i < hdrs.length;i++){
+		for (int i=0; i < hdrs.length;i++) {
 			hdrs[i]=mTable.getColumnIdentifier(i);
 		}
 		return hdrs;
@@ -76,12 +78,12 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 	//@Override
 	public double[][] getData() {
 		double [][] data = new double [mTable.getRowCount()][mTable.getColumnCount()];
-		for (int i = 0; i < mTable.getRowCount();i++){
-			for (int j =0; j< mTable.getColumnCount();j++){
+		for (int i = 0; i < mTable.getRowCount();i++) {
+			for (int j =0; j< mTable.getColumnCount();j++) {
 				data[i][j] = mTable.getValueAt(i, j);
-			
+
 			}
-			
+
 		}
 		return data;
 	}
@@ -91,10 +93,10 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 	 */
 	//@Override
 	public Double[] getDataByColumnId(String id) {
-		
+
 		Double [] rc = new Double[mTable.getRowCount()];
 		Column col = mTable.getColumn(id);
-		for (int i =0; i< mTable.getRowCount();i++){
+		for (int i =0; i< mTable.getRowCount();i++) {
 			rc[i]=col.getValue(i);
 		}
 		return rc;
@@ -107,7 +109,7 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 	public Double[] getDataByColumnIndex(int indx) {
 		Double [] rc = new Double[mTable.getRowCount()];
 		Column col = mTable.getColumn(indx);
-		for (int i =0; i< mTable.getRowCount();i++){
+		for (int i =0; i< mTable.getRowCount();i++) {
 			rc[i]=col.getValue(i);
 		}
 		return rc;
@@ -146,7 +148,7 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 	//@Override
 	public IModel2DataMappings getMappings() {
 		return new IModel2DataMappings() {
-			
+
 			/* (non-Javadoc)
 			 * @see org.jlibsedml.execution.IModel2DataMappings#hasMappingFor(java.lang.String)
 			 */
@@ -154,7 +156,7 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 			public boolean hasMappingFor(String id) {
 				return mTable.getColumn(id)!=null;
 			}
-			
+
 			/* (non-Javadoc)
 			 * @see org.jlibsedml.execution.IModel2DataMappings#getColumnTitleFor(java.lang.String)
 			 */
@@ -162,7 +164,7 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 			public String getColumnTitleFor(String modelID) {
 				return modelID;
 			}
-			
+
 			/* (non-Javadoc)
 			 * @see org.jlibsedml.execution.IModel2DataMappings#getColumnIndexFor(java.lang.String)
 			 */
@@ -170,8 +172,8 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 			public int getColumnIndexFor(String colID) {
 				return mTable.getColumnIndex(colID);
 			}
-			
+
 		};
 	}
-	
+
 }

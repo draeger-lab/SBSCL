@@ -57,39 +57,47 @@ import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
- * This class extends an abstract class from jlibsedml, which provides various support functions 
- *  such as retrieving models, applying changes to models, working out what tasks need to be executed to achieve 
- *  an Output, and post-processing of results.
- *  <p>
- *  Typical usage for this class is demonstrated in the JUnit test for this class.<br/>
- *  
- * Models can be resolved either from local files, URLs, or BioModels MIRIAM URNs.<br/>
- * TO resolve models from different sources, see the documentation for {@link AbstractSedmlExecutor}
- * in the jlibsedml library.
+ * This class extends an abstract class from jlibsedml, which provides various
+ * support functions such as retrieving models, applying changes to models,
+ * working out what tasks need to be executed to achieve an Output, and
+ * post-processing of results.
+ * <p>
+ * Typical usage for this class is demonstrated in the
+ * <a href="http://www.junit.org/" target="_blank">JUnit</a> test for this
+ * class.<br/>
+ * 
+ * Models can be resolved either from local files, URLs, or
+ * <a href="http://www.ebi.ac.uk/biomodels-main/" target="_blank">BioModels</a>
+ * <a href="http://www.ebi.ac.uk/miriam/main/">MIRIAM</a>
+ * URNs.<br/>
+ * TO resolve models from different sources, see the documentation for
+ * {@link AbstractSedmlExecutor} in the
+ * <a href="http://jlibsedml.sourceforge.net" target="_blank">jlibsedml.jar</a> library.
+ * 
  * @author Richard Adams
  * @version $Rev$
  * @since 1.1
  */
 public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
-  /*
-   * A list of KISAO Ids corresponding to supported algorithm types in SBMLSimulator.
-   *  These are used to determine if we are able to perform the simulation.
-   */
-  final static String [] SupportedIDs = new String [] {"KISAO:0000033","KISAO:0000030", "KISAO:0000087", "KISAO:0000088", "KISAO:0000019"};
-  
-  /**
-   * Information for SBML interpreter about the species that an amount should be calculated for
-   */
-  private Map<String, Boolean> amountHash;
-  
-  public SedMLSBMLSimulatorExecutor(SedML sedml, Output output) {
+	/*
+	 * A list of KISAO Ids corresponding to supported algorithm types in SBMLSimulator.
+	 *  These are used to determine if we are able to perform the simulation.
+	 */
+	final static String [] SupportedIDs = new String [] {"KISAO:0000033","KISAO:0000030", "KISAO:0000087", "KISAO:0000088", "KISAO:0000019"};
+
+	/**
+	 * Information for SBML interpreter about the species that an amount should be calculated for
+	 */
+	private Map<String, Boolean> amountHash;
+
+	public SedMLSBMLSimulatorExecutor(SedML sedml, Output output) {
 		super(sedml, output);
 		// add extra model resolvers - only FileModelResolver is included by default.
 		addModelResolver(new BioModelsModelsRetriever());
 		addModelResolver(new URLResourceRetriever());
-		
-  }
-	
+
+	}
+
 	/**
 	 * @param sedml
 	 * @param wanted
@@ -119,8 +127,8 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	protected boolean canExecuteSimulation(Simulation sim) {
 		String kisaoID = sim.getAlgorithm().getKisaoID();
 		KisaoTerm wanted = KisaoOntology.getInstance().getTermById(kisaoID);
-		for (String supported: SupportedIDs){
-			
+		for (String supported: SupportedIDs) {
+
 			KisaoTerm offered = KisaoOntology.getInstance().getTermById(
 					supported);
 			// If the available type is, or is a subtype of the desired algorithm,
@@ -145,12 +153,12 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		File tmp = null;
 		try {
 			// get a JSBML object from the model string.
-			 tmp = File.createTempFile("Sim", "sbml");
+			tmp = File.createTempFile("Sim", "sbml");
 			FileUtils.writeStringToFile(tmp, modelStr,"UTF-8");
 			Model model = (new SBMLReader()).readSBML(tmp).getModel();
 			// now run simulation
 			SBMLinterpreter interpreter = null;
-			if(amountHash != null) {
+			if (amountHash != null) {
 				interpreter = new SBMLinterpreter(model, 0, 0, 1,
 						amountHash);
 			}
@@ -160,19 +168,19 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 			solver.setIncludeIntermediates(false);
 			solver.setStepSize((sim.getOutputEndTime() -sim.getOutputStartTime() )/ (sim.getNumberOfPoints()-1));
 			MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(),
-					 sim.getOutputStartTime(),sim.getOutputEndTime());
-			
+					sim.getOutputStartTime(),sim.getOutputEndTime());
+
 			// adapt the MultiTable to jlibsedml interface.
 			return new MultTableSEDMLWrapper(mts);
-			
-			
+
+
 		} catch (Exception e) {
 			addStatus(new ExecutionStatusElement(e, "Simulation failed", ExecutionStatusType.ERROR));
 		}
 		return null;
-		
+
 	}
-	
+
 	/* SBMLSimulator can simulate SBML....
 	 * (non-Javadoc)
 	 * @see org.jlibsedml.execution.AbstractSedmlExecutor#supportsLanguage(java.lang.String)
@@ -181,16 +189,16 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	protected boolean supportsLanguage(String language) {
 		return language.contains("sbml") || language.contains("SBML");
 	}
-	
+
 	/*
 	 * Simple factory to return a solver based on the KISAO ID.
 	 */
-	AbstractDESSolver getSolverForKisaoID(String id){
-		if(SupportedIDs[0].equals(id)){
+	AbstractDESSolver getSolverForKisaoID(String id) {
+		if (SupportedIDs[0].equals(id)) {
 			return new RosenbrockSolver();
-		}else if (SupportedIDs[1].equals(id)){
+		}else if (SupportedIDs[1].equals(id)) {
 			return new EulerMethod();
-		}else if (SupportedIDs[2].equals(id)){
+		}else if (SupportedIDs[2].equals(id)) {
 			return new DormandPrince54Solver();
 		}else {
 			return new RosenbrockSolver(); // default
@@ -199,17 +207,17 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	public MultiTable processSimulationResults(Output wanted,
 			Map<Task, IRawSedmlSimulationResults> res) {
 		// here we post-process the results
-		 SedMLResultsProcesser2 pcsr2 =  new SedMLResultsProcesser2(sedml, wanted);
-		 pcsr2.process(res);
-		 
-		 // this does not necessarily have time as x-axis - another variable could be  the 
-		 // independent variable.
-		 IProcessedSedMLSimulationResults prRes = pcsr2.getProcessedResult();
-		
-		 
-		 // now we restore a MultiTable from the processed results. This basic example assumes a typical 
-		 // simulation where time = xaxis - otherwise, if output is a Plot, we would need to analyse the x-axis
-		 // datagenerators
+		SedMLResultsProcesser2 pcsr2 =  new SedMLResultsProcesser2(sedml, wanted);
+		pcsr2.process(res);
+
+		// this does not necessarily have time as x-axis - another variable could be  the 
+		// independent variable.
+		IProcessedSedMLSimulationResults prRes = pcsr2.getProcessedResult();
+
+
+		// now we restore a MultiTable from the processed results. This basic example assumes a typical 
+		// simulation where time = xaxis - otherwise, if output is a Plot, we would need to analyse the x-axis
+		// datagenerators
 		MultiTable mt = createMultiTableFromProcessedResults(wanted, prRes);
 		return mt;
 	}
@@ -218,17 +226,17 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	public MultiTable createMultiTableFromProcessedResults(Output wanted,
 			IProcessedSedMLSimulationResults prRes) {
 		String timeColName = findTimeColumn(prRes, wanted, sedml);
-		
+
 		// most of the rest of this code is concerned with adapting a processed result set
 		// back to a multitable.
-		
+
 		double [] time = getTimeData(prRes, timeColName);
 		// we need to get a new datset that does not contain the time-series dataset.
 		double [][] data = getNonTimeData(prRes, timeColName);
 		// now we ignore the time dataset
 		String []hdrs = getNonTimeHeaders(prRes, timeColName);
-		
-		 MultiTable mt = new MultiTable(time, data, hdrs);
+
+		MultiTable mt = new MultiTable(time, data, hdrs);
 		return mt;
 	}
 
@@ -236,13 +244,13 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 			String timeColName) {
 		String []rc = new String [prRes.getNumColumns()-1];
 		int rcIndx =0;
-		for (String col:prRes.getColumnHeaders()){
-			if(!col.equals(timeColName)){
+		for (String col:prRes.getColumnHeaders()) {
+			if (!col.equals(timeColName)) {
 				rc[rcIndx++]=col;
 			}
 		}
 		return rc;
-		
+
 	}
 
 	// gets the variable ( or non-time data )
@@ -251,28 +259,28 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		double [][] data = prRes.getData();
 		int indx = prRes.getIndexByColumnID(timeColName);
 		double [][] rc = new double [prRes.getNumDataRows() ][prRes.getNumColumns()-1];
-		for (int r = 0; r< data.length;r++){
+		for (int r = 0; r< data.length;r++) {
 			int colIndx=0;
-			for ( int c = 0; c< data[r].length;c++){
+			for ( int c = 0; c< data[r].length;c++) {
 				if (c!=indx) {
 					rc[r][colIndx++]=data[r][c];
 				}
 			}
 		}
 		return rc;
-		
-		
+
+
 	}
 
 	//gets the time data from the processed result array.
 	private double[] getTimeData(IProcessedSedMLSimulationResults prRes,
 			String timeColName) {
 		Double [] tim = prRes.getDataByColumnId(timeColName);
-	
-		
+
+
 		double [] rc = new double[tim.length];
 		int indx=0;
-		for (Double d: tim){
+		for (Double d: tim) {
 			rc[indx++]=d.doubleValue();
 		}
 		return rc;
@@ -284,12 +292,12 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 			Output wanted, SedML sedml2) {
 		// TODO Auto-generated method stub
 		List<String>dgIds = wanted.getAllDataGeneratorReferences();
-		for (String dgID:dgIds){
+		for (String dgID:dgIds) {
 			DataGenerator dg = sedml.getDataGeneratorWithId(dgID);
-			if(dg != null){
+			if (dg != null) {
 				List<Variable> vars = dg.getListOfVariables();
-				for (Variable v: vars){
-					if (v.isSymbol() && VariableSymbol.TIME.equals(v.getSymbol())){
+				for (Variable v: vars) {
+					if (v.isSymbol() && VariableSymbol.TIME.equals(v.getSymbol())) {
 						return dgID;
 					}
 				}

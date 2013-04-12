@@ -24,13 +24,10 @@ package org.simulator.sbml;
 
 import java.util.LinkedList;
 
-
 /**
- * <p > 
  * This class represents a compilation of all information calculated during
- * simulation concerning events in SBML. An SBMLEventInProcessWithDelay especially stands
- * for an event with delay.
- * </p > 
+ * simulation concerning events in SBML. An {@link SBMLEventInProgressWithDelay}
+ * especially stands for an event with delay.
  * 
  * @author Alexander D&ouml;rr
  * @version $Rev$
@@ -41,12 +38,12 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
 	/**
 	 * The previous times the event has been executed
 	 */
-	private LinkedList<Double >  previousExecutionTimes;
+	private LinkedList<Double> previousExecutionTimes;
 	
 	/**
 	 * The previous values with which the event has been executed
 	 */
-	private LinkedList<Double[] >  previousExecutionValues;
+	private LinkedList<Double[]> previousExecutionValues;
 
 	/**
 	 * Creates a new SBMLEventInProcessWithDelay with the given boolean value
@@ -56,8 +53,8 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
 	 */
 	public SBMLEventInProgressWithDelay(boolean fired) {
 		super(fired);
-		previousExecutionTimes = new LinkedList<Double > ();
-		previousExecutionValues = new LinkedList<Double[] > ();
+		previousExecutionTimes = new LinkedList<Double> ();
+		previousExecutionValues = new LinkedList<Double[]> ();
 	}
 
 	/*
@@ -67,8 +64,8 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
 	@Override
 	public void refresh(boolean fired) {
 		super.refresh(fired);
-		previousExecutionTimes = new LinkedList<Double > ();
-		previousExecutionValues = new LinkedList<Double[] > ();
+		previousExecutionTimes = new LinkedList<Double> ();
+		previousExecutionValues = new LinkedList<Double[]> ();
 	}
 
 	/*
@@ -129,8 +126,7 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
 
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.simulator.math.odes.SBMLEventInProcess#refresh(double)
 	 */
 	@Override
@@ -149,9 +145,9 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
 			}
 			Double lastTime = previousExecutionTimes.peekLast();
 			if (lastTime != null) {
-				this.lastTimeExecuted = lastTime;  
+				this.lastTimeExecuted = lastTime.doubleValue();  
 			} else {
-				this.lastTimeExecuted = -1;
+				this.lastTimeExecuted = -1d;
 			}
 		} 
 	}

@@ -25,40 +25,40 @@ package org.simulator.sbml.astnode;
 import org.sbml.jsbml.ASTNode;
 
 /**
- * This class computes and stores values of variables occuring in a function. 
+ * This class computes and stores values of variables occurring in a function.
+ * 
  * @author Roland Keller
  * @version $Rev$
  */
 public class NamedValue extends ASTNodeValue {
+
 	/**
 	 * The function the variable occurs in
 	 */
-  private FunctionValue function;
-  
-  /**
-   * The index of the variable in the arguments array of the corresponding FunctionValue.
-   */
-  private int index;
-  
-  /**
-   * 
-   * @param interpreter
-   * @param node
-   * @param function
-   */
-  public NamedValue(ASTNodeInterpreter interpreter, ASTNode node, FunctionValue function) {
-    super(interpreter, node);
-    this.function = function;
-    this.index = function.getIndex(node.getName());
-  }
-  
- /*
-  * (non-Javadoc)
-  * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
-  */
-  protected void computeDoubleValue(double delay) {
-    doubleValue=function.getArgumentValues()[index];
-  }
-  
-  
+	private FunctionValue function;
+
+	/**
+	 * The index of the variable in the arguments array of the corresponding FunctionValue.
+	 */
+	private int index;
+
+	/**
+	 * 
+	 * @param interpreter
+	 * @param node
+	 * @param function
+	 */
+	public NamedValue(ASTNodeInterpreter interpreter, ASTNode node, FunctionValue function) {
+		super(interpreter, node);
+		this.function = function;
+		this.index = function.getIndex(node.getName());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+	 */
+	protected void computeDoubleValue(double delay) {
+		doubleValue=function.getArgumentValues()[index];
+	}
+
 }

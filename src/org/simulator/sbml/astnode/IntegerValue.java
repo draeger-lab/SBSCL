@@ -26,6 +26,7 @@ import org.sbml.jsbml.ASTNode;
 
 /**
  * This class can compute and store the value of an integer node.
+ * 
  * @author Roland Keller
  * @version $Rev$
  */
@@ -39,16 +40,14 @@ public class IntegerValue extends ASTNodeValue {
 		super(interpreter, node);
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
 	 */
 	protected void computeDoubleValue(double delay) {
 		doubleValue = interpreter.compile(real, units);
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.simulator.sbml.astnode.ASTNodeValue#getConstant()
 	 */
 	public boolean getConstant() {

@@ -27,7 +27,9 @@ import org.sbml.jsbml.Species;
 import org.simulator.sbml.SBMLValueHolder;
 
 /**
- * This class computes and stores values of ASTNodes that refer to a species.
+ * This class computes and stores values of {@link ASTNode}s that refer to a
+ * {@link Species}.
+ * 
  * @author Roland Keller
  * @version $Rev: 205 $
  * @since 1.0
@@ -83,42 +85,42 @@ public class SpeciesValue extends ASTNodeValue {
 	 * The id of the compartment of the species
 	 */
 	private String compartmentID;
-  
-  /**
-   * 
-   * @param interpreter
-   * @param node
-   * @param s
-   * @param valueHolder
-   * @param position
-   * @param compartmentPosition
-   * @param compartmentID
-   * @param zeroSpatialDimensions
-   * @param isAmount
-   */
-  public SpeciesValue(ASTNodeInterpreter interpreter, ASTNode node,
-    Species s, SBMLValueHolder valueHolder, int position, int compartmentPosition, String compartmentID, boolean zeroSpatialDimensions, boolean isAmount) {
-    super(interpreter, node);
-    this.s = s;
-    this.id = s.getId();
-    this.valueHolder = valueHolder;
-    this.isAmount = isAmount;
-    this.isSetInitialConcentration = s.isSetInitialConcentration();
-    this.hasOnlySubstanceUnits = s.getHasOnlySubstanceUnits();
-    this.position = position;
-    this.compartmentPosition = compartmentPosition;
-    this.compartmentID = compartmentID;
-    this.zeroSpatialDimensions = zeroSpatialDimensions;
-  }
-  
-  /*
-   * (non-Javadoc)
-   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
-   */
-  @Override
+
+	/**
+	 * 
+	 * @param interpreter
+	 * @param node
+	 * @param s
+	 * @param valueHolder
+	 * @param position
+	 * @param compartmentPosition
+	 * @param compartmentID
+	 * @param zeroSpatialDimensions
+	 * @param isAmount
+	 */
+	public SpeciesValue(ASTNodeInterpreter interpreter, ASTNode node,
+			Species s, SBMLValueHolder valueHolder, int position, int compartmentPosition, String compartmentID, boolean zeroSpatialDimensions, boolean isAmount) {
+		super(interpreter, node);
+		this.s = s;
+		this.id = s.getId();
+		this.valueHolder = valueHolder;
+		this.isAmount = isAmount;
+		this.isSetInitialConcentration = s.isSetInitialConcentration();
+		this.hasOnlySubstanceUnits = s.getHasOnlySubstanceUnits();
+		this.position = position;
+		this.compartmentPosition = compartmentPosition;
+		this.compartmentID = compartmentID;
+		this.zeroSpatialDimensions = zeroSpatialDimensions;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+	 */
+	@Override
 	protected void computeDoubleValue(double delay) {
-	  if(delay == 0) {
-		  if (isAmount && !hasOnlySubstanceUnits) {
+		if (delay == 0) {
+			if (isAmount && !hasOnlySubstanceUnits) {
 				double compartmentValue = valueHolder
 						.getCurrentValueOf(compartmentPosition);
 				if ((compartmentValue == 0d) || zeroSpatialDimensions) {
@@ -141,12 +143,12 @@ public class SpeciesValue extends ASTNodeValue {
 				doubleValue = valueHolder.getCurrentValueOf(position);
 
 			}
-	  }
-	  else {
-		 double valueTime = interpreter.symbolTime() - delay;
-		
-		 
-		 if (isAmount && !hasOnlySubstanceUnits) {
+		}
+		else {
+			double valueTime = interpreter.symbolTime() - delay;
+
+
+			if (isAmount && !hasOnlySubstanceUnits) {
 				double compartmentValue = valueHolder
 						.computeDelayedValue(valueTime, compartmentID, null, null, 0);
 				if ((compartmentValue == 0d) || zeroSpatialDimensions) {
@@ -169,10 +171,8 @@ public class SpeciesValue extends ASTNodeValue {
 				doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
 
 			}
-	  }
-	  
-	  
-	  	
+		}
+
 	}
-  
+
 }

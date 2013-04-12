@@ -27,10 +27,9 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * <p>
  * This class represents a compilation of the values and execution times during
- * simulation concerning events. 
- * </p>
+ * simulation concerning events.
+ *
  * @author Roland Keller
  * @version $Rev$
  */
@@ -126,7 +125,7 @@ public class EventInProgress {
 		if ((lastTimeFired <= time) && (lastTimeRecovered <= time)) {
 		  return fired;
 		}
-		else if ((lastTimeFired <= time) && (lastTimeRecovered > time)){
+		else if ((lastTimeFired <= time) && (lastTimeRecovered > time)) {
 		  lastTimeRecovered = -1;
 		  fired = true;
 		  return true;

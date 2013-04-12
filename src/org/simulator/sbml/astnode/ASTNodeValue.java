@@ -30,8 +30,10 @@ import org.sbml.jsbml.util.Maths;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
- * This class can compute and store the interpreted value (double or boolean) of an ASTNode at the current time. A new computation is only done if the time has changed.
- * So the computation is time-efficient.
+ * This class can compute and store the interpreted value (double or boolean) of
+ * an {@link ASTNode} at the current time. A new computation is only done if the
+ * time has changed. So the computation is time-efficient.
+ * 
  * @author Roland Keller
  * @version $Rev: 205 $
  * @since 1.0
@@ -170,7 +172,7 @@ public class ASTNodeValue {
       isInfinite = Double.isInfinite(real);
       isConstant = true;
     }
-    else if (nodeType==ASTNode.Type.INTEGER){
+    else if (nodeType==ASTNode.Type.INTEGER) {
       real = node.getInteger();
       isConstant = true;
     }

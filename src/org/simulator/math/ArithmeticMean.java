@@ -24,6 +24,7 @@ package org.simulator.math;
 
 /**
  * Class that computes the arithmetic mean of the given column distances.
+ * 
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
@@ -40,8 +41,8 @@ public class ArithmeticMean extends MeanFunction {
 	 */
 	public double computeMean(double... distances) {
 		double sum = 0;
-		for(double distance: distances) {
-			sum+= distance;
+		for (double distance: distances) {
+			sum += distance;
 		}
 		return sum / distances.length;
 	}

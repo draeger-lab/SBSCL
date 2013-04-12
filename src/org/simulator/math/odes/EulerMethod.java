@@ -25,9 +25,10 @@ package org.simulator.math.odes;
 import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.Mathematics;
 
-
 /**
- * In this class the Euler method for integration a differential equation system is implemented.
+ * In this class the Euler method for integration a differential equation system
+ * is implemented.
+ * 
  * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 0.9
