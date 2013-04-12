@@ -68,6 +68,5 @@ public interface DESystem extends Serializable, FirstOrderDifferentialEquations 
 	 * 			Determines whether delay expression should be included in the calculation.
 	 */
 	public void setDelaysIncluded(boolean delaysIncluded);
-	
 
 }

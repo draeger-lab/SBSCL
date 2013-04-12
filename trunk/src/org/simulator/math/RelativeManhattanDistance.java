@@ -23,16 +23,16 @@
 package org.simulator.math;
 
 /**
- * Class for computation of the relative Manhattan distance of two vectors
+ * Class for computation of the relative Manhattan distance of two vectors.
+ * 
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
  */
 public class RelativeManhattanDistance extends Relative_N_Metric {
 
-
 	/**
-	 * 
+	 * Generated serial version identifier. 
 	 */
 	private static final long serialVersionUID = -5446188147827736620L;
 
@@ -43,8 +43,7 @@ public class RelativeManhattanDistance extends Relative_N_Metric {
 		super(new ManhattanDistance());
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.Relative_N_Metric#setRoot(double)
 	 */
 	public void setRoot(double root) {

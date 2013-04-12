@@ -33,20 +33,20 @@ package org.simulator.math;
  * @since 0.9
  */
 public class Mathematics {
-	
+
 	/**
-   * This method computes the factorial! function.
-   *
-   * @param n
-   * @return result
-   */
-  public static final double factorial(double n) {
-    if ((n == 0) || (n == 1)) {
-    	return 1;
-    }
-    return n * factorial(n - 1);
-  }
-  
+	 * This method computes the factorial! function.
+	 *
+	 * @param n
+	 * @return result
+	 */
+	public static final double factorial(double n) {
+		if ((n == 0) || (n == 1)) {
+			return 1;
+		}
+		return n * factorial(n - 1);
+	}
+
 
 	/**
 	 * Swaps a and b if a is greater then b.
@@ -61,7 +61,7 @@ public class Mathematics {
 			a = swap;
 		}
 	}
-	
+
 	/**
 	 * This just computes the minimum of three integer values.
 	 * 
@@ -79,20 +79,20 @@ public class Mathematics {
 		}
 		return z;
 	}
-	
-	/**
-   * Scales a vector with the given scalar.
-   * 
-   * @param scale
-   * @param vec
-   */
-  public static void scale(double scale, double[] vec) {
-    for (int i = 0; i < vec.length; i++) {
-      vec[i] *= scale;
-    }
-  }
 
-  /**
+	/**
+	 * Scales a vector with the given scalar.
+	 * 
+	 * @param scale
+	 * @param vec
+	 */
+	public static void scale(double scale, double[] vec) {
+		for (int i = 0; i < vec.length; i++) {
+			vec[i] *= scale;
+		}
+	}
+
+	/**
 	 * Multiplies (scales) every element of the array v with s in place.
 	 * 
 	 * @param s
@@ -105,7 +105,7 @@ public class Mathematics {
 			res[i] = v[i] * s;
 		}
 	}
-  
+
 	/**
 	 * Add vectors scaled: res[i] = s*(v[i] + w[i])
 	 * 
@@ -119,7 +119,7 @@ public class Mathematics {
 			res[i] = s * (v[i] + w[i]);
 		}
 	}
-	
+
 	/**
 	 * Add vectors scaled: res[i] = s*v[i] + w[i]
 	 * 
@@ -133,32 +133,33 @@ public class Mathematics {
 			res[i] = s * v[i] + w[i];
 		}
 	}
-  
-  /**
-   * Add vectors in place setting res = v1 + v2.
-   * 
-   * @param v1
-   * @param v2
-   */
-  public static void vvAdd(double[] v1, double[] v2, double[] res) {
-    vvAddOffs(v1, 0, v2, 0, res, 0, v1.length);
-  }
 
-  /**
-   * Add vectors in place setting with an offset within the target vector,
-   * meaning that res[resOffs+i]=v1[v1Offs+i]+v2[v2Offs+i] for i in length.
-   * 
-   * @param v1
-   * @param v2
-   */
-  public static void vvAddOffs(double[] v1, int v1Offs, double[] v2,
-      int v2Offs, double[] res, int resOffs, int len) {
-    for (int i = 0; i < len; i++) {
-      res[resOffs + i] = v1[v1Offs + i] + v2[v2Offs + i];
-    }
-  }
-	
-  /**
+	/**
+	 * Add vectors in place setting res = v1 + v2.
+	 * 
+	 * @param v1
+	 * @param v2
+	 */
+	public static void vvAdd(double[] v1, double[] v2, double[] res) {
+		vvAddOffs(v1, 0, v2, 0, res, 0, v1.length);
+	}
+
+	/**
+	 * Add vectors in place setting with an offset within the target vector,
+	 * meaning that {@code res[resOffs+i]=v1[v1Offs+i]+v2[v2Offs+i]} for i in
+	 * length.
+	 * 
+	 * @param v1
+	 * @param v2
+	 */
+	public static void vvAddOffs(double[] v1, int v1Offs, double[] v2,
+			int v2Offs, double[] res, int resOffs, int len) {
+		for (int i = 0; i < len; i++) {
+			res[resOffs + i] = v1[v1Offs + i] + v2[v2Offs + i];
+		}
+	}
+
+	/**
 	 * Subtract vectors returning a new vector c = a - b.
 	 * 
 	 * @param a
@@ -170,7 +171,7 @@ public class Mathematics {
 		vvSub(a, b, result);
 		return result;
 	}
-	
+
 	/**
 	 * Subtract vectors returning a new vector c = a - b.
 	 * 
@@ -182,5 +183,5 @@ public class Mathematics {
 			res[i] = a[i] - b[i];
 		}
 	}
-  
+
 }

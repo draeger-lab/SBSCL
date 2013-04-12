@@ -22,16 +22,17 @@
  */
 
 /** 
- * <p>Classes for reading and executing SED-ML files. The 
- * <a href="http://www.jlibsedml.org">jlibsedml</a> library
+ * <p>Classes for reading and executing
+ * <a href="http://sed-ml.org/" target="_blank">SED-ML</a> files.
+ * The <a href="http://www.jlibsedml.org">jlibsedml</a> library
  * is used to perform these operations.
  * <p>
  * For more information about SED-ML please visit 
- * <a href="http://sed-ml.org">http://sed-ml.org</a>.
+ * <a href="http://sed-ml.org" target="_blank">http://sed-ml.org</a>.
  * <p>
- * Classes for storing and interpreting an SBML model. The most important
- * class is SBMLinterpreter that can return the current vector of
- * derivatives to the solver.
+ * Classes for storing and interpreting an <a href="http://sbml.org">SBML</a>
+ * model. The most important class is {@link org.simulator.sbml.SBMLinterpreter}
+ * that can return the current vector of derivatives to the solver.
  * 
  * @author Richard Adams
  */

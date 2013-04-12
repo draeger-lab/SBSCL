@@ -83,10 +83,10 @@ public class SEDMLExecutorTest {
 		// Here we run all the simulations needed to create an output, and get the 
 		// raw results.
 		Map<Task, IRawSedmlSimulationResults>res = exe.runSimulations();
-		if(res==null ||res.isEmpty() || !exe.isExecuted()){
+		if (res==null ||res.isEmpty() || !exe.isExecuted()) {
 			 fail ("Simulatation failed: " + exe.getFailureMessages().get(0).getMessage());
 		}
-		for(IRawSedmlSimulationResults re: res.values()){
+		for (IRawSedmlSimulationResults re: res.values()) {
 			assertTrue(re instanceof MultTableSEDMLWrapper);
 		}
 			
@@ -108,7 +108,7 @@ public class SEDMLExecutorTest {
 		SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml,wanted);
 		// This gets the raw simulation results - one for each Task that was run.
 		Map<Task, IRawSedmlSimulationResults>res = exe.runSimulations();
-		if(res==null ||res.isEmpty() || !exe.isExecuted()){
+		if (res==null ||res.isEmpty() || !exe.isExecuted()) {
 			 fail ("Simulatation failed: " + exe.getFailureMessages().get(0));
 		}
 		      // now process.In this case, there's no processing performed - we're displaying the

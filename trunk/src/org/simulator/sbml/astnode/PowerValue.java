@@ -26,6 +26,7 @@ import org.sbml.jsbml.ASTNode;
 
 /**
  * This class can compute and store the value of a power expression.
+ * 
  * @author Roland Keller
  * @version $Rev$
  */
@@ -39,10 +40,10 @@ public class PowerValue extends ASTNodeValue {
 		super(interpreter, node);
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
 	 */
+	@Override
 	protected void computeDoubleValue(double delay) {
 		doubleValue = interpreter.pow(leftChild, rightChild, time, delay);
     }

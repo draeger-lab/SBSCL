@@ -31,16 +31,15 @@ import org.simulator.sbml.astnode.ASTNodeValue;
 import org.simulator.sbml.astnode.AssignmentRuleValue;
 
 /**
- * <p>
  * This class represents a compilation of all information calculated during
- * simulation concerning events in SBML. It can also contain the math of the trigger, the priority and the delay. 
- * </p>
+ * simulation concerning events in <a href="http://sbml.org" target="_blank">SBML</a>.
+ * It can also contain the math of the trigger, the priority and the delay. 
  * 
  * @author Alexander D&ouml;rr
  * @version $Rev$
  * @since 0.9
  */
-public class SBMLEventInProgress extends EventInProgress{
+public class SBMLEventInProgress extends EventInProgress {
 
 	/**
 	 * The priority of the event

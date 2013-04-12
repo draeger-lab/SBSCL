@@ -23,12 +23,14 @@
 package org.simulator.sbml.astnode;
 
 import java.util.Map;
+
+import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Species;
 import org.simulator.sbml.SBMLValueHolder;
 
 /**
- * This class can compute and store the value of an AssignmentRule together with
- * the variable of the rule.
+ * This class can compute and store the value of an {@link AssignmentRule}
+ * together with the variable of the rule.
  * 
  * @author Roland Keller
  * @version $Rev$
@@ -92,7 +94,7 @@ public class AssignmentRuleValue extends RuleValue {
 	 * @return Has there been a change in the Y vector caused by the rule?
 	 */
 	public boolean processRule(double[] Y, double time, boolean changeY) {
-		if(index >= 0) {
+		if (index >= 0) {
 			double oldValue = Y[index];
 			processAssignmentVariable(time);
 			if (changeY) {

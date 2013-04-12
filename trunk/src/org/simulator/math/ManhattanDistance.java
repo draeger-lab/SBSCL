@@ -23,7 +23,8 @@
 package org.simulator.math;
 
 /**
- * Class for computation of the Manhattan distance of two vectors
+ * Class for computation of the Manhattan distance of two vectors.
+ * 
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
@@ -46,6 +47,7 @@ public class ManhattanDistance extends N_Metric {
 	/* (non-Javadoc)
 	 * @see org.sbml.simulator.math.N_Metric#setRoot(double)
 	 */
+	@Override
 	public void setRoot(double root) {
 		// root should not be changed
 	}

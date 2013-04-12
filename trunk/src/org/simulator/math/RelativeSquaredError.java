@@ -41,8 +41,8 @@ public class RelativeSquaredError extends N_Metric {
 	private static final long serialVersionUID = 1643317436479699973L;
 
 	/**
-	 * Constructs a new RelativeSquaredError. Here
-	 * the root is the default value to be returned by the distance function.
+	 * Constructs a new {@link RelativeSquaredError}. Here the root is the
+	 * default value to be returned by the distance function.
 	 */
 	public RelativeSquaredError() {
 		super(2d);
@@ -55,7 +55,6 @@ public class RelativeSquaredError extends N_Metric {
 	double additiveTerm(double x, double y, double root, double defaultValue) {
 		return (y != 0d) ? Math.pow(Math.abs(x - y) / y, root) : Math.abs(x - y);
 	}
-
 	
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.math.NMetric#overallDistance()

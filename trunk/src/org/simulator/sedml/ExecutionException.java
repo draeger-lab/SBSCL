@@ -23,13 +23,19 @@
 package org.simulator.sedml;
 
 /**
- * Runtime exception indicating that SEDML execution has failed.
+ * Runtime exception indicating that
+ * <a href="http://sed-ml.org" target="_blank">SED-ML</a> execution has failed.
+ * 
  * @author Richard Adams
  * @version $Rev$
  * @since 1.1
  */
 public class ExecutionException extends RuntimeException {
 
+	/**
+	 * 
+	 * @param message
+	 */
 	public ExecutionException(String message) {
 		super(message);
 	}

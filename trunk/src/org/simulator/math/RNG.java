@@ -22,9 +22,9 @@
  */
 package org.simulator.math;
 
+import java.text.MessageFormat;
 import java.util.Random;
 import java.util.logging.Logger;
-
 
 /**
  * A Random Number Generator.
@@ -34,6 +34,7 @@ import java.util.logging.Logger;
  * @since 0.9
  */
 public class RNG {
+
   /**
    * 
    */
@@ -68,8 +69,8 @@ public class RNG {
     }
     int result = (Math.abs(RANDOM.nextInt()) % (high - low + 1)) + low;
     if ((result < low) || (result > high)) {
-      logger.fine(String.format(
-                "Error, invalid value %d in RNG.randomInt! boundaries were low = %d\thigh = %d",
+      logger.fine(MessageFormat.format(
+                "Error, invalid value {0,number} in RNG.randomInt! boundaries were low = {1,number}\thigh = {2,number}",
                 result, low, high));
       result = Math.abs(RANDOM.nextInt() % (high - low + 1)) + low;
     }

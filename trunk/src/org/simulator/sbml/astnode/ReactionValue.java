@@ -27,7 +27,9 @@ import org.sbml.jsbml.Reaction;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
- * This class computes and stores values of ASTNodes that refer to a reaction.
+ * This class computes and stores values of {@link ASTNode}s that refer to a
+ * {@link Reaction}.
+ * 
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
@@ -61,10 +63,10 @@ public class ReactionValue extends ASTNodeValue {
     }
   }
   
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
    */
+  @Override
   protected void computeDoubleValue(double delay) {
     doubleValue = Double.NaN;
     if (kineticLawUserObject != null) {

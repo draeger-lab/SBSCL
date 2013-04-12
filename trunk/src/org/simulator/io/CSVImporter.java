@@ -41,6 +41,7 @@ import org.simulator.math.odes.MultiTable;
 
 /**
  * This class is for importing CSV files.
+ * 
  * @author Roland Keller
  * @version $Rev$
  */
@@ -163,7 +164,7 @@ public class CSVImporter {
 		
 		List<String> lines = new LinkedList<String>();
 		String line = reader.readLine();
-		if(line != null) {
+		if (line != null) {
 			header = line.split(",");
 			
 			line = reader.readLine();
@@ -174,7 +175,7 @@ public class CSVImporter {
 			
 			String[][] result = new String[lines.size()][header.length];
 			int i=0;
-			for(String l: lines) {
+			for (String l: lines) {
 				result[i] = l.split(",");
 				i++;
 			}

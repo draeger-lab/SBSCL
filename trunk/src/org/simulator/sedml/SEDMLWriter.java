@@ -55,7 +55,8 @@ import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.math.odes.RungeKutta_EventSolver;
 
 /**
- * Writes a simulation configuration to SED-ML for export and sharing.<br/>
+ * Writes a simulation configuration to
+ * <a href="http://sed-ml.org" target="_blank">SED-ML</a> for export and sharing.<br/>
  * Usage:
  * <pre>
  * SEDMLWriter writer = new SEDMLWriter();

@@ -22,7 +22,8 @@
  */
 
 /**
- * This package contains images and icons for the Simulation Core Library.
+ * This package contains images and icons for the Systems Biology Simulation
+ * Core Library.
  * These pictures can be used in graphical user interfaces.
  * 
  * @author Andreas Dr&auml;ger

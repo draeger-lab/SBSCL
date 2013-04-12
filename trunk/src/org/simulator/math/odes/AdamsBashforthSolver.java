@@ -25,7 +25,9 @@ package org.simulator.math.odes;
 import org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegrator;
 
 /**
- * This class is a wrapper for the Adams-Bashforth solver in the Apache Math Library.
+ * This class is a wrapper for the Adams-Bashforth solver in the 
+ * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
+ * 
  * @author Roland Keller
  * @version $Rev$
  * @since 0.9

@@ -26,7 +26,9 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
 
 /**
- * This class computes and stores values of ASTNodes that refer to a local parameter.
+ * This class computes and stores values of {@link ASTNode}s that refer to a
+ * {@link LocalParameter}.
+ * 
  * @author Roland Keller
  * @version $Rev: 205 $
  * @since 1.0
@@ -53,14 +55,13 @@ public class LocalParameterValue extends ASTNodeValue {
 		isConstant = true;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.simulator.sbml.astnode.ASTNodeValue#compileDouble(double)
 	 */
 	@Override
 	public double compileDouble(double time, double delay) {
 		this.time=time;
-		if(alreadyProcessed == false) {
+		if (alreadyProcessed == false) {
 			doubleValue = lp.getValue();
 			alreadyProcessed = true;
 		}

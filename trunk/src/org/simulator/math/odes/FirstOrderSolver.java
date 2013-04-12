@@ -30,7 +30,9 @@ import org.apache.commons.math.util.FastMath;
 import org.simulator.math.Mathematics;
 
 /**
- * This class is the superclass of the wrapper classes for the solvers of the Apache Math library.
+ * This class is the superclass of the wrapper classes for the solvers of the 
+ * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
+ * 
  * @author Roland Keller
  * @version $Rev$
  * @since 0.9
@@ -124,7 +126,7 @@ public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
 	 */
 	public double[] computeChange(DESystem DES, double[] y, double t,
 			double stepSize, double[] change, boolean steadyState) throws DerivativeException {
-		if((integrationResult==null)||(integrationResult.length!=y.length)) {
+		if ((integrationResult==null)||(integrationResult.length!=y.length)) {
 			integrationResult = new double[y.length];
 		}
 

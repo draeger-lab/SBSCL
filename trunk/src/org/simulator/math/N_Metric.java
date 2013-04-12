@@ -26,9 +26,9 @@ package org.simulator.math;
 import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
- * An implementation of an n-metric. An n-metric is basically the n-th root of
- * the sum of the distances of every single element in two vectors (arrays),
- * where this distance will always be exponentiated by the value of n.
+ * An implementation of an n-metric. An n-metric is basically the n<sup>th</sup>
+ * root of the sum of the distances of every single element in two vectors
+ * (arrays), where this distance will always be exponentiated by the value of n.
  * 
  * @author Andreas Dr&auml;ger
  * @author Roland Keller
@@ -60,10 +60,10 @@ public class N_Metric extends QualityMeasure {
 	}
 
 	/**
-	 * Constructs a new NMetric with a costumized root. Depending on the values
+	 * Constructs a new NMetric with a customized root. Depending on the values
 	 * of root this results in different metrics. Some are especially important:
 	 * <ul>
-	 * <li>one is the Manhatten Norm or the city block metric.</li>
+	 * <li>one is the Manhattan norm or the city block metric.</li>
 	 * <li>two is the Euclidean metric.</li>
 	 * <li>Infinity is the maximum norm.</li>
 	 * </ul>
@@ -118,11 +118,12 @@ public class N_Metric extends QualityMeasure {
 	}
 	
 	/**
+	 * Helper method, which can be overridden in extending classes.
 	 * 
 	 * @param distance
 	 * @param root
 	 * @param defaultValue
-	 * @return
+	 * @return computes the root the actual distance.
 	 */
 	double overallDistance(double distance, double root, double defaultValue) {
 		return Math.pow(distance, 1d / root);
@@ -137,17 +138,17 @@ public class N_Metric extends QualityMeasure {
 	}
 
 	/**
-	 * @param expected
+	 * @param x expected
 	 * @param defaultValue
-	 * @return
+	 * @return the distance of the column vector x to the point of origin.
 	 */
 	public double distanceToZero(Column x, double defaultValue) {
-		if(root == 0d) {
+		if (root == 0d) {
 			return defaultValue;
 		}
 		double d = 0;
 		double x_i;
-		for (int i=0; i!= x.getRowCount(); i++) {
+		for (int i = 0; i != x.getRowCount(); i++) {
 			x_i = x.getValue(i);
 			if (computeDistanceFor(x_i, 0d, root, defaultValue)) {
 				d += additiveTerm(x_i, 0d, root, defaultValue);
@@ -155,6 +156,5 @@ public class N_Metric extends QualityMeasure {
 		}
 		return overallDistance(d,root,defaultValue);
 	}
-
 
 }
