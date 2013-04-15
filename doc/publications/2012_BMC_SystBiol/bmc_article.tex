@@ -1136,16 +1136,16 @@ Germany) as part of the Virtual Liver Network (grant number 0315756).
 \COR{This figure displays a unified representation of kinetic equations from an example model that} consists of the following reactions:
 \begin{center}
 \parbox[c]{.35\textwidth}{\begin{align*}
-R_{1}&:& \ce{F1,6BP} &\rightleftharpoons \ce{DHAP + GA3P}\\
-R_{2}&:& \ce{DHAP}   &\rightleftharpoons \ce{GA3P}
+R_{1}&:& \textnormal{F1,6BP} &\rightleftharpoons \ce{DHAP} + \textnormal{GA3P}\\
+R_{2}&:& \ce{DHAP}   &\rightleftharpoons \textnormal{GA3P}
 \end{align*}}
 \end{center}
 \COR{Both} reactions are part of the glycolysis\COR{. T}he contained molecules are \acf{F1,6BP},
 \acf{DHAP}\COR{,} and \acf{GA3P}.
 Using the program SBMLsqueezer \cite{Draeger2008} the following mass action kinetics have been created:
 \begin{align*}
-\nu_{R_{1}} &= k_{+1} \cdot [\ce{F1,6BP}] - k_{-1} \cdot[\ce{DHAP}] \cdot [\ce{GA3P}]\\
-\nu_{R_{2}} &= k_{+2} \cdot [\ce{DHAP}]   - k_{-2} \cdot[\ce{GA3P}]
+\nu_{R_{1}} &= k_{+1} \cdot [\textnormal{F1,6BP}] - k_{-1} \cdot[\ce{DHAP}] \cdot [\textnormal{GA3P}]\\
+\nu_{R_{2}} &= k_{+2} \cdot [\ce{DHAP}]           - k_{-2} \cdot[\textnormal{GA3P}]
 \end{align*}
 The nodes for [DHAP] and [GA3P] are only contained in the syntax graph once and connected to more than one multiplication node.
 This figure clearly indicates that the syntax graph is not a tree.
@@ -1161,12 +1161,12 @@ Let $E$ be the set of all events in a model, and $I_E$ be the set of events, who
 conditions have already been evaluated to \true in the previous time step. We refer to elements within
 $I_E$ as \emph{inactive} events. We define the set $A_E$ as the subset of $E$ containing those events,
 whose trigger condition switches from \false to \true in the current point $t$ in time. At the beginning
-of the event handling, $A_E$ is empty. We call an event \emph{persistent}\COR{,} if it can only be removed from
+of the event handling, $A_E$ is empty. We call an event \emph{persistent}\COR{,} if it can \TODO{only} be removed from
 $A_E$ under the condition that all of its assignments have been evaluated. This means that a
 \COR{\emph{nonpersistent}} event can be removed from $A_E$ in case that its trigger condition becomes \false
 during the evaluation of other events. Here, the function $\mathrm{trig}(e)$ returns \COR{1 or 0} depending 
 on whether or not the trigger condition of event $e \in E$ is satisfied. Similarly, the function
-$\mathrm{persist}(e)$ returns 0 if event $e$ is not persistent, or 1 otherwise.
+$\mathrm{persist}(e)$ returns \COR{1} if event $e$ is \sout{not} persistent, or \COR{0} otherwise.
 In each iteration the trigger conditions of those active events $a_e \in A_E$ that are not persistent are checked.
 If the trigger condition of such an event has changed from \true (1) to \false (0), it is removed from $A_E$.
 The next step comprises the evaluation of the triggers of all events.
@@ -1174,7 +1174,7 @@ If its trigger changes from \false to \true, an event is added to the set of act
 An event with its trigger changed from \true to \false is removed from the list of inactive events.
 After the procession of all triggers the event $e$ of highest priority in the set of active events is chosen for execution by the function $\mathrm{choose}(A_E)$.
 Note that priorities are not always defined, or multiple events may have an identical priority. The function $\mathrm{choose}(A_E)$ is therefore more complex than can be shown in this figure.
-This event is then processed, i.e., all of its assignments are evaluated, and afterwards the triggers of all events in $E$ have to be evaluated again, because of possible mutual influences between the events.
+Th\sout{is}\COR{e selected} event is then processed, i.e., all of its assignments are evaluated, and afterwards the triggers of all events in $E$ have to be evaluated again, because of possible mutual influences between the events.
 The algorithm proceeds until the \COR{set $A_E$ of active} events is empty.
 \TODO{Should we rename $A_E$ to $E_\mathrm{A}$ and $I_E$ to $E_\mathrm{I}$? If yes, this has also to be done in the images.}
 
@@ -1210,11 +1210,11 @@ library.
 
 \subsection*{Figure 7 - Simulation of glycolytic oscillations}
 This figure displays the results of a simulation computed with the Systems
-Biology Simulation Core Library based on model 206 from BioModels \COR{Database}
+Biology Simulation Core Library based on model \COR{\numero} 206 from BioModels \COR{Database}
 \cite{Novere2006a, Wolf2000}.
 Shown are the changes of the concentration (7a) of the most characteristic
-intracellular metabolites 3-phosphogylcerate, \acs{ATP}, glucose, glyceraldhyde 
-3-phosphate, and \acs{NAD$^+$} within yeast cells.
+intracellular metabolites 3-phosphogylcerate, \acs{ATP}, glucose, \acf{GA3P},
+and \acs{NAD$^+$} within yeast cells.
 Figure~7b displays a selection of the dynamcis of relevant fluxes 
 (\textsc{d}-glucose 6-phosphotransferase, glycerone-phosphate-forming,
 phosphoglycerate kinase, pyruvate 2-O-phosphotransferase, acetaldehyde forming,
@@ -1235,14 +1235,13 @@ reproduces the results provided by \COR{BioModels Database}.
 
 \subsection*{Figure 8 - Simulation of the Calvin-Benson cycle}
 Another example of the capabilities of the Simulation Core Library has been
-obtained by solving model 390 from BioModels \COR{Database} 
+obtained by solving model \COR{\numero} 390 from BioModels \COR{Database} 
 \cite{Novere2006a, Arnold2011}.
 This model was simulated using Euler's method (\acs{KiSAO} term 30) with 200
 integration steps for the time interval $[0, 35]$ seconds.
 This figure shows the evolution of the concentrations of ribulose 1,5
 bisphosphate\COR{, a key metabolite for \ce{CO2} fixation in the reaction catalzed by \acf{RuBisCO},} and the currency metabolites \acs{ATP} and \acs{ADP} during the first 35\,s of
 the photosynthesis.
-\TODO{Add more information about the number of species and reactions etc. in the model.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
