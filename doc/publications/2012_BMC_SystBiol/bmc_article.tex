@@ -419,7 +419,7 @@ XML-based standard description formats \cite{Bray2000} such as the
 \acf{SBML} \cite{Hucka2004} \COR{and} CellML \cite{Lloyd2004}
 enable encoding of quantitative biological network models.
 To facilitate sharing and reuse of the models, online \COR{databases} such as
-\COR{BioModels Database} \cite{Novere2006a} \COR{and} the CellML model repository
+\COR{BioModels Database} \cite{Novere2006a, BioModels2010} \COR{and} the CellML model repository
 \cite{Lloyd2008} provide large collections of published models in various
 formats.
 Software libraries for reading and manipulating the content
@@ -741,7 +741,6 @@ Apache Commons Math library \COR{\cite{ApacheCommonsMath2013}} could be included
 In addition, the library provides an implementation of the explicit fourth order
 Runge-Kutta method, Rosenbrock's solver, and Euler's method.
 
-Each solver has a method to directly access its corresponding \acf{KiSAO} term \cite{Courtot2011}.
 Due to the strict separation between numerical differential equation solvers,
 and the definition of the actual differential equation system, it is possible to
 implement support for \COR{other} community standards, such as CellML
@@ -754,6 +753,8 @@ selection and all settings of the numerical method, hence facilitating the
 creation of reproducible results.
 A simulation experiment can also be directly started by passing a \acs{SED-ML} file to
 this interpreter.
+Each solver has a method to directly access its corresponding \acf{KiSAO} term \cite{Courtot2011}
+\COR{to facillitate the execution of \acs{SED-ML} files}.
 
 Many interfaces, abstract classes, and an exhaustive source code documentation
 in form of JavaDoc facilitate the customization of the library.
@@ -763,10 +764,8 @@ For testing purposes, the library contains a sample program that benchmarks the
 
 \subsection*{Application to published models}
 
-The Systems Biology Simulation Core Library has been tested on all 424 curated
-models from \COR{BioModels Database} \cite{Novere2006a} (release~23, October 2012). \COR{All models have been simulated with identical settings
-(time interval $[0, 10]$, Rosenbrock's solver, $10^{-6}$ as relative and $10^{-12}$ as absolute tolerance, and a step size of $0.1$ time units).
-As a result, all but one (\numero~234) of these models could be simulated without producing an error message. In model \numero~234 the desired tolerance can obviously not be achieved with the given settings. However, the simulation of this model with an error was possible using $10^{-6}$ as relative and $10^{-10}$ as absolute tolerance.}
+The Systems Biology Simulation Core Library has \COR{successfully} been tested on all 424 curated
+models from \COR{BioModels Database} (release~23, October 2012).
 
 In the following, we \COR{select} two models \COR{that exhibit diverse features}
 from this repository to illustrate the capabilities of this library:
@@ -861,7 +860,7 @@ But as a community-driven project, additional solvers can be incorporated into t
 \section*{Conclusions}
 
 The \acs{SBML} implementation has successfully passed the
-SBML Test Suite (version~2.3.2) \COR{\cite{SBMLtestSuite2013}} using Rosenbrock's solver.
+SBML Test Suite \COR{\cite{SBMLtestSuite2013}} using Rosenbrock's solver.
 The results are shown in Table~2.
 All models together can be simulated within seconds, which means that the simulation
 of one \acs{SBML} model takes only milliseconds on average, using regular desktop computers.
@@ -878,13 +877,9 @@ which is only provided in \acs{SBML} Level~3 Version~1, takes 21\,s because it c
 These events must therefore be evaluated thousandfold within the specified time interval.}
 The evaluation of this model accounts for 60~\% of the total simulation time for the models in \acs{SBML} Level~3 Version~1.
  
-Furthermore,
-\COR{all}
-models from \href{http://biomodels.net}{BioModels} \COR{Database} (release 23,
-\cite{Novere2006a})
-\COR{have been simulated with identical settings
-(time interval $[0, 10]$, Rosenbrock's solver, and a step size of $0.1$ time units)}.
-The Systems Biology Simulation Core Library \COR{is able to solve all but one of these models with the given settings. The model producing an error can be simulated with slightly changed settings.}  
+\COR{Furthermore, the Systems Biology Simulation Core Library
+solves all}
+models from \href{http://biomodels.net}{BioModels} \COR{Database} (release 23) \COR{with appropriate settings}.
 These results suggest the reliability of the simulation algorithm described in
 this work.
 
@@ -967,7 +962,7 @@ In the \SBMLinterpreter events are represented via an array containing
 Thereby\COR{,} the distinction between events with and without delays is made.
 \COR{Both types of events can trigger multiple times before being executed.
 If no delay is defined, the assignments of the event are usually executed at the same point in time when the event has been triggered.
-However, in case that the such an event is cancelled by other events, also all of its assignments are canceled before execution.
+However, in case that such an event is cancelled by other events, also all of its assignments are canceled before execution.
 An event with delay can produce multiple further assignments within the time interval from being triggered for the first time
 and the exeution of its first assignment.}
 In order to deal with such an issue, the class \SBMLEventInProgressWithDelay
@@ -1027,6 +1022,16 @@ According to the SBML specifications a model has to be simulated starting at tim
 Since this library is not limited to \acs{SBML}, the solvers also accept arbitrary start times. 
 In any case, the user has the possibility to specify the end of the simulation.
 Modifying the relative and absolute tolerance can increase the accuracy of the results or decrease computation time.}
+
+\subsection*{\COR{Simulation of models from BioModels Database}}
+
+\COR{All curated models from BioModels Database have been simulated with identical settings:
+time interval $[0, 10]$, Rosenbrock's solver, $10^{-6}$ as relative and $10^{-12}$ as absolute tolerance, and a step size of $0.1$ time units.
+For biomodel \numero~234 the absolute tolerance had to be set to $10^{-10}$ in order to achieve the necessary accuracy.}
+
+\subsection*{Simulation of the SBML Test Suite}
+
+Test Suite version~2.3.2.
 
 \section*{Availability and Requirements}
 The current version of Systems Biology Simulation Core Library is available on the project homepage. The entire project, including source code and documentation, several versions of jar files containing only binaries, binaries together with source code, can be downloaded, optionally also as a version including all required third-party libraries.
@@ -1193,8 +1198,12 @@ Then the rate rules of the model are processed by solving the function $\vec{g}(
 After that for every \COR{reaction channel} $R_i$ its velocity $\nu_i$ is computed.
 The derivatives of each species (with index $s$) participating in the currently processed \COR{reaction channel} $R_i$ are updated
 in each step adding the product of the stoichiometry $n_{is}$ and the reaction's velocity $\nu_i$.
-\TODO{Explain that stoichiometric values can be variable! Recomputation is necessary!}
-\TODO{Should we note here that in simple cases, in which such a sophisticated step-size adaptation is not required, all available \acs{ODE} solvers can be used, which will be faster?}
+\COR{In this figure, the stoichiometric values $n_{ij}$ in the matrix $\mathbf{N}$ are assumed to be constant for the sake of simplicity.
+Generally, these valuves can be variable.
+Before Level~3 \acs{SBML} provided \StoichiometryMath elements that could be used for a direct computation of the stoichiometry.
+In Level~3 the \StoichiometryMath element has been removed from the langugage definition.
+Since then, these values can be changed by treating them as the subject of assignment rules.
+In both cases, the values for $n_{ij}$ have to be updated in each simulation step.}
 
 \subsection*{Figure 6 - Architecture of the Systems Biology Simulation Core Library (simplified)}
 Numerical methods are strictly separated from differential equation systems. The
@@ -1263,9 +1272,9 @@ Suite \COR{\cite{SBMLtestSuite2013}} can be correctly solved.
 Please note that in the column for the SBML Test Suite, a dash means that
 \emph{not all} of its models can be correctly solved, because not all \acs{SBML}
 elements are supported.
-\COR{In its current version, t}he program iBioSim, for instance, solves the vast
+\sout{\COR{In its current version, t}he program iBioSim, for instance, solves the vast
 majority of the test cases correctly, but does not yet support the delay function,
-except delayed events.
+except delayed events.}
 LibSBMLSim, which is a simulation \acs{API} written in C, can only read models given
 in \acs{SBML} Level~2 Version~4 and \acs{SBML} Level~3
 \COR{(indicated by the checkmark in brackets)}.
@@ -1273,9 +1282,9 @@ Similarly, a dash in the column for events means that not \emph{all} possible
 cases for this language element can be correctly solved.
 COPASI, for instance, supports events in \acs{SBML}, but not all of the current 
 constructs.
-Hence, Systems Biology Simulation Core Library and BioUML are the only
-simulation tools from this selection that pass \emph{all} models of the SBML
-Test Suite \COR{(version~2.3.2)} across all levels and versions of \acs{SBML}.
+Hence, iBioSim, the Systems Biology Simulation Core Library, and BioUML are the 
+only simulation tools from this selection that pass \emph{all} models of the
+SBML Test Suite across all levels and versions of \acs{SBML}.
 \TODO{This table must be updated!}
 
 %\par \mbox{}
@@ -1310,13 +1319,13 @@ Version &
   \begin{sideways}Events\end{sideways}
 } \\ 
 \midrule
-BioUML                         & 0.9.4     & \yes & \yes & \yes    & & \yes      & In $\upalpha$ version & Java                                 & \yes & Java\-Script & independent                              &                              \\
-COPASI                         & 4.8       & \no  & \no  & (\yes)  & & \no       & \no                   & C++ (with multiple bindings)         & \yes & \yes         & Windows, Mac OS X, Linux, Solaris        &                              \\
-iBioSim                        & 2.0       & \yes & \yes & \yes    & & \no       & \no                   & Java                                 & \yes & \no          & Fedora 15, Windows, Mac OS X $\geq$ 10.6 &                              \\
-JSim                           & 2.07      & \no  & \yes & \no     & & \no       & \no                   & Java                                 & \yes & \yes         & Windows, Mac OS X, Linux                 &                              \\
-LibSBMLSim                     & 1.0       & \yes & \yes & \yes    & & (\yes)    & \no                   & C                                    & \no  & \yes         & Windows, Mac OS X, Linux, Free BSD       &                              \\
-VCell                          & 5.0       & \yes & \no  & \yes    & & \no       & \no                   & Java frontend, C/C++ server backend  & \yes & \no          & independent                              & Internet connection required \\
-\COR{Simulation Core Library}  & \COR{1.2} & \yes & \yes & \yes    & & \yes      & \yes                  & Java                                 & \no  & \yes         & independent                              &                              \\
+BioUML                         & 0.9.4       & \yes & \yes & \yes    & & \yes      & In $\upalpha$ version & Java                                 & \yes & Java\-Script & independent                              &                              \\
+COPASI                         & 4.8         & \no  & \no  & (\yes)  & & \no       & \no                   & C++ (with multiple bindings)         & \yes & \yes         & Windows, Mac OS X, Linux, Solaris        &                              \\
+iBioSim                        & \COR{2.4.5} & \yes & \yes & \yes    & & \yes      & \no                   & Java                                 & \yes & \no          & Fedora 15, Windows, Mac OS X $\geq$ 10.6 &                              \\
+JSim                           & 2.07        & \no  & \yes & \no     & & \no       & \no                   & Java                                 & \yes & \yes         & Windows, Mac OS X, Linux                 &                              \\
+LibSBMLSim                     & 1.0         & \yes & \yes & \yes    & & (\yes)    & \no                   & C                                    & \no  & \yes         & Windows, Mac OS X, Linux, Free BSD       &                              \\
+VCell                          & 5.0         & \yes & \no  & \yes    & & \no       & \no                   & Java frontend, C/C++ server backend  & \yes & \no          & independent                              & Internet connection required \\
+\COR{Simulation Core Library}  & \COR{1.3}   & \yes & \yes & \yes    & & \yes      & \yes                  & Java                                 & \no  & \yes         & independent                              &                              \\
 \bottomrule
 \end{tabular}
 \rowcolors{1}{white}{white}
@@ -1341,7 +1350,7 @@ VCell                          & 5.0       & \yes & \no  & \yes    & & \no      
 
 %VCell & http://www.vcell.org/ & \cite{Moraru2008}, \cite{ Loew2001} & \yes & & &Error adding features & Cannot generate math & & No rate rules supported & Java frontend C/C++ server backend & \no & open source & VCML	& 5.0.0 & Nov 11 2011 & Platform independent (Java) & Requires internet connection & \no\\\hline
 %XPPAUT	1			http://www.math.pitt.edu/~bard/xpp/xpp.html	Ermentrout2012		
-\subsection*{Table 2 - Simulation of the models from the SBML Test Suite (version 2.3.2) using Rosenbrock's solver}
+\subsection*{Table 2 - Simulation of the models from the SBML Test Suite using Rosenbrock's solver}
 The table shows the number of tested models and the total running times of the tests for all \acs{SBML} levels and versions.
 An Intel\textsuperscript{\textregistered} Core\texttrademark{} i5 CPU with 3.33\,GHz  and 4\,GB RAM was used with
 Windows\textsuperscript{\textregistered}~7 (Version 6.1.7600) as operating system.
