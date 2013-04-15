@@ -45,12 +45,19 @@ import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 
 /**
+ * Automatically evaluates models from the SBML Test Suite within a given range
+ * of model numbers, thereby using the {@link RosenbrockSolver} as integration
+ * method.
+ * 
  * @author Roland Keller
  * @version $Rev$
  */
 public class SBMLTestSuiteWrapper {
-	private static final Logger logger = Logger
-			.getLogger(SBMLTestSuiteWrapper.class.getName());
+	
+	/**
+	 * A {@link Logger} for this class.
+	 */
+	private static final Logger logger = Logger.getLogger(SBMLTestSuiteWrapper.class.getName());
 
 	/**
 	 * Computes a statistic for the SBML test suite using the {@link RosenbrockSolver} as integrator
@@ -66,7 +73,7 @@ public class SBMLTestSuiteWrapper {
 	public static void testRosenbrockSolver(String path, int modelnr, String outputPath, int level, int version) 
 			throws FileNotFoundException, IOException, URISyntaxException {
 		String sbmlfile, csvfile, configfile;
-		if ((modelnr>=1124) && (modelnr<=1183)) {
+		if ((modelnr >= 1124) && (modelnr <= 1183)) {
 			return;
 		}
 		
@@ -100,8 +107,9 @@ public class SBMLTestSuiteWrapper {
 		
 		StringBuilder fileBuilder = new StringBuilder();
 		fileBuilder.append(modelnr);
-		while (fileBuilder.length() < 5)
+		while (fileBuilder.length() < 5) {
 			fileBuilder.insert(0, '0');
+		}
 		String folder = fileBuilder.toString();
 		fileBuilder.append('/');
 		fileBuilder.append(folder);
@@ -138,7 +146,7 @@ public class SBMLTestSuiteWrapper {
 			}
 		}
 
-		for (int i=0; i!=variables.length; i++) {
+		for (int i = 0; i!=variables.length; i++) {
 			variables[i] = variables[i].trim();
 		}
 
@@ -189,21 +197,21 @@ public class SBMLTestSuiteWrapper {
 
 		writer.append("time");
 		writer.append(",");
-		for (int i=0; i!=variables.length; i++) {
+		for (int i = 0; i!=variables.length; i++) {
 			writer.append(variables[i]);
 			if (i < variables.length - 1) {
 				writer.append(",");
 			}
 		}
 
-		for (int row=0; row!=solution.getTimePoints().length; row++) {
+		for (int row = 0; row != solution.getTimePoints().length; row++) {
 			writer.newLine();
 			writer.append(String.valueOf(solution.getTimePoint(row)));
-			writer.append(",");
-			for (int i=0; i!=variables.length; i++) {
+			writer.append(',');
+			for (int i = 0; i!=variables.length; i++) {
 				writer.append(String.valueOf(solution.getColumn(variables[i]).getValue(row)));
 				if (i < variables.length - 1) {
-					writer.append(",");
+					writer.append(',');
 				}
 			}
 		}
@@ -214,19 +222,26 @@ public class SBMLTestSuiteWrapper {
 	/**
 	 * 
 	 * @param args
+	 *            Expected arguments are (in this order): the path to the SBML
+	 *            Test Suite, number of the model where to start the test, out
+	 *            path (i.e., the path where to store results), SBML Level, SBML
+	 *            version (for the given level), number of the last test case to
+	 *            be evaluated
 	 * @throws NumberFormatException
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 * @throws URISyntaxException
 	 */
 	public static void main(String[] args) throws NumberFormatException, FileNotFoundException, IOException, URISyntaxException {
-		int begin = Integer.valueOf(args[1]);
+		int begin = Integer.parseInt(args[1]);
 		int end = begin;
 		if (args.length > 5) {
-			end = Integer.valueOf(args[5]);
+			end = Integer.parseInt(args[5]);
 		}
-		for (int modelnr = begin; modelnr<=end; modelnr++) {
-			testRosenbrockSolver(args[0], modelnr, args[2], Integer.valueOf(args[3]), Integer.valueOf(args[4])); 
+		int level = Integer.parseInt(args[3]);
+		int version = Integer.parseInt(args[4]);
+		for (int modelnr = begin; modelnr <= end; modelnr++) {
+			testRosenbrockSolver(args[0], modelnr, args[2], level, version); 
 		}
 	}
 

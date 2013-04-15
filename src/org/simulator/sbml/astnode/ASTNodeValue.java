@@ -199,7 +199,7 @@ public class ASTNodeValue {
     this.time = 0d;
     children = new ASTNodeValue[node.getChildCount()];
     if (node != null) {  
-      for (int i=0; i!= node.getChildCount(); i++) {
+      for (int i = 0; i!= node.getChildCount(); i++) {
         ASTNode childNode = node.getChild(i);
     	  Object userObject = childNode.getUserObject(SBMLinterpreter.TEMP_VALUE);
         if (userObject != null) {

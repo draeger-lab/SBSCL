@@ -474,7 +474,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 				System.arraycopy(y2, 0, y, 0, y.length);
 			}
 
-			for (int i=0;i!=y.length;i++) {
+			for (int i = 0;i!=y.length;i++) {
 				if (Double.isInfinite(y[i]) || (Double.isNaN(y[i]))) {
 					ignoreNaN[i]=true;
 				}
@@ -571,7 +571,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 							double[] result = clonedSolver.computeSteadyState(FDES,
 									yTemp2, 0);
 							System.arraycopy(result, 0, yTemp, 0, yTemp.length);
-							for (int i=0; i!=result.length; i++) {
+							for (int i = 0; i!=result.length; i++) {
 								double difference = Math.abs(yTemp[i]-oldY[i]);
 								if ((Math.abs(yTemp[i]) > 1E-10) || (Math.abs(oldY[i]) > 1E-10)) {
 									difference = Math.abs((yTemp[i]-oldY[i])/ Math.max(yTemp[i], oldY[i]));

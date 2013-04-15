@@ -27,6 +27,7 @@ import java.io.IOException;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.math.ode.DerivativeException;
+import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
@@ -36,8 +37,11 @@ import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.DESSolver;
 import org.simulator.math.odes.RosenbrockSolver;
 
-
 /**
+ * This class tests the {@link ConstraintListener} interface implementation
+ * {@link SimpleConstraintListener} by evaluating a simple test model that
+ * contains a {@link Constraint}.
+ * 
  * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 1.3
@@ -45,8 +49,8 @@ import org.simulator.math.odes.RosenbrockSolver;
 public class ConstraintTest {
 
 	/**
+	 * @param args not used.
 	 * 
-	 * @param args
 	 * @throws XMLStreamException
 	 * @throws IOException
 	 * @throws ParseException
