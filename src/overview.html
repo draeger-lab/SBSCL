@@ -126,13 +126,15 @@
         <li>{@link org.simulator.math.odes.EulerMethod}</li>
         <li>{@link org.simulator.math.odes.RungeKutta_EventSolver}</li>
       </ul>
+    </p><p>
+      For a full list of available solvers, see {@link org.simulator.math.odes}.
     </p>
 
-    <h3>Reading in a model and creating the respective differential equation 
+    <h3>Reading an SBML model and creating the respective differential equation 
         system</h3>
     <p>
       A model can be read in by using the {@link org.sbml.jsbml.SBMLReader}
-      class from JSBML.
+      class from <a href="http://sbml.org/Software/JSBML" target="_blank">JSBML</a>.
       With the model in memory the {@link org.simulator.sbml.SBMLinterpreter}
       can create the differential equation system that provides the basis for
       simulation:
@@ -141,6 +143,10 @@
       <span class="class">Model</span> model = (<span class="keyword">new</span> <span class="class">SBMLReader</span>()).<span class="method">readSBML</span>(sbmlfile).<span class="method">getModel()</span>;<br/>
       <span class="class">SBMLinterpreter</span> interpreter = <span class="keyword">new</span> <span class="class">SBMLinterpreter</span>(model);
     </code></pre>
+    <p>
+      For more documentation about working with SBML models in simulations see
+      {@link org.simulator.sbml}.
+    </p>
 
     <h3>Simulation of a differential equation system</h3>
     <p>
@@ -160,7 +166,7 @@
       The following example shows how to read in a {@link java.io.File} f (in
       <a href="http://sed-ml.org/" target="_blank">SED-ML</a> format) and how to run a simulation
       described in this file afterwards. The simulation results are stored in a
-      {@link org.simulator.math.odes.MultiTable}.
+      {@link org.simulator.math.odes.MultiTable}:
     </p>
 			
     <pre><code class="spoiled">
@@ -171,6 +177,11 @@
       <span class="class">Map<Task, IRawSedmlSimulationResults></span> res = exe.<span class="method">runSimulations</span>();<br/>
       <span class="class">MultiTable</span> solution = exe.<span class="method">processSimulationResults</span>(wanted, res);<br/>
     </code></pre>
+    
+    <p>
+      For more information about how to use SED-ML to execute your simulation
+      experiments, see {@link org.simulator.sedml}.
+    </p>
     
     <h3>Simulation of the models in the SBML Test Suite</h3>
     <p>
@@ -195,11 +206,13 @@
       <i>00259</i> to <i>00326</i>, simply call the algorithm with
       <i>first = 259</i> and <i>last = 326</i>. 
     </p>
+    
     <p>
       Note that for the sake of a simple configuration, the simulation is 
       started using default settings for the selection of the
       integration routine, step size etc.
     </p>
+    
     <p>
       The
       <a href="http://sbml.org/Facilities/Database/Simulator">SBML Test Suite Database</a>
@@ -228,24 +241,46 @@
     
     <h3>Listening to SBML constraint violation</h3>
     <p>
-    In version 1.3 of this library a new listener interface has been added to
-    this library, which can be used to perform user-defined actions upon violation
-    of a {@link org.sbml.jsbml.Constraint}'s math expression during a simulation.
-    There is still a simple implementation available, which logs violation at the
-    {@link java.util.logging.Level#WARNING} using standard Java&trade;
-    logging (see {@link java.util.logging.Logger}). By default the
-    {@link org.simulator.sbml.SBMLinterpreter} adds this
-    {@link org.simulator.sbml.SimpleConstraintListener} to its internal list of
-    {@link org.simulator.sbml.ConstraintListener}s.
-    </p><p>
-    You can remove this listener by calling the method
-    {@link org.simulator.sbml.SBMLinterpreter#removeConstraintListener(int)},
-    with the argument 0 for the first listener in the list,
-    and add your own listener implementation with the help of method 
-    {@link org.simulator.sbml.SBMLinterpreter#addConstraintListener(ConstraintListener)}.
-    </p><p>
-    You can find more details about this topic in the description of package
-    {@link org.simulator.sbml}. 
+      In version 1.3 a new listener interface has been added to
+      this library, which can be used to perform user-defined actions upon violation
+      of a {@link org.sbml.jsbml.Constraint}'s math expression during a simulation.
+      A simple implementation is already included in this package,
+      which logs violation at the
+      {@link java.util.logging.Level#WARNING} using standard Java&trade;
+      logging (see {@link java.util.logging.Logger}).
+      By default the
+      {@link org.simulator.sbml.SBMLinterpreter} adds this
+      {@link org.simulator.sbml.SimpleConstraintListener} to its internal list of
+      {@link org.simulator.sbml.ConstraintListener}s.
+    </p>
+    
+    <p>
+      You can remove this listener by calling the method
+      {@link org.simulator.sbml.SBMLinterpreter#removeConstraintListener(int)},
+      with the argument 0 for the first listener in the list,
+      and add your own listener implementation with the help of method 
+      {@link org.simulator.sbml.SBMLinterpreter#addConstraintListener(ConstraintListener)}.
+    </p>
+    <p>The following example demonstrates how you can easily define your customized
+      {@link org.simulator.sbml.ConstraintListener}:
+    <pre><code class="spoiled">
+      <span class="keyword">double</span> timeEnd = 5d;<br/>
+      <span class="class">SBMLDocument</span> doc = <span class="class">SBMLReader</span>.<span class="method">read</span>(<span class="keyword">new</span> <span class="class">File</span>(<span class="stringliteral">"path/to/file.xml"</span>));<br/>
+      <span class="class">SBMLinterpreter</span> interpreter = <span class="keyword">new</span> <span class="class">SBMLinterpreter</span>(doc.<span class="method">getModel</span>());<br/>
+	  interpreter.<span class="method">addConstraintListener</span>(<span class="keyword">new</span> <span class="class">ConstraintListener</span>() {<br/>
+	     &#160;&#160;<span class="comment-single">/* (non-Javadoc)<br/>
+		 &#160;&#160;&#160;* @see org.simulator.sbml.ConstraintListener#processViolation(org.simulator.sbml.ConstraintEvent)<br/>
+		 &#160;&#160;&#160;*/</span><br/>
+	     &#160;&#160;public <span class="keyword">void</span> <span class="method">processViolation</span>(<span class="class">ConstraintEvent</span> evt) {<br/>
+		 &#160;&#160;&#160;&#160;<span class="class">System</span>.err.<span class="method">println</span>(<span class="stringliteral">"Constraint violated at time "</span> + evt.<span class="method">getTime</span>() + <span class="stringliteral">": "</span> + evt.<span class="method">getSource</span>().<span class="method">getMath</span>().<span class="method">toFormula</span>());<br/>
+	     &#160;&#160;}<br/>
+	  });<br/>
+	  solver.<span class="method">solve</span>(interpreter, interpreter.<span class="method">getInitialValues()</span>, 0d, timeEnd);
+    </code></pre>
+    </p>
+    <p>
+      You can find more details about this topic in the description of package
+      {@link org.simulator.sbml}. 
     </p>
 
   </body>

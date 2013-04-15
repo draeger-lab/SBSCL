@@ -286,7 +286,7 @@ public class SBMLTestSuiteRunner {
 						timepoints = inputData.getTimePoints();
 					}
 					else {
-						for (int i=0; i!=timepoints.length; i++) {
+						for (int i = 0; i!=timepoints.length; i++) {
 							timepoints[i] = Math.min(current.doubleValue(), end.doubleValue());
 							current = current.add(step);
 						}
@@ -487,7 +487,7 @@ public class SBMLTestSuiteRunner {
 						timepoints = inputData.getTimePoints();
 					}
 					else {
-						for (int i=0; i!=timepoints.length; i++) {
+						for (int i = 0; i!=timepoints.length; i++) {
 							timepoints[i] = Math.min(current.doubleValue(), end.doubleValue());
 							current = current.add(step);
 						}
@@ -716,7 +716,7 @@ public class SBMLTestSuiteRunner {
 								csvfile);
 						String[] currentIdentifiers = mt.getBlock(0).getIdentifiers();
 						String[] correctedIdentifiers = new String[currentIdentifiers.length];
-						for (int i=0; i!= currentIdentifiers.length; i++) {
+						for (int i = 0; i!= currentIdentifiers.length; i++) {
 							correctedIdentifiers[i] = currentIdentifiers[i].replaceAll("_.*", "");
 						}
 						mt.getBlock(0).setIdentifiers(correctedIdentifiers);

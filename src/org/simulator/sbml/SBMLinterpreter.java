@@ -1347,7 +1347,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 			 hasFastReactions = true;
 		 }
 		 
-		 for (i=0; i!= inConcentrationValues.length; i++) {
+		 for (i = 0; i!= inConcentrationValues.length; i++) {
 			 if (inConcentration.contains(symbolIdentifiers[i])) {
 				 inConcentrationValues[i] = true;
 			 }
@@ -1455,7 +1455,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		for (ASTNode node: nodes) {
 			((ASTNodeValue) node.getUserObject(TEMP_VALUE)).reset();
 		}
-		for (int i=0; i!= stoichiometryValues.length; i++) {
+		for (int i = 0; i!= stoichiometryValues.length; i++) {
 			stoichiometryValues[i].refresh();
 			stoichiometrySet[i] = stoichiometryValues[i].getStoichiometrySet();
 		}
@@ -1686,7 +1686,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		constantStoichiometry = new boolean[stoichiometriesSize];
 		stoichiometrySet = new boolean[stoichiometriesSize];
 		stoichiometry = new double[stoichiometriesSize];
-		for (int i=0; i!=stoichiometriesSize; i++) {
+		for (int i = 0; i!=stoichiometriesSize; i++) {
 			isReactant[i] = isReactantList.get(i);
 			speciesIndex[i] = speciesIndexList.get(i);
 			reactionIndex[i] = reactionIndexList.get(i);

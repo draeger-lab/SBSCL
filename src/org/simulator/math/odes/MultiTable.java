@@ -628,7 +628,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	 */
 	public MultiTable filter(double[] timepoints) {
 		ArrayList<Integer> rowIndices = new ArrayList<Integer>();
-		int i=0;
+		int i = 0;
 		for (double time: timepoints) {
 			while((i<this.getTimePoints().length) && (this.getTimePoints()[i]<=time)) {
 				if (this.getTimePoints()[i]==time) {

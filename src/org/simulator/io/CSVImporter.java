@@ -174,7 +174,7 @@ public class CSVImporter {
 			}
 			
 			String[][] result = new String[lines.size()][header.length];
-			int i=0;
+			int i = 0;
 			for (String l: lines) {
 				result[i] = l.split(",");
 				i++;

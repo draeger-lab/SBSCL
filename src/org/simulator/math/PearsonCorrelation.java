@@ -72,7 +72,7 @@ public class PearsonCorrelation extends QualityMeasure {
 		double sumXSquared = 0d;
 		double sumYSquared = 0d;
 
-		for (int i=0; i != Math.min(x.getRowCount(), y.getRowCount()); i++) {
+		for (int i = 0; i != Math.min(x.getRowCount(), y.getRowCount()); i++) {
 			double x_i = x.getValue(i);
 			double y_i = y.getValue(i);
 			sumNumerator+= (x_i-meanX)*(y_i-meanY);
