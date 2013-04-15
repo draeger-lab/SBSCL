@@ -98,7 +98,7 @@ public class N_Metric extends QualityMeasure {
 		double d = 0;
 		double x_i;
 		double y_i;
-		for (int i=0; i!= Math.min(x.getRowCount(), y.getRowCount()); i++) {
+		for (int i = 0; i!= Math.min(x.getRowCount(), y.getRowCount()); i++) {
 			x_i = x.getValue(i);
 			y_i = y.getValue(i);
 			if (computeDistanceFor(x_i, y_i, root, defaultValue)) {

@@ -34,13 +34,18 @@ import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
- * * This class can test the simulation of all models from biomodels.org.
+ * This class can test the simulation of all models from 
+ * <a href="http://www.ebi.ac.uk/biomodels-main/" target="_blank">BioModels database</a>.
+ * 
  * @author Roland Keller
  * @version $Rev$
  */
 public class TestBiomodels {
-	private static final Logger logger = Logger
-			.getLogger(TestBiomodels.class.getName());
+	
+	/**
+	 * A {@link Logger} for this class.
+	 */
+	private static final Logger logger = Logger.getLogger(TestBiomodels.class.getName());
 	
 	
 	/**
@@ -119,8 +124,8 @@ public class TestBiomodels {
 	 * @throws IOException
 	 * @throws URISyntaxException
 	 */
-	public static void main(String[] args) throws IOException,
-			URISyntaxException {
+	public static void main(String[] args) throws IOException,URISyntaxException {
 		testBiomodels(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]));
 	}
+
 }

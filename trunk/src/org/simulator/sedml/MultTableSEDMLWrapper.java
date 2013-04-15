@@ -66,7 +66,7 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 	//@Override
 	public String[] getColumnHeaders() {
 		String [] hdrs = new String [mTable.getColumnCount()];
-		for (int i=0; i < hdrs.length;i++) {
+		for (int i = 0; i < hdrs.length;i++) {
 			hdrs[i]=mTable.getColumnIdentifier(i);
 		}
 		return hdrs;
