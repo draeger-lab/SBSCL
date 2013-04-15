@@ -24,10 +24,9 @@ package org.simulator.sbml.astnode;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Symbol;
 import org.simulator.sbml.SBMLValueHolder;
-
-import com.sun.javadoc.Parameter;
 
 /**
  * This class computes and stores values of {@link ASTNode}s that refer to a 
