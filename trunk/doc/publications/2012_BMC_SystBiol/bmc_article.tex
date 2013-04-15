@@ -764,8 +764,10 @@ For testing purposes, the library contains a sample program that benchmarks the
 \subsection*{Application to published models}
 
 The Systems Biology Simulation Core Library has been tested on all 424 curated
-models from \COR{BioModels Database} \cite{Novere2006a} (release~23, October 2012).
-As a result, \TODO{99.06\,\%} of these models could be \TODO{correctly} simulated.
+models from \COR{BioModels Database} \cite{Novere2006a} (release~23, October 2012). \COR{All models have been simulated with identical settings
+(time interval $[0, 10]$, Rosenbrock's solver, $10^{-6}$ as relative and $10^{-12}$ as absolute tolerance, and a step size of $0.1$ time units).
+As a result, all but one (\numero~234) of these models could be simulated without producing an error message. In model \numero~234 the desired tolerance can obviously not be achieved with the given settings. However, the simulation of this model with an error was possible using $10^{-6}$ as relative and $10^{-10}$ as absolute tolerance.}
+
 In the following, we \COR{select} two models \COR{that exhibit diverse features}
 from this repository to illustrate the capabilities of this library:
 \COR{BioModels Database model \numero~206} by Wolf \emph{et al.} \cite{Wolf2000} and
@@ -839,7 +841,7 @@ iBioSim \cite{Myers2009, Madsen2012}, JSim \cite{Raymond2003}, LibSBMLSim
 %iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}.
 Table~1 summarizes the comparison of \COR{the most recent versions of} all six
 programs.
-\COR{It should be mentioned that this comparsion can only mirror a snapshot of
+\COR{It should be mentioned that this comparison can only mirror a snapshot of
 the ongoing development process of all programs at the time of writing.
 An up-to-date comparison of the capabilities of SBML solvers can be found online
 \cite{Bergmann2013}.}
@@ -859,7 +861,7 @@ But as a community-driven project, additional solvers can be incorporated into t
 \section*{Conclusions}
 
 The \acs{SBML} implementation has successfully passed the
-SBML Test Suite (version~2.0.2) \COR{\cite{SBMLtestSuite2013}} using Rosenbrock's solver.
+SBML Test Suite (version~2.3.2) \COR{\cite{SBMLtestSuite2013}} using Rosenbrock's solver.
 The results are shown in Table~2.
 All models together can be simulated within seconds, which means that the simulation
 of one \acs{SBML} model takes only milliseconds on average, using regular desktop computers.
@@ -880,9 +882,9 @@ Furthermore,
 \COR{all}
 models from \href{http://biomodels.net}{BioModels} \COR{Database} (release 23,
 \cite{Novere2006a})
-\COR{have been simulated with identical seetings
+\COR{have been simulated with identical settings
 (time interval $[0, 10]$, Rosenbrock's solver, and a step size of $0.1$ time units)}.
-The Systems Biology Simulation Core Library \COR{is able to solve} \TODO{99.06\,\%} of \COR{all these models}. 
+The Systems Biology Simulation Core Library \COR{is able to solve all but one of these models with the given settings. The model producing an error can be simulated with slightly changed settings.}  
 These results suggest the reliability of the simulation algorithm described in
 this work.
 
@@ -990,13 +992,13 @@ For this reason, we disregarded the use of other data structures for the current
 %
 %The simulation algorithm then proceeds as follows: For each time step, the \acs{ODE} %solver gets the current variable values and calculates the system's state for the next point in time. After that, events and rules are processed, that can change the values. The modified values then become the initial values for the next time step. The event processing of the Rosenbrock solver \sout{is different from other solvers, as it} is directly integrated in the solver class and influences the step size. The time-accurate handling of events and rules leads to very precise results of the simulation.
 %
-\COR{Besides the subset of MathML functions provided by the different \acs{SBML} specifications there exists also the possibility to apply user-defined functions from a given \acs{SBML} file.
+\COR{Besides the subset of MathML functions provided by the different \acs{SBML} specifications, there also exists the possibility to apply user-defined functions from a given \acs{SBML} file.
 As mentioned in the initialization, additional function definitions are also represented via an abstract syntax graph.
 For each function definition the arguments defined in its lambda expression are mapped to their corresponding nodes in the abstract syntax graph.
-The evaluation of a MathML element with a user-defined function take place in several steps.
+The evaluation of a MathML element with a user-defined function consists of several steps.
 The arguments of the respective function are evaluated and then passed to their corresponding node in the graph via the mapping established before.
 After this step the nodes representing arguments have a specific value attached to them.
-At last the complete abstract syntax graph can be evaluated.}
+Finally, the complete abstract syntax graph can be evaluated.}
 
 \COR{During the calculation of reaction velocities the \StoichiometryMath construct allows a dynamic change of a reaction's stoichiometry during simulation.
 Since SBML Level~3 Version~1, the stoichiometry of a reaction can be directly altered because it is now possible to address the identifier of a \SpeciesReference as the target variable within rules or events.
@@ -1017,7 +1019,7 @@ Clients of the Systems Biology Simulation Core Library can choose to use the \jl
 %Points of Control:
 
 \COR{The standard preferences for simulating an SBML model consist of the Rosenbrock
-solver with an absolute tolerance of $10^{-14}$ and a relative tolerance of $10^{-10}$.
+solver with an absolute tolerance of $10^{-12}$ and a relative tolerance of $10^{-6}$.
 On the basis of our experiments this setup can handle most of the problems without further ado.
 Rosenbrock's solver with its adaptive step size is the most effective solver in this library for stiff \acsp{ODE}.
 Nevertheless the user has the possibility the choose another solver for integration.
@@ -1274,7 +1276,7 @@ COPASI, for instance, supports events in \acs{SBML}, but not all of the current
 constructs.
 Hence, Systems Biology Simulation Core Library and BioUML are the only
 simulation tools from this selection that pass \emph{all} models of the SBML
-Test Suite \COR{(version~2.0.2)} across all levels and versions of \acs{SBML}.
+Test Suite \COR{(version~2.3.2)} across all levels and versions of \acs{SBML}.
 \TODO{This table must be updated!}
 
 %\par \mbox{}
@@ -1340,7 +1342,7 @@ VCell                          & 5.0       & \yes & \no  & \yes    & & \no      
 
 %VCell & http://www.vcell.org/ & \cite{Moraru2008}, \cite{ Loew2001} & \yes & & &Error adding features & Cannot generate math & & No rate rules supported & Java frontend C/C++ server backend & \no & open source & VCML	& 5.0.0 & Nov 11 2011 & Platform independent (Java) & Requires internet connection & \no\\\hline
 %XPPAUT	1			http://www.math.pitt.edu/~bard/xpp/xpp.html	Ermentrout2012		
-\subsection*{Table 2 - Simulation of the models from the SBML Test Suite (version 2.0.2) using Rosenbrock's solver}
+\subsection*{Table 2 - Simulation of the models from the SBML Test Suite (version 2.3.2) using Rosenbrock's solver}
 The table shows the number of tested models and the total running times of the tests for all \acs{SBML} levels and versions.
 An Intel\textsuperscript{\textregistered} Core\texttrademark{} i5 CPU with 3.33\,GHz  and 4\,GB RAM was used with
 Windows\textsuperscript{\textregistered}~7 (Version 6.1.7600) as operating system.
