@@ -847,16 +847,10 @@ An up-to-date comparison of the capabilities of SBML solvers can be found online
 
 \subsection*{\COR{Perspective}}
 
-\COR{As mentioned before, Rosenbrock's solver is basically capable of solving stiff \acsp{ODE}.
-Albeit there are some models from BioModels Database that constitute very stiff problems and large \acsp{ODE}
-(e.g., the models \numero~235 or \numero~408), for which Rosenbrock's method has some difficulty solving them.
-In order to maintain the desired accuracy, the solver contineously decreases its step size.
-As a result, the time consumption for simulation raises.
-In some cases, tuning the relative and absolute tolerance can help, but depending on the system's structure, Rosenbrock's method is sometimes stretched to its limits.}
+\COR{As mentioned before, Rosenbrock's solver is basically capable of solving stiff \acsp{ODE}. Albeit there are some models from BioModels Database that constitute very stiff problems or large \acsp{ODE} (e.g., the models \numero~235 or \numero~408), for which Rosenbrock's method has some difficulty solving them. In order to maintain the desired accuracy, the solver contineously decreases its step size. As a result, the time consumption for simulation raises. In some cases, tuning the relative and absolute tolerance can help, but depending on the system's structure, Rosenbrock's method is sometimes stretched to its limits.}
 
-\COR{This behavior can also be observed for the Runge-Kutta-Fehlberg method \cite{Fehlberg1970} (\acs{KiSAO} term 86), which is included in iBioSim.
-It should be noted that iBioSim does not primary focus on the use of \acs{ODE} solvers, but in the stochastic analysis of systems with the Reb2Sac stochastic simulator and abstraction techniques to make the models easier to analyze.}
-%
+\COR{The Runge-Kutta-Fehlberg method \cite{Fehlberg1970} (\acs{KiSAO} term 86), which is included in iBioSim, shows also an increase in run time concerning the models mentioned above. It should however be mentioned at this point, that  iBioSim does not primary focus on the use of \acs{ODE} solvers, but in the stochastic analysis of systems with the Reb2Sac stochastic simulator and abstraction techniques to make the models easier to analyze.}
+
 \COR{The performance of the methods Runge-Kutta-Fehlberg and Rosenbrock show, however, that some \acs{ODE} solvers can have more difficulties with some biological models than
 more advanced solvers, such as \textsc{CVODE} from \textsc{SUNDIALS} \cite{Hindmarsh2005}, which is incorporated into BioUML. 
 \textsc{SUNDIALS} can handle complicated \acsp{ODE} significantly better, but since it is not available under the \acs{LGPL} and currently no open-source Java version of these solvers can be obtained, we disregard its use.
