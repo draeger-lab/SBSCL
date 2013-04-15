@@ -393,7 +393,7 @@ public class SBMLTestSuiteRunner {
 		modelsWithStrongestTolerance.add(1052);
 		
 		for (int modelnr = from; modelnr <= to; modelnr++) {
-			if ((modelnr>=1124) && (modelnr<=1183)) {
+			if ((modelnr >= 1124) && (modelnr <= 1183)) {
 				continue;
 			}
 			System.out.println("model " + modelnr);
@@ -451,9 +451,11 @@ public class SBMLTestSuiteRunner {
 				}
 			}
 
-			String[] sbmlFileTypes = { "-sbml-l1v2.xml", "-sbml-l2v1.xml",
-					"-sbml-l2v2.xml", "-sbml-l2v3.xml", "-sbml-l2v4.xml",
-					"-sbml-l3v1.xml" };
+			String[] sbmlFileTypes = { 
+				"-sbml-l1v2.xml", 
+				"-sbml-l2v1.xml", "-sbml-l2v2.xml", "-sbml-l2v3.xml", "-sbml-l2v4.xml",
+				"-sbml-l3v1.xml"
+			};
 			boolean highDistance = false, errorInSimulation = false;
 			for (String sbmlFileType : sbmlFileTypes) {
 				sbmlfile = path + sbmlFileType;
