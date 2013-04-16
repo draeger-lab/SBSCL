@@ -419,7 +419,7 @@ XML-based standard description formats \cite{Bray2000} such as the
 \acf{SBML} \cite{Hucka2004} \COR{and} CellML \cite{Lloyd2004}
 enable encoding of quantitative biological network models.
 To facilitate sharing and reuse of the models, online \COR{databases} such as
-\COR{BioModels Database} \cite{Novere2006a, BioModels2010} \COR{and} the CellML model repository
+\COR{BioModels Database} \cite{Li2010a} \COR{and} the CellML model repository
 \cite{Lloyd2008} provide large collections of published models in various
 formats.
 Software libraries for reading and manipulating the content
@@ -846,16 +846,32 @@ An up-to-date comparison of the capabilities of SBML solvers can be found online
 \cite{Bergmann2013}.}
 
 
-\subsection*{\COR{Perspective}}
+\subsection*{\COR{Limitations and perspective}}
 
-\COR{As mentioned before, Rosenbrock's solver is basically capable of solving stiff \acsp{ODE}. Albeit there are some models from BioModels Database that constitute very stiff problems or large \acsp{ODE} (e.g., the models \numero~235 or \numero~408), for which Rosenbrock's method has some difficulty solving them. In order to maintain the desired accuracy, the solver contineously decreases its step size. As a result, the time consumption for simulation raises. In some cases, tuning the relative and absolute tolerance can help, but depending on the system's structure, Rosenbrock's method is sometimes stretched to its limits.}
+\COR{As mentioned before, Rosenbrock's solver is basically capable of solving stiff \acsp{ODE}.
+Albeit there are some models from BioModels Database that constitute very stiff problems or large \acsp{ODE} (e.g., the models \numero~235 or \numero~408), for which Rosenbrock's method has some difficulty solving them.
+In order to maintain the desired accuracy, the solver contineously decreases its step size.
+As a result, the time consumption for simulation raises.
+In some cases, tuning the relative and absolute tolerance can help, but depending on the system's structure, Rosenbrock's method is sometimes stretched to its limits.}
 
-\COR{The Runge-Kutta-Fehlberg method \cite{Fehlberg1970} (\acs{KiSAO} term 86), which is included in iBioSim, shows also an increase in run time concerning the models mentioned above. It should however be mentioned at this point, that  iBioSim does not primary focus on the use of \acs{ODE} solvers, but in the stochastic analysis of systems with the Reb2Sac stochastic simulator and abstraction techniques to make the models easier to analyze.}
+\COR{The Runge-Kutta-Fehlberg method \cite{Fehlberg1970} (\acs{KiSAO} term 86), which is included in iBioSim, shows also an increase in run time concerning the models mentioned above.
+It should be mentioned that iBioSim does not primary focus on the use of \acs{ODE} solvers, but in the stochastic analysis of systems with the Reb2Sac stochastic simulator and abstraction techniques to make the models easier to analyze.}
 
 \COR{The performance of the methods Runge-Kutta-Fehlberg and Rosenbrock show, however, that some \acs{ODE} solvers can have more difficulties with some biological models than
 more advanced solvers, such as \textsc{CVODE} from \textsc{SUNDIALS} \cite{Hindmarsh2005}, which is incorporated into BioUML. 
-\textsc{SUNDIALS} can handle complicated \acsp{ODE} significantly better, but since it is not available under the \acs{LGPL} and currently no open-source Java version of these solvers can be obtained, we disregard its use.
-But as a community-driven project, additional solvers can be incorporated into the Systems Biology Simulation Core Library and contribution from the community is welcome.}
+\textsc{SUNDIALS} can handle complicated \acsp{ODE} significantly better, but since it is not available under the \acs{LGPL} and currently no open-source Java version of these solvers can be obtained, we disregard its use.}
+
+\COR{Since Level~3 the language \acs{SBML} entails one further aspect:
+It is now possible to add additional features to the model by declaring specialized extension packages.
+The algorithm discussed in this paper, however, describes the core features of \acs{SBML}.
+The features added to core \acs{SBML} by these packages are very diverse,
+reaching from the graphical represenatation \cite{Gauges2006} to the description
+of qualitative networks, such as Petri nets \cite{Chaouiya2012} etc. 
+It is therefore necessary to separately derive and implmeent algorithms for the interpretation of individual extension packages.}
+
+\COR{The agenda for the further development of the open-source project, the Systems Biology Simulation Core Library,
+includes the implementation of \acs{SBML} extension packages, support for CellML, and the incorporation of additional numerical solvers.
+Contribution from the community is welcome.}
 
 \section*{Conclusions}
 
@@ -1266,8 +1282,8 @@ the photosynthesis.
 \subsection*{Table 1 - Comparison of SBML-capable simulators}
 The table gives an overview about the most characteristic features of
 \acs{SBML}-capable simulation programs. As one aspect, it shows, which programs
-support the most difficult \acs{SBML} elements (fast reactions, algebraic rules, and
-events). Another key point is whether all models of the most recent SBML Test
+support the most difficult \acs{SBML} elements (fast reactions, algebraic rules,
+and events). Another key point is whether all models of the most recent SBML Test
 Suite \COR{\cite{SBMLtestSuite2013}} can be correctly solved.
 Please note that in the column for the SBML Test Suite, a dash means that
 \emph{not all} of its models can be correctly solved, because not all \acs{SBML}
@@ -1282,14 +1298,14 @@ Similarly, a dash in the column for events means that not \emph{all} possible
 cases for this language element can be correctly solved.
 COPASI, for instance, supports events in \acs{SBML}, but not all of the current 
 constructs.
-Hence, iBioSim, the Systems Biology Simulation Core Library, and BioUML are the 
+BioUML, iBioSim, and the Systems Biology Simulation Core Library, are the 
 only simulation tools from this selection that pass \emph{all} models of the
 SBML Test Suite across all levels and versions of \acs{SBML}.
-\TODO{This table must be updated!}
+%\TODO{This table must be updated!}
 
 %\par \mbox{}
 \begin{landscape}
-\rowcolors{4}{white}{lightblue}
+\rowcolors{4}{lightblue}{white}
 \begin{tabular}{p{2cm}lccccC{1cm}C{1.2cm}p{2.5cm}C{.5cm}p{1cm}p{3.3cm}p{1.65cm}}
 \toprule
 Program &
@@ -1320,12 +1336,12 @@ Version &
 } \\ 
 \midrule
 BioUML                         & 0.9.4       & \yes & \yes & \yes    & & \yes      & In $\upalpha$ version & Java                                 & \yes & Java\-Script & independent                              &                              \\
-COPASI                         & 4.8         & \no  & \no  & (\yes)  & & \no       & \no                   & C++ (with multiple bindings)         & \yes & \yes         & Windows, Mac OS X, Linux, Solaris        &                              \\
+COPASI                         & \COR{4.9.45}& \no  & \no  & (\yes)  & & \no       & \no                   & C++ (with multiple bindings)         & \yes & \yes         & Windows, Mac OS X, Linux, Solaris        &                              \\
 iBioSim                        & \COR{2.4.5} & \yes & \yes & \yes    & & \yes      & \no                   & Java                                 & \yes & \no          & Fedora 15, Windows, Mac OS X $\geq$ 10.6 &                              \\
-JSim                           & 2.07        & \no  & \yes & \no     & & \no       & \no                   & Java                                 & \yes & \yes         & Windows, Mac OS X, Linux                 &                              \\
-LibSBMLSim                     & 1.0         & \yes & \yes & \yes    & & (\yes)    & \no                   & C                                    & \no  & \yes         & Windows, Mac OS X, Linux, Free BSD       &                              \\
-VCell                          & 5.0         & \yes & \no  & \yes    & & \no       & \no                   & Java frontend, C/C++ server backend  & \yes & \no          & independent                              & Internet connection required \\
+JSim                           & \COR{2.10}  & \no  & \yes & \no     & & \no       & \no                   & Java                                 & \yes & \yes         & Windows, Mac OS X, Linux                 &                              \\
+LibSBMLSim                     & \COR{1.1.0} & \yes & \yes & \yes    & & (\yes)    & \no                   & C                                    & \no  & \yes         & Windows, Mac OS X, Linux, Free BSD       &                              \\
 \COR{Simulation Core Library}  & \COR{1.3}   & \yes & \yes & \yes    & & \yes      & \yes                  & Java                                 & \no  & \yes         & independent                              &                              \\
+VCell                          & 5.0         & \yes & \no  & \yes    & & \no       & \no                   & Java frontend, C/C++ server backend  & \yes & \no          & independent                              & Internet connection required \\
 \bottomrule
 \end{tabular}
 \rowcolors{1}{white}{white}
@@ -1358,7 +1374,7 @@ Windows\textsuperscript{\textregistered}~7 (Version 6.1.7600) as operating syste
 \par \mbox{}
 \par
     \mbox{
-\rowcolors{2}{white}{lightblue}
+\rowcolors{2}{lightblue}{white}
 \begin{tabular}{rrrrr}
 \toprule
 \multicolumn{1}{c}{Level} & \multicolumn{1}{c}{Version} &
