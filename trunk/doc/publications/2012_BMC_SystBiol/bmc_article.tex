@@ -848,7 +848,7 @@ An up-to-date comparison of the capabilities of SBML solvers can be found online
 
 \subsection*{\COR{Limitations and perspective}}
 
-\COR{As mentioned before, Rosenbrock's solver is basically capable of solving stiff \acsp{ODE}.
+\COR{The Rosenbrock solver with the adaption of its step size is basically capable of solving stiff \acsp{ODE} and, according to our experiments, performs better than other solvers in this library.
 Albeit there are some models from BioModels Database that constitute very stiff problems or large \acsp{ODE} (e.g., the models \numero~235 or \numero~408), for which Rosenbrock's method has some difficulty solving them.
 In order to maintain the desired accuracy, the solver continuously decreases its step size.
 As a result, the time consumption for simulation raises.
