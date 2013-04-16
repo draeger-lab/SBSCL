@@ -309,9 +309,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 	 */
 	public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues, int yIndex) {
 		//get interval
-		if (logger.getLevel().intValue() <= Level.FINE.intValue()) {
-			logger.fine("computeDelayedValue: time = " + time + " id = " + id);
-		}
+//		if (logger.getLevel().intValue() <= Level.FINE.intValue()) {
+//			logger.fine("computeDelayedValue: time = " + time + " id = " + id);
+//		}
 		double[] timepoints = data.getTimePoints();
 		int leftIndex = -1;
 		int rightIndex = -1;
@@ -939,9 +939,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			}
 
 			v = additionalResults(DES, t, yTemp, data, i);
-			if (logger.getLevel().intValue() < Level.INFO.intValue()) {
-				logger.fine("additional results: " + Arrays.toString(v));
-			}
+//			if (logger.getLevel().intValue() < Level.INFO.intValue()) {
+//				logger.fine("additional results: " + Arrays.toString(v));
+//			}
 			firePropertyChange(timePoints[i-1] * intervalFactor, timePoints[i] * intervalFactor);
 
 			t = timePoints[i];
