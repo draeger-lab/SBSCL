@@ -1181,35 +1181,30 @@ the computed matching is maximal. Having a unconnected equation vertex results i
 If the matching is not overdetermined, for each algebraic rule an assignment rule is generated. The left-hand side of each rule corresponds to the variable the respective algebraic rule has been matched to.}
 
 \subsection*{Figure 3 - Processing of events: simplified algorithm (handling of delayed events omitted)}
-Let $E$ be the set of all events in a model, and $I_E$ be the set of events, whose trigger
+Let $E$ be the set of all events in a model, and $E_\mathrm{I}$ be the set of events, whose trigger
 conditions have already been evaluated to \true in the previous time step. We refer to elements within
-$I_E$ as \emph{inactive} events. We define the set $A_E$ as the subset of $E$ containing those events,
+$E_\mathrm{I}$ as \emph{inactive} events. We define the set $E_\mathrm{A}$ as the subset of $E$ containing those events,
 whose trigger condition switches from \false to \true in the current point $t$ in time. At the beginning
-of the event handling, $A_E$ is empty. We call an event \emph{persistent}\COR{,} if it can \TODO{only} be removed from
-$A_E$ under the condition that all of its assignments have been evaluated. This means that a
-\COR{\emph{nonpersistent}} event can be removed from $A_E$ in case that its trigger condition becomes \false
-during the evaluation of other events. Here, the function $\mathrm{trig}(e)$ returns \COR{1 or 0} depending 
-on whether or not the trigger condition of event $e \in E$ is satisfied. Similarly, the function
+of the event handling, $E_\mathrm{A}$ is empty. We call an event \emph{persistent}\COR{,} if it can \TODO{only} be removed from $E_\mathrm{A}$ under the condition that all of its assignments have been evaluated. This means that a
+\COR{\emph{nonpersistent}} event can be removed from $E_\mathrm{A}$ in case that its trigger condition becomes \false during the evaluation of other events. Here, the function $\mathrm{trig}(e)$ returns \COR{1 or 0} depending on whether or not the trigger condition of event $e \in E$ is satisfied. Similarly, the function
 $\mathrm{persist}(e)$ returns \COR{1} if event $e$ is \sout{not} persistent, or \COR{0} otherwise.
-In each iteration the trigger conditions of those active events $a_e \in A_E$ that are not persistent are checked.
-If the trigger condition of such an event has changed from \true (1) to \false (0), it is removed from $A_E$.
+In each iteration the trigger conditions of those active events $e_\mathrm{a} \in E_\mathrm{A}$ that are not persistent are checked.
+If the trigger condition of such an event has changed from \true (1) to \false (0), it is removed from $E_\mathrm{A}$.
 The next step comprises the evaluation of the triggers of all events.
-If its trigger changes from \false to \true, an event is added to the set of active events $A_E$.
+If its trigger changes from \false to \true, an event is added to the set of active events $E_\mathrm{A}$.
 An event with its trigger changed from \true to \false is removed from the list of inactive events.
-After the procession of all triggers the event $e$ of highest priority in the set of active events is chosen for execution by the function $\mathrm{choose}(A_E)$.
-Note that priorities are not always defined, or multiple events may have an identical priority. The function $\mathrm{choose}(A_E)$ is therefore more complex than can be shown in this figure.
+After the procession of all triggers the event $e$ of highest priority in the set of active events is chosen for execution by the function $\mathrm{choose}(E_\mathrm{A})$.
+Note that priorities are not always defined, or multiple events may have an identical priority. The function $\mathrm{choose}(E_\mathrm{A})$ is therefore more complex than can be shown in this figure.
 Th\sout{is}\COR{e selected} event is then processed, i.e., all of its assignments are evaluated, and afterwards the triggers of all events in $E$ have to be evaluated again, because of possible mutual influences between the events.
-The algorithm proceeds until the \COR{set $A_E$ of active} events is empty.
-\TODO{Should we rename $A_E$ to $E_\mathrm{A}$ and $I_E$ to $E_\mathrm{I}$? If yes, this has also to be done in the images.}
+The algorithm proceeds until the \COR{set $E_\mathrm{A}$ of active} events is empty.
 
 \subsection*{Figure 4 - Integrated calculation of new values for a time step including event processing}
 For a certain time interval the Rosenbrock solver \COR{(\acs{KiSAO} term 33)} always tries to increase time $t$ by the current adaptive
-step size $s$ and calculates a new vector of quantities $\vec{Q}_{\mathrm{res}}$.
+step size $s$ and calculates a new vector of quantities $\vec{Q}_{\mathrm{next}}$.
 After a successful step the events and rules of the model are processed.
 If this causes a change in $\vec{Q}$, $h$ is first decreased and then the Rosenbrock solver calculates another vector $\vec{Q}_{t}$ using this adapted step size.
 The precision of the event processing is therefore determined by the minimum step size $h_{\min}$.
 The $\mathrm{adapt}$ function is defined by Rosenbrock's method \cite{Press1993}.
-\TODO{Should we rename $\vec{Q}_{\mathrm{res}}$ to $\vec{Q}_{\mathrm{next}}$?}
 
 \subsection*{Figure 5 - Calculation of the derivatives at a specific point in time}
 First, the vector for saving the derivatives of all quantities $\dot{\vec{Q}}$ is set to the null vector $\vec{0}$.
