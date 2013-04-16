@@ -536,7 +536,7 @@ constant, quantities that influence the reactions' velocities.
 According to \cite{Liebermeister2006, Liebermeister2010} the modulation matrix
 $\mathbf{W}$ is defined as a matrix of size $|\vec{R}|\times|\vec{S}|$
 containing the type of the regulatory influences of the species on
-the reactions, e.g., competetive inhibition or physical stimulation.
+the reactions, e.g., competitive inhibition or physical stimulation.
 Integrating equation~(\ref{eq:SpeciesChange}) yields the predicted amounts of the
 species at each time point of interest within the interval $[t_0, t_T]$:
 \begin{equation}
@@ -552,7 +552,7 @@ The \COR{nonlinear} form of the kinetic equations in the vector function $\vec{\
 constitutes the major difficulty for this endeavor and is often the reason why
 an analytical solution of these systems is not possible or very hard to achieve.
 Generally, differential equation systems describing biological networks are,
-however, inhomogenious systems with a higher complexity.
+however, inhomogeneous systems with a higher complexity.
 Solving systems encoded in \acs{SBML} can be seen as computing the solution of the following
 equation:
 \ifthenelse{\boolean{publ}}{\begin{multline}
@@ -754,7 +754,7 @@ creation of reproducible results.
 A simulation experiment can also be directly started by passing a \acs{SED-ML} file to
 this interpreter.
 Each solver has a method to directly access its corresponding \acf{KiSAO} term \cite{Courtot2011}
-\COR{to facillitate the execution of \acs{SED-ML} files}.
+\COR{to facilitate the execution of \acs{SED-ML} files}.
 
 Many interfaces, abstract classes, and an exhaustive source code documentation
 in form of JavaDoc facilitate the customization of the library.
@@ -850,7 +850,7 @@ An up-to-date comparison of the capabilities of SBML solvers can be found online
 
 \COR{As mentioned before, Rosenbrock's solver is basically capable of solving stiff \acsp{ODE}.
 Albeit there are some models from BioModels Database that constitute very stiff problems or large \acsp{ODE} (e.g., the models \numero~235 or \numero~408), for which Rosenbrock's method has some difficulty solving them.
-In order to maintain the desired accuracy, the solver contineously decreases its step size.
+In order to maintain the desired accuracy, the solver continuously decreases its step size.
 As a result, the time consumption for simulation raises.
 In some cases, tuning the relative and absolute tolerance can help, but depending on the system's structure, Rosenbrock's method is sometimes stretched to its limits.}
 
@@ -865,9 +865,9 @@ more advanced solvers, such as \textsc{CVODE} from \textsc{SUNDIALS} \cite{Hindm
 It is now possible to add additional features to the model by declaring specialized extension packages.
 The algorithm discussed in this paper, however, describes the core features of \acs{SBML}.
 The features added to core \acs{SBML} by these packages are very diverse,
-reaching from the graphical represenatation \cite{Gauges2006} to the description
+reaching from the graphical representation \cite{Gauges2006} to the description
 of qualitative networks, such as Petri nets \cite{Chaouiya2012} etc. 
-It is therefore necessary to separately derive and implmeent algorithms for the interpretation of individual extension packages.}
+It is therefore necessary to separately derive and implement algorithms for the interpretation of individual extension packages.}
 
 \COR{The agenda for the further development of the open-source project, the Systems Biology Simulation Core Library,
 includes the implementation of \acs{SBML} extension packages, support for CellML, and the incorporation of additional numerical solvers.
@@ -978,9 +978,9 @@ In the \SBMLinterpreter events are represented via an array containing
 Thereby\COR{,} the distinction between events with and without delays is made.
 \COR{Both types of events can trigger multiple times before being executed.
 If no delay is defined, the assignments of the event are usually executed at the same point in time when the event has been triggered.
-However, in case that such an event is cancelled by other events, also all of its assignments are canceled before execution.
+However, in case that such an event is cancelled by other events, also all of its assignments are cancelled before execution.
 An event with delay can produce multiple further assignments within the time interval from being triggered for the first time
-and the exeution of its first assignment.}
+and the execution of its first assignment.}
 In order to deal with such an issue, the class \SBMLEventInProgressWithDelay
 keeps track of this via the help of a list containing the points in time,
 at which the respective event has to executed.
@@ -1043,7 +1043,7 @@ Modifying the relative and absolute tolerance can increase the accuracy of the r
 
 \COR{All curated models from BioModels Database have been simulated with identical settings:
 time interval $[0, 10]$, Rosenbrock's solver, $10^{-6}$ as relative and $10^{-12}$ as absolute tolerance, and a step size of $0.1$ time units.
-For biomodel \numero~234 the absolute tolerance had to be set to $10^{-10}$ in order to achieve the necessary accuracy.}
+For model \numero~234 from BioModels Database the absolute tolerance had to be set to $10^{-10}$ in order to achieve the necessary accuracy.}
 
 \subsection*{Simulation of the SBML Test Suite}
 
@@ -1172,14 +1172,15 @@ Using the program SBMLsqueezer \cite{Draeger2008} the following mass action kine
 \end{align*}
 The nodes for [DHAP] and [GA3P] are only contained in the syntax graph once and connected to more than one multiplication node.
 This figure clearly indicates that the syntax graph is not a tree.
-\COR{As can be seen in this picture, the outdegree of syntax trees does not necessaryly have to be binary.}
+\COR{As can be seen in this picture, the outdegree of syntax trees does not necessarily have to be binary.}
 
 \subsection*{Figure 2 - Algorithm for transforming algebraic rules to assignment rules}
-The first step is to decide whether the model is overdetermined by creating a matching of the variables.
-If this is not the case, every algebraic rule is solved to the matched variable,
-which provides the basis for the creation of an equivalent assignment rule. \TODO{MORE DESCRIPTION!}
+The first step is to decide whether the model is overdetermined by creating a matching \COR{ between the equations and the variables of a model. For this purpose, a initial greedy matching is computed based on a bipartite constructed according to the \acs{SBML} specifications. To obtain a maximal matching, augmenting
+paths are determined and the current matching is extended. If there are no augmenting paths available anymore,
+the computed matching is maximal. Having a unconnected equation vertex results in an overdetermined model.
+If the matching is not overdetermined, for each algebraic rule an assignment rule is generated. The left-hand side of each rule corresponds to the variable the respective algebraic rule has been matched to.}
 
-\subsection*{Figure 3 - Processing of events: simpflified algorithm (handling of delayed events omitted)}
+\subsection*{Figure 3 - Processing of events: simplified algorithm (handling of delayed events omitted)}
 Let $E$ be the set of all events in a model, and $I_E$ be the set of events, whose trigger
 conditions have already been evaluated to \true in the previous time step. We refer to elements within
 $I_E$ as \emph{inactive} events. We define the set $A_E$ as the subset of $E$ containing those events,
@@ -1217,9 +1218,9 @@ After that for every \COR{reaction channel} $R_i$ its velocity $\nu_i$ is comput
 The derivatives of each species (with index $s$) participating in the currently processed \COR{reaction channel} $R_i$ are updated
 in each step adding the product of the stoichiometry $n_{is}$ and the reaction's velocity $\nu_i$.
 \COR{In this figure, the stoichiometric values $n_{ij}$ in the matrix $\mathbf{N}$ are assumed to be constant for the sake of simplicity.
-Generally, these valuves can be variable.
+Generally, these values can be variable.
 Before Level~3 \acs{SBML} provided \StoichiometryMath elements that could be used for a direct computation of the stoichiometry.
-In Level~3 the \StoichiometryMath element has been removed from the langugage definition.
+In Level~3 the \StoichiometryMath element has been removed from the language definition.
 Since then, these values can be changed by treating them as the subject of assignment rules.
 In both cases, the values for $n_{ij}$ have to be updated in each simulation step.}
 
@@ -1242,7 +1243,7 @@ Biology Simulation Core Library based on model \COR{\numero} 206 from BioModels 
 Shown are the changes of the concentration (7a) of the most characteristic
 intracellular metabolites 3-phosphogylcerate, \acs{ATP}, glucose, \acf{GA3P},
 and \acs{NAD$^+$} within yeast cells.
-Figure~7b displays a selection of the dynamcis of relevant fluxes 
+Figure~7b displays a selection of the dynamics of relevant fluxes 
 (\textsc{d}-glucose 6-phosphotransferase, glycerone-phosphate-forming,
 phosphoglycerate kinase, pyruvate 2-O-phosphotransferase, acetaldehyde forming,
 \acs{ATP} biosynthetic process)
@@ -1267,7 +1268,7 @@ obtained by solving model \COR{\numero} 390 from BioModels \COR{Database}
 This model was simulated using Euler's method (\acs{KiSAO} term 30) with 200
 integration steps for the time interval $[0, 35]$ seconds.
 This figure shows the evolution of the concentrations of ribulose 1,5
-bisphosphate\COR{, a key metabolite for \ce{CO2} fixation in the reaction catalzed by \acf{RuBisCO},} and the currency metabolites \acs{ATP} and \acs{ADP} during the first 35\,s of
+bisphosphate\COR{, a key metabolite for \ce{CO2} fixation in the reaction catalyzed by \acf{RuBisCO},} and the currency metabolites \acs{ATP} and \acs{ADP} during the first 35\,s of
 the photosynthesis.
 
 
