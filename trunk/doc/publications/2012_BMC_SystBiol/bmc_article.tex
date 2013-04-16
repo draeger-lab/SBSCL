@@ -888,10 +888,10 @@ some models \sout{in \acs{SBML} Level~3 Version~1}\COR{of this version},
 \sout{in which}\COR{whose evaluation requires} 
 a time-consuming processing of a large number of events\sout{ is necessary}.
 In particular, the simulation of model \COR{\numero~}966 of the SBML Test Suite,
-which is only provided in \acs{SBML} Level~3 Version~1, takes 21\,s because it contains 23 events to be processed.
+which is only provided in \acs{SBML} Level~3 Version~1, takes \COR{20}\,s because it contains 23 events to be processed.
 \COR{Two events fire every $10^{-2}$\,s.
 These events must therefore be evaluated thousandfold within the specified time interval.}
-The evaluation of this model accounts for 60~\% of the total simulation time for the models in \acs{SBML} Level~3 Version~1.
+The evaluation of this model accounts for \COR{over 50}~\% of the total simulation time for the models in \acs{SBML} Level~3 Version~1.
  
 \COR{Furthermore, the Systems Biology Simulation Core Library
 solves all}
@@ -1383,12 +1383,12 @@ Windows\textsuperscript{\textregistered}~7 (Version 6.1.7600) as operating syste
 \multicolumn{1}{c}{Models} & \multicolumn{1}{c}{Correct simulations} &
 \multicolumn{1}{c}{Total running time (in s)}\\
 \midrule
-1 & 2 &   252 &   252 &  1.1\\
-2 & 1 &   885 &   885 &  3.6\\
-2 & 2 & 1,039 & 1,039 &  3.3\\
-2 & 3 & 1,039 & 1,039 &  3.2\\
-2 & 4 & 1,041 & 1,041 &  3.2\\
-3 & 1 & 1,075 & 1,075 & 34.3\\
+1 & 2 &   252 &   252 &  2.9\\
+2 & 1 &   885 &   885 &  6.8\\
+2 & 2 & 1,039 & 1,041 &  6.8\\
+2 & 3 & 1,039 & 1,041 &  6.8\\
+2 & 4 & 1,041 & 1,043 &  6.8\\
+3 & 1 & 1,075 & 1,077 & 38.5\\
 \bottomrule
 \end{tabular}
 }
