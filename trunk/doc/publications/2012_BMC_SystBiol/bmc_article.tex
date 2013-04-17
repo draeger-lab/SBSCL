@@ -73,13 +73,6 @@
 \usepackage[normalem]{ulem}
 \usepackage{relsize}
 
-\definecolor{royalblue}{cmyk}{.93, .79, 0, 0}
-\definecolor{lightblue}{cmyk}{.10, .017, 0, 0}
-\definecolor{darkgreen}{rgb}{0,.7,0}
-\definecolor{darkred}{rgb}{.7,0,0}
-\definecolor{lightgray}{gray}{0.97}
-\newcommand{\numero}{\mbox{N\hspace{-0.075em}\raisebox{0.25em}{\relsize{-2}\b{o}}}}
-
 %\usepackage[applemac]{inputenc} %applemac support if unicode package fails
 %\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
 \urlstyle{rm}
@@ -148,95 +141,10 @@
 \usepackage{xcolor}
 \usepackage{amsmath}
 
-\hyphenation{
-  % TODO hypens for regular words
-  im-ple-men-ta-tions
-  gra-phi-cal
-  bench-mark-ed
-}
 
-% some nice colors
-\definecolor{royalblue}{cmyk}{.93, .79, 0, 0}
-\definecolor{lightblue}{cmyk}{.10, .017, 0, 0}
-\definecolor{forrestgreen}{cmyk}{.76, 0, .76, .45}
-\definecolor{darkred}{rgb}{.7,0,0}
-\definecolor{winered}{cmyk}{0,1,0.331,0.502}
-\definecolor{lightgray}{gray}{0.97}
-
-\newcommand{\AbstractDESSolver}           {\texttt{Abstract\-DES\-Solver}\xspace}
-\newcommand{\AbstractIntegrator}          {\texttt{AbstractIntegrator}\xspace}
-\newcommand{\AlgebraicRule}               {\texttt{Algebraic\-Rule}\xspace}
-\newcommand{\AssignmentRule}              {\texttt{Assignment\-Rule}\xspace}
-\newcommand{\ASTNodeInterpreter}          {\texttt{ASTNode\-In\-terpreter}\xspace}
-\newcommand{\Block}                       {\texttt{Block}\xspace}
-\newcommand{\ConstraintEvent}             {\texttt{Constraint\-Event}\xspace}
-\newcommand{\ConstraintListener}          {\texttt{Constraint\-Listener}\xspace}
-\newcommand{\COR}[1]                      {\textcolor{blue}{#1}}
-\newcommand{\EventInProgress}             {\texttt{Event\-In\-Progress}\xspace}
-\newcommand{\FirstOrderSolver}            {\texttt{First\-Order\-Solver}\xspace}
-\newcommand{\jlibsedml}                   {\texttt{jlibsedml}\xspace}
-\newcommand{\Logger}                      {\texttt{Logger}\xspace}
-\newcommand{\MultiTable}                  {\texttt{Multi\-Table}\xspace}
-\newcommand{\no}                          {--\xspace} %{\parbox[c]{1.3em}{--} %\Large\square\hspace{-.62em}--}
-\newcommand{\OverdeterminationValidator}  {\texttt{Overdetermination\-Validator}\xspace}
-\newcommand{\SBMLEventInProgressWithDelay}{\texttt{SBML\-Event\-In\-Progress\-With\-Delay}\xspace}
-\newcommand{\SBMLinterpreter}             {\texttt{SBML\-interpreter}\xspace}
-\newcommand{\SpeciesReference}            {\texttt{Spe\-ci\-es\-Re\-fe\-ren\-ce}\xspace}
-\newcommand{\StoichiometryMath}           {\texttt{Stoi\-chio\-metry\-Math}\xspace}
-\newcommand{\true}                        {\emph{true}\xspace}
-\newcommand{\TODO}[1]                     {\textcolor{red}{#1}}
-\newcommand{\false}                       {\emph{false}\xspace}
-\newcommand{\yes}                         {\ding{51}\xspace} %{\parbox[c]{1.3em}{\ding{51}}} %\Large\square\hspace{-.65em}
-
-
-% centered columns with fixed width
-\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
-% right adjusted columns with fixed width
-\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
-% left adjusted columns with fixed width
-\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
-
-% the derivative symbol for differential equations
-\newcommand{\D}{\mathrm{d}}
-
-
-\lstset{language=Java,
-morendkeywords={String, Throwable}
-captionpos=b,
-basicstyle=\scriptsize\ttfamily,%\bfseries
-stringstyle=\color{darkred}\scriptsize\ttfamily,
-keywordstyle=\color{royalblue}\bfseries\ttfamily,
-ndkeywordstyle=\color{forrestgreen},
-numbers=left,
-numberstyle=\scriptsize,
-% backgroundcolor=\color{lightgray},
-breaklines=true,
-tabsize=2,
-frame=single,
-breakatwhitespace=true,
-identifierstyle=\color{black},
-% morecomment=[l][\color{forrestgreen}]{//},
-% morecomment=[s][\color{lightblue}]{/**}{*/},
-% morecomment=[s][\color{forrestgreen}]{/*}{*/},
-commentstyle=\ttfamily\itshape\color{forrestgreen}
-% framexleftmargin=5mm,
-% rulesepcolor=\color{lightgray}
-% frameround=ttff
-}
-%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\urlstyle{same}
-
-\hyphenation{
-J-SB-ML
-Bio-UML
-CO-PA-SI
-i-Bio-Sim
-J-Sim
-Lib-SBML-Sim
-V-Cell
-}
+\input{macros}
 
 % Begin ...
 \begin{document}
@@ -274,7 +182,7 @@ Michael J. Ziller$^{3}$, %\email{Michael J. Ziller - michael_ziller@harvard.edu}
 Richard Adams$^{4}$, %\email{Richard Adams - richard.adams@ed.ac.uk}
 Nicolas Rodriguez$^{5}$, %\email{Nicolas Rodriguez - rodrigue@ebi.ac.uk}
 Nicolas Le Nov\`{e}re$^{6}$, %\email{Nicolas Le Nov\`{e}re - nicolas.lenovere@babraham.ac.uk}
-Hannes Planatscher$^{7}$, %\email{Hannes Planatscher - Hannes.Planatscher@nmi.de}
+Hannes Planatscher$^{1,7}$, %\email{Hannes Planatscher - Hannes.Planatscher@nmi.de}
 Andreas Zell$^{1}$, %\email{Andreas Zell - andreas.zell@uni-tuebingen.de}
 and Andreas Dr\"ager$^{1}$\correspondingauthor\email{Andreas Dr\"ager -
 andreas.draeger@uni-tuebingen.de}%
@@ -298,7 +206,7 @@ Edinburgh EH9 3JD, UK
 \iid(5)European Bioinformatics Institute, Wellcome Trust Genome Campus, Hinxton,
 Cambridge, UK
 \iid(6)Babraham Institute, Babraham, Cambridge, UK
-\iid(7)Natural and Medical Sciences Institute at the University of Tuebingen,
+\iid(7)Present address: Natural and Medical Sciences Institute at the University of Tuebingen,
 Reutlingen, Germany}
 
 \maketitle
@@ -412,13 +320,12 @@ levels of detail.
 Large-scale efforts like this require \COR{intensive} collaboration between various
 research groups, including experimenters\COR{,} modelers\COR{, and bioinformaticians}.
 The exchange, storage, interoperability\COR{,} and the possibility to combine models have been recognized as
-key aspects of this endeavor \cite{Liebermeister2009sta}.
-\TODO{Do we have any other good references for this statement?}
+key aspects of this endeavor \cite{Schulz2006, Klipp2007, Chelliah2009, Liebermeister2009sta}.
 
-XML-based standard description formats \cite{Bray2000} such as the
-\acf{SBML} \cite{Hucka2004} \COR{and} CellML \cite{Lloyd2004}
+XML-based standard description formats %\cite{Bray2000} 
+such as the \acf{SBML} \cite{Hucka2004, SBML2013} \COR{and} CellML \cite{Lloyd2004, CellML2013}
 enable encoding of quantitative biological network models.
-To facilitate sharing and reuse of the models, online \COR{databases} such as
+To facilitate sharing and \COR{re-use} of the models, online \COR{databases} such as
 \COR{BioModels Database} \cite{Li2010a} \COR{and} the CellML model repository
 \cite{Lloyd2008} provide large collections of published models in various
 formats.
@@ -429,7 +336,7 @@ Draeger2011b}
 \sout{and a large variety of programs supports these model description languages}
 
 The models encoded in these formats can be interpreted in terms of 
-\COR{several modeling frameworks, including without limitation}
+\COR{several modeling frameworks, including, but not limited to,}
 differential equation systems, with additional structures such as
 discrete events and algebraic equations.
 The diversity of modeling \COR{approaches} and experimental data often requires
@@ -444,7 +351,7 @@ and their interpretation, the algorithmic implementation is still not
 straightforward.
 
 \COR{The \acs{SBML} community offers} standardized and manually derived benchmark
-\COR{tests} in order to evaluate the quality of simulation results, because it
+\COR{tests \cite{SBMLtestSuite2013}} in order to evaluate the quality of simulation results, because it
 has been recognized that in many cases different solver implementations lead to
 divergent results \cite{Bergmann2008}.
 %In this work we address the question of how to precisely solve models encoded in
@@ -493,10 +400,10 @@ CellML module.}
 %their objectives, e.g., the concentration of a reacting species.
 %
 %
-\COR{As the result, we present t}he Systems Biology Simulation Core Library\COR{, which}
-\sout{presented here} is a platform-independent,
-well-tested generic \COR{open-source} library that is completely decoupled from any graphical
-user interface and can therefore easily be integrated into third-party programs.
+\COR{As the result, we present the Systems Biology Simulation Core Library, 
+a platform-independent, well-tested generic opensource library.
+The library is completely decoupled from any graphical user interface and can
+therefore easily be integrated into third-party programs.}
 It \COR{comprises} several \acf{ODE} solvers and an interpreter for \acs{SBML}
 models.
 It is the first simulation library based on JSBML \cite{Draeger2011b}. 
@@ -509,7 +416,7 @@ It is the first simulation library based on JSBML \cite{Draeger2011b}.
 
 Furthermore, the Systems Biology Simulation Core Library contains classes to both export
 simulation configurations to the \acf{SED-ML} \cite{Waltemath2011},
-and facilitate the \COR{reuse} and reproduction of these experiments by executing \acs{SED-ML} files.
+and facilitate the \COR{re-use} and reproduction of these experiments by executing \acs{SED-ML} files.
 
 \section*{Results and discussion}
 
@@ -531,22 +438,22 @@ change of the species' amounts:
 \frac{\D}{\D t}\vec{S} = \mathbf{N}\vec{\nu}(\vec{S}, t, \mathbf{N}, \mathbf{W}, \vec{p})\,.
 \label{eq:SpeciesChange}
 \end{equation}
-The parameter vector $\vec{p}$ contains rate constants and other, often
-constant, quantities that influence the reactions' velocities.
-According to \cite{Liebermeister2006, Liebermeister2010} the modulation matrix
+The parameter vector $\vec{p}$ contains rate constants
+and other\sout{, often constant,} quantities that influence the reactions' velocities.
+According to \COR{Liebermeister \emph{et al.}} \cite{Liebermeister2006, Liebermeister2010} the modulation matrix
 $\mathbf{W}$ is defined as a matrix of size $|\vec{R}|\times|\vec{S}|$
 containing the type of the regulatory influences of the species on
 the reactions, e.g., competitive inhibition or physical stimulation.
-Integrating equation~(\ref{eq:SpeciesChange}) yields the predicted amounts of the
+Integrating \COR{the homogeneous ordinary differential equation system~(\ref{eq:SpeciesChange})} yields the predicted amounts of the
 species at each time point of interest within the interval $[t_0, t_T]$:
 \begin{equation}
 \vec{S} = \int_{t_0}^{t_T} \mathbf{N}\vec{\nu}(\vec{S}, t, \mathbf{N}, \mathbf{W}, \vec{p})
 \D t\,.
+\label{eq:SpeciesChangeIntegral}
 \end{equation}
 Depending on the units of the species, the same notation can also express the
 change of the species' concentrations.
-In this simple case, solving the homogeneous ordinary
-differential equation system~(\ref{eq:SpeciesChange}) can be done in a
+In this simple case, solving \COR{equation~(\ref{eq:SpeciesChangeIntegral})} can be done in a
 straightforward way using many (numerical) differential equation solvers.
 The \COR{nonlinear} form of the kinetic equations in the vector function $\vec{\nu}$
 constitutes the major difficulty for this endeavor and is often the reason why
@@ -557,12 +464,12 @@ Solving systems encoded in \acs{SBML} can be seen as computing the solution of t
 equation:
 \ifthenelse{\boolean{publ}}{\begin{multline}
 \vec{Q} = \int_{t_0}^{t_T} \mathbf{N}\vec{\nu}(\vec{Q}, t, \mathbf{N}, \mathbf{W},
-\vec{p})\D t\\ 
-+ \int_{t_0}^{t_T} \vec{g}(\vec{Q}, t)\D t + \vec{f}_E(\vec{Q}, t) + \vec{r}(\vec{Q}, t)\,.
+\vec{p}) + \vec{g}(\vec{Q}, t)\D t\\ 
++ \vec{f}_E(\vec{Q}, t) + \vec{r}(\vec{Q}, t)\,.
 \label{eq:QuantityValue}
 \end{multline}}{\begin{equation}
 \vec{Q} = \int_{t_0}^{t_T} \mathbf{N}\vec{\nu}(\vec{Q}, t, \mathbf{N}, \mathbf{W},
-\vec{p})\D t + \int_{t_0}^{t_T} \vec{g}(\vec{Q}, t)\D t + \vec{f}_E(\vec{Q}, t) + \vec{r}(\vec{Q}, t)\,.
+\vec{p}) + \vec{g}(\vec{Q}, t)\D t + \vec{f}_E(\vec{Q}, t) + \vec{r}(\vec{Q}, t)\,.
 \label{eq:QuantityValue}
 \end{equation}}
 The vector $\vec{Q}$ of quantities contains the sizes of the
@@ -572,15 +479,15 @@ It should be noted that these models may contain local parameters $\vec{p}$ that
 influence the reactions' velocities, but which are not part of the global parameter
 vector $\vec{P}$, and hence also not part of $\vec{Q}$.
 All vector function terms may involve a delay function, i.e., an expression of 
-the form $\mathrm{delay}(x, \tau)$ with $\tau > 0$. In this way, it is possible
-to address values of $x$ computed in the earlier integration step at time 
-$t - \tau$, turning equation~(\ref{eq:QuantityValue})
+the form $\mathrm{delay}(x, \tau)$ with $\tau > 0$. 
+\COR{It is therefore} possible to address values of $x$ computed in the earlier
+integration step at time  $t - \tau$, turning equation~(\ref{eq:QuantityValue})
 into a \acf{DDE}.
 
 In the general case of equation~(\ref{eq:QuantityValue}), not all species' amounts
-can be computed by integrating the transformation $\mathbf{N}\vec{\nu}$: The
-change of some model quantities may be given in form of rate rules \COR{by}
-function $\vec{g}(\vec{Q}, t)$ that must be \COR{separately integrated}.
+can be computed by integrating the transformation $\mathbf{N}\vec{\nu}$: the
+change of some model quantities may be given in \COR{the} form of rate rules \COR{by}
+function $\vec{g}(\vec{Q}, t)$.
 \COR{Species, whose} amounts are determined by rate rules, must not participate \COR{in any
 reaction and hence only have} zero-valued corresponding entries in the
 stoichiometric matrix $\mathbf{N}$.
@@ -594,7 +501,7 @@ reduce the size of a compartment to a certain portion of its current size,
 as soon as a trigger condition becomes satisfied.
 An assignment rule also influences the absolute value of some quantity.
 
-\COR{A further concept in \acs{SBML} are} algebraic rules, which are equations that
+\COR{A further concept in \acs{SBML} is that of} algebraic rules, which are equations that
 must evaluate to zero at all times during the simulation of the model.
 These rules can be solved to determine the values of quantities, whose values
 are not determined by \COR{any} other construct.
@@ -606,8 +513,8 @@ term $\vec{r}(\vec{Q}, t)$.
 Such a transformation, however, requires symbolic computation and is
 \COR{thus} a complicated endeavor.
 
-In case that the system under study operates at multiple time scales, i.e., it
-contains a fast and a slow \COR{subsystem}, a separation of the system is necessary
+\COR{When}\sout{In case that} the system under study operates at multiple time scales, i.e., it
+contains a fast and a slow \COR{subsystem}, a separation of the system is necessary,
 leading to \acfp{DAE}.
 Some species can be declared to operate at the system's boundaries, assuming a
 constant pool of their amounts or concentrations.
@@ -633,16 +540,26 @@ with standard numerical solvers.
 
 \subsection*{Initialization}
 
-At the beginning of the simulation the values of species, parameters and compartments are set to the initial values as given in the model.
-All \COR{rate laws} of the reactions, assignment rules, transformed algebraic rules (see below), initial assignments, event assignments, rate rules and \COR{function definitions} are integrated into one directed acyclic syntax graph.
-This graph is hence the result of merging of the abstract syntax trees representing all those individual elements.
+At the beginning of the simulation the values of species, parameters and
+compartments are set to the initial values \sout{as} given in the model.
+All \COR{rate laws} of the reactions, assignment rules, transformed algebraic
+rules (see below), initial assignments, event assignments, rate rules and
+\COR{function definitions} are integrated into \sout{one}\COR{a single} directed
+acyclic syntax graph.
+This graph is \sout{hence}\COR{thus}
+the result of merging \sout{of} the abstract syntax trees representing
+all those individual elements.
 Equivalent elements are only contained once.
-This significantly decreases the computation time needed for the evaluation of these syntax graphs during the simulation, in comparison to maintaining multiple syntax trees.
+\COR{In comparison to maintaining multiple syntax trees, this solution
+significantly decreases the computation time needed for the evaluation of
+syntax graphs during the simulation.}
 Figure~1 gives an example for such a syntax graph.
 
-After the creation of th\sout{e abstract syntax}\COR{is} graph, the initial assignments and the
-assignment rules (including transformed algebraic rules) are processed.
-\COR{Initial values defined by initial assignments or assignment rules are computed in this step.}
+After the creation of th\sout{e abstract syntax}\COR{is} graph, the initial
+assignments and the assignment rules (including transformed algebraic rules) are
+processed.
+\COR{Initial values defined by initial assignments or assignment rules are
+computed at this step.}
 
 
 \subsection*{Solving algebraic rules}
@@ -658,7 +575,7 @@ As stated in the \acs{SBML} specifications \cite{Finney2006, Hucka2007, Hucka200
 \COR{If this is not the case, the mathematical expression of every algebraic rule is thereafter 
 transformed into an equation with the target variable on its left-hand side, and hence fulfills the definition of an assignment rule.}
 The left-hand side is represented by the respective variable vertex, to which the considered algebraic rule has been matched.
-Figure~2 displays the described algorithm in form of a flow chart.
+Figure~2 displays the described algorithm in \COR{the} form of a flow chart.
 
 
 \subsection*{Event handling}
@@ -668,76 +585,86 @@ In addition, \COR{\acs{SBML} enables modellers to define a delay which may postp
 to a later point in time.}
 With the release of \acs{SBML} Level~3 Version~1, the processing of events has been
 raised to a\COR{n even} higher level of complexity\COR{:}
-\COR{In earlier versions} it was sufficient to determine, when an event triggers and when its \COR{assignments} are to be \COR{executed}.
-In Level~3 Version~1 just a few new language elements have been added\COR{, but these have a huge impact} on how to handle events:
-\COR{For example,} the order\COR{,} in which events have been processed\COR{,} used to be at programmer\COR{'}s discretion \COR{in \acs{SBML} Level 2},
+\COR{in earlier versions} it was sufficient to determine, when an event triggers and when its \COR{assignments} are to be \COR{executed}.
+In Level~3 Version~1 \sout{just}\COR{only} a few new language elements have been
+added\COR{, but these have a significant impact} on how to handle events:
+\COR{for example,} the order\COR{,} in which events have been processed\COR{,} used to be at programmer\COR{'}s discretion \COR{in \acs{SBML} Level 2},
 but \COR{in Level~3 Version~1} it is given by the event's priority element.
 Coordinating the sequence, in which events are to be executed, has now become the crucial part of event handling. 
 Furthermore, there exists the option to cancel an event during the time since its trigger 
 has been activated and the actual time when the scheduler picks the event for execution.
 \COR{Events that can be cancelled after the activation of their triggers are called \emph{nonpersistent}.}
 
-For every time step, the events to be executed are a union of two subsets of the set of all events.
-On the one hand, \COR{there are events whose triggers have} been activated at the \COR{current} time and which are to be evaluated without delay.
-On the other hand, there are events that triggered at some time point before, and whose delay reaches till the current point in time.
-For every element of the resulting set of events their priority rule must be evaluated.
+\sout{For}\COR{At} every time step, the events to be executed are a union of two subsets of the set of all events.
+On \sout{the} one hand, \COR{there are events whose triggers have} been activated at the \COR{current} time and which are to be evaluated without delay.
+On the other hand, there are events \sout{that} triggered at some time point before, and whose delay reaches till the current point in time.
+For every element of the resulting set of events\sout{ their}\COR{, the} priority rule must be evaluated.
 One event is randomly chosen for execution from all events \COR{of} highest priority.
-All other events could be handled in the same manner.
-However, the assignment of the first event can change the priority or even the trigger condition of the events that have not yet been executed.
+\COR{In principle, a}ll other events could be handled in the same manner\COR{, but}
+the assignment of the first event can change the priority or even the trigger condition of the events that have not yet been executed.
 Therefore, the trigger of \COR{nonpersistent} events and the priority of the remaining events have to be evaluated again.
-In this case, another event that has now the highest priority is chosen.
+In this case, \sout{another}\COR{the} event that has now the highest priority is chosen\COR{ as next}.
 This process \COR{must be repeated} until no further events are left \COR{for execution}.
 Figure~3 shows the slightly simplified algorithm for event processing at a specific point in time.
 
 \COR{The interpretation of events is the most time consuming step of the integration procedure.
 This is why efficient and clearly organized data structures are required to ensure high performance of the algorithm}.
 
-\subsection*{Integrated calculation for a certain time step including event processing}
-The precise calculation of the \COR{time when} events are triggered\COR{,} is crucial to 
-ensure exact results of the numerical integration process.
+\subsection*{Time step adaptation including events and calculation of derivatives}
+The precise calculation of the \COR{time when} events are triggered is crucial
+to ensure exact results of the numerical integration process.
 It could, for instance, happen that an event is triggered at time $t_{\tau}$,
-which is between the two integration time points $t_{\tau - 1}$ and $t_{\tau + 1}$.
-When processing the events only at time points $t_{\tau - 1}$ and $t_{\tau + 1}$
+which is between the \sout{two} integration time points $t_{\tau - 1}$ and $t_{\tau + 1}$.
+When processing the events only at time points $t_{\tau - 1}$ and $t_{\tau + 1}$\COR{,}
 it might happen that the trigger condition cannot be evaluated to \true at
-neither of these time points. 
-The Rosenbrock solver \cite{Press1993} can adapt its step size $h$ if events
+neither of these time points.
+\COR{Hence, a numerical integration method with step-size adaptation is required
+in order to hit the correct time points.}
+\COR{Rosenbrock's method} \cite{Press1993} can adapt its step size $h$ if events
 occur (see \COR{figure~4} for details).
 For a certain time interval $[t_{\tau - 1}, t_{\tau + 1}]$ and the current vector
 $\vec{Q}$\COR{,} Rosenbrock's method determines the new value of vector $\vec{Q}$ at a
 point in time $t_{\tau - 1} + h$\COR{, with $h > 0$}.
-If the error tolerance cannot be ensured, $h$ is reduced and the procedure is
-repeated.
+If the error tolerance cannot be \sout{ensured}\COR{respected},
+$h$ is reduced and the procedure is repeated.
 
-After that\COR{,} the events and the assignment rules are processed at the new point in
-time $t_{\tau - 1} + h$.
+After that\COR{,} the events and the assignment rules are processed at the new
+point in time $t_{\tau - 1} + h$.
 If the previous step causes a change in $\vec{Q}$, the adaptive step size is
 decreased by setting $h$ to $\nicefrac{h}{10}$ and the calculation is repeated
-until \COR{either} the minimum step size is reached or the processing of events and rules
-does not change $\vec{Q}$ anymore.
-Hence, the \COR{time, at which} an event takes place, is precisely determined.
+until \COR{either} the minimum step size is reached or the processing of events
+and \COR{assignment} rules does not change $\vec{Q}$ anymore.
+Hence, the \COR{time at which} an event takes place is precisely determined.
 
-\subsection*{Calculation of the derivatives for a certain point in time}
-For given values $\vec{Q}$ at a point $t$ in time the current vector of derivatives $\dot{\vec{Q}}$ is calculated as follows\COR{.}
-First, the rate rules are processed $\dot{\vec{Q}} = \vec{g}(\vec{Q}, t)$. Note that function $\vec{g}$ returns 0 in all \COR{dimensions,
+For given values $\vec{Q}$ at a point $t$ in time the current vector of
+derivatives $\dot{\vec{Q}}$ is calculated as follows\COR{.}
+First, the rate rules are processed $\dot{\vec{Q}} = \vec{g}(\vec{Q}, t)$.
+Note that function $\vec{g}$ returns 0 in all \COR{dimensions,
 in which} no rate rule is defined.
-Second, the velocity $\nu_i$ of each \COR{reaction channel} $R_i$ is computed with the help of the unified syntax graph (\COR{figure~1} shows an example of such a graph).
+Second, the velocity $\nu_i$ of each \COR{reaction channel} $R_i$ is computed
+with the help of the unified syntax graph (\COR{figure~1} shows an example of
+such a graph).
 The velocity functions depend on $\vec{Q}$ at time $t$.
-During the second step\COR{,} the derivatives of all species that participate in the current reaction $R_i$ need to be updated (see the flowchart in \COR{figure~5}).
+During the second step\COR{,} the derivatives of all species that participate in
+the current reaction $R_i$ need to be updated (see the flowchart in
+\COR{figure~5}).
 
 \subsection*{A reference implementation of the algorithm \sout{as part of the Systems
 Biology Simulation Core Library}}
 
 The algorithm described above has been implemented in Java\texttrademark{} and
 included into the Systems Biology Simulation Core Library.
-Figure~6 displays \COR{an overview of} the software architecture of this \sout{library}\COR{community project},
-which has been designed 
+Figure~6 displays \COR{an overview of} the software architecture of this
+\sout{library}\COR{community project}, which has been designed 
 \sout{as part of a community project aiming}
 \COR{with the aim}
-to provide an extensible numerical backend for customized programs for research in computational systems biology.
-The \acs{SBML}-solving algorithm is based on the data structures provided by the JSBML
-project \cite{Draeger2008}.
+to provide an extensible numerical backend for customized programs for research
+in computational systems biology.
+The \acs{SBML}-solving algorithm is based on the data structures provided by the
+JSBML project \cite{Draeger2008}.
 With the help of wrapper classes several numerical solvers originating from the
-Apache Commons Math library \COR{\cite{ApacheCommonsMath2013}} could be included into the project.
+Apache Commons Math library \COR{\cite{ApacheCommonsMath2013}} could be included
+into the project.
 In addition, the library provides an implementation of the explicit fourth order
 Runge-Kutta method, Rosenbrock's solver, and Euler's method.
 
@@ -751,21 +678,34 @@ library also provides an interpreter of \acf{SED-ML} files \cite{Waltemath2011}.
 These files allow users to store the details of a simulation, including the
 selection and all settings of the numerical method, hence facilitating the
 creation of reproducible results.
-A simulation experiment can also be directly started by passing a \acs{SED-ML} file to
-this interpreter.
-Each solver has a method to directly access its corresponding \acf{KiSAO} term \cite{Courtot2011}
-\COR{to facilitate the execution of \acs{SED-ML} files}.
+A simulation experiment can also be directly started by passing a \acs{SED-ML}
+file to this interpreter.
+Each solver has a method to directly access its corresponding \acf{KiSAO} term
+\cite{Courtot2011} \COR{to facilitate the execution of \acs{SED-ML} files}.
 
 Many interfaces, abstract classes, and an exhaustive source code documentation
-in form of JavaDoc facilitate the customization of the library.
+in \COR{the} form of JavaDoc facilitate the customization of the library.
 For testing purposes, the library contains a sample program that benchmarks the
 \acs{SBML} interpreter against the entire SBML Test Suite \COR{\cite{SBMLtestSuite2013}}.
 
 
 \subsection*{Application to published models}
 
-The Systems Biology Simulation Core Library has \COR{successfully} been tested on all 424 curated
-models from \COR{BioModels Database} (release~23, October 2012).
+\COR{BioModels Database contains a collection of published and curated models.
+An implementation of an \acs{SBML} solver that passes the test suite should
+in principle also be capable of computing the solution of all models from
+BioModels Database.
+This database currently provides neither reference data for the models,
+nor any settings for the numerical computation (such as step size, end time etc.).
+However, it offers pre-computed plots of the time courses for the vast majority
+of models.
+Therefore, while it cannot be directly used as a benchmark test,
+it can help checking that a solver implementation supports all features of many
+published models and that the algorithm always successfully terminates.}
+The Systems Biology Simulation Core Library \COR{solves}
+all 424 curated models from \COR{BioModels Database}
+(release~23, October 2012) \COR{without raising any errors, see Methods
+for details}.
 
 In the following, we \COR{select} two models \COR{that exhibit diverse features}
 from this repository to illustrate the capabilities of this library:
@@ -780,7 +720,7 @@ The model describes how the dynamics propagate through the cellular network
 Figure~7a displays the simulation results for the intracellular concentrations
 of 3-phosphogylcerate, \acs{ATP}, glucose, glyceraldhyde 3-phosphate, and 
 \acs{NAD$^+$}:
-After an initial phase of approximately 15\,s all metabolites begin a
+after an initial phase of approximately 15\,s all metabolites begin a
 steady-going rhythmic oscillation.
 Changes in the dynamics of the fluxes through selected reaction channels within
 this model can be seen in \COR{figure~7b}. 
@@ -800,7 +740,7 @@ reproduce the \COR{figures} provided by \COR{BioModels Database}.
 
 In order to benchmark our software, we chose similar tools exhibiting the
 following features from the \acs{SBML} software
-matrix \TODO{\cite{SBMLsoftwareMatrix2012}}:
+matrix \COR{\cite{SBMLsoftwareMatrix2012}}:
 %
 %\TODO{Many stand-alone programs providing simulation of SBML come with graphical user
 %interfaces.
@@ -861,8 +801,21 @@ It should be mentioned that iBioSim does not primary focus on the use of \acs{OD
 more advanced solvers, such as \textsc{CVODE} from \textsc{SUNDIALS} \cite{Hindmarsh2005}, which is incorporated into BioUML. 
 \textsc{SUNDIALS} can handle complicated \acsp{ODE} significantly better, but since it is not available under the \acs{LGPL} and currently no open-source Java version of these solvers can be obtained, we disregard its use.}
 
+\COR{Algebraic rules constitute an important problem for any implementation of
+the \acs{SBML} standard.
+While the unbound variable of each such equation can be efficiently identified,
+the transformation of an algebraic rule into an assignment rule includes
+symbolic computation and is very difficult to implement.
+In some cases, such a transformation is not even possible.
+Alternatively, the current value of the free variable in an algebraic equation
+could be identified using nested intervals.
+However, this approach consumes a significantly higher run-time, because the
+nested intervals would have to be re-computed at every time step, whereas the
+transformation approach considers every algebraic rule only once (during the
+initialization).}
+
 \COR{Since Level~3 the language \acs{SBML} entails one further aspect:
-It is now possible to add additional features to the model by declaring specialized extension packages.
+it is now possible to add additional features to the model by declaring specialized extension packages.
 The algorithm discussed in this paper, however, describes the core features of \acs{SBML}.
 The features added to core \acs{SBML} by these packages are very diverse,
 reaching from the graphical representation \cite{Gauges2006} to the description
@@ -895,7 +848,8 @@ The evaluation of this model accounts for \COR{over 50}~\% of the total simulati
  
 \COR{Furthermore, the Systems Biology Simulation Core Library
 solves all}
-models from \href{http://biomodels.net}{BioModels} \COR{Database} (release 23) \COR{with appropriate settings}.
+models from \href{http://biomodels.net}{BioModels} \COR{Database} (release 23)
+\COR{with appropriate settings (see Methods)}.
 These results suggest the reliability of the simulation algorithm described in
 this work.
 
@@ -978,7 +932,7 @@ In the \SBMLinterpreter events are represented via an array containing
 Thereby\COR{,} the distinction between events with and without delays is made.
 \COR{Both types of events can trigger multiple times before being executed.
 If no delay is defined, the assignments of the event are usually executed at the same point in time when the event has been triggered.
-However, in case that such an event is cancelled by other events, also all of its assignments are cancelled before execution.
+However, when such an event is cancelled by other events, also all of its assignments are cancelled before execution.
 An event with delay can produce multiple further assignments within the time interval from being triggered for the first time
 and the execution of its first assignment.}
 In order to deal with such an issue, the class \SBMLEventInProgressWithDelay
@@ -995,8 +949,8 @@ queues like this would apply a well known binary max heap data structure.
 The root of the heap represents the largest value in the heap.
 After its extraction, the heap property is restored so that the next largest
 value is moved to the root. However,}
-as stated in Results, the execution of one event can influence the priority \TODO{of} the remaining events.
-\TODO{Consider the concept binary max heap: It can possibly happen that many priorities simultaneously change,
+as stated in Results, the execution of one event can influence the priority \COR{of} the remaining events.
+\COR{Consider the concept binary max heap: it can possibly happen that many priorities simultaneously change,
 whereby the standard method to restore the max heap characteristic after extraction is not sufficient anymore.
 For this reason, we disregarded the use of other data structures for the current implementation.}
 
@@ -1043,12 +997,13 @@ Modifying the relative and absolute tolerance can increase the accuracy of the r
 
 \COR{All curated models from BioModels Database have been simulated with identical settings:
 time interval $[0, 10]$, Rosenbrock's solver, $10^{-6}$ as relative and $10^{-12}$ as absolute tolerance, and a step size of $0.1$ time units.
-For model \numero~234 from BioModels Database the absolute tolerance had to be set to $10^{-10}$ in order to achieve the necessary accuracy.}
+For model \numero~234 from BioModels Database the absolute tolerance had to be set to $10^{-10}$ in order to achieve the necessary accuracy
+and to avoid that the algorithm surpasses its minimal step size.}
 
 \subsection*{Simulation of the SBML Test Suite}
 
 \COR{The models from SBML Test Suite version~2.3.2 were first simulated with Rosenbrock's solver, $10^{-6}$ as relative and $10^{-12}$ as absolute tolerance. 
-For six models we had to set the relative tolerance to $10^-8$ in order to simulate as accurately as desired. 
+For six models we had to set the relative tolerance to $10^{-8}$ in order to simulate as accurately as desired. 
 For three other models the relative tolerance even had to be set to $10^{-12}$ and the absolute tolerance to $10^{-14}$.}
 
 \section*{Availability and Requirements}
@@ -1086,8 +1041,8 @@ The current version of Systems Biology Simulation Core Library is available on t
   \acro{ODE}       {ordinary differential equation}
   \acro{RuBisCO}   {ribulose-1,5-bisphosphate carboxylase oxygenase}
   \acro{NAD$^+$}   {nicotinamide adenine dinucleotide}
-  \acro{SBML}      {systems biology markup language}
-  \acro{SED-ML}    {simulation experiment description markup language}
+  \acro{SBML}      {Systems Biology Markup Language}
+  \acro{SED-ML}    {Simulation Experiment Description Markup Language}
 \end{acronym}
 
 
@@ -1186,7 +1141,7 @@ conditions have already been evaluated to \true in the previous time step. We re
 $E_\mathrm{I}$ as \emph{inactive} events. We define the set $E_\mathrm{A}$ as the subset of $E$ containing those events,
 whose trigger condition switches from \false to \true in the current point $t$ in time. At the beginning
 of the event handling, $E_\mathrm{A}$ is empty. We call an event \emph{persistent}\COR{,} if it can \TODO{only} be removed from $E_\mathrm{A}$ under the condition that all of its assignments have been evaluated. This means that a
-\COR{\emph{nonpersistent}} event can be removed from $E_\mathrm{A}$ in case that its trigger condition becomes \false during the evaluation of other events. Here, the function $\mathrm{trig}(e)$ returns \COR{1 or 0} depending on whether or not the trigger condition of event $e \in E$ is satisfied. Similarly, the function
+\COR{\emph{nonpersistent}} event can be removed from $E_\mathrm{A}$ \sout{in case that}\COR{when} its trigger condition becomes \false during the evaluation of other events. Here, the function $\mathrm{trig}(e)$ returns \COR{1 or 0} depending on whether or not the trigger condition of event $e \in E$ is satisfied. Similarly, the function
 $\mathrm{persist}(e)$ returns \COR{1} if event $e$ is \sout{not} persistent, or \COR{0} otherwise.
 In each iteration the trigger conditions of those active events $e_\mathrm{a} \in E_\mathrm{A}$ that are not persistent are checked.
 If the trigger condition of such an event has changed from \true (1) to \false (0), it is removed from $E_\mathrm{A}$.
@@ -1299,6 +1254,11 @@ constructs.
 BioUML, iBioSim, and the Systems Biology Simulation Core Library, are the 
 only simulation tools from this selection that pass \emph{all} models of the
 SBML Test Suite across all levels and versions of \acs{SBML}.
+\COR{Most programs provide direct access to their \acs{API}.
+COPASI, LibSBMLSim, and the Systems Biology Simulation Core Library have
+particularly been designed for the use as a solver backend.
+The program iBioSim can be executed in a script, e.g., for batch processing
+of multiple models.}
 %\TODO{This table must be updated!}
 
 %\par \mbox{}
@@ -1333,13 +1293,13 @@ Version &
   \begin{sideways}Events\end{sideways}
 } \\ 
 \midrule
-BioUML                         & 0.9.4       & \yes & \yes & \yes    & & \yes      & In $\upalpha$ version & Java                                 & \yes & Java\-Script & independent                              &                              \\
-COPASI                         & \COR{4.9.45}& \no  & \no  & (\yes)  & & \no       & \no                   & C++ (with multiple bindings)         & \yes & \yes         & Windows, Mac OS X, Linux, Solaris        &                              \\
-iBioSim                        & \COR{2.4.5} & \yes & \yes & \yes    & & \yes      & \no                   & Java                                 & \yes & \no          & Fedora 15, Windows, Mac OS X $\geq$ 10.6 &                              \\
-JSim                           & \COR{2.10}  & \no  & \yes & \no     & & \no       & \no                   & Java                                 & \yes & \yes         & Windows, Mac OS X, Linux                 &                              \\
-LibSBMLSim                     & \COR{1.1.0} & \yes & \yes & \yes    & & (\yes)    & \no                   & C                                    & \no  & \yes         & Windows, Mac OS X, Linux, Free BSD       &                              \\
-\COR{Simulation Core Library}  & \COR{1.3}   & \yes & \yes & \yes    & & \yes      & \yes                  & Java                                 & \no  & \yes         & independent                              &                              \\
-VCell                          & 5.0         & \yes & \no  & \yes    & & \no       & \no                   & Java frontend, C/C++ server backend  & \yes & \no          & independent                              & Internet connection required \\
+BioUML                         & 0.9.4       & \yes & \yes & \yes    & & \yes      & In $\upalpha$ version       & Java                                 & \yes & Java\-Script & independent                        &                              \\
+COPASI                         & \COR{4.9.45}& \no  & \no  & (\yes)  & & \no       & \no                         & C++ (with multiple bindings)         & \yes & \yes         & Windows, Mac OS X, Linux, Solaris  &                              \\
+iBioSim                        & \COR{2.4.5} & \yes & \yes & \yes    & & \yes      & \COR{In $\upalpha$ version} & Java\COR{, C}                        & \yes & \COR{(\yes)} & \COR{Windows, Mac OS X, Linux (Fedora~17)} &                              \\
+JSim                           & \COR{2.10}  & \no  & \yes & \no     & & \no       & \no                         & Java                                 & \yes & \yes         & Windows, Mac OS X, Linux           &                              \\
+LibSBMLSim                     & \COR{1.1.0} & \yes & \yes & \yes    & & (\yes)    & \no                         & C                                    & \no  & \yes         & Windows, Mac OS X, Linux, Free BSD &                              \\
+\COR{Simulation Core Library}  & \COR{1.3}   & \yes & \yes & \yes    & & \yes      & \yes                        & Java                                 & \no  & \yes         & independent                        &                              \\
+VCell                          & 5.0         & \yes & \no  & \yes    & & \no       & \no                         & Java frontend, C/C++ server backend  & \yes & \no          & independent                        & Internet connection required \\
 \bottomrule
 \end{tabular}
 \rowcolors{1}{white}{white}
@@ -1363,7 +1323,7 @@ VCell                          & 5.0         & \yes & \no  & \yes    & & \no    
 %LibSBMLSim &http://fun.bio.keio.ac.jp/software/libsbmlsim/& \cite{Moraru2008}, \cite{ Loew2001} & \yes & & &Error adding features & Cannot generate math & & \no rate rules supported & Java frontend C/C++ server backend & \no & open source & VCML	& 5.0.0 & Nov 11 2011 & Platform independent (Java) & Requires internet connection & 
 
 %VCell & http://www.vcell.org/ & \cite{Moraru2008}, \cite{ Loew2001} & \yes & & &Error adding features & Cannot generate math & & No rate rules supported & Java frontend C/C++ server backend & \no & open source & VCML	& 5.0.0 & Nov 11 2011 & Platform independent (Java) & Requires internet connection & \no\\\hline
-%XPPAUT	1			http://www.math.pitt.edu/~bard/xpp/xpp.html	Ermentrout2012		
+%XPPAUT	1			http://www.math.pitt.edu/~bard/xpp/xpp.html	Ermentrout2012
 \subsection*{Table 2 - Simulation of the models from the SBML Test Suite using Rosenbrock's solver}
 The table shows the number of tested models and the total running times of the tests for all \acs{SBML} levels and versions.
 \COR{The measured running time consists of the times necessary for the interpretation and for the simulation of the models. The reading of the SBML model into memory is not considered at this point.}
