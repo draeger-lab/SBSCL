@@ -666,7 +666,7 @@ With the help of wrapper classes several numerical solvers originating from the
 Apache Commons Math library \COR{\cite{ApacheCommonsMath2013}} could be included
 into the project.
 In addition, the library provides an implementation of the explicit fourth order
-Runge-Kutta method, Rosenbrock's solver, and Euler's method.
+Runge-Kutta method, Rosenbrock's method, and Euler's method.
 
 Due to the strict separation between numerical differential equation solvers,
 and the definition of the actual differential equation system, it is possible to
@@ -829,7 +829,7 @@ Contribution from the community is welcome.}
 \section*{Conclusions}
 
 The \acs{SBML} implementation has successfully passed the
-SBML Test Suite \COR{\cite{SBMLtestSuite2013}} using Rosenbrock's solver.
+SBML Test Suite \COR{\cite{SBMLtestSuite2013}} using the Rosenbrock solver.
 The results are shown in Table~2.
 All models together can be simulated within seconds, which means that the simulation
 of one \acs{SBML} model takes only milliseconds on average, using regular desktop computers.
@@ -986,7 +986,7 @@ Clients of the Systems Biology Simulation Core Library can choose to use the \jl
 \COR{The standard preferences for simulating an SBML model consist of the Rosenbrock
 solver with an absolute tolerance of $10^{-12}$ and a relative tolerance of $10^{-6}$.
 On the basis of our experiments this setup can handle most of the problems without further ado.
-Rosenbrock's solver with its adaptive step size is the most effective solver in this library for stiff \acsp{ODE}.
+The Rosenbrock solver with its adaptive step size is the most effective solver in this library for stiff \acsp{ODE}.
 Nevertheless the user has the possibility the choose another solver for integration.
 According to the SBML specifications a model has to be simulated starting at time point 0.0.
 Since this library is not limited to \acs{SBML}, the solvers also accept arbitrary start times. 
@@ -996,13 +996,13 @@ Modifying the relative and absolute tolerance can increase the accuracy of the r
 \subsection*{\COR{Simulation of models from BioModels Database}}
 
 \COR{All curated models from BioModels Database have been simulated with identical settings:
-time interval $[0, 10]$, Rosenbrock's solver, $10^{-6}$ as relative and $10^{-12}$ as absolute tolerance, and a step size of $0.1$ time units.
+time interval $[0, 10]$, the Rosenbrock solver, $10^{-6}$ as relative and $10^{-12}$ as absolute tolerance, and a step size of $0.1$ time units.
 For model \numero~234 from BioModels Database the absolute tolerance had to be set to $10^{-10}$ in order to achieve the necessary accuracy
 and to avoid that the algorithm surpasses its minimal step size.}
 
 \subsection*{Simulation of the SBML Test Suite}
 
-\COR{The models from SBML Test Suite version~2.3.2 were first simulated with Rosenbrock's solver, $10^{-6}$ as relative and $10^{-12}$ as absolute tolerance. 
+\COR{The models from SBML Test Suite version~2.3.2 were first simulated with the Rosenbrock solver, $10^{-6}$ as relative and $10^{-12}$ as absolute tolerance. 
 For six models we had to set the relative tolerance to $10^{-8}$ in order to simulate as accurately as desired. 
 For three other models the relative tolerance even had to be set to $10^{-12}$ and the absolute tolerance to $10^{-14}$.}
 
@@ -1324,7 +1324,7 @@ VCell                          & 5.0         & \yes & \no  & \yes    & & \no    
 
 %VCell & http://www.vcell.org/ & \cite{Moraru2008}, \cite{ Loew2001} & \yes & & &Error adding features & Cannot generate math & & No rate rules supported & Java frontend C/C++ server backend & \no & open source & VCML	& 5.0.0 & Nov 11 2011 & Platform independent (Java) & Requires internet connection & \no\\\hline
 %XPPAUT	1			http://www.math.pitt.edu/~bard/xpp/xpp.html	Ermentrout2012
-\subsection*{Table 2 - Simulation of the models from the SBML Test Suite using Rosenbrock's solver}
+\subsection*{Table 2 - Simulation of the models from the SBML Test Suite using the Rosenbrock solver}
 The table shows the number of tested models and the total running times of the tests for all \acs{SBML} levels and versions.
 \COR{The measured running time consists of the times necessary for the interpretation and for the simulation of the models. The reading of the SBML model into memory is not considered at this point.}
 An Intel\textsuperscript{\textregistered} Core\texttrademark{} i5 CPU with 3.33\,GHz  and 4\,GB RAM was used with
