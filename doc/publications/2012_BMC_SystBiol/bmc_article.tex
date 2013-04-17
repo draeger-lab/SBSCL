@@ -1366,9 +1366,9 @@ VCell                          & 5.0         & \yes & \no  & \yes    & & \no    
 %XPPAUT	1			http://www.math.pitt.edu/~bard/xpp/xpp.html	Ermentrout2012		
 \subsection*{Table 2 - Simulation of the models from the SBML Test Suite using Rosenbrock's solver}
 The table shows the number of tested models and the total running times of the tests for all \acs{SBML} levels and versions.
+\COR{The measured running time consists of the times necessary for the interpretation and for the simulation of the models. The reading of the SBML model into memory is not considered at this point.}
 An Intel\textsuperscript{\textregistered} Core\texttrademark{} i5 CPU with 3.33\,GHz  and 4\,GB RAM was used with
-Windows\textsuperscript{\textregistered}~7 (Version 6.1.7600) as operating system.
-\TODO{JVM version? What is exactly measured here?}
+Windows\textsuperscript{\textregistered}~7 (Version 6.1.7600) as operating system \COR{and Java Virtual Machine version 1.6}. 
 \par \mbox{}
 \par
     \mbox{
@@ -1381,10 +1381,10 @@ Windows\textsuperscript{\textregistered}~7 (Version 6.1.7600) as operating syste
 \midrule
 1 & 2 &   252 &   252 &  \COR{2.9}\\
 2 & 1 &   885 &   885 &  \COR{6.8}\\
-2 & 2 & 1,039 & \COR{1,041} &  \COR{6.8}\\
-2 & 3 & 1,039 & \COR{1,041} &  \COR{6.8}\\
-2 & 4 & 1,041 & \COR{1,043} &  \COR{6.8}\\
-3 & 1 & 1,075 & \COR{1,077} & \COR{38.5}\\
+2 & 2 & \COR{1,041} & \COR{1,041} &  \COR{6.8}\\
+2 & 3 & \COR{1,041} & \COR{1,041} &  \COR{6.8}\\
+2 & 4 & \COR{1,043} & \COR{1,043} &  \COR{6.8}\\
+3 & 1 & \COR{1,077} & \COR{1,077} & \COR{38.5}\\
 \bottomrule
 \end{tabular}
 }
