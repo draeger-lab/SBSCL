@@ -1039,7 +1039,7 @@
   title = {{Evolving a lingua franca and associated software infrastructure
 	for computational systems biology: the Systems Biology Markup Language
 	(SBML) project}},
-  journal = {Systems Biology, IEE},
+  journal = {Syst Biol},
   year = {2004},
   volume = {1},
   pages = {41--53},
@@ -1294,7 +1294,7 @@
 	and Snoep, Jacky L. and Hucka, Michael},
   title = {{BioModels Database: a free, centralized database of curated, published,
 	quantitative kinetic models of biochemical and cellular systems}},
-  journal = {Nucleic Acids Research},
+  journal = {Nucleic Acids Res},
   year = {2006},
   volume = {34},
   pages = {D689--D691},
@@ -1394,49 +1394,51 @@
 
 @ARTICLE{Liebermeister2010,
   author = {Liebermeister, Wolfram and Uhlendorf, Jannis and Klipp, Edda},
-  title = {Modular rate laws for enzymatic reactions: thermodynamics, sensitivities,
+  title = {Modular rate laws for enzymatic reactions: thermodynamics, elasticities
 	and implementation},
-  journal = {submitted to Bioinformatics},
+  journal = {Bioinformatics},
   year = {2010},
-  abstract = {Motivation: Standard rate laws are key prerequisites for systematically
-	turning metabolic networks into kinetic models. They should provide
-	simple, general, and biochemically plausible formulas for reaction
-	velocities and elasticity coefficients. At the same time, they have
-	to satisfy various thermodynamic relations that couple the kinetic
-	and thermodynamic constants with the metabolic fluxes and concentrations.
+  volume = {26},
+  pages = {1528--1534},
+  number = {12},
+  month = jun,
+  abstract = {Standard rate laws are a key requisite for systematically turning
+	metabolic networks into kinetic models. They should provide simple,
+	general and biochemically plausible formulae for reaction velocities
+	and reaction elasticities. At the same time, they need to respect
+	thermodynamic relations between the kinetic constants and the metabolic
+	fluxes and concentrations.
 	
-	Results: We present a family of reversible rate laws designed to describe
-	reactions with arbitrary stoichiometries and various modes of regulation
-	in a modular way. They include mass-action, Michaelis-Menten, and
-	uni-uni reversible Hill kinetics as special cases. Thermodynamically
-	consistent formulations of these rate laws ensure that the kinetic
-	constants will satisfy the thermodynamic Wegscheider conditions and
-	Haldane relationships, guaranteeing that parameter sets obtained
-	from literature mining, fitting, sampling, or optimisation will lead
-	to correct chemical equilibrium states. We show how the chemical
-	potential differences act as a thermodynamic driving force and relate
-	the modular rate laws to the thermodynamickinetic modelling formalism.
-	A reformulation based on parameters called saturation values leads
-	to simple formulas for elasticity and control coefficients, which
-	reflect the role of thermodynamics. In one of the rate laws, the
-	reaction rate directly depends on the reaction affinity, which therefore
-	completely determines the entropy production. To simplify automatic
-	processing of the modular rate laws, we propose a standard syntax
-	and semantic annotations for the Systems Biology Markup Language
-	(SBML). Availability: An online tool for inserting the rate laws
-	into SBML is freely available at www.semanticsbml.org/sbmlfill.
+	We present a family of reversible rate laws for reactions with arbitrary
+	stoichiometries and various types of regulation, including mass-action,
+	Michaelis-Menten and uni-uni reversible Hill kinetics as special
+	cases. With a thermodynamically safe parameterization of these rate
+	laws, parameter sets obtained by model fitting, sampling or optimization
+	are guaranteed to lead to consistent chemical equilibrium states.
+	A reformulation using saturation values yields simple formulae for
+	rates and elasticities, which can be easily adjusted to the given
+	stationary flux distributions. Furthermore, this formulation highlights
+	the role of chemical potential differences as thermodynamic driving
+	forces. We compare the modular rate laws to the thermodynamic-kinetic
+	modelling formalism and discuss a simplified rate law in which the
+	reaction rate directly depends on the reaction affinity. For automatic
+	handling of modular rate laws, we propose a standard syntax and semantic
+	annotations for the Systems Biology Markup Language.
 	
-	Contact wolfram.liebermeister@biologie.hu-berlin.de.
+	An online tool for inserting the rate laws into SBML models is freely
+	available at \url{www.semanticsbml.org}.
 	
-	Supplementary Information: Details on the implementation in SBML models,
-	an overview of thermodynamic concepts and relations, additional formulas,
-	as well as mathematical proofs are given in the supplementary appendix.}
+	Supplementary data are available at Bioinformatics online.},
+  doi = {10.1093/bioinformatics/btq141},
+  keywords = {Algorithms; Enzymes, metabolism; Kinetics; Metabolic Networks and
+	Pathways; Systems Biology, methods; Thermodynamics},
+  url = {http://dx.doi.org/10.1093/bioinformatics/btq141}
 }
 
 @ARTICLE{Lloyd2004,
   author = {Lloyd, Catherine M. and Halstead, Matt D. B. and Nielsen, Poul F.},
   title = {{CellML: its future, present and past}},
-  journal = {Prog Biophys Mol Biol},
+  journal = {Prog Biophys Mol Bio},
   year = {2004},
   volume = {85},
   pages = {433--450},
