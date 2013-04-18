@@ -8,6 +8,12 @@ Version 1.3 (2013-04-19)
    - The violation o fSBML constraints can now be treated using specialized
      listeners. In this way it has become much easier to customize what should
      happen in case of unsatisfied constraints during the simulation.
+     
+   - The csymbol delay can now be interpreted with arbitrary expressions.
+   
+   - Models with fast reactions are now simulated more precisely.
+   
+   - Some inefficiencies in the simulation routine have been removed.
  
  * Bug fixes:
  
