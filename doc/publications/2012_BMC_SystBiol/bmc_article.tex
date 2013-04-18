@@ -788,18 +788,27 @@ An up-to-date comparison of the capabilities of SBML solvers can be found online
 
 \subsection*{\COR{Limitations and perspective}}
 
-\COR{The Rosenbrock solver with the adaption of its step size is basically capable of solving stiff \acsp{ODE} and, according to our experiments, performs better than other solvers in this library.
-Albeit there are some models from BioModels Database that constitute very stiff problems or large \acsp{ODE} (e.g., the models \numero~235 or \numero~408), for which Rosenbrock's method has some difficulty solving them.
-In order to maintain the desired accuracy, the solver continuously decreases its step size.
-As a result, the time consumption for simulation raises.
-In some cases, tuning the relative and absolute tolerance can help, but depending on the system's structure, Rosenbrock's method is sometimes stretched to its limits.}
+\COR{The modifications done to the Rosenbrock solver enables a precise timing of events during simulation. 
+Albeit when events are triggered in small intervals, this can lead to noticeable increase in run-time. This can
+for example be observed in model \numero~408 of the BioModels Database. When the precise timing of events is not of utmost importance, a different solver other than the Rosenbrock solver can be chosen. But there are ambitions to improve the runtime behavior during the precise timing of events.}
 
-\COR{The Runge-Kutta-Fehlberg method \cite{Fehlberg1970} (\acs{KiSAO} term 86), which is included in iBioSim, shows also an increase in run time concerning the models mentioned above.
-It should be mentioned that iBioSim does not primary focus on the use of \acs{ODE} solvers, but in the stochastic analysis of systems with the Reb2Sac stochastic simulator and abstraction techniques to make the models easier to analyze.}
+\COR{When dealing with stiff problems, Rosenbrock's method is a good choice, since it is intended for stiff
+\acsp{ODE}. However the experiments show, that the Rosenbrock solver can be inefficient for non-stiff
+ problems in comparison to other solvers. Whereas more advanced solvers, such as \textsc{CVODE} from
+ \textsc{SUNDIALS} \cite{Hindmarsh2005}CVODE, can adapt for non-stiff and stiff problems, the Rosenbrock
+ solver can not. This issue can lead to an increase in run-time regarding large models like model
+ \numero~235 of the BioModels Database. In some cases, tuning the relative and absolute tolerance can
+ help, but depending on the system's structure, Rosenbrock's method is sometimes stretched to its limits. 
+%In order to maintain the desired accuracy, the solver continuously decreases its step size.
+The Runge-Kutta-Fehlberg method \cite{Fehlberg1970} (\acs{KiSAO} term 86), which is included in iBioSim, shows also an increase in run time concerning the model mentioned above.
+It should be mentioned that iBioSim does not primary focus on the use of \acs{ODE} solvers, but in the stochastic analysis of systems with the Reb2Sac stochastic simulator and abstraction techniques to make the models easier to analyze.
 
-\COR{The performance of the methods Runge-Kutta-Fehlberg and Rosenbrock show, however, that some \acs{ODE} solvers can have more difficulties with some biological models than
-more advanced solvers, such as \textsc{CVODE} from \textsc{SUNDIALS} \cite{Hindmarsh2005}, which is incorporated into BioUML. 
-\textsc{SUNDIALS} can handle complicated \acsp{ODE} significantly better, but since it is not available under the \acs{LGPL} and currently no open-source Java version of these solvers can be obtained, we disregard its use.}
+\COR{The performance of the methods Runge-Kutta-Fehlberg and Rosenbrock show, however, that some
+ \acs{ODE} solvers can have more difficulties with some biological models than more advanced solvers, such
+ as \textsc{CVODE}, which is incorporated into BioUML. \textsc{SUNDIALS} can handle complicated \acsp{ODE} significantly better, but since it is not available under the \acs{LGPL} and currently no open-source Java version of these solvers can be obtained, we disregard its use for now. }
+
+\COR{Nevertheless, the Rosenbrock solver embodies a universal approach for simulation, that can deal with
+stiff problems and event heavy models...}
 
 \COR{Algebraic rules constitute an important problem for any implementation of
 the \acs{SBML} standard.
