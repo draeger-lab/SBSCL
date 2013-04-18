@@ -515,9 +515,11 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
 
 				// see if we're done
 				if (t >= timeEnd) {
-					if (DES instanceof EventDESystem) {
+					if ((DES instanceof EventDESystem) && (!steadyState)) {
+					//if (DES instanceof EventDESystem) {
 						EventDESystem EDES = (EventDESystem) DES;
-						if (((EDES.getEventCount() > 0) && (!steadyState)) || (EDES.getRuleCount() > 0)) {
+						//if (((EDES.getEventCount() > 0) && (!steadyState)) || (EDES.getRuleCount() > 0)) {
+						if ((EDES.getEventCount() > 0) || (EDES.getRuleCount() > 0)) {
 							processEventsAndRules(true, EDES, timeEnd, t-h, yTemp);
 						}
 						System.arraycopy(yTemp, 0, y, 0, numEqn);
