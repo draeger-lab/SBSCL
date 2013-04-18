@@ -52,18 +52,18 @@
     \draw [color = black, line width = 1.0pt, ->, -triangle 60] (start) -- (init);
     \draw [color = black, line width = 1.0pt, ->, -triangle 60] (init) -- (initLoop);
     \draw [color = black, line width = 1.0pt, ->, -triangle 60] (initLoop) -- (triggerEvents);
-    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (triggerEvents) -- node{No} (updateInactive);
-    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (triggerEvents) -- node{Yes} (decision2);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (triggerEvents) -- node[above, very near start]{No} (updateInactive);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (triggerEvents) -- node[right, near start]{Yes} (decision2);
     \draw [color = black, line width = 1.0pt, ->, -triangle 60] (updateInactive) -- (increase2);
-    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (decision2) -- node{No} (updateRunningEvents);
-    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (decision2) -- node{Yes} (aux4) -| (increase2);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (decision2) -- node[right, near start]{No} (updateRunningEvents);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (decision2) -- node[above, near start]{Yes} (aux4) -| (increase2);
     \draw [color = black, line width = 1.0pt, ->, -triangle 60] (increase2) -- (decision3);
 
     \draw [color = black, line width = 1.0pt, ->, -triangle 60] (updateRunningEvents) -- (increase2);
-    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (decision3) -- node{Yes} (noRunningEvents);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (decision3) -- node[right, near start]{Yes} (noRunningEvents);
     \draw [color = black, line width = 1.0pt, ->, -triangle 60] (decision3) -- node [right, very near start] {No}(aux3)|- (aux2);
     \draw [color = black, line width = 1.0pt, ->, -triangle 60] (noRunningEvents) |- node{Yes} (stop);
-    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (noRunningEvents) -- node{No} (chooseEvent);
+    \draw [color = black, line width = 1.0pt, ->, -triangle 60] (noRunningEvents) -- node[below, near start]{No} (chooseEvent);
     \draw [color = black, line width = 1.0pt, ->, -triangle 60] (chooseEvent) -- (processEvent);
     \draw [color = black, line width = 1.0pt, ->, -triangle 60] (processEvent) -| (update);
     \draw [color = black, line width = 1.0pt, ->, -triangle 60] (update) -- (removeEvents);
