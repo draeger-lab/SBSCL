@@ -25,6 +25,8 @@ package org.simulator;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.Model;
@@ -63,7 +65,7 @@ public class TestBiomodels {
 		AdaptiveStepsizeIntegrator solver = new RosenbrockSolver();
 		solver.setAbsTol(1E-12);
 		solver.setRelTol(1E-6);
-
+		List<Integer> slowModels = new LinkedList<Integer>();
 		for (int modelnr = from; modelnr <= to; modelnr++) {
 			System.out.println("Biomodel " + modelnr);
 			Model model = null;
@@ -85,10 +87,11 @@ public class TestBiomodels {
 			if (model != null) {
 				solver.reset();
 				try {
+					double time1 = System.nanoTime();
 					SBMLinterpreter interpreter = new SBMLinterpreter(model);
 
 					if ((solver != null) && (interpreter != null)) {
-						solver.setStepSize(0.1);
+						solver.setStepSize(0.01);
 						
 						// solve
 						solver.solve(interpreter,
@@ -98,6 +101,11 @@ public class TestBiomodels {
 							logger.warning("unstable!");
 							errors++;
 						}
+					}
+					double time2 = System.nanoTime();
+					double runningTime = (time2 - time1) / 1E9;
+					if(runningTime >= 300) {
+						slowModels.add(modelnr);
 					}
 				} catch (Exception e) {
 					logger.warning("Exception in Biomodel " + modelnr);
@@ -110,6 +118,9 @@ public class TestBiomodels {
 		System.out.println("Models with errors in simulation: " + errors);
 		System.out.println("Models with correct simulation: "
 				+ (nModels - errors));
+		for(int slowModel: slowModels) {
+			System.out.println("Slow: #" + slowModel);
+		}
 	}
 	
 	/**
