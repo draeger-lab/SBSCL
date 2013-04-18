@@ -182,6 +182,7 @@ Michael J. Ziller$^{3}$, %\email{Michael J. Ziller - michael_ziller@harvard.edu}
 Richard Adams$^{4}$, %\email{Richard Adams - richard.adams@ed.ac.uk}
 Nicolas Rodriguez$^{5}$, %\email{Nicolas Rodriguez - rodrigue@ebi.ac.uk}
 Nicolas Le Nov\`{e}re$^{6}$, %\email{Nicolas Le Nov\`{e}re - nicolas.lenovere@babraham.ac.uk}
+Noriko Hiroi$^{2}$,%\email{Noriko Hiroi - hiroi@bio.keio.ac.jp}
 Hannes Planatscher$^{1,7}$, %\email{Hannes Planatscher - Hannes.Planatscher@nmi.de}
 Andreas Zell$^{1}$, %\email{Andreas Zell - andreas.zell@uni-tuebingen.de}
 and Andreas Dr\"ager$^{1}$\correspondingauthor\email{Andreas Dr\"ager -
@@ -322,16 +323,16 @@ research groups, including experimenters\COR{,} modelers\COR{, and bioinformatic
 The exchange, storage, interoperability\COR{,} and the possibility to combine models have been recognized as
 key aspects of this endeavor \cite{Schulz2006, Klipp2007, Chelliah2009, Liebermeister2009sta}.
 
-XML-based standard description formats %\cite{Bray2000} 
-such as the \acf{SBML} \cite{Hucka2004, SBML2013} \COR{and} CellML \cite{Lloyd2004, CellML2013}
-enable encoding of quantitative biological network models.
-To facilitate sharing and \COR{re-use} of the models, online \COR{databases} such as
-\COR{BioModels Database} \cite{Li2010a} \COR{and} the CellML model repository
-\cite{Lloyd2008} provide large collections of published models in various
-formats.
-Software libraries for reading and manipulating the content
-of these formats are also available \cite{Bornstein2008, Miller2010,
-Draeger2011b}
+XML-based standard description formats %\cite{Bray2000}
+such as the \acf{SBML} \cite{M.Hucka03012003, SBML2013} \COR{and} CellML
+\cite{Lloyd2004, CellML2013} enable encoding of quantitative biological network
+models.
+To facilitate sharing and \COR{re-use} of the models, online \COR{databases}
+such as \COR{BioModels Database} \cite{Li2010a} \COR{and} the CellML model
+repository \cite{Lloyd2008} provide large collections of published models in
+various formats.
+Software libraries for reading and manipulating the content of these formats are
+also available \cite{Bornstein2008, Miller2010, Draeger2011b}
 \COR{as well as end-user programs supporting these model description languages.}
 \sout{and a large variety of programs supports these model description languages}
 
@@ -358,8 +359,8 @@ divergent results \cite{Bergmann2008}.
 %the \acs{SBML} format, supporting all levels and versions. To this end, we here
 %describe a precise solver algorithm.
 \COR{The availability of this test suite and the currently much larger variety
-of supporting software for \acs{SBML}\footnote{More than 230 available programs
-now support the \acs{SBML} data format (April 9\textsuperscript{th} 2013).} in
+of supporting software for \acs{SBML}\footnote{\COR{More than 250 available programs
+now support the \acs{SBML} data format (April 18\textsuperscript{th} 2013).}} in
 comparison to CellML are the reasons that}
 in this work we
 \COR{focus on the simulation of models encoded in the \acs{SBML} format.}
@@ -513,9 +514,9 @@ term $\vec{r}(\vec{Q}, t)$.
 Such a transformation, however, requires symbolic computation and is
 \COR{thus} a complicated endeavor.
 
-\COR{When}\sout{In case that} the system under study operates at multiple time scales, i.e., it
-contains a fast and a slow \COR{subsystem}, a separation of the system is necessary,
-leading to \acfp{DAE}.
+\COR{When}\sout{In case that} the system under study operates at multiple time
+scales, i.e., it contains a fast and a slow \COR{subsystem}, a separation of the
+system is necessary, leading to \acfp{DAE}.
 Some species can be declared to operate at the system's boundaries, assuming a
 constant pool of their amounts or concentrations.
 Care must also be taken with respect to the units of the species, because under
@@ -610,7 +611,8 @@ Figure~3 shows the slightly simplified algorithm for event processing at a speci
 \COR{The interpretation of events is the most time consuming step of the integration procedure.
 This is why efficient and clearly organized data structures are required to ensure high performance of the algorithm}.
 
-\subsection*{Time step adaptation including events and calculation of derivatives}
+\subsection*{\COR{Time step adaptation considering events and the calculation of derivatives}}
+
 The precise calculation of the \COR{time when} events are triggered is crucial
 to ensure exact results of the numerical integration process.
 It could, for instance, happen that an event is triggered at time $t_{\tau}$,
@@ -642,8 +644,7 @@ First, the rate rules are processed $\dot{\vec{Q}} = \vec{g}(\vec{Q}, t)$.
 Note that function $\vec{g}$ returns 0 in all \COR{dimensions,
 in which} no rate rule is defined.
 Second, the velocity $\nu_i$ of each \COR{reaction channel} $R_i$ is computed
-with the help of the unified syntax graph (\COR{figure~1} shows an example of
-such a graph).
+with the help of the unified syntax graph (e.g., \COR{figure~1}).
 The velocity functions depend on $\vec{Q}$ at time $t$.
 During the second step\COR{,} the derivatives of all species that participate in
 the current reaction $R_i$ need to be updated (see the flowchart in
@@ -673,8 +674,9 @@ and the definition of the actual differential equation system, it is possible to
 implement support for \COR{other} community standards, such as CellML
 \cite{Lloyd2004}.
 
-In order to support the emerging standard \acf{MIASE} \cite{Waltemath2011a}, the
-library also provides an interpreter of \acf{SED-ML} files \cite{Waltemath2011}.
+In order to support the \sout{emerging} standard \acf{MIASE}
+\cite{Waltemath2011a}, the library also provides an interpreter of \acf{SED-ML}
+files \cite{Waltemath2011}.
 These files allow users to store the details of a simulation, including the
 selection and all settings of the numerical method, hence facilitating the
 creation of reproducible results.
@@ -686,17 +688,42 @@ Each solver has a method to directly access its corresponding \acf{KiSAO} term
 Many interfaces, abstract classes, and an exhaustive source code documentation
 in \COR{the} form of JavaDoc facilitate the customization of the library.
 For testing purposes, the library contains a sample program that benchmarks the
-\acs{SBML} interpreter against the entire SBML Test Suite \COR{\cite{SBMLtestSuite2013}}.
+\acs{SBML} interpreter against the entire SBML Test Suite
+\COR{\cite{SBMLtestSuite2013}}.
 
+\subsection*{\COR{Benchmark and a}pplication to published models}
 
-\subsection*{Application to published models}
+The \COR{reference} \acs{SBML} implementation has successfully passed the
+SBML Test Suite \COR{\cite{SBMLtestSuite2013}} using the Rosenbrock solver.
+The results are shown in Table~2.
+All models together can be simulated within seconds, which means that the
+simulation of one \acs{SBML} model takes only milliseconds on average, using
+regular desktop computers.
 
-\COR{BioModels Database contains a collection of published and curated models.
-An implementation of an \acs{SBML} solver that passes the test suite should
+The total simulation time for all models in \acs{SBML} Level~3 Version~1 is
+significantly higher than for the models in other \acs{SBML} levels and
+versions.
+This can be explained by the fact that \sout{there are}\COR{the test suite
+contains} some models
+\sout{in \acs{SBML} Level~3 Version~1}\COR{of this version}, 
+\sout{in which}\COR{whose evaluation requires} 
+a time-consuming processing of a large number of events\sout{ is necessary}.
+In particular, the simulation of model \COR{\numero~}966 of the SBML Test Suite,
+which is only provided in \acs{SBML} Level~3 Version~1, takes \COR{20}\,s 
+because it contains 23 events to be processed.
+\COR{Two events fire every $10^{-2}$\,s.
+These events must therefore be evaluated thousandfold within the specified time
+interval.}
+The evaluation of this model accounts for \COR{over 50}~\% of the total
+simulation time for the models in \acs{SBML} Level~3 Version~1.
+
+\COR{An implementation of an \acs{SBML} solver that passes the test suite should
 in principle also be capable of computing the solution of all models from
-BioModels Database.
-This database currently provides neither reference data for the models,
-nor any settings for the numerical computation (such as step size, end time etc.).
+\href{http://biomodels.net}{BioModels Database}, a resource that contains a
+collection of published and curated models.
+This online database currently provides neither reference data for the models,
+nor any settings for the numerical computation (such as step size, end time
+etc.).
 However, it offers pre-computed plots of the time courses for the vast majority
 of models.
 Therefore, while it cannot be directly used as a benchmark test,
@@ -706,11 +733,13 @@ The Systems Biology Simulation Core Library \COR{solves}
 all 424 curated models from \COR{BioModels Database}
 (release~23, October 2012) \COR{without raising any errors, see Methods
 for details}.
+These results suggest the reliability of the simulation algorithm described in
+this work.
 
 In the following, we \COR{select} two models \COR{that exhibit diverse features}
 from this repository to illustrate the capabilities of this library:
-\COR{BioModels Database model \numero~206} by Wolf \emph{et al.} \cite{Wolf2000} and
-\COR{BioModels Database model \numero~390} by Arnold 
+\COR{BioModels Database model \numero~206} by Wolf \emph{et al.} \cite{Wolf2000}
+and \COR{BioModels Database model \numero~390} by Arnold 
 and Nikoloski \cite{Arnold2011}.
 
 The model by Wolf \emph{et al.} \cite{Wolf2000} mimics glycolytic oscillations
@@ -773,9 +802,9 @@ matrix \COR{\cite{SBMLsoftwareMatrix2012}}:
 \end{itemize}
 The selected programs are in alphabetical order:
 %Only three other applications support the simulation of models containing events, algebraic rules and fast reactions completely:
-BioUML \cite{Kolpakov2011, Kolpakov2006}, COPASI \cite{Hoops2006}, 
-iBioSim \cite{Myers2009, Madsen2012}, JSim \cite{Raymond2003}, LibSBMLSim 
-\cite{Takizawa2013, Funahashi2012}, and VCell \cite{Moraru2008}.
+BioUML \cite{Kolpakov2011}, COPASI \cite{Hoops2006}, 
+iBioSim \cite{Myers2009}, JSim \cite{Raymond2003}, LibSBMLSim 
+\cite{Takizawa2013}, and VCell \cite{Moraru2008}.
 %\TODO{Only three applications pass the four exemplary models (966, 988, 1083, 1000) of the SBML Test Suite (version 2.0.2):}
 %iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}.
 Table~1 summarizes the comparison of \COR{the most recent versions of} all six
@@ -788,27 +817,62 @@ An up-to-date comparison of the capabilities of SBML solvers can be found online
 
 \subsection*{\COR{Limitations and perspective}}
 
-\COR{The modifications done to the Rosenbrock solver enables a precise timing of events during simulation. 
-Albeit when events are triggered in small intervals, this can lead to noticeable increase in run-time. This can
-for example be observed in model \numero~408 of the BioModels Database. When the precise timing of events is not of utmost importance, a different solver other than the Rosenbrock solver can be chosen. But there are ambitions to improve the runtime behavior during the precise timing of events.}
+\COR{The modifications done to the Rosenbrock solver enables a precise timing of
+events during simulation. 
+Albeit when events are triggered in small intervals, this can lead to noticeable
+increase in run-time.
+This can, for example, be observed in BioModels Database model \numero~408.
+When the precise timing of events is not of utmost importance, a different
+solver other than the Rosenbrock solver can be chosen. But there are ambitions
+to improve the runtime behavior during the precise timing of events.}
+\sout{The Rosenbrock solver with the adaption of its step size is capable of
+solving stiff \acsp{ODE} and, according to our experiments, performs better than
+other solvers in this library.
+Albeit there are some models from BioModels Database that constitute very stiff
+problems or large \acsp{ODE} (e.g., the models \numero~235 or \numero~408),
+with which Rosenbrock's method has some difficulty solving them.
+In order to maintain the desired accuracy, the solver continuously decreases its
+step size.
+As a result, the time consumption for simulation rises.
+In some cases, tuning the relative and absolute tolerances can help, but
+depending on the system's structure, Rosenbrock's method is sometimes stretched
+to its limits.}
 
-\COR{When dealing with stiff problems, Rosenbrock's method is a good choice, since it is intended for stiff
-\acsp{ODE}. However the experiments show, that the Rosenbrock solver can be inefficient for non-stiff
- problems in comparison to other solvers. Whereas more advanced solvers, such as \textsc{CVODE} from
- \textsc{SUNDIALS} \cite{Hindmarsh2005}CVODE, can adapt for non-stiff and stiff problems, the Rosenbrock
- solver can not. This issue can lead to an increase in run-time regarding large models like model
- \numero~235 of the BioModels Database. In some cases, tuning the relative and absolute tolerance can
- help, but depending on the system's structure, Rosenbrock's method is sometimes stretched to its limits. 
+\sout{The Runge-Kutta-Fehlberg method \cite{Fehlberg1970} (\acs{KiSAO} term 86),
+which is included in iBioSim, also shows an increase in run time with the models
+mentioned above.}
+\COR{When dealing with stiff problems, Rosenbrock's method is a good choice,
+since it is intended for stiff \acsp{ODE}.
+However, the experiments show, that the Rosenbrock solver can be inefficient for
+non-stiff problems in comparison to other solvers.
+Whereas more advanced solvers, such as \textsc{CVODE} from \textsc{SUNDIALS}
+\cite{Hindmarsh2005}, can adapt for non-stiff and stiff problems, the Rosenbrock
+solver cannot.
+This issue can lead to an increase in run-time regarding large models such as
+model \numero~235 of the BioModels Database. In some cases, tuning the relative
+and absolute tolerance can help, but depending on the system's structure,
+Rosenbrock's method is sometimes stretched to its limits. 
 %In order to maintain the desired accuracy, the solver continuously decreases its step size.
-The Runge-Kutta-Fehlberg method \cite{Fehlberg1970} (\acs{KiSAO} term 86), which is included in iBioSim, shows also an increase in run time concerning the model mentioned above.
-It should be mentioned that iBioSim does not primary focus on the use of \acs{ODE} solvers, but in the stochastic analysis of systems with the Reb2Sac stochastic simulator and abstraction techniques to make the models easier to analyze.
+The Runge-Kutta-Fehlberg method \cite{Fehlberg1970} (\acs{KiSAO} term 86), which
+is included in iBioSim, shows also an increase in run time concerning the model
+mentioned above.}
+\TODO{It should be mentioned that iBioSim does not primary focus on the use of
+\acs{ODE} solvers, but in the stochastic analysis of systems with the Reb2Sac
+stochastic simulator and abstraction techniques to make the models easier to
+analyze \cite{Madsen2012}.}
 
-\COR{The performance of the methods Runge-Kutta-Fehlberg and Rosenbrock show, however, that some
- \acs{ODE} solvers can have more difficulties with some biological models than more advanced solvers, such
- as \textsc{CVODE}, which is incorporated into BioUML. \textsc{SUNDIALS} can handle complicated \acsp{ODE} significantly better, but since it is not available under the \acs{LGPL} and currently no open-source Java version of these solvers can be obtained, we disregard its use for now. }
+\COR{The performance of the Runge-Kutta-Fehlberg and Rosenbrock methods show,
+however, that simpler \acs{ODE} solvers can have more difficulties with some
+biological models than more advanced solvers, such as
+\textsc{CVODE}\sout{  from \textsc{SUNDIALS} \cite{Hindmarsh2005}}, which is 
+incorporated into BioUML.
+\textsc{SUNDIALS} can handle complicated \acsp{ODE} significantly better, but
+since it is not available under the \acs{LGPL} and no open-source Java version
+of these solvers can currently be obtained, we disregard its use.}
 
-\COR{Nevertheless, the implemented Rosenbrock solver embodies a universal approach for simulation, that can deal with
-stiff problems and precisely solve models containing arbitrary \acs{SBML} elements.}
+\TODO{Nevertheless, the Rosenbrock solver embodies a universal approach for
+simulation, that can deal with stiff problems and precisely solve models
+containing arbitrary \acs{SBML} elements.}
 
 \COR{Algebraic rules constitute an important problem for any implementation of
 the \acs{SBML} standard.
@@ -823,64 +887,49 @@ nested intervals would have to be re-computed at every time step, whereas the
 transformation approach considers every algebraic rule only once (during the
 initialization).}
 
-\COR{Since Level~3 the language \acs{SBML} entails one further aspect:
-it is now possible to add additional features to the model by declaring specialized extension packages.
-The algorithm discussed in this paper, however, describes the core features of \acs{SBML}.
+\COR{Since Level~3, \acs{SBML} entails one further aspect:
+it is now possible to add additional features to the model by declaring
+specialized extension packages.
+However, the algorithm discussed in this paper describes the core features of
+\acs{SBML}.
 The features added to core \acs{SBML} by these packages are very diverse,
-reaching from the graphical representation \cite{Gauges2006} to the description
-of qualitative networks, such as Petri nets \cite{Chaouiya2012} etc. 
-It is therefore necessary to separately derive and implement algorithms for the interpretation of individual extension packages.}
+reaching the graphical representation \cite{Gauges2006}, the description
+of qualitative networks, such as Petri nets \cite{Chaouiya2012}, and many more. 
+It is therefore necessary to separately derive and implement algorithms for the
+interpretation of individual extension packages.}
 
-\COR{The agenda for the further development of the open-source project, the Systems Biology Simulation Core Library,
-includes the implementation of \acs{SBML} extension packages, support for CellML, and the incorporation of additional numerical solvers.
-Contribution from the community is welcome.}
+\COR{The agenda for the further development of the open-source project, the
+Systems Biology Simulation Core Library, includes the implementation of
+\acs{SBML} extension packages, support for CellML, and the incorporation of
+additional numerical solvers.
+Contributions from the community are welcome.}
 
 \section*{Conclusions}
 
-The \acs{SBML} implementation has successfully passed the
-SBML Test Suite \COR{\cite{SBMLtestSuite2013}} using the Rosenbrock solver.
-The results are shown in Table~2.
-All models together can be simulated within seconds, which means that the simulation
-of one \acs{SBML} model takes only milliseconds on average, using regular desktop computers.
-
-The total simulation time for all models in \acs{SBML} Level~3 Version~1 is significantly
-higher than for the models in other \acs{SBML} levels and versions.
-This can be explained by the fact that \sout{there are}\COR{the test suite contains}
-some models \sout{in \acs{SBML} Level~3 Version~1}\COR{of this version}, 
-\sout{in which}\COR{whose evaluation requires} 
-a time-consuming processing of a large number of events\sout{ is necessary}.
-In particular, the simulation of model \COR{\numero~}966 of the SBML Test Suite,
-which is only provided in \acs{SBML} Level~3 Version~1, takes \COR{20}\,s because it contains 23 events to be processed.
-\COR{Two events fire every $10^{-2}$\,s.
-These events must therefore be evaluated thousandfold within the specified time interval.}
-The evaluation of this model accounts for \COR{over 50}~\% of the total simulation time for the models in \acs{SBML} Level~3 Version~1.
- 
-\COR{Furthermore, the Systems Biology Simulation Core Library
-solves all}
-models from \href{http://biomodels.net}{BioModels} \COR{Database} (release 23)
-\COR{with appropriate settings (see Methods)}.
-These results suggest the reliability of the simulation algorithm described in
-this work.
-
-Our tests indicate that \COR{at the moment only two other programs} pass the entire \COR{test suite} for all 
-\acs{SBML} levels and versions: BioUML, which is a workbench for modelling, simulation,
-and parameter fitting, and \sout{the Systems Biology Simulation Core Library}\COR{iBioSim}.
-The Systems Biology Simulation Core Library is therefore the only \acs{API} simulation
-library exhibiting this capability.
+\TODO{This only describes the implementation, but does not say much about the
+algorithmic part of the paper!}
+Our tests indicate that \COR{at the moment only two other programs} pass the
+entire \COR{test suite} for all \acs{SBML} levels and versions: BioUML, which is
+a workbench for modelling, simulation, and parameter fitting, and
+\sout{the Systems Biology Simulation Core Library}\COR{iBioSim}.
+The Systems Biology Simulation Core Library is therefore the only \acs{API}
+simulation library exhibiting this capability.
 %Compared to BioUML the Simulation Core Library simulates all models of the Test Suite much faster.
 %(see
 %\href{http://sbml.org/Software/SBML_Test_Suite}{http://sbml.org/Software/SBML\_Test\_Suite}):
-
-\sout{Therefore}\COR{For these reasons}, the Systems Biology Simulation Core Library is an efficient Java tool
-for the simulation of differential equation systems used in systems biology.
+%
+\sout{Therefore, t}\COR{T}he Systems Biology Simulation Core
+Library is an efficient Java tool for the simulation of differential equation
+systems used in systems biology.
 It can be easily integrated into larger customized applications.
-For instance, \COR{CellDesigner \cite{Funahashi2003} has already been using it since version~4.2}
-as one of its \COR{integral} simulation libraries.
+For instance, \COR{CellDesigner \cite{Funahashi2003} has already been using it
+since version~4.2} as one of its \COR{integral} simulation libraries.
 The stand-alone application SBMLsimulator \COR{\cite{SBMLsimulator2013}}
 provides a convenient graphical user interface for the simulation of \acs{SBML}
 models and uses it as a computational back-end.
-The abstract class structure of the library supports the integration of \sout{additional}\COR{further} model formats,
-such as CellML, \sout{besides}\COR{in addition to} its \acs{SBML} implementation.
+The abstract class structure of the library supports the integration of
+\sout{additional}\COR{further} model formats, such as CellML,
+\sout{besides}\COR{in addition to} its \acs{SBML} implementation.
 To this end, it is only necessary to implement a suitable interpreter class.
 
 
@@ -889,9 +938,9 @@ To this end, it is only necessary to implement a suitable interpreter class.
 %provides such a simulation routine based on the \textsc{SUNDIALS} differential equation
 %solver.
 
-By including support for the emerging standard \acs{SED-ML}, we hope to facilitate the
-exchange, archival and reproduction of simulation experiments performed using
-the Systems Biology Simulation Core Library.
+By including support for the emerging standard \acs{SED-ML}, we hope to
+facilitate the exchange, archival and reproduction of simulation experiments
+performed using the Systems Biology Simulation Core Library.
 
 \section*{Methods}
 
@@ -908,27 +957,36 @@ The abstract description of differential equation systems, with the help of seve
 %
 %A specialized interpreter class is required for the evaluation of a biological
 %model.
-The interpretation of \acs{SBML} models is split between evaluation of events and rules,
-computation of stoichiometric information, and computation of the current values for all model components (such as species and compartments).
+The interpretation of \acs{SBML} models is split between evaluation of events
+and rules, computation of stoichiometric information, and computation of the
+current values for all model components (such as species and compartments).
 %
-For a given state of the \acs{ODE} system, the class \SBMLinterpreter, responsible
-for the evaluation of models encoded in \acs{SBML}\COR{,} returns the current set of
-time-derivatives of the variables.
+For a given state of the \acs{ODE} system, the class \SBMLinterpreter,
+responsible for the evaluation of models encoded in \acs{SBML}\COR{,} returns
+the current set of time-derivatives of the variables.
 It is connected to an efficient MathML interpreter of the expressions contained
 in kinetic laws, rules and events (\ASTNodeInterpreter).
-The nodes of the syntax graph for those expressions depend on the current state of the \acs{ODE} system.
-If the state has changed, the values of the nodes have to be recalculated (see Results).
+The nodes of the syntax graph for those expressions depend on the current state
+of the \acs{ODE} system.
+If the state has changed, the values of the nodes have to be recalculated (see
+Results).
 
 %
-An important aspect in the interpretation of \acs{SBML} models is the determination of the exact time\COR{,}
-at which an event occurs, as this influences the precision of the system's variables.
-To this end, we adjusted \COR{an implementation of} the Rosenbrock solver \cite{Kotcon2011},
-an integrator with an adaptive step size, to a very precise timing of the events. %\sout{Rosenbrock's method is well-suited even for stiff systems.}
-% 
+An important aspect in the interpretation of \acs{SBML} models is the
+determination of the exact time at which an event occurs \sout{as}\COR{because}
+this influences the precision of the system's variables.
+To this end, we adjusted \COR{an implementation of} the Rosenbrock solver
+\cite{Kotcon2011},
+an integrator with an adaptive step size, to a very precise timing of the
+events.
+%\sout{Rosenbrock's method is well-suited even for stiff systems.}
 In addition to events, rules are also treated during integration.
-Basically, rules are events that occur at every given point in time and are therefore processed in the same manner.
-For every object of the type \AlgebraicRule, a new \AssignmentRule object is generated by means of the preceding bipartite matching.
-They represent only temporary rules, that are incorporated in the simulation process but do not influence the model in the \acs{SBML} file.
+Basically, rules are \COR{treated like} events that occur at every given point
+in time and are therefore processed in the same manner.
+For every object of the type \AlgebraicRule, a new \AssignmentRule object is
+generated by means of the preceding bipartite matching.
+They represent only temporary rules, that are incorporated in the simulation
+process but do not influence the model in the \acs{SBML} file.
 %\marginpar{This is only valid for polynomes. And for those,
 %assignmentRules should have been used anyway. How do-you proceed for
 %cos(x)=0?: Yes, that's true. People should use assignments there, but the
@@ -936,77 +994,126 @@ They represent only temporary rules, that are incorporated in the simulation pro
 %currently not sure if we could solve cos(x) = 0 or similar cases.}
 %
 
-In the \SBMLinterpreter events are represented via an array containing
-\sout{an object}\COR{one instance} of \sout{the class} \EventInProgress for every event in the model.
+In the \SBMLinterpreter\COR{,} events are represented via an array containing
+\sout{an object}\COR{one instance} of \sout{the class} \EventInProgress for
+every event in the model.
 Thereby\COR{,} the distinction between events with and without delays is made.
-\COR{Both types of events can trigger multiple times before being executed.
-If no delay is defined, the assignments of the event are usually executed at the same point in time when the event has been triggered.
-However, when such an event is cancelled by other events, also all of its assignments are cancelled before execution.
-An event with delay can produce multiple further assignments within the time interval from being triggered for the first time
-and the execution of its first assignment.}
-In order to deal with such an issue, the class \SBMLEventInProgressWithDelay
-keeps track of this via the help of a list containing the points in time,
-at which the respective event has to executed.
-When events trigger more than once before execution,
-they have to be ordered according to their delay because the delay of the very same event may vary.
+\COR{Both types of events can be triggered multiple times before being executed.
+If no delay is defined, the assignments of the event are usually executed at the
+same point in time when the event has been triggered.
+However, when such an event is cancelled by other events, all of its assignments
+are also cancelled before execution.}
+\TODO{An event with delay can produce multiple further assignments within
+the time frame since it has been triggered for the first time and the actual
+execution of its first assignment.}
+In order to deal with \sout{such an issue}\COR{delayed events}, the class
+\SBMLEventInProgressWithDelay keeps track of this via \sout{the help of} a list
+containing the points in time, at which the respective event has to \COR{be}
+executed.
+When events \COR{are triggered} more than once before execution,
+they have to be \sout{ordered according to}\COR{sorted in ascending order by}
+their delay\COR{. This is neccesary, because in this case the delay of the very
+same event may vary.}
 
 When the \SBMLinterpreter is processing events with priority,
 the events with the highest priority are \sout{currently} stored in \COR{a} list
 until one of them is selected for \COR{execution}.
-\COR{In computer science, the method of choice for the organization of priority
-queues like this would apply a well known binary max heap data structure.
+\COR{Technically, the method of choice for the organization of such priority
+queues would apply a binary max heap data structure instead.
 The root of the heap represents the largest value in the heap.
 After its extraction, the heap property is restored so that the next largest
 value is moved to the root. However,}
-as stated in Results, the execution of one event can influence the priority \COR{of} the remaining events.
-\COR{Consider the concept binary max heap: it can possibly happen that many priorities simultaneously change,
-whereby the standard method to restore the max heap characteristic after extraction is not sufficient anymore.
-For this reason, we disregarded the use of other data structures for the current implementation.}
+as stated in Results, the execution of one event can influence the priority
+\COR{of} the remaining events.
+\COR{It can possibly happen that many priorities simultaneously change,
+whereby the standard method to restore the max heap characteristic after
+extraction is not sufficient anymore.
+For this reason, we disregarded the use of other data structures for the current
+implementation.}
 
 %
 %The simulation algorithm then proceeds as follows: For each time step, the \acs{ODE} %solver gets the current variable values and calculates the system's state for the next point in time. After that, events and rules are processed, that can change the values. The modified values then become the initial values for the next time step. The event processing of the Rosenbrock solver \sout{is different from other solvers, as it} is directly integrated in the solver class and influences the step size. The time-accurate handling of events and rules leads to very precise results of the simulation.
 %
-\COR{Besides the subset of MathML functions provided by the different \acs{SBML} specifications, there also exists the possibility to apply user-defined functions from a given \acs{SBML} file.
-As mentioned in the initialization, additional function definitions are also represented via an abstract syntax graph.
-For each function definition the arguments defined in its lambda expression are mapped to their corresponding nodes in the abstract syntax graph.
-The evaluation of a MathML element with a user-defined function consists of several steps.
-The arguments of the respective function are evaluated and then passed to their corresponding node in the graph via the mapping established before.
-After this step the nodes representing arguments have a specific value attached to them.
-Finally, the complete abstract syntax graph can be evaluated.}
+\COR{Since \acs{SBML} Level~2 Version~1 it has als become possible to create
+user-defined funcions.
+These function definition objects contain lambda calculus including an optional
+list of arguments together with the actual mathematical expression of the
+function.
+During the initialization phase, function definitions are also incorporated into
+the abstract syntax graph (figure~1).
+For each function definition, its arguments defined in its lambda expression are
+mapped to their corresponding nodes in the abstract syntax graph.
+The evaluation of a syntax graph node with a user-defined function consists of
+several steps.
+The arguments of the respective function are evaluated and then passed to their
+corresponding node in the graph via the mapping established before.
+After this step the nodes representing arguments have a specific value attached
+to them.
+Finally, the complete abstract syntax graph can be evaluated.
+Care must be taken, because several function definitions may have arguments with
+identical identifiers.
+All possible naming conflicts must be preempted.}
 
-\COR{During the calculation of reaction velocities the \StoichiometryMath construct allows a dynamic change of a reaction's stoichiometry during simulation.
-Since SBML Level~3 Version~1, the stoichiometry of a reaction can be directly altered because it is now possible to address the identifier of a \SpeciesReference as the target variable within rules or events.
-The \SBMLinterpreter class flags reactions with changing stoichiometry during initialization and evaluates the corresponding abstract syntax graph anew if the stoichiometry is needed for calculation.}
+\COR{As part of the calculation of reaction velocities the \StoichiometryMath
+construct allows a dynamic change of a reaction's stoichiometry over the course
+of the simulation.
+Since \acs{SBML} Level~3 Version~1, the stoichiometry of a reaction can be
+directly altered because it is now possible to address the identifier of a
+\SpeciesReference as the target variable within rules or events.
+The \SBMLinterpreter class flags reactions with changing stoichiometry during
+initialization and evaluates the corresponding abstract syntax graph anew if the
+stoichiometry is needed for calculation.}
 
-\COR{The definition of constraints introduces assumptions of how a model is supposed to act during simulation.
-Analogous to the trigger of events, the abstract syntax graph of each constraint is evaluated for every time step.
-In case of a violation the \SBMLinterpreter generates an instance of \ConstraintEvent that is then processed by the corresponding \ConstraintListener class.
-The user is then informed via the standard Java \Logger about the constraint that was violated at which point in time with the message of the corresponding constraint in addition.
-More advanced user-defined implementations of \ConstraintListener can be added to the \SBMLinterpreter,
-for instance, to notify a \acs{GUI} about violations or display the associated messages in a more user-friendly way.}
+\COR{The constraints introduce assumptions about a model behavior.
+Similar to the trigger of events, the abstract syntax graph of each constraint
+is evaluated at every time step.
+In case of a violation the \SBMLinterpreter generates an instance of
+\ConstraintEvent that is then processed by the corresponding \ConstraintListener
+class.
+The user is informed about the constraint upon its violation via the
+standard Java \Logger.
+The output message includes the point in simulation time and the message of the
+constraint.
+In addition, more advanced user-defined implementations of \ConstraintListener
+can be added to the \SBMLinterpreter, for instance, to notify a \acs{GUI} about
+violations or display the associate messages in a more user-friendly way.}
 
-\acs{SED-ML} support is enabled by inclusion of the \jlibsedml library \COR{\cite{jlibsedml2013}} in the binary download.
-Clients of the Systems Biology Simulation Core Library can choose to use the \jlibsedml \acs{API} directly, or access \acs{SED-ML} support via  facade classes in the \texttt{org.simulator.sedml} package that do not require direct dependencies on \jlibsedml in their code.
+\acs{SED-ML} support is enabled by inclusion of the \jlibsedml library
+\COR{\cite{jlibsedml2013}} in the binary download.
+Clients of the Systems Biology Simulation Core Library can choose to use the
+\jlibsedml \acs{API} directly, or access \acs{SED-ML} support via  facade
+classes in the \texttt{org.simulator.sedml} package that do not require direct
+dependencies on \jlibsedml in their code.
 
 \subsection*{Default settings and configuration}
 
 %Points of Control:
 
-\COR{The standard preferences for simulating an SBML model consist of the Rosenbrock
-solver with an absolute tolerance of $10^{-12}$ and a relative tolerance of $10^{-6}$.
-On the basis of our experiments this setup can handle most of the problems without further ado.
-The Rosenbrock solver with its adaptive step size is the most effective solver in this library for stiff \acsp{ODE}.
-Nevertheless the user has the possibility the choose another solver for integration.
-According to the SBML specifications a model has to be simulated starting at time point 0.0.
-Since this library is not limited to \acs{SBML}, the solvers also accept arbitrary start times. 
-In any case, the user has the possibility to specify the end of the simulation.
-Modifying the relative and absolute tolerance can increase the accuracy of the results or decrease computation time.}
+\COR{The standard preferences for simulating an SBML model consist of the
+Rosenbrock solver with an absolute tolerance of $10^{-12}$ and a relative
+tolerance of $10^{-6}$.
+On the basis of our experiments, this setup can handle most of the problems
+without further tuning.
+The Rosenbrock solver with its adaptive step size is the most effective solver
+in this library for stiff \acsp{ODE}.
+Nevertheless the user has the possibility the choose another solver for
+integration.
+According to the SBML specifications, a model has to be simulated starting at
+time point 0.0.
+Since this library is not limited to \acs{SBML}, the solvers also accept
+arbitrary start times. 
+The user has also the possibility to specify the end of the simulation.
+Modifying the relative and absolute tolerance can increase the accuracy of the
+results or decrease computation time.}
 
 \subsection*{\COR{Simulation of models from BioModels Database}}
 
-\COR{All curated models from BioModels Database have been simulated with identical settings, as it was suggested before \cite{Bergmann2008}}:
-time interval $[0, 10]$, the Rosenbrock solver, $10^{-6}$ as relative and $10^{-12}$ as absolute tolerance, and a step size of $0.01$ time units.
-For model \numero~234 from BioModels Database the absolute tolerance had to be set to $10^{-10}$ in order to achieve the necessary accuracy
+\COR{All curated models from BioModels Database have been simulated with
+identical settings, as it was suggested before \cite{Bergmann2008}:
+time interval $[0, 10]$, the Rosenbrock solver, $10^{-6}$ as relative and 
+$10^{-12}$ as absolute tolerance, and a step size of $0.01$ time units.
+For model \numero~234 from BioModels Database the absolute tolerance had to be
+set to $10^{-10}$ in order to achieve the necessary accuracy
 and to avoid that the algorithm surpasses its minimal step size.}
 
 \subsection*{Simulation of the SBML Test Suite}
@@ -1045,7 +1152,7 @@ The current version of Systems Biology Simulation Core Library is available on t
   \acro{JDK}       {Java Development Kit}
   \acro{JVM}       {Java Virtual Machine}
   \acro{KiSAO}     {kinetic simulation algorithm ontology}
-  \acro{MIASE}     {minimal information about a simulation experiment}
+  \acro{MIASE}     {Minimum Information About a Simulation Experiment}
   \acro{LGPL}      {GNU Lesser General Public License}
   \acro{ODE}       {ordinary differential equation}
   \acro{RuBisCO}   {ribulose-1,5-bisphosphate carboxylase oxygenase}
