@@ -1251,28 +1251,30 @@ the computed matching is maximal. Having a unconnected equation vertex results i
 If the matching is not overdetermined, for each algebraic rule an assignment rule is generated. The left-hand side of each rule corresponds to the variable the respective algebraic rule has been matched to.}
 
 \subsection*{Figure 3 - Processing of events: simplified algorithm (handling of delayed events omitted)}
-Let $E$ be the set of all events in a model, and $E_\mathrm{I}$ be the set of events, whose trigger
-conditions have already been evaluated to \true in the previous time step. We refer to elements within
-$E_\mathrm{I}$ as \emph{inactive} events. We define the set $E_\mathrm{A}$ as the subset of $E$ containing those events,
-whose trigger condition switches from \false to \true in the current point $t$ in time. At the beginning
-of the event handling, $E_\mathrm{A}$ is empty. We call an event \emph{persistent}\COR{,} if it can \TODO{only} be removed from $E_\mathrm{A}$ under the condition that all of its assignments have been evaluated. This means that a
-\COR{\emph{nonpersistent}} event can be removed from $E_\mathrm{A}$ \sout{in case that}\COR{when} its trigger condition becomes \false during the evaluation of other events. Here, the function $\mathrm{trig}(e)$ returns \COR{1 or 0} depending on whether or not the trigger condition of event $e \in E$ is satisfied. Similarly, the function
-$\mathrm{persist}(e)$ returns \COR{1} if event $e$ is \sout{not} persistent, or \COR{0} otherwise.
-In each iteration the trigger conditions of those active events $e_\mathrm{a} \in E_\mathrm{A}$ that are not persistent are checked.
-If the trigger condition of such an event has changed from \true (1) to \false (0), it is removed from $E_\mathrm{A}$.
+Let $E$ be the set of all events in a model, and $E_\mathrm{I}$ be the set of events whose trigger conditions have already been evaluated to \true in previous time steps. 
+We refer to elements within $E_\mathrm{I}$ as \emph{inactive} events.
+We define the set $E_\mathrm{A}$ as the subset of $E$ containing events whose trigger condition switches from \false to \true at the current time step $t$.
+At the beginning of the event handling, $E_\mathrm{A}$ is empty.
+We call an event \emph{persistent}\COR{,} if it can only be removed from $E_\mathrm{A}$ under the condition that all of its assignments have been evaluated.
+This means that a \COR{\emph{nonpersistent}} event can be removed from $E_\mathrm{A}$ \sout{in case that}\COR{when} its trigger condition becomes \false during the evaluation of other events.
+\sout{Here, t}\COR{T}he function $\mathrm{trig}(e)$ returns \COR{1 or 0} depending on whether or not the trigger condition of event $e \in E$ is satisfied.
+Similarly, the function $\mathrm{persist}(e)$ returns \COR{1} if event $e$ is \sout{not} persistent, or \COR{0} otherwise.
+\COR{At} each iteration\COR{,} the trigger conditions of \sout{those} active events $e_\mathrm{a} \in E_\mathrm{A}$ that are not persistent are checked.
+If the trigger condition of such an event has changed from \true (1) to \false (0), \sout{it}\COR{the event} is removed from $E_\mathrm{A}$.
 The next step comprises the evaluation of the triggers of all events.
 If its trigger changes from \false to \true, an event is added to the set of active events $E_\mathrm{A}$.
 An event with its trigger changed from \true to \false is removed from the list of inactive events.
-After the procession of all triggers the event $e$ of highest priority in the set of active events is chosen for execution by the function $\mathrm{choose}(E_\mathrm{A})$.
-Note that priorities are not always defined, or multiple events may have an identical priority. The function $\mathrm{choose}(E_\mathrm{A})$ is therefore more complex than can be shown in this figure.
+After the processing of all triggers\COR{,} the event $e$ of highest priority in the set of active events is chosen for execution by the function $\mathrm{choose}(E_\mathrm{A})$.
+Note that priorities are not always defined, or multiple events may have an identical priority.
+The function $\mathrm{choose}(E_\mathrm{A})$ is therefore more complex than \sout{can be} shown in this figure.
 Th\sout{is}\COR{e selected} event is then processed, i.e., all of its assignments are evaluated, and afterwards the triggers of all events in $E$ have to be evaluated again, because of possible mutual influences between the events.
 The algorithm proceeds until the \COR{set $E_\mathrm{A}$ of active} events is empty.
 
-\subsection*{Figure 4 - Integrated calculation of new values for a time step including event processing}
-For a certain time interval the Rosenbrock solver \COR{(\acs{KiSAO} term 33)} always tries to increase time $t$ by the current adaptive
+\subsection*{Figure 4 - \sout{Integrated calculation of new values for a time step including event processing}\COR{Refined step-size adaptation for events}}
+For a certain time interval\COR{,} the Rosenbrock solver \COR{(\acs{KiSAO} term 33)} always tries to increase time $t$ by the current adaptive
 step size $s$ and calculates a new vector of quantities $\vec{Q}_{\mathrm{next}}$.
-After a successful step the events and rules of the model are processed.
-If this causes a change in $\vec{Q}$, $h$ is first decreased and then the Rosenbrock solver calculates another vector $\vec{Q}_{t}$ using this adapted step size.
+After a successful step\COR{,} the events and rules of the model are processed.
+If this causes a change in $\vec{Q}$, $h$ is first decreased and \sout{then} the Rosenbrock solver then calculates another vector $\vec{Q}_{t}$ using this adapted step size.
 The precision of the event processing is therefore determined by the minimum step size $h_{\min}$.
 The $\mathrm{adapt}$ function is defined by Rosenbrock's method \cite{Press1993}.
 
@@ -1283,10 +1285,9 @@ After that for every \COR{reaction channel} $R_i$ its velocity $\nu_i$ is comput
 The derivatives of each species (with index $s$) participating in the currently processed \COR{reaction channel} $R_i$ are updated
 in each step adding the product of the stoichiometry $n_{is}$ and the reaction's velocity $\nu_i$.
 \COR{In this figure, the stoichiometric values $n_{ij}$ in the matrix $\mathbf{N}$ are assumed to be constant for the sake of simplicity.
-Generally, these values can be variable.
-Before Level~3 \acs{SBML} provided \StoichiometryMath elements that could be used for a direct computation of the stoichiometry.
-In Level~3 the \StoichiometryMath element has been removed from the language definition.
-Since then, these values can be changed by treating them as the subject of assignment rules.
+These values can be variable.
+Before Level~3, \acs{SBML} provided \StoichiometryMath elements that could be used for a direct computation of the stoichiometry.
+In Level~3, the \StoichiometryMath element has been removed and these values can be changed by treating them as the subject of assignment rules.
 In both cases, the values for $n_{ij}$ have to be updated in each simulation step.}
 
 \subsection*{Figure 6 - Architecture of the Systems Biology Simulation Core Library (simplified)}
@@ -1348,14 +1349,10 @@ the photosynthesis.
 \section*{Tables}
 
 \subsection*{Table 1 - Comparison of SBML-capable simulators}
-The table gives an overview about the most characteristic features of
-\acs{SBML}-capable simulation programs. As one aspect, it shows, which programs
-support the most difficult \acs{SBML} elements (fast reactions, algebraic rules,
-and events). Another key point is whether all models of the most recent SBML Test
-Suite \COR{\cite{SBMLtestSuite2013}} can be correctly solved.
-Please note that in the column for the SBML Test Suite, a dash means that
-\emph{not all} of its models can be correctly solved, because not all \acs{SBML}
-elements are supported.
+The table gives an overview about the most characteristic features of \acs{SBML}-capable simulation programs \COR{(April 18\textsuperscript{th} 2013)}.
+\sout{As one aspect, i}\COR{I}t shows which programs support \acs{SBML} elements fast reactions, algebraic rules, and events.
+Another key point is whether all models of the most recent SBML Test Suite \COR{\cite{SBMLtestSuite2013}} can be correctly solved.
+\sout{Please n}\COR{N}ote that in the \COR{SBML Test Suite column, a dash means that not all of its models can be correctly solved, because not all SBML elements are supported.} 
 \sout{\COR{In its current version, t}he program iBioSim, for instance, solves the vast
 majority of the test cases correctly, but does not yet support the delay function,
 except delayed events.}
