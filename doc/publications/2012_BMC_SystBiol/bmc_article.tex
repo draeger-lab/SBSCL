@@ -489,7 +489,7 @@ In the general case of equation~(\ref{eq:QuantityValue}), not all species' amoun
 can be computed by integrating the transformation $\mathbf{N}\vec{\nu}$: the
 change of some model quantities may be given in \COR{the} form of rate rules \COR{by}
 function $\vec{g}(\vec{Q}, t)$.
-\COR{Species, whose} amounts are determined by rate rules, must not participate \COR{in any
+\COR{Species whose} amounts are determined by rate rules must not participate \COR{in any
 reaction and hence only have} zero-valued corresponding entries in the
 stoichiometric matrix $\mathbf{N}$.
 Thereby, the rate rule function $\vec{g}(\vec{Q}, t)$ directly gives the rate of
@@ -504,7 +504,7 @@ An assignment rule also influences the absolute value of some quantity.
 
 \COR{A further concept in \acs{SBML} is that of} algebraic rules, which are equations that
 must evaluate to zero at all times during the simulation of the model.
-These rules can be solved to determine the values of quantities, whose values
+These rules can be solved to determine the values of \COR{quantities whose} values
 are not determined by \COR{any} other construct.
 In this way, conservation relations or other complex interrelations can be
 expressed in a very convenient way.
@@ -604,7 +604,7 @@ One event is randomly chosen for execution from all events \COR{of} highest prio
 \COR{In principle, a}ll other events could be handled in the same manner\COR{, but}
 the assignment of the first event can change the priority or even the trigger condition of the events that have not yet been executed.
 Therefore, the trigger of \COR{nonpersistent} events and the priority of the remaining events have to be evaluated again.
-In this case, \sout{another}\COR{the} event that has now the highest priority is chosen\COR{ as next}.
+In this case, \sout{another}\COR{the} event that has now the highest priority is chosen \COR{ as next}.
 This process \COR{must be repeated} until no further events are left \COR{for execution}.
 Figure~3 shows the slightly simplified algorithm for event processing at a specific point in time.
 
@@ -641,7 +641,7 @@ Hence, the \COR{time at which} an event takes place is precisely determined.
 For given values $\vec{Q}$ at a point $t$ in time the current vector of
 derivatives $\dot{\vec{Q}}$ is calculated as follows\COR{.}
 First, the rate rules are processed $\dot{\vec{Q}} = \vec{g}(\vec{Q}, t)$.
-Note that function $\vec{g}$ returns 0 in all \COR{dimensions,
+Note that function $\vec{g}$ returns 0 in all \COR{dimensions
 in which} no rate rule is defined.
 Second, the velocity $\nu_i$ of each \COR{reaction channel} $R_i$ is computed
 with the help of the unified syntax graph (e.g., \COR{figure~1}).
@@ -705,7 +705,7 @@ significantly higher than for the models in other \acs{SBML} levels and
 versions.
 This can be explained by the fact that \sout{there are}\COR{the test suite
 contains} some models
-\sout{in \acs{SBML} Level~3 Version~1}\COR{of this version}, 
+\sout{in \acs{SBML} Level~3 Version~1}\COR{of this version} 
 \sout{in which}\COR{whose evaluation requires} 
 a time-consuming processing of a large number of events\sout{ is necessary}.
 In particular, the simulation of model \COR{\numero~}966 of the SBML Test Suite,
@@ -839,7 +839,7 @@ depending on the system's structure, Rosenbrock's method is sometimes stretched
 to its limits.}
 
 \sout{The Runge-Kutta-Fehlberg method \cite{Fehlberg1970} (\acs{KiSAO} term 86),
-which is included in iBioSim, also shows an increase in run time with the models
+which is included in iBioSim, also shows an increase in run-time with the models
 mentioned above.}
 \COR{When dealing with stiff problems, Rosenbrock's method is a good choice,
 since it is intended for stiff \acsp{ODE}.
@@ -854,9 +854,9 @@ and absolute tolerance can help, but depending on the system's structure,
 Rosenbrock's method is sometimes stretched to its limits. 
 %In order to maintain the desired accuracy, the solver continuously decreases its step size.
 The Runge-Kutta-Fehlberg method \cite{Fehlberg1970} (\acs{KiSAO} term 86), which
-is included in iBioSim, shows also an increase in run time concerning the model
+is included in iBioSim, shows also an increase in run-time concerning the model
 mentioned above.}
-\TODO{It should be mentioned that iBioSim does not primary focus on the use of
+\TODO{It should be mentioned that iBioSim does not primarily focus on the use of
 \acs{ODE} solvers, but in the stochastic analysis of systems with the Reb2Sac
 stochastic simulator and abstraction techniques to make the models easier to
 analyze \cite{Madsen2012}.}
@@ -871,7 +871,7 @@ since it is not available under the \acs{LGPL} and no open-source Java version
 of these solvers can currently be obtained, we disregard its use.}
 
 \TODO{Nevertheless, the Rosenbrock solver embodies a universal approach for
-simulation, that can deal with stiff problems and precisely solve models
+simulation that can deal with stiff problems and precisely solve models
 containing arbitrary \acs{SBML} elements.}
 
 \COR{Algebraic rules constitute an important problem for any implementation of
@@ -1004,8 +1004,8 @@ same point in time when the event has been triggered.
 However, when such an event is cancelled by other events, all of its assignments
 are also cancelled before execution.}
 \TODO{An event with delay can produce multiple further assignments within
-the time frame since it has been triggered for the first time and the actual
-execution of its first assignment.}
+the time frame between the trigger time and the actual
+execution time.}
 In order to deal with \sout{such an issue}\COR{delayed events}, the class
 \SBMLEventInProgressWithDelay keeps track of this via \sout{the help of} a list
 containing the points in time, at which the respective event has to \COR{be}
@@ -1034,7 +1034,7 @@ implementation.}
 %
 %The simulation algorithm then proceeds as follows: For each time step, the \acs{ODE} %solver gets the current variable values and calculates the system's state for the next point in time. After that, events and rules are processed, that can change the values. The modified values then become the initial values for the next time step. The event processing of the Rosenbrock solver \sout{is different from other solvers, as it} is directly integrated in the solver class and influences the step size. The time-accurate handling of events and rules leads to very precise results of the simulation.
 %
-\COR{Since \acs{SBML} Level~2 Version~1 it has als become possible to create
+\COR{Since \acs{SBML} Level~2 Version~1, it has also become possible to create
 user-defined funcions.
 These function definition objects contain lambda calculus including an optional
 list of arguments together with the actual mathematical expression of the
@@ -1058,7 +1058,7 @@ All possible naming conflicts must be preempted.}
 construct allows a dynamic change of a reaction's stoichiometry over the course
 of the simulation.
 Since \acs{SBML} Level~3 Version~1, the stoichiometry of a reaction can be
-directly altered because it is now possible to address the identifier of a
+directly altered, because it is now possible to address the identifier of a
 \SpeciesReference as the target variable within rules or events.
 The \SBMLinterpreter class flags reactions with changing stoichiometry during
 initialization and evaluates the corresponding abstract syntax graph anew if the
@@ -1096,7 +1096,7 @@ On the basis of our experiments, this setup can handle most of the problems
 without further tuning.
 The Rosenbrock solver with its adaptive step size is the most effective solver
 in this library for stiff \acsp{ODE}.
-Nevertheless the user has the possibility the choose another solver for
+Nevertheless, the user has the possibility the choose another solver for
 integration.
 According to the SBML specifications, a model has to be simulated starting at
 time point 0.0.
@@ -1440,7 +1440,7 @@ VCell                          & 5.0         & \yes & \no  & \yes    & & \no    
 The table shows the number of tested models and the total running times of the tests for all \acs{SBML} levels and versions.
 \COR{The measured running time consists of the times necessary for the interpretation and for the simulation of the models. The reading of the SBML model into memory is not considered at this point.}
 An Intel\textsuperscript{\textregistered} Core\texttrademark{} i5 CPU with 3.33\,GHz  and 4\,GB RAM was used with
-Windows\textsuperscript{\textregistered}~7 (Version 6.1.7600) as operating system \COR{and Java Virtual Machine version 1.6}. 
+Windows\textsuperscript{\textregistered}~7 (Version 6.1.7600) as operating system \COR{and Java Virtual Machine version 1.6.0\_25}. 
 \par \mbox{}
 \par
     \mbox{
