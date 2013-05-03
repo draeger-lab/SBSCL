@@ -157,22 +157,10 @@ public abstract class QualityMeasure implements Serializable {
 		}
 		
 		ArrayList<Double> distances = new ArrayList<Double>();
-		for (int i = 0; i < Math.min(left.getBlockCount(), right.getBlockCount()); i++) {
-			distances.addAll(getColumnDistances(left.getBlock(i), right.getBlock(i)));
-		}
+		distances.addAll(getColumnDistances(left, right));
 		return meanFunction.computeMean(distances);
 	}
 	
-	/**
-	 * 
-	 * @param x
-	 * @param expected
-	 * @return distance the distance between the two blocks
-	 */
-	public double distance(MultiTable.Block x, MultiTable.Block expected) {
-		return meanFunction.computeMean(getColumnDistances(x,expected));
-	}
-
 	/**
 	 * Computes the distance of two matrices as the sum of the distances of each
 	 * row. It is possible that one matrix contains more columns than the other
@@ -185,13 +173,14 @@ public abstract class QualityMeasure implements Serializable {
 	 * @param expected
 	 * @return columnDistances the list of distances for the columns in the blocks
 	 */
-	public ArrayList<Double> getColumnDistances(MultiTable.Block x, MultiTable.Block expected) {
-		String identifiers[] = x.getIdentifiers();
+	public ArrayList<Double> getColumnDistances(MultiTable x, MultiTable expected) {
 		ArrayList<Double> distances= new ArrayList<Double>();
-		
-		for (int i = 0; i < identifiers.length; i++) {
-			if (identifiers[i]!=null && expected.containsColumn(identifiers[i])) {
-				distances.add(distance(x.getColumn(i), expected.getColumn(identifiers[i])));
+		for(int block = 0; block < x.getBlockCount(); block++) {
+			String identifiers[] = x.getBlock(block).getIdentifiers();
+			for (int i = 0; i < identifiers.length; i++) {
+				if ((identifiers[i]!=null) && (expected.findColumn(identifiers[i]) != -1)) {
+					distances.add(distance(x.getBlock(block).getColumn(i), expected.getColumn(identifiers[i])));
+				}
 			}
 		}
 		return distances;
