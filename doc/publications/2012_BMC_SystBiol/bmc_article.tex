@@ -241,7 +241,7 @@ structure is very complex and difficult to evaluate due to many special cases.
 \textbf{Results:}
 This article describes an efficient algorithm to
 \sout{interpret and} solve \sout{differential equation systems in}
-\acs{SBML} models\COR{, which are interpreted in terms of ordinary differential equation systems}.
+\acs{SBML} models \CORR{that are interpreted in terms of ordinary differential equations}.
 We begin our consideration with a formal representation of the mathematical form
 of the models and explain all parts of the algorithm in detail,
 including several \COR{preprocessing} steps.  
@@ -925,16 +925,16 @@ Contributions from the community are welcome.}
 
 \section*{Conclusions}
 
-\COR{The aim of this work is to derive a formal description of the mathematics
+The aim of this work is to derive a formal description of the mathematics
 behind \acs{SBML} together with an algorithm that efficiently solves it in
-terms of an ordinaray differential equation framework.
+terms of an \CORR{ordinary} differential equation framework.
 As an important design feature, the algorithm can be combined with existing
 numerical solvers in a plugin fashion. 
 The Rosenbrock solver embodies a universal approach for
 simulation that can deal with stiff problems and precisely solve models
 containing arbitrary \acs{SBML} elements.
 The description in this paper is intended to facilitate the implementation of
-the algorithm within specifically tailored programs.}
+the algorithm within specifically tailored programs.
 
 Our tests indicate that \COR{at the moment only two other programs} pass the
 entire \COR{test suite} for all \acs{SBML} levels and versions: BioUML, which is
@@ -1068,7 +1068,7 @@ current implementation.}
 %The simulation algorithm then proceeds as follows: For each time step, the \acs{ODE} %solver gets the current variable values and calculates the system's state for the next point in time. After that, events and rules are processed, that can change the values. The modified values then become the initial values for the next time step. The event processing of the Rosenbrock solver \sout{is different from other solvers, as it} is directly integrated in the solver class and influences the step size. The time-accurate handling of events and rules leads to very precise results of the simulation.
 %
 \COR{Since \acs{SBML} Level~2 Version~1, it has also become possible to create
-user-defined funcions.
+user-defined \CORR{functions}.
 These function definition objects contain lambda calculus including an optional
 list of arguments together with the actual mathematical expression of the
 function.
