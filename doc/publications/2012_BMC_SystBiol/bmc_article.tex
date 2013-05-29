@@ -256,8 +256,8 @@ Systems Biology Simulation Core Library, a community-driven project providing a
 large collection of numerical solvers and a sophisticated interface hierarchy 
 for the definition of custom differential equation systems. 
 To demonstrate the capabilities of the new algorithm, it has been tested with
-the entire SBML Test Suite and %also been used to simulate 
-all models of \href{http://www.ebi.ac.uk/biomodels-main/}{BioModels Database}.
+the entire SBML Test Suite \CORR{version~2.3.2} and %also been used to simulate 
+all models of \href{http://www.ebi.ac.uk/biomodels-main/}{BioModels Database} \CORR{(release~23, October 2012)}.
 
 %
 %\section{Supplementary information:}
@@ -716,7 +716,7 @@ For testing purposes, the library contains a sample program that benchmarks
 \subsection*{\COR{Benchmark and a}pplication to published models}
 
 The \COR{reference} \acs{SBML} implementation has successfully passed the
-SBML Test Suite \COR{\cite{SBMLtestSuite2013}} using the Rosenbrock solver.
+SBML Test Suite \CORR{version~2.3.2} \COR{\cite{SBMLtestSuite2013}} using the Rosenbrock solver.
 The results are shown in Table~2.
 All models together can be simulated within seconds, which means that the
 simulation of one \acs{SBML} model takes only milliseconds on average, using
@@ -741,7 +741,8 @@ simulation time for the models in \acs{SBML} Level~3 Version~1.
 
 \COR{An implementation of an \acs{SBML} solver that passes the test suite should
 in principle also be capable of computing the solution of all models from
-\href{http://www.ebi.ac.uk/biomodels-main/}{BioModels Database}, a resource that contains a
+\href{http://www.ebi.ac.uk/biomodels-main/}{BioModels Database} 
+\CORR{(release~23, October 2012)}, a resource that contains a
 collection of published and curated models.
 This online database currently provides neither reference data for the models,
 nor any settings for the numerical computation (such as step size, end time
@@ -826,11 +827,11 @@ The selected programs are in alphabetical order:
 %Only three other applications support the simulation of models containing events, algebraic rules and fast reactions completely:
 BioUML \cite{Kolpakov2011}, COPASI \cite{Hoops2006}, 
 iBioSim \cite{Myers2009}, JSim \cite{Raymond2003}, LibSBMLSim 
-\cite{Takizawa2013}, and VCell \cite{Moraru2008}.
+\cite{Takizawa2013}, and VCell \cite{Moraru2008}\CORR{, \cite{Resasco2012}}.
 %\TODO{Only three applications pass the four exemplary models (966, 988, 1083, 1000) of the SBML Test Suite (version 2.0.2):}
 %iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}.
 Table~1 summarizes the comparison of \COR{the most recent versions of} all six
-programs.
+programs. 
 \COR{It should be mentioned that this comparison can only mirror a snapshot of
 the ongoing development process of all programs at the time of writing.
 An up-to-date comparison of the capabilities of \acs{SBML} solvers can be found
