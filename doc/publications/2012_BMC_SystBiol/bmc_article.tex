@@ -724,7 +724,7 @@ a time-consuming processing of a large number of events.
 In particular, the simulation of model \COR{\numero~}966 of the SBML Test Suite,
 which is only provided in \acs{SBML} Level~3 Version~1, takes \COR{20}\,s 
 because it contains 23 events to be processed.
-\COR{Two events fire every $10^{-2}$\,s \CORR{for 1,000 seconds}.
+\COR{Two events fire every $10^{-2}$ \CORR{time units within the simulation time period of 1,000 time units}.
 These events must therefore be evaluated thousandfold within the specified time
 interval.}
 The evaluation of this model accounts for \COR{over 50}~\% of the total
@@ -818,7 +818,7 @@ The selected programs are in alphabetical order:
 %Only three other applications support the simulation of models containing events, algebraic rules and fast reactions completely:
 BioUML \cite{Kolpakov2011}, COPASI \cite{Hoops2006}, 
 iBioSim \cite{Myers2009}, JSim \cite{Raymond2003}, LibSBMLSim 
-\cite{Takizawa2013}, and VCell \cite{Moraru2008}\CORR{, \cite{Resasco2012}}.
+\cite{Takizawa2013}, and VCell \CORR{\cite{Moraru2008, Resasco2012}}.
 %\TODO{Only three applications pass the four exemplary models (966, 988, 1083, 1000) of the SBML Test Suite (version 2.0.2):}
 %iBioSim \cite{Myers2009}, BioUML \cite{Kolpakov2011}, \cite{Kolpakov2006}, and LibSBMLSim \TODO{Citation}.
 Table~1 summarizes the comparison of \COR{the most recent versions of} all six
@@ -1422,7 +1422,7 @@ constructs.
 \COR{It should be mentioned that not all programs primarily focus on the use of
 \acs{ODE} solvers.
 In iBioSim, for instance, the stochastic analysis of \acs{SBML} is more important
-\cite{Madsen2012}.} \CORR{Furthermore, some programs, e.g. VCell, do not use SBML as their native format.}
+\cite{Madsen2012}.} \CORR{Furthermore, some programs like VCell or COPASI do not use SBML as their native format.}
 BioUML, iBioSim, and the Systems Biology Simulation Core Library, are the 
 only simulation tools from this selection that pass \emph{all} models of the
 SBML Test Suite across all levels and versions of \acs{SBML}.
