@@ -776,8 +776,7 @@ Figure~8 shows the simulation results for the species ribulose-1,5-bisphosphate,
 \acs{ATP}, and \acs{ADP} within this model.
 As in the previous test case, the
 \COR{dynamics computed by the Simulation Core Library}
-reproduce the \COR{figures} provided by \COR{\href{http://www.ebi.ac.uk/biomodels-main/}{
-}}.  
+reproduce the \COR{figures} provided by \COR{\href{http://www.ebi.ac.uk/biomodels-main/}{BioModels Database}}.  
 
 \subsection*{Comparison to existing solver implementations for SBML}
 
@@ -840,8 +839,7 @@ This behavior can, for example, be observed in
 \numero~408 \cite{Hettling2011} (a model with three events).
 When the precise timing of events is not of utmost importance, a
 solver other than Rosenbrock can be chosen.
-There are already ambitions to improve the runtime behavior but still achieve a
-precise timing of events.}
+\CORR{Furthermore, there} are \CORR{plans} to improve the runtime behavior \CORR{for the simulation of models containing events with Rosenbrock solver.}}
 
 \COR{When dealing with stiff problems, Rosenbrock's method is a good choice,
 because it is has been designed for stiff \acsp{ODE}.
@@ -1327,7 +1325,7 @@ The algorithm proceeds until the \COR{set $E_\mathrm{A}$ of active} events is em
 
 \subsection*{Figure 4 - \COR{Refined step-size adaptation for events}}
 For a certain time interval\COR{,} the Rosenbrock solver \COR{(\acs{KiSAO} term 33)} always tries to increase time $t$ by the current adaptive
-step size $s$ and calculates a new vector of quantities $\vec{Q}_{\mathrm{next}}$.
+step size \CORR{$h$} and calculates a new vector of quantities $\vec{Q}_{\mathrm{next}}$.
 After a successful step\COR{,} the events and rules of the model are processed.
 If this causes a change in $\vec{Q}$, $h$ is first decreased and the
 Rosenbrock solver then calculates another vector $\vec{Q}_\mathrm{next}$ using this adapted step size.
@@ -1337,9 +1335,9 @@ The $\mathrm{adapt}$ function is defined by Rosenbrock's method \cite{Press1993}
 \subsection*{Figure 5 - Calculation of the derivatives at a specific point in time}
 First, the vector for saving the derivatives of all quantities $\dot{\vec{Q}}$ is set to the null vector $\vec{0}$.
 Then the rate rules of the model are processed by solving the function $\vec{g}(\vec{Q}, t)$, which can change $\dot{\vec{Q}}$ in some dimensions.
-After that for every \COR{reaction channel} $R_i$ its velocity $\nu_i$ is computed.
-The derivatives of each species (with index $s$) participating in the currently processed \COR{reaction channel} $R_i$ are updated
-in each step adding the product of the stoichiometry $n_{is}$ and the reaction's velocity $\nu_i$.
+After that for every \COR{reaction channel} \CORR{$R_j$} its velocity \CORR{$J_j$} is computed.
+The derivatives of each species (with index \CORR{$i$}) participating in the currently processed \COR{reaction channel} \CORR{$R_j$} are updated
+in each step adding the product of the stoichiometry \CORR{$n_{ij}$} and the reaction's velocity \CORR{$J_j$}.
 \COR{In this figure, the stoichiometric values $n_{ij}$ in the matrix $\mathbf{N}$ are assumed to be constant for the sake of simplicity.
 These values can be variable.
 Before Level~3, \acs{SBML} provided \StoichiometryMath elements that could be used for a direct computation of the stoichiometry.
