@@ -28,7 +28,7 @@ text width=14em, text badly centered, node distance=2.5cm, inner sep=4pt,minimum
 	\node [cloud] (start) {Start};
 	\node [block, below of=start] (init) {\vspace{-.5cm}\begin{align*}t &:= t_{0}\\\vec{Q} &:= \vec{Q}_{0}\\h &:= h_0\end{align*}};
 	\node [io, below of=init, text width=15em] (output) {($\vec{Q}_{\mathrm{next}}, t_{\mathrm{next}}) := \mathrm{Rosenbrock}(t, \vec{Q}, h)$};
-	\node [block, below of=output,text width=17em] (pevents) {$\vec{Q}_{\mathrm{tmp}} :=$\\$\vec{Q}_{\mathrm{next}} + \vec{e}(\vec{Q}_{\mathrm{next}}, t_{\mathrm{next}}) + \vec{r}(\vec{Q}_{\mathrm{next}}, t_{\mathrm{next}})$};
+	\node [block, below of=output,text width=17em] (pevents) {$\vec{Q}_{\mathrm{tmp}} :=$\\$\vec{Q}_{\mathrm{next}} + \vec{f}_E(\vec{Q}_{\mathrm{next}}, t_{\mathrm{next}}) + \vec{r}(\vec{Q}_{\mathrm{next}}, t_{\mathrm{next}})$};
 	\node [decision, below of=pevents, node distance=3cm] (xpxres?) {$\vec{Q}_{\mathrm{tmp}} = \vec{Q}_{\mathrm{next}}$?};
 	\node [block, left of=xpxres?, below of=xpxres?, node distance=4cm] (newvalues) {\vspace{-.5cm}\begin{align*}t &:= t_{\mathrm{next}}\\\vec{Q} &:= \vec{Q}_{\mathrm{next}}\\h &:= \mathrm{adapt}(h)\end{align*}};
 	\node [decision, right of=xpxres?, node distance=3.5cm] (larger?) {$h\ge h_{\min} \cdot 10$?};
