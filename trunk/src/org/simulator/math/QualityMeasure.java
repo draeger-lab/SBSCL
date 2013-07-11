@@ -178,7 +178,7 @@ public abstract class QualityMeasure implements Serializable {
 		for(int block = 0; block < x.getBlockCount(); block++) {
 			String identifiers[] = x.getBlock(block).getIdentifiers();
 			for (int i = 0; i < identifiers.length; i++) {
-				if ((identifiers[i]!=null) && (expected.findColumn(identifiers[i]) != -1)) {
+				if ((identifiers[i]!=null) && (expected.getColumn(identifiers[i]) != null)) {
 					distances.add(distance(x.getBlock(block).getColumn(i), expected.getColumn(identifiers[i])));
 				}
 			}
