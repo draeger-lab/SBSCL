@@ -24,6 +24,7 @@ package org.simulator.sbml.astnode;
 
 import java.util.Map;
 
+import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Species;
 import org.simulator.sbml.SBMLValueHolder;
@@ -123,6 +124,10 @@ public class AssignmentRuleValue extends RuleValue {
 	 */
 	public String getSpeciesReferenceID() {
 		return speciesReferenceID;
+	}
+
+	public ASTNode getMath() {
+		return nodeObject.getNode();
 	}
 
 }

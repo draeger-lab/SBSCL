@@ -639,6 +639,13 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 		}
 
 		MultiTable filtered= new MultiTable();
+		double[] filteredTimepoints = new double[rowIndices.size()];
+		int number = 0;
+		for (int rowIndex: rowIndices) {
+			filteredTimepoints[number] = this.getTimePoints()[rowIndex];
+			number++;
+		}
+		filtered.setTimePoints(filteredTimepoints);
 		for (int block=0;block!=this.getBlockCount();block++) {
 			filtered.addBlock(this.getBlock(block).getIdentifiers());
 			filtered.getBlock(block).setData(new double[rowIndices.size()][this.getBlock(block).getIdentifiers().length]);
@@ -649,7 +656,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 				rowCounter++;
 			}
 		}
-
+		
 		return filtered;
 	}
 
