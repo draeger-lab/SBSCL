@@ -70,10 +70,7 @@ public class CompartmentOrParameterValue extends ASTNodeValue {
 		super(interpreter, node);
 		this.sb = sb;
 		this.id=sb.getId();
-		//    if (sb.getConstant()) {
-		//      isConstant = true;
-		//      doubleValue = sb.getValue();
-		//    }
+		isConstant = sb.getConstant();
 		this.valueHolder = valueHolder;
 		this.position=position;
 	}
@@ -89,6 +86,14 @@ public class CompartmentOrParameterValue extends ASTNodeValue {
 		else {
 			double valueTime = interpreter.symbolTime() - delay;
 			doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
+		}
+		if(isConstant) {
+			if((valueHolder.getCurrentTime() > 0) && (delay == 0)) {
+				alreadyProcessed = true;
+			}
+			else {
+				alreadyProcessed = false;
+			}
 		}
 	}
 
