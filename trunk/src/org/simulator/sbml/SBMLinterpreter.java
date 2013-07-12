@@ -452,6 +452,18 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * The number of repetitions for the processing of assignment rules
 	 */
 	private int numberOfAssignmentRulesLoops;
+
+	/**
+	 * Array for saving older Y values
+	 */
+	private double[] oldY;
+
+	/**
+	 * Array for saving older Y values (when computing delayed values)
+	 */
+	private double[] oldY2;
+
+	private boolean containsDelays;
 	
 
 	/**
@@ -532,6 +544,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		}
 		this.Y = new double[model.getCompartmentCount() + model.getSpeciesCount()
 		                    + model.getParameterCount() + speciesReferencesInRateRules];
+		this.oldY = new double[Y.length];
+		this.oldY2 = new double[Y.length];
+		
 		this.isAmount = new boolean[Y.length];
 		this.compartmentIndexes = new int[Y.length];
 		this.conversionFactors = new double[Y.length];
@@ -1138,7 +1153,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		Integer compartmentIndex, yIndex = Integer.valueOf(0);
 		currentTime = 0d;
 		astNodeTime = 0d;
-
+		containsDelays = false;
 		noDerivatives = false;
 		if ((model.getReactionCount() == 0) && (model.getConstraintCount() == 0)) {
 			noDerivatives = true;
@@ -1712,7 +1727,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		initialAssignmentRoots = new ArrayList<AssignmentRuleValue>();
 		rateRulesRoots = new ArrayList<RateRuleValue>();
 		Integer symbolIndex;
-		
+
 		for (int i = 0; i < model.getRuleCount(); i++) {
 			Rule rule = model.getRule(i);
 			if (rule.isAssignment()) {
@@ -1723,28 +1738,32 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					if (sp != null) {
 						Compartment c = sp.getCompartmentInstance();
 						boolean hasZeroSpatialDimensions = true;
-						if ((c!=null) && (c.getSpatialDimensions()>0)) {
-							hasZeroSpatialDimensions=false;
+						if ((c != null) && (c.getSpatialDimensions() > 0)) {
+							hasZeroSpatialDimensions = false;
 						}
 						assignmentRulesRootsInit.add(new AssignmentRuleValue(
-								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
-								.getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
-										.getId()), hasZeroSpatialDimensions, this));
+								(ASTNodeValue) copyAST(as.getMath(), true,
+										null, null).getUserObject(TEMP_VALUE),
+								symbolIndex, sp,
+								compartmentHash.get(sp.getId()),
+								hasZeroSpatialDimensions, this));
 					} else {
 						assignmentRulesRootsInit.add(new AssignmentRuleValue(
-								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
-								.getUserObject(TEMP_VALUE), symbolIndex));
+								(ASTNodeValue) copyAST(as.getMath(), true,
+										null, null).getUserObject(TEMP_VALUE),
+								symbolIndex));
 					}
 				} else if (model.findSpeciesReference(as.getVariable()) != null) {
-					SpeciesReference sr = model.findSpeciesReference(as.getVariable());
+					SpeciesReference sr = model.findSpeciesReference(as
+							.getVariable());
 					if (!sr.isConstant()) {
 						assignmentRulesRootsInit.add(new AssignmentRuleValue(
-								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
-								.getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
+								(ASTNodeValue) copyAST(as.getMath(), true,
+										null, null).getUserObject(TEMP_VALUE),
+								sr.getId(), stoichiometricCoefHash));
 					}
 				}
-			}
-			else if (rule.isRate()) {
+			} else if (rule.isRate()) {
 				RateRule rr = (RateRule) rule;
 				symbolIndex = symbolHash.get(rr.getVariable());
 				if (symbolIndex != null) {
@@ -1752,34 +1771,40 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					if (sp != null) {
 						Compartment c = sp.getCompartmentInstance();
 						boolean hasZeroSpatialDimensions = true;
-						if ((c!=null) && (c.getSpatialDimensions()>0)) {
+						if ((c != null) && (c.getSpatialDimensions() > 0)) {
 							hasZeroSpatialDimensions = false;
 						}
 						rateRulesRoots.add(new RateRuleValue(
-								(ASTNodeValue) copyAST(rr.getMath(), true, null, null)
-								.getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
-										.getId()), hasZeroSpatialDimensions, this));
-					}
-					else if (compartmentHash.containsValue(symbolIndex)) {
+								(ASTNodeValue) copyAST(rr.getMath(), true,
+										null, null).getUserObject(TEMP_VALUE),
+								symbolIndex, sp,
+								compartmentHash.get(sp.getId()),
+								hasZeroSpatialDimensions, this));
+					} else if (compartmentHash.containsValue(symbolIndex)) {
 						List<Integer> speciesIndices = new LinkedList<Integer>();
-						for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
+						for (Entry<String, Integer> entry : compartmentHash
+								.entrySet()) {
 							if (entry.getValue() == symbolIndex) {
 								Species s = model.getSpecies(entry.getKey());
-								int speciesIndex = symbolHash.get(entry.getKey());
-								if ((!isAmount[speciesIndex]) && (!s.isConstant())) {	
+								int speciesIndex = symbolHash.get(entry
+										.getKey());
+								if ((!isAmount[speciesIndex])
+										&& (!s.isConstant())) {
 									speciesIndices.add(speciesIndex);
 								}
 							}
 						}
 						rateRulesRoots.add(new RateRuleValue(
-								(ASTNodeValue) copyAST(rr.getMath(), true, null, null)
-								.getUserObject(TEMP_VALUE), symbolIndex, speciesIndices, this));
+								(ASTNodeValue) copyAST(rr.getMath(), true,
+										null, null).getUserObject(TEMP_VALUE),
+								symbolIndex, speciesIndices, this));
 					}
 
 					else {
 						rateRulesRoots.add(new RateRuleValue(
-								(ASTNodeValue) copyAST(rr.getMath(), true, null, null)
-								.getUserObject(TEMP_VALUE), symbolIndex));
+								(ASTNodeValue) copyAST(rr.getMath(), true,
+										null, null).getUserObject(TEMP_VALUE),
+								symbolIndex));
 					}
 				}
 			}
@@ -1793,101 +1818,112 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 						Compartment c = sp.getCompartmentInstance();
 						boolean hasZeroSpatialDimensions = true;
 						if ((c != null) && (c.getSpatialDimensions() > 0)) {
-							hasZeroSpatialDimensions=false;
+							hasZeroSpatialDimensions = false;
 						}
 						assignmentRulesRootsInit.add(new AssignmentRuleValue(
-								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
-								.getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
-										.getId()), hasZeroSpatialDimensions, this));
+								(ASTNodeValue) copyAST(as.getMath(), true,
+										null, null).getUserObject(TEMP_VALUE),
+								symbolIndex, sp,
+								compartmentHash.get(sp.getId()),
+								hasZeroSpatialDimensions, this));
 					} else {
 						assignmentRulesRootsInit.add(new AssignmentRuleValue(
-								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
-								.getUserObject(TEMP_VALUE), symbolIndex));
+								(ASTNodeValue) copyAST(as.getMath(), true,
+										null, null).getUserObject(TEMP_VALUE),
+								symbolIndex));
 					}
 				} else if (model.findSpeciesReference(as.getVariable()) != null) {
-					SpeciesReference sr = model.findSpeciesReference(as.getVariable());
+					SpeciesReference sr = model.findSpeciesReference(as
+							.getVariable());
 					if (!sr.isConstant()) {
 						assignmentRulesRootsInit.add(new AssignmentRuleValue(
-								(ASTNodeValue) copyAST(as.getMath(), true, null, null)
-								.getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
+								(ASTNodeValue) copyAST(as.getMath(), true,
+										null, null).getUserObject(TEMP_VALUE),
+								sr.getId(), stoichiometricCoefHash));
 					}
 				}
 			}
 		}
-		
-		//Determine best order of assignment rule roots
-		Map<String,Set<String>> neededRules = new HashMap<String,Set<String>>();
-		Map<String, AssignmentRuleValue> sBaseMap = new HashMap<String, AssignmentRuleValue>();
-		Set<String> variables = new HashSet<String>();
-		
 		assignmentRulesRoots = new ArrayList<AssignmentRuleValue>();
-		for(AssignmentRuleValue rv: assignmentRulesRootsInit) {
-			assignmentRulesRoots.add(rv);
-			if (rv.getIndex() != -1) {
-				CallableSBase sBase = model.findCallableSBase(symbolIdentifiers[rv.getIndex()]);
-				variables.add(sBase.getId());
-				sBaseMap.put(sBase.getId(), rv);
-				
-			} else if (rv.getSpeciesReferenceID() != null) {
-				SpeciesReference sr = model.findSpeciesReference(rv.getSpeciesReferenceID());
-				variables.add(sr.getId());
-				sBaseMap.put(sr.getId(), rv);
+		if (assignmentRulesRootsInit.size() <= 1) {
+			for (AssignmentRuleValue rv : assignmentRulesRootsInit) {
+				assignmentRulesRoots.add(rv);
+				numberOfAssignmentRulesLoops = 1;
 			}
-		}
-		
-		for(String variable: variables) {
-			for(String dependentVariable: getSetOfVariables(sBaseMap.get(variable).getMath(), variables, new HashSet<String>())) {
-				Set<String> currentSet = neededRules.get(dependentVariable);
-				if(currentSet == null) {
-					currentSet = new HashSet<String>();
-					neededRules.put(dependentVariable, currentSet);
-				}
-				currentSet.add(variable);
-			}
-		}
-		
-		int currentPosition = assignmentRulesRootsInit.size() - 1;
-		Set<String> toRemove = new HashSet<String>();
-		Set<String> keysToRemove = new HashSet<String>();
-		boolean toContinue = variables.size() > 0;
-		while(toContinue) {
-			toContinue = false;
-			toRemove.clear();
-			keysToRemove.clear();
-			for(String variable: variables) {
-				if(!neededRules.containsKey(variable)) {
-					toRemove.add(variable);
-					assignmentRulesRoots.set(currentPosition, sBaseMap.get(variable));
-					 currentPosition--;
+
+		} else {
+			// Determine best order of assignment rule roots
+			Map<String, Set<String>> neededRules = new HashMap<String, Set<String>>();
+			Map<String, AssignmentRuleValue> sBaseMap = new HashMap<String, AssignmentRuleValue>();
+			Set<String> variables = new HashSet<String>();
+
+			for (AssignmentRuleValue rv : assignmentRulesRootsInit) {
+				assignmentRulesRoots.add(rv);
+				if (rv.getIndex() != -1) {
+					variables.add(symbolIdentifiers[rv.getIndex()]);
+					sBaseMap.put(symbolIdentifiers[rv.getIndex()], rv);
+
+				} else if (rv.getSpeciesReferenceID() != null) {
+					variables.add(rv.getSpeciesReferenceID());
+					sBaseMap.put(rv.getSpeciesReferenceID(), rv);
 				}
 			}
-			
-			for(String key: neededRules.keySet()) {
-				Set<String> currentSet = neededRules.get(key);
-				currentSet.removeAll(toRemove);
-				if(currentSet.size() == 0) {
-					keysToRemove.add(key);
+			for (String variable : variables) {
+				for (String dependentVariable : getSetOfVariables(
+						sBaseMap.get(variable).getMath(), variables,
+						new HashSet<String>())) {
+					Set<String> currentSet = neededRules.get(dependentVariable);
+					if (currentSet == null) {
+						currentSet = new HashSet<String>();
+						neededRules.put(dependentVariable, currentSet);
+					}
+					currentSet.add(variable);
 				}
 			}
-			
-			for(String keyToRemove: keysToRemove) {
-				neededRules.remove(keyToRemove);
+
+			int currentPosition = assignmentRulesRootsInit.size() - 1;
+			Set<String> toRemove = new HashSet<String>();
+			Set<String> keysToRemove = new HashSet<String>();
+			boolean toContinue = variables.size() > 0;
+			while (toContinue) {
+				toContinue = false;
+				toRemove.clear();
+				keysToRemove.clear();
+				for (String variable : variables) {
+					if (!neededRules.containsKey(variable)) {
+						toRemove.add(variable);
+						assignmentRulesRoots.set(currentPosition,
+								sBaseMap.get(variable));
+						currentPosition--;
+					}
+				}
+
+				for (String key : neededRules.keySet()) {
+					Set<String> currentSet = neededRules.get(key);
+					currentSet.removeAll(toRemove);
+					if (currentSet.size() == 0) {
+						keysToRemove.add(key);
+					}
+				}
+
+				for (String keyToRemove : keysToRemove) {
+					neededRules.remove(keyToRemove);
+				}
+				variables.removeAll(toRemove);
+
+				if ((toRemove.size() > 0) || (keysToRemove.size() > 0)) {
+					toContinue = true;
+				}
+
 			}
-			variables.removeAll(toRemove);
-			
-			if((toRemove.size() > 0) || (keysToRemove.size() > 0)) {
-				toContinue = true;
+
+			for (String variable : variables) {
+				assignmentRulesRoots.set(currentPosition,
+						sBaseMap.get(variable));
+				currentPosition--;
 			}
-			
+			numberOfAssignmentRulesLoops = Math.max(variables.size(), 1);
 		}
-		
-		numberOfAssignmentRulesLoops = Math.max(variables.size(), 1);
-		
-		for(String variable: variables) {
-			assignmentRulesRoots.set(currentPosition, sBaseMap.get(variable));
-			currentPosition--;
-		}
-		
 
 		for (int i = 0; i < model.getInitialAssignmentCount(); i++) {
 			InitialAssignment iA = model.getInitialAssignment(i);
@@ -1897,23 +1933,27 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				if (sp != null) {
 					Compartment c = sp.getCompartmentInstance();
 					boolean hasZeroSpatialDimensions = true;
-					if ((c!=null) && (c.getSpatialDimensions()>0)) {
-						hasZeroSpatialDimensions=false;
+					if ((c != null) && (c.getSpatialDimensions() > 0)) {
+						hasZeroSpatialDimensions = false;
 					}
 					initialAssignmentRoots.add(new AssignmentRuleValue(
-							(ASTNodeValue) copyAST(iA.getMath(), true, null, null)
-							.getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
-									.getId()), hasZeroSpatialDimensions, this));
+							(ASTNodeValue) copyAST(iA.getMath(), true, null,
+									null).getUserObject(TEMP_VALUE),
+							symbolIndex, sp, compartmentHash.get(sp.getId()),
+							hasZeroSpatialDimensions, this));
 				} else {
 					initialAssignmentRoots.add(new AssignmentRuleValue(
-							(ASTNodeValue) copyAST(iA.getMath(), true, null, null)
-							.getUserObject(TEMP_VALUE), symbolIndex));
+							(ASTNodeValue) copyAST(iA.getMath(), true, null,
+									null).getUserObject(TEMP_VALUE),
+							symbolIndex));
 				}
 			} else if (model.findSpeciesReference(iA.getVariable()) != null) {
-				SpeciesReference sr = model.findSpeciesReference(iA.getVariable());
+				SpeciesReference sr = model.findSpeciesReference(iA
+						.getVariable());
 				initialAssignmentRoots.add(new AssignmentRuleValue(
 						(ASTNodeValue) copyAST(iA.getMath(), true, null, null)
-						.getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
+								.getUserObject(TEMP_VALUE), sr.getId(),
+						stoichiometricCoefHash));
 			}
 		}
 		nRateRules = rateRulesRoots.size();
@@ -2418,12 +2458,22 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		double oldTime = this.currentTime;
 		if (Y != null) {
 			for (int n = 0; n != numberOfAssignmentRulesLoops; n++) {
+				if(!this.delaysIncluded) {
+					System.arraycopy(Y, 0, oldY2, 0, Y.length);
+				}
+				else {
+					System.arraycopy(Y, 0, oldY, 0, Y.length);
+				}
 				intermediateASTNodeTime = - intermediateASTNodeTime;
 				for (int i = 0; i != nAssignmentRules; i++) {
 					AssignmentRuleValue currentRuleObject = assignmentRulesRoots.get(i);
 					double oldValue = Double.NaN, newValue = Double.NaN;
-					double[] oldY = new double[Y.length];
-					System.arraycopy(Y, 0, oldY, 0, Y.length);
+					if(!this.delaysIncluded) {
+						System.arraycopy(Y, 0, oldY2, 0, Y.length);
+					}
+					else if(this.containsDelays){
+						System.arraycopy(Y, 0, oldY, 0, Y.length);
+					}
 					int index = currentRuleObject.getIndex();
 					if (index >= 0) {
 						oldValue = Y[index];
@@ -2434,7 +2484,12 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					if (index >= 0) {
 						newValue = Y[index];
 					}
-					System.arraycopy(oldY, 0, Y, 0, Y.length);
+					if(!this.delaysIncluded) {
+						System.arraycopy(oldY2, 0, Y, 0, Y.length);
+					}
+					else if(this.containsDelays){
+						System.arraycopy(oldY, 0, Y, 0, Y.length);
+					}
 					if (index != -1) {
 						Y[index] = newValue;
 					}
@@ -2695,6 +2750,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	 * @see org.simulator.math.odes.DelayValueHolder#computeDelayedValue(double, java.lang.String, org.simulator.math.odes.DESystem, double[], int)
 	 */
 	public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues, int yIndex) {
+		this.containsDelays = true;
 		if (!delaysIncluded) {
 			return this.Y[symbolHash.get(id)];
 		}

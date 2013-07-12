@@ -110,6 +110,7 @@ public class SpeciesValue extends ASTNodeValue {
 		this.position = position;
 		this.compartmentPosition = compartmentPosition;
 		this.compartmentID = compartmentID;
+		isConstant = s.getConstant();
 		this.zeroSpatialDimensions = zeroSpatialDimensions;
 	}
 
@@ -170,6 +171,14 @@ public class SpeciesValue extends ASTNodeValue {
 			} else {
 				doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
 
+			}
+		}
+		if(isConstant) {
+			if((valueHolder.getCurrentTime() > 0) && (delay == 0)) {
+				alreadyProcessed = true;
+			}
+			else {
+				alreadyProcessed = false;
 			}
 		}
 

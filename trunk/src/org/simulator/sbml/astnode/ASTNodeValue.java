@@ -198,17 +198,24 @@ public class ASTNodeValue {
     
     this.time = 0d;
     children = new ASTNodeValue[node.getChildCount()];
+    
+    boolean allChildrenConstant = true;
+    
     if (node != null) {  
       for (int i = 0; i!= node.getChildCount(); i++) {
-        ASTNode childNode = node.getChild(i);
-    	  Object userObject = childNode.getUserObject(SBMLinterpreter.TEMP_VALUE);
+    	ASTNode childNode = node.getChild(i);
+    	Object userObject = childNode.getUserObject(SBMLinterpreter.TEMP_VALUE);
         if (userObject != null) {
           children[i]=(ASTNodeValue)userObject;
+          allChildrenConstant&= children[i].getConstant();
         }
       }
     }
     numChildren = node.getChildCount();
     if (numChildren>0) {
+      if(allChildrenConstant) {
+    	  isConstant = true;
+      }
       leftChild = children[0];
       rightChild = children[numChildren-1];
     }
@@ -271,15 +278,33 @@ public class ASTNodeValue {
       return doubleValue;
     } else {
       isDouble = true;
-      alreadyProcessed = true;
       this.time = time;
       computeDoubleValue(delay);
+      if(isConstant) {
+    	  boolean childrenProcessed = true;
+    	  for(ASTNodeValue child: children) {
+    		  childrenProcessed&= child.getAlreadyProcessed();
+    	  }
+    	  if((children.length > 0) && childrenProcessed) {
+    		  alreadyProcessed = true;
+    	  }
+    	  if((nodeType == ASTNode.Type.REAL) || (nodeType == ASTNode.Type.INTEGER) || (nodeType == ASTNode.Type.RATIONAL)) {
+    		  alreadyProcessed = true;
+    	  }
+      }
     }
     return doubleValue;
   }
   
-  
   /**
+   * 
+   * @return
+   */
+  private boolean getAlreadyProcessed() {
+	return alreadyProcessed;
+  }
+
+/**
    * Computes the boolean value if the time has changed and otherwise returns the already computed value
    * @param time
    * @return booleanValue the boolean value of the node
