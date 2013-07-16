@@ -1345,8 +1345,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				 species = speciesMap.get(speciesID);
 
 				 if (species != null) {
-					 if (!isAmount[symbolHash.get(speciesID)]
-							 && !species.hasOnlySubstanceUnits()) {
+//					 if (!isAmount[symbolHash.get(speciesID)]
+//							 && !species.hasOnlySubstanceUnits()) {
+					 if (!isAmount[symbolHash.get(speciesID)]) {
 						 inConcentration.add(speciesID);
 					 }
 				 }
@@ -1355,8 +1356,9 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				 speciesID = speciesRef.getSpecies();
 				 species = speciesMap.get(speciesID);
 				 if (species != null) {
-					 if (!isAmount[symbolHash.get(speciesID)]
-							 && !species.hasOnlySubstanceUnits()) {
+//					 if (!isAmount[symbolHash.get(speciesID)]
+//					 && !species.hasOnlySubstanceUnits()) {
+					 if (!isAmount[symbolHash.get(speciesID)]) {
 						 inConcentration.add(speciesID);
 					 }
 				 }
