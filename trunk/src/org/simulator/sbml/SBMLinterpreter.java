@@ -2473,7 +2473,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					if(!this.delaysIncluded) {
 						System.arraycopy(Y, 0, oldY2, 0, Y.length);
 					}
-					else if(this.containsDelays){
+					else if(this.containsDelays) {
 						System.arraycopy(Y, 0, oldY, 0, Y.length);
 					}
 					int index = currentRuleObject.getIndex();
@@ -2489,7 +2489,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					if(!this.delaysIncluded) {
 						System.arraycopy(oldY2, 0, Y, 0, Y.length);
 					}
-					else if(this.containsDelays){
+					else if(this.containsDelays) {
 						System.arraycopy(oldY, 0, Y, 0, Y.length);
 					}
 					if (index != -1) {
