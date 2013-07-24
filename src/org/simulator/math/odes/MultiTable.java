@@ -758,7 +758,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 	 * @return columnIdentifier the identifier of the column at the given position
 	 */
 	public String getColumnIdentifier(int column) {
-		if (column > getColumnCount()) {
+		if (column >= getColumnCount()) {
 			throw new IndexOutOfBoundsException(Integer.toString(column));
 		}
 		if (column == 0) {
