@@ -1020,9 +1020,9 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 			System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
 
 			v = additionalResults(DES, t, yTemp, data, i);
-			if (logger.getLevel().intValue() < Level.INFO.intValue()) {
-				logger.fine("additional results: " + Arrays.toString(v));
-			}
+//			if ((logger != null) && (logger.getLevel().intValue() < Level.INFO.intValue())) {
+//				logger.fine("additional results: " + Arrays.toString(v));
+//			}
 			firePropertyChange(timePoints[i-1] * intervalFactor, timePoints[i] * intervalFactor);
 			
 			t = timePoints[i];
