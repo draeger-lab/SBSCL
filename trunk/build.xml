@@ -143,18 +143,13 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
     depends="init"
 	description="Determines the current SVN revions number and stores it in a variable."
   >
-    <exec executable="svnversion" outputproperty="repository.revision">
-	  <arg line="-c ${basedir}"/>
-	  <redirector>
-	    <outputfilterchain>
-		  <tokenfilter>
-		    <replaceregex pattern="[0-9]+\:" replace=""/>
-		    <replaceregex pattern="[PM]+" replace=""/>
-		  </tokenfilter>
-		</outputfilterchain>
-      </redirector>
-    </exec>
-	
+    <exec executable="svn" outputproperty="svninfo.xml">
+	  <arg line="info --xml"/>
+	</exec>
+	<xmlproperty collapseAttributes="true">
+	  <propertyresource name="svninfo.xml"/>
+	</xmlproperty>
+	<property name="repository.revision" value="${info.entry.revision}"/>
   	<echo message="Current revision of ${Name} is ${repository.revision}"/>  	
 	<property name="build.name" value="Revision ${repository.revision} ${TODAY} (Build ${build.number})"/>
 
