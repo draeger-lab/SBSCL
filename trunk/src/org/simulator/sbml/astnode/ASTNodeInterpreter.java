@@ -951,7 +951,7 @@ public class ASTNodeInterpreter {
     	double sign = Math.pow(-1, r);
     	if (Double.isNaN(sign)) {
     		sign = -1;
-    		logger.warning("Power with negative base and non-integer exponent encountered.");
+    		logger.fine("Power with negative base and non-integer exponent encountered.");
     	}
     	result = result*sign;
     	return result;
