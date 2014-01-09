@@ -5,7 +5,7 @@
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
  *
- * Copyright (C) 2007-2013 jointly by the following organizations:
+ * Copyright (C) 2007-2014 jointly by the following organizations:
  * 1. University of Tuebingen, Germany
  * 2. Keio University, Japan
  * 3. Harvard University, USA
@@ -1518,12 +1518,12 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 				Event e=model.getEvent(i);
 				events[i].setUseValuesFromTriggerTime(e.getUseValuesFromTriggerTime());
 				events[i].setPersistent(e.getTrigger().getPersistent());
-				events[i].setTriggerObject((ASTNodeValue)copyAST(e.getTrigger().getMath(),true, null, null).getUserObject(TEMP_VALUE));
+				events[i].setTriggerObject((ASTNodeValue) copyAST(e.getTrigger().getMath(), true, null, null).getUserObject(TEMP_VALUE));
 				if (e.getPriority() != null) {
-					events[i].setPriorityObject((ASTNodeValue)copyAST(e.getPriority().getMath(),true, null, null).getUserObject(TEMP_VALUE));
+					events[i].setPriorityObject((ASTNodeValue)copyAST(e.getPriority().getMath(), true, null, null).getUserObject(TEMP_VALUE));
 				}
 				if (e.getDelay() != null) {
-					events[i].setDelayObject((ASTNodeValue)copyAST(e.getDelay().getMath(),true, null, null).getUserObject(TEMP_VALUE));
+					events[i].setDelayObject((ASTNodeValue)copyAST(e.getDelay().getMath(), true, null, null).getUserObject(TEMP_VALUE));
 				}
 
 				events[i].clearRuleObjects();
@@ -1579,7 +1579,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 		for (Reaction r : model.getListOfReactions()) {
 			KineticLaw kl = r.getKineticLaw();
 			if (kl != null) {
-				ASTNodeValue currentLaw = (ASTNodeValue) copyAST(kl.getMath(),true, null, null)
+				ASTNodeValue currentLaw = (ASTNodeValue) copyAST(kl.getMath(), true, null, null)
 						.getUserObject(TEMP_VALUE);
 				kineticLawRootsList.add(currentLaw);
 				kl.getMath().putUserObject(TEMP_VALUE, currentLaw);
@@ -1603,7 +1603,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					if (speciesRef.isSetStoichiometryMath()) {
 						@SuppressWarnings("deprecation")
 						ASTNode currentMath = speciesRef.getStoichiometryMath().getMath();
-						currentMathValue = (ASTNodeValue) copyAST(currentMath,true, null, null)
+						currentMathValue = (ASTNodeValue) copyAST(currentMath, true, null, null)
 						.getUserObject(TEMP_VALUE);
 						currentMath.putUserObject(TEMP_VALUE, currentMathValue);
 					}
@@ -1657,7 +1657,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 					if (speciesRef.isSetStoichiometryMath()) {
 						@SuppressWarnings("deprecation")
 						ASTNode currentMath = speciesRef.getStoichiometryMath().getMath();
-						currentMathValue = (ASTNodeValue) copyAST(currentMath,true, null, null)
+						currentMathValue = (ASTNodeValue) copyAST(currentMath, true, null, null)
 						.getUserObject(TEMP_VALUE);
 						currentMath.putUserObject(TEMP_VALUE, currentMathValue);
 					}
@@ -2435,7 +2435,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 	public void processInitialAssignments(double time, double[] Y) throws SBMLException {
 		if (Y != null) {
 			for (int i = 0; i != initialAssignmentRoots.size(); i++) {
-				initialAssignmentRoots.get(i).processRule(Y, time,true);
+				initialAssignmentRoots.get(i).processRule(Y, time, true);
 			}
 		}
 	}
