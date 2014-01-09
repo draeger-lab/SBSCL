@@ -4,18 +4,19 @@
 
                            -- Main developers --
 
-         Alexander Dörr, University of Tuebingen, Germany,
+         Andreas Dr√§ger, University of California, San Diego, United States,
+           andraeger@eng.ucsd.edu
+         Alexander D√∂rr, University of Tuebingen, Germany,
            alexander.doerr@uni-tuebingen.de
          Roland Keller, University of Tuebingen, Germany,
            roland.keller@uni-tuebingen.de
-         Andreas Dräger, University of Tuebingen, Germany,
-           andreas.draeger@uni-tuebingen.de
          
 
                       -- Principal investigators -- 
-                           
-         Nicolas Le Novère, Babraham Institute, Babraham, Cambridge, 
-           United Kingdom, nicolas.lenovere@babraham.ac.uk
+             
+         Nicolas Le Nov√©re, European Bioinformatics Institute, Wellcome 
+           Trust Genome Campus, Hinxton, United Kingdom,
+           lenov@ebi.ac.uk
          Andreas Zell, University of Tuebingen, Germany,
            andreas.zell@uni-tuebingen.de
 
@@ -47,14 +48,13 @@
            
                                -- Alumni --
          
-         Dieudonné Motsou Wouamba, University of Tuebingen, Germany,
+         Dieudonn√© Motsou Wouamba, University of Tuebingen, Germany,
            dwouamba@yahoo.fr
-         Max Zwießele, University of Tuebingen, Germany,
+         Max Zwie√üele, University of Tuebingen, Germany,
            max-benjamin.zwiessele@student.uni-tuebingen.de
          Philip Stevens, University of Tuebingen, Germany,
            philip.stevens@student.uni-tuebingen.de
-         Adrian Schröder, University of Tuebingen, Germany,
+         Adrian Schr√∂der, University of Tuebingen, Germany,
            adrian.schroeder@uni-tuebingen.de
          Marcel Kronfeld, University of Tuebingen, Germany,
            marcel.kronfeld@uni-tuebingen.de           
-
