@@ -20,7 +20,6 @@
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
-
 package org.simulator.sbml;
 
 import java.text.MessageFormat;
@@ -28,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.Constraint;
+import org.sbml.jsbml.util.SBMLtools;
 
 /**
  * This class represents a simple listener implementation to process the
@@ -40,7 +40,7 @@ import org.sbml.jsbml.Constraint;
  * @since 1.3
  */
 public class SimpleConstraintListener implements ConstraintListener {
-	
+
 	/**
 	 * A {@link Logger} for this class.
 	 */
@@ -49,13 +49,13 @@ public class SimpleConstraintListener implements ConstraintListener {
 	/* (non-Javadoc)
 	 * @see org.simulator.sbml.ContraintListener#processViolation(org.simulator.sbml.ConstraintEvent)
 	 */
-	//@Override
+	@Override
 	public void processViolation(ConstraintEvent evt) {
 		assert evt != null;
 		String constraint = "null", message = "null";
 		// Math must be set, otherwise this event would not have been triggered.
 		constraint = evt.getSource().getMath().toFormula();
-		message = evt.getSource().getMessageString();
+		message = SBMLtools.toXML(evt.getSource().getMessage());
 		// TODO: Localize
 		logger.log(Level.WARNING, MessageFormat.format(
 				"[VIOLATION]\t{0} at time {1,number}: {2}",
