@@ -14,7 +14,7 @@
 
                       -- Principal investigators -- 
              
-         Nicolas Le Novére, European Bioinformatics Institute, Wellcome 
+         Nicolas Le Novère, European Bioinformatics Institute, Wellcome 
            Trust Genome Campus, Hinxton, United Kingdom,
            lenov@ebi.ac.uk
          Andreas Zell, University of Tuebingen, Germany,
