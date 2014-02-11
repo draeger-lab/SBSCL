@@ -5,11 +5,13 @@ Version 1.4 (2014-02-xx)
 
  * New features:
    
-   - 
+   - The processing of rules has been improved in order to avoid too many recomputations.
       
  * Bug fixes:
 
-   - 
+   - An error in the computation of amounts/concentrations of a species has been corrected.
+   
+   - A potential source for IndexOutOfBoundsExceptions in MultiTable has been corrected.
       
 ======================================================================
 Version 1.3 (2013-04-19)
