@@ -32,33 +32,34 @@ import org.sbml.jsbml.ASTNode;
  */
 public class NamedValue extends ASTNodeValue {
 
-	/**
-	 * The function the variable occurs in
-	 */
-	private FunctionValue function;
+  /**
+   * The function the variable occurs in
+   */
+  private FunctionValue function;
 
-	/**
-	 * The index of the variable in the arguments array of the corresponding FunctionValue.
-	 */
-	private int index;
+  /**
+   * The index of the variable in the arguments array of the corresponding {@link FunctionValue}.
+   */
+  private int index;
 
-	/**
-	 * 
-	 * @param interpreter
-	 * @param node
-	 * @param function
-	 */
-	public NamedValue(ASTNodeInterpreter interpreter, ASTNode node, FunctionValue function) {
-		super(interpreter, node);
-		this.function = function;
-		this.index = function.getIndex(node.getName());
-	}
+  /**
+   * 
+   * @param interpreter
+   * @param node
+   * @param function
+   */
+  public NamedValue(ASTNodeInterpreter interpreter, ASTNode node, FunctionValue function) {
+    super(interpreter, node);
+    this.function = function;
+    index = function.getIndex(node.getName());
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
-	 */
-	protected void computeDoubleValue(double delay) {
-		doubleValue=function.getArgumentValues()[index];
-	}
+  /* (non-Javadoc)
+   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+   */
+  @Override
+  protected void computeDoubleValue(double delay) {
+    doubleValue=function.getArgumentValues()[index];
+  }
 
 }

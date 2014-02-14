@@ -23,7 +23,7 @@
 package org.simulator.math.odes;
 
 /**
- * This is an abstract class for solvers with adaptive stepsizes and given 
+ * This is an abstract class for solvers with adaptive stepsizes and given
  * relative and absolute tolerances.
  * 
  * @author Andreas Dr&auml;ger
@@ -32,80 +32,80 @@ package org.simulator.math.odes;
  */
 public abstract class AdaptiveStepsizeIntegrator extends AbstractDESSolver {
 
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -5411228466445964211L;
-	/**
-	 * Default absolute allowable vectorial tolerance.
-	 */
-	protected double absTol = 1E-12d;
-	/**
-	 * Default relative allowable vectorial tolerance.
-	 */
-	protected double relTol = 1E-6d;
-	
-	/**
-	 * 
-	 */
-	public AdaptiveStepsizeIntegrator() {
-		super();
-	}
-	
-	/**
-	 * clone constructor
-	 * @param adaptiveStepSizeIntegrator
-	 */
-	public AdaptiveStepsizeIntegrator(AdaptiveStepsizeIntegrator adaptiveStepSizeIntegrator) {
-		super(adaptiveStepSizeIntegrator);
-		absTol = adaptiveStepSizeIntegrator.getAbsTol();
-		relTol = adaptiveStepSizeIntegrator.getRelTol();
-	}
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -5411228466445964211L;
+  /**
+   * Default absolute allowable vectorial tolerance.
+   */
+  protected double absTol = 1E-12d;
+  /**
+   * Default relative allowable vectorial tolerance.
+   */
+  protected double relTol = 1E-6d;
 
-	/**
-	 * 
-	 * @param stepSize
-	 */
-	public AdaptiveStepsizeIntegrator(double stepSize) {
-		super(stepSize);
-	}
+  /**
+   * 
+   */
+  public AdaptiveStepsizeIntegrator() {
+    super();
+  }
 
-	/**
-	 * 
-	 * @param stepSize
-	 * @param nonnegative the nonnegative flag of the super class
-	 * @see AbstractDESSolver
-	 */
-	public AdaptiveStepsizeIntegrator(double stepSize, boolean nonnegative) {
-		super(stepSize, nonnegative);
-	}
+  /**
+   * clone constructor
+   * @param adaptiveStepSizeIntegrator
+   */
+  public AdaptiveStepsizeIntegrator(AdaptiveStepsizeIntegrator adaptiveStepSizeIntegrator) {
+    super(adaptiveStepSizeIntegrator);
+    absTol = adaptiveStepSizeIntegrator.getAbsTol();
+    relTol = adaptiveStepSizeIntegrator.getRelTol();
+  }
 
-	/**
-	 * @return the absolute tolerance
-	 */
-	public double getAbsTol() {
-		return absTol;
-	}
+  /**
+   * 
+   * @param stepSize
+   */
+  public AdaptiveStepsizeIntegrator(double stepSize) {
+    super(stepSize);
+  }
 
-	/**
-	 * @return the relative tolerance
-	 */
-	public double getRelTol() {
-		return relTol;
-	}
+  /**
+   * 
+   * @param stepSize
+   * @param nonnegative the nonnegative flag of the super class
+   * @see AbstractDESSolver
+   */
+  public AdaptiveStepsizeIntegrator(double stepSize, boolean nonnegative) {
+    super(stepSize, nonnegative);
+  }
 
-	/**
-	 * @param absTol the absolute tolerance to set
-	 */
-	public void setAbsTol(double absTol) {
-		this.absTol = absTol;
-	}
+  /**
+   * @return the absolute tolerance
+   */
+  public double getAbsTol() {
+    return absTol;
+  }
 
-	/**
-	 * @param relTol the relative tolerance to set
-	 */
-	public void setRelTol(double relTol) {
-		this.relTol = relTol;
-	}
+  /**
+   * @return the relative tolerance
+   */
+  public double getRelTol() {
+    return relTol;
+  }
+
+  /**
+   * @param absTol the absolute tolerance to set
+   */
+  public void setAbsTol(double absTol) {
+    this.absTol = absTol;
+  }
+
+  /**
+   * @param relTol the relative tolerance to set
+   */
+  public void setRelTol(double relTol) {
+    this.relTol = relTol;
+  }
 
 }

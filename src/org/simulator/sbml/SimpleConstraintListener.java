@@ -41,25 +41,25 @@ import org.sbml.jsbml.util.SBMLtools;
  */
 public class SimpleConstraintListener implements ConstraintListener {
 
-	/**
-	 * A {@link Logger} for this class.
-	 */
-	private static final transient Logger logger = Logger.getLogger(SimpleConstraintListener.class.getName());
+  /**
+   * A {@link Logger} for this class.
+   */
+  private static final transient Logger logger = Logger.getLogger(SimpleConstraintListener.class.getName());
 
-	/* (non-Javadoc)
-	 * @see org.simulator.sbml.ContraintListener#processViolation(org.simulator.sbml.ConstraintEvent)
-	 */
-	@Override
-	public void processViolation(ConstraintEvent evt) {
-		assert evt != null;
-		String constraint = "null", message = "null";
-		// Math must be set, otherwise this event would not have been triggered.
-		constraint = evt.getSource().getMath().toFormula();
-		message = SBMLtools.toXML(evt.getSource().getMessage());
-		// TODO: Localize
-		logger.log(Level.WARNING, MessageFormat.format(
-				"[VIOLATION]\t{0} at time {1,number}: {2}",
-				constraint, evt.getTime(), message));
-	}
+  /* (non-Javadoc)
+   * @see org.simulator.sbml.ContraintListener#processViolation(org.simulator.sbml.ConstraintEvent)
+   */
+  @Override
+  public void processViolation(ConstraintEvent evt) {
+    assert evt != null;
+    String constraint = "null", message = "null";
+    // Math must be set, otherwise this event would not have been triggered.
+    constraint = evt.getSource().getMath().toFormula();
+    message = SBMLtools.toXML(evt.getSource().getMessage());
+    // TODO: Localize
+    logger.log(Level.WARNING, MessageFormat.format(
+      "[VIOLATION]\t{0} at time {1,number}: {2}",
+      constraint, evt.getTime(), message));
+  }
 
 }

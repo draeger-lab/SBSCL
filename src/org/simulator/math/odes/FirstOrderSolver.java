@@ -30,7 +30,7 @@ import org.apache.commons.math.util.FastMath;
 import org.simulator.math.Mathematics;
 
 /**
- * This class is the superclass of the wrapper classes for the solvers of the 
+ * This class is the superclass of the wrapper classes for the solvers of the
  * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
  * 
  * @author Roland Keller
@@ -39,133 +39,136 @@ import org.simulator.math.Mathematics;
  */
 public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
 
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -2671266540106066022L;
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -2671266540106066022L;
 
-	/**
-	 * A logger.
-	 */
-	private static final Logger logger = Logger.getLogger(FirstOrderSolver.class
-			.getName());
+  /**
+   * A logger.
+   */
+  private static final Logger logger = Logger.getLogger(FirstOrderSolver.class
+    .getName());
 
-	/**
-	 * The result of the integration.
-	 */
-	private double[] integrationResult;
+  /**
+   * The result of the integration.
+   */
+  private double[] integrationResult;
 
-	/**
-	 * The integrator used.
-	 */
-	protected AbstractIntegrator integrator;
+  /**
+   * The integrator used.
+   */
+  protected AbstractIntegrator integrator;
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#setStepSize(double)
-	 */
-	@Override
-	public void setStepSize(double stepSize) {
-		super.setStepSize(stepSize);
-		createIntegrator();
-	}
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.odes.AbstractDESSolver#setStepSize(double)
+   */
+  @Override
+  public void setStepSize(double stepSize) {
+    super.setStepSize(stepSize);
+    createIntegrator();
+  }
 
-	/**
-	 * default constructor
-	 */
-	public FirstOrderSolver() {
-		super();
-		createIntegrator();
-		addHandler();
-	}
+  /**
+   * default constructor
+   */
+  public FirstOrderSolver() {
+    super();
+    createIntegrator();
+    addHandler();
+  }
 
-	/**
-	 * @param stepSize
-	 */
-	public FirstOrderSolver(double stepSize) {
-		super(stepSize);
-		createIntegrator();
-		addHandler();
-	}
+  /**
+   * @param stepSize
+   */
+  public FirstOrderSolver(double stepSize) {
+    super(stepSize);
+    createIntegrator();
+    addHandler();
+  }
 
-	/**
-	 * @param stepSize
-	 * @param nonnegative
-	 *            the nonnegative flag of the super class
-	 * @see AbstractDESSolver
-	 */
-	public FirstOrderSolver(double stepSize, boolean nonnegative) {
-		super(stepSize, nonnegative);
-		createIntegrator();
-		addHandler();
-	}
+  /**
+   * @param stepSize
+   * @param nonnegative
+   *            the nonnegative flag of the super class
+   * @see AbstractDESSolver
+   */
+  public FirstOrderSolver(double stepSize, boolean nonnegative) {
+    super(stepSize, nonnegative);
+    createIntegrator();
+    addHandler();
+  }
 
-	/**
-	 * clone constructor
-	 * @param firstOrderSolver
-	 */
-	public FirstOrderSolver(FirstOrderSolver firstOrderSolver) {
-		super(firstOrderSolver);
-		createIntegrator();
-		addHandler();
-	}
+  /**
+   * clone constructor
+   * @param firstOrderSolver
+   */
+  public FirstOrderSolver(FirstOrderSolver firstOrderSolver) {
+    super(firstOrderSolver);
+    createIntegrator();
+    addHandler();
+  }
 
-	/**
-	 * 
-	 */
-	private void addHandler() {
-		integrator.addEventHandler(this, 1, 1, 1);
-	}
+  /**
+   * 
+   */
+  private void addHandler() {
+    integrator.addEventHandler(this, 1, 1, 1);
+  }
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#clone()
-	 */
-	public abstract FirstOrderSolver clone();
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.odes.AbstractDESSolver#clone()
+   */
+  @Override
+  public abstract FirstOrderSolver clone();
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#computeChange(org.sbml.simulator.math.odes.DESystem, double[], double, double, double[])
-	 */
-	public double[] computeChange(DESystem DES, double[] y, double t,
-			double stepSize, double[] change, boolean steadyState) throws DerivativeException {
-		if ((integrationResult==null)||(integrationResult.length!=y.length)) {
-			integrationResult = new double[y.length];
-		}
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.odes.AbstractDESSolver#computeChange(org.sbml.simulator.math.odes.DESystem, double[], double, double, double[])
+   */
+  @Override
+  public double[] computeChange(DESystem DES, double[] y, double t,
+    double stepSize, double[] change, boolean steadyState) throws DerivativeException {
+    if ((integrationResult==null)||(integrationResult.length!=y.length)) {
+      integrationResult = new double[y.length];
+    }
 
-		double tstart = t;
-		double tend = t + stepSize;
-		if (FastMath.abs(tstart - tend) <= (1.0e-12 * FastMath.max(
-				FastMath.abs(tstart), FastMath.abs(tend)))) {
-			for (int i = 0; i != change.length; i++) {
-				change[i] = 0;
-			}
-		} else {
-			try {
-				integrator.integrate(DES, tstart, y, tend, integrationResult);
-				Mathematics.vvSub(integrationResult, y, change);
-			} catch (Exception e) {
-				setUnstableFlag(true);
-				logger.fine(e.getLocalizedMessage());
-			}
-		}
-		return change;
-	}
+    double tstart = t;
+    double tend = t + stepSize;
+    if (FastMath.abs(tstart - tend) <= (1.0e-12 * FastMath.max(
+      FastMath.abs(tstart), FastMath.abs(tend)))) {
+      for (int i = 0; i != change.length; i++) {
+        change[i] = 0;
+      }
+    } else {
+      try {
+        integrator.integrate(DES, tstart, y, tend, integrationResult);
+        Mathematics.vvSub(integrationResult, y, change);
+      } catch (Exception e) {
+        setUnstableFlag(true);
+        logger.fine(e.getLocalizedMessage());
+      }
+    }
+    return change;
+  }
 
-	/**
-	 * initialization function of the integrator
-	 */
-	protected abstract void createIntegrator();
+  /**
+   * initialization function of the integrator
+   */
+  protected abstract void createIntegrator();
 
-	/**
-	 * @return integrator
-	 */
-	public AbstractIntegrator getIntegrator() {
-		return integrator;
-	}
+  /**
+   * @return integrator
+   */
+  public AbstractIntegrator getIntegrator() {
+    return integrator;
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.AbstractDESSolver#hasSolverEventProcessing()
-	 */
-	protected boolean hasSolverEventProcessing() {
-		return false;
-	}
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.AbstractDESSolver#hasSolverEventProcessing()
+   */
+  @Override
+  protected boolean hasSolverEventProcessing() {
+    return false;
+  }
 
 }

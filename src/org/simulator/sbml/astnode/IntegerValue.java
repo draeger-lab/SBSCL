@@ -32,26 +32,28 @@ import org.sbml.jsbml.ASTNode;
  */
 public class IntegerValue extends ASTNodeValue {
 
-	/**
-	 * @param interpreter
-	 * @param node
-	 */
-	public IntegerValue(ASTNodeInterpreter interpreter, ASTNode node) {
-		super(interpreter, node);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
-	 */
-	protected void computeDoubleValue(double delay) {
-		doubleValue = interpreter.compile(real, units);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.simulator.sbml.astnode.ASTNodeValue#getConstant()
-	 */
-	public boolean getConstant() {
-		return true;
-	}
+  /**
+   * @param interpreter
+   * @param node
+   */
+  public IntegerValue(ASTNodeInterpreter interpreter, ASTNode node) {
+    super(interpreter, node);
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+   */
+  @Override
+  protected void computeDoubleValue(double delay) {
+    doubleValue = interpreter.compile(real, units);
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.sbml.astnode.ASTNodeValue#getConstant()
+   */
+  @Override
+  public boolean getConstant() {
+    return true;
+  }
 
 }

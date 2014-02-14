@@ -31,24 +31,24 @@ package org.simulator.math;
  */
 public class EuclideanDistance extends N_Metric {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2520265250898674233L;
-	
-	/**
-	 * Initializes a new object
-	 */
-	public EuclideanDistance() {
-		super(2d);
-	}
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -2520265250898674233L;
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.N_Metric#setRoot(double)
-	 */
-	@Override
-	public void setRoot(double root) {
-		//root should not be changed
-	}
+  /**
+   * Initializes a new object
+   */
+  public EuclideanDistance() {
+    super(2d);
+  }
+
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.N_Metric#setRoot(double)
+   */
+  @Override
+  public void setRoot(double root) {
+    //root should not be changed
+  }
 
 }

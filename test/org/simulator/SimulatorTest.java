@@ -49,7 +49,7 @@ import org.simulator.sbml.SBMLinterpreter;
  * @since 0.9
  */
 public class SimulatorTest {
-  
+
   /**
    * Starts a simulation at the command line.
    * 
@@ -62,14 +62,14 @@ public class SimulatorTest {
    * @throws DerivativeException
    */
   public static void main(String[] args) throws XMLStreamException,
-    IOException, ModelOverdeterminedException, SBMLException,
-    DerivativeException {
+  IOException, ModelOverdeterminedException, SBMLException,
+  DerivativeException {
 
     // Configuration
     String fileName = args[0];
     double stepSize = Double.parseDouble(args[1]);
     double timeEnd = Double.parseDouble(args[2]);
-    
+
     // Read the model and initialize solver
     Model model = (new SBMLReader()).readSBML(fileName).getModel();
     DESSolver solver = new RosenbrockSolver();
@@ -78,17 +78,17 @@ public class SimulatorTest {
     if (solver instanceof AbstractDESSolver) {
       ((AbstractDESSolver) solver).setIncludeIntermediates(false);
     }
-    
+
     // Compute the numerical solution of the initial value problem
-	// TODO: Rel-Tolerance, Abs-Tolerance.
+    // TODO: Rel-Tolerance, Abs-Tolerance.
     MultiTable solution = solver.solve(interpreter, interpreter
-        .getInitialValues(), 0d, timeEnd);
-    
+      .getInitialValues(), 0d, timeEnd);
+
     // Display simulation result to the user
     JScrollPane resultDisplay = new JScrollPane(new JTable(solution));
     resultDisplay.setPreferredSize(new Dimension(400, 400));
     JOptionPane.showMessageDialog(null, resultDisplay, "The solution of model "
         + model.getId(), JOptionPane.INFORMATION_MESSAGE);
   }
-  
+
 }

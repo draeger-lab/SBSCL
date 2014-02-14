@@ -21,8 +21,10 @@
  * ---------------------------------------------------------------------
  */
 
-/** 
+/**
  * Classes for efficient numerical treatment of equations in form of
  * abstract syntax trees.
+ * 
+ * @version $Rev$
  */
 package org.simulator.sbml.astnode;

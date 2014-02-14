@@ -32,23 +32,24 @@ import org.sbml.jsbml.ASTNode;
  */
 public class MinusValue extends ASTNodeValue {
 
-	/**
-	 * @param interpreter
-	 * @param node
-	 */
-	public MinusValue(ASTNodeInterpreter interpreter, ASTNode node) {
-		super(interpreter, node);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
-	 */
-	protected void computeDoubleValue(double delay) {
-		if (numChildren == 1) {
-			doubleValue = interpreter.uMinus(leftChild, time, delay);
-		} else {
-			doubleValue = interpreter.minus(children, numChildren, time, delay);
-		}
-	}
+  /**
+   * @param interpreter
+   * @param node
+   */
+  public MinusValue(ASTNodeInterpreter interpreter, ASTNode node) {
+    super(interpreter, node);
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+   */
+  @Override
+  protected void computeDoubleValue(double delay) {
+    if (numChildren == 1) {
+      doubleValue = interpreter.uMinus(leftChild, time, delay);
+    } else {
+      doubleValue = interpreter.minus(children, numChildren, time, delay);
+    }
+  }
 
 }

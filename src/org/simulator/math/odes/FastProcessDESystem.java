@@ -32,17 +32,17 @@ package org.simulator.math.odes;
  */
 public interface FastProcessDESystem extends DESystem {
 
-	/**
-	 * 
-	 * @return flag that is true if fast processes are contained.
-	 */
-	public boolean containsFastProcesses();
+  /**
+   * 
+   * @return flag that is true if fast processes are contained.
+   */
+  public boolean containsFastProcesses();
 
-	/**
-	 * 
-	 * @param isProcessing
-	 *           Should there be a splitting of fast and slow reactions in the simulation?
-	 */
-	public void setFastProcessComputation(boolean isProcessing);
-	
+  /**
+   * 
+   * @param isProcessing
+   *           Should there be a splitting of fast and slow reactions in the simulation?
+   */
+  public void setFastProcessComputation(boolean isProcessing);
+
 }

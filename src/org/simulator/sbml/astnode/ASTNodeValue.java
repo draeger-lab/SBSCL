@@ -43,62 +43,62 @@ public class ASTNodeValue {
    * The time of the last computation
    */
   protected double time;
-  
+
   /**
    * Flag that is true if the value of the ASTNode is constant.
    */
   protected boolean isConstant;
-  
+
   /**
    * Flag that is true if the value is positive/negative infinity
    */
   protected boolean isInfinite;
-  
+
   /**
    * Boolean value of the node (if the type of the value is boolean)
    */
   protected boolean booleanValue;
-  
+
   /**
    * Double value of the node (if the type of the value is double)
    */
   protected double doubleValue;
-  
+
   /**
    * Flag that is true if the value has double as type and false if the value is boolean
    */
   protected boolean isDouble;
-  
+
   /**
    * The ASTNode this object is referring to
    */
   protected ASTNode node;
-  
+
   /**
    * The node type of the corresponding ASTNode
    */
   protected ASTNode.Type nodeType;
-  
+
   /**
    * The ASTNodeObjects of the child nodes of the corresponding ASTNode
    */
   protected ASTNodeValue[] children;
-  
+
   /**
    * The ASTNodeObject of the left child of the corresponding ASTNode
    */
   protected ASTNodeValue leftChild;
-  
+
   /**
    * The ASTNodeObject of the right child of the corresponding ASTNode
    */
   protected ASTNodeValue rightChild;
-  
+
   /**
    * The name of the corresponding ASTNode
    */
   protected String name;
-  
+
   /**
    * The number of children of the corresponding ASTNode
    */
@@ -108,54 +108,54 @@ public class ASTNodeValue {
    * Flag that tells whether a calculation of the value has already been done (important in the case of constant values)
    */
   protected boolean alreadyProcessed;
-  
+
   /**
    * The interpreter for calculating the value
    */
   protected ASTNodeInterpreter interpreter;
-  
+
   /**
    * The real value of the corresponding ASTNode
    */
   protected double real;
-  
+
   /**
    * The mantissa of the corresponding ASTNode
    */
   protected double mantissa;
-  
+
   /**
    * The exponent of the corresponding ASTNode
    */
   protected int exponent;
-  
+
   /**
    * The numerator of the corresponding ASTNode
    */
   protected int numerator;
-  
+
   /**
    * The denominator of the corresponding ASTNode
    */
   protected int denominator;
-  
+
   /**
    * The units of the corresponding ASTNode
    */
   protected String units;
-  
+
   /**
    * Resets the node
    */
   public void reset() {
     alreadyProcessed=false;
   }
-  
+
   /**
    * A {@link Logger} for this class.
    */
   public static final Logger logger = Logger.getLogger(ASTNodeValue.class.getName());
-  
+
   /**
    * 
    * @param interpreter
@@ -164,9 +164,9 @@ public class ASTNodeValue {
   public ASTNodeValue(ASTNodeInterpreter interpreter, ASTNode node) {
     this.interpreter = interpreter;
     this.node = node;
-    this.nodeType = node.getType();
-    this.isConstant = false;
-    this.alreadyProcessed = false;
+    nodeType = node.getType();
+    isConstant = false;
+    alreadyProcessed = false;
     if (nodeType == ASTNode.Type.REAL) {
       real = node.getReal();
       isInfinite = Double.isInfinite(real);
@@ -191,20 +191,20 @@ public class ASTNodeValue {
       denominator = node.getDenominator();
       isConstant = true;
     }
-    
+
     if (node.isName()) {
       name = node.getName();
     }
-    
-    this.time = 0d;
+
+    time = 0d;
     children = new ASTNodeValue[node.getChildCount()];
-    
+
     boolean allChildrenConstant = true;
-    
-    if (node != null) {  
+
+    if (node != null) {
       for (int i = 0; i!= node.getChildCount(); i++) {
-    	ASTNode childNode = node.getChild(i);
-    	Object userObject = childNode.getUserObject(SBMLinterpreter.TEMP_VALUE);
+        ASTNode childNode = node.getChild(i);
+        Object userObject = childNode.getUserObject(SBMLinterpreter.TEMP_VALUE);
         if (userObject != null) {
           children[i]=(ASTNodeValue)userObject;
           allChildrenConstant&= children[i].getConstant();
@@ -213,14 +213,14 @@ public class ASTNodeValue {
     }
     numChildren = node.getChildCount();
     if (numChildren>0) {
-      if(allChildrenConstant) {
-    	  isConstant = true;
+      if (allChildrenConstant) {
+        isConstant = true;
       }
       leftChild = children[0];
       rightChild = children[numChildren-1];
     }
   }
-  
+
   /**
    * 
    * @return time the time of the last computation of the value
@@ -228,7 +228,7 @@ public class ASTNodeValue {
   public double getTime() {
     return time;
   }
-  
+
   /**
    * 
    * @param time
@@ -236,7 +236,7 @@ public class ASTNodeValue {
   public void setTime(double time) {
     this.time = time;
   }
-  
+
   /**
    * 
    * @return constant?
@@ -244,15 +244,15 @@ public class ASTNodeValue {
   public boolean getConstant() {
     return isConstant;
   }
-  
+
   /**
    * 
    * @return node the corresponding ASTNode
    */
   public ASTNode getNode() {
-	  return node;
+    return node;
   }
-  
+
   /**
    * Returns the value as an object (double or boolean)
    * @param time
@@ -266,7 +266,7 @@ public class ASTNodeValue {
       return compileBoolean(time);
     }
   }
-  
+
   /**
    * Computes the double value if the time has changed and otherwise returns the already computed value
    * @param time
@@ -280,31 +280,31 @@ public class ASTNodeValue {
       isDouble = true;
       this.time = time;
       computeDoubleValue(delay);
-      if(isConstant) {
-    	  boolean childrenProcessed = true;
-    	  for(ASTNodeValue child: children) {
-    		  childrenProcessed&= child.getAlreadyProcessed();
-    	  }
-    	  if((children.length > 0) && childrenProcessed) {
-    		  alreadyProcessed = true;
-    	  }
-    	  if((nodeType == ASTNode.Type.REAL) || (nodeType == ASTNode.Type.INTEGER) || (nodeType == ASTNode.Type.RATIONAL)) {
-    		  alreadyProcessed = true;
-    	  }
+      if (isConstant) {
+        boolean childrenProcessed = true;
+        for(ASTNodeValue child: children) {
+          childrenProcessed&= child.getAlreadyProcessed();
+        }
+        if ((children.length > 0) && childrenProcessed) {
+          alreadyProcessed = true;
+        }
+        if ((nodeType == ASTNode.Type.REAL) || (nodeType == ASTNode.Type.INTEGER) || (nodeType == ASTNode.Type.RATIONAL)) {
+          alreadyProcessed = true;
+        }
       }
     }
     return doubleValue;
   }
-  
+
   /**
    * 
    * @return
    */
   private boolean getAlreadyProcessed() {
-	return alreadyProcessed;
+    return alreadyProcessed;
   }
 
-/**
+  /**
    * Computes the boolean value if the time has changed and otherwise returns the already computed value
    * @param time
    * @return booleanValue the boolean value of the node
@@ -328,213 +328,213 @@ public class ASTNodeValue {
    */
   protected void computeDoubleValue(double delay) {
     switch (nodeType) {
-      /*
-       * Numbers
-       */
-      case REAL:
-        if (isInfinite) {
-          doubleValue = (real > 0d) ? Double.POSITIVE_INFINITY
-              : Double.NEGATIVE_INFINITY;
-        } else {
-          doubleValue = interpreter.compile(real, units);
-        }
-        break;
+    /*
+     * Numbers
+     */
+    case REAL:
+      if (isInfinite) {
+        doubleValue = (real > 0d) ? Double.POSITIVE_INFINITY
+          : Double.NEGATIVE_INFINITY;
+      } else {
+        doubleValue = interpreter.compile(real, units);
+      }
+      break;
       /*
        * Operators
        */
-      case RATIONAL:
-        doubleValue = interpreter.frac(numerator, denominator);
-        break;
-      case NAME_TIME:
-        doubleValue = interpreter.symbolTime();
-        break;
-      case FUNCTION_DELAY:
-        doubleValue = interpreter.delay(leftChild,
-          rightChild, units, time);
-        break;
+    case RATIONAL:
+      doubleValue = interpreter.frac(numerator, denominator);
+      break;
+    case NAME_TIME:
+      doubleValue = interpreter.symbolTime();
+      break;
+    case FUNCTION_DELAY:
+      doubleValue = interpreter.delay(leftChild,
+        rightChild, units, time);
+      break;
       /*
        * Type: pi, e, true, false, Avogadro
        */
-      case CONSTANT_PI:
-        doubleValue = Math.PI;
-        break;
-      case CONSTANT_E:
-        doubleValue = Math.E;
-        break;
-      case NAME_AVOGADRO:
-        doubleValue = Maths.AVOGADRO_L3V1;
-        break;
-      case REAL_E:
-        doubleValue = interpreter.compile(mantissa, exponent,
-          units);
-        break;
+    case CONSTANT_PI:
+      doubleValue = Math.PI;
+      break;
+    case CONSTANT_E:
+      doubleValue = Math.E;
+      break;
+    case NAME_AVOGADRO:
+      doubleValue = Maths.AVOGADRO_L3V1;
+      break;
+    case REAL_E:
+      doubleValue = interpreter.compile(mantissa, exponent,
+        units);
+      break;
       /*
        * Basic Functions
        */
-      case FUNCTION_LOG:
-        if (numChildren == 2) {
-          doubleValue = interpreter.log(leftChild, rightChild, time, delay);
-        } else {
-          doubleValue = interpreter.log(rightChild, time, delay);
-        }
-        break;
-      case FUNCTION_ABS:
-        doubleValue = interpreter.abs(rightChild, time, delay);
-        break;
-      case FUNCTION_ARCCOS:
-        doubleValue = interpreter.arccos(leftChild, time, delay);
-        break;
-      case FUNCTION_ARCCOSH:
-        doubleValue = interpreter.arccosh(leftChild, time, delay);
-        break;
-      case FUNCTION_ARCCOT:
-        doubleValue = interpreter.arccot(leftChild, time, delay);
-        break;
-      case FUNCTION_ARCCOTH:
-        doubleValue = interpreter.arccoth(leftChild, time, delay);
-        break;
-      case FUNCTION_ARCCSC:
-        doubleValue = interpreter.arccsc(leftChild, time, delay);
-        break;
-      case FUNCTION_ARCCSCH:
-        doubleValue = interpreter.arccsch(leftChild, time, delay);
-        break;
-      case FUNCTION_ARCSEC:
-        doubleValue = interpreter.arcsec(leftChild, time, delay);
-        break;
-      case FUNCTION_ARCSECH:
-        doubleValue = interpreter.arcsech(leftChild, time, delay);
-        break;
-      case FUNCTION_ARCSIN:
-        doubleValue = interpreter.arcsin(leftChild, time, delay);
-        break;
-      case FUNCTION_ARCSINH:
-        doubleValue = interpreter.arcsinh(leftChild, time, delay);
-        break;
-      case FUNCTION_ARCTAN:
-        doubleValue = interpreter.arctan(leftChild, time, delay);
-        break;
-      case FUNCTION_ARCTANH:
-        doubleValue = interpreter.arctanh(leftChild, time, delay);
-        break;
-      case FUNCTION_CEILING:
-        doubleValue = interpreter.ceiling(leftChild, time, delay);
-        break;
-      case FUNCTION_COS:
-        doubleValue = interpreter.cos(leftChild, time, delay);
-        break;
-      case FUNCTION_COSH:
-        doubleValue = interpreter.cosh(leftChild, time, delay);
-        break;
-      case FUNCTION_COT:
-        doubleValue = interpreter.cot(leftChild, time, delay);
-        break;
-      case FUNCTION_COTH:
-        doubleValue = interpreter.coth(leftChild, time, delay);
-        break;
-      case FUNCTION_CSC:
-        doubleValue = interpreter.csc(leftChild, time, delay);
-        break;
-      case FUNCTION_CSCH:
-        doubleValue = interpreter.csch(leftChild, time, delay);
-        break;
-      case FUNCTION_EXP:
-        doubleValue = interpreter.exp(leftChild, time, delay);
-        break;
-      case FUNCTION_FACTORIAL:
-        doubleValue = interpreter.factorial(leftChild, time, delay);
-        break;
-      case FUNCTION_FLOOR:
-        doubleValue = interpreter.floor(leftChild, time, delay);
-        break;
-      case FUNCTION_LN:
-        doubleValue = interpreter.ln(leftChild, time, delay);
-        break;
-      case FUNCTION_SEC:
-        doubleValue = interpreter.sec(leftChild, time, delay);
-        break;
-      case FUNCTION_SECH:
-        doubleValue = interpreter.sech(leftChild, time, delay);
-        break;
-      case FUNCTION_SIN:
-        doubleValue = interpreter.sin(leftChild, time, delay);
-        break;
-      case FUNCTION_SINH:
-        doubleValue = interpreter.sinh(leftChild, time, delay);
-        break;
-      case FUNCTION_TAN:
-        doubleValue = interpreter.tan(leftChild, time, delay);
-        break;
-      case FUNCTION_TANH:
-        doubleValue = interpreter.tanh(leftChild, time, delay);
-        break;
-      case FUNCTION_PIECEWISE:
-        doubleValue = interpreter.piecewise(children, time, delay);
-        break;
-      case LAMBDA:
-        doubleValue = interpreter.lambdaDouble(children, time);
-        break;
-      default: // UNKNOWN:
-        doubleValue = Double.NaN;
-        break;
+    case FUNCTION_LOG:
+      if (numChildren == 2) {
+        doubleValue = interpreter.log(leftChild, rightChild, time, delay);
+      } else {
+        doubleValue = interpreter.log(rightChild, time, delay);
+      }
+      break;
+    case FUNCTION_ABS:
+      doubleValue = interpreter.abs(rightChild, time, delay);
+      break;
+    case FUNCTION_ARCCOS:
+      doubleValue = interpreter.arccos(leftChild, time, delay);
+      break;
+    case FUNCTION_ARCCOSH:
+      doubleValue = interpreter.arccosh(leftChild, time, delay);
+      break;
+    case FUNCTION_ARCCOT:
+      doubleValue = interpreter.arccot(leftChild, time, delay);
+      break;
+    case FUNCTION_ARCCOTH:
+      doubleValue = interpreter.arccoth(leftChild, time, delay);
+      break;
+    case FUNCTION_ARCCSC:
+      doubleValue = interpreter.arccsc(leftChild, time, delay);
+      break;
+    case FUNCTION_ARCCSCH:
+      doubleValue = interpreter.arccsch(leftChild, time, delay);
+      break;
+    case FUNCTION_ARCSEC:
+      doubleValue = interpreter.arcsec(leftChild, time, delay);
+      break;
+    case FUNCTION_ARCSECH:
+      doubleValue = interpreter.arcsech(leftChild, time, delay);
+      break;
+    case FUNCTION_ARCSIN:
+      doubleValue = interpreter.arcsin(leftChild, time, delay);
+      break;
+    case FUNCTION_ARCSINH:
+      doubleValue = interpreter.arcsinh(leftChild, time, delay);
+      break;
+    case FUNCTION_ARCTAN:
+      doubleValue = interpreter.arctan(leftChild, time, delay);
+      break;
+    case FUNCTION_ARCTANH:
+      doubleValue = interpreter.arctanh(leftChild, time, delay);
+      break;
+    case FUNCTION_CEILING:
+      doubleValue = interpreter.ceiling(leftChild, time, delay);
+      break;
+    case FUNCTION_COS:
+      doubleValue = interpreter.cos(leftChild, time, delay);
+      break;
+    case FUNCTION_COSH:
+      doubleValue = interpreter.cosh(leftChild, time, delay);
+      break;
+    case FUNCTION_COT:
+      doubleValue = interpreter.cot(leftChild, time, delay);
+      break;
+    case FUNCTION_COTH:
+      doubleValue = interpreter.coth(leftChild, time, delay);
+      break;
+    case FUNCTION_CSC:
+      doubleValue = interpreter.csc(leftChild, time, delay);
+      break;
+    case FUNCTION_CSCH:
+      doubleValue = interpreter.csch(leftChild, time, delay);
+      break;
+    case FUNCTION_EXP:
+      doubleValue = interpreter.exp(leftChild, time, delay);
+      break;
+    case FUNCTION_FACTORIAL:
+      doubleValue = interpreter.factorial(leftChild, time, delay);
+      break;
+    case FUNCTION_FLOOR:
+      doubleValue = interpreter.floor(leftChild, time, delay);
+      break;
+    case FUNCTION_LN:
+      doubleValue = interpreter.ln(leftChild, time, delay);
+      break;
+    case FUNCTION_SEC:
+      doubleValue = interpreter.sec(leftChild, time, delay);
+      break;
+    case FUNCTION_SECH:
+      doubleValue = interpreter.sech(leftChild, time, delay);
+      break;
+    case FUNCTION_SIN:
+      doubleValue = interpreter.sin(leftChild, time, delay);
+      break;
+    case FUNCTION_SINH:
+      doubleValue = interpreter.sinh(leftChild, time, delay);
+      break;
+    case FUNCTION_TAN:
+      doubleValue = interpreter.tan(leftChild, time, delay);
+      break;
+    case FUNCTION_TANH:
+      doubleValue = interpreter.tanh(leftChild, time, delay);
+      break;
+    case FUNCTION_PIECEWISE:
+      doubleValue = interpreter.piecewise(children, time, delay);
+      break;
+    case LAMBDA:
+      doubleValue = interpreter.lambdaDouble(children, time);
+      break;
+    default: // UNKNOWN:
+      doubleValue = Double.NaN;
+    break;
     }
   }
-  
+
   /**
    * Computes the boolean value of the node.
    */
   protected void computeBooleanValue() {
     switch (nodeType) {
-        case LOGICAL_AND:
-          booleanValue = interpreter.and(children,numChildren, time);
-          break;
-        case LOGICAL_XOR:
-          booleanValue = interpreter.xor(children,time);
-          break;
-        case LOGICAL_OR:
-          booleanValue = interpreter.or(children,time);
-          break;
-        case LOGICAL_NOT:
-          booleanValue = interpreter.not(leftChild,time);
-          break;
-        case RELATIONAL_EQ:
-          booleanValue = interpreter.eq(leftChild, rightChild,time);
-          break;
-        case RELATIONAL_GEQ:
-          booleanValue = interpreter.geq(leftChild, rightChild,time);
-          break;
-        case RELATIONAL_GT:
-          booleanValue = interpreter.gt(leftChild, rightChild,time);
-          break;
-        case RELATIONAL_NEQ:
-          booleanValue = interpreter.neq(leftChild, rightChild,time);
-          break;
-        case RELATIONAL_LEQ:
-          booleanValue = interpreter.leq(leftChild, rightChild,time);
-          break;
-        case RELATIONAL_LT:
-          booleanValue = interpreter.lt(leftChild, rightChild,time);
-          break;
-        case CONSTANT_TRUE:
-          booleanValue = true;
-          break;
-        case CONSTANT_FALSE:
-          booleanValue = false;
-          break;
-        case NAME:
-          CallableSBase variable = node.getVariable();
-          if (variable != null) {
-            booleanValue = interpreter.compileBoolean(variable, time);
-          }
-          break;
-        case LAMBDA:
-          booleanValue = interpreter.lambdaBoolean(children, time);
-          break;
-        default:
-          booleanValue = false;
-          break;
+    case LOGICAL_AND:
+      booleanValue = interpreter.and(children,numChildren, time);
+      break;
+    case LOGICAL_XOR:
+      booleanValue = interpreter.xor(children,time);
+      break;
+    case LOGICAL_OR:
+      booleanValue = interpreter.or(children,time);
+      break;
+    case LOGICAL_NOT:
+      booleanValue = interpreter.not(leftChild,time);
+      break;
+    case RELATIONAL_EQ:
+      booleanValue = interpreter.eq(leftChild, rightChild,time);
+      break;
+    case RELATIONAL_GEQ:
+      booleanValue = interpreter.geq(leftChild, rightChild,time);
+      break;
+    case RELATIONAL_GT:
+      booleanValue = interpreter.gt(leftChild, rightChild,time);
+      break;
+    case RELATIONAL_NEQ:
+      booleanValue = interpreter.neq(leftChild, rightChild,time);
+      break;
+    case RELATIONAL_LEQ:
+      booleanValue = interpreter.leq(leftChild, rightChild,time);
+      break;
+    case RELATIONAL_LT:
+      booleanValue = interpreter.lt(leftChild, rightChild,time);
+      break;
+    case CONSTANT_TRUE:
+      booleanValue = true;
+      break;
+    case CONSTANT_FALSE:
+      booleanValue = false;
+      break;
+    case NAME:
+      CallableSBase variable = node.getVariable();
+      if (variable != null) {
+        booleanValue = interpreter.compileBoolean(variable, time);
       }
+      break;
+    case LAMBDA:
+      booleanValue = interpreter.lambdaBoolean(children, time);
+      break;
+    default:
+      booleanValue = false;
+      break;
     }
+  }
 
   /**
    * Returns true if the corresponding ASTNode is of type name.

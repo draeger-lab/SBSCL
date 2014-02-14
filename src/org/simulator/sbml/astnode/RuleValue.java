@@ -34,123 +34,124 @@ import org.simulator.sbml.SBMLValueHolder;
  */
 public class RuleValue {
 
-	/**
-	 * Object that refers to the math of the rule
-	 */
-	protected ASTNodeValue nodeObject;
+  /**
+   * Object that refers to the math of the rule
+   */
+  protected ASTNodeValue nodeObject;
 
-	/**
-	 * The calculated value of the rul
-	 */
-	protected double value;
+  /**
+   * The calculated value of the rul
+   */
+  protected double value;
 
-	/**
-	 * Flag that is true if the variable is referring to a species, otherwise false
-	 */
-	protected boolean isSpecies;
+  /**
+   * Flag that is true if the variable is referring to a species, otherwise false
+   */
+  protected boolean isSpecies;
 
-	/**
-	 * The value holder that stores the current simulation results
-	 */
-	protected SBMLValueHolder valueHolder;
+  /**
+   * The value holder that stores the current simulation results
+   */
+  protected SBMLValueHolder valueHolder;
 
-	/**
-	 * The index of the compartment of the species (if applicable)
-	 */
-	protected int compartmentIndex;
+  /**
+   * The index of the compartment of the species (if applicable)
+   */
+  protected int compartmentIndex;
 
-	/**
-	 * The hasOnlySubstanceUnits attribute of the species (if applicable)
-	 */
-	protected boolean hasOnlySubstanceUnits;
+  /**
+   * The hasOnlySubstanceUnits attribute of the species (if applicable)
+   */
+  protected boolean hasOnlySubstanceUnits;
 
-	/**
-	 * The isSetInitialAmount attribute of the species (if applicable)
-	 */
-	protected boolean isSetInitialAmount;
+  /**
+   * The isSetInitialAmount attribute of the species (if applicable)
+   */
+  protected boolean isSetInitialAmount;
 
-	/**
-	 * The isSetInitialConcentration attribute of the species (if applicable)
-	 */
-	protected boolean isSetInitialConcentration;
+  /**
+   * The isSetInitialConcentration attribute of the species (if applicable)
+   */
+  protected boolean isSetInitialConcentration;
 
-	/**
-	 * This flag is true if the variable is a species and its compartment has no spatial dimensions
-	 */
-	protected boolean hasZeroSpatialDimensions;
+  /**
+   * This flag is true if the variable is a species and its compartment has no spatial dimensions
+   */
+  protected boolean hasZeroSpatialDimensions;
 
-	/**
-	 * The index of the variable in the Y vector of the value holder
-	 */
-	protected int index;
+  /**
+   * The index of the variable in the Y vector of the value holder
+   */
+  protected int index;
 
-	/**
-	 * 
-	 * @param nodeObject
-	 * @param index
-	 */
-	public RuleValue(ASTNodeValue nodeObject, int index) {
-		this.nodeObject = nodeObject;
-		this.index = index;
-		this.isSpecies = false;
-	}
+  /**
+   * 
+   * @param nodeObject
+   * @param index
+   */
+  public RuleValue(ASTNodeValue nodeObject, int index) {
+    this.nodeObject = nodeObject;
+    this.index = index;
+    isSpecies = false;
+  }
 
-	/**
-	 * Constructor for rules that refer to a species.
-	 * @param nodeObject
-	 * @param index
-	 * @param sp
-	 * @param compartmentIndex
-	 * @param hasZeroSpatialDimensions
-	 * @param valueHolder
-	 */
-	public RuleValue(ASTNodeValue nodeObject, int index,
-			Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder) {
-		this.nodeObject = nodeObject;
-		this.index = index;
-		this.isSpecies = true;
-		this.compartmentIndex = compartmentIndex;
-		this.hasOnlySubstanceUnits = sp.getHasOnlySubstanceUnits();
-		this.isSetInitialAmount = sp.isSetInitialAmount();
-		this.isSetInitialConcentration = sp.isSetInitialConcentration();
-		this.hasZeroSpatialDimensions = hasZeroSpatialDimensions;
-		this.valueHolder = valueHolder;
-	}
+  /**
+   * Constructor for rules that refer to a species.
+   * @param nodeObject
+   * @param index
+   * @param sp
+   * @param compartmentIndex
+   * @param hasZeroSpatialDimensions
+   * @param valueHolder
+   */
+  public RuleValue(ASTNodeValue nodeObject, int index,
+    Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder) {
+    this.nodeObject = nodeObject;
+    this.index = index;
+    isSpecies = true;
+    this.compartmentIndex = compartmentIndex;
+    hasOnlySubstanceUnits = sp.getHasOnlySubstanceUnits();
+    isSetInitialAmount = sp.isSetInitialAmount();
+    isSetInitialConcentration = sp.isSetInitialConcentration();
+    this.hasZeroSpatialDimensions = hasZeroSpatialDimensions;
+    this.valueHolder = valueHolder;
+  }
 
-	/**
-	 * Calculates the math of the rule and returns the new value of the variable.
-	 * @param time
-	 * @return value the computed value of the variable
-	 */
-	protected double processAssignmentVariable(double time) {
-		value = nodeObject.compileDouble(time, 0d);
-		if (isSpecies && !hasZeroSpatialDimensions) {
-			double compartmentValue = valueHolder
-					.getCurrentValueOf(compartmentIndex);
-			if (isSetInitialAmount && !hasOnlySubstanceUnits) {
-				value = value * compartmentValue;
+  /**
+   * Calculates the math of the rule and returns the new value of the variable.
+   * @param time
+   * @return value the computed value of the variable
+   */
+  protected double processAssignmentVariable(double time) {
+    value = nodeObject.compileDouble(time, 0d);
+    if (isSpecies && !hasZeroSpatialDimensions) {
+      double compartmentValue = valueHolder
+          .getCurrentValueOf(compartmentIndex);
+      if (isSetInitialAmount && !hasOnlySubstanceUnits) {
+        value = value * compartmentValue;
 
-			}
-			else if (isSetInitialConcentration && hasOnlySubstanceUnits) {
-				value = value / compartmentValue;
-			} 
-		}
-		return value;
-	}
+      }
+      else if (isSetInitialConcentration && hasOnlySubstanceUnits) {
+        value = value / compartmentValue;
+      }
+    }
+    return value;
+  }
 
-	/**
-	 * Returns the value of the rule.
-	 * @return value
-	 */
-	public double getValue() {
-		return value;
-	}
+  /**
+   * Returns the value of the rule.
+   * @return value
+   */
+  public double getValue() {
+    return value;
+  }
 
-	/**
-	 * Returns the index of the variable in the Y vector of the value holder.
-	 * @return index
-	 */
-	public int getIndex() {
-		return index;
-	}
+  /**
+   * Returns the index of the variable in the Y vector of the value holder.
+   * @return index
+   */
+  public int getIndex() {
+    return index;
+  }
+
 }

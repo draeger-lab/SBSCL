@@ -21,7 +21,9 @@
  * ---------------------------------------------------------------------
  */
 
-/** 
+/**
  * Classes that contain several mathematical operations.
+ * 
+ * @version $Rev$
  */
 package org.simulator.math;

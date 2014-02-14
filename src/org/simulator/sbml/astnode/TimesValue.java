@@ -32,21 +32,21 @@ import org.sbml.jsbml.ASTNode;
  */
 public class TimesValue extends ASTNodeValue{
 
-	/**
-	 * Initializes a new instance with the interpreter and ASTNode given
-	 * @param interpreter
-	 * @param node
-	 */
-	public TimesValue(ASTNodeInterpreter interpreter, ASTNode node) {
-		super(interpreter, node);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
-	 */
-	@Override
-	protected void computeDoubleValue(double delay) {
-		doubleValue = interpreter.times(children, numChildren, time, delay);
-	}
+  /**
+   * Initializes a new instance with the interpreter and ASTNode given
+   * @param interpreter
+   * @param node
+   */
+  public TimesValue(ASTNodeInterpreter interpreter, ASTNode node) {
+    super(interpreter, node);
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+   */
+  @Override
+  protected void computeDoubleValue(double delay) {
+    doubleValue = interpreter.times(children, numChildren, time, delay);
+  }
 
 }

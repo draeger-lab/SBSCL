@@ -30,26 +30,26 @@ package org.simulator.math;
  * @since 1.0
  */
 public class ManhattanDistance extends N_Metric {
-	
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7863697829237313786L;
 
-	/**
-	 * Initializes a new distance object
-	 */
-	public ManhattanDistance() {
-		super(1d);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.N_Metric#setRoot(double)
-	 */
-	@Override
-	public void setRoot(double root) {
-		// root should not be changed
-	}
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -7863697829237313786L;
+
+  /**
+   * Initializes a new distance object
+   */
+  public ManhattanDistance() {
+    super(1d);
+  }
+
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.N_Metric#setRoot(double)
+   */
+  @Override
+  public void setRoot(double root) {
+    // root should not be changed
+  }
 
 }

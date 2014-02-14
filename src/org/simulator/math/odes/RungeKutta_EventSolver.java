@@ -25,7 +25,6 @@ package org.simulator.math.odes;
 import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.Mathematics;
 
-
 /**
  * Runge-Kutta method.
  * 
@@ -35,120 +34,124 @@ import org.simulator.math.Mathematics;
  */
 public class RungeKutta_EventSolver extends AbstractDESSolver {
 
-	/**
-	 * Generated serial version identifier
-	 */
-	private static final long serialVersionUID = -2034495479346567501L;
+  /**
+   * Generated serial version identifier
+   */
+  private static final long serialVersionUID = -2034495479346567501L;
 
-	/**
-	 * Stores temporary results for the fourth-order Runge-Kutta method.
-	 */
-	transient protected double[][] kVals = null;
-	/**
-	 * Helper variable for the k values.
-	 */
-	transient protected double[] kHelp;
+  /**
+   * Stores temporary results for the fourth-order Runge-Kutta method.
+   */
+  transient protected double[][] kVals = null;
+  /**
+   * Helper variable for the k values.
+   */
+  transient protected double[] kHelp;
 
-	/**
-	 * default constructor
-	 */
-	public RungeKutta_EventSolver() {
-		super();
-	}
-	
-	/**
-	 * 
-	 * @param stepSize
-	 */
-	public RungeKutta_EventSolver(double stepSize) {
-		super(stepSize);
-	}
-	
-	/**
-	 * 
-	 * @param stepSize
-	 * @param nonnegative
-	 *            the nonnegative flag of the super class
-	 * @see AbstractDESSolver
-	 */
-	public RungeKutta_EventSolver(double stepSize, boolean nonnegative) {
-		super(stepSize, nonnegative);
-	}
-	
-	/**
-	 * clone constructor
-	 * @param rkEventSolver
-	 */
-	public RungeKutta_EventSolver(RungeKutta_EventSolver rkEventSolver) {
-		super(rkEventSolver);
-	}
+  /**
+   * default constructor
+   */
+  public RungeKutta_EventSolver() {
+    super();
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.AbstractDESSolver#computeChange(org.simulator.math.odes.DESystem, double[], double, double, double[], boolean)
-	 */
-	public double[] computeChange(DESystem DES, double[] yTemp, double t,
-			double h, double[] change, boolean steadyState) throws DerivativeException {
-		int dim = DES.getDimension();
-		if ((kVals == null) || (kVals.length != 4) || (kVals[0].length != dim)) {
-			// "static" vectors which are allocated only once
-			kVals = new double[4][dim];
-			kHelp = new double[dim];
-		}
+  /**
+   * 
+   * @param stepSize
+   */
+  public RungeKutta_EventSolver(double stepSize) {
+    super(stepSize);
+  }
 
-		// k0
-		DES.computeDerivatives(t, yTemp, kVals[0]);
-		Mathematics.svMult(h, kVals[0], kVals[0]);
+  /**
+   * 
+   * @param stepSize
+   * @param nonnegative
+   *            the nonnegative flag of the super class
+   * @see AbstractDESSolver
+   */
+  public RungeKutta_EventSolver(double stepSize, boolean nonnegative) {
+    super(stepSize, nonnegative);
+  }
 
-		// k1
-		Mathematics.svvAddScaled(0.5, kVals[0], yTemp, kHelp);
-		DES.computeDerivatives(t + h / 2, kHelp, kVals[1]);
-		Mathematics.svMult(h, kVals[1], kVals[1]);
+  /**
+   * clone constructor
+   * @param rkEventSolver
+   */
+  public RungeKutta_EventSolver(RungeKutta_EventSolver rkEventSolver) {
+    super(rkEventSolver);
+  }
 
-		// k2
-		Mathematics.svvAddScaled(0.5, kVals[1], yTemp, kHelp);
-		DES.computeDerivatives(t + h / 2, kHelp, kVals[2]);
-		Mathematics.svMult(h, kVals[2], kVals[2]);
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.AbstractDESSolver#computeChange(org.simulator.math.odes.DESystem, double[], double, double, double[], boolean)
+   */
+  @Override
+  public double[] computeChange(DESystem DES, double[] yTemp, double t,
+    double h, double[] change, boolean steadyState) throws DerivativeException {
+    int dim = DES.getDimension();
+    if ((kVals == null) || (kVals.length != 4) || (kVals[0].length != dim)) {
+      // "static" vectors which are allocated only once
+      kVals = new double[4][dim];
+      kHelp = new double[dim];
+    }
 
-		// k3
-		Mathematics.vvAdd(yTemp, kVals[2], kHelp);
-		DES.computeDerivatives(t + h, kHelp, kVals[3]);
-		Mathematics.svMult(h, kVals[3], kVals[3]);
+    // k0
+    DES.computeDerivatives(t, yTemp, kVals[0]);
+    Mathematics.svMult(h, kVals[0], kVals[0]);
 
-		// combining all k's
-		Mathematics.svvAddScaled(2, kVals[2], kVals[3], kVals[3]);
-		Mathematics.svvAddScaled(2, kVals[1], kVals[3], kVals[2]);
-		Mathematics.svvAddAndScale(1d / 6d, kVals[0], kVals[2], change);
+    // k1
+    Mathematics.svvAddScaled(0.5, kVals[0], yTemp, kHelp);
+    DES.computeDerivatives(t + h / 2, kHelp, kVals[1]);
+    Mathematics.svMult(h, kVals[1], kVals[1]);
 
-		return change;
-	}
+    // k2
+    Mathematics.svvAddScaled(0.5, kVals[1], yTemp, kHelp);
+    DES.computeDerivatives(t + h / 2, kHelp, kVals[2]);
+    Mathematics.svMult(h, kVals[2], kVals[2]);
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.AbstractDESSolver#getName()
-	 */
-	public String getName() {
-		return "4th order Runge-Kutta event solver";
-	}
+    // k3
+    Mathematics.vvAdd(yTemp, kVals[2], kHelp);
+    DES.computeDerivatives(t + h, kHelp, kVals[3]);
+    Mathematics.svMult(h, kVals[3], kVals[3]);
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.AbstractDESSolver#clone()
-	 */
-	public RungeKutta_EventSolver clone() {
-		return new RungeKutta_EventSolver(this);
-	}
+    // combining all k's
+    Mathematics.svvAddScaled(2, kVals[2], kVals[3], kVals[3]);
+    Mathematics.svvAddScaled(2, kVals[1], kVals[3], kVals[2]);
+    Mathematics.svvAddAndScale(1d / 6d, kVals[0], kVals[2], change);
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.AbstractDESSolver#hasSolverEventProcessing()
-	 */
-	protected boolean hasSolverEventProcessing() {
-		return false;
-	}
+    return change;
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
-	 */
-	//@Override
-	public int getKiSAOterm() {
-		return 64;
-	}
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.AbstractDESSolver#getName()
+   */
+  @Override
+  public String getName() {
+    return "4th order Runge-Kutta event solver";
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.AbstractDESSolver#clone()
+   */
+  @Override
+  public RungeKutta_EventSolver clone() {
+    return new RungeKutta_EventSolver(this);
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.AbstractDESSolver#hasSolverEventProcessing()
+   */
+  @Override
+  protected boolean hasSolverEventProcessing() {
+    return false;
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
+   */
+  @Override
+  public int getKiSAOterm() {
+    return 64;
+  }
 
 }

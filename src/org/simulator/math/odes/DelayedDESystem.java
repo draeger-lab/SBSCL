@@ -31,11 +31,11 @@ package org.simulator.math.odes;
  */
 public interface DelayedDESystem extends DESystem {
 
-	/**
-	 * 
-	 * @param dvh
-	 *            the delay value holder to be registered
-	 */
-	public void registerDelayValueHolder(DelayValueHolder dvh);
-  
+  /**
+   * 
+   * @param dvh
+   *            the delay value holder to be registered
+   */
+  public void registerDelayValueHolder(DelayValueHolder dvh);
+
 }

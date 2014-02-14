@@ -35,82 +35,86 @@ import org.simulator.math.Mathematics;
  */
 public class EulerMethod extends AbstractDESSolver {
 
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = 9094797527506196715L;
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = 9094797527506196715L;
 
-	/**
-	 * default constructor
-	 */
-	public EulerMethod() {
-		super();
-	}
+  /**
+   * default constructor
+   */
+  public EulerMethod() {
+    super();
+  }
 
-	/**
-	 * 
-	 * @param stepSize
-	 */
-	public EulerMethod(double stepSize) {
-		super(stepSize);
-	}
-	
-	/**
-	 * 
-	 * @param stepSize
-	 * @param nonnegative
-	 *            the nonnegative flag of the super class
-	 * @see AbstractDESSolver
-	 */
-	public EulerMethod(double stepSize, boolean nonnegative) {
-		super(stepSize, nonnegative);
-	}
+  /**
+   * 
+   * @param stepSize
+   */
+  public EulerMethod(double stepSize) {
+    super(stepSize);
+  }
 
-	/**
-	 * clone constructor
-	 * @param eulerMethod
-	 */
-	public EulerMethod(EulerMethod eulerMethod) {
-		super(eulerMethod);
-	}
+  /**
+   * 
+   * @param stepSize
+   * @param nonnegative
+   *            the nonnegative flag of the super class
+   * @see AbstractDESSolver
+   */
+  public EulerMethod(double stepSize, boolean nonnegative) {
+    super(stepSize, nonnegative);
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.AbstractDESSolver#getName()
-	 */
-	public String getName() {
-		return "Euler's method";
-	}
+  /**
+   * clone constructor
+   * @param eulerMethod
+   */
+  public EulerMethod(EulerMethod eulerMethod) {
+    super(eulerMethod);
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.AbstractDESSolver#computeChange(org.simulator.math.odes.DESystem, double[], double, double, double[], boolean)
-	 */
-	public double[] computeChange(DESystem DES, double[] yPrev, double t,
-			double stepSize, double[] change, boolean steadyState) throws DerivativeException {
-		DES.computeDerivatives(t, yPrev, change);
-		Mathematics.scale(stepSize, change);
-		return change;
-	}
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.AbstractDESSolver#getName()
+   */
+  @Override
+  public String getName() {
+    return "Euler's method";
+  }
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#clone()
-	 */
-	public EulerMethod clone() {
-		return new EulerMethod(this);
-	}
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.AbstractDESSolver#computeChange(org.simulator.math.odes.DESystem, double[], double, double, double[], boolean)
+   */
+  @Override
+  public double[] computeChange(DESystem DES, double[] yPrev, double t,
+    double stepSize, double[] change, boolean steadyState) throws DerivativeException {
+    DES.computeDerivatives(t, yPrev, change);
+    Mathematics.scale(stepSize, change);
+    return change;
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.AbstractDESSolver#hasSolverEventProcessing()
-	 */
-	protected boolean hasSolverEventProcessing() {
-		return false;
-	}
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.odes.AbstractDESSolver#clone()
+   */
+  @Override
+  public EulerMethod clone() {
+    return new EulerMethod(this);
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
-	 */
-	//@Override
-	public int getKiSAOterm() {
-		return 261;
-	}
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.AbstractDESSolver#hasSolverEventProcessing()
+   */
+  @Override
+  protected boolean hasSolverEventProcessing() {
+    return false;
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
+   */
+  @Override
+  public int getKiSAOterm() {
+    return 261;
+  }
 
 }

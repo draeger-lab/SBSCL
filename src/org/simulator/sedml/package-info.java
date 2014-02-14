@@ -21,13 +21,13 @@
  * ---------------------------------------------------------------------
  */
 
-/** 
+/**
  * <p>Classes for reading and executing
  * <a href="http://sed-ml.org/" target="_blank">SED-ML</a> files.
  * The <a href="http://www.jlibsedml.org">jlibsedml</a> library
  * is used to perform these operations.
  * <p>
- * For more information about SED-ML please visit 
+ * For more information about SED-ML please visit
  * <a href="http://sed-ml.org" target="_blank">http://sed-ml.org</a>.
  * <p>
  * Classes for storing and interpreting an <a href="http://sbml.org">SBML</a>
@@ -35,5 +35,6 @@
  * that can return the current vector of derivatives to the solver.
  * 
  * @author Richard Adams
+ * @version $Rev$
  */
 package org.simulator.sedml;
