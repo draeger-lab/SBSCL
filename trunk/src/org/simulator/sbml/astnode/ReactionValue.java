@@ -35,17 +35,17 @@ import org.simulator.sbml.SBMLinterpreter;
  * @since 1.0
  */
 public class ReactionValue extends ASTNodeValue {
-	
+
   /**
    * The corresponding reaction
    */
   protected Reaction r;
-  
+
   /**
    * The object hat refers to the kinetic law of the reaction
    */
   protected ASTNodeValue kineticLawUserObject;
-  
+
   /**
    * 
    * @param interpreter
@@ -57,12 +57,12 @@ public class ReactionValue extends ASTNodeValue {
     super(interpreter, node);
     this.r = r;
     if (r.isSetKineticLaw()) {
-      this.kineticLawUserObject = (ASTNodeValue) r.getKineticLaw().getMath().getUserObject(SBMLinterpreter.TEMP_VALUE);
+      kineticLawUserObject = (ASTNodeValue) r.getKineticLaw().getMath().getUserObject(SBMLinterpreter.TEMP_VALUE);
     } else {
-      this.kineticLawUserObject = null;
+      kineticLawUserObject = null;
     }
   }
-  
+
   /* (non-Javadoc)
    * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
    */

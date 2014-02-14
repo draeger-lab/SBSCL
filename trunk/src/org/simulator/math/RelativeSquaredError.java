@@ -22,7 +22,6 @@
  */
 package org.simulator.math;
 
-
 /**
  * An implementation of the relative squared error with a default value to avoid
  * division by zero. Actually, the exponent in this error function is 2 (squared
@@ -35,33 +34,33 @@ package org.simulator.math;
  */
 public class RelativeSquaredError extends N_Metric {
 
-	/**
-	 * Generated serial identifier.
-	 */
-	private static final long serialVersionUID = 1643317436479699973L;
+  /**
+   * Generated serial identifier.
+   */
+  private static final long serialVersionUID = 1643317436479699973L;
 
-	/**
-	 * Constructs a new {@link RelativeSquaredError}. Here the root is the
-	 * default value to be returned by the distance function.
-	 */
-	public RelativeSquaredError() {
-		super(2d);
-	}
+  /**
+   * Constructs a new {@link RelativeSquaredError}. Here the root is the
+   * default value to be returned by the distance function.
+   */
+  public RelativeSquaredError() {
+    super(2d);
+  }
 
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.math.Distance#additiveTerm(double, double, double, double)
-	 */
-	@Override
-	double additiveTerm(double x, double y, double root, double defaultValue) {
-		return (y != 0d) ? Math.pow(Math.abs(x - y) / y, root) : Math.abs(x - y);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.math.NMetric#overallDistance()
-	 */
-	@Override
-	double overallDistance(double distance, double root, double defaultValue) {
-		return distance;
-	}
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.math.Distance#additiveTerm(double, double, double, double)
+   */
+  @Override
+  double additiveTerm(double x, double y, double root, double defaultValue) {
+    return (y != 0d) ? Math.pow(Math.abs(x - y) / y, root) : Math.abs(x - y);
+  }
+
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.math.NMetric#overallDistance()
+   */
+  @Override
+  double overallDistance(double distance, double root, double defaultValue) {
+    return distance;
+  }
 
 }

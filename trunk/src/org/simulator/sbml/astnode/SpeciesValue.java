@@ -35,153 +35,153 @@ import org.simulator.sbml.SBMLValueHolder;
  * @since 1.0
  */
 public class SpeciesValue extends ASTNodeValue {
-	/**
-	 * The corresponding species
-	 */
-	protected Species s;
+  /**
+   * The corresponding species
+   */
+  protected Species s;
 
-	/**
-	 * The id of the species
-	 */
-	protected String id;
+  /**
+   * The id of the species
+   */
+  protected String id;
 
-	/**
-	 * The value holder that stores the current simulation results
-	 */
-	protected SBMLValueHolder valueHolder;
+  /**
+   * The value holder that stores the current simulation results
+   */
+  protected SBMLValueHolder valueHolder;
 
-	/**
-	 * Is the Y value of the species referring to an amount?
-	 */
-	protected boolean isAmount;
+  /**
+   * Is the Y value of the species referring to an amount?
+   */
+  protected boolean isAmount;
 
-	/**
-	 * The hasOnlySubstanceUnits attribute of the species
-	 */
-	protected boolean hasOnlySubstanceUnits;
+  /**
+   * The hasOnlySubstanceUnits attribute of the species
+   */
+  protected boolean hasOnlySubstanceUnits;
 
-	/**
-	 * Has the species an initial concentration set?
-	 */
-	protected boolean isSetInitialConcentration;
+  /**
+   * Has the species an initial concentration set?
+   */
+  protected boolean isSetInitialConcentration;
 
-	/**
-	 * The position of the species value in the Y vector of the value holder
-	 */
-	protected int position;
+  /**
+   * The position of the species value in the Y vector of the value holder
+   */
+  protected int position;
 
-	/**
-	 * The position of the compartment value of the species in the Y vector of
-	 * the value holder
-	 */
-	protected int compartmentPosition;
+  /**
+   * The position of the compartment value of the species in the Y vector of
+   * the value holder
+   */
+  protected int compartmentPosition;
 
-	/**
-	 * Has the compartment of the species no spatial dimensions?
-	 */
-	protected boolean zeroSpatialDimensions;
+  /**
+   * Has the compartment of the species no spatial dimensions?
+   */
+  protected boolean zeroSpatialDimensions;
 
-	/**
-	 * The id of the compartment of the species
-	 */
-	private String compartmentID;
+  /**
+   * The id of the compartment of the species
+   */
+  private String compartmentID;
 
-	/**
-	 * 
-	 * @param interpreter
-	 * @param node
-	 * @param s
-	 * @param valueHolder
-	 * @param position
-	 * @param compartmentPosition
-	 * @param compartmentID
-	 * @param zeroSpatialDimensions
-	 * @param isAmount
-	 */
-	public SpeciesValue(ASTNodeInterpreter interpreter, ASTNode node,
-			Species s, SBMLValueHolder valueHolder, int position, int compartmentPosition, String compartmentID, boolean zeroSpatialDimensions, boolean isAmount) {
-		super(interpreter, node);
-		this.s = s;
-		this.id = s.getId();
-		this.valueHolder = valueHolder;
-		this.isAmount = isAmount;
-		this.isSetInitialConcentration = s.isSetInitialConcentration();
-		this.hasOnlySubstanceUnits = s.getHasOnlySubstanceUnits();
-		this.position = position;
-		this.compartmentPosition = compartmentPosition;
-		this.compartmentID = compartmentID;
-		isConstant = s.getConstant();
-		this.zeroSpatialDimensions = zeroSpatialDimensions;
-	}
+  /**
+   * 
+   * @param interpreter
+   * @param node
+   * @param s
+   * @param valueHolder
+   * @param position
+   * @param compartmentPosition
+   * @param compartmentID
+   * @param zeroSpatialDimensions
+   * @param isAmount
+   */
+  public SpeciesValue(ASTNodeInterpreter interpreter, ASTNode node,
+    Species s, SBMLValueHolder valueHolder, int position, int compartmentPosition, String compartmentID, boolean zeroSpatialDimensions, boolean isAmount) {
+    super(interpreter, node);
+    this.s = s;
+    id = s.getId();
+    this.valueHolder = valueHolder;
+    this.isAmount = isAmount;
+    isSetInitialConcentration = s.isSetInitialConcentration();
+    hasOnlySubstanceUnits = s.getHasOnlySubstanceUnits();
+    this.position = position;
+    this.compartmentPosition = compartmentPosition;
+    this.compartmentID = compartmentID;
+    isConstant = s.getConstant();
+    this.zeroSpatialDimensions = zeroSpatialDimensions;
+  }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
-	 */
-	@Override
-	protected void computeDoubleValue(double delay) {
-		if (delay == 0) {
-			if (isAmount && !hasOnlySubstanceUnits) {
-				double compartmentValue = valueHolder
-						.getCurrentValueOf(compartmentPosition);
-				if ((compartmentValue == 0d) || zeroSpatialDimensions) {
-					doubleValue = valueHolder.getCurrentValueOf(position);
-				} else {
-					doubleValue = valueHolder.getCurrentValueOf(position)
-							/ compartmentValue;
+  /*
+   * (non-Javadoc)
+   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+   */
+  @Override
+  protected void computeDoubleValue(double delay) {
+    if (delay == 0) {
+      if (isAmount && !hasOnlySubstanceUnits) {
+        double compartmentValue = valueHolder
+            .getCurrentValueOf(compartmentPosition);
+        if ((compartmentValue == 0d) || zeroSpatialDimensions) {
+          doubleValue = valueHolder.getCurrentValueOf(position);
+        } else {
+          doubleValue = valueHolder.getCurrentValueOf(position)
+              / compartmentValue;
 
-				}
-			} else if (!isAmount && hasOnlySubstanceUnits) {
-				double compartmentValue = valueHolder
-						.getCurrentValueOf(compartmentPosition);
-				if ((compartmentValue == 0d) || zeroSpatialDimensions) {
-					doubleValue = valueHolder.getCurrentValueOf(position);
-				} else {
-					doubleValue = valueHolder.getCurrentValueOf(position)
-							* compartmentValue;
-				}
-			} else {
-				doubleValue = valueHolder.getCurrentValueOf(position);
+        }
+      } else if (!isAmount && hasOnlySubstanceUnits) {
+        double compartmentValue = valueHolder
+            .getCurrentValueOf(compartmentPosition);
+        if ((compartmentValue == 0d) || zeroSpatialDimensions) {
+          doubleValue = valueHolder.getCurrentValueOf(position);
+        } else {
+          doubleValue = valueHolder.getCurrentValueOf(position)
+              * compartmentValue;
+        }
+      } else {
+        doubleValue = valueHolder.getCurrentValueOf(position);
 
-			}
-		}
-		else {
-			double valueTime = interpreter.symbolTime() - delay;
+      }
+    }
+    else {
+      double valueTime = interpreter.symbolTime() - delay;
 
 
-			if (isAmount && !hasOnlySubstanceUnits) {
-				double compartmentValue = valueHolder
-						.computeDelayedValue(valueTime, compartmentID, null, null, 0);
-				if ((compartmentValue == 0d) || zeroSpatialDimensions) {
-					doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
-				} else {
-					doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0)
-							/ compartmentValue;
+      if (isAmount && !hasOnlySubstanceUnits) {
+        double compartmentValue = valueHolder
+            .computeDelayedValue(valueTime, compartmentID, null, null, 0);
+        if ((compartmentValue == 0d) || zeroSpatialDimensions) {
+          doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
+        } else {
+          doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0)
+              / compartmentValue;
 
-				}
-			} else if (!isAmount && hasOnlySubstanceUnits) {
-				double compartmentValue = valueHolder
-						.computeDelayedValue(valueTime, compartmentID, null, null, 0);
-				if ((compartmentValue == 0d) || zeroSpatialDimensions) {
-					doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
-				} else {
-					doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0)
-							* compartmentValue;
-				}
-			} else {
-				doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
+        }
+      } else if (!isAmount && hasOnlySubstanceUnits) {
+        double compartmentValue = valueHolder
+            .computeDelayedValue(valueTime, compartmentID, null, null, 0);
+        if ((compartmentValue == 0d) || zeroSpatialDimensions) {
+          doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
+        } else {
+          doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0)
+              * compartmentValue;
+        }
+      } else {
+        doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
 
-			}
-		}
-		if(isConstant) {
-			if((valueHolder.getCurrentTime() > 0) && (delay == 0)) {
-				alreadyProcessed = true;
-			}
-			else {
-				alreadyProcessed = false;
-			}
-		}
+      }
+    }
+    if (isConstant) {
+      if ((valueHolder.getCurrentTime() > 0) && (delay == 0)) {
+        alreadyProcessed = true;
+      }
+      else {
+        alreadyProcessed = false;
+      }
+    }
 
-	}
+  }
 
 }

@@ -33,75 +33,78 @@ import org.apache.commons.math.ode.nonstiff.GraggBulirschStoerIntegrator;
  * @since 0.9
  */
 public class GraggBulirschStoerSolver extends FirstOrderSolver {
-    
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -2601862472447650296L;
-	
-	/**
-	 * default constructor
-	 */
-	public GraggBulirschStoerSolver() {
-	    super();
-	}
-	
-	/**
-	 * 
-	 * @param stepSize
-	 */
-	public GraggBulirschStoerSolver(double stepSize) {
-		super(stepSize);
-	}
-	
-	/**
-	 * 
-	 * @param stepSize
-	 *            the nonnegative flag of the super class
-	 * @param nonnegative
-	 * @see AbstractDESSolver
-	 */
-	public GraggBulirschStoerSolver(double stepSize, boolean nonnegative) {
-		super(stepSize, nonnegative);
-		
-	}
-	
-	/**
-	 * clone constructor
-	 * @param solver
-	 */
-	public GraggBulirschStoerSolver(GraggBulirschStoerSolver solver) {
-		super(solver);
-		this.integrator = solver.getIntegrator();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.FirstOrderSolver#clone()
-	 */
-	public GraggBulirschStoerSolver clone() {
-		return new GraggBulirschStoerSolver(this);
-	}
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.FirstOrderSolver#createIntegrator()
-	 */
-	protected void createIntegrator() {
-		integrator = new GraggBulirschStoerIntegrator(Math.min(1e-8, Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
-	}
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -2601862472447650296L;
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.AbstractDESSolver#getName()
-	 */
-	public String getName() {
-		return "Gragg-Bulirsch-Stoer solver";
-	}
+  /**
+   * default constructor
+   */
+  public GraggBulirschStoerSolver() {
+    super();
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
-	 */
-	//@Override
-	public int getKiSAOterm() {
-		return 379;
-	}
+  /**
+   * 
+   * @param stepSize
+   */
+  public GraggBulirschStoerSolver(double stepSize) {
+    super(stepSize);
+  }
+
+  /**
+   * 
+   * @param stepSize
+   *            the nonnegative flag of the super class
+   * @param nonnegative
+   * @see AbstractDESSolver
+   */
+  public GraggBulirschStoerSolver(double stepSize, boolean nonnegative) {
+    super(stepSize, nonnegative);
+
+  }
+
+  /**
+   * clone constructor
+   * @param solver
+   */
+  public GraggBulirschStoerSolver(GraggBulirschStoerSolver solver) {
+    super(solver);
+    integrator = solver.getIntegrator();
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.FirstOrderSolver#clone()
+   */
+  @Override
+  public GraggBulirschStoerSolver clone() {
+    return new GraggBulirschStoerSolver(this);
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.FirstOrderSolver#createIntegrator()
+   */
+  @Override
+  protected void createIntegrator() {
+    integrator = new GraggBulirschStoerIntegrator(Math.min(1e-8, Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.AbstractDESSolver#getName()
+   */
+  @Override
+  public String getName() {
+    return "Gragg-Bulirsch-Stoer solver";
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
+   */
+  @Override
+  public int getKiSAOterm() {
+    return 379;
+  }
 
 }

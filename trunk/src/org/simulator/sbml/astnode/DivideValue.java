@@ -36,24 +36,25 @@ import org.sbml.jsbml.SBMLException;
  */
 public class DivideValue extends ASTNodeValue{
 
-	/**
-	 * @param interpreter
-	 * @param node
-	 */
-	public DivideValue(ASTNodeInterpreter interpreter, ASTNode node) {
-		super(interpreter, node);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
-	 */
-	protected void computeDoubleValue(double delay) {
-		if (numChildren != 2) { 
-        	throw new SBMLException(MessageFormat.format(
-                "Fractions must have one numerator and one denominator, here {0,number,integer} elements are given.",
-                node.getChildCount())); 
-        }
-        doubleValue = interpreter.frac(leftChild, rightChild, time, delay);
-	}
+  /**
+   * @param interpreter
+   * @param node
+   */
+  public DivideValue(ASTNodeInterpreter interpreter, ASTNode node) {
+    super(interpreter, node);
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+   */
+  @Override
+  protected void computeDoubleValue(double delay) {
+    if (numChildren != 2) {
+      throw new SBMLException(MessageFormat.format(
+        "Fractions must have one numerator and one denominator, here {0,number,integer} elements are given.",
+        node.getChildCount()));
+    }
+    doubleValue = interpreter.frac(leftChild, rightChild, time, delay);
+  }
 
 }

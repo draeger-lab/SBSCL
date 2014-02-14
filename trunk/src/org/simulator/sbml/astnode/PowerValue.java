@@ -32,20 +32,20 @@ import org.sbml.jsbml.ASTNode;
  */
 public class PowerValue extends ASTNodeValue {
 
-	/**
-	 * @param interpreter
-	 * @param node
-	 */
-	public PowerValue(ASTNodeInterpreter interpreter, ASTNode node) {
-		super(interpreter, node);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
-	 */
-	@Override
-	protected void computeDoubleValue(double delay) {
-		doubleValue = interpreter.pow(leftChild, rightChild, time, delay);
-    }
+  /**
+   * @param interpreter
+   * @param node
+   */
+  public PowerValue(ASTNodeInterpreter interpreter, ASTNode node) {
+    super(interpreter, node);
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+   */
+  @Override
+  protected void computeDoubleValue(double delay) {
+    doubleValue = interpreter.pow(leftChild, rightChild, time, delay);
+  }
 
 }

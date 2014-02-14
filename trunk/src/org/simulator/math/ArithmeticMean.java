@@ -31,20 +31,21 @@ package org.simulator.math;
  */
 public class ArithmeticMean extends MeanFunction {
 
-	/**
-	 * Generated serial identifier.
-	 */
-	private static final long serialVersionUID = 1738283911802695133L;
-	
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.MeanFunction#computeMean(double[])
-	 */
-	public double computeMean(double... distances) {
-		double sum = 0;
-		for (double distance: distances) {
-			sum += distance;
-		}
-		return sum / distances.length;
-	}
+  /**
+   * Generated serial identifier.
+   */
+  private static final long serialVersionUID = 1738283911802695133L;
+
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.MeanFunction#computeMean(double[])
+   */
+  @Override
+  public double computeMean(double... distances) {
+    double sum = 0;
+    for (double distance: distances) {
+      sum += distance;
+    }
+    return sum / distances.length;
+  }
 
 }

@@ -36,36 +36,36 @@ import org.simulator.sbml.SBMLValueHolder;
  */
 public class SpeciesReferenceValue extends ASTNodeValue {
 
-	/**
-	 * The value holder that stores the current simulation values
-	 */
-	private SBMLValueHolder valueHolder;
+  /**
+   * The value holder that stores the current simulation values
+   */
+  private SBMLValueHolder valueHolder;
 
-	/**
-	 * The id of the species reference
-	 */
-	private String id;
+  /**
+   * The id of the species reference
+   */
+  private String id;
 
-	/**
-	 * 
-	 * @param interpreter
-	 * @param node
-	 * @param sr
-	 * @param valueHolder
-	 */
-	public SpeciesReferenceValue(ASTNodeInterpreter interpreter,
-			ASTNode node, SpeciesReference sr, SBMLValueHolder valueHolder) {
-		super(interpreter, node);
-		this.id=sr.getId();
-		this.valueHolder=valueHolder;
-	}
+  /**
+   * 
+   * @param interpreter
+   * @param node
+   * @param sr
+   * @param valueHolder
+   */
+  public SpeciesReferenceValue(ASTNodeInterpreter interpreter,
+    ASTNode node, SpeciesReference sr, SBMLValueHolder valueHolder) {
+    super(interpreter, node);
+    id=sr.getId();
+    this.valueHolder=valueHolder;
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
-	 */
-	@Override
-	protected void computeDoubleValue(double delay) {
-		doubleValue = valueHolder.getCurrentStoichiometry(id);
-	}
+  /* (non-Javadoc)
+   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+   */
+  @Override
+  protected void computeDoubleValue(double delay) {
+    doubleValue = valueHolder.getCurrentStoichiometry(id);
+  }
 
 }

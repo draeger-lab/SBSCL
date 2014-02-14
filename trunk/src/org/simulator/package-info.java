@@ -21,9 +21,10 @@
  * ---------------------------------------------------------------------
  */
 
-/** 
+/**
  * This package simply contains a default main program to display very
- * basic licensing terms and other information. 
+ * basic licensing terms and other information.
+ * 
+ * @version $Rev$
  */
 package org.simulator;
-

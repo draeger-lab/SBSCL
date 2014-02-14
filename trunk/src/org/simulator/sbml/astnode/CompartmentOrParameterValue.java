@@ -29,7 +29,7 @@ import org.sbml.jsbml.Symbol;
 import org.simulator.sbml.SBMLValueHolder;
 
 /**
- * This class computes and stores values of {@link ASTNode}s that refer to a 
+ * This class computes and stores values of {@link ASTNode}s that refer to a
  * {@link Compartment} or a {@link Parameter}.
  * 
  * @author Roland Keller
@@ -37,64 +37,64 @@ import org.simulator.sbml.SBMLValueHolder;
  * @since 1.0
  */
 public class CompartmentOrParameterValue extends ASTNodeValue {
-	/**
-	 * The compartment or parameter the corresponding ASTNode is referring to
-	 */
-	protected Symbol sb;
+  /**
+   * The compartment or parameter the corresponding ASTNode is referring to
+   */
+  protected Symbol sb;
 
-	/**
-	 * The id of the compartment or parameter.
-	 */
-	protected String id;
+  /**
+   * The id of the compartment or parameter.
+   */
+  protected String id;
 
-	/**
-	 * The value holder that stores the current simulation results.
-	 */
-	protected SBMLValueHolder valueHolder;
+  /**
+   * The value holder that stores the current simulation results.
+   */
+  protected SBMLValueHolder valueHolder;
 
-	/**
-	 * The position of the current compartment/parameter value in the Y vector of the value holder
-	 */
-	protected int position;
+  /**
+   * The position of the current compartment/parameter value in the Y vector of the value holder
+   */
+  protected int position;
 
-	/**
-	 * 
-	 * @param interpreter
-	 * @param node
-	 * @param sb
-	 * @param valueHolder
-	 * @param position
-	 */
-	public CompartmentOrParameterValue(ASTNodeInterpreter interpreter, ASTNode node,
-			Symbol sb, SBMLValueHolder valueHolder, int position) {
-		super(interpreter, node);
-		this.sb = sb;
-		this.id=sb.getId();
-		isConstant = sb.getConstant();
-		this.valueHolder = valueHolder;
-		this.position=position;
-	}
+  /**
+   * 
+   * @param interpreter
+   * @param node
+   * @param sb
+   * @param valueHolder
+   * @param position
+   */
+  public CompartmentOrParameterValue(ASTNodeInterpreter interpreter, ASTNode node,
+    Symbol sb, SBMLValueHolder valueHolder, int position) {
+    super(interpreter, node);
+    this.sb = sb;
+    id=sb.getId();
+    isConstant = sb.getConstant();
+    this.valueHolder = valueHolder;
+    this.position=position;
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
-	 */
-	@Override
-	protected void computeDoubleValue(double delay) {
-		if (delay == 0) {
-			doubleValue = valueHolder.getCurrentValueOf(position);
-		}
-		else {
-			double valueTime = interpreter.symbolTime() - delay;
-			doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
-		}
-		if(isConstant) {
-			if((valueHolder.getCurrentTime() > 0) && (delay == 0)) {
-				alreadyProcessed = true;
-			}
-			else {
-				alreadyProcessed = false;
-			}
-		}
-	}
+  /* (non-Javadoc)
+   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+   */
+  @Override
+  protected void computeDoubleValue(double delay) {
+    if (delay == 0) {
+      doubleValue = valueHolder.getCurrentValueOf(position);
+    }
+    else {
+      double valueTime = interpreter.symbolTime() - delay;
+      doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
+    }
+    if (isConstant) {
+      if ((valueHolder.getCurrentTime() > 0) && (delay == 0)) {
+        alreadyProcessed = true;
+      }
+      else {
+        alreadyProcessed = false;
+      }
+    }
+  }
 
 }

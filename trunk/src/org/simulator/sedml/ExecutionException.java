@@ -32,17 +32,17 @@ package org.simulator.sedml;
  */
 public class ExecutionException extends RuntimeException {
 
-	/**
-	 * 
-	 * @param message
-	 */
-	public ExecutionException(String message) {
-		super(message);
-	}
+  /**
+   * 
+   * @param message
+   */
+  public ExecutionException(String message) {
+    super(message);
+  }
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
 }

@@ -20,7 +20,6 @@
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
-
 package org.simulator.sbml;
 
 import java.util.EventObject;
@@ -38,43 +37,43 @@ import org.sbml.jsbml.Constraint;
  */
 public class ConstraintEvent extends EventObject {
 
-	/**
-	 * Generated serial version identifier
-	 */
-	private static final long serialVersionUID = -7217087217464285486L;
-	 
-	/**
-	 * The point in time, at which a violation occurred.
-	 */
-	private double violationTime;
+  /**
+   * Generated serial version identifier
+   */
+  private static final long serialVersionUID = -7217087217464285486L;
 
-	/**
-	 * Creates a new {@link ConstraintEvent} for the given {@link Constraint}
-	 * and the given point in time.
-	 * 
-	 * @param source
-	 *            the {@link Constraint}, whose condition has been violated.
-	 * @param violationTime
-	 *            the simulation time, at which the violation occurred.
-	 */
-	public ConstraintEvent(Constraint source, double violationTime) {
-		super(source);
-		this.violationTime = violationTime;
-	}
+  /**
+   * The point in time, at which a violation occurred.
+   */
+  private double violationTime;
 
-	/**
-	 * @return the point in time at which this violation occurred.
-	 */
-	public double getTime() {
-		return this.violationTime;
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.util.EventObject#getSource()
-	 */
-	@Override
-	public Constraint getSource() {
-		return (Constraint) super.getSource();
-	}
+  /**
+   * Creates a new {@link ConstraintEvent} for the given {@link Constraint}
+   * and the given point in time.
+   * 
+   * @param source
+   *            the {@link Constraint}, whose condition has been violated.
+   * @param violationTime
+   *            the simulation time, at which the violation occurred.
+   */
+  public ConstraintEvent(Constraint source, double violationTime) {
+    super(source);
+    this.violationTime = violationTime;
+  }
+
+  /**
+   * @return the point in time at which this violation occurred.
+   */
+  public double getTime() {
+    return violationTime;
+  }
+
+  /* (non-Javadoc)
+   * @see java.util.EventObject#getSource()
+   */
+  @Override
+  public Constraint getSource() {
+    return (Constraint) super.getSource();
+  }
 
 }

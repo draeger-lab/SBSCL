@@ -25,7 +25,7 @@ package org.simulator.math.odes;
 import org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegrator;
 
 /**
- * This class is a wrapper for the Adams-Moulton solver in the 
+ * This class is a wrapper for the Adams-Moulton solver in the
  * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
  * 
  * @author Roland Keller
@@ -34,74 +34,76 @@ import org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegrator;
  */
 public class AdamsMoultonSolver extends FirstOrderSolver {
 
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -2601862472447650296L;
-	
-	/**
-	 * 
-	 */
-	public AdamsMoultonSolver() {
-	    super();
-	}
-	
-	/**
-	 * clone constructor
-	 * @param adamsSolver
-	 */
-	public AdamsMoultonSolver(AdamsMoultonSolver adamsSolver) {
-		super(adamsSolver);
-		this.integrator=adamsSolver.getIntegrator();
-	}
-	
-	/**
-	 * 
-	 * @param stepSize
-	 */
-	public AdamsMoultonSolver(double stepSize) {
-		super(stepSize);
-	}
-	
-	/**
-	 * 
-	 * @param stepSize
-	 * @param nonnegative
-	 *            the nonnegative flag of the super class
-	 * @see AbstractDESSolver
-	 */
-	public AdamsMoultonSolver(double stepSize, boolean nonnegative) {
-		super(stepSize, nonnegative);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#clone()
-	 */
-	public AdamsMoultonSolver clone() {
-		return new AdamsMoultonSolver(this);
-	}
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -2601862472447650296L;
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#createIntegrator()
-	 */
-	protected void createIntegrator() {
-		integrator = new AdamsMoultonIntegrator(5, Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
-	}
+  /**
+   * 
+   */
+  public AdamsMoultonSolver() {
+    super();
+  }
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#getName()
-	 */
-	@Override
-	public String getName() {
-		return "Adams-Moulton solver";
-	}
+  /**
+   * clone constructor
+   * @param adamsSolver
+   */
+  public AdamsMoultonSolver(AdamsMoultonSolver adamsSolver) {
+    super(adamsSolver);
+    integrator=adamsSolver.getIntegrator();
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
-	 */
-	//@Override
-	public int getKiSAOterm() {
-		return 280;
-	}
+  /**
+   * 
+   * @param stepSize
+   */
+  public AdamsMoultonSolver(double stepSize) {
+    super(stepSize);
+  }
+
+  /**
+   * 
+   * @param stepSize
+   * @param nonnegative
+   *            the nonnegative flag of the super class
+   * @see AbstractDESSolver
+   */
+  public AdamsMoultonSolver(double stepSize, boolean nonnegative) {
+    super(stepSize, nonnegative);
+  }
+
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.odes.FirstOrderSolver#clone()
+   */
+  @Override
+  public AdamsMoultonSolver clone() {
+    return new AdamsMoultonSolver(this);
+  }
+
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.odes.FirstOrderSolver#createIntegrator()
+   */
+  @Override
+  protected void createIntegrator() {
+    integrator = new AdamsMoultonIntegrator(5, Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
+  }
+
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.odes.AbstractDESSolver#getName()
+   */
+  @Override
+  public String getName() {
+    return "Adams-Moulton solver";
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
+   */
+  @Override
+  public int getKiSAOterm() {
+    return 280;
+  }
 
 }
