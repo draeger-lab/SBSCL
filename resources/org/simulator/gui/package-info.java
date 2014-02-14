@@ -27,6 +27,7 @@
  * 
  * @author Andreas Dr&auml;ger
  * @since 1.2
+ * @version $Rev$
  */
 package org.simulator.gui;
 

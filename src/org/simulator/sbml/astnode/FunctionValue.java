@@ -41,123 +41,123 @@ import org.simulator.sbml.SBMLinterpreter;
  * @version $Rev$
  */
 public class FunctionValue extends ASTNodeValue {
-	/**
-	 * The value of the evaluation block of the function stored in an ASTNodeObject.
-	 */
-	protected ASTNodeValue evaluationBlock;
-	
-	/**
-	 * The variables of the function
-	 */
-	protected List<String> variables;
-  
-	/**
-	 * The current values of the function arguments.
-	 */
-	protected double[] argumentValues;
+  /**
+   * The value of the evaluation block of the function stored in an ASTNodeObject.
+   */
+  protected ASTNodeValue evaluationBlock;
 
-	/**
-	 * A map for storing the indexes of the arguments in the array argumentValues.
-	 */
-	protected Map<String,Integer> indexMap;
+  /**
+   * The variables of the function
+   */
+  protected List<String> variables;
 
-	/**
-	 * The math of the function definition.
-	 */
-	protected ASTNode math;
-  
-	/**
-	 * 
-	 * @param interpreter
-	 *            the interpreter
-	 * @param node
-	 *            the corresponding ASTNode
-	 * @param variableNodes
-	 *            the variables of the function as ASTNodes
-	 */
-	public FunctionValue(ASTNodeInterpreter interpreter,
-			ASTNode node, List<ASTNode> variableNodes) {
-		super(interpreter, node);
-		CallableSBase variable = node.getVariable();
-		if ((variable != null)) {
-			if (variable instanceof FunctionDefinition) {
-				this.variables=new ArrayList<String>(variableNodes.size());
-				this.indexMap=new HashMap<String,Integer>();
-				int index=0;
-				for (ASTNode argument:variableNodes) {
-					String argumentName=interpreter.compileString(argument);
-					variables.add(argumentName);
-					indexMap.put(argumentName, index);
-					index++;
-				}
-				this.argumentValues=new double[variables.size()];
-			} else {
-				logger
-				.warning("ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! ("
-						+ node.getName() + ", " + node.getParentSBMLObject() + ")");
-				throw new SBMLException(
-						"ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! ("
-								+ node.getName() + ", " + node.getParentSBMLObject() + ")");
-				// doubleValue = compiler.compile(variable);
-			}
+  /**
+   * The current values of the function arguments.
+   */
+  protected double[] argumentValues;
 
-		} else {
-			logger.warning("ASTNode of type FUNCTION but the variable is null !! ("
-					+ node.getName() + ", " + node.getParentSBMLObject() + "). "
-					+ "Check that your object is linked to a Model.");
-		}
+  /**
+   * A map for storing the indexes of the arguments in the array argumentValues.
+   */
+  protected Map<String,Integer> indexMap;
+
+  /**
+   * The math of the function definition.
+   */
+  protected ASTNode math;
+
+  /**
+   * 
+   * @param interpreter
+   *            the interpreter
+   * @param node
+   *            the corresponding ASTNode
+   * @param variableNodes
+   *            the variables of the function as ASTNodes
+   */
+  public FunctionValue(ASTNodeInterpreter interpreter,
+    ASTNode node, List<ASTNode> variableNodes) {
+    super(interpreter, node);
+    CallableSBase variable = node.getVariable();
+    if ((variable != null)) {
+      if (variable instanceof FunctionDefinition) {
+        variables=new ArrayList<String>(variableNodes.size());
+        indexMap=new HashMap<String,Integer>();
+        int index=0;
+        for (ASTNode argument:variableNodes) {
+          String argumentName=interpreter.compileString(argument);
+          variables.add(argumentName);
+          indexMap.put(argumentName, index);
+          index++;
+        }
+        argumentValues=new double[variables.size()];
+      } else {
+        logger
+        .warning("ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! ("
+            + node.getName() + ", " + node.getParentSBMLObject() + ")");
+        throw new SBMLException(
+          "ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! ("
+              + node.getName() + ", " + node.getParentSBMLObject() + ")");
+        // doubleValue = compiler.compile(variable);
+      }
+
+    } else {
+      logger.warning("ASTNode of type FUNCTION but the variable is null !! ("
+          + node.getName() + ", " + node.getParentSBMLObject() + "). "
+          + "Check that your object is linked to a Model.");
+    }
 
 
-	}
+  }
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
-	 */
-	@Override
-	protected void computeDoubleValue(double delay) {
-		if (math != null) {
-			doubleValue = interpreter.functionDouble(evaluationBlock, variables, children, numChildren, argumentValues, time);
-		} else {
-			doubleValue = Double.NaN;
-		}
-	}
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.astnode.ASTNodeObject#computeDoubleValue()
+   */
+  @Override
+  protected void computeDoubleValue(double delay) {
+    if (math != null) {
+      doubleValue = interpreter.functionDouble(evaluationBlock, variables, children, numChildren, argumentValues, time);
+    } else {
+      doubleValue = Double.NaN;
+    }
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeBooleanValue()
-	 */
-	@Override
-	protected void computeBooleanValue() {
-		if (math != null) {
-			booleanValue = interpreter.functionBoolean(evaluationBlock, variables, children, argumentValues, time);
-		} else {
-			booleanValue = false;
-		}
-	}
+  /* (non-Javadoc)
+   * @see org.simulator.sbml.astnode.ASTNodeValue#computeBooleanValue()
+   */
+  @Override
+  protected void computeBooleanValue() {
+    if (math != null) {
+      booleanValue = interpreter.functionBoolean(evaluationBlock, variables, children, argumentValues, time);
+    } else {
+      booleanValue = false;
+    }
+  }
 
-	/**
-	 * Sets the math and evaluation block of the function definition.
-	 * @param math
-	 */
-	public void setMath(ASTNode math) {
-		this.math = math;
-		this.evaluationBlock=(ASTNodeValue) math.getRightChild().getUserObject(SBMLinterpreter.TEMP_VALUE);
-	}
+  /**
+   * Sets the math and evaluation block of the function definition.
+   * @param math
+   */
+  public void setMath(ASTNode math) {
+    this.math = math;
+    evaluationBlock=(ASTNodeValue) math.getRightChild().getUserObject(SBMLinterpreter.TEMP_VALUE);
+  }
 
-	/**
-	 * Returns the values of the arguments.
-	 * @return argumentValues
-	 */
-	public double[] getArgumentValues() {
-		return argumentValues;
-	}
+  /**
+   * Returns the values of the arguments.
+   * @return argumentValues
+   */
+  public double[] getArgumentValues() {
+    return argumentValues;
+  }
 
-	/**
-	 * Returns the index of a specific argument.
-	 * @param argumentName
-	 * @return index
-	 */
-	public int getIndex(String argumentName) {
-		return indexMap.get(argumentName);
-	}
+  /**
+   * Returns the index of a specific argument.
+   * @param argumentName
+   * @return index
+   */
+  public int getIndex(String argumentName) {
+    return indexMap.get(argumentName);
+  }
 
 }

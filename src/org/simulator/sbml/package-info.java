@@ -21,7 +21,7 @@
  * ---------------------------------------------------------------------
  */
 
-/** 
+/**
  * Classes for storing and interpreting an
  * <a href="http://sbml.org" target="_blank">SBML</a>
  * model. The most important class is {@link org.simulator.sbml.SBMLinterpreter}
@@ -34,7 +34,7 @@
  * {@link org.simulator.sbml.ConstraintEvent} as an argument. The method
  * {@link org.simulator.sbml.ConstraintListener#processViolation(ConstraintEvent)}
  * can then be used to deal with the {@link org.sbml.jsbml.Constraint}.
- * It receives the time, when the 
+ * It receives the time, when the
  * {@link org.sbml.jsbml.Constraint}'s condition has been violated together with
  * a reference of the {@link org.sbml.jsbml.Constraint} itself. By default, the
  * {@link org.simulator.sbml.SBMLinterpreter} adds an instance of
@@ -46,7 +46,7 @@
  * instead. The {@link org.simulator.sbml.SimpleConstraintListener} uses the
  * standard Java {@link java.util.logging.Logger} and displays the time,
  * condition (as formula {@link java.lang.String}),
- * and the message of the {@link org.sbml.jsbml.Constraint} on the log-level 
+ * and the message of the {@link org.sbml.jsbml.Constraint} on the log-level
  * {@link java.util.logging.Level#WARNING}. A recommended practice would be
  * maintain a list for each {@link org.sbml.jsbml.Constraint} that gathers all
  * points in time, when it was violated. This list could at the end of the
@@ -54,6 +54,8 @@
  * with a rendered version of the message (note that the message element in
  * the {@link org.sbml.jsbml.Constraint} is not a simple text, but an arbitrary
  * XHTML document and therefore not always suitable to be displayed on the
- * console). 
+ * console).
+ * 
+ * @version $Rev$
  */
 package org.simulator.sbml;

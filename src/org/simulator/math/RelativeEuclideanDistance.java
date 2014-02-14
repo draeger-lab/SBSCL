@@ -30,25 +30,25 @@ package org.simulator.math;
  * @since
  */
 public class RelativeEuclideanDistance extends Relative_N_Metric {
-	
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -7488743431449082030L;
 
-	/**
-	 * Initializes a new instance
-	 */
-	public RelativeEuclideanDistance() {
-		super(new EuclideanDistance());
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.Relative_N_Metric#setRoot(double)
-	 */
-	@Override
-	public void setRoot(double root) {
-		//root should not be changed
-	}
-	
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -7488743431449082030L;
+
+  /**
+   * Initializes a new instance
+   */
+  public RelativeEuclideanDistance() {
+    super(new EuclideanDistance());
+  }
+
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.Relative_N_Metric#setRoot(double)
+   */
+  @Override
+  public void setRoot(double root) {
+    //root should not be changed
+  }
+
 }

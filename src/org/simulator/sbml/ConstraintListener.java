@@ -20,7 +20,6 @@
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
-
 package org.simulator.sbml;
 
 import java.util.EventListener;
@@ -38,11 +37,11 @@ import org.sbml.jsbml.Constraint;
  */
 public interface ConstraintListener extends EventListener {
 
-	/**
-	 * Processes the given {@link ConstraintEvent}.
-	 * 
-	 * @param evt
-	 */
-	public abstract void processViolation(ConstraintEvent evt);
+  /**
+   * Processes the given {@link ConstraintEvent}.
+   * 
+   * @param evt
+   */
+  public abstract void processViolation(ConstraintEvent evt);
 
 }

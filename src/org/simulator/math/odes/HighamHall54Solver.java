@@ -33,79 +33,82 @@ import org.apache.commons.math.ode.nonstiff.HighamHall54Integrator;
  * @since 0.9
  */
 public class HighamHall54Solver extends FirstOrderSolver {
-    
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -2601862472447650296L;
-	
-	/**
-	 * default constructor
-	 */
-	public HighamHall54Solver() {
-	    super();
-	    absTol = 0.5d;
-	    relTol = 0.01d;
-	}
-	
-	/**
-	 * 
-	 * @param stepSize
-	 */
-	public HighamHall54Solver(double stepSize) {
-		super(stepSize);
-	    absTol = 0.5d;
-	    relTol = 0.01d;
-	}
-	
-	/**
-	 * 
-	 * @param stepSize
-	 *            the nonnegative flag of the super class
-	 * @param nonnegative
-	 * @see AbstractDESSolver
-	 */
-	public HighamHall54Solver(double stepSize, boolean nonnegative) {
-		super(stepSize, nonnegative);
-	    absTol = 0.5d;
-	    relTol = 0.01d;
-	}
-	
-	/**
-	 * clone constructor
-	 * @param solver
-	 */
-	public HighamHall54Solver(HighamHall54Solver solver) {
-		super(solver);
-		this.integrator=solver.getIntegrator();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.FirstOrderSolver#clone()
-	 */
-	public HighamHall54Solver clone() {
-		return new HighamHall54Solver(this);
-	}
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.FirstOrderSolver#createIntegrator()
-	 */
-	protected void createIntegrator() {
-		integrator=new HighamHall54Integrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
-	}
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -2601862472447650296L;
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.AbstractDESSolver#getName()
-	 */
-	public String getName() {
-		return "Higham-Hall 54 solver";
-	}
+  /**
+   * default constructor
+   */
+  public HighamHall54Solver() {
+    super();
+    absTol = 0.5d;
+    relTol = 0.01d;
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
-	 */
-	//@Override
-	public int getKiSAOterm() {
-		return 434;
-	}
+  /**
+   * 
+   * @param stepSize
+   */
+  public HighamHall54Solver(double stepSize) {
+    super(stepSize);
+    absTol = 0.5d;
+    relTol = 0.01d;
+  }
+
+  /**
+   * 
+   * @param stepSize
+   *            the nonnegative flag of the super class
+   * @param nonnegative
+   * @see AbstractDESSolver
+   */
+  public HighamHall54Solver(double stepSize, boolean nonnegative) {
+    super(stepSize, nonnegative);
+    absTol = 0.5d;
+    relTol = 0.01d;
+  }
+
+  /**
+   * clone constructor
+   * @param solver
+   */
+  public HighamHall54Solver(HighamHall54Solver solver) {
+    super(solver);
+    integrator=solver.getIntegrator();
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.FirstOrderSolver#clone()
+   */
+  @Override
+  public HighamHall54Solver clone() {
+    return new HighamHall54Solver(this);
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.FirstOrderSolver#createIntegrator()
+   */
+  @Override
+  protected void createIntegrator() {
+    integrator=new HighamHall54Integrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.AbstractDESSolver#getName()
+   */
+  @Override
+  public String getName() {
+    return "Higham-Hall 54 solver";
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
+   */
+  @Override
+  public int getKiSAOterm() {
+    return 434;
+  }
 }

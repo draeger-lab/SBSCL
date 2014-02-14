@@ -25,7 +25,7 @@ package org.simulator.math.odes;
 import org.apache.commons.math.ode.nonstiff.DormandPrince853Integrator;
 
 /**
- * This class is a wrapper for the Dormand-Prince-853 solver in the 
+ * This class is a wrapper for the Dormand-Prince-853 solver in the
  * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
  * 
  * @author Roland Keller
@@ -33,74 +33,77 @@ import org.apache.commons.math.ode.nonstiff.DormandPrince853Integrator;
  * @since 0.9
  */
 public class DormandPrince853Solver extends FirstOrderSolver {
-    
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -2601862472447650296L;
-	
-	/**
-	 * default constructor
-	 */
-	public DormandPrince853Solver() {
-	    super();
-	}
-	
-	/**
-	 * clone constructor
-	 * @param solver
-	 */
-	public DormandPrince853Solver(DormandPrince853Solver solver) {
-		super(solver);
-		this.integrator=solver.getIntegrator();
-	}
-	
-	/**
-	 * 
-	 * @param stepSize
-	 */
-	public DormandPrince853Solver(double stepSize) {
-		super(stepSize);
-	}
-	
-	/**
-	 * 
-	 * @param stepSize
-	 * @param nonnegative
-	 *            the nonnegative flag of the super class
-	 * @see AbstractDESSolver
-	 */
-	public DormandPrince853Solver(double stepSize, boolean nonnegative) {
-		super(stepSize, nonnegative);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#clone()
-	 */
-	public DormandPrince853Solver clone() {
-		return new DormandPrince853Solver(this);
-	}
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#createIntegrator()
-	 */
-	protected void createIntegrator() {
-		integrator=new DormandPrince853Integrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
-	}
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -2601862472447650296L;
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#getName()
-	 */
-	public String getName() {
-		return "Dormand-Prince 853 solver";
-	}
+  /**
+   * default constructor
+   */
+  public DormandPrince853Solver() {
+    super();
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
-	 */
-	//@Override
-	public int getKiSAOterm() {
-		return 436;
-	}
+  /**
+   * clone constructor
+   * @param solver
+   */
+  public DormandPrince853Solver(DormandPrince853Solver solver) {
+    super(solver);
+    integrator=solver.getIntegrator();
+  }
+
+  /**
+   * 
+   * @param stepSize
+   */
+  public DormandPrince853Solver(double stepSize) {
+    super(stepSize);
+  }
+
+  /**
+   * 
+   * @param stepSize
+   * @param nonnegative
+   *            the nonnegative flag of the super class
+   * @see AbstractDESSolver
+   */
+  public DormandPrince853Solver(double stepSize, boolean nonnegative) {
+    super(stepSize, nonnegative);
+  }
+
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.odes.FirstOrderSolver#clone()
+   */
+  @Override
+  public DormandPrince853Solver clone() {
+    return new DormandPrince853Solver(this);
+  }
+
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.odes.FirstOrderSolver#createIntegrator()
+   */
+  @Override
+  protected void createIntegrator() {
+    integrator=new DormandPrince853Integrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
+  }
+
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.odes.AbstractDESSolver#getName()
+   */
+  @Override
+  public String getName() {
+    return "Dormand-Prince 853 solver";
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
+   */
+  @Override
+  public int getKiSAOterm() {
+    return 436;
+  }
 
 }

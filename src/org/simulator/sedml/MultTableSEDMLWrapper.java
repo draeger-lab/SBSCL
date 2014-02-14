@@ -42,138 +42,143 @@ import org.simulator.math.odes.MultiTable.Block.Column;
  * @since 1.1
  */
 public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
-	public MultTableSEDMLWrapper(MultiTable mTable) {
-		super();
-		this.mTable = mTable;
-	}
 
-	/**
-	 * Gets the underlying {@link MultiTable} wrapped by this class.
-	 * @return table
-	 */
-	public MultiTable getMultiTable() {
-		return mTable;
-	}
+  /**
+   * 
+   * @param mTable
+   */
+  public MultTableSEDMLWrapper(MultiTable mTable) {
+    super();
+    this.mTable = mTable;
+  }
 
-	/**
-	 * The result table.
-	 */
-	private MultiTable mTable;
+  /**
+   * Gets the underlying {@link MultiTable} wrapped by this class.
+   * @return table
+   */
+  public MultiTable getMultiTable() {
+    return mTable;
+  }
 
-	/* (non-Javadoc)
-	 * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getColumnHeaders()
-	 */
-	//@Override
-	public String[] getColumnHeaders() {
-		String [] hdrs = new String [mTable.getColumnCount()];
-		for (int i = 0; i < hdrs.length;i++) {
-			hdrs[i]=mTable.getColumnIdentifier(i);
-		}
-		return hdrs;
-	}
+  /**
+   * The result table.
+   */
+  private MultiTable mTable;
 
-	/* (non-Javadoc)
-	 * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getData()
-	 */
-	//@Override
-	public double[][] getData() {
-		double [][] data = new double [mTable.getRowCount()][mTable.getColumnCount()];
-		for (int i = 0; i < mTable.getRowCount();i++) {
-			for (int j =0; j< mTable.getColumnCount();j++) {
-				data[i][j] = mTable.getValueAt(i, j);
+  /* (non-Javadoc)
+   * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getColumnHeaders()
+   */
+  @Override
+  public String[] getColumnHeaders() {
+    String [] hdrs = new String [mTable.getColumnCount()];
+    for (int i = 0; i < hdrs.length;i++) {
+      hdrs[i]=mTable.getColumnIdentifier(i);
+    }
+    return hdrs;
+  }
 
-			}
+  /* (non-Javadoc)
+   * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getData()
+   */
+  @Override
+  public double[][] getData() {
+    double [][] data = new double [mTable.getRowCount()][mTable.getColumnCount()];
+    for (int i = 0; i < mTable.getRowCount();i++) {
+      for (int j =0; j< mTable.getColumnCount();j++) {
+        data[i][j] = mTable.getValueAt(i, j);
 
-		}
-		return data;
-	}
+      }
 
-	/* (non-Javadoc)
-	 * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getDataByColumnId(java.lang.String)
-	 */
-	//@Override
-	public Double[] getDataByColumnId(String id) {
+    }
+    return data;
+  }
 
-		Double [] rc = new Double[mTable.getRowCount()];
-		Column col = mTable.getColumn(id);
-		for (int i =0; i< mTable.getRowCount();i++) {
-			rc[i]=col.getValue(i);
-		}
-		return rc;
-	}
+  /* (non-Javadoc)
+   * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getDataByColumnId(java.lang.String)
+   */
+  @Override
+  public Double[] getDataByColumnId(String id) {
 
-	/* (non-Javadoc)
-	 * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getDataByColumnIndex(int)
-	 */
-	//@Override
-	public Double[] getDataByColumnIndex(int indx) {
-		Double [] rc = new Double[mTable.getRowCount()];
-		Column col = mTable.getColumn(indx);
-		for (int i =0; i< mTable.getRowCount();i++) {
-			rc[i]=col.getValue(i);
-		}
-		return rc;
-	}
+    Double [] rc = new Double[mTable.getRowCount()];
+    Column col = mTable.getColumn(id);
+    for (int i =0; i< mTable.getRowCount();i++) {
+      rc[i]=col.getValue(i);
+    }
+    return rc;
+  }
 
-	/* (non-Javadoc)
-	 * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getIndexByColumnID(java.lang.String)
-	 */
-	//@Override
-	public int getIndexByColumnID(String colID) {
-		return mTable.getColumnIndex(colID);
-	}
+  /* (non-Javadoc)
+   * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getDataByColumnIndex(int)
+   */
+  @Override
+  public Double[] getDataByColumnIndex(int indx) {
+    Double [] rc = new Double[mTable.getRowCount()];
+    Column col = mTable.getColumn(indx);
+    for (int i =0; i< mTable.getRowCount();i++) {
+      rc[i]=col.getValue(i);
+    }
+    return rc;
+  }
 
-	/* (non-Javadoc)
-	 * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getNumColumns()
-	 */
-	//@Override
-	public int getNumColumns() {
-		return mTable.getColumnCount();
-	}
+  /* (non-Javadoc)
+   * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getIndexByColumnID(java.lang.String)
+   */
+  @Override
+  public int getIndexByColumnID(String colID) {
+    return mTable.getColumnIndex(colID);
+  }
 
-	/* (non-Javadoc)
-	 * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getNumDataRows()
-	 */
-	//@Override
-	public int getNumDataRows() {
-		return mTable.getRowCount();
-	}
+  /* (non-Javadoc)
+   * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getNumColumns()
+   */
+  @Override
+  public int getNumColumns() {
+    return mTable.getColumnCount();
+  }
 
-	/*
-	 * This class maps variable IDs to data column headers.
-	 * In this class, data column headers are usually IDs, so no mapping is required
-	 * (non-Javadoc)
-	 * @see org.jlibsedml.execution.IRawSedmlSimulationResults#getMappings()
-	 */
-	//@Override
-	public IModel2DataMappings getMappings() {
-		return new IModel2DataMappings() {
+  /* (non-Javadoc)
+   * @see org.jlibsedml.execution.IProcessedSedMLSimulationResults#getNumDataRows()
+   */
+  @Override
+  public int getNumDataRows() {
+    return mTable.getRowCount();
+  }
 
-			/* (non-Javadoc)
-			 * @see org.jlibsedml.execution.IModel2DataMappings#hasMappingFor(java.lang.String)
-			 */
-			//@Override
-			public boolean hasMappingFor(String id) {
-				return mTable.getColumn(id)!=null;
-			}
+  /*
+   * This class maps variable IDs to data column headers.
+   * In this class, data column headers are usually IDs, so no mapping is required
+   * (non-Javadoc)
+   * @see org.jlibsedml.execution.IRawSedmlSimulationResults#getMappings()
+   */
+  @Override
+  public IModel2DataMappings getMappings() {
+    return new IModel2DataMappings() {
 
-			/* (non-Javadoc)
-			 * @see org.jlibsedml.execution.IModel2DataMappings#getColumnTitleFor(java.lang.String)
-			 */
-			//@Override
-			public String getColumnTitleFor(String modelID) {
-				return modelID;
-			}
+      /* (non-Javadoc)
+       * @see org.jlibsedml.execution.IModel2DataMappings#hasMappingFor(java.lang.String)
+       */
+      @Override
+      public boolean hasMappingFor(String id) {
+        return mTable.getColumn(id)!=null;
+      }
 
-			/* (non-Javadoc)
-			 * @see org.jlibsedml.execution.IModel2DataMappings#getColumnIndexFor(java.lang.String)
-			 */
-			//@Override
-			public int getColumnIndexFor(String colID) {
-				return mTable.getColumnIndex(colID);
-			}
+      /* (non-Javadoc)
+       * @see org.jlibsedml.execution.IModel2DataMappings#getColumnTitleFor(java.lang.String)
+       */
+      @Override
+      public String getColumnTitleFor(String modelID) {
+        return modelID;
+      }
 
-		};
-	}
+      /* (non-Javadoc)
+       * @see org.jlibsedml.execution.IModel2DataMappings#getColumnIndexFor(java.lang.String)
+       */
+      @Override
+      public int getColumnIndexFor(String colID) {
+        return mTable.getColumnIndex(colID);
+      }
+
+    };
+  }
 
 }

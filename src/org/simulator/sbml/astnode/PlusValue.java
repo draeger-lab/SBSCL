@@ -32,20 +32,20 @@ import org.sbml.jsbml.ASTNode;
  */
 public class PlusValue extends ASTNodeValue {
 
-	/**
-	 * @param interpreter
-	 * @param node
-	 */
-	public PlusValue(ASTNodeInterpreter interpreter, ASTNode node) {
-		super(interpreter, node);
-	}
+  /**
+   * @param interpreter
+   * @param node
+   */
+  public PlusValue(ASTNodeInterpreter interpreter, ASTNode node) {
+    super(interpreter, node);
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
-	 */
-	@Override
-	protected void computeDoubleValue(double delay) {
-		doubleValue = interpreter.plus(children, numChildren, time, delay);
-	}
+  /* (non-Javadoc)
+   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+   */
+  @Override
+  protected void computeDoubleValue(double delay) {
+    doubleValue = interpreter.plus(children, numChildren, time, delay);
+  }
 
 }

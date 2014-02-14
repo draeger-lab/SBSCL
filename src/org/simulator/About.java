@@ -30,39 +30,39 @@ package org.simulator;
  * @since 1.1
  */
 public class About {
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		String message = 
-				"This is the Systems Biology Simulation Core Library.\n\n" +
-				"Main authors: Roland Keller, Alexander D\u00f6rr, and Andreas Dr\u00e4ger\n" +
-				"Copyright \u00A9 2007-2014 jointly by the following organizations:\n" +
-				"1. University of Tuebingen, Germany\n" + 
-				"2. Keio University, Japan\n" + 
-				"3. Harvard University, USA\n" + 
-				"4. The University of Edinburgh, UK\n" + 
-				"5. EMBL European Bioinformatics Institute (EBML-EBI), UK\n\n" +
-				"License: LGPL Version 3\n" +
-				"For more information please see\n" +
-				"https://sourceforge.net/projects/simulation-core/.";
-		try {
-			try {
-				javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-			} catch (Throwable t) {
-			}
-			String iconName = "SCL_icon", path = "gui/img/" + iconName + ".png";
-			javax.swing.ImageIcon icon = null;
-			java.net.URL u = About.class.getResource(path);
-			if (u != null) {
-				icon = new javax.swing.ImageIcon(u);
-				javax.swing.UIManager.put(iconName, icon);
-			}
-			javax.swing.JOptionPane.showMessageDialog(null, message, "About Simulation Core Library", javax.swing.JOptionPane.INFORMATION_MESSAGE, icon);
-		} catch (java.awt.HeadlessException exc) {
-			System.out.println(message);
-		}
-	}
+
+  /**
+   * @param args
+   */
+  public static void main(String[] args) {
+    String message =
+        "This is the Systems Biology Simulation Core Library.\n\n" +
+            "Main authors: Roland Keller, Alexander D\u00f6rr, and Andreas Dr\u00e4ger\n" +
+            "Copyright \u00A9 2007-2014 jointly by the following organizations:\n" +
+            "1. University of Tuebingen, Germany\n" +
+            "2. Keio University, Japan\n" +
+            "3. Harvard University, USA\n" +
+            "4. The University of Edinburgh, UK\n" +
+            "5. EMBL European Bioinformatics Institute (EBML-EBI), UK\n\n" +
+            "License: LGPL Version 3\n" +
+            "For more information please see\n" +
+            "https://sourceforge.net/projects/simulation-core/.";
+    try {
+      try {
+        javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+      } catch (Throwable t) {
+      }
+      String iconName = "SCL_icon", path = "gui/img/" + iconName + ".png";
+      javax.swing.ImageIcon icon = null;
+      java.net.URL u = About.class.getResource(path);
+      if (u != null) {
+        icon = new javax.swing.ImageIcon(u);
+        javax.swing.UIManager.put(iconName, icon);
+      }
+      javax.swing.JOptionPane.showMessageDialog(null, message, "About Simulation Core Library", javax.swing.JOptionPane.INFORMATION_MESSAGE, icon);
+    } catch (java.awt.HeadlessException exc) {
+      System.out.println(message);
+    }
+  }
 
 }

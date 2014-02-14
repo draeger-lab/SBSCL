@@ -34,38 +34,38 @@ import org.sbml.jsbml.LocalParameter;
  * @since 1.0
  */
 public class LocalParameterValue extends ASTNodeValue {
-	
-	/**
-	 * The corresponding local parameter
-	 */
-	protected LocalParameter lp;
 
-	/**
-	 * 
-	 * @param interpreter
-	 * @param node
-	 * @param lp
-	 */
-	public LocalParameterValue(ASTNodeInterpreter interpreter, ASTNode node,
-			LocalParameter lp) {
-		super(interpreter, node);
-		this.lp = lp;
-		doubleValue=lp.getValue();
-		isDouble=true;
-		isConstant = true;
-	}
+  /**
+   * The corresponding local parameter
+   */
+  protected LocalParameter lp;
 
-	/* (non-Javadoc)
-	 * @see org.simulator.sbml.astnode.ASTNodeValue#compileDouble(double)
-	 */
-	@Override
-	public double compileDouble(double time, double delay) {
-		this.time=time;
-		if (alreadyProcessed == false) {
-			doubleValue = lp.getValue();
-			alreadyProcessed = true;
-		}
-		return doubleValue;
-	}
+  /**
+   * 
+   * @param interpreter
+   * @param node
+   * @param lp
+   */
+  public LocalParameterValue(ASTNodeInterpreter interpreter, ASTNode node,
+    LocalParameter lp) {
+    super(interpreter, node);
+    this.lp = lp;
+    doubleValue=lp.getValue();
+    isDouble=true;
+    isConstant = true;
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.sbml.astnode.ASTNodeValue#compileDouble(double)
+   */
+  @Override
+  public double compileDouble(double time, double delay) {
+    this.time=time;
+    if (alreadyProcessed == false) {
+      doubleValue = lp.getValue();
+      alreadyProcessed = true;
+    }
+    return doubleValue;
+  }
 
 }

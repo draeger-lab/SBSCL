@@ -35,44 +35,44 @@ import java.util.List;
  * @since 1.0
  */
 public abstract class MeanFunction implements Serializable {
-	
-	/**
-	 * Generated serial identifier.
-	 */
-	private static final long serialVersionUID = -7272984374334773096L;
-	
-	/**
-	 * Computes the overall distance
-	 * @param values the distance values for the columns
-	 * @return the computed value
-	 */
-	public abstract double computeMean(double... values);
-	
-	/**
-	 * Computes the overall distance
-	 * @param values the distance values for the columns
-	 * @return the computed value
-	 */
-	public double computeMean(List<Double> values) {
-		double[] val = new double[values.size()];
-		for (int i = 0; i != val.length; i++) {
-			val[i] = values.get(i);
-		}
-		return computeMean(val);
-	}
-	
-	/**
-	 * Computes the overall distance
-	 * 
-	 * @param values the distance values for the columns
-	 * @return the computed value
-	 */
-	public double computeMean(Iterable<? extends Number> values) {
-		List<Double> val = new ArrayList<Double>();
-		for (Number number : values) {
-			val.add(number.doubleValue());
-		}
-		return computeMean(val);
-	}
+
+  /**
+   * Generated serial identifier.
+   */
+  private static final long serialVersionUID = -7272984374334773096L;
+
+  /**
+   * Computes the overall distance
+   * @param values the distance values for the columns
+   * @return the computed value
+   */
+  public abstract double computeMean(double... values);
+
+  /**
+   * Computes the overall distance
+   * @param values the distance values for the columns
+   * @return the computed value
+   */
+  public double computeMean(List<Double> values) {
+    double[] val = new double[values.size()];
+    for (int i = 0; i != val.length; i++) {
+      val[i] = values.get(i);
+    }
+    return computeMean(val);
+  }
+
+  /**
+   * Computes the overall distance
+   * 
+   * @param values the distance values for the columns
+   * @return the computed value
+   */
+  public double computeMean(Iterable<? extends Number> values) {
+    List<Double> val = new ArrayList<Double>();
+    for (Number number : values) {
+      val.add(number.doubleValue());
+    }
+    return computeMean(val);
+  }
 
 }

@@ -29,7 +29,7 @@ package org.simulator.math;
  * @version $Rev$
  */
 public class DistanceSum extends MeanFunction {
-  
+
   /**
    * Generated serial version identifier.
    */
@@ -38,6 +38,7 @@ public class DistanceSum extends MeanFunction {
   /* (non-Javadoc)
    * @see org.sbml.simulator.math.MeanFunction#computeMean(double[])
    */
+  @Override
   public double computeMean(double... values) {
     double result = 0d;
     for (double value : values) {
@@ -45,5 +46,5 @@ public class DistanceSum extends MeanFunction {
     }
     return result;
   }
-  
+
 }

@@ -48,32 +48,32 @@ import org.simulator.math.odes.RosenbrockSolver;
  */
 public class ConstraintTest {
 
-	/**
-	 * @param args not used.
-	 * 
-	 * @throws XMLStreamException
-	 * @throws IOException
-	 * @throws ParseException
-	 * @throws SBMLException
-	 * @throws ModelOverdeterminedException
-	 * @throws DerivativeException
-	 */
-	public static void main(String args[]) throws XMLStreamException, IOException, ParseException, SBMLException, ModelOverdeterminedException, DerivativeException {
-		SBMLDocument doc = SBMLReader.read(ConstraintTest.class.getResourceAsStream("data/Constraint-00001-L3V1.xml"));
+  /**
+   * @param args not used.
+   * 
+   * @throws XMLStreamException
+   * @throws IOException
+   * @throws ParseException
+   * @throws SBMLException
+   * @throws ModelOverdeterminedException
+   * @throws DerivativeException
+   */
+  public static void main(String args[]) throws XMLStreamException, IOException, ParseException, SBMLException, ModelOverdeterminedException, DerivativeException {
+    SBMLDocument doc = SBMLReader.read(ConstraintTest.class.getResourceAsStream("data/Constraint-00001-L3V1.xml"));
 
-		double stepSize = .1d;
-		double timeEnd = 5d;
-		
-		DESSolver solver = new RosenbrockSolver();
-	    solver.setStepSize(stepSize);
-	    SBMLinterpreter interpreter = new SBMLinterpreter(doc.getModel());
-	    if (solver instanceof AbstractDESSolver) {
-	      ((AbstractDESSolver) solver).setIncludeIntermediates(false);
-	    }
-	    
-	    // Compute the numerical solution of the initial value problem
-		//MultiTable solution = 
-	    solver.solve(interpreter, interpreter.getInitialValues(), 0d, timeEnd);
-	}
-	
+    double stepSize = .1d;
+    double timeEnd = 5d;
+
+    DESSolver solver = new RosenbrockSolver();
+    solver.setStepSize(stepSize);
+    SBMLinterpreter interpreter = new SBMLinterpreter(doc.getModel());
+    if (solver instanceof AbstractDESSolver) {
+      ((AbstractDESSolver) solver).setIncludeIntermediates(false);
+    }
+
+    // Compute the numerical solution of the initial value problem
+    //MultiTable solution =
+    solver.solve(interpreter, interpreter.getInitialValues(), 0d, timeEnd);
+  }
+
 }

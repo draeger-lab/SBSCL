@@ -25,7 +25,7 @@ package org.simulator.math.odes;
 import org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegrator;
 
 /**
- * This class is a wrapper for the Adams-Bashforth solver in the 
+ * This class is a wrapper for the Adams-Bashforth solver in the
  * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
  * 
  * @author Roland Keller
@@ -33,73 +33,76 @@ import org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegrator;
  * @since 0.9
  */
 public class AdamsBashforthSolver extends FirstOrderSolver {
-	
-	/**
-	 * Generated serial version identifier. 
-	 */
-	private static final long serialVersionUID = -2601862472447650296L;
-	
-	/**
-	 * default constructor
-	 */
-	public AdamsBashforthSolver() {
-	    super();
-	}
-	
-	/**
-	 * Clone constructor
-	 * @param adamsSolver
-	 */
-	public AdamsBashforthSolver(AdamsBashforthSolver adamsSolver) {
-		super(adamsSolver);
-		this.integrator = adamsSolver.getIntegrator();
-	}
-	
-	/**
-	 * 
-	 * @param stepSize
-	 */
-	public AdamsBashforthSolver(double stepSize) {
-		super(stepSize);
-	}
-	
-	/**
-	 * 
-	 * @param stepSize
-	 * @param nonnegative the nonnegative flag of the super class
-	 * @see AbstractDESSolver
-	 */
-	public AdamsBashforthSolver(double stepSize, boolean nonnegative) {
-		super(stepSize, nonnegative);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#clone()
-	 */
-	public AdamsBashforthSolver clone() {
-		return new AdamsBashforthSolver(this);
-	}
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.FirstOrderSolver#createIntegrator()
-	 */
-	public void createIntegrator() {
-		integrator = new AdamsBashforthIntegrator(5, Math.min(1e-8d, Math.min(1d, getStepSize())), Math.min(1d, getStepSize()), getAbsTol(), getRelTol());
-	}
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -2601862472447650296L;
 
-	/* (non-Javadoc)
-	 * @see org.sbml.simulator.math.odes.AbstractDESSolver#getName()
-	 */
-	public String getName() {
-		return "Adams-Bashforth solver";
-	}
+  /**
+   * default constructor
+   */
+  public AdamsBashforthSolver() {
+    super();
+  }
 
-	/* (non-Javadoc)
-	 * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
-	 */
-	//@Override
-	public int getKiSAOterm() {
-		return 279;
-	}
+  /**
+   * Clone constructor
+   * @param adamsSolver
+   */
+  public AdamsBashforthSolver(AdamsBashforthSolver adamsSolver) {
+    super(adamsSolver);
+    integrator = adamsSolver.getIntegrator();
+  }
+
+  /**
+   * 
+   * @param stepSize
+   */
+  public AdamsBashforthSolver(double stepSize) {
+    super(stepSize);
+  }
+
+  /**
+   * 
+   * @param stepSize
+   * @param nonnegative the nonnegative flag of the super class
+   * @see AbstractDESSolver
+   */
+  public AdamsBashforthSolver(double stepSize, boolean nonnegative) {
+    super(stepSize, nonnegative);
+  }
+
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.odes.FirstOrderSolver#clone()
+   */
+  @Override
+  public AdamsBashforthSolver clone() {
+    return new AdamsBashforthSolver(this);
+  }
+
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.odes.FirstOrderSolver#createIntegrator()
+   */
+  @Override
+  public void createIntegrator() {
+    integrator = new AdamsBashforthIntegrator(5, Math.min(1e-8d, Math.min(1d, getStepSize())), Math.min(1d, getStepSize()), getAbsTol(), getRelTol());
+  }
+
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.odes.AbstractDESSolver#getName()
+   */
+  @Override
+  public String getName() {
+    return "Adams-Bashforth solver";
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.DESSolver#getKISAOTerm()
+   */
+  @Override
+  public int getKiSAOterm() {
+    return 279;
+  }
 
 }

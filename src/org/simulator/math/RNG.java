@@ -47,7 +47,7 @@ public class RNG {
    * 
    */
   private static final Logger logger = Logger.getLogger(RNG.class.getName());
-  
+
   /**
    *
    */
@@ -55,7 +55,7 @@ public class RNG {
     RANDOM_SEED = System.currentTimeMillis();
     RANDOM = new Random(RANDOM_SEED);
   }
-  
+
   /**
    * Generates a random integer between first and second input value.
    * @param low
@@ -70,11 +70,11 @@ public class RNG {
     int result = (Math.abs(RANDOM.nextInt()) % (high - low + 1)) + low;
     if ((result < low) || (result > high)) {
       logger.fine(MessageFormat.format(
-                "Error, invalid value {0,number} in RNG.randomInt! boundaries were low = {1,number}\thigh = {2,number}",
-                result, low, high));
+        "Error, invalid value {0,number} in RNG.randomInt! boundaries were low = {1,number}\thigh = {2,number}",
+        result, low, high));
       result = Math.abs(RANDOM.nextInt() % (high - low + 1)) + low;
     }
     return result;
   }
-  
+
 }

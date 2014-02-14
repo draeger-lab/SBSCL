@@ -36,107 +36,107 @@ import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
- * This class can test the simulation of all models from 
+ * This class can test the simulation of all models from
  * <a href="http://www.ebi.ac.uk/biomodels-main/" target="_blank">BioModels database</a>.
  * 
  * @author Roland Keller
  * @version $Rev$
  */
 public class TestBiomodels {
-	
-	/**
-	 * A {@link Logger} for this class.
-	 */
-	private static final Logger logger = Logger.getLogger(TestBiomodels.class.getName());
-	
-	
-	/**
-	 * Tests the models of biomodels.org using the {@link RosenbrockSolver} as integrator
-	 * @param file
-	 * @param from
-	 * @param to
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public static void testBiomodels(String file, int from, int to)
-			throws FileNotFoundException, IOException {
-		int errors = 0;
-		int nModels = 0;
-		AdaptiveStepsizeIntegrator solver = new RosenbrockSolver();
-		solver.setAbsTol(1E-12);
-		solver.setRelTol(1E-6);
-		List<Integer> slowModels = new LinkedList<Integer>();
-		for (int modelnr = from; modelnr <= to; modelnr++) {
-			System.out.println("Biomodel " + modelnr);
-			Model model = null;
-			try {
-				String modelFile = "";
-				if (modelnr < 10) {
-					modelFile = file + "BIOMD000000000" + modelnr + ".xml";
-				} else if (modelnr < 100) {
-					modelFile = file + "BIOMD00000000" + modelnr + ".xml";
-				} else {
-					modelFile = file + "BIOMD0000000" + modelnr + ".xml";
-				}
-				model = (new SBMLReader()).readSBML(modelFile).getModel();
-			} catch (Exception e) {
-				model = null;
-				logger.warning("Exception while reading Biomodel " + modelnr);
-				errors++;
-			}
-			if (model != null) {
-				solver.reset();
-				try {
-					double time1 = System.nanoTime();
-					SBMLinterpreter interpreter = new SBMLinterpreter(model);
 
-					if ((solver != null) && (interpreter != null)) {
-						solver.setStepSize(0.01);
-						
-						// solve
-						solver.solve(interpreter,
-								interpreter.getInitialValues(), 0, 10);
+  /**
+   * A {@link Logger} for this class.
+   */
+  private static final Logger logger = Logger.getLogger(TestBiomodels.class.getName());
 
-						if (solver.isUnstable()) {
-							logger.warning("unstable!");
-							errors++;
-						}
-					}
-					double time2 = System.nanoTime();
-					double runningTime = (time2 - time1) / 1E9;
-					if(runningTime >= 300) {
-						slowModels.add(modelnr);
-					}
-				} catch (Exception e) {
-					logger.warning("Exception in Biomodel " + modelnr);
-					errors++;
-				} 
-			}
-			nModels++;
-		}
-		System.out.println("Models: " + nModels);
-		System.out.println("Models with errors in simulation: " + errors);
-		System.out.println("Models with correct simulation: "
-				+ (nModels - errors));
-		for(int slowModel: slowModels) {
-			System.out.println("Slow: #" + slowModel);
-		}
-	}
-	
-	/**
-	 * * Input:
-	 * <ol>
-	 * <li>directory with models (containing the biomodels),
-	 * <li>first model to be simulated,
-	 * <li>last model to be simulated,
-	 * </ol>
-	 * 
-	 * @param args
-	 * @throws IOException
-	 * @throws URISyntaxException
-	 */
-	public static void main(String[] args) throws IOException,URISyntaxException {
-		testBiomodels(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]));
-	}
+
+  /**
+   * Tests the models of biomodels.org using the {@link RosenbrockSolver} as integrator
+   * @param file
+   * @param from
+   * @param to
+   * @throws FileNotFoundException
+   * @throws IOException
+   */
+  public static void testBiomodels(String file, int from, int to)
+      throws FileNotFoundException, IOException {
+    int errors = 0;
+    int nModels = 0;
+    AdaptiveStepsizeIntegrator solver = new RosenbrockSolver();
+    solver.setAbsTol(1E-12);
+    solver.setRelTol(1E-6);
+    List<Integer> slowModels = new LinkedList<Integer>();
+    for (int modelnr = from; modelnr <= to; modelnr++) {
+      System.out.println("Biomodel " + modelnr);
+      Model model = null;
+      try {
+        String modelFile = "";
+        if (modelnr < 10) {
+          modelFile = file + "BIOMD000000000" + modelnr + ".xml";
+        } else if (modelnr < 100) {
+          modelFile = file + "BIOMD00000000" + modelnr + ".xml";
+        } else {
+          modelFile = file + "BIOMD0000000" + modelnr + ".xml";
+        }
+        model = (new SBMLReader()).readSBML(modelFile).getModel();
+      } catch (Exception e) {
+        model = null;
+        logger.warning("Exception while reading Biomodel " + modelnr);
+        errors++;
+      }
+      if (model != null) {
+        solver.reset();
+        try {
+          double time1 = System.nanoTime();
+          SBMLinterpreter interpreter = new SBMLinterpreter(model);
+
+          if ((solver != null) && (interpreter != null)) {
+            solver.setStepSize(0.01);
+
+            // solve
+            solver.solve(interpreter,
+              interpreter.getInitialValues(), 0, 10);
+
+            if (solver.isUnstable()) {
+              logger.warning("unstable!");
+              errors++;
+            }
+          }
+          double time2 = System.nanoTime();
+          double runningTime = (time2 - time1) / 1E9;
+          if (runningTime >= 300) {
+            slowModels.add(modelnr);
+          }
+        } catch (Exception e) {
+          logger.warning("Exception in Biomodel " + modelnr);
+          errors++;
+        }
+      }
+      nModels++;
+    }
+    System.out.println("Models: " + nModels);
+    System.out.println("Models with errors in simulation: " + errors);
+    System.out.println("Models with correct simulation: "
+        + (nModels - errors));
+    for(int slowModel: slowModels) {
+      System.out.println("Slow: #" + slowModel);
+    }
+  }
+
+  /**
+   * * Input:
+   * <ol>
+   * <li>directory with models (containing the biomodels),
+   * <li>first model to be simulated,
+   * <li>last model to be simulated,
+   * </ol>
+   * 
+   * @param args
+   * @throws IOException
+   * @throws URISyntaxException
+   */
+  public static void main(String[] args) throws IOException,URISyntaxException {
+    testBiomodels(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+  }
 
 }

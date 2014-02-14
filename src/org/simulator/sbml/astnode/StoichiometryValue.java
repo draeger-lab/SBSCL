@@ -23,6 +23,7 @@
 package org.simulator.sbml.astnode;
 
 import java.util.Map;
+
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 
@@ -34,146 +35,144 @@ import org.sbml.jsbml.SpeciesReference;
  * @version $Rev: 205 $
  */
 public class StoichiometryValue {
-	/**
-	 * The value of the stoichiometry.
-	 */
-	private double stoichiometry;
 
-	/**
-	 * The current ASTNode time
-	 */
-	private double time;
+  /**
+   * The value of the stoichiometry.
+   */
+  private double stoichiometry;
 
-	/**
-	 * The index of the corresponding species reference in the Y vector of the
-	 * value holder (if any), -1 if not existing
-	 */
-	private int speciesRefIndex;
+  /**
+   * The current {@link org.sbml.jsbml.ASTNode} time
+   */
+  private double time;
 
-	/**
-	 * Is the StoichiometryMath of the species reference set?
-	 */
-	private boolean isSetStoichiometryMath;
+  /**
+   * The index of the corresponding species reference in the Y vector of the
+   * value holder (if any), -1 if not existing
+   */
+  private int speciesRefIndex;
 
-	/**
-	 * The id of the species reference
-	 */
-	private String id;
+  /**
+   * Is the StoichiometryMath of the species reference set?
+   */
+  private boolean isSetStoichiometryMath;
 
-	/**
-	 * The species reference
-	 */
-	private SpeciesReference sr;
+  /**
+   * The id of the species reference
+   */
+  private String id;
 
-	/**
-	 * The map of the species references that are contained in rules with their values
-	 */
-	private Map<String, Double> stoichiometricCoefHash;
+  /**
+   * The species reference
+   */
+  private SpeciesReference sr;
 
-	/**
-	 * The Y vector of the value holder
-	 */
-	private double[] Y;
+  /**
+   * The map of the species references that are contained in rules with their values
+   */
+  private Map<String, Double> stoichiometricCoefHash;
 
-	/**
-	 * The value of the stoichiometry math
-	 */
-	private ASTNodeValue stoichiometryMathValue;
+  /**
+   * The Y vector of the value holder
+   */
+  private double[] Y;
 
-	/**
-	 * Has the stoichiometry already been calculated? (important in the case of constant stoichiometry)
-	 */
-	private boolean stoichiometrySet;
+  /**
+   * The value of the stoichiometry math
+   */
+  private ASTNodeValue stoichiometryMathValue;
 
-	/**
-	 * 
-	 * @param sr
-	 * @param speciesRefIndex
-	 * @param stoichiometricCoefHash
-	 * @param Y
-	 * @param stoichiometryMathValue
-	 */
-	public StoichiometryValue(SpeciesReference sr, 
-			int speciesRefIndex, Map<String, Double> stoichiometricCoefHash, 
-			double[] Y, ASTNodeValue stoichiometryMathValue) {
-		this.isSetStoichiometryMath = sr.isSetStoichiometryMath();
-		this.sr = sr;
-		this.id = sr.getId();
-		this.speciesRefIndex = speciesRefIndex;
-		this.stoichiometricCoefHash = stoichiometricCoefHash;
-		this.Y = Y;
-		this.stoichiometryMathValue = stoichiometryMathValue;
-		this.time = Double.NaN;
+  /**
+   * Has the stoichiometry already been calculated? (important in the case of constant stoichiometry)
+   */
+  private boolean stoichiometrySet;
 
-		computeStoichiometricValue();
-	}
+  /**
+   * 
+   * @param sr
+   * @param speciesRefIndex
+   * @param stoichiometricCoefHash
+   * @param Y
+   * @param stoichiometryMathValue
+   */
+  public StoichiometryValue(SpeciesReference sr,
+    int speciesRefIndex, Map<String, Double> stoichiometricCoefHash,
+    double[] Y, ASTNodeValue stoichiometryMathValue) {
+    isSetStoichiometryMath = sr.isSetStoichiometryMath();
+    this.sr = sr;
+    id = sr.getId();
+    this.speciesRefIndex = speciesRefIndex;
+    this.stoichiometricCoefHash = stoichiometricCoefHash;
+    this.Y = Y;
+    this.stoichiometryMathValue = stoichiometryMathValue;
+    time = Double.NaN;
 
+    computeStoichiometricValue();
+  }
 
-	/**
-	 * Computes the value of the stoichiometry at the current time if it has not been computed yet or is not constant.
-	 * @param time
-	 * @return doubleValue the value of the stoichiometry
-	 */
-	public double compileDouble(double time) {
-		if (this.time != time) {
-			this.time = time;
-			computeStoichiometricValue();
-		}
-		return stoichiometry;
-	}
+  /**
+   * Computes the value of the stoichiometry at the current time if it has not been computed yet or is not constant.
+   * @param time
+   * @return doubleValue the value of the stoichiometry
+   */
+  public double compileDouble(double time) {
+    if (this.time != time) {
+      this.time = time;
+      computeStoichiometricValue();
+    }
+    return stoichiometry;
+  }
 
-	/**
-	 * Computes the value of the stoichiometry.
-	 */
-	private void computeStoichiometricValue() {
-		if (speciesRefIndex >= 0) {
-			stoichiometry = Y[speciesRefIndex];
-			stoichiometricCoefHash.put(id, stoichiometry);
-			stoichiometrySet=true;
-		} else if (stoichiometricCoefHash != null
-				&& stoichiometricCoefHash.containsKey(id)) {
-			stoichiometry = stoichiometricCoefHash.get(id);
-			stoichiometrySet=true;
-		} else {
-			if (isSetStoichiometryMath) {
-				stoichiometry = stoichiometryMathValue.compileDouble(time, 0d);
-				stoichiometrySet=true;
-			} else if ((!sr.isSetStoichiometry()) && (sr.getLevel() >= 3)) {
-				stoichiometry = 1d;
-				stoichiometrySet=false;
-			} else {
-				stoichiometry = sr.getCalculatedStoichiometry();
-				if (id.equals("")) {
-					stoichiometrySet=true;
-				}
-				else {
-					stoichiometrySet=false;
-				}
-			}
-		}
-	}
+  /**
+   * Computes the value of the stoichiometry.
+   */
+  private void computeStoichiometricValue() {
+    if (speciesRefIndex >= 0) {
+      stoichiometry = Y[speciesRefIndex];
+      stoichiometricCoefHash.put(id, stoichiometry);
+      stoichiometrySet=true;
+    } else if (stoichiometricCoefHash != null
+        && stoichiometricCoefHash.containsKey(id)) {
+      stoichiometry = stoichiometricCoefHash.get(id);
+      stoichiometrySet=true;
+    } else {
+      if (isSetStoichiometryMath) {
+        stoichiometry = stoichiometryMathValue.compileDouble(time, 0d);
+        stoichiometrySet=true;
+      } else if ((!sr.isSetStoichiometry()) && (sr.getLevel() >= 3)) {
+        stoichiometry = 1d;
+        stoichiometrySet=false;
+      } else {
+        stoichiometry = sr.getCalculatedStoichiometry();
+        if (id.equals("")) {
+          stoichiometrySet=true;
+        }
+        else {
+          stoichiometrySet=false;
+        }
+      }
+    }
+  }
 
-	/**
-	 * Refreshes the stoichiometry.
-	 */
-	public void refresh() {
-		this.computeStoichiometricValue();
-	}
+  /**
+   * Refreshes the stoichiometry.
+   */
+  public void refresh() {
+    computeStoichiometricValue();
+  }
 
+  /**
+   * @return stoichiometrySet?
+   */
+  public boolean getStoichiometrySet() {
+    return stoichiometrySet;
+  }
 
-	/**
-	 * @return stoichiometrySet?
-	 */
-	public boolean getStoichiometrySet() {
-		return stoichiometrySet;
-	}
+  /**
+   * @return stoichiometry
+   */
+  public double getStoichiometry() {
+    return stoichiometry;
+  }
 
-
-	/**
-	 * @return stoichiometry
-	 */
-	public double getStoichiometry() {
-		return stoichiometry;
-	}
-  
 }
