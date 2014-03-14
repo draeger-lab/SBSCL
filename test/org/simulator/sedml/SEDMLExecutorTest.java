@@ -53,21 +53,39 @@ import org.simulator.math.odes.MultiTable;
  * @since 1.1
  */
 public class SEDMLExecutorTest {
-  /*
+  /**
    * This file describes a straightforward simulation of a basic model a->b->c
    */
-  File abc1test = new File("files/sedmlTest/sed1.xml");
-  File miriamtest = new File("files/sedmlTest/ClockSedML.xml");
-  SedML sedml=null;
+  private File abc1test = new File("files/sedmlTest/sed1.xml");
+  /**
+   * 
+   */
+  private File miriamtest = new File("files/sedmlTest/ClockSedML.xml");
+  /**
+   * 
+   */
+  private SedML sedml = null;
+
+  /**
+   * 
+   * @throws Exception
+   */
   @Before
   public void setUp() throws Exception {
-
   }
 
+  /**
+   * 
+   * @throws Exception
+   */
   @After
   public void tearDown() throws Exception {
   }
 
+  /**
+   * 
+   * @throws XMLException
+   */
   @Test
   public final void testBasicSEDMLExecutorForLocalFile() throws XMLException {
     // get the SED-ML object model from file. The model referred to in this
@@ -84,7 +102,7 @@ public class SEDMLExecutorTest {
     // Here we run all the simulations needed to create an output, and get the
     // raw results.
     Map<Task, IRawSedmlSimulationResults>res = exe.runSimulations();
-    if (res==null ||res.isEmpty() || !exe.isExecuted()) {
+    if ((res == null) || res.isEmpty() || !exe.isExecuted()) {
       fail ("Simulatation failed: " + exe.getFailureMessages().get(0).getMessage());
     }
     for (IRawSedmlSimulationResults re: res.values()) {
@@ -99,7 +117,11 @@ public class SEDMLExecutorTest {
     assertEquals("A_dg",mt.getBlock(0).getColumn(0).getColumnName());
 
   }
-  // retrieves model from Miriam DB - needs internet connection
+  /**
+   * retrieves model from Miriam DB - needs internet connection
+   * 
+   * @throws XMLException
+   */
   @Test
   public final void testBasicSEDMLExecutorForMiriamURNDefinedModel() throws XMLException {
     sedml=Libsedml.readDocument(miriamtest).getSedMLModel();
@@ -115,11 +137,9 @@ public class SEDMLExecutorTest {
     // now process.In this case, there's no processing performed - we're displaying the
     // raw results.
     MultiTable mt = exe.processSimulationResults(wanted, res);
-    assertTrue( 3== mt.getColumnCount());
+    assertTrue(3 == mt.getColumnCount());
     assertTrue ("Num Rows was: "  + mt.getRowCount(), 1001 == mt.getRowCount());
     assertEquals("Time", mt.getTimeName());
   }
-
-
 
 }
