@@ -174,21 +174,26 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
 	  memoryMaximumSize="512M"
 	  nowarn="no"
 	  optimize="${optimize}"
-	  source="1.5"
-	  target="1.5"
+	  source="1.6"
+	  target="1.6"
 	  verbose="${verbose}"
     >
 	  <src path="${build.src}"/>
 	</javac>
-	  	
+	
+  	<property name="vendor" value="The Simulation Core Library Team"/>
+  	
 	<manifest file="${build.dest}/META-INF/MANIFEST.MF">
 	  <attribute name="Main-Class" value="org.simulator.About"/>
 	  <attribute name="Built-By" value="${user.name}"/>
+	  <attribute name="Built-Date" value="${TODAY}"/> 
+	  <attribute name="Implementation-Title"   value="${Name}"/>
+	  <attribute name="Implementation-Version" value="Revision ${repository.revision} (Build ${build.number})"/>
+	  <attribute name="Implementation-Vendor"  value="${vendor}"/>
 	  <section name="${Name}">
-	    <attribute name="Specification-Title"    value="${Name}"/>
-	    <attribute name="Specification-Version"  value="${version}"/>
-	    <attribute name="Implementation-Title"   value="${Name}"/>
-	    <attribute name="Implementation-Version" value="Revision ${repository.revision} (Build ${build.number})"/>
+	  	<attribute name="Specification-Title"    value="${Name}"/>
+	  	<attribute name="Specification-Version"  value="${version}"/>
+	    <attribute name="Specification-Vendor"   value="${vendor}"/>
 	  </section>
 	</manifest>
 	  
@@ -399,7 +404,7 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
       <param name="-nodefontsize" value="9"/>
       <param name="-nodefontpackagesize" value="7"/>
       <param name="-link" value="http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/doclet/spec"/>
-      <param name="-link" value="http://java.sun.com/j2se/1.5/docs/api"/>
+      <param name="-link" value="http://docs.oracle.com/javase/6/docs/api/"/>
     </doclet>
   </javadoc>
   </target>
@@ -459,7 +464,7 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
       notree="false"
       overview="${src}/overview.html"
       packagenames="org.*"
-      source="1.5"
+      source="1.6"
       sourcepath="${src}:${test}:${resources}"
       splitindex="true"
       stylesheetfile="${doc}/javadoc-style.css"
@@ -476,13 +481,14 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
       <link href="http://sbml.org/Special/Software/JSBML/latest-stable/build/apidocs/"/>
       <link href="http://www.jdom.org/docs/apidocs.1.1/"/>
       <link href="http://www.xom.nu/apidocs/"/>
+      <link href="http://docs.oracle.com/javase/6/docs/api/"/>
       
-      <!-- For JSBML classes:
+      <!-- For JSBML classes: -->
       <tag name="sbml.deprecated" description="Deprecated in SBML since: "/>
       <tag name="jsbml.note" description="Note"/>
       <tag name="jsbml.warning"/>
-      <tag name="doc.note"  description="Documentation note"/>
-      -->
+      <tag name="doc.note" description="Documentation note"/>
+      <!-- -->
             
     </javadoc>
   	
