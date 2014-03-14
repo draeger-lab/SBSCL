@@ -54,26 +54,53 @@ import org.simulator.sbml.SBMLinterpreter;
  * @since 1.1
  */
 public class SEDMLWriterTest {
+
+  /**
+   * 
+   */
   private static final String COMMENT = "Standard time course of ABC1 model";
-  File SBMLFile = new File("files/sedmlTest/abc_1.xml");
-  SEDMLWriter writer;
+  /**
+   * 
+   */
+  private File SBMLFile = new File("files/sedmlTest/abc_1.xml");
+  /**
+   * 
+   */
+  private SEDMLWriter writer;
+
+  /**
+   * 
+   * @throws Exception
+   */
   @Before
   public void setUp() throws Exception {
     writer = new SEDMLWriter();
   }
 
+  /**
+   * 
+   * @throws Exception
+   */
   @After
   public void tearDown() throws Exception {
   }
 
+  /**
+   * 
+   * @throws IOException
+   * @throws XMLStreamException
+   * @throws SBMLException
+   * @throws ModelOverdeterminedException
+   * @throws XMLException
+   */
   @Test
   public final void testSaveExperimentToSEDML() throws IOException, XMLStreamException, SBMLException, ModelOverdeterminedException, XMLException {
-    double start=0;
-    double end=10;
-    double stepsize=0.1;
+    double start = 0d;
+    double end = 10d;
+    double stepsize = 0.1d;
     Model model = (new SBMLReader()).readSBML(SBMLFile).getModel();
     AbstractDESSolver solver = new DormandPrince54Solver();
-    solver.setStepSize(0.1);
+    solver.setStepSize(stepsize);
     SBMLinterpreter interpreter = new SBMLinterpreter(model);
 
     if (solver instanceof AbstractDESSolver) {
@@ -83,8 +110,7 @@ public class SEDMLWriterTest {
 
     File tmp = File.createTempFile("sedmlOut", "xml");
     FileOutputStream fos = new FileOutputStream(tmp);
-    writer.saveExperimentToSEDML(start,end,stepsize,solver,model,
-      SBMLFile.toURI(),fos );
+    writer.saveExperimentToSEDML(start, end, stepsize, solver, model, SBMLFile.toURI(), fos);
 
     // now test reading in SEDML file
     SEDMLDocument doc = Libsedml.readDocument(tmp);
@@ -98,10 +124,9 @@ public class SEDMLWriterTest {
     fos.close();
     boolean IoExthrown=false;
     try{
-      writer.saveExperimentToSEDML(start,end,stepsize,solver,model,
-        SBMLFile.toURI(),fos );
-    }catch(IOException e) {
-      IoExthrown =true;
+      writer.saveExperimentToSEDML(start, end, stepsize, solver, model, SBMLFile.toURI(), fos);
+    } catch(IOException e) {
+      IoExthrown = true;
     }
     if (!IoExthrown) {
       fail("Should throw IOEXception since OS was closed");
