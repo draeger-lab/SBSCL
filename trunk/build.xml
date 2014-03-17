@@ -133,8 +133,7 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
 	depends="prepare"
 	description="Prepares the source code"
   >
-	<echo message="Removing existing directories"/>
-	<delete dir="${build.dest}"/>
+	<delete dir="${build.dest}" verbose="true"/>
 	  	
 	<echo message="Creating target directories"/>
 	<mkdir dir="${build.src}"/>
@@ -144,8 +143,8 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
 	<mkdir dir="${dist.dir}"/>
 
 	<!-- copy src files -->
-	<copy todir="${build.src}" overwrite="yes">
-	  <fileset 
+	<copy todir="${build.src}" overwrite="yes" verbose="true">
+	  <fileset
 	    dir="${src}"
 	    excludes="**/.svn*, **/*.class, **/*~, **/*.tgz, **/*.zip"
 	  />
@@ -233,7 +232,7 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
     depends="compile"
     description="Bundels only the class files in one JAR library, without any other libraries.">
     
-    <delete file="${appJar}_v${version}_slim.jar"/>
+    <delete file="${appJar}_v${version}_slim.jar" verbose="true"/>
     <jar
       compress="true"
       filesetmanifest="mergewithoutmain"
@@ -274,7 +273,7 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
     depends="jar_slim"
     description="Creates a JAR file including all class files and all third-party libraries, but no source files.">
     
-    <delete file="${appJar}_v${version}_incl-libs.jar"/>
+    <delete file="${appJar}_v${version}_incl-libs.jar" verbose="true"/>
     <jar
       compress="true"
       filesetmanifest="mergewithoutmain"
@@ -316,7 +315,7 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
     depends="jar_incl-libs"
     description="Creates a JAR file including all class files and all third-party libraries, all package descriptions, and also all source files.">
 
-    <delete file="${appJar}_v${version}_incl-libs_src.jar"/>
+    <delete file="${appJar}_v${version}_incl-libs_src.jar" verbose="true"/>
     <jar
       compress="true"
       filesetmanifest="mergewithoutmain"
@@ -350,7 +349,7 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
     depends="init"
     description="Removes all that has been built">
     
-    <delete includeemptydirs="true" dir="${build.dir}"/>
+    <delete includeemptydirs="true" dir="${build.dir}" verbose="true"/>
   </target>
 
   <!-- =================================================================== -->
@@ -481,7 +480,7 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
       destdir="${doc.location}"
       doctitle="${Name} ${version}"
       footer="Generated at ${TODAY}&lt;br/&gt;Version ${version} Revision ${repository.revision}"
-      header="&lt;img src=&quot;resources/SCL_icon.png&quot;/&gt;"
+      header="&lt;img src=&quot;resources/SCL_icon.png&quot; title=&quot;Simulation Core Library&quot; alt=&quot;Simulation Core Library&quot;/&gt;"
       maxmemory="96m"
       nodeprecated="false"
       nodeprecatedlist="false"
@@ -525,8 +524,7 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
   	-->
   	<property name="icon.file.src" value="${resources}/org/simulator/gui/img/SCL_icon.png"/>
   	<property name="icon.file.dest" value="${doc.location}/resources/SCL_icon.png"/>
-  	<echo message="Copying file ${icon.file.src} to file ${icon.file.dest}..."/>
-  	<copy file="${icon.file.src}" tofile="${icon.file.dest}"/>
+  	<copy file="${icon.file.src}" tofile="${icon.file.dest}" verbose="true"/>
  
   </target>
 
