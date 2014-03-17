@@ -535,8 +535,7 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
     name="zip"
     depends="javadoc,jar_incl-libs,jar_slim,jar_incl-libs_and_src"
     description="Creates a ZIP file containing all sources, tests, resources, libs, licenses, text files, three different versions of JAR files, and api documentation.">
-  
-    <!-- TODO: include publications as soon as accepted -->
+
     <zip
       compress="true"
       comment="Full distribution of ${Name}"
@@ -555,6 +554,7 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
       <zipfileset dir="${dist.dir}" prefix="dist/" includes="${JAR_Name}_v${version}_incl-libs.jar"/>
       <zipfileset dir="${dist.dir}" prefix="dist/" includes="${JAR_Name}_v${version}_incl-libs_src.jar"/>
       <zipfileset dir="${dist.dir}" prefix="dist/" includes="${JAR_Name}_v${version}_slim.jar"/>
+      <zipfileset file="${basedir}/doc/publications/Keller2013_BMCSystBiol_SBSCL.pdf" prefix="doc/publications/"/>
     </zip>
     
   </target>
