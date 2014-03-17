@@ -44,11 +44,11 @@
           </apply>
         </math>
         <message>        
-        <body xmlns="http://www.w3.org/1999/xhtml">
-                <p>S2 is too large</p>
-                    </body>
-                  </message>
-            </constraint>
+          <body xmlns="http://www.w3.org/1999/xhtml">
+            <p>S2 is too large</p>
+          </body>
+        </message>
+      </constraint>
       <constraint>
         <math xmlns="http://www.w3.org/1998/Math/MathML">        
           <apply>
@@ -58,11 +58,11 @@
           </apply>
         </math>
         <message>        
-        <body xmlns="http://www.w3.org/1999/xhtml">
-                <p>S1 is too large</p>
-                    </body>
-                  </message>
-            </constraint>
+          <body xmlns="http://www.w3.org/1999/xhtml">
+            <p>S1 is too large</p>
+          </body>
+        </message>
+      </constraint>
     </listOfConstraints>
     <listOfReactions>
       <reaction id="reaction1" name="reaction1" reversible="false" fast="false">
@@ -81,7 +81,7 @@
               <ci> S1 </ci>
             </apply>
           </math>
-                </kineticLaw>
+        </kineticLaw>
       </reaction>
     </listOfReactions>
   </model>

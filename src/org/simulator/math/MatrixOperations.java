@@ -2,13 +2,17 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of ODE Toolkit: a free application for solving
- * systems of ordinary differential equations.
- * 
- * Copyright (C) 2002-2011 Beky Kotcon, Samantha Mesuro, Daniel
- * Rozenfeld, Anak Yodpinyanee, Andres Perez, Eric Doi, Richard
- * Mehlinger, Steven Ehrlich, Martin Hunt, George Tucker, Peter
- * Scherpelz, Aaron Becker, Eric Harley, and Chris Moore
+ * This file is part of Simulation Core Library, a Java-based library
+ * for efficient numerical simulation of biological models.
+ *
+ * Copyright (C) 2007-2014 jointly by the following organizations:
+ * 1. University of Tuebingen, Germany
+ * 2. Keio University, Japan
+ * 3. Harvard University, USA
+ * 4. The University of Edinburgh, UK
+ * 5. EMBL European Bioinformatics Institute (EBML-EBI), Hinxton, UK
+ * 6. The University of California, San Diego, La Jolla, CA, USA
+ * 7. The Babraham Institute, Cambridge, UK
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
