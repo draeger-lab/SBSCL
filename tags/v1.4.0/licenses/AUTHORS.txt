@@ -1,0 +1,64 @@
+% File-encoding: UTF8
+
+                      -------------------------------
+                      Simulation Core Library Authors
+                      -------------------------------
+
+                           -- Main developers --
+
+         Andreas Dräger, University of California, San Diego, United States,
+           University of Tuebingen, Germany,
+           andraeger@eng.ucsd.edu
+         Alexander Dörr, University of Tuebingen, Germany,
+           alexander.doerr@uni-tuebingen.de
+         Roland Keller, University of Tuebingen, Germany,
+           roland.keller@uni-tuebingen.de
+         
+
+                      -- Principal investigators -- 
+             
+         Nicolas Le Novère, Babraham Institute, Babraham Campus, Babraham,
+           Cambridgeshire, United Kingdom
+           lenovere@gmail.com
+         Andreas Zell, University of Tuebingen, Germany,
+           andreas.zell@uni-tuebingen.de
+
+
+                           -- Contributors --
+
+         Akira Funahashi, Keio University, Yokohama, Japan,
+           funa@bio.keio.ac.jp
+         Akito Tabira, Keio University, Yokohama, Japan,
+           tabira@fun.bio.keio.ac.jp
+         Richard Adams, University of Edinburgh, UK,
+           Richard.Adams@ed.ac.uk
+         Mike Cooling, University of Auckland, Auckland, New Zealand,
+           m.cooling@auckland.ac.nz
+         Michael Ziller, Harvard University, MA, USA,
+           michael_ziller@harvard.edu
+         Nicolas Rodriguez, European Bioinformatics Institute, Hinxton, UK,
+            Babraham Institute, Babraham Campus, Babraham,
+            rodrigue@ebi.ac.uk
+         Hannes Planatscher, NMI Reutlingen, Germany,
+           Hannes.Planatscher@nmi.de
+           
+                             -- Thanks to --
+                                      
+         Beky Kotcon, Samantha Mesuro, Daniel Rozenfeld, Anak Yodpinyanee, 
+         Andres Perez, Eric Doi, Richard Mehlinger, Steven Ehrlich, Martin Hunt, 
+         George Tucker, Peter Scherpelz, Aaron Becker, Eric Harley, and 
+         Chris Moore, Harvey Mudd College, Claremont, California, USA.
+           
+           
+                               -- Alumni --
+         
+         Dieudonné Motsou Wouamba, University of Tuebingen, Germany,
+           dwouamba@yahoo.fr
+         Max Zwießele, University of Tuebingen, Germany,
+           max-benjamin.zwiessele@student.uni-tuebingen.de
+         Philip Stevens, University of Tuebingen, Germany,
+           philip.stevens@student.uni-tuebingen.de
+         Adrian Schröder, University of Tuebingen, Germany,
+           adrian.schroeder@uni-tuebingen.de
+         Marcel Kronfeld, University of Tuebingen, Germany,
+           marcel.kronfeld@uni-tuebingen.de           
