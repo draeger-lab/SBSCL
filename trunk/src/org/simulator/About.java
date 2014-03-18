@@ -45,7 +45,9 @@ public class About {
             "2. Keio University, Japan\n" +
             "3. Harvard University, USA\n" +
             "4. The University of Edinburgh, UK\n" +
-            "5. EMBL European Bioinformatics Institute (EBML-EBI), UK\n\n" +
+            "5. EMBL European Bioinformatics Institute (EBML-EBI), UK\n" +
+            "6. The University of California, San Diego, La Jolla, CA, USA\n" +
+            "7. The Babraham Institute, Cambridge, UK\n\n" +
             "License: LGPL Version 3\n" +
             "For more information please see\n" +
             "https://sourceforge.net/projects/simulation-core/.";
