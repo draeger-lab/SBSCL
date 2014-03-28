@@ -86,22 +86,23 @@ public class SBMLTestSuiteRunner {
   static {
     int i;
     String[] classes = new String[] {
-      "org.simulator.math.odes.AdamsBashforthSolver",
-      "org.simulator.math.odes.AdamsMoultonSolver",
-      "org.simulator.math.odes.DormandPrince54Solver",
-      "org.simulator.math.odes.DormandPrince853Solver",
-      "org.simulator.math.odes.EulerMethod",
-      "org.simulator.math.odes.GraggBulirschStoerSolver",
-      "org.simulator.math.odes.HighamHall54Solver",
-      "org.simulator.math.odes.RosenbrockSolver",
-    "org.simulator.math.odes.RungeKutta_EventSolver" };
+      org.simulator.math.odes.AdamsBashforthSolver.class.getName(),
+      org.simulator.math.odes.AdamsMoultonSolver.class.getName(),
+      org.simulator.math.odes.DormandPrince54Solver.class.getName(),
+      org.simulator.math.odes.DormandPrince853Solver.class.getName(),
+      org.simulator.math.odes.EulerMethod.class.getName(),
+      org.simulator.math.odes.GraggBulirschStoerSolver.class.getName(),
+      org.simulator.math.odes.HighamHall54Solver.class.getName(),
+      org.simulator.math.odes.RosenbrockSolver.class.getName(),
+      org.simulator.math.odes.RungeKutta_EventSolver.class.getName()
+    };
     AVAILABLE_SOLVERS = new Class[classes.length];
     for (i = 0; i < classes.length; i++) {
       try {
         AVAILABLE_SOLVERS[i] = (Class<AbstractDESSolver>) Class
             .forName(classes[i]);
       } catch (ClassNotFoundException exc) {
-        logger.severe(exc.getLocalizedMessage());
+        logger.severe(exc.getLocalizedMessage() != null ? exc.getLocalizedMessage() : exc.getMessage());
       }
     }
   }
