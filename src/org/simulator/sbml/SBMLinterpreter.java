@@ -5,7 +5,7 @@
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
  *
- * Copyright (C) 2007-2014 jointly by the following organizations:
+ * Copyright (C) 2007-2015 jointly by the following organizations:
  * 1. University of Tuebingen, Germany
  * 2. Keio University, Japan
  * 3. Harvard University, USA
@@ -39,7 +39,6 @@ import java.util.logging.Logger;
 
 import org.apache.commons.math.ode.DerivativeException;
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Assignment;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.CallableSBase;
 import org.sbml.jsbml.Compartment;
@@ -730,7 +729,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
 
     if ((sr != null) && sr.isSetStoichiometryMath()) {
       try {
-        return ((ASTNodeValue)sr.getStoichiometryMath().getMath().getUserObject(TEMP_VALUE)).compileDouble(astNodeTime, 0d);
+        return ((ASTNodeValue) sr.getStoichiometryMath().getMath().getUserObject(TEMP_VALUE)).compileDouble(astNodeTime, 0d);
       } catch (SBMLException exc) {
         // TODO: Localize
         logger.log(Level.WARNING, MessageFormat.format(
@@ -1491,7 +1490,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
   }
 
   /**
-   * Refreshes the syntax tree (e.g. resets the ASTNode time)
+   * Refreshes the syntax tree (e.g., resets the ASTNode time)
    */
   private void refreshSyntaxTree() {
     for (ASTNode node: nodes) {
@@ -1586,15 +1585,15 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
    */
   private void initializeKineticLaws() {
     int reaction = 0;
-    ArrayList<Boolean> isReactantList = new ArrayList<Boolean>();
-    ArrayList<Integer> speciesIndexList = new ArrayList<Integer>();
-    ArrayList<Integer> reactionIndexList = new ArrayList<Integer>();
-    ArrayList<Boolean> zeroChangeList = new ArrayList<Boolean>();
-    ArrayList<Boolean> constantStoichiometryList = new ArrayList<Boolean>();
-    ArrayList<StoichiometryValue> stoichiometriesList = new ArrayList<StoichiometryValue>();
+    List<Boolean> isReactantList = new ArrayList<Boolean>();
+    List<Integer> speciesIndexList = new ArrayList<Integer>();
+    List<Integer> reactionIndexList = new ArrayList<Integer>();
+    List<Boolean> zeroChangeList = new ArrayList<Boolean>();
+    List<Boolean> constantStoichiometryList = new ArrayList<Boolean>();
+    List<StoichiometryValue> stoichiometriesList = new ArrayList<StoichiometryValue>();
 
 
-    ArrayList<ASTNodeValue> kineticLawRootsList = new ArrayList<ASTNodeValue>();
+    List<ASTNodeValue> kineticLawRootsList = new ArrayList<ASTNodeValue>();
     for (Reaction r : model.getListOfReactions()) {
       KineticLaw kl = r.getKineticLaw();
       if (kl != null) {
@@ -1708,7 +1707,6 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
           stoichiometriesList.add(new StoichiometryValue(speciesRef,
             srIndex, stoichiometricCoefHash, Y,
             currentMathValue));
-
         }
 
 
@@ -1969,8 +1967,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
               symbolIndex));
         }
       } else if (model.findSpeciesReference(iA.getVariable()) != null) {
-        SpeciesReference sr = model.findSpeciesReference(iA
-          .getVariable());
+        SpeciesReference sr = model.findSpeciesReference(iA.getVariable());
         initialAssignmentRoots.add(new AssignmentRuleValue(
           (ASTNodeValue) copyAST(iA.getMath(), true, null, null)
           .getUserObject(TEMP_VALUE), sr.getId(),
@@ -1981,9 +1978,16 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     nAssignmentRules = assignmentRulesRoots.size();
   }
 
+  /**
+   * 
+   * @param math
+   * @param variables
+   * @param current
+   * @return
+   */
   private Set<String> getSetOfVariables(ASTNode math, Set<String> variables, Set<String> current) {
-
-    if ((math.isVariable()) && (math.getVariable() != null) && (variables.contains(math.getVariable().getId()))) {
+    if ((math.isVariable()) && (math.getVariable() != null)
+        && (variables.contains(math.getVariable().getId()))) {
       current.add(math.getVariable().getId());
     }
 
@@ -2011,12 +2015,12 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
   private ASTNode copyAST(ASTNode node, boolean mergingPossible, FunctionValue function, List<ASTNode> inFunctionNodes) {
     String nodeString = node.toString();
     ASTNode copiedAST = null;
-    if (mergingPossible && (!nodeString.equals("")) && (!nodeString.contains(""))) {
+    if (mergingPossible && !nodeString.equals("") && !nodeString.contains("")) {
       //Be careful with local parameters!
       if (!(node.isName()) || (node.getType() == ASTNode.Type.NAME_TIME) || (node.getType() == ASTNode.Type.NAME_AVOGADRO)
           || !((node.getVariable() != null) && (node.getVariable() instanceof LocalParameter))) {
-        List<ASTNode> nodesToLookAt=null;
-        if (function!=null) {
+        List<ASTNode> nodesToLookAt = null;
+        if (function != null) {
           nodesToLookAt = inFunctionNodes;
         }
         else {
@@ -2046,7 +2050,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         }
       }
 
-      if (function!=null) {
+      if (function != null) {
         inFunctionNodes.add(copiedAST);
       }
       else {
