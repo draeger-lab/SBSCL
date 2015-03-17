@@ -22,29 +22,12 @@
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
-package org.simulator.sedml;
 
 /**
- * Runtime exception indicating that
- * <a href="http://sed-ml.org" target="_blank">SED-ML</a> execution has failed.
+ * This package contains an implementation of flux balance analysis for COBRA
+ * models.
  * 
- * @author Richard Adams
- * @version $Rev$
- * @since 1.1
+ * @author Andreas Dr&auml;ger
+ * @since 1.5
  */
-public class ExecutionException extends RuntimeException {
-
-  /**
-   * 
-   * @param message
-   */
-  public ExecutionException(String message) {
-    super(message);
-  }
-
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
-
-}
+package org.simulator.fba;

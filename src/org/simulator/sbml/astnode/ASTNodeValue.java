@@ -5,7 +5,7 @@
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
  *
- * Copyright (C) 2007-2014 jointly by the following organizations:
+ * Copyright (C) 2007-2015 jointly by the following organizations:
  * 1. University of Tuebingen, Germany
  * 2. Keio University, Japan
  * 3. Harvard University, USA
@@ -276,7 +276,7 @@ public class ASTNodeValue {
    * @return doubleValue the double value of the node
    */
   public double compileDouble(double time, double delay) {
-    if (((this.time==time) && (delay == 0d)) || (isConstant && alreadyProcessed)) {
+    if (((this.time == time) && (delay == 0d)) || (isConstant && alreadyProcessed)) {
       return doubleValue;
     } else {
       isDouble = true;
@@ -285,7 +285,7 @@ public class ASTNodeValue {
       if (isConstant) {
         boolean childrenProcessed = true;
         for(ASTNodeValue child: children) {
-          childrenProcessed&= child.getAlreadyProcessed();
+          childrenProcessed &= child.getAlreadyProcessed();
         }
         if ((children.length > 0) && childrenProcessed) {
           alreadyProcessed = true;

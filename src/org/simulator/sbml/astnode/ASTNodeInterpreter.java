@@ -5,7 +5,7 @@
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
  *
- * Copyright (C) 2007-2014 jointly by the following organizations:
+ * Copyright (C) 2007-2015 jointly by the following organizations:
  * 1. University of Tuebingen, Germany
  * 2. Keio University, Japan
  * 3. Harvard University, USA
@@ -94,6 +94,7 @@ public class ASTNodeInterpreter {
    * 
    * @param name
    * @param time
+   * @param delay
    * @return doubleValue the interpreted double value of the node
    */
   public double compileDouble(String name, double time, double delay) {
@@ -847,7 +848,7 @@ public class ASTNodeInterpreter {
    * @return doubleValue the interpreted double value of the node
    */
   public double symbolTime() {
-    return (valueHolder.getCurrentTime());
+    return valueHolder.getCurrentTime();
   }
 
   /**
@@ -857,7 +858,7 @@ public class ASTNodeInterpreter {
    * @return doubleValue the interpreted double value of the node
    */
   public double frac(int numerator, int denominator) {
-    return (numerator / ((double) denominator));
+    return numerator / ((double) denominator);
   }
 
   /**
@@ -869,7 +870,7 @@ public class ASTNodeInterpreter {
    * @return doubleValue the interpreted double value of the node
    */
   public double frac(ASTNodeValue left, ASTNodeValue right, double time, double delay) {
-    return (left.compileDouble(time, delay) / right.compileDouble(time, delay));
+    return left.compileDouble(time, delay) / right.compileDouble(time, delay);
   }
 
   /**
@@ -993,7 +994,7 @@ public class ASTNodeInterpreter {
    * @return doubleValue the interpreted double value of the node
    */
   public double uMinus(ASTNodeValue userObject, double time, double delay) {
-    return (-userObject.compileDouble(time, delay));
+    return -userObject.compileDouble(time, delay);
   }
 
 }
