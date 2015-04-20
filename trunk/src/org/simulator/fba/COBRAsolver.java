@@ -52,22 +52,25 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FBCReactionPlugin;
+import org.sbml.jsbml.ext.fbc.FluxBound;
 import org.sbml.jsbml.ext.fbc.FluxObjective;
 import org.sbml.jsbml.ext.fbc.Objective;
 import org.sbml.jsbml.util.Pair;
+import org.sbml.jsbml.util.SBMLtools;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sbml.astnode.ASTNodeValue;
 
 
 /**
- * This solver implementation only accepts SBML models with FBC package version
- * 2.
+ * This solver implementation only accepts SBML models with FBC package versions
+ * 1 or 2.
  * 
  * @author Andreas Dr&auml;ger
  * @author Ali Ebrahim
  * @since 1.5
  */
+@SuppressWarnings("deprecation")
 public class COBRAsolver {
 
   /**
@@ -76,7 +79,7 @@ public class COBRAsolver {
   private static final transient Logger logger = Logger.getLogger(COBRAsolver.class.getName());
 
   /**
-   * 
+   * The linear programming solver.
    */
   private IloCplex cplex;
   /**
@@ -99,14 +102,14 @@ public class COBRAsolver {
   /**
    * Initializes the linear program and all data structures based on the
    * definitions in the given {@link SBMLDocument}.
-   * This implementation should work for diverse levels and versions of SBML,
-   * but note that this implementation only accepts {@link Model}s with fbc
-   * package in version 2.
+   * This implementation should work for diverse levels and versions of SBML
+   * {@link Model}s given that the model contains an fbc package in version 1 or
+   * 2.
    * 
    * @param doc
    *        the SBML container from which the {@link Model} is taken. This
    *        implementation only understands SBML core (diverse levels and
-   *        versions) and fbc version 2.
+   *        versions) in combination with fbc versions 1 and 2.
    * @throws IloException
    *         if the construction of the linear program fails.
    * @throws ModelOverdeterminedException
@@ -133,7 +136,8 @@ public class COBRAsolver {
 
     int level = doc.getLevel(), version = doc.getVersion();
 
-    String fbcNamespace = FBCConstants.getNamespaceURI(level, version, 2);
+    String fbcNamespaceV1 = FBCConstants.getNamespaceURI(level, version, 1);
+    String fbcNamespaceV2 = FBCConstants.getNamespaceURI(level, version, 2);
 
     reaction2Index = new HashMap<String, Integer>();
 
@@ -147,30 +151,60 @@ public class COBRAsolver {
     if (model.getReactionCount() > 0) {
       int i = 0;
       for (Reaction r : model.getListOfReactions()) {
-        FBCReactionPlugin rPlug = (FBCReactionPlugin) r.getPlugin(fbcNamespace);
-        Parameter upperBound = rPlug.getUpperFluxBoundInstance();
-        Parameter lowerBound = rPlug.getLowerFluxBoundInstande();
 
-        lb[i] = interpreter != null ? interpreter.getCurrentValueOf(lowerBound.getId()) : lowerBound.getValue();
-        ub[i] = interpreter != null ? interpreter.getCurrentValueOf(upperBound.getId()) : upperBound.getValue();
+        if (r.isSetPlugin(fbcNamespaceV2)) {
+          FBCReactionPlugin rPlug = (FBCReactionPlugin) r.getPlugin(fbcNamespaceV2);
+          Parameter upperBound = rPlug.getUpperFluxBoundInstance();
+          Parameter lowerBound = rPlug.getLowerFluxBoundInstance();
+
+          lb[i] = interpreter != null ? interpreter.getCurrentValueOf(lowerBound.getId()) : lowerBound.getValue();
+          ub[i] = interpreter != null ? interpreter.getCurrentValueOf(upperBound.getId()) : upperBound.getValue();
+        }
 
         reaction2Index.put(r.getId(), i);
-
         buildSpeciesReactionMap(species2Reaction, r.getListOfReactants());
         buildSpeciesReactionMap(species2Reaction, r.getListOfProducts());
-
         i++;
       }
     }
 
-
-
-    FBCModelPlugin mPlug = (FBCModelPlugin) model.getPlugin(fbcNamespace);
+    FBCModelPlugin mPlug = null;
+    if (model.isSetPlugin(fbcNamespaceV2)) {
+      mPlug = (FBCModelPlugin) model.getPlugin(fbcNamespaceV2);
+    } else if (model.isSetPlugin(fbcNamespaceV1)) {
+      mPlug = (FBCModelPlugin) model.getPlugin(fbcNamespaceV1);
+      if (mPlug.isSetListOfFluxBounds()) {
+        for (FluxBound fb : mPlug.getListOfFluxBounds()) {
+          if (!fb.isSetReaction()) {
+            logger.warning(MessageFormat.format("Encountered fluxBound ''{0}'' without reaction identifier.", fb.getId()));
+          } else {
+            int index = reaction2Index.get(fb.getReaction());
+            if (fb.isSetOperation()) {
+              if (fb.getOperation() == FluxBound.Operation.GREATER_EQUAL) {
+                lb[index] = fb.getValue();
+              } else if (fb.getOperation() == FluxBound.Operation.LESS_EQUAL) {
+                ub[index] = fb.getValue();
+              } else if (fb.getOperation() == FluxBound.Operation.EQUAL) {
+                lb[index] = ub[index] = fb.getValue();
+              } else {
+                logger.severe(MessageFormat.format("Encountered fluxBound ''{0}'' with invalid operation.", fb.getId()));
+              }
+            } else {
+              logger.severe(MessageFormat.format("Encountered fluxBound ''{0}'' without defined operation.", fb.getId()));
+            }
+          }
+        }
+      }
+    } else {
+      throw new IllegalArgumentException(MessageFormat.format(
+        "Cannot conduct flux balance analysis without defined objective function in model ''{0}''.",
+        model.getId()));
+    }
 
     // define objective function
     double objvals[] = new double[model.getReactionCount()];
     Arrays.fill(objvals, 0d);
-    Objective objective = mPlug.getActiveObjectiveInstsance();
+    Objective objective = mPlug.getActiveObjectiveInstance();
     Objective.Type type = objective.getType(); // max or min
 
     for (FluxObjective fo : objective.getListOfFluxObjectives()) {
@@ -234,15 +268,21 @@ public class COBRAsolver {
   private void buildSpeciesReactionMap(Map<String, Set<Pair<String, Double>>> species2Reaction, ListOf<SpeciesReference> listOfParticipants) throws SBMLException, ModelOverdeterminedException {
     String rId = ((Reaction) listOfParticipants.getParent()).getId();
     if ((rId == null) || (rId.length() == 0)) {
-      throw new SBMLException("Incomplete model: encountered a reaction with undefined identifier.");
+      Model model = listOfParticipants.getModel();
+      Reaction r = (Reaction) listOfParticipants.getParent();
+      String id = SBMLtools.getIdOrName(model);
+      throw new SBMLException(MessageFormat.format(
+        "Incomplete model{0}: encountered {1} without identifier.",
+        (id.length() > 0) ? " '" + id + "'" : "",
+          (r.isSetName() ? "reaction '" + r.getName() + "'" : "a reaction")));
     }
     double factor = listOfParticipants.getSBaseListType().equals(ListOf.Type.listOfReactants) ? -1d : 1d;
 
     for (SpeciesReference specRef : listOfParticipants) {
       if (!specRef.isSetSpecies()) {
         throw new SBMLException(MessageFormat.format(
-          "Incomplete model: no species defined for a species reference in reaction ''{0}''",
-          rId));
+          "Incomplete model: no species defined for a species reference in the {0} of reaction ''{1}''",
+          listOfParticipants.getSBaseListType(), rId));
       }
       if (!species2Reaction.containsKey(specRef.getSpecies())) {
         species2Reaction.put(specRef.getSpecies(), new HashSet<Pair<String, Double>>());
@@ -348,7 +388,7 @@ public class COBRAsolver {
    * @throws SBMLException
    *         if the model has an invalid structure.
    */
-  @SuppressWarnings({"deprecation", "javadoc"})
+  @SuppressWarnings({"javadoc"})
   private double stoichiometry(SpeciesReference specRef) throws SBMLException, ModelOverdeterminedException {
     if ((interpreter != null) && specRef.isSetId()) {
       // There could be an initial assignment that has changed the value of this speciesReference.
