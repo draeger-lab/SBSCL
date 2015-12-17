@@ -30,7 +30,6 @@ import ilog.cplex.CpxException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Arrays;
 
 import javax.xml.stream.XMLStreamException;
@@ -42,7 +41,6 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
-import org.sbml.jsbml.validator.SBMLValidator;
 
 /**
  * A simple test class to demonstrate the capabilities of the FBA implementation
@@ -132,6 +130,7 @@ public class COBRAsolverExample {
    * @throws FileNotFoundException
    */
   public static void main(String[] args) throws FileNotFoundException {
+    //System.setOut(new PrintStream(new FileOutputStream("out.txt")));
     PropertyConfigurator.configure("MyLog4j.properties");
     try {
       new COBRAsolverExample(new File(args[0]));

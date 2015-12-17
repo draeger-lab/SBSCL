@@ -2040,6 +2040,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
 
     if (copiedAST == null) {
       copiedAST = new ASTNode(node.getType());
+      copiedAST.setParentSBMLObject(node.getParentSBMLObject()); // The variable is not stored any more directly in the ASTNode2
 
       for (ASTNode child : node.getChildren()) {
         if (function!=null) {

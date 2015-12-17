@@ -25,82 +25,229 @@
  * Version: $Rev$
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.sbml</groupId>
-	<artifactId>jsimulator-core</artifactId>
-	<version>1.1-SNAPSHOT</version>
-	<description>Simulator-core library</description>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.simulator</groupId>
+  <artifactId>sbscl</artifactId>
+  
+  <!-- Output to jar format -->
+  <packaging>jar</packaging>
+  
+  
+  <!-- =================================================================== -->
+  <!-- General project information                                         -->
+  <!-- =================================================================== -->  
+  
+  <name>Simulator-core library</name>
+  <version>1.5</version>
+  <url>http://simulation-core.sourceforge.net</url>
+  <inceptionYear>2007</inceptionYear>
+  <description>The Systems Biology Simulation Core Library provides an efficient and exhaustive Java™ implementation of methods to interpret the content of models encoded in the Systems Biology Markup Language (SBML) and its numerical solution. This library is based on the JSBML project and can be used on every operating system, for which a Java Virtual Machine is available.</description>
 
-	<build>
-		<directory>dist</directory>
-		<outputDirectory>dist/classes</outputDirectory>
-		<finalName>${artifactId}-${version}</finalName>
-		<testOutputDirectory>dist/test-classes</testOutputDirectory>
-		<sourceDirectory>src</sourceDirectory>
-		<scriptSourceDirectory>scripts</scriptSourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
-		<resources>
-			<resource>
-				<directory>resources</directory>
-			</resource>
-		</resources>
+  <properties>
+    <jdk.version>1.5</jdk.version>
+    <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+    <year>${maven.build.timestamp}</year><!-- This property is used for filtering the variable ${year} in some resource files -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.license.url>http://www.gnu.org/licenses/lgpl-3.0-standalone.html</project.license.url>
+    <junit.version>4.11</junit.version>
+  </properties>
 
+  <issueManagement>
+    <system>Sourceforge Tickets</system>
+    <url>http://sourceforge.net/p/simulation-core/tickets/</url>
+  </issueManagement>
+  
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License</name>
+      <url>${project.license.url}</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
+  <developers>
+    <developer>
+      <name>Andreas Dräger</name>
+      <id>draeger</id>
+      <email>andreas.draeger@uni-tuebingen.de</email>
+      <url>https://github.com/draeger</url>
+    </developer>
+    <developer>
+      <name>Roland Keller</name>
+      <email>http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/</email>
+      <url>roland.keller@gmx.de</url>
+    </developer>
+    <developer>
+      <name>Alexander Dörr</name>
+      <email>alexander.doerr@uni-tuebingen.de</email>
+      <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/doerr/</url>
+    </developer>
+    <developer>
+      <name>Richard Adams</name>
+    </developer>
+    <developer>
+      <name>Akira Funahashi</name>
+      <email>funa@bio.keio.ac.jp</email>
+      <url>http://fun.bio.keio.ac.jp/people/</url>
+    </developer>
+    <developer>
+      <name>Noriko Hiroi</name>
+      <email>hiroi@bio.keio.ac.jp</email>
+      <url>http://fun.bio.keio.ac.jp/~hiroi/</url>
+    </developer>
+    <developer>
+      <name>Nicolas Le Novère</name>
+      <email>n.lenovere@gmail.com</email>
+      <url>http://lenoverelab.org/perso/lenov/</url>
+    </developer>
+    <developer>
+      <name>Hannes Planatscher</name>
+      <email>hannes.planatscher@nmi.de</email>
+    </developer>
+    <developer>
+      <name>Nicolas Rodriguez</name>
+      <email>rodrigue@ebi.ac.uk</email>
+      <url>http://www.ebi.ac.uk/about/people/nicolas-rodriguez</url>
+    </developer>
+    <developer>
+      <name>Akito Tabira</name>
+      <email>tabira@fun.bio.keio.ac.jp</email>
+    </developer>
+    <developer>
+      <name>Andreas Zell</name>
+      <email>andreas.zell@uni-tuebingen.de</email>
+      <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/zell/</url>
+    </developer>
+    <developer>
+      <name>Michael J. Ziller</name>
+      <email>michael_ziller@harvard.edu</email>
+      <url>http://connects.catalyst.harvard.edu/Profiles/display/Person/15411</url>
+    </developer>
+  </developers>
+  
+  
+  <!-- =================================================================== -->
+  <!-- Dependencies                                                        -->
+  <!-- =================================================================== -->
+  
+  <dependencies>
+    <!-- To update or install local non-MAVEN JAR files run the command in the comments -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <!-- mvn install:install-file -Dfile=/path/to/sysbio.jar -DgroupId=org.sbml -DartifactId=JSBML -Dversion=REVISION_NUMBER -Dpackaging=jar -->
+      <groupId>org.sbml</groupId>
+      <artifactId>JSBML</artifactId>
+      <version>2457</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jlibsedml</groupId>
+      <artifactId>jlibsedml</artifactId>
+      <version>2.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-math</artifactId>
+      <version>2.2</version>
+    </dependency>
+  </dependencies>
+    
+  
+  <!-- =================================================================== -->
+  <!-- Building                                                            -->
+  <!-- =================================================================== -->
+  
+  <!-- To build the project run: -->
+  <!-- mvn clean compile package assembly:single -->
+  
+  <build>
+    <finalName>${project.artifactId}-${project.version}</finalName>
+    <sourceDirectory>src</sourceDirectory>
+    <testSourceDirectory>test</testSourceDirectory>
+    
+    <resources>
+      <resource>
+        <directory>resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    
+    <pluginManagement>
+      <plugins>
+      
+        <!-- Download source code in Eclipse, best practice [OPTIONAL!] -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-eclipse-plugin</artifactId>
+          <version>2.9</version>
+          <configuration>
+            <downloadSources>true</downloadSources>
+            <downloadJavadocs>false</downloadJavadocs>
+          </configuration>
+        </plugin>
+              
+        <!-- Set a JDK compiler level -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.3</version>
+          <configuration>
+            <source>${jdk.version}</source>
+            <target>${jdk.version}</target>
+          </configuration>
+        </plugin>
+        
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <testFailureIgnore>false</testFailureIgnore>
+          </configuration>
+        </plugin>
+        
+        <!-- Assemble executable JAR -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.6</version>
+          <configuration>
+            <archive>
+              <manifest>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              </manifest>
+            </archive>
+            <descriptorRefs>
+              <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+            <finalName>${project.artifactId}-${project.version}</finalName>
+            <appendAssemblyId>false</appendAssemblyId>
+            <descriptor>assembly.xml</descriptor> <!-- Details of the assembly are described in this file -->
+          </configuration>
+          <executions>
+            <execution>
+              <id>make-assembly</id> <!-- this is used for inheritance merges -->
+              <phase>package</phase> <!-- bind to the packaging phase -->
+              <goals>
+                <!-- This will create a JAR with all dependencies -->
+                <!-- mvn clean compile assembly:single -->
+                <goal>single</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        
+      </plugins>
+    </pluginManagement>
 
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<testFailureIgnore>false</testFailureIgnore>
-				</configuration>
-			</plugin>
-		</plugins>
-
-	</build>
-
-	<repositories>
-
-	</repositories>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.sbml</groupId>
-			<artifactId>jsbml</artifactId>
-			<version>0.8-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jlibsedml</groupId>
-			<artifactId>jlibsedml</artifactId>
-			<version>2.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-math</artifactId>
-			<version>2.2</version>
-		</dependency>
-		<dependency>
-	<groupId>gr.spinellis</groupId>
-	<artifactId>UmlGraph</artifactId>
-	<version>4.6</version>
-</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8</version>
-			<type>jar</type>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-
-
+  </build>
+  
 </project>
