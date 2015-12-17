@@ -1117,6 +1117,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
    * 
    * @throws ModelOverdeterminedException
    * @throws SBMLException
+   * @see #init(boolean, double, double, double)
    */
   public void init() throws ModelOverdeterminedException, SBMLException {
     init(true, 0d, 1d, 1d);
@@ -2650,6 +2651,11 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         logger.log(Level.WARNING,
           "Could not re-initialize the model with the new parameter values.",
           exc);
+      }
+    } else {
+      int nCompPlusSpec = model.getCompartmentCount() + model.getSpeciesCount();
+      for (int i = nCompPlusSpec; i < nCompPlusSpec + model.getParameterCount(); i++) {
+        initialValues[i] = params[i - nCompPlusSpec];
       }
     }
   }
