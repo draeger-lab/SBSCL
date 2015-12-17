@@ -25,6 +25,7 @@
 package org.simulator;
 
 import java.awt.Dimension;
+import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JOptionPane;
@@ -36,7 +37,7 @@ import org.apache.commons.math.ode.DerivativeException;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
-import org.sbml.jsbml.xml.stax.SBMLReader;
+import org.sbml.jsbml.SBMLReader;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.DESSolver;
 import org.simulator.math.odes.MultiTable;
@@ -50,7 +51,7 @@ import org.simulator.sbml.SBMLinterpreter;
  * @version $Rev$
  * @since 0.9
  */
-public class SimulatorTest {
+public class SimulatorExample {
 
   /**
    * Starts a simulation at the command line.
@@ -73,7 +74,7 @@ public class SimulatorTest {
     double timeEnd = Double.parseDouble(args[2]);
 
     // Read the model and initialize solver
-    Model model = (new SBMLReader()).readSBML(fileName).getModel();
+    Model model = SBMLReader.read(new File(fileName)).getModel();
     DESSolver solver = new RosenbrockSolver();
     solver.setStepSize(stepSize);
     SBMLinterpreter interpreter = new SBMLinterpreter(model);
