@@ -76,6 +76,9 @@ import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
  */
 @SuppressWarnings("unchecked")
 public class SBMLTestSuiteRunner {
+  /**
+   * A {@link Logger} for this class.
+   */
   private static final Logger logger = Logger
       .getLogger(SBMLTestSuiteRunner.class.getName());
   /**
