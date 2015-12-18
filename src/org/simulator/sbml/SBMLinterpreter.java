@@ -561,7 +561,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     reactionReversible = new boolean[model.getReactionCount()];
     initialValues = new double[Y.length];
     nodes = new LinkedList<ASTNode>();
-    this.init(true, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, amountHash);
+    init(true, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, amountHash);
   }
 
   /* (non-Javadoc)
@@ -2637,10 +2637,17 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     for (paramNum = 0; paramNum < model.getParameterCount(); paramNum++) {
       model.getParameter(paramNum).setValue(params[paramNum]);
     }
-    for (reactionNum = 0; reactionNum < model.getReactionCount(); reactionNum++) {
+    boolean updateSyntaxGraph = false;
+    for (reactionNum = 0; (reactionNum < model.getReactionCount()) && (paramNum < params.length); reactionNum++) {
       KineticLaw law = model.getReaction(reactionNum).getKineticLaw();
-      for (localPnum = 0; localPnum < law.getLocalParameterCount(); localPnum++) {
-        law.getLocalParameter(localPnum).setValue(params[paramNum++]);
+      if (law != null) {
+        for (localPnum = 0; (localPnum < law.getLocalParameterCount()) && (paramNum < params.length); localPnum++) {
+          law.getLocalParameter(localPnum).setValue(params[paramNum++]);
+          updateSyntaxGraph = true;
+        }
+        law.getMath().updateVariables(); // make sure references to local parameter values are reflected in the ASTNode
+      } else {
+        logger.log(Level.FINE, "Cannot set local parameters for reaction {0} because of missing kinetic law.", model.getReaction(reactionNum).getId());
       }
     }
     if ((model.getInitialAssignmentCount() > 0) || (model.getEventCount() > 0)) {
@@ -2657,6 +2664,9 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
       for (int i = nCompPlusSpec; i < nCompPlusSpec + model.getParameterCount(); i++) {
         initialValues[i] = params[i - nCompPlusSpec];
       }
+    }
+    if (updateSyntaxGraph) {
+      refreshSyntaxTree();
     }
   }
 
