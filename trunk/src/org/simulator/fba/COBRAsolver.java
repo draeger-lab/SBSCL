@@ -122,7 +122,6 @@ public class COBRAsolver {
   public COBRAsolver(SBMLDocument doc) throws IloException, SBMLException, ModelOverdeterminedException {
     super();
 
-    cplex = new IloCplex();
 
     if (!doc.isSetModel()) {
       throw new IllegalArgumentException("Could not find a model definition in the given SBML document.");
@@ -212,6 +211,10 @@ public class COBRAsolver {
       objvals[rIndex] = fo.getCoefficient();
     }
 
+    /*
+     * Create linear solver
+     */
+    cplex = new IloCplex();
     x = cplex.numVarArray(model.getReactionCount(), lb, ub);
     IloLinearNumExpr target = cplex.scalProd(x, objvals);
     switch (type) {
