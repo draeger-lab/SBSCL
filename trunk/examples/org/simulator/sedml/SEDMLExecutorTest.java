@@ -32,11 +32,11 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.util.Map;
 
+import org.jlibsedml.AbstractTask;
 import org.jlibsedml.Libsedml;
 import org.jlibsedml.Output;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
-import org.jlibsedml.Task;
 import org.jlibsedml.XMLException;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
 import org.junit.After;
@@ -103,7 +103,7 @@ public class SEDMLExecutorTest {
 
     // Here we run all the simulations needed to create an output, and get the
     // raw results.
-    Map<Task, IRawSedmlSimulationResults>res = exe.runSimulations();
+    Map<AbstractTask, IRawSedmlSimulationResults>res = exe.runSimulations();
     if ((res == null) || res.isEmpty() || !exe.isExecuted()) {
       fail ("Simulatation failed: " + exe.getFailureMessages().get(0).getMessage());
     }
@@ -132,7 +132,7 @@ public class SEDMLExecutorTest {
     Output wanted = sedml.getOutputs().get(0);
     SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml,wanted);
     // This gets the raw simulation results - one for each Task that was run.
-    Map<Task, IRawSedmlSimulationResults>res = exe.runSimulations();
+    Map<AbstractTask, IRawSedmlSimulationResults>res = exe.runSimulations();
     if (res==null ||res.isEmpty() || !exe.isExecuted()) {
       fail ("Simulatation failed: " + exe.getFailureMessages().get(0));
     }

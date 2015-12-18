@@ -40,12 +40,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.math.ode.DerivativeException;
+import org.jlibsedml.AbstractTask;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.Libsedml;
 import org.jlibsedml.Output;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
-import org.jlibsedml.Task;
 import org.jlibsedml.Variable;
 import org.jlibsedml.VariableSymbol;
 import org.jlibsedml.XMLException;
@@ -53,7 +53,6 @@ import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
@@ -688,8 +687,7 @@ public class SBMLTestSuiteRunner {
             Output wanted = sedml.getOutputs().get(0);
             exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, amountHash);
             double time1 = System.nanoTime();
-            Map<Task, IRawSedmlSimulationResults> res = exe
-                .runSimulations();
+            Map<AbstractTask, IRawSedmlSimulationResults> res = exe.runSimulations();
             double time2 = System.nanoTime();
 
             if (res == null || res.isEmpty() || !exe.isExecuted()) {
@@ -699,7 +697,7 @@ public class SBMLTestSuiteRunner {
             }
 
             MultiTable mt = null;
-            for (Task t: res.keySet()) {
+            for (AbstractTask t: res.keySet()) {
               mt = ((MultTableSEDMLWrapper) res.get(t)).getMultiTable();
               break;
             }
