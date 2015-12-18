@@ -159,7 +159,7 @@
       <version>2.1.0</version>
     </dependency>
     <dependency>
-      <!-- mvn install:install-file -Dfile=lib/ext-lib/jlibsedml-2.2.1.jar -DgroupId=org.jlibsedml -DartifactId=org.jlibsedml -DartifactId=jlibsedml -Dversion=2.2.1 -Dpackaging=jar -->
+      <!-- mvn install:install-file -Dfile=lib/ext-lib/jlibsedml-2.2.1.jar -DgroupId=org.jlibsedml -DartifactId=org.jlibsedml -Dversion=2.2.1 -Dpackaging=jar -->
       <groupId>org.jlibsedml</groupId>
       <artifactId>jlibsedml</artifactId>
       <version>2.2.1</version>
@@ -168,6 +168,12 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-math</artifactId>
       <version>2.2</version>
+    </dependency>
+    <dependency>
+      <!-- mvn install:install-file -Dfile=lib/lp-lib/SCPSolver.jar -DgroupId=nmi -DartifactId=scpsolver -Dversion=1.0 -Dpackaging=jar -->
+      <groupId>nmi</groupId>
+      <artifactId>scpsolver</artifactId>
+      <version>1.0</version>
     </dependency>
   </dependencies>
     
