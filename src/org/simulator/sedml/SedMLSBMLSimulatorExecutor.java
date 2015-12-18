@@ -29,22 +29,22 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.jlibsedml.AbstractTask;
 import org.jlibsedml.ArchiveComponents;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.Output;
 import org.jlibsedml.SedML;
 import org.jlibsedml.Simulation;
-import org.jlibsedml.Task;
 import org.jlibsedml.UniformTimeCourse;
 import org.jlibsedml.Variable;
 import org.jlibsedml.VariableSymbol;
 import org.jlibsedml.execution.AbstractSedmlExecutor;
 import org.jlibsedml.execution.ArchiveModelResolver;
 import org.jlibsedml.execution.ExecutionStatusElement;
-import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
-import org.jlibsedml.execution.SedMLResultsProcesser2;
 import org.jlibsedml.execution.ExecutionStatusElement.ExecutionStatusType;
+import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
+import org.jlibsedml.execution.SedMLResultsProcesser2;
 import org.jlibsedml.modelsupport.BioModelsModelsRetriever;
 import org.jlibsedml.modelsupport.KisaoOntology;
 import org.jlibsedml.modelsupport.KisaoTerm;
@@ -206,8 +206,15 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
       return new RosenbrockSolver(); // default
     }
   }
+
+  /**
+   * 
+   * @param wanted
+   * @param res
+   * @return
+   */
   public MultiTable processSimulationResults(Output wanted,
-    Map<Task, IRawSedmlSimulationResults> res) {
+    Map<AbstractTask, IRawSedmlSimulationResults> res) {
     // here we post-process the results
     SedMLResultsProcesser2 pcsr2 =  new SedMLResultsProcesser2(sedml, wanted);
     pcsr2.process(res);

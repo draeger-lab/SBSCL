@@ -30,11 +30,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 
+import org.jlibsedml.AbstractTask;
 import org.jlibsedml.Libsedml;
 import org.jlibsedml.Output;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
-import org.jlibsedml.Task;
 import org.jlibsedml.XMLException;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
 import org.simulator.math.odes.MultiTable;
@@ -94,7 +94,7 @@ public class SEDMLExecutor {
     }
     SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sed, out);
 
-    Map<Task, IRawSedmlSimulationResults> res = exe.runSimulations();
+    Map<AbstractTask, IRawSedmlSimulationResults> res = exe.runSimulations();
     return exe.processSimulationResults(out, res);
   }
 

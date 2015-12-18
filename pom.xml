@@ -47,7 +47,7 @@
   <description>The Systems Biology Simulation Core Library provides an efficient and exhaustive Java™ implementation of methods to interpret the content of models encoded in the Systems Biology Markup Language (SBML) and its numerical solution. This library is based on the JSBML project and can be used on every operating system, for which a Java Virtual Machine is available.</description>
 
   <properties>
-    <jdk.version>1.5</jdk.version>
+    <jdk.version>1.6</jdk.version>
     <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
     <year>${maven.build.timestamp}</year><!-- This property is used for filtering the variable ${year} in some resource files -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -149,6 +149,17 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jmathml</groupId>
+      <artifactId>jmathml</artifactId>
+      <version>2.1.0</version>
+    </dependency>
+    <dependency>
+      <!-- mvn install:install-file -Dfile=lib/ext-lib/jlibsedml-2.2.1.jar -DgroupId=org.jlibsedml -DartifactId=org.jlibsedml -DartifactId=jlibsedml -Dversion=2.2.1 -Dpackaging=jar -->
       <groupId>org.jlibsedml</groupId>
       <artifactId>jlibsedml</artifactId>
       <version>2.2.1</version>
