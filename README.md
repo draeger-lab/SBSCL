@@ -14,3 +14,43 @@ Bio-Informatics, Libraries, Simulations
 * Time-course analysis
 * Systems Biology Markup Language
 * Application programming interface
+
+
+## Getting started
+
+The folder doc/api contains a directory called version_XX, where XX stands for the current version of the library. For an introduction of how to use this library, please open the index.html file from this folder in your system's web browser. There you can find instructions and source code examples, including some use cases. The dist folder contains three different versions of JAR files to work with.
+
+## File structure
+
+Just a brief explanation of the folders and files contained in this distribution.
+
+Most importantly, see 
+ * the dist folder containing the JAR files
+ * the doc folder containing an exhaustive source code and api documentation
+
+The package structure in more detail:
+```
+ /
+ |- dist        -> Contains three different JAR file versions of the library
+ |- doc
+    |- api      -> JavaDoc including examples for usage of the library
+ |- lib         -> 3rd party libraries needed for compilation and execution
+ |- licenses    -> License agreements of all 3rd party libs and a list of 
+ |                 authors of this library
+ |- resources   -> A source folder containing required resource files.
+ |- src         -> The main source folder containing all Java files and the 
+ |                 overview.html providing a brief overview of the project.
+ |- test        -> Source code for testing, including BioModels and SBML Test
+ |                 Suite
+ |- build.xml   -> an Apache ANT script which compiles the source code and
+ |                 provides several options to create distribution files.
+ |- LICENSE.txt -> the license, under which this project is distributed
+ |- pom.xml     -> Maven support for the project
+ |- README.txt  -> this file
+```
+
+## Troubleshooting
+
+Please e-mail any bugs, problems, suggestions, or issues regarding this library to the mailing list: simulation-core-development@lists.sourceforge.net
+
+Or use the bug tracker at https://github.com/cogsys-tuebingen/SBSCL/issues
