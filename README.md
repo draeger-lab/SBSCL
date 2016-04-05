@@ -15,6 +15,15 @@ Bio-Informatics, Libraries, Simulations
 * Systems Biology Markup Language
 * Application programming interface
 
+#### Licensing terms
+
+This file is part of Simulation Core Library, a Java-based library for efficient numerical simulation of biological models.
+
+Copyright (C) 2007 jointly held by the individual authors.
+
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation. A copy of the license agreement is provided in the file named "LICENSE.txt" included with this software distribution and also available online as http://www.gnu.org/licenses/lgpl-3.0-standalone.html.
+
+Please cite the original work and the authors when using this program.
 
 ## Getting started
 
