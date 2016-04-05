@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>The Systems Biology Simulation Core Library (SBSCL) by cogsys-tuebingen</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">The Systems Biology Simulation Core Library (SBSCL)</h1>
+      <h2 class="project-tagline">The Systems Biology Simulation Core Library (SBSCL) provides an efficient and exhaustive Java™ implementation of methods to interpret the content of models encoded in the Systems Biology Markup Language (SBML) and its numerical solution. </h2>
+      <a href="https://github.com/cogsys-tuebingen/SBSCL" class="btn">View on GitHub</a>
+      <a href="https://github.com/cogsys-tuebingen/SBSCL/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/cogsys-tuebingen/SBSCL/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="the-systems-biology-simulation-core-library" class="anchor" href="#the-systems-biology-simulation-core-library" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The Systems Biology Simulation Core Library</h1>
+
+<h4>
+<a id="description" class="anchor" href="#description" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Description</h4>
+
+<p>The Systems Biology Simulation Core Library (SBSCL) provides an efficient and exhaustive Java™ implementation of methods to interpret the content of models encoded in the Systems Biology Markup Language (<a href="http://sbml.org">SBML</a>) and its numerical solution. This library is based on the <a href="http://sbml.org/Software/JSBML">JSBML</a> project and can be used on every operating system for which a Java Virtual Machine is available. Please note that this project does not contain any user interface, neither a command-line interface, nor a graphical user interface. This project has been developed as a pure programming library. To support the <a href="http://co.mbine.org/standards/miase">MIASE</a> effort, it understands <a href="http://sed-ml.org">SED-ML</a> files. Its abstract type and interface hierarchy facilitates the implementation of further community standards, such as <a href="https://www.cellml.org">CellML</a>.</p>
+
+<p>When using this library, please cite: <a href="http://www.biomedcentral.com/1752-0509/7/55">http://www.biomedcentral.com/1752-0509/7/55</a>.</p>
+
+<h4>
+<a id="categories" class="anchor" href="#categories" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Categories</h4>
+
+<p>Bio-Informatics, Libraries, Simulations</p>
+
+<h4>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h4>
+
+<ul>
+<li>Numerical simulation</li>
+<li>Ordinary differential equation solver</li>
+<li>Time-course analysis</li>
+<li>Systems Biology Markup Language</li>
+<li>Application programming interface</li>
+</ul>
+
+<h4>
+<a id="licensing-terms" class="anchor" href="#licensing-terms" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Licensing terms</h4>
+
+<p>This file is part of Simulation Core Library, a Java-based library for efficient numerical simulation of biological models.</p>
+
+<p>Copyright (C) 2007 jointly held by the individual authors.</p>
+
+<p>This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation. A copy of the license agreement is provided in the file named "LICENSE.txt" included with this software distribution and also available online as <a href="http://www.gnu.org/licenses/lgpl-3.0-standalone.html">http://www.gnu.org/licenses/lgpl-3.0-standalone.html</a>.</p>
+
+<p>Please cite the original work and the authors when using this program. See the <a href="https://github.com/cogsys-tuebingen/SBSCL/wiki/The-Systems-Biology-Simulation-Core-Library">project homepage</a> for details.</p>
+
+<h2>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting started</h2>
+
+<p>The folder doc/api contains a directory called version_XX, where XX stands for the current version of the library. For an introduction of how to use this library, please open the index.html file from this folder in your system's web browser. There you can find instructions and source code examples, including some use cases. The dist folder contains three different versions of JAR files to work with.</p>
+
+<h2>
+<a id="file-structure" class="anchor" href="#file-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>File structure</h2>
+
+<p>Just a brief explanation of the folders and files contained in this distribution.</p>
+
+<p>Most importantly, see </p>
+
+<ul>
+<li>the dist folder containing the JAR files</li>
+<li>the doc folder containing an exhaustive source code and api documentation</li>
+</ul>
+
+<p>The package structure in more detail:</p>
+
+<pre><code> /
+ |- dist        -&gt; Contains three different JAR file versions of the library
+ |- doc
+    |- api      -&gt; JavaDoc including examples for usage of the library
+ |- lib         -&gt; 3rd party libraries needed for compilation and execution
+ |- licenses    -&gt; License agreements of all 3rd party libs and a list of 
+ |                 authors of this library
+ |- resources   -&gt; A source folder containing required resource files.
+ |- src         -&gt; The main source folder containing all Java files and the 
+ |                 overview.html providing a brief overview of the project.
+ |- test        -&gt; Source code for testing, including BioModels and SBML Test
+ |                 Suite
+ |- build.xml   -&gt; an Apache ANT script which compiles the source code and
+ |                 provides several options to create distribution files.
+ |- LICENSE.txt -&gt; the license, under which this project is distributed
+ |- pom.xml     -&gt; Maven support for the project
+ |- README.txt  -&gt; this file
+</code></pre>
+
+<h2>
+<a id="troubleshooting" class="anchor" href="#troubleshooting" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Troubleshooting</h2>
+
+<p>Please e-mail any bugs, problems, suggestions, or issues regarding this library to the mailing list: <a href="mailto:simulation-core-development@lists.sourceforge.net">simulation-core-development@lists.sourceforge.net</a></p>
+
+<p>Or use the bug tracker at <a href="https://github.com/cogsys-tuebingen/SBSCL/issues">https://github.com/cogsys-tuebingen/SBSCL/issues</a></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/cogsys-tuebingen/SBSCL">The Systems Biology Simulation Core Library (SBSCL)</a> is maintained by <a href="https://github.com/cogsys-tuebingen">cogsys-tuebingen</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
