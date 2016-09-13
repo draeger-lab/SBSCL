@@ -171,10 +171,10 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
     <exec executable="svn" outputproperty="svninfo.xml">
 	  <arg line="info --xml"/>
 	</exec>
-	<xmlproperty collapseAttributes="true">
+	<!--<xmlproperty collapseAttributes="true">
 	  <propertyresource name="svninfo.xml"/>
-	</xmlproperty>
-	<property name="repository.revision" value="${info.entry.revision}"/>
+	</xmlproperty>-->
+	<property name="repository.revision" value="${version}"/> <!--${info.entry.revision}"/>-->
   	<echo message="Current revision of ${Name} is ${repository.revision}"/>  	
 	<property name="build.name" value="Revision ${repository.revision} ${TODAY} (Build ${build.number})"/>
 
@@ -489,7 +489,7 @@ YOU WANT TO USE THE LIB-JARs OR REFERENCED PROJECTS.
       notree="false"
       overview="${src}/overview.html"
       packagenames="org.*"
-      source="1.6"
+      source="1.7"
       sourcepath="${src}:${test}:${resources}"
       splitindex="true"
       stylesheetfile="${doc}/javadoc-style.css"
