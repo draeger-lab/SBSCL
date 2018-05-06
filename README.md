@@ -27,7 +27,7 @@ Please cite the original work and the authors when using this program. See the [
 
 ## Getting started
 
-The folder doc/api contains a directory called version_XX, where XX stands for the current version of the library. For an introduction of how to use this library, please open the index.html file from this folder in your system's web browser. There you can find instructions and source code examples, including some use cases. The dist folder contains three different versions of JAR files to work with.
+The folder doc/api contains a directory called version_XX, where XX stands for the current version of the library. For an introduction of how to use this library, please open the index.html file from this folder in your system's web browser. There you can find instructions and source code examples, including some use cases. The dist folder contains a JAR files of the simulation core library to work with.
 
 ## File structure
 
@@ -40,7 +40,7 @@ Most importantly, see
 The package structure in more detail:
 ```
  /
- |- dist        -> Contains three different JAR file versions of the library
+ |- dist        -> Contains a JAR file of the library
  |- doc
     |- api      -> JavaDoc including examples for usage of the library
  |- lib         -> 3rd party libraries needed for compilation and execution
