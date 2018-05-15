@@ -27,19 +27,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  
+
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.simulator</groupId>
   <artifactId>sbscl</artifactId>
-  
+
   <!-- Output to jar format -->
   <packaging>jar</packaging>
-  
-  
+
+
   <!-- =================================================================== -->
   <!-- General project information                                         -->
-  <!-- =================================================================== -->  
-  
+  <!-- =================================================================== -->
+
   <name>Simulator-core library</name>
   <version>1.5</version>
   <url>http://simulation-core.sourceforge.net</url>
@@ -59,7 +59,7 @@
     <system>Sourceforge Tickets</system>
     <url>http://sourceforge.net/p/simulation-core/tickets/</url>
   </issueManagement>
-  
+
   <licenses>
     <license>
       <name>GNU Lesser General Public License</name>
@@ -67,7 +67,7 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
+
   <developers>
     <developer>
       <name>Andreas Dräger</name>
@@ -127,8 +127,8 @@
       <url>http://connects.catalyst.harvard.edu/Profiles/display/Person/15411</url>
     </developer>
   </developers>
-  
-  
+
+
   <!-- =================================================================== -->
   <!-- Repositories -->
   <!-- =================================================================== -->
@@ -142,18 +142,20 @@
       <url>file://${project.basedir}/lib</url>
     </repository>
   </repositories>
-  
+
   <!-- =================================================================== -->
   <!-- Dependencies                                                        -->
   <!-- =================================================================== -->
-  
+
   <dependencies>
     <dependency>
       <groupId>cplex</groupId>
       <artifactId>cplex</artifactId>
-      <version>12.6.1.0</version>
+      <version>12.8.1.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/cplex/cplex/12.8.1.0/cplex-12.8.1.0.jar</systemPath>
     </dependency>
-    <dependency>    
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
@@ -163,6 +165,8 @@
       <groupId>org.sbml</groupId>
       <artifactId>JSBML</artifactId>
       <version>1.2</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/org/sbml/JSBML/1.2/JSBML-1.2.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.jdom</groupId>
@@ -178,6 +182,8 @@
       <groupId>org.jlibsedml</groupId>
       <artifactId>jlibsedml</artifactId>
       <version>2.2.1</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/org/jlibsedml/jlibsedml/2.2.1/jlibsedml-2.2.1.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -188,32 +194,34 @@
       <groupId>nmi</groupId>
       <artifactId>scpsolver</artifactId>
       <version>1.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/nmi/scpsolver/1.0/scpsolver-1.0.jar</systemPath>
     </dependency>
   </dependencies>
-    
-  
+
+
   <!-- =================================================================== -->
   <!-- Building                                                            -->
   <!-- =================================================================== -->
-  
+
   <!-- To build the project run: -->
   <!-- mvn clean compile package assembly:single -->
-  
+
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
     <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>test</testSourceDirectory>
-    
+
     <resources>
       <resource>
         <directory>resources</directory>
         <filtering>true</filtering>
       </resource>
     </resources>
-    
+
     <pluginManagement>
       <plugins>
-      
+
         <!-- Download source code in Eclipse, best practice [OPTIONAL!] -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -224,7 +232,7 @@
             <downloadJavadocs>false</downloadJavadocs>
           </configuration>
         </plugin>
-              
+
         <!-- Set a JDK compiler level -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -235,7 +243,7 @@
             <target>${jdk.version}</target>
           </configuration>
         </plugin>
-        
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
@@ -243,7 +251,7 @@
             <testFailureIgnore>false</testFailureIgnore>
           </configuration>
         </plugin>
-        
+
         <!-- Assemble executable JAR -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -275,10 +283,10 @@
             </execution>
           </executions>
         </plugin>
-        
+
       </plugins>
     </pluginManagement>
 
   </build>
-  
+
 </project>
