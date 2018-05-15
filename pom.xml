@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- * $Id$
- * $URL$
- *
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
  *
- * Copyright (C) 2007-2016 jointly by the following organizations:
+ * Copyright (C) 2007-2018 jointly by the following organizations:
  * 1. University of Tuebingen, Germany
  * 2. Keio University, Japan
  * 3. Harvard University, USA
@@ -21,8 +18,6 @@
  * agreement is provided in the file named "LICENSE.txt" included with
  * this software distribution and also available online as
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
- *
- * Version: $Rev$
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -42,7 +37,7 @@
   
   <name>Simulator-core library</name>
   <version>1.5</version>
-  <url>http://simulation-core.sourceforge.net</url>
+  <url>https://github.com/draeger-lab/SBSCL/</url>
   <inceptionYear>2007</inceptionYear>
   <description>The Systems Biology Simulation Core Library provides an efficient and exhaustive Java™ implementation of methods to interpret the content of models encoded in the Systems Biology Markup Language (SBML) and its numerical solution. This library is based on the JSBML project and can be used on every operating system, for which a Java Virtual Machine is available.</description>
 
@@ -56,8 +51,8 @@
   </properties>
 
   <issueManagement>
-    <system>Sourceforge Tickets</system>
-    <url>http://sourceforge.net/p/simulation-core/tickets/</url>
+    <system>GitHub Issues</system>
+    <url>https://github.com/shalinshah1993/SBSCL/issues</url>
   </issueManagement>
   
   <licenses>
@@ -70,15 +65,7 @@
   
   <developers>
     <developer>
-      <name>Andreas Dräger</name>
-      <id>draeger</id>
-      <email>andreas.draeger@uni-tuebingen.de</email>
-      <url>https://github.com/draeger</url>
-    </developer>
-    <developer>
-      <name>Roland Keller</name>
-      <email>http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/</email>
-      <url>roland.keller@gmx.de</url>
+      <name>Richard Adams</name>
     </developer>
     <developer>
       <name>Alexander Dörr</name>
@@ -86,7 +73,10 @@
       <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/doerr/</url>
     </developer>
     <developer>
-      <name>Richard Adams</name>
+      <name>Andreas Dräger</name>
+      <id>draeger</id>
+      <email>andreas.draeger@uni-tuebingen.de</email>
+      <url>https://github.com/draeger</url>
     </developer>
     <developer>
       <name>Akira Funahashi</name>
@@ -99,6 +89,11 @@
       <url>http://fun.bio.keio.ac.jp/~hiroi/</url>
     </developer>
     <developer>
+      <name>Roland Keller</name>
+      <email>http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/</email>
+      <url>roland.keller@gmx.de</url>
+    </developer>
+    <developer>
       <name>Nicolas Le Novère</name>
       <email>n.lenovere@gmail.com</email>
       <url>http://lenoverelab.org/perso/lenov/</url>
@@ -109,12 +104,18 @@
     </developer>
     <developer>
       <name>Nicolas Rodriguez</name>
-      <email>rodrigue@ebi.ac.uk</email>
-      <url>http://www.ebi.ac.uk/about/people/nicolas-rodriguez</url>
+      <email>rodriguezn@babraham.ac.uk</email>
+      <url>https://github.com/niko-rodrigue</url>
+    </developer>
+    <developer>
+      <name>Shalin Shah</name>
+      <email>shalin.shah@duke.edu</email>
+      <url>https://ssdoesgsoc.wordpress.com</url>
     </developer>
     <developer>
       <name>Akito Tabira</name>
       <email>tabira@fun.bio.keio.ac.jp</email>
+      <url>https://github.com/mythosil</url>
     </developer>
     <developer>
       <name>Andreas Zell</name>
@@ -123,8 +124,8 @@
     </developer>
     <developer>
       <name>Michael J. Ziller</name>
-      <email>michael_ziller@harvard.edu</email>
-      <url>http://connects.catalyst.harvard.edu/Profiles/display/Person/15411</url>
+      <email>michael_ziller@psych.mpg.de</email>
+      <url>https://www.psych.mpg.de/person/47510/2176252</url>
     </developer>
   </developers>
   
