@@ -34,6 +34,7 @@ import javax.swing.JTable;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.math.ode.DerivativeException;
+import org.jfree.ui.RefineryUtilities;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
@@ -42,7 +43,10 @@ import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.DESSolver;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
+import org.simulator.plot.plotMultiTable;
 import org.simulator.sbml.SBMLinterpreter;
+
+import org.simulator.plot.plotMultiTable;
 
 /**
  * A simple program that performs a simulation of a model.
@@ -92,6 +96,14 @@ public class SimulatorExample {
     resultDisplay.setPreferredSize(new Dimension(400, 400));
     JOptionPane.showMessageDialog(null, resultDisplay, "The solution of model "
         + model.getId(), JOptionPane.INFORMATION_MESSAGE);
+    
+    // test plot library
+    plotMultiTable p = new plotMultiTable(solution);
+    p.pack( );
+    RefineryUtilities.centerFrameOnScreen(p);
+    p.setVisible( true );
+    
+    
   }
 
 }
