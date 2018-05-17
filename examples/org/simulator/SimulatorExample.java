@@ -97,13 +97,11 @@ public class SimulatorExample {
     JOptionPane.showMessageDialog(null, resultDisplay, "The solution of model "
         + model.getId(), JOptionPane.INFORMATION_MESSAGE);
     
-    // test plot library
+    // plot all the reactions species
     plotMultiTable p = new plotMultiTable(solution);
-    p.pack( );
+    p.pack();
     RefineryUtilities.centerFrameOnScreen(p);
     p.setVisible( true );
-    
-    
   }
 
 }
