@@ -17,7 +17,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * @since 1.5
  */
 @SuppressWarnings("serial")
-public class plotMultiTable extends ApplicationFrame {
+public class PlotMultiTable extends ApplicationFrame {
 	private MultiTable species;
 	private DefaultCategoryDataset data;
 
@@ -28,7 +28,7 @@ public class plotMultiTable extends ApplicationFrame {
 	 *        The input data type to the plot API is MultiTable which gets converted
 	 *        internally to DefaultCategoryDataset
 	 */
-	public plotMultiTable(MultiTable table) {
+	public PlotMultiTable(MultiTable table) {
 		super("Model simulation");
 
 		species = table;
