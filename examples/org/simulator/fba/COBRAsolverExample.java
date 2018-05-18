@@ -97,8 +97,7 @@ public class COBRAsolverExample {
    *         if the model is invalid or inappropriate for flux balance analysis.
    */
   public void solve(File file) throws SBMLException, IloException, ModelOverdeterminedException, XMLStreamException, IOException {
-	BufferedWriter writer = new BufferedWriter(new FileWriter("C:\\Users\\Melon\\Desktop\\test_output.txt", true));
-    if (file.isDirectory()) {
+	if (file.isDirectory()) {
       for (File f : file.listFiles()) {
     	System.out.println("attempting to solving model: " + f.getName());
         solve(f);
@@ -111,7 +110,6 @@ public class COBRAsolverExample {
           System.out.println(file.getName());
           System.out.println("Objective value:\t" + solver.getObjetiveValue());
           System.out.println("Fluxes:\t" + Arrays.toString(solver.getValues()));
-          writer.append("\n\nModel name:\t" + file.getName() + "\tObjective value:\t" + solver.getObjetiveValue());
         }
       } catch (CpxException exc) {
         if (exc.getMessage().contains("Restricted version")) {
@@ -123,7 +121,6 @@ public class COBRAsolverExample {
         logger.error(exc.getMessage());
       }
     }
-	writer.close();
   }
 
 

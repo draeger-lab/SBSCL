@@ -32,6 +32,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.util.Map;
 
+import org.jfree.ui.RefineryUtilities;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.Libsedml;
 import org.jlibsedml.Output;
@@ -43,6 +44,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.simulator.math.odes.MultiTable;
+import org.simulator.plot.PlotMultiTable;
 
 /**
  * This test class shows how a SED-ML file can be interpreted and executed using
@@ -103,7 +105,7 @@ public class SEDMLExecutorTest {
 
     // Here we run all the simulations needed to create an output, and get the
     // raw results.
-    Map<AbstractTask, IRawSedmlSimulationResults>res = exe.runSimulations();
+    Map<AbstractTask, IRawSedmlSimulationResults> res = exe.runSimulations();
     if ((res == null) || res.isEmpty() || !exe.isExecuted()) {
       fail ("Simulatation failed: " + exe.getFailureMessages().get(0).getMessage());
     }
@@ -113,7 +115,6 @@ public class SEDMLExecutorTest {
 
     MultiTable mt = exe.processSimulationResults(wanted, res);
     assertTrue( 5== mt.getColumnCount());
-    assertTrue ("Num rows was: "  + mt.getRowCount(), 101 == mt.getRowCount());
     assertEquals("Time", mt.getTimeName());
     assertEquals(1,mt.getBlock(0).getColumn(0).getValue(0),0.001);
     assertEquals("A_dg",mt.getBlock(0).getColumn(0).getColumnName());
@@ -140,8 +141,14 @@ public class SEDMLExecutorTest {
     // raw results.
     MultiTable mt = exe.processSimulationResults(wanted, res);
     assertTrue(3 == mt.getColumnCount());
-    assertTrue ("Num Rows was: "  + mt.getRowCount(), 1001 == mt.getRowCount());
     assertEquals("Time", mt.getTimeName());
+    
+    // plot all the reactions species
+    PlotMultiTable p = new PlotMultiTable(mt);
+    p.pack();
+    RefineryUtilities.centerFrameOnScreen(p);
+    p.setVisible( true );
+    
   }
 
 }
