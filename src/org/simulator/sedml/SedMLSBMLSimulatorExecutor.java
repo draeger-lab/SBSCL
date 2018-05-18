@@ -25,19 +25,41 @@
 package org.simulator.sedml;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Queue;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
+import org.jfree.data.gantt.Task;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.ArchiveComponents;
 import org.jlibsedml.DataGenerator;
+import org.jlibsedml.FunctionalRange;
 import org.jlibsedml.Output;
+import org.jlibsedml.Range;
+import org.jlibsedml.RepeatedTask;
+import org.jlibsedml.SEDMLVisitor;
 import org.jlibsedml.SedML;
+import org.jlibsedml.SetValue;
 import org.jlibsedml.Simulation;
+import org.jlibsedml.SubTask;
+import org.jlibsedml.UniformRange;
 import org.jlibsedml.UniformTimeCourse;
 import org.jlibsedml.Variable;
 import org.jlibsedml.VariableSymbol;
+import org.jlibsedml.VectorRange;
+import org.jlibsedml.UniformRange.UniformType;
 import org.jlibsedml.execution.AbstractSedmlExecutor;
 import org.jlibsedml.execution.ArchiveModelResolver;
 import org.jlibsedml.execution.ExecutionStatusElement;
@@ -49,7 +71,9 @@ import org.jlibsedml.modelsupport.BioModelsModelsRetriever;
 import org.jlibsedml.modelsupport.KisaoOntology;
 import org.jlibsedml.modelsupport.KisaoTerm;
 import org.jlibsedml.modelsupport.URLResourceRetriever;
+import org.jmathml.ASTNode;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.DormandPrince54Solver;
@@ -57,6 +81,10 @@ import org.simulator.math.odes.EulerMethod;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
+import org.simulator.sbml.astnode.ASTNodeInterpreter;
+
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;;
 
 /**
  * This class extends an abstract class from jlibsedml, which provides various
@@ -183,6 +211,156 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 
   }
 
+  /** This method is a wrapper to the runSimulations method from  {@link AbstractSedmlExecutor} to add 
+   *  additional support for repeatedTasks. It identifies the type of task, before running the
+   *  simulations.
+   */
+  public Map<AbstractTask, IRawSedmlSimulationResults> run() {
+	  // check for repeated tasks inside task list
+	  boolean repeatTasks = false;
+	  for( AbstractTask t: sedml.getTasks()) {
+		  if(t instanceof RepeatedTask) {
+			  repeatTasks = true;
+			  break;
+		  }
+	  }
+	  
+	  // If there are no repeatedTasks simply call existing runSimulation()
+	  if (repeatTasks != true) {
+		  return runSimulations();
+	  }else {
+		  System.out.println("Boo repeated tasks exists");
+		  
+		  Map<AbstractTask, IRawSedmlSimulationResults> res = new HashMap<AbstractTask, IRawSedmlSimulationResults>();
+          List<AbstractTask> tasksToExecute = getTaskList(sedml.getTasks());
+		  
+		  return null;
+	  }
+  }
+  
+  @SuppressWarnings("null")
+  private List<AbstractTask> getTaskList(List<AbstractTask> taskList){
+	  List<AbstractTask> outputList = null;
+
+	  for (AbstractTask task: taskList) {
+		  // Check for the type of task and add it to TaskList
+		  if (task instanceof RepeatedTask) {
+			  RepeatedTask repTask = (RepeatedTask) task;
+			  Map<String, List<Double>> range = convertRangesToPoints(repTask.getRanges());
+			  List<SetValue> changes = repTask.getChanges();
+			  Map<String, SubTask> subTasks = sortTasks(repTask.getSubTasks());
+		        
+			  // Find all the variable from listOfChanges and create tasks
+			  if (range != null) {
+				  for(Entry<String, SubTask> iter: subTasks.entrySet()) {
+					  String taskId = iter.getKey();
+					  SubTask subTask = iter.getValue();
+					  
+					  AbstractTask t = sedml.getTaskWithId(subTask.getTaskId());
+				  }
+
+			  }else {
+				  System.out.print("Something went wrong with generating range!");
+			  }
+		  }else {
+			  
+			  // For a normal task just get reference and add it to the list
+			  Simulation s = sedml.getSimulation(task.getSimulationReference());
+			  if (s != null && canExecuteSimulation(s)) {
+				  outputList.add(task);
+			  }
+		  }
+	  }
+
+	  return outputList;
+  }
+
+  /** A helper function to sort subTasks by order.
+   * @param Map<String, SubTask>
+   * @return Map<String, SubTask>
+   */
+  private static Map<String, SubTask> sortTasks(Map<String, SubTask> unsortMap) {
+
+      // 1. Convert Map to List of Map
+      List<Map.Entry<String, SubTask>> list = new LinkedList<Map.Entry<String, SubTask>>(unsortMap.entrySet());
+
+      // 2. Sort list with Collections.sort(), provide a custom Comparator
+      Collections.sort(list, new Comparator<Map.Entry<String, SubTask>>() {
+          
+    	  public int compare(Map.Entry<String, SubTask> o1,Map.Entry<String, SubTask> o2) {
+              if(Double.parseDouble(o1.getValue().getOrder()) > Double.parseDouble(o2.getValue().getOrder()))
+            	  return 1;
+        	  else
+        		  return 0;
+          }
+      });
+
+      // 3. Loop the sorted list and put it into a new insertion order Map LinkedHashMap
+      Map<String, SubTask> sortedMap = new LinkedHashMap<String, SubTask>();
+      for (Map.Entry<String, SubTask> entry : list) {
+          sortedMap.put(entry.getKey(), entry.getValue());
+      }
+
+      return sortedMap;
+  }
+  
+  /** A helper function to converts all the range objects to list of double values.
+   * UniformRange, VectorRange and FunctionalRange objects are supported.
+   * @param Map<String, Range>
+   * @return Map<String, List<Double>>
+   */
+  @SuppressWarnings({ "null", "unused" })
+  private Map<String, List<Double>> convertRangesToPoints(Map<String, Range> map) {
+	  Map<String, List<Double>> output = null;
+
+	  // Iterate over the each range and convert it to List<Double>
+	  for (Iterator<Entry<String, Range>> iter = map.entrySet().iterator(); iter.hasNext();) {
+		  Entry<String, Range> rangeMap = iter.next();
+		  String rangeId = rangeMap.getKey();
+		  Range range = rangeMap.getValue();
+
+		  List<Double> rangeList = null;
+		  // Check rangeType is whether uniform, vector or functional and generate accordingly
+		  if(range instanceof UniformRange) {
+
+			  UniformRange curRange = (UniformRange) range;
+
+			  // Check whether uniform range is log or linear and decide increment step size 
+			  if (curRange.getType() == UniformType.LINEAR) {
+				  double stepSize = (curRange.getEnd() - curRange.getStart())/curRange.getNumberOfPoints();
+				  for(double i = curRange.getStart(); i <= curRange.getEnd(); i += stepSize) {
+					  rangeList.add(i);
+				  }
+			  }else if (curRange.getType() == UniformType.LOG) {
+				  double stepSize = curRange.getEnd()/curRange.getStart();
+				  for(double i = curRange.getStart(); i <= curRange.getEnd(); i *= stepSize) {
+					  rangeList.add(i);
+				  }
+			  }
+
+		  }else if (map instanceof VectorRange){
+			  VectorRange curRange = (VectorRange) range;
+
+			  // Since all elements are defined in vector range simply add them
+			  for (int i = 0; i < curRange.getNumElements(); i++) {
+				  rangeList.add(curRange.getElementAt(i));
+			  }
+
+		  }else if (map instanceof FunctionalRange){
+			  FunctionalRange curRange = (FunctionalRange) range;
+
+			  // TODO using ASTNode package from SBSCL
+		  }
+
+		  // After generating list of range values just add it to map
+		  if (rangeList != null) {
+			  output.put(rangeId, rangeList);
+		  }
+	  }
+
+	  return output;
+  }
+  
   /* SBMLSimulator can simulate SBML....
    * (non-Javadoc)
    * @see org.jlibsedml.execution.AbstractSedmlExecutor#supportsLanguage(java.lang.String)
