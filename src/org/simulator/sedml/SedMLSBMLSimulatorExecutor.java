@@ -28,20 +28,14 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Queue;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
-import org.jfree.data.gantt.Task;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.ArchiveComponents;
 import org.jlibsedml.DataGenerator;
@@ -49,17 +43,16 @@ import org.jlibsedml.FunctionalRange;
 import org.jlibsedml.Output;
 import org.jlibsedml.Range;
 import org.jlibsedml.RepeatedTask;
-import org.jlibsedml.SEDMLVisitor;
 import org.jlibsedml.SedML;
 import org.jlibsedml.SetValue;
 import org.jlibsedml.Simulation;
 import org.jlibsedml.SubTask;
 import org.jlibsedml.UniformRange;
+import org.jlibsedml.UniformRange.UniformType;
 import org.jlibsedml.UniformTimeCourse;
 import org.jlibsedml.Variable;
 import org.jlibsedml.VariableSymbol;
 import org.jlibsedml.VectorRange;
-import org.jlibsedml.UniformRange.UniformType;
 import org.jlibsedml.execution.AbstractSedmlExecutor;
 import org.jlibsedml.execution.ArchiveModelResolver;
 import org.jlibsedml.execution.ExecutionStatusElement;
@@ -71,20 +64,14 @@ import org.jlibsedml.modelsupport.BioModelsModelsRetriever;
 import org.jlibsedml.modelsupport.KisaoOntology;
 import org.jlibsedml.modelsupport.KisaoTerm;
 import org.jlibsedml.modelsupport.URLResourceRetriever;
-import org.jmathml.ASTNode;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.DormandPrince54Solver;
 import org.simulator.math.odes.EulerMethod;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
-import org.simulator.sbml.SBMLinterpreter;
-import org.simulator.sbml.astnode.ASTNodeInterpreter;
-
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;;
+import org.simulator.sbml.SBMLinterpreter;;
 
 /**
  * This class extends an abstract class from jlibsedml, which provides various
@@ -234,10 +221,25 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		  Map<AbstractTask, IRawSedmlSimulationResults> res = new HashMap<AbstractTask, IRawSedmlSimulationResults>();
           List<AbstractTask> tasksToExecute = getTaskList(sedml.getTasks());
 		  
-		  return null;
+          for (AbstractTask task : tasksToExecute) {
+              org.jlibsedml.Model m = sedml.getModelWithId(task.getModelReference());
+              
+              IRawSedmlSimulationResults results = executeSimulation(
+                      m.getName(), (UniformTimeCourse) sedml.getSimulation(task
+                              .getSimulationReference()));
+              if (results == null) {
+                  System.out.println("Simulation failed during execution: "
+                                  + task.getSimulationReference() + " with model: "
+                                  + task.getModelReference());
+              }
+              
+              res.put(task, results);
+          }
+		  return res;
 	  }
   }
   
+
   @SuppressWarnings("null")
   private List<AbstractTask> getTaskList(List<AbstractTask> taskList){
 	  List<AbstractTask> outputList = null;
@@ -249,22 +251,22 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 			  Map<String, List<Double>> range = convertRangesToPoints(repTask.getRanges());
 			  List<SetValue> changes = repTask.getChanges();
 			  Map<String, SubTask> subTasks = sortTasks(repTask.getSubTasks());
-		        
+
 			  // Find all the variable from listOfChanges and create tasks
 			  if (range != null) {
 				  for(Entry<String, SubTask> iter: subTasks.entrySet()) {
-					  String taskId = iter.getKey();
 					  SubTask subTask = iter.getValue();
-					  
-					  AbstractTask t = sedml.getTaskWithId(subTask.getTaskId());
-				  }
 
+					  // everytime original task is called setSimulationParams and modelParams
+					  AbstractTask relatedTask = sedml.getTaskWithId(subTask.getTaskId());
+					  outputList.add(relatedTask);
+				  }
 			  }else {
 				  System.out.print("Something went wrong with generating range!");
 			  }
+		  
+		  // For a normal task just get reference and add it to the list
 		  }else {
-			  
-			  // For a normal task just get reference and add it to the list
 			  Simulation s = sedml.getSimulation(task.getSimulationReference());
 			  if (s != null && canExecuteSimulation(s)) {
 				  outputList.add(task);
