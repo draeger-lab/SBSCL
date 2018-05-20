@@ -25,6 +25,7 @@
 package org.simulator.sedml;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -216,11 +217,13 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	  if (repeatTasks != true) {
 		  return runSimulations();
 	  }else {
-		  System.out.println("Boo repeated tasks exists");
-		  
+		  System.out.println("Repeated tasks exists. Converting it to list of tasks!");
+		  System.out.println(sedml.getTasks());
 		  Map<AbstractTask, IRawSedmlSimulationResults> res = new HashMap<AbstractTask, IRawSedmlSimulationResults>();
           List<AbstractTask> tasksToExecute = getTaskList(sedml.getTasks());
 		  
+          System.out.println("Feteched all subTasks. Trying to execute each task now...list is shown:");
+          System.out.println(tasksToExecute);
           for (AbstractTask task : tasksToExecute) {
               org.jlibsedml.Model m = sedml.getModelWithId(task.getModelReference());
               
@@ -239,33 +242,65 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	  }
   }
   
-
-  @SuppressWarnings("null")
+  /** This is a recursive method which finds all the tasks (or repeatedTasks) along with their
+   * subTasks and return a flat single taskList which contains all the tasks with corresponding 
+   * model parameters and simulation values.
+   * @param list of Tasks and RepeatedTasks
+   * @return list of Tasks
+   */
   private List<AbstractTask> getTaskList(List<AbstractTask> taskList){
-	  List<AbstractTask> outputList = null;
+	  List<AbstractTask> outputList = new ArrayList<AbstractTask>();
 
 	  for (AbstractTask task: taskList) {
 		  // Check for the type of task and add it to TaskList
 		  if (task instanceof RepeatedTask) {
+			  // get all subTasks for repeatedTasks and sort them with order attribute
 			  RepeatedTask repTask = (RepeatedTask) task;
+			  Map<String, SubTask> subTasks = sortTasks(repTask.getSubTasks());
 			  Map<String, List<Double>> range = convertRangesToPoints(repTask.getRanges());
 			  List<SetValue> changes = repTask.getChanges();
-			  Map<String, SubTask> subTasks = sortTasks(repTask.getSubTasks());
 
 			  // Find all the variable from listOfChanges and create tasks
-			  if (range != null) {
-				  for(Entry<String, SubTask> iter: subTasks.entrySet()) {
-					  SubTask subTask = iter.getValue();
+			  if (range.size() > 0 && subTasks.size() > 0) {
+				  // Iterate over master range
+				  String masterRangeId = repTask.getRange();
+				  List<Double> masterRange = range.get(masterRangeId);
 
-					  // everytime original task is called setSimulationParams and modelParams
-					  AbstractTask relatedTask = sedml.getTaskWithId(subTask.getTaskId());
-					  outputList.add(relatedTask);
+				  org.jlibsedml.Model origModel = sedml.getModelWithId(repTask.getModelReference());
+				  for(Double mr: masterRange) {
+					  // 1. Check for resetModel. All subTasks work with same model
+					  if(repTask.getResetModel()) {
+						  
+					  }
+					  
+					  // 2. (optional) list of SetValue for modelParams
+					  if (changes.size() > 0) {
+
+					  }
+					  
+					  // 3. Execute subTasks in sorted order
+					  for(Entry<String, SubTask> st: subTasks.entrySet()) {
+						  SubTask subTask = st.getValue();
+						  System.out.println("Current subtask is: "+ subTask);
+
+						  AbstractTask relatedTask = sedml.getTaskWithId(subTask.getTaskId());
+
+						  // everytime original task is called subTask can also be repeatedTask
+						  // recurse all repeatedTasks subTasks to add all of them
+						  if (relatedTask instanceof RepeatedTask) {
+							  List<AbstractTask> tempSubTaskList = new ArrayList<AbstractTask>();
+							  tempSubTaskList.add(relatedTask);
+							  outputList.addAll(getTaskList(tempSubTaskList));
+						  }else {
+							  outputList.add(relatedTask);
+						  }
+					  }
+
 				  }
 			  }else {
-				  System.out.print("Something went wrong with generating range!");
+				  System.out.print("Something went wrong with generating range or subTaks!");
 			  }
-		  
-		  // For a normal task just get reference and add it to the list
+			  // For a normal task just get reference and add it to the list
 		  }else {
 			  Simulation s = sedml.getSimulation(task.getSimulationReference());
 			  if (s != null && canExecuteSimulation(s)) {
@@ -313,15 +348,15 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
    */
   @SuppressWarnings({ "null", "unused" })
   private Map<String, List<Double>> convertRangesToPoints(Map<String, Range> map) {
-	  Map<String, List<Double>> output = null;
-
+	  Map<String, List<Double>> output = new HashMap<String, List<Double>>();
+	  
 	  // Iterate over the each range and convert it to List<Double>
 	  for (Iterator<Entry<String, Range>> iter = map.entrySet().iterator(); iter.hasNext();) {
 		  Entry<String, Range> rangeMap = iter.next();
 		  String rangeId = rangeMap.getKey();
 		  Range range = rangeMap.getValue();
-
-		  List<Double> rangeList = null;
+		  
+		  List<Double> rangeList = new ArrayList<Double>();
 		  // Check rangeType is whether uniform, vector or functional and generate accordingly
 		  if(range instanceof UniformRange) {
 
@@ -340,15 +375,15 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 				  }
 			  }
 
-		  }else if (map instanceof VectorRange){
+		  }else if (range instanceof VectorRange){
 			  VectorRange curRange = (VectorRange) range;
-
+			  
 			  // Since all elements are defined in vector range simply add them
 			  for (int i = 0; i < curRange.getNumElements(); i++) {
 				  rangeList.add(curRange.getElementAt(i));
 			  }
 
-		  }else if (map instanceof FunctionalRange){
+		  }else if (range instanceof FunctionalRange){
 			  FunctionalRange curRange = (FunctionalRange) range;
 
 			  // TODO using ASTNode package from SBSCL
