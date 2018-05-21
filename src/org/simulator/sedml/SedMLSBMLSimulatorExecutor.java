@@ -39,6 +39,7 @@ import java.util.Map.Entry;
 import org.apache.commons.io.FileUtils;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.ArchiveComponents;
+import org.jlibsedml.Change;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.FunctionalRange;
 import org.jlibsedml.Output;
@@ -48,6 +49,7 @@ import org.jlibsedml.SedML;
 import org.jlibsedml.SetValue;
 import org.jlibsedml.Simulation;
 import org.jlibsedml.SubTask;
+import org.jlibsedml.Task;
 import org.jlibsedml.UniformRange;
 import org.jlibsedml.UniformRange.UniformType;
 import org.jlibsedml.UniformTimeCourse;
@@ -218,7 +220,6 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		  return runSimulations();
 	  }else {
 		  System.out.println("Repeated tasks exists. Converting it to list of tasks!");
-		  System.out.println(sedml.getTasks());
 		  Map<AbstractTask, IRawSedmlSimulationResults> res = new HashMap<AbstractTask, IRawSedmlSimulationResults>();
           List<AbstractTask> tasksToExecute = getTaskList(sedml.getTasks());
 		  
@@ -258,40 +259,45 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 			  RepeatedTask repTask = (RepeatedTask) task;
 			  Map<String, SubTask> subTasks = sortTasks(repTask.getSubTasks());
 			  Map<String, List<Double>> range = convertRangesToPoints(repTask.getRanges());
-			  List<SetValue> changes = repTask.getChanges();
 
 			  // Find all the variable from listOfChanges and create tasks
 			  if (range.size() > 0 && subTasks.size() > 0) {
+				  
 				  // Iterate over master range
-				  String masterRangeId = repTask.getRange();
-				  List<Double> masterRange = range.get(masterRangeId);
-
-				  org.jlibsedml.Model origModel = sedml.getModelWithId(repTask.getModelReference());
+				  List<Double> masterRange = range.get(repTask.getRange());
 				  for(Double mr: masterRange) {
-					  // 1. Check for resetModel. All subTasks work with same model
-					  if(repTask.getResetModel()) {
-						  
-					  }
-					  
-					  // 2. (optional) list of SetValue for modelParams
-					  if (changes.size() > 0) {
-
-					  }
-					  
-					  // 3. Execute subTasks in sorted order
 					  for(Entry<String, SubTask> st: subTasks.entrySet()) {
 						  SubTask subTask = st.getValue();
-						  System.out.println("Current subtask is: "+ subTask);
-
 						  AbstractTask relatedTask = sedml.getTaskWithId(subTask.getTaskId());
 
-						  // everytime original task is called subTask can also be repeatedTask
+						  // A subTask can also be a repeatedTask in which case
 						  // recurse all repeatedTasks subTasks to add all of them
 						  if (relatedTask instanceof RepeatedTask) {
 							  List<AbstractTask> tempSubTaskList = new ArrayList<AbstractTask>();
 							  tempSubTaskList.add(relatedTask);
+
 							  outputList.addAll(getTaskList(tempSubTaskList));
 						  }else {
+							  // Keep original model saved and add changes everytime to model
+							  org.jlibsedml.Model curModel = sedml.getModelWithId(relatedTask.getModelReference());
+							  
+							  // 1. Check for resetModel
+							  List<Change> changesToDel = curModel.getListOfChanges();
+							  if(repTask.getResetModel()) {
+								  for(Change change: changesToDel) {
+									  curModel.removeChange(change);
+								  }
+							  }
+
+							  // 2. (optional) list of SetValue for modelParams
+							  List<SetValue> changesToAdd = repTask.getChanges();
+							  if (changesToAdd.size() > 0) {
+								  for(SetValue change: changesToAdd) {
+									  curModel.addChange(change);
+								  }
+							  }
+
+							  // 3. Execute subTasks in sorted order with modified model
 							  outputList.add(relatedTask);
 						  }
 					  }
