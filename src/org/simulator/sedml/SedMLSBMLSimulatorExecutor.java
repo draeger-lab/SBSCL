@@ -233,9 +233,9 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 			  interpreter = new SBMLinterpreter(model);
 		  }
 		  solver.setIncludeIntermediates(false);
-		  // A step-size randomly taken to be 2 since SED-ML L1V2 says simulator decides this
+		  // A step-size randomly taken to be 1 since SED-ML L1V2 says simulator decides this
 		  // A better way to decide step size is essential
-		  solver.setStepSize(2.0);
+		  solver.setStepSize(1.0);
 		  MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(),
 				  0.0, sim.getStep());
 
