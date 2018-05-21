@@ -36,18 +36,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.management.remote.JMXAuthenticator;
+
 import org.apache.commons.io.FileUtils;
+import org.jfree.util.Log;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.ArchiveComponents;
 import org.jlibsedml.Change;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.FunctionalRange;
+import org.jlibsedml.OneStep;
 import org.jlibsedml.Output;
 import org.jlibsedml.Range;
 import org.jlibsedml.RepeatedTask;
 import org.jlibsedml.SedML;
 import org.jlibsedml.SetValue;
 import org.jlibsedml.Simulation;
+import org.jlibsedml.SteadyState;
 import org.jlibsedml.SubTask;
 import org.jlibsedml.Task;
 import org.jlibsedml.UniformRange;
@@ -67,6 +72,7 @@ import org.jlibsedml.modelsupport.BioModelsModelsRetriever;
 import org.jlibsedml.modelsupport.KisaoOntology;
 import org.jlibsedml.modelsupport.KisaoTerm;
 import org.jlibsedml.modelsupport.URLResourceRetriever;
+import org.jmathml.ASTNode;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.simulator.math.odes.AbstractDESSolver;
@@ -145,7 +151,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
    */
   @Override
   protected boolean canExecuteSimulation(Simulation sim) {
-    String kisaoID = sim.getAlgorithm().getKisaoID();
+	String kisaoID = sim.getAlgorithm().getKisaoID();
     KisaoTerm wanted = KisaoOntology.getInstance().getTermById(kisaoID);
     for (String supported: SupportedIDs) {
 
@@ -161,7 +167,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
   }
 
   /** This method performs the actual simulation, using the model and simulation configuration
-	 that are passed in as arguments.
+	 that are passed in as arguments.It runs UniformTimeCourse simulation
 	 @return An {@link IRawSedmlSimulationResults} object that is used for post-processing by the framework.
 	  The actual implementation class in this implementation will be a {@link MultTableSEDMLWrapper}
 	  which wraps a {@link MultiTable} of raw results.
@@ -195,9 +201,52 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 
 
     } catch (Exception e) {
+    	System.out.println(e);
       addStatus(new ExecutionStatusElement(e, "Simulation failed", ExecutionStatusType.ERROR));
     }
     return null;
+
+  }
+  
+  /** This method performs the actual simulation, using the model and simulation configuration
+	 that are passed in as arguments. It runs OneStep simulation defined in SED-ML L1V2
+	 @return An {@link IRawSedmlSimulationResults} object that is used for post-processing by the framework.
+	  The actual implementation class in this implementation will be a {@link MultTableSEDMLWrapper}
+	  which wraps a {@link MultiTable} of raw results.
+*/
+  protected IRawSedmlSimulationResults executeSimulation(String modelStr,
+		  OneStep sim) {
+	  AbstractDESSolver solver = getSolverForKisaoID(sim.getAlgorithm().getKisaoID());
+	  File tmp = null;
+	  try {
+		  // get a JSBML object from the model string.
+		  tmp = File.createTempFile("Sim", "sbml");
+		  FileUtils.writeStringToFile(tmp, modelStr,"UTF-8");
+		  Model model = (new SBMLReader()).readSBML(tmp).getModel();
+		  // now run simulation
+		  SBMLinterpreter interpreter = null;
+		  if (amountHash != null) {
+			  interpreter = new SBMLinterpreter(model, 0, 0, 1,
+					  amountHash);
+		  }
+		  else {
+			  interpreter = new SBMLinterpreter(model);
+		  }
+		  solver.setIncludeIntermediates(false);
+		  // A step-size randomly taken to be 2 since SED-ML L1V2 says simulator decides this
+		  // A better way to decide step size is essential
+		  solver.setStepSize(2.0);
+		  MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(),
+				  0.0, sim.getStep());
+
+		  // adapt the MultiTable to jlibsedml interface.
+		  return new MultTableSEDMLWrapper(mts);
+
+
+	  } catch (Exception e) {
+		  addStatus(new ExecutionStatusElement(e, "Simulation failed", ExecutionStatusType.ERROR));
+	  }
+	  return null;
 
   }
 
@@ -223,21 +272,35 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		  Map<AbstractTask, IRawSedmlSimulationResults> res = new HashMap<AbstractTask, IRawSedmlSimulationResults>();
           List<AbstractTask> tasksToExecute = getTaskList(sedml.getTasks());
 		  
-          System.out.println("Feteched all subTasks. Trying to execute each task now...list is shown:");
-          System.out.println(tasksToExecute);
+          Log.debug("Feteched all subTasks. Trying to execute each task now...list is shown: " + tasksToExecute);
           for (AbstractTask task : tasksToExecute) {
               org.jlibsedml.Model m = sedml.getModelWithId(task.getModelReference());
               
-              IRawSedmlSimulationResults results = executeSimulation(
-                      m.getName(), (UniformTimeCourse) sedml.getSimulation(task
-                              .getSimulationReference()));
-              if (results == null) {
-                  System.out.println("Simulation failed during execution: "
-                                  + task.getSimulationReference() + " with model: "
-                                  + task.getModelReference());
+              // Check for the simulation type and algorithm, if they are supported
+              if(canExecuteSimulation(sedml.getSimulation(task.getSimulationReference()))) {
+            	  Simulation sim = sedml.getSimulation(task.getSimulationReference());
+            	  IRawSedmlSimulationResults results = null;
+            	  
+            	  System.out.println(task + " " + sim);  
+            	  if(sim instanceof OneStep) {
+            		  results = executeSimulation(m.getName(), (OneStep) sim);    
+            	  }else if(sim instanceof SteadyState) {
+            		  // TODO: Add code here for steadyState            		  
+            	  }else if(sim instanceof UniformTimeCourse) {
+            		  results = executeSimulation(m.getName(), (UniformTimeCourse) sim);    
+            	  }
+            	  
+            	  System.out.println(results + " \n\n");
+            	  if (results == null) {
+            		  addStatus(new ExecutionStatusElement(null, "Simulation failed during execution: "
+            				  + task.getSimulationReference() + " with model: "
+            				  + task.getModelReference(), ExecutionStatusType.INFO));
+            	  }else {
+            		  res.put(task, results);
+            	  }
+              }else {
+            	  addStatus(new ExecutionStatusElement(null, "Simulation settings not supported for Task: " + task.getName(), ExecutionStatusType.INFO));
               }
-              
-              res.put(task, results);
           }
 		  return res;
 	  }
@@ -258,14 +321,14 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 			  // get all subTasks for repeatedTasks and sort them with order attribute
 			  RepeatedTask repTask = (RepeatedTask) task;
 			  Map<String, SubTask> subTasks = sortTasks(repTask.getSubTasks());
-			  Map<String, List<Double>> range = convertRangesToPoints(repTask.getRanges());
+			  Map<String, Range> range = repTask.getRanges();
 
 			  // Find all the variable from listOfChanges and create tasks
 			  if (range.size() > 0 && subTasks.size() > 0) {
 				  
 				  // Iterate over master range
-				  List<Double> masterRange = range.get(repTask.getRange());
-				  for(Double mr: masterRange) {
+				  Range masterRange = range.get(repTask.getRange());
+				  for(int element = 0; element < masterRange.getNumElements(); element++) {
 					  for(Entry<String, SubTask> st: subTasks.entrySet()) {
 						  SubTask subTask = st.getValue();
 						  AbstractTask relatedTask = sedml.getTaskWithId(subTask.getTaskId());
@@ -282,10 +345,13 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 							  org.jlibsedml.Model curModel = sedml.getModelWithId(relatedTask.getModelReference());
 							  
 							  // 1. Check for resetModel
-							  List<Change> changesToDel = curModel.getListOfChanges();
 							  if(repTask.getResetModel()) {
-								  for(Change change: changesToDel) {
-									  curModel.removeChange(change);
+								  ArrayList<Change> changesToDel = new ArrayList<Change>(curModel.getListOfChanges());
+								  if (changesToDel.size() > 0){
+									  for(Iterator<Change> change = changesToDel.iterator(); change.hasNext(); ) {
+										  change.next();
+										  change.remove();
+									  }
 								  }
 							  }
 
@@ -345,63 +411,6 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
       }
 
       return sortedMap;
-  }
-  
-  /** A helper function to converts all the range objects to list of double values.
-   * UniformRange, VectorRange and FunctionalRange objects are supported.
-   * @param Map<String, Range>
-   * @return Map<String, List<Double>>
-   */
-  @SuppressWarnings({ "null", "unused" })
-  private Map<String, List<Double>> convertRangesToPoints(Map<String, Range> map) {
-	  Map<String, List<Double>> output = new HashMap<String, List<Double>>();
-	  
-	  // Iterate over the each range and convert it to List<Double>
-	  for (Iterator<Entry<String, Range>> iter = map.entrySet().iterator(); iter.hasNext();) {
-		  Entry<String, Range> rangeMap = iter.next();
-		  String rangeId = rangeMap.getKey();
-		  Range range = rangeMap.getValue();
-		  
-		  List<Double> rangeList = new ArrayList<Double>();
-		  // Check rangeType is whether uniform, vector or functional and generate accordingly
-		  if(range instanceof UniformRange) {
-
-			  UniformRange curRange = (UniformRange) range;
-
-			  // Check whether uniform range is log or linear and decide increment step size 
-			  if (curRange.getType() == UniformType.LINEAR) {
-				  double stepSize = (curRange.getEnd() - curRange.getStart())/curRange.getNumberOfPoints();
-				  for(double i = curRange.getStart(); i <= curRange.getEnd(); i += stepSize) {
-					  rangeList.add(i);
-				  }
-			  }else if (curRange.getType() == UniformType.LOG) {
-				  double stepSize = curRange.getEnd()/curRange.getStart();
-				  for(double i = curRange.getStart(); i <= curRange.getEnd(); i *= stepSize) {
-					  rangeList.add(i);
-				  }
-			  }
-
-		  }else if (range instanceof VectorRange){
-			  VectorRange curRange = (VectorRange) range;
-			  
-			  // Since all elements are defined in vector range simply add them
-			  for (int i = 0; i < curRange.getNumElements(); i++) {
-				  rangeList.add(curRange.getElementAt(i));
-			  }
-
-		  }else if (range instanceof FunctionalRange){
-			  FunctionalRange curRange = (FunctionalRange) range;
-
-			  // TODO using ASTNode package from SBSCL
-		  }
-
-		  // After generating list of range values just add it to map
-		  if (rangeList != null) {
-			  output.put(rangeId, rangeList);
-		  }
-	  }
-
-	  return output;
   }
   
   /* SBMLSimulator can simulate SBML....
