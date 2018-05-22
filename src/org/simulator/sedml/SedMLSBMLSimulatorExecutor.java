@@ -322,6 +322,9 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 			  RepeatedTask repTask = (RepeatedTask) task;
 			  Map<String, SubTask> subTasks = sortTasks(repTask.getSubTasks());
 			  Map<String, Range> range = repTask.getRanges();
+			  
+			  // Store state of all the existing changes by subTasks
+			  List<SetValue> modelState = new ArrayList<SetValue>();
 
 			  // Find all the variable from listOfChanges and create tasks
 			  if (range.size() > 0 && subTasks.size() > 0) {
@@ -344,21 +347,20 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 							  // Keep original model saved and add changes everytime to model
 							  org.jlibsedml.Model curModel = sedml.getModelWithId(relatedTask.getModelReference());
 							  
-							  // 1. Check for resetModel
+							  // 1. Check for resetModel, if so clear all the SetValues
 							  if(repTask.getResetModel()) {
-								  ArrayList<Change> changesToDel = new ArrayList<Change>(curModel.getListOfChanges());
-								  if (changesToDel.size() > 0){
-									  for(Iterator<Change> change = changesToDel.iterator(); change.hasNext(); ) {
-										  change.next();
-										  change.remove();
-									  }
-								  }
+								  modelState.clear();
 							  }
+							  
 
-							  // 2. (optional) list of SetValue for modelParams
-							  List<SetValue> changesToAdd = repTask.getChanges();
-							  if (changesToAdd.size() > 0) {
-								  for(SetValue change: changesToAdd) {
+							  // 2. (optional) Check if any new changes are added
+							  modelState.addAll(repTask.getChanges());
+							  
+							  // Set model to previously stored state by applying all the current
+							  // changes. If resetModel=true then this will be empty and we get fresh
+							  // model with no modification
+							  if (modelState.size() > 0){
+								  for(SetValue change: modelState) {
 									  curModel.addChange(change);
 								  }
 							  }
