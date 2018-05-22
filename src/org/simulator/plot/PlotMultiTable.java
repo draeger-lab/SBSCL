@@ -28,11 +28,11 @@ public class PlotMultiTable extends ApplicationFrame {
 	 *        The input data type to the plot API is MultiTable which gets converted
 	 *        internally to DefaultCategoryDataset
 	 */
-	public PlotMultiTable(MultiTable table) {
-		super("Model simulation");
+	public PlotMultiTable(MultiTable table, String title) {
+		super(title);
 
 		species = table;
-		JFreeChart lineChart = ChartFactory.createLineChart("chart title", 
+		JFreeChart lineChart = ChartFactory.createLineChart(title, 
 				"time", "conentration (nM)", createDataset(),
 				PlotOrientation.VERTICAL, true, true, false);
 
