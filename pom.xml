@@ -212,6 +212,20 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/nmi/scpsolver/1.0/scpsolver-1.0.jar</systemPath>
     </dependency>
+    <dependency>
+      <groupId>nmi</groupId>
+      <artifactId>glpksolver</artifactId>
+      <version>4.35</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/nmi/glpksolver/4.35/glpkSolver-4.35.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>nmi</groupId>
+      <artifactId>lpsolver</artifactId>
+      <version>5.5.2.5</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/nmi/lpsolver/5.5.2.5/lpSolver-5.5.jar</systemPath>
+    </dependency>
   </dependencies>
 
 
