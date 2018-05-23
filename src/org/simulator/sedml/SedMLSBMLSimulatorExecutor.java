@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.ArchiveComponents;
 import org.jlibsedml.DataGenerator;
@@ -108,7 +109,10 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	 */
 	private Map<String, Boolean> amountHash;
 	private ModelResolver modelResolver;
+	private static final transient Logger logger = Logger.getLogger(SBMLinterpreter.class.getName());
 
+	private static final double ONE_STEP_SIM_STEPS = 10;
+	
 	public SedMLSBMLSimulatorExecutor(SedML sedml, Output output) {
 		super(sedml, output);
 		this.modelResolver = new ModelResolver(sedml);
@@ -196,18 +200,12 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 
 
 		} catch (Exception e) {
-			System.out.println(e);
-			addStatus(new ExecutionStatusElement(e, "Simulation failed", ExecutionStatusType.ERROR));
+			logger.warn(e.getMessage());
 		}
 		return null;
 	}
 
-	/** This method performs the actual simulation, using the model and simulation configuration
-	 that are passed in as arguments. It runs OneStep simulation defined in SED-ML L1V2
-	 @return An {@link IRawSedmlSimulationResults} object that is used for post-processing by the framework.
-	  The actual implementation class in this implementation will be a {@link MultTableSEDMLWrapper}
-	  which wraps a {@link MultiTable} of raw results.
-	 */
+
 	protected IRawSedmlSimulationResults executeSimulation(String modelStr,
 			OneStep sim) {
 
@@ -228,33 +226,56 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 				interpreter = new SBMLinterpreter(model);
 			}
 			solver.setIncludeIntermediates(false);
-			// A step-size randomly taken to be 1 since SED-ML L1V2 says simulator decides this
+			// A step-size randomly taken since SED-ML L1V2 says simulator decides this
 			// A better way to decide step size is essential
-			solver.setStepSize(sim.getStep()/10);
+			solver.setStepSize(sim.getStep()/ONE_STEP_SIM_STEPS);
 			MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(),
 					0.0, sim.getStep());
+
+			// adapt the MultiTable to jlibsedml interface.
+			// return only 2 points for OneStep simulation: start and end
+			return new MultTableSEDMLWrapper(mts.filter(new double[] {0.0, sim.getStep()}));
+
+
+		} catch (Exception e) {
+			logger.warn(e.getMessage());
+		}
+		return null;
+	}
+
+	protected IRawSedmlSimulationResults executeSimulation(String modelStr,
+			SteadyState sim) {
+
+		AbstractDESSolver solver = getSolverForKisaoID(sim.getAlgorithm().getKisaoID());
+		File tmp = null;
+		try {
+			// get a JSBML object from the model string.
+			tmp = File.createTempFile("Sim", "sbml");
+			FileUtils.writeStringToFile(tmp, modelStr,"UTF-8");
+			Model model = (new SBMLReader()).readSBML(tmp).getModel();
+			// now run simulation
+			SBMLinterpreter interpreter = null;
+			if (amountHash != null) {
+				interpreter = new SBMLinterpreter(model, 0, 0, 1,
+						amountHash);
+			}
+			else {
+				interpreter = new SBMLinterpreter(model);
+			}
+			solver.setIncludeIntermediates(false);
+			// TODO: implement something like AbstractDESSolver.getSteadyState method
+			// to find when steadyState is reached instead of long simulation
+			solver.setStepSize(1);
+			MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(),
+					0.0, 100000);
 
 			// adapt the MultiTable to jlibsedml interface.
 			return new MultTableSEDMLWrapper(mts);
 
 
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			addStatus(new ExecutionStatusElement(e, "Simulation failed", ExecutionStatusType.ERROR));
+			logger.warn(e.getMessage());
 		}
-		return null;
-	}
-
-	/** This method performs the actual simulation, using the model and simulation configuration
-	 that are passed in as arguments. It runs OneStep simulation defined in SED-ML L1V2
-	 @return An {@link IRawSedmlSimulationResults} object that is used for post-processing by the framework.
-	  The actual implementation class in this implementation will be a {@link MultTableSEDMLWrapper}
-	  which wraps a {@link MultiTable} of raw results.
-	 */
-	protected IRawSedmlSimulationResults executeSimulation(String modelStr,
-			SteadyState sim) {
-
-		// TODO: Add code for SteadyState simulations here
 		return null;
 	}
 
@@ -268,8 +289,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		Map<AbstractTask, IRawSedmlSimulationResults> res = new HashMap<AbstractTask, IRawSedmlSimulationResults>();
 		List<AbstractTask> tasksToExecute = sedml.getTasks();
 		if (tasksToExecute.isEmpty()) {
-			addStatus(new ExecutionStatusElement(null, "No Tasks could be resolved from the required output.",
-					ExecutionStatusType.ERROR));
+			logger.error("No Tasks could be resolved from the required output.");
 			return res;
 		}
 
@@ -282,7 +302,8 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 				RepeatedTask repTask = (RepeatedTask) task;
 				Map<String, SubTask> subTasks = sortTasks(repTask.getSubTasks());
 				Map<String, Range> range = repTask.getRanges();
-
+				List<IRawSedmlSimulationResults> subTaskResults = new ArrayList<IRawSedmlSimulationResults>();
+				
 				// Store state of all the existing changes by subTasks
 				List<SetValue> modelState = new ArrayList<SetValue>();
 
@@ -324,48 +345,48 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 
 								// 3. Execute subTasks in sorted order with the current state of model
 								Simulation sim = sedml.getSimulation(relatedTask.getSimulationReference());
-								IRawSedmlSimulationResults results = null;
+								IRawSedmlSimulationResults result = null;
 								String changedModel = modelResolver.getModelString(curModel);
 
 								// Quickly run error checks before final execution
 								if (!supportsLanguage(curModel.getLanguage())) {
-									addStatus(new ExecutionStatusElement(null,
-											"Language not supported: " + curModel.getLanguage(),
-											ExecutionStatusType.ERROR));
+									logger.error("Language not supported: " + curModel.getLanguage());
 									return res;
-
 								}
 								if (sim == null || !canExecuteSimulation(sim)) {
-									addStatus(new ExecutionStatusElement(null,
-											"Cannot simulate task" + relatedTask.getId()
-											+ "Either the simulation reference is corrupt or the simulation algorithm is not available.",
-											ExecutionStatusType.ERROR));
+									logger.error("Cannot simulate task" + relatedTask.getId()
+									+ "Either the simulation reference is corrupt or the simulation algorithm is not available.");
 									return res;
 
 								}
 								if (changedModel == null) {
-									addStatus(new ExecutionStatusElement(null,
-											"XML cannot be resolved", ExecutionStatusType.ERROR));
+									logger.error("XML cannot be resolved");
+									return res;
 								}
 
 								// Identify simulation type and run it. Store the results in a Map
 								if(sim instanceof OneStep) {
-									results = executeSimulation(changedModel, (OneStep) sim);    
+									result = executeSimulation(changedModel, (OneStep) sim);    
 								}else if(sim instanceof SteadyState) {
-									results = executeSimulation(changedModel, (SteadyState) sim);
+									result = executeSimulation(changedModel, (SteadyState) sim);
 								}else if(sim instanceof UniformTimeCourse) {
-									results = executeSimulation(changedModel, (UniformTimeCourse) sim);    
+									result = executeSimulation(changedModel, (UniformTimeCourse) sim);    
 								}
 
 								if (results == null) {
-									addStatus(new ExecutionStatusElement(null, "Simulation failed during execution: "
+									logger.warn("Simulation failed during execution: "
 											+ relatedTask.getSimulationReference() + " with model: "
-											+ relatedTask.getModelReference(), ExecutionStatusType.INFO));
+											+ relatedTask.getModelReference());
+								}else {
+									//res.put(relatedTask, results);
+									subTaskResults.add(result);
 								}
-								res.put(task, results);
 							}
 						}
 					}
+					// merge all the IRawSimulationResults into a big one and add it to results list
+					// with the ID of repeatedTasks
+					
 				}
 			}else {
 				// Execute a simple Task 
@@ -379,22 +400,17 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 
 				// Quickly run error checks before final execution
 				if (!supportsLanguage(curModel.getLanguage())) {
-					addStatus(new ExecutionStatusElement(null,
-							"Language not supported: " + curModel.getLanguage(),
-							ExecutionStatusType.ERROR));
+					logger.error("Language not supported: " + curModel.getLanguage());
 					return res;
-
 				}
 				if (sim == null || !canExecuteSimulation(sim)) {
-					addStatus(new ExecutionStatusElement(null,
-							"Cannot simulate task" + stdTask.getId()
-							+ "Either the simulation reference is corrupt or the simulation algorithm is not available.",
-							ExecutionStatusType.ERROR));
+					logger.error("Cannot simulate task" + stdTask.getId()
+					+ "Either the simulation reference is corrupt or the simulation algorithm is not available.");
 					return res;
 				}
 				if (changedModel == null) {
-					addStatus(new ExecutionStatusElement(null,
-							"XML cannot be resolved", ExecutionStatusType.ERROR));
+					logger.error("XML cannot be resolved");
+					return res;
 				}
 
 				// Identify simulation type and run it. Store the results in a Map
@@ -407,11 +423,11 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 				}
 
 				if (results == null) {
-					addStatus(new ExecutionStatusElement(null, "Simulation failed during execution: "
-							+ task.getSimulationReference() + " with model: "
-							+ task.getModelReference(), ExecutionStatusType.INFO));
+					logger.warn("Simulation failed during execution: "
+							+ stdTask.getSimulationReference() + " with model: "
+							+ stdTask.getModelReference());
 				}
-				res.put(task, results);
+				res.put(stdTask, results);
 			}
 		}
 		return res;
