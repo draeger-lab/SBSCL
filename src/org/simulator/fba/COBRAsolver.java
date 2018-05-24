@@ -27,23 +27,15 @@ package org.simulator.fba;
 
 import static org.sbml.jsbml.util.Pair.pairOf;
 import ilog.concert.IloException;
-import ilog.concert.IloLinearNumExpr;
-import ilog.concert.IloNumVar;
-import ilog.cplex.IloCplex;
 import ilog.cplex.IloCplex.UnknownObjectException;
-import scpsolver.constraints.LinearConstraint;
 import scpsolver.constraints.LinearEqualsConstraint;
 import scpsolver.lpsolver.LinearProgramSolver;
 import scpsolver.lpsolver.SolverFactory;
 import scpsolver.problems.LinearProgram;
-import scpsolver.util.SparseVector;
-
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -91,10 +83,10 @@ public class COBRAsolver {
 	/**
 	 * The linear programming solver.
 	 */
-	//  private IloCplex cplex;
 	private LinearProgramSolver scpSolver;
 	private LinearProgram problem;
 	private double[] solution;
+	private static double EPS = 0.0001;
 	/**
 	 * This interpreter is only used if the model contains
 	 * {@link InitialAssignment}s or {@link org.sbml.jsbml.StoichiometryMath}.
@@ -102,10 +94,9 @@ public class COBRAsolver {
 	 */
 	@SuppressWarnings("javadoc")
 	private SBMLinterpreter interpreter;
-	//  /**
-	//   * The variables of the linear program, i.e., the reactions.
-	//   */
-	//  private IloNumVar x[];
+	 /**
+	   * The variables of the linear program, i.e., the reactions.
+	  */
 	/**
 	 * A dictionary to lookup the position of a {@link Reaction} in the list of
 	 * reactions of the {@link Model} based on the reaction's identifier.
@@ -162,6 +153,7 @@ public class COBRAsolver {
 
 		if (model.getReactionCount() > 0) {
 			int i = 0;
+			
 			for (Reaction r : model.getListOfReactions()) {
 
 				if (r.isSetPlugin(fbcNamespaceV2)) {
@@ -171,8 +163,13 @@ public class COBRAsolver {
 
 					lb[i] = interpreter != null ? interpreter.getCurrentValueOf(lowerBound.getId()) : lowerBound.getValue();
 					ub[i] = interpreter != null ? interpreter.getCurrentValueOf(upperBound.getId()) : upperBound.getValue();
+					
+					// SCPsolver doesn't allow same values for upper bound and lower bound
+					// therefore adding a small ESPILON
+					if (ub[i] == lb[i]) 
+						ub[i] += EPS;
+						
 				}
-
 				reaction2Index.put(r.getId(), i);
 				buildSpeciesReactionMap(species2Reaction, r.getListOfReactants());
 				buildSpeciesReactionMap(species2Reaction, r.getListOfProducts());
@@ -227,13 +224,10 @@ public class COBRAsolver {
 		/*
 		 * Create linear solver
 		 */
-		//cplex = new IloCplex();
-		//x = cplex.numVarArray(model.getReactionCount(), lb, ub);
-		//IloLinearNumExpr target = cplex.scalProd(x, objvals);
 		scpSolver = SolverFactory.newDefault(); 
 		problem = new LinearProgram(objvals);
 		problem.setLowerbound(lb);
-		problem.setLowerbound(ub);
+		problem.setUpperbound(ub);
 
 		switch (type) {
 		case MAXIMIZE:
@@ -248,27 +242,20 @@ public class COBRAsolver {
 
 		// Add weighted constraints equations for each reaction.
 		for (Species species : model.getListOfSpecies()) {
-			//IloLinearNumExpr expr = cplex.linearNumExpr();
 			double[] weights = new double[reaction2Index.size()];
-
+			
 			if (!species2Reaction.containsKey(species.getId())) {
 				logger.warning(MessageFormat.format(
 						"Species ''{0}'' does not participate in any reaction.",
 						species.getId()));
 			} else {
 				for (Pair<String, Double> pair : species2Reaction.get(species.getId())) {
-					//expr.addTerm(pair.getValue(), x[reaction2Index.get(pair.getKey())]);
-					System.out.println("\n\nSpecie number: " + reaction2Index.get(pair.getKey()));
-					System.out.println("Specie value: " + pair.getValue());
 					weights[reaction2Index.get(pair.getKey())] = pair.getValue();
 				}
 			}
-			System.out.println("\n\nCoeff length: " + weights.length);
-			System.out.println(Arrays.toString(weights));
-
-			//cplex.addEq(expr, 0d);
-			problem.addConstraint(new LinearEqualsConstraint(weights, 0.0, "C_" + species.toString()));
-		}
+			
+			problem.addConstraint(new LinearEqualsConstraint(weights, 0.0, "cnstrt_" + species.getId()));
+		}		
 	}
 
 	/**
@@ -327,9 +314,9 @@ public class COBRAsolver {
 	 *        must end with extension '.lp'.
 	 * @throws IloException if the path is invalid or the file cannot be written.
 	 */
-	//	public void exportLP(String path) throws IloException {
-	//		//cplex.exportModel(path);
-	//	}
+//	public void exportLP(String path) throws IloException {
+//		//cplex.exportModel(path);
+//	}
 
 	/**
 	 * Solves the linear program that is defined in the {@link SBMLDocument} with
@@ -339,16 +326,16 @@ public class COBRAsolver {
 	 *         found. This solution is not necessarily optimal. If false is
 	 *         returned, a feasible solution may still be present, but IloCplex
 	 *         has not been able to prove its feasibility.
-	 * @throws IloException
-	 *         If the method fails, an exception of type IloException, or one of
+	 * @throws NullPointerException
+	 *         If the method fails, an exception of type NullPointerException, or one of
 	 *         its derived classes, is thrown.
 	 */
 	public boolean solve() throws IloException {
-		//return cplex.solve();
 		try {
 			solution = scpSolver.solve(problem);
 			return true;
-		}catch (NullPointerException e) {
+		}catch (Exception e) {
+			logger.warning("Solver returned null! Something might be off with SCPsolver." + e.getMessage());
 			return false;
 		}
 	}
@@ -362,8 +349,12 @@ public class COBRAsolver {
 	 *         its derived classes, is thrown.
 	 */
 	public double getObjetiveValue() throws IloException {
-		//return cplex.getObjValue();
-		return  problem.evaluate(solution);
+		try {
+			return  problem.evaluate(solution);
+		}catch (Exception e) {
+			logger.warning("Solver returned null! Something might be off with SCPsolver." + e.getMessage());
+			return 0.0;
+		}
 	}
 
 	/**
@@ -375,13 +366,17 @@ public class COBRAsolver {
 	 * @return The value the {@link Reaction} takes for the current solution.
 	 * @throws UnknownObjectException
 	 *         If the {@link Reaction} identifier is not in the active model.
-	 * @throws IloException
-	 *         If the method fails, an exception of type IloException, or one of
+	 * @throws ArrayIndexOutOfBoundsException
+	 *         If the method fails, an exception of type ArrayIndexOutOfBoundsException, or one of
 	 *         its derived classes, is thrown.
 	 */
 	public double getValue(String reactionId) throws UnknownObjectException, IloException {
-		//return cplex.getValue(x[reaction2Index.get(reactionId)]);
-		return solution[reaction2Index.get(reactionId)];
+		try{
+			return solution[reaction2Index.get(reactionId)];
+		}catch (Exception e) {
+			logger.warning("Solver returned null! Something might be off with SCPsolver." + e.getMessage());
+			return 0.0;
+		}
 	}
 
 	/**
@@ -393,7 +388,6 @@ public class COBRAsolver {
 	 *         its derived classes, is thrown.
 	 */
 	public double[] getValues() throws IloException {
-		//return cplex.getValues(x);
 		return solution;
 	}
 

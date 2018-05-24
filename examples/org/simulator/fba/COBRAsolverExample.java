@@ -13,6 +13,7 @@
  * 5. EMBL European Bioinformatics Institute (EBML-EBI), Hinxton, UK
  * 6. The University of California, San Diego, La Jolla, CA, USA
  * 7. The Babraham Institute, Cambridge, UK
+ * 8. Duke University, Durham, NC, US
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,13 +26,10 @@
 package org.simulator.fba;
 
 import ilog.concert.IloException;
-import ilog.cplex.CpxException;
-
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 
 import javax.xml.stream.XMLStreamException;
@@ -53,93 +51,83 @@ import org.sbml.jsbml.validator.ModelOverdeterminedException;
  * Note that this project does not redistribute CPLEX.
  * 
  * @author Andreas Dr&auml;ger
+ * @author Shalin Shah
  * @version 1.5
  */
 public class COBRAsolverExample {
 
-  /**
-   * 
-   */
-  private static final Logger logger = Logger.getLogger(COBRAsolverExample.class);
+	/**
+	 * 
+	 */
+	private static final Logger logger = Logger.getLogger(COBRAsolverExample.class);
+	PrintWriter writer;
+	/**
+	 * 
+	 * @param file can be a file or a directory.
+	 * @throws SBMLException if the model is invalid or inappropriate for flux balance analysis.
+	 * @throws XMLStreamException
+	 *         if the file cannot be parsed into an {@link SBMLDocument}.
+	 * @throws IOException
+	 *         if the given path is invalid or cannot be read
+	 * @throws ModelOverdeterminedException
+	 *         if the model is over determined through {@link AlgebraicRule}s.
+	 * @throws SBMLException
+	 *         if the model is invalid or inappropriate for flux balance analysis.
+	 */
+	public COBRAsolverExample(File file) throws SBMLException, IloException, ModelOverdeterminedException, XMLStreamException, IOException {
+		solve(file);
+	}
 
-  /**
-   * 
-   * @param file can be a file or a directory.
-   * @throws SBMLException if the model is invalid or inappropriate for flux balance analysis.
-   * @throws XMLStreamException
-   *         if the file cannot be parsed into an {@link SBMLDocument}.
-   * @throws IOException
-   *         if the given path is invalid or cannot be read
-   * @throws IloException
-   *         if the construction of the linear program fails.
-   * @throws ModelOverdeterminedException
-   *         if the model is over determined through {@link AlgebraicRule}s.
-   * @throws SBMLException
-   *         if the model is invalid or inappropriate for flux balance analysis.
-   */
-  public COBRAsolverExample(File file) throws SBMLException, IloException, ModelOverdeterminedException, XMLStreamException, IOException {
-    solve(file);
-  }
-
-  /**
-   * 
-   * @param file can be a file or a directory. In the latter case, the directory will be recursively queried.
-   * @throws SBMLException if the model is invalid or inappropriate for flux balance analysis.
-   * @throws XMLStreamException
-   *         if the file cannot be parsed into an {@link SBMLDocument}.
-   * @throws IOException
-   *         if the given path is invalid or cannot be read
-   * @throws IloException
-   *         if the construction of the linear program fails.
-   * @throws ModelOverdeterminedException
-   *         if the model is over determined through {@link AlgebraicRule}s.
-   * @throws SBMLException
-   *         if the model is invalid or inappropriate for flux balance analysis.
-   */
-  public void solve(File file) throws SBMLException, IloException, ModelOverdeterminedException, XMLStreamException, IOException {
-	if (file.isDirectory()) {
-      for (File f : file.listFiles()) {
-    	System.out.println("attempting to solving model: " + f.getName());
-        solve(f);
-      }
-    } else {
-      logger.error(file.getName());
-      try {
-        COBRAsolver solver = new COBRAsolver(SBMLReader.read(file));
-        if (solver.solve()) {
-          System.out.println(file.getName());
-          System.out.println("Objective value:\t" + solver.getObjetiveValue());
-          System.out.println("Fluxes:\t" + Arrays.toString(solver.getValues()));
-        }
-      } catch (CpxException exc) {
-        if (exc.getMessage().contains("Restricted version")) {
-          System.err.println(exc.getMessage());
-        } else {
-          throw exc;
-        }
-      } catch (SBMLException exc) {
-        logger.error(exc.getMessage());
-      }
-    }
-  }
+	/**
+	 * 
+	 * @param file can be a file or a directory. In the latter case, the directory will be recursively queried.
+	 * @throws SBMLException if the model is invalid or inappropriate for flux balance analysis.
+	 * @throws XMLStreamException
+	 *         if the file cannot be parsed into an {@link SBMLDocument}.
+	 * @throws IOException
+	 *         if the given path is invalid or cannot be read
+	 * @throws ModelOverdeterminedException
+	 *         if the model is over determined through {@link AlgebraicRule}s.
+	 * @throws SBMLException
+	 *         if the model is invalid or inappropriate for flux balance analysis.
+	 */
+	public void solve(File file) throws SBMLException, IloException, ModelOverdeterminedException, XMLStreamException, IOException {
+		if (file.isDirectory()) {
+			for (File f : file.listFiles()) {
+				System.out.println("attempting to solving model: " + f.getName());
+				solve(f);
+			}
+		} else {
+			logger.error(file.getName());
+			try {
+				COBRAsolver solver = new COBRAsolver(SBMLReader.read(file));
+				if (solver.solve()) {
+					System.out.println(file.getName());
+					System.out.println("Objective value:\t" + solver.getObjetiveValue());
+					System.out.println("Fluxes:\t" + Arrays.toString(solver.getValues()));
+				}
+			} catch (SBMLException exc) {
+				logger.error(exc.getMessage());
+			}
+		}
+	}
 
 
-  /**
-   * Simple test function that reads and solves an SBML file in a flux balance
-   * constraints framework.
-   * 
-   * @param args
-   *        the path to a valid SBML file with fbc version 2.
-   * @throws FileNotFoundException
-   */
-  public static void main(String[] args) throws FileNotFoundException {
-    //System.setOut(new PrintStream(new FileOutputStream("out.txt")));
-    PropertyConfigurator.configure("MyLog4j.properties");
-    try {
-      new COBRAsolverExample(new File(args[0]));
-    } catch (Throwable exc) {
-      exc.printStackTrace();
-    }
-  }
+	/**
+	 * Simple test function that reads and solves an SBML file in a flux balance
+	 * constraints framework.
+	 * 
+	 * @param args
+	 *        the path to a valid SBML file with fbc version 2.
+	 * @throws FileNotFoundException
+	 */
+	public static void main(String[] args) throws FileNotFoundException {
+		PropertyConfigurator.configure("MyLog4j.properties");
+		try {
+			new COBRAsolverExample(new File(args[0]));
+		} catch (Throwable exc) {
+			exc.printStackTrace();
+		}
+	}
 
 }
