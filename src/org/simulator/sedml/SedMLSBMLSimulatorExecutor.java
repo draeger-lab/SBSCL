@@ -93,7 +93,7 @@ import org.simulator.sbml.SBMLinterpreter;;
  * {@link AbstractSedmlExecutor} in the
  * <a href="http://jlibsedml.sourceforge.net" target="_blank">jlibsedml.jar</a> library.
  * 
- * @author Richard Adams
+ * @author Richard Adams, Shalin Shah
  * @version $Rev$
  * @since 1.1
  */
@@ -233,8 +233,8 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 					0.0, sim.getStep());
 
 			// adapt the MultiTable to jlibsedml interface.
-			// return only 2 points for OneStep simulation: start and end
-			return new MultTableSEDMLWrapper(mts.filter(new double[] {0.0, sim.getStep()}));
+			// return only 1 points for OneStep simulation: start and end
+			return new MultTableSEDMLWrapper(mts.filter(new double[] {sim.getStep()}));
 
 
 		} catch (Exception e) {
@@ -302,7 +302,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 				RepeatedTask repTask = (RepeatedTask) task;
 				Map<String, SubTask> subTasks = sortTasks(repTask.getSubTasks());
 				Map<String, Range> range = repTask.getRanges();
-				List<IRawSedmlSimulationResults> subTaskResults = new ArrayList<IRawSedmlSimulationResults>();
+				Map<AbstractTask, IRawSedmlSimulationResults> subTaskResults = new HashMap<AbstractTask, IRawSedmlSimulationResults>();
 				
 				// Store state of all the existing changes by subTasks
 				List<SetValue> modelState = new ArrayList<SetValue>();
@@ -373,13 +373,12 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 									result = executeSimulation(changedModel, (UniformTimeCourse) sim);    
 								}
 
-								if (results == null) {
+								if (result == null) {
 									logger.warn("Simulation failed during execution: "
 											+ relatedTask.getSimulationReference() + " with model: "
 											+ relatedTask.getModelReference());
 								}else {
-									//res.put(relatedTask, results);
-									subTaskResults.add(result);
+									//subTaskResults.put(relatedTask, result);
 								}
 							}
 						}
