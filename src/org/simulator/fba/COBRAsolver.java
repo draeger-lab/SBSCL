@@ -255,7 +255,7 @@ public class COBRAsolver {
 			}
 			
 			problem.addConstraint(new LinearEqualsConstraint(weights, 0.0, "cnstrt_" + species.getId()));
-		}		
+		}	
 	}
 
 	/**

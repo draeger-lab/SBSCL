@@ -323,7 +323,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 							// recurse all repeatedTasks subTasks to add all of them
 							if (relatedTask instanceof RepeatedTask) {
 								// TODO: Handle nested repeatedTask
-								
+								logger.warn("Warning! Nested repeatedTask found and ignored.");
 							}else {
 								// Load original model and update its state
 								org.jlibsedml.Model curModel = sedml.getModelWithId(relatedTask.getModelReference());
