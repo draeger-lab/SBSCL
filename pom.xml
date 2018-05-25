@@ -11,6 +11,7 @@
  * 5. EMBL European Bioinformatics Institute (EBML-EBI), Hinxton, UK
  * 6. The University of California, San Diego, La Jolla, CA, USA
  * 7. The Babraham Institute, Cambridge, UK
+ * 8. Duke University, Durham, NC, US
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -161,13 +162,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>cplex</groupId>
-      <artifactId>cplex</artifactId>
-      <version>12.8.1.0</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/cplex/cplex/12.8.1.0/cplex-12.8.1.0.jar</systemPath>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
@@ -198,12 +192,10 @@
       <artifactId>commons-math</artifactId>
       <version>2.2</version>
     </dependency>
-    <dependency>
-	  <groupId>jfree</groupId>
-	  <artifactId>jfreechart</artifactId>
-	  <version>1.0.19</version>
-	  <scope>system</scope>
-   	  <systemPath>${project.basedir}/lib/jfree/jfreechart/1.0.19/jfreechart-1.0.19.jar</systemPath>
+	<dependency>
+		<groupId>org.jfree</groupId>
+		<artifactId>jfreechart</artifactId>
+		<version>1.0.19</version>
 	</dependency>
     <dependency>
       <groupId>nmi</groupId>
