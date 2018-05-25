@@ -13,6 +13,7 @@
  * 5. EMBL European Bioinformatics Institute (EBML-EBI), Hinxton, UK
  * 6. The University of California, San Diego, La Jolla, CA, USA
  * 7. The Babraham Institute, Cambridge, UK
+ * 8. Duke University, Durham, NC, US
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -93,7 +94,8 @@ import org.simulator.sbml.SBMLinterpreter;;
  * {@link AbstractSedmlExecutor} in the
  * <a href="http://jlibsedml.sourceforge.net" target="_blank">jlibsedml.jar</a> library.
  * 
- * @author Richard Adams, Shalin Shah
+ * @author Richard Adams
+ * @author Shalin Shah
  * @version $Rev$
  * @since 1.1
  */
@@ -233,7 +235,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 					0.0, sim.getStep());
 
 			// adapt the MultiTable to jlibsedml interface.
-			// return only 1 points for OneStep simulation: start and end
+			// return only 1 point for OneStep simulation: start and end
 			return new MultTableSEDMLWrapper(mts.filter(new double[] {sim.getStep()}));
 
 
