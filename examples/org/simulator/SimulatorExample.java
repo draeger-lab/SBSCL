@@ -43,10 +43,10 @@ import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.DESSolver;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
-import org.simulator.plot.plotMultiTable;
+import org.simulator.plot.PlotMultiTable;
 import org.simulator.sbml.SBMLinterpreter;
 
-import org.simulator.plot.plotMultiTable;
+import org.simulator.plot.PlotMultiTable;
 
 /**
  * A simple program that performs a simulation of a model.
@@ -98,7 +98,7 @@ public class SimulatorExample {
         + model.getId(), JOptionPane.INFORMATION_MESSAGE);
     
     // plot all the reactions species
-    plotMultiTable p = new plotMultiTable(solution);
+    PlotMultiTable p = new PlotMultiTable(solution);
     p.pack();
     RefineryUtilities.centerFrameOnScreen(p);
     p.setVisible( true );

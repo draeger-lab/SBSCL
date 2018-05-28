@@ -209,6 +209,35 @@
       <artifactId>glpksolver</artifactId>
       <version>4.35</version>
       <scope>system</scope>
+      <systemPath>${project.basedir}/lib/nmi/scpsolver/1.0/GLPKSolverPack.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>nmi</groupId>
+      <artifactId>lpsolver</artifactId>
+      <version>5.5.2.5</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/nmi/scpsolver/1.0/LPSOLVESolverPack.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <!--<scope>test</scope>-->
+    </dependency>
+    <dependency>
+      <groupId>cplex</groupId>
+      <artifactId>cplex</artifactId>
+      <version>12.7.1.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/cplex/cplex.jar</systemPath>
+    </dependency>
+
+    <!--
+    <dependency>
+      <groupId>nmi</groupId>
+      <artifactId>glpksolver</artifactId>
+      <version>4.35</version>
+      <scope>system</scope>
       <systemPath>${project.basedir}/lib/nmi/glpksolver/4.35/glpkSolver-4.35.jar</systemPath>
     </dependency>
     <dependency>
@@ -218,6 +247,7 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/nmi/lpsolver/5.5.2.5/lpSolver-5.5.jar</systemPath>
     </dependency>
+    -->
   </dependencies>
 
 
@@ -237,6 +267,9 @@
       <resource>
         <directory>resources</directory>
         <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>.</directory>
       </resource>
     </resources>
 
@@ -282,6 +315,10 @@
           <configuration>
             <source>${jdk.version}</source>
             <target>${jdk.version}</target>
+            <excludes>
+              <exclude>**/org/simulator/fba/COBRAsolver.java</exclude>
+              <exclude>**/org/simulator/fba/COBRAsolverExample.java</exclude>
+            </excludes>
           </configuration>
         </plugin>
 

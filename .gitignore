@@ -6,3 +6,13 @@
 
 # idea
 /.idea/
+sbscl.iml
+
+
+# lp solver jars
+lib/nmi/scpsolver/1.0/GLPKSolverPack.jar
+lib/nmi/scpsolver/1.0/LPSOLVESolverPack.jar
+lib/cplex/cplex.jar
+
+# log files
+jsbml.log
