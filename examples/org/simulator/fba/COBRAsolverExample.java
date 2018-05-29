@@ -41,8 +41,6 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 
-import ilog.concert.IloException;
-
 /**
  * A simple test class to demonstrate the capabilities of the FBA implementation
  * in Simulation Core Library. This is based on an installation of
@@ -75,7 +73,7 @@ public class COBRAsolverExample {
 	 * @throws SBMLException
 	 *         if the model is invalid or inappropriate for flux balance analysis.
 	 */
-	public COBRAsolverExample(File file) throws SBMLException, IloException, ModelOverdeterminedException, XMLStreamException, IOException {
+	public COBRAsolverExample(File file) throws SBMLException, ModelOverdeterminedException, XMLStreamException, IOException {
 		solve(file);
 	}
 
