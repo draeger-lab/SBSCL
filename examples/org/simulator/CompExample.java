@@ -1,6 +1,4 @@
 /*
- * $Id$
- * $URL$
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
@@ -28,12 +26,6 @@ package org.simulator;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -41,23 +33,19 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.log4j.Logger;
-import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.AbstractTreeNode;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.SBMLReader;
-import org.sbml.jsbml.ext.comp.CompConstants;
-import org.sbml.jsbml.ext.comp.CompModelPlugin;
-import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
-import org.sbml.jsbml.ext.comp.ModelDefinition;
-import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.comp.util.CompFlatteningConverter;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.DESSolver;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
-import org.simulator.sbml.MapIdToModels;
+import org.simulator.sbml.AddMetaInfo;
+import org.simulator.sbml.GetMetaInfo;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
@@ -71,7 +59,7 @@ public class CompExample {
 
 	private static double stepSize = 0.1;
 	private static double timeEnd = 100;
-	private static Logger logger;
+	private static Logger LOGGER = Logger.getLogger(CompExample.class.getName());
 	/**
 	 * Starts a simulation at the command line.
 	 * 
@@ -86,16 +74,13 @@ public class CompExample {
 	DerivativeException {
 
 		// Read the model and initialize solver
-		File file = new File("files/comp/test58.xml");
+		File file = new File("files/comp/test51.xml");
 		
-		// Read SBML file
+		// Read original SBML file and add meta-info about original ID 
 		SBMLDocument origDoc = SBMLReader.read(file);
+		origDoc = AddMetaInfo.putOrigId(origDoc);
 		
-		// Use original model to create a map b/w flat_id and submodels
-	    MapIdToModels idMap = new MapIdToModels(origDoc);
-	    Map<String, Stack<Submodel>> origIds = idMap.getIdMap();
-	    
-	    // Flatten the model
+		// Flatten the model extra information in userObjects
 		CompFlatteningConverter compFlatteningConverter = new CompFlatteningConverter();
 	    SBMLDocument flatDoc = compFlatteningConverter.flatten(origDoc);
 	    
@@ -114,6 +99,18 @@ public class CompExample {
 				.getInitialValues(), 0d, timeEnd);
 		
 		if(solution.getColumnCount() > 1) {	
+			LOGGER.warn("Output contains objects, trying to plot and extract ids:\n");
+			// Map the output ids back to the original model
+			for (int index = 1; index < solution.getColumnCount(); index++) {
+				AbstractTreeNode node = (AbstractTreeNode) GetMetaInfo.getOrigId(flatDoc, solution.getColumnIdentifier(index));
+				
+				if(node.isSetUserObjects()) {
+					System.out.println("flat id: " + solution.getColumnIdentifier(index) + "\t old id:" + 
+								node.getUserObject(AddMetaInfo.ORIG_ID) + "\t model enclosing it: " + node.getUserObject(AddMetaInfo.MODEL_ID));
+					
+				}
+			}
+			
 			// Display simulation result to the user
 			JScrollPane resultDisplay = new JScrollPane(new JTable(solution));
 			resultDisplay.setPreferredSize(new Dimension(400, 400));
@@ -121,4 +118,6 @@ public class CompExample {
 					+ model.getId(), JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
+	
+	
 }

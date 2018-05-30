@@ -1,6 +1,4 @@
 /*
- * $Id$
- * $URL$
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
@@ -26,8 +24,6 @@
 package org.simulator.fba;
 
 import static org.sbml.jsbml.util.Pair.pairOf;
-import ilog.concert.IloException;
-import ilog.cplex.IloCplex.UnknownObjectException;
 import scpsolver.constraints.LinearEqualsConstraint;
 import scpsolver.lpsolver.LinearProgramSolver;
 import scpsolver.lpsolver.SolverFactory;
@@ -92,7 +88,6 @@ public class COBRAsolver {
 	 * {@link InitialAssignment}s or {@link org.sbml.jsbml.StoichiometryMath}.
 	 * In all other situations, it will be {@code null}.
 	 */
-	@SuppressWarnings("javadoc")
 	private SBMLinterpreter interpreter;
 	 /**
 	   * The variables of the linear program, i.e., the reactions.
@@ -114,8 +109,6 @@ public class COBRAsolver {
 	 *        the SBML container from which the {@link Model} is taken. This
 	 *        implementation only understands SBML core (diverse levels and
 	 *        versions) in combination with fbc versions 1 and 2.
-	 * @throws IloException
-	 *         if the construction of the linear program fails.
 	 * @throws ModelOverdeterminedException
 	 *         if the {@link Model} is over determined through
 	 *         {@link AlgebraicRule}s.
@@ -123,7 +116,7 @@ public class COBRAsolver {
 	 *         if the {@link Model} is invalid or inappropriate for flux balance
 	 *         analysis.
 	 */
-	public COBRAsolver(SBMLDocument doc) throws IloException, SBMLException, ModelOverdeterminedException {
+	public COBRAsolver(SBMLDocument doc) throws SBMLException, ModelOverdeterminedException {
 		super();
 
 
@@ -330,14 +323,11 @@ public class COBRAsolver {
 	 *         If the method fails, an exception of type NullPointerException, or one of
 	 *         its derived classes, is thrown.
 	 */
-	public boolean solve() throws IloException {
-		try {
-			solution = scpSolver.solve(problem);
+	public boolean solve() throws NullPointerException {
+		solution = scpSolver.solve(problem);
+		if (solution != null)
 			return true;
-		}catch (Exception e) {
-			logger.warning("Solver returned null! Something might be off with SCPsolver." + e.getMessage());
-			return false;
-		}
+		return false;
 	}
 
 	/**
@@ -348,13 +338,8 @@ public class COBRAsolver {
 	 *         If the method fails, an exception of type IloException, or one of
 	 *         its derived classes, is thrown.
 	 */
-	public double getObjetiveValue() throws IloException {
-		try {
+	public double getObjetiveValue() throws NullPointerException {
 			return  problem.evaluate(solution);
-		}catch (Exception e) {
-			logger.warning("Solver returned null! Something might be off with SCPsolver." + e.getMessage());
-			return 0.0;
-		}
 	}
 
 	/**
@@ -364,30 +349,25 @@ public class COBRAsolver {
 	 * @param reactionId
 	 *        the identifier of the {@link Reaction} of interest.
 	 * @return The value the {@link Reaction} takes for the current solution.
-	 * @throws UnknownObjectException
+	 * @throws NullPointerException
 	 *         If the {@link Reaction} identifier is not in the active model.
 	 * @throws ArrayIndexOutOfBoundsException
 	 *         If the method fails, an exception of type ArrayIndexOutOfBoundsException, or one of
 	 *         its derived classes, is thrown.
 	 */
-	public double getValue(String reactionId) throws UnknownObjectException, IloException {
-		try{
-			return solution[reaction2Index.get(reactionId)];
-		}catch (Exception e) {
-			logger.warning("Solver returned null! Something might be off with SCPsolver." + e.getMessage());
-			return 0.0;
-		}
+	public double getValue(String reactionId) throws NullPointerException, ArrayIndexOutOfBoundsException {
+		return solution[reaction2Index.get(reactionId)];
 	}
 
 	/**
 	 * Returns solution values for an array of {@link Reaction} variables.
 	 * 
 	 * @return The solution values for the variables in the list of reactions.
-	 * @throws IloException
-	 *         If the method fails, an exception of type IloException, or one of
+	 * @throws NullPointerException
+	 *         If the method fails, an exception of type NullPointerException, or one of
 	 *         its derived classes, is thrown.
 	 */
-	public double[] getValues() throws IloException {
+	public double[] getValues() throws NullPointerException{
 		return solution;
 	}
 
