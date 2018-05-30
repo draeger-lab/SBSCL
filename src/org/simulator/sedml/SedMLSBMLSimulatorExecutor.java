@@ -58,6 +58,7 @@ import org.jlibsedml.execution.AbstractSedmlExecutor;
 import org.jlibsedml.execution.ArchiveModelResolver;
 import org.jlibsedml.execution.ExecutionStatusElement;
 import org.jlibsedml.execution.FileModelResolver;
+import org.jlibsedml.execution.IModel2DataMappings;
 import org.jlibsedml.execution.ExecutionStatusElement.ExecutionStatusType;
 import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
@@ -111,7 +112,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	 */
 	private Map<String, Boolean> amountHash;
 	private ModelResolver modelResolver;
-	private static final transient Logger logger = Logger.getLogger(SBMLinterpreter.class.getName());
+	private static final transient Logger logger = Logger.getLogger(SedMLSBMLSimulatorExecutor.class.getName());
 
 	private static final double ONE_STEP_SIM_STEPS = 10;
 	private static final double STEADY_STATE_STEPS = 10;
@@ -284,10 +285,10 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	 *  additional support for repeatedTasks. It identifies the type of task, before running the
 	 *  simulations.
 	 */
-	public Map<AbstractTask, IRawSedmlSimulationResults> run() {
+	public Map<AbstractTask, Object> run() {
 
 		// Fetch all the tasks: Tasks + RepeatedTasks
-		Map<AbstractTask, IRawSedmlSimulationResults> res = new HashMap<AbstractTask, IRawSedmlSimulationResults>();
+		Map<AbstractTask, Object> res = new HashMap<AbstractTask, Object>();
 		List<AbstractTask> tasksToExecute = sedml.getTasks();
 		if (tasksToExecute.isEmpty()) {
 			logger.error("No Tasks could be resolved from the required output.");
@@ -297,6 +298,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		// Iterate over task list for sequential execution
 		// Handle AbstractTasks differently for Tasks and RepeatedTasks
 		for (AbstractTask task : tasksToExecute) {
+			System.out.println("Executing " + task);
 			if (task instanceof RepeatedTask) {
 				// loop over all the subTasks
 				// get all subTasks for repeatedTasks and sort them with order attribute
@@ -314,6 +316,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 					// Iterate over master range
 					Range masterRange = range.get(repTask.getRange());
 					for(int element = 0; element < masterRange.getNumElements(); element++) {
+						System.out.println("Iterating over master range: " + (1+element) + " of " + masterRange.getNumElements());
 						for(Entry<String, SubTask> st: subTasks.entrySet()) {
 							SubTask subTask = st.getValue();
 							AbstractTask relatedTask = sedml.getTaskWithId(subTask.getTaskId());
@@ -322,7 +325,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 							// recurse all repeatedTasks subTasks to add all of them
 							if (relatedTask instanceof RepeatedTask) {
 								// TODO: Handle nested repeatedTask
-								logger.warn("Warning! Nested repeatedTask found and ignored.");
+								System.out.println("Warning! Nested repeatedTask found and ignored.");
 							}else {
 								// Load original model and update its state
 								org.jlibsedml.Model curModel = sedml.getModelWithId(relatedTask.getModelReference());
@@ -366,13 +369,13 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 								}
 
 								if(sim instanceof OneStep) {
-									logger.warn("Running OneStep on " + changedModel);
+									System.out.println("Running OneStep on " + relatedTask);
 									result = executeSimulation(changedModel, (OneStep) sim);    
 								}else if(sim instanceof SteadyState) {
-									logger.warn("Running SteadyState on " + changedModel);
+									System.out.println("Running SteadyState on " + relatedTask);
 									result = executeSimulation(changedModel, (SteadyState) sim);
 								}else if(sim instanceof UniformTimeCourse) {
-									logger.warn("Running UniformTimeCourse on " + changedModel);
+									System.out.println("Running UniformTimeCourse on " + relatedTask);
 									result = executeSimulation(changedModel, (UniformTimeCourse) sim);    
 								}
 
@@ -381,7 +384,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 											+ relatedTask.getSimulationReference() + " with model: "
 											+ relatedTask.getModelReference());
 								}else {
-									//subTaskResults.put(relatedTask, result);
+									subTaskResults.put(relatedTask, result);
 								}
 							}
 						}
@@ -389,6 +392,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 					// merge all the IRawSimulationResults into a big one and add it to results list
 					// with the ID of repeatedTasks
 					
+					res.put(repTask, subTaskResults);
 				}
 			}else {
 				// Execute a simple Task 
@@ -417,13 +421,13 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 
 				// Identify simulation type and run it. Store the results in a Map
 				if(sim instanceof OneStep) {
-					logger.warn("Running OneStep on " + changedModel);
+					System.out.println("Running OneStep on " + stdTask);
 					results = executeSimulation(changedModel, (OneStep) sim);    
 				}else if(sim instanceof SteadyState) {
-					logger.warn("Running SteadyState on " + changedModel);
+					System.out.println("Running SteadyState on " + stdTask);
 					results = executeSimulation(changedModel, (SteadyState) sim);
 				}else if(sim instanceof UniformTimeCourse) {
-					logger.warn("Running UniformTimeCourse on " + changedModel);
+					System.out.println("Running UniformTimeCourse on " + stdTask);
 					results = executeSimulation(changedModel, (UniformTimeCourse) sim);    
 				}
 
@@ -435,6 +439,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 				res.put(stdTask, results);
 			}
 		}
+		System.out.println("Finised executing tasks. Results are: " + res);
 		return res;
 
 	}
@@ -514,6 +519,18 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		// datagenerators
 		MultiTable mt = createMultiTableFromProcessedResults(wanted, prRes);
 		return mt;
+	}
+	
+	/**
+	 * 
+	 * @param wanted
+	 * @param res
+	 * @return
+	 */
+	public MultiTable processResults(Output wanted,
+			Map<AbstractTask, Object> res) {
+		//TODO: Write this method to return MultiTable output from raw simulation results
+		return null;
 	}
 
 	// Here we need to check which of the results are the independent axis to create a MultiTable

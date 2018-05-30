@@ -49,7 +49,7 @@ import org.simulator.sbml.AddMetaInfo;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
- * A simple program that performs a simulation of containing hierarchical models.
+ * A simple program that performs a simulation of SBML files containing hierarchical models.
  * 
  * @author Shalin Shah
  * @version $Rev$
@@ -98,6 +98,7 @@ public class CompExample {
 		MultiTable solution = solver.solve(interpreter, interpreter
 				.getInitialValues(), 0d, timeEnd);
 		
+		// If columns other than time exists map ids back to original   
 		if(solution.getColumnCount() > 1) {	
 			LOGGER.warn("Output contains objects, trying to plot and extract ids:\n");
 			// Map the output ids back to the original model
@@ -107,7 +108,6 @@ public class CompExample {
 				if(node.isSetUserObjects()) {
 					System.out.println("flat id: " + solution.getColumnIdentifier(index) + "\t old id:" + 
 								node.getUserObject(AddMetaInfo.ORIG_ID) + "\t model enclosing it: " + node.getUserObject(AddMetaInfo.MODEL_ID));
-					
 				}
 			}
 			
