@@ -43,6 +43,7 @@ import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.plot.PlotMultiTable;
 import org.simulator.sbml.SBMLinterpreter;
+import org.simulator.plot.PlotMultiTable;
 
 /**
  * A simple program that performs a simulation of a model.
