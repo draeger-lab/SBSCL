@@ -23,6 +23,8 @@
  */
 package org.simulator.sbml;
 
+import java.util.Enumeration;
+
 import javax.swing.tree.TreeNode;
 
 import org.sbml.jsbml.SBMLDocument;
@@ -42,19 +44,20 @@ public class GetMetaInfo {
 	 * @param SBMLDocument
 	 */
 	public static TreeNode getOrigId(SBMLDocument doc, String id) {
-		int children = doc.getChildCount();
-		// Check the entire tree recursively for node of interest
-		for(int i = 0 ; i < children; i++) {
+		Enumeration<TreeNode> children = doc.children();
+		// Set the entire tree recursively for adding information
+		while(children.hasMoreElements()) {
+			TreeNode child = children.nextElement();
 			
 			// Check the entire subTree of current Root
-			TreeNode subTreeOutput = recurse(doc.getChildAt(i), id);
+			TreeNode subTreeOutput = recurse(child, id);
 			if(subTreeOutput != null) {
 				return subTreeOutput;
 			}else {
 			
 				// May be it is root itself?
-				if(doc.getChildAt(i) instanceof SBase) {
-					SBase node = (SBase) doc.getChildAt(i);
+				if(child instanceof SBase) {
+					SBase node = (SBase) child;
 					if(node.isSetId() && node.getId().equals(id)) {
 						return node;
 					}
@@ -70,17 +73,19 @@ public class GetMetaInfo {
 	 * A helper method to recurse all the nodes of a SBML tree
 	 */
 	private static TreeNode recurse(TreeNode treeNode, String id) {
-		int children = treeNode.getChildCount();
-		for(int i = 0 ; i < children; i++) {
-			// Check the entire subTree of current Root
-			TreeNode subTreeOutput = recurse(treeNode.getChildAt(i), id);
+		Enumeration<TreeNode> children = treeNode.children();
+		// Set the entire tree recursively for adding information
+		while(children.hasMoreElements()) {
+			TreeNode child = children.nextElement();
+			
+			TreeNode subTreeOutput = recurse(child, id);
 			if(subTreeOutput != null) {
 				return subTreeOutput;
 			}else {
 			
 				// May be it is root itself?
-				if(treeNode.getChildAt(i) instanceof SBase) {
-					SBase node = (SBase) treeNode.getChildAt(i);
+				if(child instanceof SBase) {
+					SBase node = (SBase) child;
 					if(node.isSetId() && node.getId().equals(id)) {
 						return node;
 					}
