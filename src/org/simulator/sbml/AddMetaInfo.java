@@ -27,7 +27,6 @@ import java.util.Enumeration;
 
 import javax.swing.tree.TreeNode;
 
-import org.sbml.jsbml.AbstractSBase;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBase;
 
@@ -57,38 +56,21 @@ public class AddMetaInfo{
 	 * @param SBMLDocument
 	 */
 	public static SBMLDocument putOrigId(SBMLDocument doc) {
-		Enumeration<TreeNode> children = doc.children();
-		// Set the entire tree recursively for adding information
-		while(children.hasMoreElements()) {
-			TreeNode child = children.nextElement();
-			
-			// Set ORIGINAL_ID for entire subTree of this node
-			recurse(child);
-			
-			if(child instanceof SBase) {
-				SBase node = (SBase) child;
-				if(node.isSetId()) {
-					// add meta information model id and parent model id
-					node.putUserObject(ORIG_ID, node.getId());
-					node.putUserObject(MODEL_ID, node.getModel().getId());
-				}
-			}
-		}
-		
+		doc = (SBMLDocument) recurse((TreeNode) doc);
 		return doc;
 	}
 	
 	/**
 	 * A helper method to recurse all the nodes of a SBML tree
 	 */
-	private static void recurse(TreeNode treeNode) {
+	private static TreeNode recurse(TreeNode treeNode) {
 		Enumeration<TreeNode> children = treeNode.children();
 		// Set the entire tree recursively for adding information
 		while(children.hasMoreElements()) {
 			TreeNode child = children.nextElement();
 			
 			// Set ORIGINAL_ID for entire subTree of this node
-			recurse(child);
+			child = recurse(child);
 			
 			if(child instanceof SBase) {
 				SBase node = (SBase) child;
@@ -99,5 +81,6 @@ public class AddMetaInfo{
 				}
 			}
 		}
+		return treeNode;
 	}
 }
