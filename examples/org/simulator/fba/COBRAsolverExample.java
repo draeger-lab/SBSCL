@@ -25,7 +25,6 @@
  */
 package org.simulator.fba;
 
-import ilog.concert.IloException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -74,7 +73,7 @@ public class COBRAsolverExample {
 	 * @throws SBMLException
 	 *         if the model is invalid or inappropriate for flux balance analysis.
 	 */
-	public COBRAsolverExample(File file) throws SBMLException, IloException, ModelOverdeterminedException, XMLStreamException, IOException {
+	public COBRAsolverExample(File file) throws SBMLException, ModelOverdeterminedException, XMLStreamException, IOException {
 		solve(file);
 	}
 
@@ -91,7 +90,7 @@ public class COBRAsolverExample {
 	 * @throws SBMLException
 	 *         if the model is invalid or inappropriate for flux balance analysis.
 	 */
-	public void solve(File file) throws SBMLException, IloException, ModelOverdeterminedException, XMLStreamException, IOException {
+	public void solve(File file) throws SBMLException, ModelOverdeterminedException, XMLStreamException, IOException {
 		if (file.isDirectory()) {
 			for (File f : file.listFiles()) {
 				System.out.println("attempting to solving model: " + f.getName());

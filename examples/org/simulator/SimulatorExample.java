@@ -1,6 +1,4 @@
 /*
- * $Id$
- * $URL$
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
@@ -25,7 +23,6 @@
 package org.simulator;
 
 import java.awt.Dimension;
-import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JOptionPane;
@@ -36,6 +33,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.math.ode.DerivativeException;
 import org.jfree.ui.RefineryUtilities;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.SBMLReader;
@@ -45,7 +43,6 @@ import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.plot.PlotMultiTable;
 import org.simulator.sbml.SBMLinterpreter;
-
 import org.simulator.plot.PlotMultiTable;
 
 /**
@@ -78,7 +75,9 @@ public class SimulatorExample {
     double timeEnd = Double.parseDouble(args[2]);
 
     // Read the model and initialize solver
-    Model model = SBMLReader.read(new File(fileName)).getModel();
+    SBMLDocument document = (new SBMLReader()).readSBML(fileName);
+    Model model = document.getModel();
+    
     DESSolver solver = new RosenbrockSolver();
     solver.setStepSize(stepSize);
     SBMLinterpreter interpreter = new SBMLinterpreter(model);
@@ -98,7 +97,7 @@ public class SimulatorExample {
         + model.getId(), JOptionPane.INFORMATION_MESSAGE);
     
     // plot all the reactions species
-    PlotMultiTable p = new PlotMultiTable(solution);
+    PlotMultiTable p = new PlotMultiTable(solution, "Output plot");
     p.pack();
     RefineryUtilities.centerFrameOnScreen(p);
     p.setVisible( true );

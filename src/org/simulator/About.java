@@ -1,6 +1,4 @@
 /*
- * $Id$
- * $URL$
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
@@ -48,6 +46,7 @@ public class About {
             "5. EMBL European Bioinformatics Institute (EBML-EBI), UK\n" +
             "6. The University of California, San Diego, La Jolla, CA, USA\n" +
             "7. The Babraham Institute, Cambridge, UK\n\n" +
+            "8. Duke University, Durham, NC, US\n\n" +
             "License: LGPL Version 3\n" +
             "For more information please see\n" +
             "https://sourceforge.net/projects/simulation-core/.";
