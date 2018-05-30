@@ -29,6 +29,7 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.tree.TreeNode;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.math.ode.DerivativeException;
@@ -45,7 +46,6 @@ import org.simulator.math.odes.DESSolver;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.AddMetaInfo;
-import org.simulator.sbml.GetMetaInfo;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
@@ -102,8 +102,8 @@ public class CompExample {
 			LOGGER.warn("Output contains objects, trying to plot and extract ids:\n");
 			// Map the output ids back to the original model
 			for (int index = 1; index < solution.getColumnCount(); index++) {
-				AbstractTreeNode node = (AbstractTreeNode) GetMetaInfo.getOrigId(flatDoc, solution.getColumnIdentifier(index));
-				
+				AbstractTreeNode node = (AbstractTreeNode) origDoc.getElementBySId(solution.getColumnIdentifier(index));
+			
 				if(node.isSetUserObjects()) {
 					System.out.println("flat id: " + solution.getColumnIdentifier(index) + "\t old id:" + 
 								node.getUserObject(AddMetaInfo.ORIG_ID) + "\t model enclosing it: " + node.getUserObject(AddMetaInfo.MODEL_ID));
