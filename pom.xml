@@ -109,11 +109,6 @@
       <url>https://github.com/niko-rodrigue</url>
     </developer>
     <developer>
-      <name>Shalin Shah</name>
-      <email>shalin.shah@duke.edu</email>
-      <url>https://ssdoesgsoc.wordpress.com</url>
-    </developer>
-    <developer>
       <name>Akito Tabira</name>
       <email>tabira@fun.bio.keio.ac.jp</email>
       <url>https://github.com/mythosil</url>
@@ -229,14 +224,15 @@
       <version>4.11</version>
       <!--<scope>test</scope>-->
     </dependency>
-    <dependency>
+	<!--     
+	<dependency>
       <groupId>cplex</groupId>
       <artifactId>cplex</artifactId>
       <version>12.7.1.0</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/cplex/cplex.jar</systemPath>
-    </dependency>
-
+    </dependency> 
+    -->
     <!--
     <dependency>
       <groupId>nmi</groupId>
@@ -273,9 +269,9 @@
         <directory>resources</directory>
         <filtering>true</filtering>
       </resource>
-      <resource>
+      <!-- <resource>
         <directory>.</directory>
-      </resource>
+      </resource> -->
     </resources>
 
     <plugins>
@@ -320,10 +316,10 @@
           <configuration>
             <source>${jdk.version}</source>
             <target>${jdk.version}</target>
-            <excludes>
+            <!-- <excludes>
               <exclude>**/org/simulator/fba/COBRAsolver.java</exclude>
               <exclude>**/org/simulator/fba/COBRAsolverExample.java</exclude>
-            </excludes>
+            </excludes> -->
           </configuration>
         </plugin>
 
