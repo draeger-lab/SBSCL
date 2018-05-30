@@ -144,7 +144,7 @@ public class SEDMLExecutorTest {
     assertEquals("Time", mt.getTimeName());
     
     // plot all the reactions species
-    PlotMultiTable p = new PlotMultiTable(mt);
+    PlotMultiTable p = new PlotMultiTable(mt, "Simulation output");
     p.pack();
     RefineryUtilities.centerFrameOnScreen(p);
     p.setVisible( true );

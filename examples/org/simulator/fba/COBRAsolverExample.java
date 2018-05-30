@@ -1,6 +1,4 @@
 /*
- * $Id$
- * $URL$
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
@@ -104,9 +102,11 @@ public class COBRAsolverExample {
 					System.out.println(file.getName());
 					System.out.println("Objective value:\t" + solver.getObjetiveValue());
 					System.out.println("Fluxes:\t" + Arrays.toString(solver.getValues()));
+				}else {
+					logger.error("\nSolver returned null for "+ file.getName());
 				}
-			} catch (SBMLException exc) {
-				logger.error(exc.getMessage());
+			} catch (Exception exc) {
+				logger.error("\nCannot run "+ file.getName() + "\n" +exc);
 			}
 		}
 	}

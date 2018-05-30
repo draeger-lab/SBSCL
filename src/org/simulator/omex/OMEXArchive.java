@@ -1,6 +1,4 @@
 /*
- * $Id$
- * $URL$
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
@@ -23,11 +21,11 @@
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
+package org.simulator.omex;
 
-/**
- * This package simply contains a default main program to display very
- * basic licensing terms and other information.
- * 
- * @version $Rev$
- */
-package org.simulator;
+public class OMEXArchive {
+
+	public OMEXArchive() {
+		
+	}
+}

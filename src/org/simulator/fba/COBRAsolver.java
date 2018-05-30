@@ -392,7 +392,6 @@ public class COBRAsolver {
 	 * @throws SBMLException
 	 *         if the model has an invalid structure.
 	 */
-	@SuppressWarnings({"javadoc"})
 	private double stoichiometry(SpeciesReference specRef) throws SBMLException, ModelOverdeterminedException {
 		if ((interpreter != null) && specRef.isSetId()) {
 			// There could be an initial assignment that has changed the value of this speciesReference.
