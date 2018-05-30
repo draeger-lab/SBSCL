@@ -23,8 +23,11 @@
  */
 package org.simulator.sbml;
 
+import java.util.Enumeration;
+
 import javax.swing.tree.TreeNode;
 
+import org.sbml.jsbml.AbstractSBase;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBase;
 
@@ -44,9 +47,9 @@ public class AddMetaInfo{
 	 */
 	public static final String ORIG_ID = "ORIGINAL_ID";
 	/**
-	 * string constant for Submodel id
+	 * string constant for (Sub-)Model id
 	 */
-	public static final String SUB_MODEL_ID = "SUBMODEL_ID";
+	public static final String MODEL_ID = "MODEL_ID";
 	
 	/**
 	 * A static method which add id information of each element to userObjects map
@@ -54,18 +57,20 @@ public class AddMetaInfo{
 	 * @param SBMLDocument
 	 */
 	public static SBMLDocument putOrigId(SBMLDocument doc) {
-		int children = doc.getChildCount();
+		Enumeration<TreeNode> children = doc.children();
 		// Set the entire tree recursively for adding information
-		for(int i = 0 ; i < children; i++) {
+		while(children.hasMoreElements()) {
+			TreeNode child = children.nextElement();
 			
 			// Set ORIGINAL_ID for entire subTree of this node
-			recurse(doc.getChildAt(i));
+			recurse(child);
 			
-			if(doc.getChildAt(i) instanceof SBase) {
-				SBase node = (SBase) doc.getChildAt(i);
+			if(child instanceof SBase) {
+				SBase node = (SBase) child;
 				if(node.isSetId()) {
-					// add meta information ORIGINAL_ID
+					// add meta information model id and parent model id
 					node.putUserObject(ORIG_ID, node.getId());
+					node.putUserObject(MODEL_ID, node.getModel().getId());
 				}
 			}
 		}
@@ -77,15 +82,20 @@ public class AddMetaInfo{
 	 * A helper method to recurse all the nodes of a SBML tree
 	 */
 	private static void recurse(TreeNode treeNode) {
-		int children = treeNode.getChildCount();
-		for(int i = 0 ; i < children; i++) {
-			// Check the entire subTree of current Root
-			recurse(treeNode.getChildAt(i));
+		Enumeration<TreeNode> children = treeNode.children();
+		// Set the entire tree recursively for adding information
+		while(children.hasMoreElements()) {
+			TreeNode child = children.nextElement();
 			
-			if(treeNode.getChildAt(i) instanceof SBase) {
-				SBase node = (SBase) treeNode.getChildAt(i);
+			// Set ORIGINAL_ID for entire subTree of this node
+			recurse(child);
+			
+			if(child instanceof SBase) {
+				SBase node = (SBase) child;
 				if(node.isSetId()) {
+					// add meta information model id and parent model id
 					node.putUserObject(ORIG_ID, node.getId());
+					node.putUserObject(MODEL_ID, node.getModel().getId());
 				}
 			}
 		}

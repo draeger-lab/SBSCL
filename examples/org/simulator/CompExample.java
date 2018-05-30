@@ -74,7 +74,7 @@ public class CompExample {
 	DerivativeException {
 
 		// Read the model and initialize solver
-		File file = new File("files/comp/test50.xml");
+		File file = new File("files/comp/test51.xml");
 		
 		// Read original SBML file and add meta-info about original ID 
 		SBMLDocument origDoc = SBMLReader.read(file);
@@ -105,7 +105,9 @@ public class CompExample {
 				AbstractTreeNode node = (AbstractTreeNode) GetMetaInfo.getOrigId(flatDoc, solution.getColumnIdentifier(index));
 				
 				if(node.isSetUserObjects()) {
-					System.out.println(node.userObjectKeySet() + " " + node.getUserObject(AddMetaInfo.ORIG_ID));
+					System.out.println("flat id: " + solution.getColumnIdentifier(index) + "\t old id:" + 
+								node.getUserObject(AddMetaInfo.ORIG_ID) + "\t model enclosing it: " + node.getUserObject(AddMetaInfo.MODEL_ID));
+					
 				}
 			}
 			
