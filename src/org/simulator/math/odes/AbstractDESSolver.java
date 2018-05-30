@@ -1,6 +1,4 @@
 /*
- * $Id$
- * $URL$
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
@@ -13,6 +11,7 @@
  * 5. EMBL European Bioinformatics Institute (EBML-EBI), Hinxton, UK
  * 6. The University of California, San Diego, La Jolla, CA, USA
  * 7. The Babraham Institute, Cambridge, UK
+ * 8. Duke University, Durham, NC, US
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,6 +48,7 @@ import org.simulator.math.odes.MultiTable.Block.Column;
  * @author Hannes Planatscher
  * @author Philip Stevens
  * @author Max Zwie&szlig;ele
+ * @author Shalin Shah
  * @version $Rev$
  * @since 0.9
  */
@@ -629,7 +629,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
       if ((Math.abs(newValues[i]) > 1E-10) || (Math.abs(oldValues[i]) > 1E-10)) {
         relativeDistance = Math.abs((newValues[i]-oldValues[i])/Math.max(newValues[i],oldValues[i]));
       }
-      if (((distance > 1E-6) || (relativeDistance > 1E-6)) &&  (step < 10000)) {
+      if (((distance > 1E-6) || (relativeDistance > 1E-6)) && (step < 10000)) {
         return false;
       }
     }
@@ -1047,6 +1047,46 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
     }
 
     return data;
+  }
+
+  /* (non-Javadoc)
+   * @see org.simulator.math.odes.DESSolver#solve(org.simulator.math.odes.DESystem, double[], double, double, int)
+   * This method is useful to run SteadyState simulations when end time for simulations is unknown
+   */
+  public MultiTable solve(DESystem DES, double[] initialValues, double steps) throws DerivativeException{
+	  // This solver method is used to run until SteadyState is found
+
+	  double[] curState = initialValues;
+	  double[] nextState = new double[initialValues.length];
+	  
+	  // By default at least run for 1000 seconds
+	  setStepSize(1000);
+	  double curTime = 0.0;
+	  int step = 0;
+	  
+	  // Run oneStep simulation until steadyState is reached to find endTime
+	  while(true) {
+		  MultiTable intmdOutput = solve(DES, curState, curTime, getStepSize());
+
+		  // Extract the endPoint and compare it with initial point
+		  intmdOutput = intmdOutput.filter(new double[] {getStepSize()});
+		  double[][] temp = intmdOutput.getBlock(0).getData();
+		  nextState = temp[0];
+		  
+		  // If states are too close end this simulation 
+		  if(!noChange(nextState, curState, step)) {
+			  break;
+		  }
+		  step += 1;
+		  setStepSize(getStepSize() * 10);
+		  System.arraycopy(nextState, 0, curState, 0, initialValues.length);
+	  }
+	  
+	  // Once we know when steady state is reached simply run simulation till then
+	  // using total number of steps given as input
+	  double endTime = getStepSize();
+	  setStepSize(endTime/steps);
+	  return solve(DES, initialValues, 0.0, endTime);
   }
 
 }

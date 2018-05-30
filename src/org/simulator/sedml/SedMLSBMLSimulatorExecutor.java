@@ -114,6 +114,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	private static final transient Logger logger = Logger.getLogger(SBMLinterpreter.class.getName());
 
 	private static final double ONE_STEP_SIM_STEPS = 10;
+	private static final double STEADY_STATE_STEPS = 10;
 	
 	public SedMLSBMLSimulatorExecutor(SedML sedml, Output output) {
 		super(sedml, output);
@@ -207,7 +208,6 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		return null;
 	}
 
-
 	protected IRawSedmlSimulationResults executeSimulation(String modelStr,
 			OneStep sim) {
 
@@ -265,12 +265,11 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 				interpreter = new SBMLinterpreter(model);
 			}
 			solver.setIncludeIntermediates(false);
-			// TODO: implement something like AbstractDESSolver.getSteadyState method
-			// to find when steadyState is reached instead of long simulation
-			solver.setStepSize(1);
-			MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(),
-					0.0, 100000);
 
+			// set default stepSize and call solver. Solver will automatically find
+			// steadyState and terminate when steadyState is reached.
+			MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(), STEADY_STATE_STEPS);
+			
 			// adapt the MultiTable to jlibsedml interface.
 			return new MultTableSEDMLWrapper(mts);
 
@@ -280,7 +279,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		}
 		return null;
 	}
-
+	
 	/** This method is a wrapper to the runSimulations method from  {@link AbstractSedmlExecutor} to add 
 	 *  additional support for repeatedTasks. It identifies the type of task, before running the
 	 *  simulations.
@@ -366,12 +365,14 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 									return res;
 								}
 
-								// Identify simulation type and run it. Store the results in a Map
 								if(sim instanceof OneStep) {
+									logger.warn("Running OneStep on " + changedModel);
 									result = executeSimulation(changedModel, (OneStep) sim);    
 								}else if(sim instanceof SteadyState) {
+									logger.warn("Running SteadyState on " + changedModel);
 									result = executeSimulation(changedModel, (SteadyState) sim);
 								}else if(sim instanceof UniformTimeCourse) {
+									logger.warn("Running UniformTimeCourse on " + changedModel);
 									result = executeSimulation(changedModel, (UniformTimeCourse) sim);    
 								}
 
@@ -416,10 +417,13 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 
 				// Identify simulation type and run it. Store the results in a Map
 				if(sim instanceof OneStep) {
+					logger.warn("Running OneStep on " + changedModel);
 					results = executeSimulation(changedModel, (OneStep) sim);    
 				}else if(sim instanceof SteadyState) {
+					logger.warn("Running SteadyState on " + changedModel);
 					results = executeSimulation(changedModel, (SteadyState) sim);
 				}else if(sim instanceof UniformTimeCourse) {
+					logger.warn("Running UniformTimeCourse on " + changedModel);
 					results = executeSimulation(changedModel, (UniformTimeCourse) sim);    
 				}
 
