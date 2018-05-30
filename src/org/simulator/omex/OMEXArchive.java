@@ -23,9 +23,62 @@
  */
 package org.simulator.omex;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.text.ParseException;
+import org.jdom2.JDOMException;
+
+import de.unirostock.sems.cbarchive.ArchiveEntry;
+import de.unirostock.sems.cbarchive.CombineArchive;
+import de.unirostock.sems.cbarchive.CombineArchiveException;
+
+/**
+ * @author Shalin
+ * @since 1.5
+ */
 public class OMEXArchive {
 
-	public OMEXArchive() {
-		
+	private CombineArchive archive;
+
+	public OMEXArchive(File zipFile) throws IOException, ParseException, CombineArchiveException, JDOMException{
+		archive = new CombineArchive(zipFile);
+
+		// read description of the archive itself
+		System.out.println("found " + archive.getDescriptions().size() + " meta data entries describing the archive.");
+	
+		// iterate over all entries in the archive
+		for (ArchiveEntry entry : archive.getEntries())
+		{
+			// display some information about the archive
+			System.out.println(">>> file name in archive: " + entry.getFileName() + "  -- apparently of format: " + entry.getFormat());
+
+			// We want to read it, you do not need to extract it
+			// so we call for an InputStream:
+			try {
+				InputStream myReader = Files.newInputStream (entry.getPath(), StandardOpenOption.READ);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				System.out.println("Cannnot read zip archive.");
+				return;
+			}
+		}
+	}
+
+	/**
+	 * A simple method to uncompress combine archives
+	 * @param File
+	 * @return boolean
+	 */
+	public boolean extractArchive(File destination) {
+		try {
+			// Extract the whole archive to our disk at the specified location
+			archive.extractTo(destination);
+			return true;
+		}catch(IOException ex) {
+			return false;
+		}
 	}
 }
