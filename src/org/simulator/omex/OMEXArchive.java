@@ -25,12 +25,13 @@ package org.simulator.omex;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jdom2.JDOMException;
 
+import de.binfalse.bflog.LOGGER;
 import de.unirostock.sems.cbarchive.ArchiveEntry;
 import de.unirostock.sems.cbarchive.CombineArchive;
 import de.unirostock.sems.cbarchive.CombineArchiveException;
@@ -42,43 +43,69 @@ import de.unirostock.sems.cbarchive.CombineArchiveException;
 public class OMEXArchive {
 
 	private CombineArchive archive;
+	private Map<String, ArchiveEntry> entryMap;
+	private boolean has_models;
+	private boolean has_sim_descp;
+	private File sed_ml;
 
 	public OMEXArchive(File zipFile) throws IOException, ParseException, CombineArchiveException, JDOMException{
+		entryMap = new HashMap<String, ArchiveEntry>();
+		has_models = false;
+		has_sim_descp = false;
+		
 		archive = new CombineArchive(zipFile);
 
-		// read description of the archive itself
-		System.out.println("found " + archive.getDescriptions().size() + " meta data entries describing the archive.");
-	
-		// iterate over all entries in the archive
+		// iterate over all entries in the archive and create a Map
 		for (ArchiveEntry entry : archive.getEntries())
 		{
-			// display some information about the archive
-			System.out.println(">>> file name in archive: " + entry.getFileName() + "  -- apparently of format: " + entry.getFormat());
-
-			// We want to read it, you do not need to extract it
-			// so we call for an InputStream:
-			try {
-				InputStream myReader = Files.newInputStream (entry.getPath(), StandardOpenOption.READ);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				System.out.println("Cannnot read zip archive.");
-				return;
+			entryMap.put(entry.getFilePath(), entry);
+			if(entry.getFormat().toString().contains("SBML") || entry.getFormat().toString().contains("sbml"))
+				has_models = true;
+			if(entry.getFormat().toString().contains("SED-ML") || entry.getFormat().toString().contains("sed-ml")) {
+				has_sim_descp = true;
+				sed_ml = entry.getFile();
 			}
 		}
+
+		// read description of the archive itself
+		LOGGER.debug("found " + archive.getDescriptions().size() + " meta data entries describing the archive.");
 	}
 
+	public Map<String, ArchiveEntry> getFileEntries() {
+		return entryMap;
+	}
+
+	public boolean containsSBMLModel() {
+		return has_models;
+	}
+	
+	public boolean containsSEDMLDescp() {
+		return has_sim_descp;
+	}
+	
+	public File getSEDMLDescp() {
+		return sed_ml;
+	}
+	
 	/**
-	 * A simple method to uncompress combine archives
+	 * A simple method to uncompress combine archives at desired location
 	 * @param File
 	 * @return boolean
 	 */
 	public boolean extractArchive(File destination) {
 		try {
-			// Extract the whole archive to our disk at the specified location
 			archive.extractTo(destination);
 			return true;
 		}catch(IOException ex) {
 			return false;
 		}
+	}
+
+	/**
+	 * Since we directly work with zip archive, it needs to be closed after use
+	 * @throws IOException
+	 */
+	public void close() throws IOException {
+		archive.close();
 	}
 }
