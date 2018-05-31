@@ -23,11 +23,24 @@
  */
 package org.simulator.omex;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Map;
 
 import org.jdom2.JDOMException;
+import org.jlibsedml.AbstractTask;
+import org.jlibsedml.Libsedml;
+import org.jlibsedml.Output;
+import org.jlibsedml.SEDMLDocument;
+import org.jlibsedml.SedML;
+import org.jlibsedml.XMLException;
+import org.jlibsedml.execution.IRawSedmlSimulationResults;
+import org.simulator.sedml.MultTableSEDMLWrapper;
+import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
 
 import de.unirostock.sems.cbarchive.CombineArchiveException;
 
@@ -36,8 +49,28 @@ import de.unirostock.sems.cbarchive.CombineArchiveException;
  * @since 1.5
  */
 public class OMEXExample {
-	public static void main(String[] args) throws IOException, ParseException, CombineArchiveException, JDOMException {
-		@SuppressWarnings("unused")
-		OMEXArchive archive = new OMEXArchive(new File("G:/GSOC/SBSCL/files/omex_files/12859_2014_369_MOESM1_ESM.zip"));
+	private static String file = "G:/GSOC/SBSCL/files/omex_files/12859_2014_369_MOESM2_ESM.omex";
+
+	public static void main(String[] args) throws IOException, ParseException, CombineArchiveException,
+	JDOMException, XMLException {
+		OMEXArchive archive = new OMEXArchive(new File(file));
+
+		if(archive.containsSBMLModel() && archive.containsSEDMLDescp()) {
+			// Execute SED-ML file and run simulations
+			SEDMLDocument doc = Libsedml.readDocument(archive.getSEDMLDescp());
+			SedML sedml = doc.getSedMLModel();
+
+			Output wanted = sedml.getOutputs().get(0);
+			SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted);
+
+			Map<AbstractTask, IRawSedmlSimulationResults> res = exe.runSimulations();
+			if ((res == null) || res.isEmpty() || !exe.isExecuted()) {
+				fail ("Simulatation failed: " + exe.getFailureMessages().get(0).getMessage());
+			}
+			
+			for (IRawSedmlSimulationResults re: res.values()) {
+				assertTrue(re instanceof MultTableSEDMLWrapper);
+			}
+		}
 	}
 }
