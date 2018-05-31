@@ -45,7 +45,7 @@ public class SEDMLv2Test {
 		SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted);
 		// This gets the raw simulation results - one for each Task that was run.
 		System.out.println("Collecting tasks...");
-		Map<AbstractTask, Object> res = exe.run();
+		Map<AbstractTask, IRawSedmlSimulationResults> res = exe.run();
 		if (res==null ||res.isEmpty() || !exe.isExecuted()) {
 			fail ("Simulatation failed: " + exe.getFailureMessages().get(0));
 			return;
@@ -53,7 +53,7 @@ public class SEDMLv2Test {
 		// now process.In this case, there's no processing performed - we're displaying the
 		// raw results.
 		System.out.println("Outputs wanted: " + wanted);
-		MultiTable mt = exe.processResults(wanted, res);
+		MultiTable mt = exe.processSimulationResults(wanted, res);
 
 		// plot all the reactions species
 		if (mt.getColumnCount() > 1) {

@@ -27,6 +27,7 @@ package org.simulator.sedml;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -35,8 +36,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.ArchiveComponents;
@@ -45,6 +49,7 @@ import org.jlibsedml.OneStep;
 import org.jlibsedml.Output;
 import org.jlibsedml.Range;
 import org.jlibsedml.RepeatedTask;
+import org.jlibsedml.SEDMLVisitor;
 import org.jlibsedml.SedML;
 import org.jlibsedml.SetValue;
 import org.jlibsedml.Simulation;
@@ -69,13 +74,16 @@ import org.jlibsedml.modelsupport.KisaoOntology;
 import org.jlibsedml.modelsupport.KisaoTerm;
 import org.jlibsedml.modelsupport.URLResourceRetriever;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.validator.offline.constraints.ArraysUtils;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.DormandPrince54Solver;
 import org.simulator.math.odes.EulerMethod;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
-import org.simulator.sbml.SBMLinterpreter;;
+import org.simulator.sbml.SBMLinterpreter;
+
+import de.binfalse.bflog.LOGGER;;
 
 /**
  * This class extends an abstract class from jlibsedml, which provides various
@@ -285,10 +293,10 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	 *  additional support for repeatedTasks. It identifies the type of task, before running the
 	 *  simulations.
 	 */
-	public Map<AbstractTask, Object> run() {
+	public Map<AbstractTask, IRawSedmlSimulationResults> run() {
 
 		// Fetch all the tasks: Tasks + RepeatedTasks
-		Map<AbstractTask, Object> res = new HashMap<AbstractTask, Object>();
+		Map<AbstractTask, IRawSedmlSimulationResults> res = new HashMap<AbstractTask, IRawSedmlSimulationResults>();
 		List<AbstractTask> tasksToExecute = sedml.getTasks();
 		if (tasksToExecute.isEmpty()) {
 			logger.error("No Tasks could be resolved from the required output.");
@@ -305,7 +313,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 				RepeatedTask repTask = (RepeatedTask) task;
 				Map<String, SubTask> subTasks = sortTasks(repTask.getSubTasks());
 				Map<String, Range> range = repTask.getRanges();
-				Map<AbstractTask, IRawSedmlSimulationResults> subTaskResults = new HashMap<AbstractTask, IRawSedmlSimulationResults>();
+				//Map<AbstractTask, IRawSedmlSimulationResults> repTaskResults = new HashMap<AbstractTask, IRawSedmlSimulationResults>();
 				
 				// Store state of all the existing changes by subTasks
 				List<SetValue> modelState = new ArrayList<SetValue>();
@@ -316,7 +324,10 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 					// Iterate over master range
 					Range masterRange = range.get(repTask.getRange());
 					for(int element = 0; element < masterRange.getNumElements(); element++) {
+						
 						System.out.println("Iterating over master range: " + (1+element) + " of " + masterRange.getNumElements());
+						List<MultTableSEDMLWrapper> stResults = new ArrayList<MultTableSEDMLWrapper>();
+						
 						for(Entry<String, SubTask> st: subTasks.entrySet()) {
 							SubTask subTask = st.getValue();
 							AbstractTask relatedTask = sedml.getTaskWithId(subTask.getTaskId());
@@ -325,7 +336,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 							// recurse all repeatedTasks subTasks to add all of them
 							if (relatedTask instanceof RepeatedTask) {
 								// TODO: Handle nested repeatedTask
-								System.out.println("Warning! Nested repeatedTask found and ignored.");
+								LOGGER.warn("Warning! Nested repeatedTask found and ignored.");
 							}else {
 								// Load original model and update its state
 								org.jlibsedml.Model curModel = sedml.getModelWithId(relatedTask.getModelReference());
@@ -349,9 +360,8 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 
 								// 3. Execute subTasks in sorted order with the current state of model
 								Simulation sim = sedml.getSimulation(relatedTask.getSimulationReference());
-								IRawSedmlSimulationResults result = null;
 								String changedModel = modelResolver.getModelString(curModel);
-
+								IRawSedmlSimulationResults output = null;
 								// Quickly run error checks before final execution
 								if (!supportsLanguage(curModel.getLanguage())) {
 									logger.error("Language not supported: " + curModel.getLanguage());
@@ -370,29 +380,65 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 
 								if(sim instanceof OneStep) {
 									System.out.println("Running OneStep on " + relatedTask);
-									result = executeSimulation(changedModel, (OneStep) sim);    
+									output = executeSimulation(changedModel, (OneStep) sim);    
 								}else if(sim instanceof SteadyState) {
 									System.out.println("Running SteadyState on " + relatedTask);
-									result = executeSimulation(changedModel, (SteadyState) sim);
+									output = executeSimulation(changedModel, (SteadyState) sim);
 								}else if(sim instanceof UniformTimeCourse) {
 									System.out.println("Running UniformTimeCourse on " + relatedTask);
-									result = executeSimulation(changedModel, (UniformTimeCourse) sim);    
+									output = executeSimulation(changedModel, (UniformTimeCourse) sim);    
 								}
 
-								if (result == null) {
+								if (output == null) {
 									logger.warn("Simulation failed during execution: "
 											+ relatedTask.getSimulationReference() + " with model: "
 											+ relatedTask.getModelReference());
 								}else {
-									subTaskResults.put(relatedTask, result);
+									stResults.add((MultTableSEDMLWrapper) output);
 								}
 							}
 						}
+						
+						// Execute subtasks in order and concat their result
+						// SED-ML specs assume subTasks simulate same Tasks
+						IRawSedmlSimulationResults reducedStResults = stResults.stream()
+						.reduce((a, b) -> new MultTableSEDMLWrapper(new MultiTable(
+								ArrayUtils.addAll(a.getMultiTable().getTimePoints(), a.getMultiTable().getTimePoints()), 
+								mergeArrays(a.getData(), b.getData()), 
+								stResults.get(0).getColumnHeaders()))).get();
+
+						// Give each iteration of repeatedTasks a different Id using range element number
+						AbstractTask taskWithNewId = new AbstractTask(repTask.getId()+element, repTask.getElementName()+element) {
+							
+							@Override
+							public String getElementName() {
+								// TODO Auto-generated method stub
+								return null;
+							}
+							
+							@Override
+							public boolean accept(SEDMLVisitor visitor) {
+								// TODO Auto-generated method stub
+								return false;
+							}
+							
+							@Override
+							public String getSimulationReference() {
+								// TODO Auto-generated method stub
+								return null;
+							}
+							
+							@Override
+							public String getModelReference() {
+								// TODO Auto-generated method stub
+								return null;
+							}
+						};
+						// merge all the IRawSimulationResults into a big one and add it to results list
+						// with the ID of repeatedTasks
+						res.put(taskWithNewId, reducedStResults);
 					}
-					// merge all the IRawSimulationResults into a big one and add it to results list
-					// with the ID of repeatedTasks
-					
-					res.put(repTask, subTaskResults);
+
 				}
 			}else {
 				// Execute a simple Task 
@@ -444,6 +490,19 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 
 	}
 
+	/**
+	 * Merge two 2D arrays into one
+	 * @param double[][]
+	 * @param double[][]
+	 * @return double[][]
+	 */
+	private double[][] mergeArrays(double[][] a, double[][] b) {
+		double[][] merged = new double[a.length+b.length][a[0].length];
+		System.arraycopy(a, 0, merged, 0, a.length*a[0].length);
+		System.arraycopy(b, 0, merged, a.length*a[0].length, b.length*b[0].length);
+		return merged;
+	}
+	
 	/** A helper function to sort subTasks by order.
 	 * @param Map<String, SubTask>
 	 * @return Map<String, SubTask>
@@ -519,18 +578,6 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		// datagenerators
 		MultiTable mt = createMultiTableFromProcessedResults(wanted, prRes);
 		return mt;
-	}
-	
-	/**
-	 * 
-	 * @param wanted
-	 * @param res
-	 * @return
-	 */
-	public MultiTable processResults(Output wanted,
-			Map<AbstractTask, Object> res) {
-		//TODO: Write this method to return MultiTable output from raw simulation results
-		return null;
 	}
 
 	// Here we need to check which of the results are the independent axis to create a MultiTable
