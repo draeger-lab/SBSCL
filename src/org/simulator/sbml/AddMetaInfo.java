@@ -56,7 +56,7 @@ public class AddMetaInfo{
 	 * @param SBMLDocument
 	 */
 	public static SBMLDocument putOrigId(SBMLDocument doc) {
-		doc = (SBMLDocument) recurse((TreeNode) doc);
+		doc = (SBMLDocument) recurse(doc);
 		return doc;
 	}
 	
