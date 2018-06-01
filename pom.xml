@@ -141,13 +141,6 @@
   <!-- =================================================================== -->
 
   <repositories>
-	<!-- Local libraries are an in-project repository -->
-	<!-- Add the dependencies and put them in -->
-	<!-- ${project.basedir}/lib/groupId/artifactId/version/ -->
-	<repository>
-		<id>libs</id>
-		<url>file://${project.basedir}/lib</url>
-	</repository>
 	<!-- Adding repository to download latest jlibSBML -->
 	<repository>
 		<id>JSBML-SNAPSHOT</id>
@@ -212,21 +205,21 @@
       <artifactId>scpsolver</artifactId>
       <version>1.0</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/nmi/scpsolver/1.0/scpsolver-1.0.jar</systemPath>
+      <systemPath>${project.basedir}/src/lib/nmi/scpsolver/1.0/scpsolver-1.0.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>nmi</groupId>
       <artifactId>glpksolver</artifactId>
       <version>4.35</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/nmi/scpsolver/1.0/GLPKSolverPack.jar</systemPath>
+      <systemPath>${project.basedir}/src/lib/nmi/scpsolver/1.0/GLPKSolverPack.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>nmi</groupId>
       <artifactId>lpsolver</artifactId>
       <version>5.5.2.5</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/nmi/scpsolver/1.0/LPSOLVESolverPack.jar</systemPath>
+      <systemPath>${project.basedir}/src/lib/nmi/scpsolver/1.0/LPSOLVESolverPack.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -251,40 +244,7 @@
 
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
-    <sourceDirectory>src</sourceDirectory>
-    <testSourceDirectory>test</testSourceDirectory>
-
-    <resources>
-      <resource>
-        <directory>resources</directory>
-        <filtering>true</filtering>
-      </resource>
-      <!-- <resource>
-        <directory>.</directory>
-      </resource> -->
-    </resources>
-
-    <plugins>
-        <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>build-helper-maven-plugin</artifactId>
-            <executions>
-                <execution>
-                    <phase>generate-sources</phase>
-                    <goals>
-                        <goal>add-source</goal>
-                    </goals>
-                    <configuration>
-                        <sources>
-                          <source>${project.basedir}/src/</source>
-                          <source>${project.basedir}/examples/</source>
-                        </sources>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
-    </plugins>
-
+    
     <pluginManagement>
       <plugins>
         <!-- Download source code in Eclipse, best practice [OPTIONAL!] -->
