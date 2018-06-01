@@ -42,6 +42,7 @@ import org.jlibsedml.execution.IRawSedmlSimulationResults;
 import org.simulator.sedml.MultTableSEDMLWrapper;
 import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
 
+import de.binfalse.bflog.LOGGER;
 import de.unirostock.sems.cbarchive.CombineArchiveException;
 
 /**
@@ -49,10 +50,15 @@ import de.unirostock.sems.cbarchive.CombineArchiveException;
  * @since 1.5
  */
 public class OMEXExample {
-	private static String file = "G:/GSOC/SBSCL/files/omex_files/12859_2014_369_MOESM2_ESM.omex";
-
+	
 	public static void main(String[] args) throws IOException, ParseException, CombineArchiveException,
 	JDOMException, XMLException {
+		String file = args[0];
+		if (file.isEmpty()) {
+			LOGGER.warn("Please enter a valid omex file as argument.");
+			return;
+		}
+		
 		OMEXArchive archive = new OMEXArchive(new File(file));
 
 		if(archive.containsSBMLModel() && archive.containsSEDMLDescp()) {
@@ -72,5 +78,8 @@ public class OMEXExample {
 				assertTrue(re instanceof MultTableSEDMLWrapper);
 			}
 		}
+		
+		// close the file object
+		archive.close();
 	}
 }
