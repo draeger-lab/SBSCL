@@ -122,8 +122,8 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	private ModelResolver modelResolver;
 	private static final transient Logger logger = Logger.getLogger(SedMLSBMLSimulatorExecutor.class.getName());
 
-	private static final double ONE_STEP_SIM_STEPS = 10;
-	private static final double STEADY_STATE_STEPS = 10;
+	private static final double ONE_STEP_SIM_STEPS = 10d;
+	private static final double STEADY_STATE_STEPS = 10d;
 	
 	public SedMLSBMLSimulatorExecutor(SedML sedml, Output output) {
 		super(sedml, output);
