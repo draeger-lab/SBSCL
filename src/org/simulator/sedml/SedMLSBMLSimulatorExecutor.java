@@ -27,6 +27,7 @@ package org.simulator.sedml;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -293,10 +294,10 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	 *  additional support for repeatedTasks. It identifies the type of task, before running the
 	 *  simulations.
 	 */
-	public Map<AbstractTask, IRawSedmlSimulationResults> run() {
+	public Map<AbstractTask, List<IRawSedmlSimulationResults>> run() {
 
 		// Fetch all the tasks: Tasks + RepeatedTasks
-		Map<AbstractTask, IRawSedmlSimulationResults> res = new HashMap<AbstractTask, IRawSedmlSimulationResults>();
+		Map<AbstractTask, List<IRawSedmlSimulationResults>> res = new HashMap<AbstractTask, List<IRawSedmlSimulationResults>>();
 		List<AbstractTask> tasksToExecute = sedml.getTasks();
 		if (tasksToExecute.isEmpty()) {
 			logger.error("No Tasks could be resolved from the required output.");
@@ -313,7 +314,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 				RepeatedTask repTask = (RepeatedTask) task;
 				Map<String, SubTask> subTasks = sortTasks(repTask.getSubTasks());
 				Map<String, Range> range = repTask.getRanges();
-				//Map<AbstractTask, IRawSedmlSimulationResults> repTaskResults = new HashMap<AbstractTask, IRawSedmlSimulationResults>();
+				List<IRawSedmlSimulationResults> repTaskResults = new ArrayList<IRawSedmlSimulationResults>();
 				
 				// Store state of all the existing changes by subTasks
 				List<SetValue> modelState = new ArrayList<SetValue>();
@@ -403,42 +404,16 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 						// SED-ML specs assume subTasks simulate same Tasks
 						IRawSedmlSimulationResults reducedStResults = stResults.stream()
 						.reduce((a, b) -> new MultTableSEDMLWrapper(new MultiTable(
-								ArrayUtils.addAll(a.getMultiTable().getTimePoints(), a.getMultiTable().getTimePoints()), 
-								mergeArrays(a.getData(), b.getData()), 
+								mergeTimeCols(a, b), 
+								mergeDataCols(a.getData(), b.getData()), 
 								stResults.get(0).getColumnHeaders()))).get();
-
-						// Give each iteration of repeatedTasks a different Id using range element number
-						AbstractTask taskWithNewId = new AbstractTask(repTask.getId()+element, repTask.getElementName()+element) {
-							
-							@Override
-							public String getElementName() {
-								// TODO Auto-generated method stub
-								return null;
-							}
-							
-							@Override
-							public boolean accept(SEDMLVisitor visitor) {
-								// TODO Auto-generated method stub
-								return false;
-							}
-							
-							@Override
-							public String getSimulationReference() {
-								// TODO Auto-generated method stub
-								return null;
-							}
-							
-							@Override
-							public String getModelReference() {
-								// TODO Auto-generated method stub
-								return null;
-							}
-						};
-						// merge all the IRawSimulationResults into a big one and add it to results list
-						// with the ID of repeatedTasks
-						res.put(taskWithNewId, reducedStResults);
+						
+						// Add big subTask result to list of repTask results
+						repTaskResults.add(reducedStResults);	
 					}
-
+					// merge all the IRawSimulationResults into a big one and add it to results list
+					// with the ID of repeatedTasks
+					res.put(repTask, repTaskResults);
 				}
 			}else {
 				// Execute a simple Task 
@@ -482,7 +457,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 							+ stdTask.getSimulationReference() + " with model: "
 							+ stdTask.getModelReference());
 				}
-				res.put(stdTask, results);
+				res.put(stdTask, new ArrayList<IRawSedmlSimulationResults>(Arrays.asList(results)));
 			}
 		}
 		System.out.println("Finised executing tasks. Results are: " + res);
@@ -491,16 +466,42 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	}
 
 	/**
-	 * Merge two 2D arrays into one
+	 * Merge two 2D arrays into one 2D array in X-direction
 	 * @param double[][]
 	 * @param double[][]
 	 * @return double[][]
 	 */
-	private double[][] mergeArrays(double[][] a, double[][] b) {
-		double[][] merged = new double[a.length+b.length][a[0].length];
-		System.arraycopy(a, 0, merged, 0, a.length*a[0].length);
-		System.arraycopy(b, 0, merged, a.length*a[0].length, b.length*b[0].length);
+	private double[][] mergeDataCols(double[][] a, double[][] b) {
+		double[][] merged = new double[a.length+b.length][];
+		
+		System.arraycopy(a, 0, merged, 0, a.length);
+		System.arraycopy(b, 0, merged, a.length, b.length);
+		
 		return merged;
+	}
+	
+	/**
+	 * Merge time coloumns from 2 multiTables
+	 * @param MultTableSEDMLWrapper
+	 * @param MultTableSEDMLWrapper
+	 * @return double[]
+	 */
+	private double[] mergeTimeCols(MultTableSEDMLWrapper a, MultTableSEDMLWrapper b) {
+		// Get end time point for taskA 
+		double[] timeA = a.getMultiTable().getTimePoints();
+		double timeBegin = timeA[timeA.length-1];
+		
+		// Add end time point to taskB
+		double[] timeB = Arrays.stream(b.getMultiTable().getTimePoints())
+		.map(row -> row + timeBegin)
+		.toArray();
+		
+		// merged all point to one longer double[]
+		double[] merged = new double[timeA.length + timeB.length];
+        System.arraycopy(timeA, 0, merged, 0, timeA.length);
+        System.arraycopy(timeB, 0, merged, timeA.length, timeB.length);
+       
+        return merged;
 	}
 	
 	/** A helper function to sort subTasks by order.
@@ -563,7 +564,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	 * @return
 	 */
 	public MultiTable processSimulationResults(Output wanted,
-			Map<AbstractTask, IRawSedmlSimulationResults> res) {
+			Map<AbstractTask, List<IRawSedmlSimulationResults>> res) {
 		// here we post-process the results
 		SedMLResultsProcesser2 pcsr2 =  new SedMLResultsProcesser2(sedml, wanted);
 		pcsr2.process(res);
