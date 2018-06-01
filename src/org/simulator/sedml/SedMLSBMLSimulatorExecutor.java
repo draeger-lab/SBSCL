@@ -481,7 +481,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	}
 	
 	/**
-	 * Merge time coloumns from 2 multiTables
+	 * Merge time columns from 2 multiTables
 	 * @param MultTableSEDMLWrapper
 	 * @param MultTableSEDMLWrapper
 	 * @return double[]
@@ -565,20 +565,22 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	 */
 	public MultiTable processSimulationResults(Output wanted,
 			Map<AbstractTask, List<IRawSedmlSimulationResults>> res) {
-		// here we post-process the results
-		SedMLResultsProcesser2 pcsr2 =  new SedMLResultsProcesser2(sedml, wanted);
-		pcsr2.process(res);
-
-		// this does not necessarily have time as x-axis - another variable could be  the
-		// independent variable.
-		IProcessedSedMLSimulationResults prRes = pcsr2.getProcessedResult();
-
-
-		// now we restore a MultiTable from the processed results. This basic example assumes a typical
-		// simulation where time = xaxis - otherwise, if output is a Plot, we would need to analyse the x-axis
-		// datagenerators
-		MultiTable mt = createMultiTableFromProcessedResults(wanted, prRes);
-		return mt;
+//		// here we post-process the results
+//		SedMLResultsProcesser2 pcsr2 =  new SedMLResultsProcesser2(sedml, wanted);
+//		pcsr2.process(res);
+//
+//		// this does not necessarily have time as x-axis - another variable could be  the
+//		// independent variable.
+//		IProcessedSedMLSimulationResults prRes = pcsr2.getProcessedResult();
+//
+//
+//		// now we restore a MultiTable from the processed results. This basic example assumes a typical
+//		// simulation where time = xaxis - otherwise, if output is a Plot, we would need to analyse the x-axis
+//		// datagenerators
+//		MultiTable mt = createMultiTableFromProcessedResults(wanted, prRes);
+//		return mt;
+		//TODO: Update this method to work with Map containing list of results
+		return null;
 	}
 
 	// Here we need to check which of the results are the independent axis to create a MultiTable
