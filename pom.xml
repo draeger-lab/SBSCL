@@ -43,7 +43,7 @@
   <description>The Systems Biology Simulation Core Library provides an efficient and exhaustive Java™ implementation of methods to interpret the content of models encoded in the Systems Biology Markup Language (SBML) and its numerical solution. This library is based on the JSBML project and can be used on every operating system, for which a Java Virtual Machine is available.</description>
 
   <properties>
-    <jdk.version>1.6</jdk.version>
+    <jdk.version>1.8</jdk.version>
     <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
     <year>${maven.build.timestamp}</year><!-- This property is used for filtering the variable ${year} in some resource files -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
