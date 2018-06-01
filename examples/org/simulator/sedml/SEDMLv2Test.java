@@ -3,8 +3,8 @@ package org.simulator.sedml;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.jfree.ui.RefineryUtilities;
 import org.jlibsedml.AbstractTask;
@@ -15,6 +15,8 @@ import org.jlibsedml.XMLException;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.plot.PlotMultiTable;
+
+import de.binfalse.bflog.LOGGER;
 
 /**
  * This test class shows how a SED-ML file can be interpreted and executed using
@@ -27,32 +29,31 @@ import org.simulator.plot.PlotMultiTable;
  * @since 1.5
  */
 public class SEDMLv2Test {
-	private static File l1v1Test = new File("files/sedmlTest/ClockSedML.xml");
-	private static File l1v2Test = new File("files/sedmlTest/l1v2/v3-example1-repeated-steady-scan-oscli.xml");
-	//private static File l1v2Test = new File("files/sedmlTest/l1v2/v3-example2-oscli-nested-pulse.xml");
-	//private static File l1v2Test = new File("files/sedmlTest/l1v2/v3-example3-repeated-stochastic-runs.xml");
-	//private static File l1v2Test = new File("files/sedmlTest/l1v2/v3-example4-repeated-scan-oscli.xml");
-	//private static File l1v2Test = new File("files/sedmlTest/l1v2/v3-example5-boris-2d-scan.xml");
 	private static SedML sedml = null;
 
 	public static void main(String[] args) throws XMLException {
-		System.out.println("Reading SEDML document...");
-		sedml=Libsedml.readDocument(l1v2Test).getSedMLModel();
+		if(args[0] == null) {
+			LOGGER.warn("Please give file file name as argument.");
+			return;
+		}
+		File file = new File(args[0]);
+		
+		sedml=Libsedml.readDocument(file).getSedMLModel();
 
 		// in this SED-ML file there's just one output. If there were several,
 		// we could either iterate or get user to  decide what they want to run.
 		Output wanted = sedml.getOutputs().get(0);
 		SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted);
 		// This gets the raw simulation results - one for each Task that was run.
-		System.out.println("Collecting tasks...");
-		Map<AbstractTask, IRawSedmlSimulationResults> res = exe.run();
+		LOGGER.warn("Collecting tasks...");
+		Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
 		if (res==null ||res.isEmpty() || !exe.isExecuted()) {
 			fail ("Simulatation failed: " + exe.getFailureMessages().get(0));
 			return;
 		}
 		// now process.In this case, there's no processing performed - we're displaying the
 		// raw results.
-		System.out.println("Outputs wanted: " + wanted);
+		LOGGER.warn("Outputs wanted: " + wanted);
 		MultiTable mt = exe.processSimulationResults(wanted, res);
 
 		// plot all the reactions species
