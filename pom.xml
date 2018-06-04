@@ -54,6 +54,11 @@
     <system>GitHub Issues</system>
     <url>https://github.com/shalinshah1993/SBSCL/issues</url>
   </issueManagement>
+  
+  <ciManagement>
+    <system>Travis CI</system>
+    <url>https://travis-ci.org/shalinshah1993/${project.name}</url>
+  </ciManagement>
 
   <licenses>
     <license>
