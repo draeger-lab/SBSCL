@@ -1,22 +1,18 @@
-package org.simulator.sedml;
+package org.simulator.examples;
 
-import static org.junit.Assert.fail;
+import de.binfalse.bflog.LOGGER;
+import org.jfree.ui.RefineryUtilities;
+import org.jlibsedml.*;
+import org.jlibsedml.execution.IRawSedmlSimulationResults;
+import org.simulator.math.odes.MultiTable;
+import org.simulator.plot.PlotMultiTable;
+import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import org.jfree.ui.RefineryUtilities;
-import org.jlibsedml.AbstractTask;
-import org.jlibsedml.Libsedml;
-import org.jlibsedml.Output;
-import org.jlibsedml.SedML;
-import org.jlibsedml.XMLException;
-import org.jlibsedml.execution.IRawSedmlSimulationResults;
-import org.simulator.math.odes.MultiTable;
-import org.simulator.plot.PlotMultiTable;
-
-import de.binfalse.bflog.LOGGER;
+import static org.junit.Assert.fail;
 
 /**
  * This test class shows how a SED-ML file can be interpreted and executed using
@@ -28,7 +24,7 @@ import de.binfalse.bflog.LOGGER;
  * @author Shalin Shah
  * @since 1.5
  */
-public class SEDMLv2Test {
+public class SEDMLv2Example {
 	private static SedML sedml = null;
 
 	public static void main(String[] args) throws XMLException {
