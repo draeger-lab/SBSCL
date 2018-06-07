@@ -1,18 +1,15 @@
 package org.simulator.fba;
 
 import static org.junit.Assert.*;
-
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import javax.xml.stream.XMLStreamException;
 
-import org.junit.Test;
 import org.sbml.jsbml.SBMLReader;
-import org.simulator.TestUtils;
-
-import org.sbml.jsbml.JSBML;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 
@@ -25,6 +22,7 @@ public class CobraSolverTest {
 
 
     @Test
+    @Ignore
     public void solveEColiCore() throws ModelOverdeterminedException, IOException, XMLStreamException {
 
         String resourceName = "fba/e_coli_core.xml";
