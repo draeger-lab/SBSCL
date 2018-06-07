@@ -51,38 +51,21 @@ import org.simulator.sbml.SBMLinterpreter;
 /**
  * Tests the SEDMLWriter
  * 
- * @author Richard Adams
+ * @author Richard Adams, Matthias König
  * @version $Rev$
  * @since 1.1
  */
 public class SEDMLWriterTest {
 
-  /**
-   * 
-   */
   private static final String COMMENT = "Standard time course of ABC1 model";
-  /**
-   * 
-   */
-  private File SBMLFile = new File("files/sedmlTest/abc_1.xml");
-  /**
-   * 
-   */
+  private File SBMLFile = new File(Thread.currentThread().getContextClassLoader().getResource("sedml/abc_1.xml").getFile());
   private SEDMLWriter writer;
 
-  /**
-   * 
-   * @throws Exception
-   */
   @Before
   public void setUp() throws Exception {
     writer = new SEDMLWriter();
   }
 
-  /**
-   * 
-   * @throws Exception
-   */
   @After
   public void tearDown() throws Exception {
   }
@@ -97,6 +80,7 @@ public class SEDMLWriterTest {
    */
   @Test
   public final void testSaveExperimentToSEDML() throws IOException, XMLStreamException, SBMLException, ModelOverdeterminedException, XMLException {
+
     double start = 0d;
     double end = 10d;
     double stepsize = 0.1d;
