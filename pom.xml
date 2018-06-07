@@ -231,6 +231,12 @@
 		<groupId>de.uni-rostock.sbi</groupId>
 		<artifactId>CombineArchive</artifactId>
 		<version>1.3.6</version>
+      <exclusions>
+        <exclusion>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
 	</dependency>
   </dependencies>
 
