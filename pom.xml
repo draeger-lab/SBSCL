@@ -205,7 +205,7 @@
       <artifactId>scpsolver</artifactId>
       <version>1.0</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/src/lib/nmi/scpsolver/1.0/scpsolver-1.0.jar</systemPath>
+      <systemPath>${project.basedir}/src/lib/nmi/scpsolver/1.0/SCPSolver-1.0.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>nmi</groupId>
