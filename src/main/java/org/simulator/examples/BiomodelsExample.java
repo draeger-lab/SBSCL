@@ -22,7 +22,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
-package org.simulator.sbml;
+package org.simulator.examples.fba;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -44,12 +44,12 @@ import org.simulator.sbml.SBMLinterpreter;
  * @author Roland Keller
  * @version $Rev$
  */
-public class TestBiomodels {
+public class BiomodelsExample {
 
   /**
    * A {@link Logger} for this class.
    */
-  private static final Logger logger = Logger.getLogger(TestBiomodels.class.getName());
+  private static final Logger logger = Logger.getLogger(BiomodelsExample.class.getName());
 
 
   /**

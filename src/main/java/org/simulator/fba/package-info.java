@@ -30,4 +30,4 @@
  * @author Andreas Dr&auml;ger
  * @since 1.5
  */
-package org.simulator.fba;
+package org.simulator.examples.fba;

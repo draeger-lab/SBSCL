@@ -21,7 +21,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
-package org.simulator.sbml;
+package org.simulator.examples.fba;
 
 import java.awt.Dimension;
 import java.io.File;
