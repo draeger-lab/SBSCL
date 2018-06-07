@@ -64,7 +64,7 @@ public class AddMetaInfo{
 	 * A helper method to recurse all the nodes of a SBML tree
 	 */
 	private static TreeNode recurse(TreeNode treeNode) {
-		Enumeration<TreeNode> children = treeNode.children();
+		Enumeration<TreeNode> children = (Enumeration<TreeNode>) treeNode.children();
 		// Set the entire tree recursively for adding information
 		while(children.hasMoreElements()) {
 			TreeNode child = children.nextElement();
