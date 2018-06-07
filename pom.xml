@@ -141,6 +141,12 @@
   <!-- =================================================================== -->
 
   <repositories>
+      <repository>
+          <id>in-project</id>
+          <name>In project repository</name>
+          <url>file:${project.basedir}/src/lib/maven</url>
+      </repository>
+
 	<!-- Adding repository to download latest jlibSBML -->
 	<repository>
 		<id>JSBML-SNAPSHOT</id>
@@ -200,37 +206,39 @@
 		<artifactId>jfreechart</artifactId>
 		<version>1.0.19</version>
 	</dependency>
+      <!-- LP solvers -->
     <dependency>
-      <groupId>nmi</groupId>
-      <artifactId>scpsolver</artifactId>
+      <groupId>scpsolver</groupId>
+      <artifactId>SCPSolver</artifactId>
       <version>1.0</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/src/lib/nmi/scpsolver/1.0/scpsolver-1.0.jar</systemPath>
     </dependency>
     <dependency>
-      <groupId>nmi</groupId>
-      <artifactId>glpksolver</artifactId>
+      <groupId>scpsolver</groupId>
+      <artifactId>GLPKSolverPack</artifactId>
       <version>4.35</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/src/lib/nmi/scpsolver/1.0/GLPKSolverPack.jar</systemPath>
     </dependency>
     <dependency>
-      <groupId>nmi</groupId>
-      <artifactId>lpsolver</artifactId>
+      <groupId>scpsolver</groupId>
+      <artifactId>LPSOLVESolverPack</artifactId>
       <version>5.5.2.5</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/src/lib/nmi/scpsolver/1.0/LPSOLVESolverPack.jar</systemPath>
     </dependency>
+      <!--
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
-      <!--<scope>test</scope>-->
     </dependency>
+    -->
     <dependency>
 		<groupId>de.uni-rostock.sbi</groupId>
 		<artifactId>CombineArchive</artifactId>
 		<version>1.3.6</version>
+      <exclusions>
+        <exclusion>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
 	</dependency>
   </dependencies>
 
