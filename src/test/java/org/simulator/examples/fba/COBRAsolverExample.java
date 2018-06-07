@@ -21,7 +21,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
-package org.simulator.fba;
+package org.simulator.examples.fba;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,6 +38,7 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
+import org.simulator.fba.COBRAsolver;
 
 /**
  * A simple test class to demonstrate the capabilities of the FBA implementation

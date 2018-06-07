@@ -201,11 +201,18 @@
       <artifactId>commons-math</artifactId>
       <version>2.2</version>
     </dependency>
+      <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
+          <version>3.7</version>
+      </dependency>
+
 	<dependency>
 		<groupId>org.jfree</groupId>
 		<artifactId>jfreechart</artifactId>
 		<version>1.0.19</version>
 	</dependency>
+
       <!-- LP solvers -->
     <dependency>
       <groupId>scpsolver</groupId>
@@ -222,13 +229,8 @@
       <artifactId>LPSOLVESolverPack</artifactId>
       <version>5.5.2.5</version>
     </dependency>
-      <!--
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-    </dependency>
-    -->
+
+      <!-- OMEX archive -->
     <dependency>
 		<groupId>de.uni-rostock.sbi</groupId>
 		<artifactId>CombineArchive</artifactId>
