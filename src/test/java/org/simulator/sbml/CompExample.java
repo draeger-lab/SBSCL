@@ -21,15 +21,15 @@
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
-package org.simulator;
+package org.simulator.sbml;
 
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
+
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.tree.TreeNode;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.math.ode.DerivativeException;
@@ -38,9 +38,9 @@ import org.sbml.jsbml.AbstractTreeNode;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.ext.comp.util.CompFlatteningConverter;
+import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.DESSolver;
 import org.simulator.math.odes.MultiTable;
@@ -73,9 +73,13 @@ public class CompExample {
 	IOException, ModelOverdeterminedException, SBMLException,
 	DerivativeException {
 
-		// Read the model and initialize solver
-		File file = new File("files/comp/test51.xml");
+		if (args[0].isEmpty()) {
+			LOGGER.warn("No file entered!");
+			return;
+		}
 		
+		// Read the model and initialize solver
+		File file = new File(args[0]);
 		// Read original SBML file and add meta-info about original ID 
 		SBMLDocument origDoc = SBMLReader.read(file);
 		origDoc = AddMetaInfo.putOrigId(origDoc);

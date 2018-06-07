@@ -22,7 +22,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
-package org.simulator;
+package org.simulator.sbml;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
