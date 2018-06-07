@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import javax.xml.stream.XMLStreamException;
@@ -20,10 +19,8 @@ import org.slf4j.LoggerFactory;
 public class CobraSolverTest {
     private static final Logger logger = LoggerFactory.getLogger(CobraSolverTest.class);
 
-
     @Test
-    @Ignore
-    public void solveEColiCore() throws ModelOverdeterminedException, IOException, XMLStreamException {
+    public void solveEColiCore() throws ModelOverdeterminedException, XMLStreamException {
 
         String resourceName = "fba/e_coli_core.xml";
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
