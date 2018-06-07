@@ -4,10 +4,12 @@ import static org.junit.Assert.*;
 
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import javax.xml.stream.XMLStreamException;
 
 import org.junit.Test;
+import org.sbml.jsbml.SBMLReader;
 import org.simulator.TestUtils;
 
 import org.sbml.jsbml.JSBML;
@@ -23,22 +25,21 @@ public class CobraSolverTest {
 
 
     @Test
-    public void test1() {
-        assertTrue(true);
-    }
-
-    @Test
     public void solveEColiCore() throws ModelOverdeterminedException, IOException, XMLStreamException {
 
-        String path = TestUtils.FBA_RESOURCE_PATH + "/e_coli_core.xml";
-        SBMLDocument doc = JSBML.readSBML(path);
+        String resourceName = "fba/e_coli_core.xml";
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        InputStream is = classloader.getResourceAsStream(resourceName);
+        SBMLDocument doc = SBMLReader.read(is);
+        logger.info(doc.toString());
+
         COBRAsolver solver = new COBRAsolver(doc);
         if (solver.solve()) {
-            System.out.println(path);
+            System.out.println(resourceName);
             System.out.println("Objective value:\t" + solver.getObjetiveValue());
             System.out.println("Fluxes:\t" + Arrays.toString(solver.getValues()));
         } else {
-            logger.error("\nSolver returned null for " + path);
+            logger.error("\nSolver returned null for " + resourceName);
         }
     }
 }
