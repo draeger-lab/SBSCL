@@ -27,6 +27,7 @@ public class CobraSolverTest {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         InputStream is = classloader.getResourceAsStream(resourceName);
         SBMLDocument doc = SBMLReader.read(is);
+        assertNotNull(doc);
         logger.info(doc.toString());
 
         COBRAsolver solver = new COBRAsolver(doc);

@@ -1,5 +1,6 @@
 package org.simulator.fba;
 
+import org.junit.Ignore;
 import org.sbml.jsbml.JSBML;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
@@ -40,11 +41,9 @@ public class BiGGTest {
     public static String getBiGGModelPath() {
         Map<String, String> env = System.getenv();
         String key = "BIGG_MODELS_PATH";
-        String version = "v1.5";
         String value = null;
         if (env.containsKey(key)) {
             value = env.get(key);
-            value = value + "/" + version;
             logger.info(String.format("BiGG models folder found: %s", value));
         }
         else {
@@ -63,16 +62,14 @@ public class BiGGTest {
 		String filter = null;
 		Boolean mvnResource = false;
 
-		System.out.println("Searching resources");
-
-
-		// find all BiGG models (compressed files)
+		// find all BiGG models (compressed .xml.gz files)
         String biggPath = getBiGGModelPath();
         System.out.println("BiGG models path: " + biggPath);
 		return TestUtils.findResources(biggPath, ".xml.gz", filter, skip, mvnResource);
 	}
 
 	@Test
+    @Ignore
 	public void testFBA() throws Exception {
         logger.info("--------------------------------------------------------");
         logger.info(String.format("%s", resource));
