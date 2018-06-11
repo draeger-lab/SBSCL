@@ -13,6 +13,11 @@ sbscl.iml
 lib/nmi/scpsolver/1.0/GLPKSolverPack.jar
 lib/nmi/scpsolver/1.0/LPSOLVESolverPack.jar
 lib/cplex/cplex.jar
+libglpkjni_x64.so
 
 # log files
 jsbml.log
+
+# BiGG models
+src/test/resources/bigg/
+

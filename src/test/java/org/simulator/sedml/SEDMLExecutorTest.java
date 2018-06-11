@@ -24,17 +24,19 @@
  */
 package org.simulator.sedml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
 import org.jfree.ui.RefineryUtilities;
+
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.Libsedml;
 import org.jlibsedml.Output;
@@ -42,9 +44,8 @@ import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.XMLException;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.simulator.TestUtils;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.plot.PlotMultiTable;
 
@@ -60,8 +61,8 @@ import org.simulator.plot.PlotMultiTable;
  */
 public class SEDMLExecutorTest {
 
-    private String abc1test = "sedml/sed1.xml";
-    private String miriamtest = "sedml/ClockSedML.xml";
+    private String abc1test = "/sedml/sed1.xml";
+    private String miriamtest = "/sedml/ClockSedML.xml";
 
     @Before
     public void setUp() throws Exception {
@@ -75,11 +76,10 @@ public class SEDMLExecutorTest {
     public final void testBasicSEDMLExecutorForLocalFile() throws XMLException, IOException {
         // get the SED-ML object model from file. The model referred to in this
         //SEDML file is defined by a relative path and is in the top-level folder.
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        InputStream is = classloader.getResourceAsStream(abc1test);
-        SEDMLDocument doc = Libsedml.readDocument(is, null);
 
-        // check no errors in SEDML file, else simulation will not work so well.
+        String abcPath = TestUtils.getPathForTestResource(abc1test);
+        SEDMLDocument doc = Libsedml.readDocument(new File(abcPath));
+        assertNotNull(doc);
         assertFalse(doc.hasErrors());
 
         SedML sedml = doc.getSedMLModel();
@@ -92,7 +92,7 @@ public class SEDMLExecutorTest {
         // raw results.
         Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
         if ((res == null) || res.isEmpty() || !exe.isExecuted()) {
-            fail("Simulatation failed: " + exe.getFailureMessages().get(0).getMessage());
+            fail("Simulation failed: " + exe.getFailureMessages().get(0).getMessage());
         }
         for (List<IRawSedmlSimulationResults> re : res.values()) {
             assertTrue(re instanceof MultTableSEDMLWrapper);
@@ -113,10 +113,13 @@ public class SEDMLExecutorTest {
      */
     @Test
     public final void testBasicSEDMLExecutorForMiriamURNDefinedModel() throws XMLException, IOException {
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        InputStream is = classloader.getResourceAsStream(miriamtest);
-        SEDMLDocument doc = Libsedml.readDocument(is, "UTF-8");
+
+        String miriamPath = TestUtils.getPathForTestResource(miriamtest);
+        SEDMLDocument doc = Libsedml.readDocument(new File(miriamPath));
+        assertNotNull(doc);
+
         SedML sedml = doc.getSedMLModel();
+        assertNotNull(sedml);
 
         // in this SED-ML file there's just one output. If there were several,
         // we could either iterate or get user to  decide what they want to run.
@@ -126,19 +129,14 @@ public class SEDMLExecutorTest {
         // This gets the raw simulation results - one for each Task that was run.
         Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
         if (res == null || res.isEmpty() || !exe.isExecuted()) {
-            fail("Simulatation failed: " + exe.getFailureMessages().get(0));
+            fail("Simulation failed: " + exe.getFailureMessages().get(0));
         }
         // now process.In this case, there's no processing performed - we're displaying the
         // raw results.
         MultiTable mt = exe.processSimulationResults(wanted, res);
+        assertNotNull(mt);
+
         assertTrue(3 == mt.getColumnCount());
         assertEquals("Time", mt.getTimeName());
-
-        // plot all the reactions species
-        PlotMultiTable p = new PlotMultiTable(mt, "Simulation output");
-        p.pack();
-        RefineryUtilities.centerFrameOnScreen(p);
-        p.setVisible(true);
     }
-
 }

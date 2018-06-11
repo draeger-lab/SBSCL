@@ -3,5 +3,10 @@ language: java
 jdk:
   - oraclejdk8
 
+before_install:
+   # get BiGG models for testing
+   cd src/test
+   source ./download_bigg_models.sh
+
 script:
 - mvn clean install
