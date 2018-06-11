@@ -20,6 +20,7 @@ public class CobraSolverTest {
     private static final Logger logger = LoggerFactory.getLogger(CobraSolverTest.class);
 
     @Test
+    @Ignore  // breaks on Ubuntu: https://github.com/shalinshah1993/SBSCL/issues/24
     public void solveEColiCore() throws ModelOverdeterminedException, XMLStreamException {
 
         String resourceName = "fba/e_coli_core.xml";
