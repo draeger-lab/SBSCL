@@ -13,7 +13,7 @@
   </listOfSimulations>
   <listOfModels>
     <model id="abc_1__1j1__2_3e_4_i_1290622067691" name="" 
-    language="urn:sedml:language:sbml.level-2.version-2" source="files/sedmlTest/abc_1.xml">
+    language="urn:sedml:language:sbml.level-2.version-2" source="abc_1.xml">
       <annotation>
         <sbsi-editor xmlns="http://www.sedml.sbsi.editor/level1">
           <location y="404" x="23" />

@@ -42,7 +42,6 @@ public class SimulatorTest {
         InputStream is = classloader.getResourceAsStream("sbml/BIOMD0000000012.xml");
 
         // Read the model and initialize solver
-
         SBMLDocument doc = SBMLReader.read(is);
         assertNotNull(doc);
 
