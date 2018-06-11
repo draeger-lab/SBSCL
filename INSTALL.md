@@ -11,6 +11,7 @@ http://scpsolver.org/ and add in the library folder according to the `pom.xml`.
 ### GLPK
 
 ```
+sudo apt-get install libglpk-dev
 sudo apt-get install libglpk-java
 ```
 
