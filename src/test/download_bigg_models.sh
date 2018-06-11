@@ -20,6 +20,9 @@ export BIGG_MODELS_PATH=${TEST_DIR}/resources/bigg/v1.5
 
 echo $BIGG_MODELS_PATH
 
+# move back
+cd $TEST_DIR
+
 
 
 
