@@ -866,7 +866,12 @@ public class SBMLTestSuiteRunner {
    */
   @Test
   public void testModels() throws FileNotFoundException, IOException {
-    String file = System.getenv("TEST_CASES");
+    String file = System.getenv("SBML_TEST_CASES");
+    if (file == null || file.equals("")){
+      System.out.println("SBML_TEST_CASES environment variable not set.");
+      return;
+    }
+
     String sbmlfile, csvfile, configfile;
     for (int modelnr = 1; modelnr <= 1123; modelnr++) {
       System.out.println("model " + modelnr);
