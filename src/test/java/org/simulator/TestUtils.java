@@ -1,6 +1,7 @@
 package org.simulator;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +39,14 @@ public class TestUtils {
         }
         System.out.println("rootPath: " + rootPath);
 
-        // Get SBML files for passed tests
-        LinkedList<String> sbmlPaths = TestUtils.findFiles(rootPath, extension, filter, skip);
-        Collections.sort(sbmlPaths);
+        // Get files for passed tests
+        LinkedList<String> sbmlPaths = null;
+        if (resourcePath == null){
+           sbmlPaths = new LinkedList<>();
+        } else {
+            sbmlPaths = TestUtils.findFiles(rootPath, extension, filter, skip);
+            Collections.sort(sbmlPaths);
+        }
 
         int N = sbmlPaths.size();
         System.out.println("Number of resources: " + N);
@@ -62,6 +68,23 @@ public class TestUtils {
         return Arrays.asList(resources);
     }
 
+
+    /**
+     * Get absolute path for given test resource.
+     * Due to the relative paths of SBML and SED-ML files the resource loading is not working
+     * in maven.
+     *
+     * Example:
+     *  resourcePath="/fba/e_coli_core.xml"
+     */
+    public static String getPathForTestResource(String resourcePath) {
+        String path = null;
+        File currentDir = new File(System.getProperty("user.dir"));
+        path = currentDir.getAbsolutePath() + "/src/test/resources" + resourcePath;
+        System.out.println("currentDir: " + currentDir);
+        System.out.println("path: " + path);
+        return path;
+    }
 
     /**
      * Search recursively for all SBML files in given path.

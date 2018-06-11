@@ -16,7 +16,7 @@ tar xzvf bigg_models_v1.5.tar.gz
 rm bigg_models_v1.5.tar.gz
 
 # set environment variable
-export BIGG_MODELS_PATH=${TEST_DIR}/resources/bigg
+export BIGG_MODELS_PATH=${TEST_DIR}/resources/bigg/v1.5
 
 echo $BIGG_MODELS_PATH
 

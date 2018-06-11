@@ -92,7 +92,7 @@ public class SEDMLExecutorTest {
         // raw results.
         Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
         if ((res == null) || res.isEmpty() || !exe.isExecuted()) {
-            fail("Simulatation failed: " + exe.getFailureMessages().get(0).getMessage());
+            fail("Simulation failed: " + exe.getFailureMessages().get(0).getMessage());
         }
         for (List<IRawSedmlSimulationResults> re : res.values()) {
             assertTrue(re instanceof MultTableSEDMLWrapper);
