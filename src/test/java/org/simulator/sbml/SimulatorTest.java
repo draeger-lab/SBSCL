@@ -48,7 +48,7 @@ public class SimulatorTest {
         Model model = doc.getModel();
         assertNotNull(model);
 
-        DESSolver solver = new RosenbrockSolver();
+        AbstractDESSolver solver = new RosenbrockSolver();
         solver.setStepSize(stepSize);
         SBMLinterpreter interpreter = new SBMLinterpreter(model);
         if (solver instanceof AbstractDESSolver) {
@@ -58,7 +58,12 @@ public class SimulatorTest {
         // Compute the numerical solution of the initial value problem
         // TODO: Rel-Tolerance, Abs-Tolerance.
         MultiTable solution = solver.solve(interpreter, interpreter.getInitialValues(), 0d, timeEnd);
-
+        
+        // Uncomment this for steadyState simulation
+        // If SteadyState simulation is desired, simple call solver without end time.
+        // Pass number of steps. The output will contains that many steps, in this case 10 steps.
+        // MultiTable solution = solver.solve(interpreter, interpreter.getInitialValues(), 10d);
+        
         assertNotNull(solution);
         assertEquals(101, solution.getRowCount());
     }
