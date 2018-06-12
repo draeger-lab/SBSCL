@@ -22,7 +22,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
-package org.simulator.examples.fba;
+package org.simulator.examples;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
