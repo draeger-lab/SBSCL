@@ -27,6 +27,7 @@ package org.simulator.sedml;
 import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -73,6 +74,7 @@ public class SEDMLExecutorTest {
     }
 
     @Test
+    @Ignore //https://github.com/shalinshah1993/SBSCL/issues/32
     public final void testBasicSEDMLExecutorForLocalFile() throws XMLException, IOException {
         // get the SED-ML object model from file. The model referred to in this
         //SEDML file is defined by a relative path and is in the top-level folder.
@@ -112,6 +114,7 @@ public class SEDMLExecutorTest {
      * @throws XMLException
      */
     @Test
+    @Ignore //https://github.com/shalinshah1993/SBSCL/issues/31
     public final void testBasicSEDMLExecutorForMiriamURNDefinedModel() throws XMLException, IOException {
 
         String miriamPath = TestUtils.getPathForTestResource(miriamtest);
