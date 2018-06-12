@@ -28,20 +28,17 @@ package org.simulator.sedml;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.ArchiveComponents;
@@ -51,7 +48,6 @@ import org.jlibsedml.Output;
 import org.jlibsedml.Parameter;
 import org.jlibsedml.Range;
 import org.jlibsedml.RepeatedTask;
-import org.jlibsedml.SEDMLVisitor;
 import org.jlibsedml.SedML;
 import org.jlibsedml.SetValue;
 import org.jlibsedml.Simulation;
@@ -63,22 +59,22 @@ import org.jlibsedml.Variable;
 import org.jlibsedml.VariableSymbol;
 import org.jlibsedml.execution.AbstractSedmlExecutor;
 import org.jlibsedml.execution.ArchiveModelResolver;
-import org.jlibsedml.execution.ExecutionStatusElement;
 import org.jlibsedml.execution.FileModelResolver;
 import org.jlibsedml.execution.IModel2DataMappings;
-import org.jlibsedml.execution.ExecutionStatusElement.ExecutionStatusType;
 import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
 import org.jlibsedml.execution.IXPathToVariableIDResolver;
 import org.jlibsedml.execution.ModelResolver;
-import org.jlibsedml.execution.SedMLResultsProcesser2;
 import org.jlibsedml.modelsupport.BioModelsModelsRetriever;
 import org.jlibsedml.modelsupport.KisaoOntology;
 import org.jlibsedml.modelsupport.KisaoTerm;
 import org.jlibsedml.modelsupport.SBMLSupport;
 import org.jlibsedml.modelsupport.URLResourceRetriever;
+import org.jmathml.ASTCi;
+import org.jmathml.ASTNode;
+import org.jmathml.ASTNumber;
+import org.jmathml.EvaluationContext;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.validator.offline.constraints.ArraysUtils;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.DormandPrince54Solver;
@@ -369,8 +365,8 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 									return res;
 								}
 								if (sim == null || !canExecuteSimulation(sim)) {
-									LOGGER.warn("Cannot simulate task" + relatedTask.getId()
-									+ "Either the simulation reference is corrupt or the simulation algorithm is not available.");
+									LOGGER.warn("Cannot simulate task " + relatedTask.getId()
+									+ " Either the simulation reference is corrupt or the simulation algorithm is not available.");
 									return res;
 
 								}
@@ -428,8 +424,8 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 					return res;
 				}
 				if (sim == null || !canExecuteSimulation(sim)) {
-					LOGGER.warn("Cannot simulate task" + stdTask.getId()
-					+ "Either the simulation reference is corrupt or the simulation algorithm is not available.");
+					LOGGER.warn("Cannot simulate task " + stdTask.getId()
+					+ " Either the simulation reference is corrupt or the simulation algorithm is not available.");
 					return res;
 				}
 				if (changedModel == null) {
@@ -456,7 +452,6 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		}
 		
 		return res;
-
 	}
 
 	/**
@@ -560,83 +555,18 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	public MultiTable processSimulationResults(Output wanted,
 			Map<AbstractTask, List<IRawSedmlSimulationResults>> res) {
 		
-//		// Check for nulls
-//		if (sedml == null || wanted == null || res == null) {
-//            throw new IllegalArgumentException();
-//        }
-//		if(wanted.getAllDataGeneratorReferences().isEmpty()) {
-//			LOGGER.warn("Data generator list is empty!");
-//			throw new NullPointerException();
-//		}
-//		// Check that required output exisits in sedml
-//		boolean found = false;
-//        for (Output o : sedml.getOutputs()) {
-//            if (o.getId().equals(wanted.getId())) {
-//                found = true;
-//            }
-//        }
-//        if (!found) {
-//            throw new IllegalArgumentException("Output [" + wanted.getId()
-//                    + "] does not belong the SED-ML object. ");
-//        }
-//        // calculate total number of rows in all the results
-//        int numRows = 0;
-//        for (AbstractTask t : res.keySet()) {
-//        	List<IRawSedmlSimulationResults> result = res.get(t);
-//        	for(IRawSedmlSimulationResults curRes: result) {
-//        		numRows += curRes.getNumDataRows();
-//        	}
-//        }
-//        
-//        // Iterate over all the data generators and to process results
-//        List<double[]> processed = new ArrayList<double[]>();
-//        IXPathToVariableIDResolver variable2IDResolver = new SBMLSupport();
-//        for (String dgId : wanted.getAllDataGeneratorReferences()) {
-//        	double[] mutated = new double[numRows];
-//            processed.add(mutated);
-//            DataGenerator dg = sedml.getDataGeneratorWithId(dgId);
-//            if (dg == null) {
-//                LOGGER.warn("Empty data generator recevied. Correct SED-ML!");
-//                return null;
-//            }
-//            
-//            List<Variable> vars = dg.getListOfVariables();
-//            List<Parameter> params = dg.getListOfParameters();
-//            Map<String, String> Var2Model = new HashMap<String, String>();
-//            Map<String, IRawSedmlSimulationResults> var2Result = new HashMap<String, IRawSedmlSimulationResults>();
-//            Map<String, double[][]> var2Data = new HashMap<String, double[][]>();
-//            String timeID = "";
-//            // map varIds to result, based upon task reference
-//            for (Variable variable : vars) {
-//            	String modelID;
-//
-//                if (variable.isVariable()) {
-//                    // get the task from which this result variable was generated.
-//                    modelID = variable2IDResolver.getIdFromXPathIdentifer(variable.getTarget());
-//                    String taskRef = variable.getReference();
-//                    AbstractTask t = sedml.getTaskWithId(taskRef);
-//
-//                    // get results list for this task. If it is repeatedTask then multiple results
-//                    List<IRawSedmlSimulationResults> resList = res.get(t);
-//                    // set up lookups to results, raw data and model ID
-//                    var2Result.put(variable.getId(), res);
-//                    var2Data.put(variable.getId(), rawTask2Results.get(t));
-//                    Var2Model.put(variable.getId(), modelID);
-//                    // it's a symbol
-//                } else if (variable.isSymbol()
-//                        && variable.getSymbol().equals(VariableSymbol.TIME)) {
-//                    timeID = variable.getId();
-//                    var2Data.put(variable.getId(), rawTask2Results.values().iterator()
-//                            .next());
-//                    Var2Model.put(variable.getId(), variable.getId());
-//
-//                }
-//            }
-//        	
-//        }
+		// here we post-process the results using our own post-processing module
+        ProcessSedMLResults pcsr = new ProcessSedMLResults(sedml, wanted);
+        pcsr.process(res);
         
-		
-        return null;
+        // this does not necessarily have time as x-axis - another variable could be  the
+        // independent variable.
+        IProcessedSedMLSimulationResults prRes = pcsr.getProcessedResult();
+
+        // now we restore a MultiTable from the processed results. This basic example assumes a typical
+        // simulation where time = xaxis - otherwise, if output is a Plot, we would need to analyse the x-axis
+        // datagenerators
+        return createMultiTableFromProcessedResults(wanted, prRes); 
 	}
 
 	// Here we need to check which of the results are the independent axis to create a MultiTable
@@ -722,5 +652,4 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		}
 		return null;
 	}
-
 }
