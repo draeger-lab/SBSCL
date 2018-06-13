@@ -21,7 +21,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
-package org.simulator.examples.fba;
+package org.simulator.examples;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
