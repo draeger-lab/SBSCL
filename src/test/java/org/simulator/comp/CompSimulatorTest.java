@@ -54,21 +54,4 @@ public class CompSimulatorTest {
 
         assertNotNull(sol);
     }
-
-    @Test
-    @Ignore
-    public void testComp1() throws IOException, XMLStreamException, DerivativeException, ModelOverdeterminedException {
-        String compPath = TestUtils.getPathForTestResource("/comp/test1.xml");
-        CompSimulator compSimulator = new CompSimulator(new File(compPath));
-
-        assertNotNull(compSimulator);
-        assertNotNull(compSimulator.getDoc());
-        assertNotNull(compSimulator.getDocFlat());
-
-        double stepSize = 1.0;
-        double timeEnd = 100.0;
-        MultiTable sol = compSimulator.solve(stepSize, timeEnd);
-
-        assertNotNull(sol);
-    }
 }
