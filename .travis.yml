@@ -4,9 +4,11 @@ jdk:
   - oraclejdk8
 
 install:
-   # get BiGG models for testing
    - cd src/test
+   # get BiGG models for testing
    - source ./download_bigg_models.sh
+   # get sbml-test-case models for testing
+   - source ./download_sbml-test-suite.sh
    - cd ../..
 
 script:
