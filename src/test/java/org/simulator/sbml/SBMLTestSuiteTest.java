@@ -49,7 +49,7 @@ public class SBMLTestSuiteTest {
 
         // environment variable for semantic test case folder
         String testsuite_path = System.getenv(SBML_TEST_SUITE_PATH);
-        System.out.println("path: " + testsuite_path);
+        System.out.println(SBML_TEST_SUITE_PATH + ": " + testsuite_path);
 
         if ((testsuite_path == null) || (testsuite_path.length() == 0)){
             Object[][] resources = new String[0][1];
@@ -82,7 +82,7 @@ public class SBMLTestSuiteTest {
     @Test
     public void testModel() throws FileNotFoundException, IOException {
 
-        System.out.println(path);
+        //System.out.println(path);
         String sbmlfile, csvfile, configfile;
         csvfile = path + "-results.csv";
         configfile = path + "-settings.txt";
@@ -159,8 +159,7 @@ public class SBMLTestSuiteTest {
                         - timepoints[0];
 
                 if ((solver != null) && (interpreter != null)) {
-                    System.out.println(sbmlFileType + " "
-                            + solver.getName());
+                    // System.out.println(sbmlFileType + " " + solver.getName());
                     solver.setStepSize(duration / steps);
 
                     // solve

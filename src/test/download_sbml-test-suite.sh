@@ -12,7 +12,7 @@ TEST_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 mkdir -p resources/sbml-test-suite
 cd resources/sbml-test-suite
 wget https://github.com/sbmlteam/sbml-test-suite/releases/download/3.3.0/sbml-semantic-test-cases-2017-12-12.zip
-unzip sbml-semantic-test-cases-2017-12-12.zip
+unzip -q sbml-semantic-test-cases-2017-12-12.zip
 rm sbml-semantic-test-cases-2017-12-12.zip
 
 # set environment variable
