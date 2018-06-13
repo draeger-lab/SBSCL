@@ -864,7 +864,6 @@ public class SBMLTestSuiteRunner {
    * @throws FileNotFoundException
    * @throws IOException
    */
-  @Test
   public void testModels() throws FileNotFoundException, IOException {
     String file = System.getenv("SBML_TEST_CASES");
     if (file == null || file.equals("")){
