@@ -32,11 +32,8 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-
-import org.jfree.ui.RefineryUtilities;
 
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.Libsedml;
@@ -48,7 +45,6 @@ import org.jlibsedml.execution.IRawSedmlSimulationResults;
 
 import org.simulator.TestUtils;
 import org.simulator.math.odes.MultiTable;
-import org.simulator.plot.PlotMultiTable;
 
 /**
  * This test class shows how a SED-ML file can be interpreted and executed using
@@ -141,5 +137,96 @@ public class SEDMLExecutorTest {
 
         assertTrue(3 == mt.getColumnCount());
         assertEquals("Time", mt.getTimeName());
+    }
+
+
+    @Test
+    @Ignore
+    public final void testIkappab() throws XMLException{
+        String resource = "/sedml/L1V2/ikappab/ikappab.xml";
+        testSpecificationExample(resource);
+    }
+
+    @Test
+    @Ignore
+    public final void testLeloupSBML() throws XMLException {
+        String resource = "/sedml/L1V2/leloup-sbml/leloup-sbml.xml";
+        testSpecificationExample(resource);
+    }
+
+    @Test
+    @Ignore
+    public final void testLorenzSBML() throws XMLException {
+        String resource = "/sedml/L1V2/lorenz-sbml/lorenz.xml";
+        testSpecificationExample(resource);
+    }
+
+    @Test
+    @Ignore
+    public final void testOscliNestedPulse() throws XMLException {
+        String resource = "/sedml/L1V2/oscli-nested-pulse/oscli-nested-pulse.xml";
+        testSpecificationExample(resource);
+    }
+
+    @Test
+    @Ignore
+    public final void testParameterScan2D() throws XMLException {
+        String resource = "/sedml/L1V2/parameter-scan-2d/parameter-scan-2d.xml";
+        testSpecificationExample(resource);
+    }
+
+    @Test
+    @Ignore
+    public final void testRepeatedScanOscli() throws XMLException {
+        String resource = "/sedml/L1V2/repeated-scan-oscli/repeated-scan-oscli.xml";
+        testSpecificationExample(resource);
+    }
+
+    @Test
+    @Ignore
+    public final void testRepeatedSteadyScanOscli() throws XMLException {
+        String resource = "/sedml/L1V2/repeated-steady-scan-oscli/repeated-steady-scan-oscli.xml";
+        testSpecificationExample(resource);
+    }
+
+    @Test
+    @Ignore
+    public final void testRepeatedStochasticRuns() throws XMLException {
+        String resource = "/sedml/L1V2/repeated-stochastic-runs/repeated-stochastic-runs.xml";
+        testSpecificationExample(resource);
+    }
+
+    @Test
+    @Ignore
+    public final void testRepressilator() throws XMLException {
+        String resource = "/sedml/L1V2/repressilator/repressilator.xml";
+        testSpecificationExample(resource);
+    }
+
+
+    public void testSpecificationExample(String resource) throws XMLException {
+        String sedmlPath = TestUtils.getPathForTestResource(resource);
+        SEDMLDocument doc = Libsedml.readDocument(new File(sedmlPath));
+        assertNotNull(doc);
+
+        SedML sedml = doc.getSedMLModel();
+        assertNotNull(sedml);
+
+        // iterate over outputs
+        List<Output> outputs = sedml.getOutputs();
+        for (int k=0; k<outputs.size(); k++){
+
+            Output wanted = outputs.get(k);
+            SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted);
+
+            Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
+            if (res == null || res.isEmpty() || !exe.isExecuted()) {
+                fail("Simulation failed: " + exe.getFailureMessages().get(0));
+            }
+            // postprocess
+            MultiTable mt = exe.processSimulationResults(wanted, res);
+            assertNotNull(mt);
+        }
+
     }
 }
