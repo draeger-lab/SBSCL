@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sedML  xmlns="http://sed-ml.org/sed-ml/level1/version3" level="1" version="3">
+  <listOfSimulations>
+    <uniformTimeCourse id="simulation1" initialTime="0" outputStartTime="0" outputEndTime="380" numberOfPoints="1000">
+      <algorithm kisaoID="KISAO:0000019" />
+    </uniformTimeCourse>
+  </listOfSimulations>
+  <listOfModels>
+    <model id="model1" name="Circadian Oscillations" language="urn:sedml:language:sbml" source="urn:miriam:biomodels.db:BIOMD0000000021" />
+    <model id="model2" name="Circadian Chaos" language="urn:sedml:language:sbml" source="model1">
+      <listOfChanges>
+        <changeAttribute target="/sbml:sbml/sbml:model/sbml:listOfParameters/sbml:parameter[@id=&quot;V_mT&quot;]/@value" newValue="0.28" />
+        <changeAttribute target="/sbml:sbml/sbml:model/sbml:listOfParameters/sbml:parameter[@id=&quot;V_dT&quot;]/@value" newValue="4.8" />
+      </listOfChanges>
+    </model>
+  </listOfModels>
+  <listOfTasks>
+    <task id="task1" modelReference="model1" simulationReference="simulation1" />
+    <task id="task2" modelReference="model2" simulationReference="simulation1" />
+  </listOfTasks>
+  <listOfDataGenerators>
+    <dataGenerator id="time" name="time">
+      <listOfVariables>
+        <variable id="t" taskReference="task1" symbol="urn:sedml:symbol:time" />
+      </listOfVariables>
+      <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <ci> t </ci>
+      </math>
+    </dataGenerator>
+    <dataGenerator id="tim1" name="tim mRNA">
+      <listOfVariables>
+        <variable id="v1" taskReference="task1" target="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@id='Mt']" />
+      </listOfVariables>
+      <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <ci> v1 </ci>
+      </math>
+    </dataGenerator>
+    <dataGenerator id="per_tim1" name="nuclear PER-TIM complex">
+      <listOfVariables>
+        <variable id="v1a" taskReference="task1" target="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@id='Cn']" />
+      </listOfVariables>
+      <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <ci> v1a </ci>
+      </math>
+    </dataGenerator>	
+    <dataGenerator id="tim2" name="tim mRNA (changed parameters)">
+      <listOfVariables>
+        <variable id="v2" taskReference="task2" target="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@id='Mt']" />
+      </listOfVariables>
+      <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <ci> v2 </ci>
+      </math>
+    </dataGenerator>
+    <dataGenerator id="per_tim2" name="nuclear PER-TIM complex">
+      <listOfVariables>
+        <variable id="v2a" taskReference="task2" target="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@id='Cn']" />
+      </listOfVariables>
+      <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <ci> v2a </ci>
+      </math>
+    </dataGenerator>	
+  </listOfDataGenerators>
+  <listOfOutputs>
+    <plot2D id="plot1" name="tim mRNA with Oscillation and Chaos">
+      <listOfCurves>
+        <curve id="c1" logX="false" logY="false" xDataReference="time" yDataReference="tim1" />
+        <curve id="c2" logX="false" logY="false" xDataReference="time" yDataReference="tim2" />
+      </listOfCurves>
+    </plot2D>
+   <plot2D id="plot2" name="tim mRNA limit cycle (Oscillation)">
+      <listOfCurves>
+        <curve id="c3" logX="false" logY="false" xDataReference="per_tim1" yDataReference="tim1" />        
+      </listOfCurves>
+    </plot2D>	
+   <plot2D id="plot3" name="tim mRNA limit cycle (chaos)">
+      <listOfCurves>
+        <curve id="c4" logX="false" logY="false" xDataReference="per_tim2" yDataReference="tim2" />
+      </listOfCurves>
+    </plot2D>	
+  </listOfOutputs>
+</sedML>
