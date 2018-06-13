@@ -12,7 +12,7 @@ TEST_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 mkdir -p resources/bigg
 cd resources/bigg
 wget https://github.com/matthiaskoenig/bigg-models-fba/raw/master/models/bigg_models_v1.5.tar.gz
-tar xzvf bigg_models_v1.5.tar.gz
+tar xzf bigg_models_v1.5.tar.gz
 rm bigg_models_v1.5.tar.gz
 
 # set environment variable
