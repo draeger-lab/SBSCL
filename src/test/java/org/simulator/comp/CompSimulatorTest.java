@@ -37,7 +37,7 @@ public class CompSimulatorTest {
         System.out.println("Comp models path: " + compPath);
         return TestUtils.findResources(compPath, ".xml", filter, skip, false);
     }
-    
+
     @Test
     public void testComp() throws IOException, XMLStreamException, DerivativeException, ModelOverdeterminedException {
         // String compPath = TestUtils.getPathForTestResource("/comp/test1.xml");
