@@ -616,20 +616,26 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
   }
 
   /**
-   * 
+   * Checks if there was any change between the old values and new values.
+   *
    * @param newValues
    * @param oldValues
    * @param step
    * @return
    */
   private boolean noChange(double newValues[], double oldValues[], int step) {
+
+    // FIXME: this must use the absolute and relative tolerance settings of the solver for checking
     for (int i = 0; i < newValues.length; i++) {
-      double distance = Math.abs(newValues[i]-oldValues[i]);
-      double relativeDistance = 0;
+
+      // absolute distance
+      double absDist = Math.abs(newValues[i]-oldValues[i]);
+      // relative distance
+      double relDist = 0;
       if ((Math.abs(newValues[i]) > 1E-10) || (Math.abs(oldValues[i]) > 1E-10)) {
-        relativeDistance = Math.abs((newValues[i]-oldValues[i])/Math.max(newValues[i],oldValues[i]));
+        relDist = Math.abs((newValues[i]-oldValues[i])/Math.max(newValues[i],oldValues[i]));
       }
-      if (((distance > 1E-6) || (relativeDistance > 1E-6)) && (step < 10000)) {
+      if (((absDist > 1E-6) || (relDist > 1E-6)) && (step < 10000)) {
         return false;
       }
     }
@@ -819,8 +825,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
    * @return result as {@link MultiTable}
    */
   @Override
-  public MultiTable solve(DESystem DES, double[] initialValues,
-    double timeBegin, double timeEnd) throws DerivativeException {
+  public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd) throws DerivativeException {
     if (DES instanceof DelayedDESystem) {
       ((DelayedDESystem)DES).registerDelayValueHolder(this);
     }
@@ -874,16 +879,15 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
   }
 
   /* (non-Javadoc)
-   * @see org.simulator.math.odes.DESSolver#solve(org.simulator.math.odes.DESystem, double[], double, double, int)
+   * @see org.simulator.math.odes.DESSolver#steadystate(org.simulator.math.odes.DESystem, double[], double, double, int)
    */
   @Override
-  public MultiTable solve(DESystem DES, double[] initialValues,
-    double x, double h, int steps) throws DerivativeException {
-    double[] timeVector = new double[steps];
+  public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps) throws DerivativeException {
+    double[] timePoints = new double[steps];
     for (int i = 0; i < steps; i++) {
-      timeVector[i] = x + i * h;
+      timePoints[i] = x + i * h;
     }
-    return solve(DES, initialValues, timeVector);
+    return solve(DES, initialValues, timePoints);
   }
 
   /**
@@ -896,8 +900,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
    * @return result as a multi table
    */
   @Override
-  public MultiTable solve(DESystem DES, double[] initialValues,
-    double[] timePoints) throws DerivativeException {
+  public MultiTable solve(DESystem DES, double[] initialValues, double[] timePoints) throws DerivativeException {
     if (DES instanceof DelayedDESystem) {
       ((DelayedDESystem)DES).registerDelayValueHolder(this);
     }
@@ -967,7 +970,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
   }
 
   /* (non-Javadoc)
-   * @see org.simulator.math.odes.DESSolver#solve(org.simulator.math.odes.DESystem, org.simulator.math.odes.MultiTable.Block, double[])
+   * @see org.simulator.math.odes.DESSolver#steadystate(org.simulator.math.odes.DESystem, org.simulator.math.odes.MultiTable.Block, double[])
    */
   @Override
   public MultiTable solve(DESystem DES,
@@ -1049,44 +1052,53 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
     return data;
   }
 
-  /* (non-Javadoc)
-   * @see org.simulator.math.odes.DESSolver#solve(org.simulator.math.odes.DESystem, double[], double, double, int)
-   * This method is useful to run SteadyState simulations when end time for simulations is unknown
+  /*
+   * Method for running SteadyState simulations based on numerical integration.
+   * This method is not very efficient.
    */
-  public MultiTable solve(DESystem DES, double[] initialValues, double steps) throws DerivativeException{
-	  // This solver method is used to run until SteadyState is found
+  public MultiTable steadystate(DESystem DES, double[] initialValues, double maxSteps) throws DerivativeException{
+      // TODO: use steady state solver like neq2 to calculate steady states.
 
 	  double[] curState = initialValues;
 	  double[] nextState = new double[initialValues.length];
-	  
-	  // By default at least run for 1000 seconds
-	  setStepSize(1000);
+      double stepSize = 1000.0; // By default at least run for a step of 1000
+	  double totalTime = 0.0;
 	  double curTime = 0.0;
 	  int step = 0;
-	  
+
 	  // Run oneStep simulation until steadyState is reached to find endTime
 	  while(true) {
-		  MultiTable intmdOutput = solve(DES, curState, curTime, getStepSize());
+          setStepSize(stepSize);
+		  MultiTable intmdOutput = solve(DES, curState, curTime, stepSize);
+          totalTime += stepSize;
 
 		  // Extract the endPoint and compare it with initial point
 		  intmdOutput = intmdOutput.filter(new double[] {getStepSize()});
 		  double[][] temp = intmdOutput.getBlock(0).getData();
+		  // copy last row of results
 		  nextState = temp[0];
+          System.arraycopy(nextState, 0, curState, 0, initialValues.length);
 		  
-		  // If states are too close end this simulation 
-		  if(!noChange(nextState, curState, step)) {
+		  // If states are too close steady state is reached
+		  if(!noChange(nextState, curState, 1)) {
 			  break;
 		  }
+		  // Stop if max number of steps is reached
+		  if (step == maxSteps){
+		    logger.warning("Steady state could not be reached!");
+		    break;
+          }
+		  stepSize = stepSize * 10;
 		  step += 1;
-		  setStepSize(getStepSize() * 10);
-		  System.arraycopy(nextState, 0, curState, 0, initialValues.length);
+
 	  }
-	  
-	  // Once we know when steady state is reached simply run simulation till then
-	  // using total number of steps given as input
-	  double endTime = getStepSize();
-	  setStepSize(endTime/steps);
-	  return solve(DES, initialValues, 0.0, endTime);
+
+	  double[] timepoints = { totalTime };
+      return initResultMatrix(DES, curState, timepoints);
+
+	  // FIXME: this is incorrect, only single row should be returned.
+	  // setStepSize(totalTime/maxSteps);
+	  // return solve(DES, initialValues, 0.0, totalTime);
   }
 
 }
