@@ -31,12 +31,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -45,7 +43,6 @@ import org.jlibsedml.ArchiveComponents;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.OneStep;
 import org.jlibsedml.Output;
-import org.jlibsedml.Parameter;
 import org.jlibsedml.Range;
 import org.jlibsedml.RepeatedTask;
 import org.jlibsedml.SedML;
@@ -60,20 +57,13 @@ import org.jlibsedml.VariableSymbol;
 import org.jlibsedml.execution.AbstractSedmlExecutor;
 import org.jlibsedml.execution.ArchiveModelResolver;
 import org.jlibsedml.execution.FileModelResolver;
-import org.jlibsedml.execution.IModel2DataMappings;
 import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
-import org.jlibsedml.execution.IXPathToVariableIDResolver;
 import org.jlibsedml.execution.ModelResolver;
 import org.jlibsedml.modelsupport.BioModelsModelsRetriever;
 import org.jlibsedml.modelsupport.KisaoOntology;
 import org.jlibsedml.modelsupport.KisaoTerm;
-import org.jlibsedml.modelsupport.SBMLSupport;
 import org.jlibsedml.modelsupport.URLResourceRetriever;
-import org.jmathml.ASTCi;
-import org.jmathml.ASTNode;
-import org.jmathml.ASTNumber;
-import org.jmathml.EvaluationContext;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.simulator.math.odes.AbstractDESSolver;
@@ -277,7 +267,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 
 			// set default stepSize and call solver. Solver will automatically find
 			// steadyState and terminate when steadyState is reached.
-			MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(), STEADY_STATE_STEPS);
+			MultiTable mts = solver.steadystate(interpreter, interpreter.getInitialValues(), STEADY_STATE_STEPS);
 
 			// adapt the MultiTable to jlibsedml interface.
 			return new MultTableSEDMLWrapper(mts);
