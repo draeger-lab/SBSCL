@@ -1,7 +1,6 @@
 package org.simulator.fba;
 
 import org.junit.Ignore;
-import org.sbml.jsbml.JSBML;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
 import org.simulator.TestUtils;
@@ -13,18 +12,16 @@ import org.junit.runners.Parameterized.Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.stream.XMLStreamException;
 import java.io.*;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test cases for the BIGG models.
- * bigg_models v1.5 (https://github.com/SBRG/bigg_models/releases)
  */
 @RunWith(value = Parameterized.class)
 public class BiGGTest {
@@ -75,6 +72,10 @@ public class BiGGTest {
         logger.info(String.format("%s", resource));
         System.out.println("BiGG Resource:" + resource);
 
+        if (resource.endsWith("Recon3D.xml.gz") || resource.endsWith("RECON1.xml.gz")){
+            return;
+        }
+
         // read SBML
         InputStream is = new FileInputStream(resource);
         GZIPInputStream gzis = new GZIPInputStream(is);
@@ -83,17 +84,14 @@ public class BiGGTest {
         logger.info(doc.toString());
         assertNotNull(doc);
 
-        // TODO: solve FBA (
-        /*
         COBRAsolver solver = new COBRAsolver(doc);
-        if (solver.solve()) {
-            System.out.println(resourceName);
-            System.out.println("Objective value:\t" + solver.getObjetiveValue());
-            System.out.println("Fluxes:\t" + Arrays.toString(solver.getValues()));
-        } else {
-            logger.error("\nSolver returned null for " + resourceName);
-        }
-        */
+        boolean success = solver.solve();
+        assertNotNull(success);
+
+        double objectiveValue = solver.getObjetiveValue();
+        assertTrue(objectiveValue>=0.0);
+        double[] fluxes = solver.getValues();
+        assertNotNull(fluxes);
 
         //TODO: check against reference solution
         is.close();
