@@ -68,7 +68,7 @@ public class OMEXExample {
 			SedML sedml = doc.getSedMLModel();
 
 			Output wanted = sedml.getOutputs().get(0);
-			SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted);
+			SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, null);
 
 			Map<AbstractTask, IRawSedmlSimulationResults> res = exe.runSimulations();
 			if ((res == null) || res.isEmpty() || !exe.isExecuted()) {

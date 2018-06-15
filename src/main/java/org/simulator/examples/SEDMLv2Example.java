@@ -34,13 +34,16 @@ public class SEDMLv2Example {
 			return;
 		}
 		File file = new File(args[0]);
+		String sedmlDir = file.getAbsoluteFile().getParentFile().getAbsolutePath();
+
+
 		LOGGER.warn("Opening file: "+ file + " Collecting tasks...");
-		sedml=Libsedml.readDocument(file).getSedMLModel();
+		sedml = Libsedml.readDocument(file).getSedMLModel();
 
 		// in this SED-ML file there's just one output. If there were several,
 		// we could either iterate or get user to  decide what they want to run.
 		Output wanted = sedml.getOutputs().get(0);
-		SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted);
+		SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, sedmlDir);
 		// This gets the raw simulation results - one for each Task that was run.
 		LOGGER.warn("Collecting tasks...");
 		Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
