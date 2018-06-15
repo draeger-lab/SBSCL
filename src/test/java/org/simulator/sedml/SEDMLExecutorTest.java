@@ -32,6 +32,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -232,4 +233,69 @@ public class SEDMLExecutorTest {
         }
 
     }
+
+    @Test
+    public final void testRepressilator1() throws XMLException {
+        String resource = "/sedml/L1V2/repressilator/repressilator.xml";
+        testSpecificationExample(resource);
+        String sedmlPath = TestUtils.getPathForTestResource(resource);
+        SEDMLDocument doc = Libsedml.readDocument(new File(sedmlPath));
+        assertNotNull(doc);
+        SedML sedml = doc.getSedMLModel();
+        assertNotNull(sedml);
+
+        // iterate over outputs
+        HashSet<String> outputIds = new HashSet<String>();
+        outputIds.add("timecourse");
+        outputIds.add("preprocessing");
+        outputIds.add("postprocessing");
+
+        List<Output> outputs = sedml.getOutputs();
+        for (int k=0; k<outputs.size(); k++){
+
+            Output wanted = outputs.get(k);
+            SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted);
+
+            Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
+            if (res == null || res.isEmpty() || !exe.isExecuted()) {
+                fail("Simulation failed: " + exe.getFailureMessages().get(0));
+            }
+
+            // postprocess
+            IProcessedSedMLSimulationResults pr = exe.processSimulationResults(wanted, res);
+            assertNotNull(pr);
+
+            String outputId = wanted.getId();
+            assertTrue(outputIds.contains(outputId));
+
+            String[] headers = pr.getColumnHeaders();
+            int ncol = pr.getNumColumns();
+            int nrow = pr.getNumDataRows();
+
+            // https://github.com/shalinshah1993/SBSCL/issues/44
+            // assertEquals(1001, nrow);
+
+            if (outputId == "timecourse"){
+                assertEquals(3, ncol);
+                assertEquals("plot_0__plot_0_0_0__plot_0_0_1", headers[0]);
+                assertEquals("plot_0__plot_0_0_0__plot_0_1_1", headers[1]);
+                assertEquals("plot_0__plot_0_0_0__plot_0_2_1", headers[2]);
+            } else if (outputId == "preprocessing") {
+                assertEquals(3, ncol);
+                assertEquals("plot_1__plot_1_0_0__plot_1_0_1", headers[0]);
+                assertEquals("plot_1__plot_1_0_0__plot_1_1_1", headers[1]);
+                assertEquals("plot_1__plot_1_0_0__plot_1_2_1", headers[2]);
+            } else if (outputId == "postprocessing") {
+                assertEquals(3, ncol);
+                assertEquals("plot_2__plot_2_0_0__plot_2_0_1", headers[0]);
+                assertEquals("plot_2__plot_2_1_0__plot_2_0_0", headers[1]);
+                assertEquals("plot_2__plot_2_0_1__plot_2_1_0", headers[2]);
+            }
+
+        }
+
+    }
+
+
+
 }
