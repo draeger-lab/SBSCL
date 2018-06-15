@@ -3,6 +3,7 @@ package org.simulator.examples;
 import de.binfalse.bflog.LOGGER;
 import org.jfree.ui.RefineryUtilities;
 import org.jlibsedml.*;
+import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.plot.PlotMultiTable;
@@ -50,17 +51,7 @@ public class SEDMLv2Example {
 		// now process.In this case, there's no processing performed - we're displaying the
 		// raw results.
 		LOGGER.warn("Outputs wanted: " + wanted.getAllDataGeneratorReferences());
-		MultiTable mt = exe.processSimulationResults(wanted, res);
-
-		// plot all the reactions species
-		if (mt.getColumnCount() > 1) {
-			PlotMultiTable p = new PlotMultiTable(mt, "Clock Reaction");
-			p.pack();
-			RefineryUtilities.centerFrameOnScreen(p);
-			p.setVisible( true );
-		}else {
-			
-		}
+		IProcessedSedMLSimulationResults mt = exe.processSimulationResults(wanted, res);
 	}
 
 }
