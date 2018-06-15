@@ -5,7 +5,7 @@
 **An efficient and exhaustive Java™ library for simulating computational models in systems biology**
 
 [![License (GPL version 3)](https://img.shields.io/badge/license-GPLv3.0-blue.svg?style=plastic)](http://opensource.org/licenses/GPL-3.0)
-[![Latest version](https://img.shields.io/badge/Latest_version-1.4-brightgreen.svg?style=plastic)](https://github.com/draeger-lab/SBSCL/releases/)
+[![Latest version](https://img.shields.io/badge/Latest_version-1.5-brightgreen.svg?style=plastic)](https://github.com/draeger-lab/SBSCL/releases/)
 [![DOI](http://img.shields.io/badge/DOI-10.1186%20%2F%201752-0509-7-55-blue.svg?style=plastic)](https://doi.org/10.1186/1752-0509-7-55)
 
 *Authors:* [Andreas Dräger](https://github.com/draeger/), [Alexander Dörr](https://github.com/a-doerr/), [Richard Adams](https://github.com/otter606/), [Nicolas Le Novèere](https://github.com/lenov/), [Max Zwießele](https://github.com/mzwiessele/), [Akito Tabira](https://github.com/mythosil), [Akira Funahashi](https://github.com/funasoul), [Michael J. Ziller](https://www.psych.mpg.de/2164378/ziller)
