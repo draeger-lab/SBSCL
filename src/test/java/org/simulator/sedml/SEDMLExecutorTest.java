@@ -75,13 +75,15 @@ public class SEDMLExecutorTest {
     }
 
     @Test
-    @Ignore //https://github.com/shalinshah1993/SBSCL/issues/32
     public final void testBasicSEDMLExecutorForLocalFile() throws XMLException, IOException {
         // get the SED-ML object model from file. The model referred to in this
         //SEDML file is defined by a relative path and is in the top-level folder.
 
-        String abcPath = TestUtils.getPathForTestResource(abc1test);
-        SEDMLDocument doc = Libsedml.readDocument(new File(abcPath));
+        String sedmlPath = TestUtils.getPathForTestResource(abc1test);
+        File file = new File(sedmlPath);
+        String sedmlDir = file.getAbsoluteFile().getParentFile().getAbsolutePath();
+
+        SEDMLDocument doc = Libsedml.readDocument(new File(sedmlPath));
         assertNotNull(doc);
         assertFalse(doc.hasErrors());
 
@@ -89,7 +91,7 @@ public class SEDMLExecutorTest {
         // in this sedml file there's just one output. If there were several,
         // we could either iterate or get user to  decide which output to generate.
         Output wanted = sedml.getOutputs().get(0);
-        SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted);
+        SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, sedmlDir);
 
         // Here we run all the simulations needed to create an output, and get the
         // raw results.
@@ -97,12 +99,11 @@ public class SEDMLExecutorTest {
         if ((res == null) || res.isEmpty() || !exe.isExecuted()) {
             fail("Simulation failed: " + exe.getFailureMessages().get(0).getMessage());
         }
-        for (List<IRawSedmlSimulationResults> re : res.values()) {
-            assertTrue(re instanceof MultTableSEDMLWrapper);
-        }
 
         IProcessedSedMLSimulationResults mt = exe.processSimulationResults(wanted, res);
+        assertNotNull(mt);
         assertTrue(5 == mt.getNumColumns());
+
         //assertEquals("Time", mt.getTimeName());
         //assertEquals(1, mt.getBlock(0).getColumn(0).getValue(0), 0.001);
         //assertEquals("A_dg", mt.getBlock(0).getColumn(0).getColumnName());
@@ -115,7 +116,7 @@ public class SEDMLExecutorTest {
      * @throws XMLException
      */
     @Test
-    @Ignore //https://github.com/shalinshah1993/SBSCL/issues/31
+    // @Ignore //https://github.com/shalinshah1993/SBSCL/issues/31
     public final void testBasicSEDMLExecutorForMiriamURNDefinedModel() throws XMLException, IOException {
 
         String miriamPath = TestUtils.getPathForTestResource(miriamtest);
@@ -128,7 +129,7 @@ public class SEDMLExecutorTest {
         // in this SED-ML file there's just one output. If there were several,
         // we could either iterate or get user to  decide what they want to run.
         Output wanted = sedml.getOutputs().get(0);
-        SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted);
+        SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, null);
 
         // This gets the raw simulation results - one for each Task that was run.
         Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
@@ -209,7 +210,10 @@ public class SEDMLExecutorTest {
 
     public void testSpecificationExample(String resource) throws XMLException {
         String sedmlPath = TestUtils.getPathForTestResource(resource);
-        SEDMLDocument doc = Libsedml.readDocument(new File(sedmlPath));
+
+        File file = new File(sedmlPath);
+        String sedmlDir = file.getAbsoluteFile().getParentFile().getAbsolutePath();
+        SEDMLDocument doc = Libsedml.readDocument(file);
         assertNotNull(doc);
 
         SedML sedml = doc.getSedMLModel();
@@ -220,7 +224,7 @@ public class SEDMLExecutorTest {
         for (int k=0; k<outputs.size(); k++){
 
             Output wanted = outputs.get(k);
-            SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted);
+            SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, sedmlDir);
 
             Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
             if (res == null || res.isEmpty() || !exe.isExecuted()) {
@@ -254,7 +258,7 @@ public class SEDMLExecutorTest {
         for (int k=0; k<outputs.size(); k++){
 
             Output wanted = outputs.get(k);
-            SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted);
+            SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, null);
 
             Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
             if (res == null || res.isEmpty() || !exe.isExecuted()) {
@@ -291,11 +295,7 @@ public class SEDMLExecutorTest {
                 assertEquals("plot_2__plot_2_1_0__plot_2_0_0", headers[1]);
                 assertEquals("plot_2__plot_2_0_1__plot_2_1_0", headers[2]);
             }
-
         }
-
     }
-
-
 
 }

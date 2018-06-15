@@ -56,10 +56,10 @@ import org.jlibsedml.Variable;
 import org.jlibsedml.VariableSymbol;
 import org.jlibsedml.execution.AbstractSedmlExecutor;
 import org.jlibsedml.execution.ArchiveModelResolver;
-import org.jlibsedml.execution.FileModelResolver;
 import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
 import org.jlibsedml.execution.ModelResolver;
+
 import org.jlibsedml.modelsupport.BioModelsModelsRetriever;
 import org.jlibsedml.modelsupport.KisaoOntology;
 import org.jlibsedml.modelsupport.KisaoTerm;
@@ -72,8 +72,9 @@ import org.simulator.math.odes.EulerMethod;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
+import org.simulator.sedml.FileModelResolver;
 
-import de.binfalse.bflog.LOGGER;;
+import de.binfalse.bflog.LOGGER;
 
 /**
  * This class extends an abstract class from jlibsedml, which provides various
@@ -115,11 +116,11 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	private static final double ONE_STEP_SIM_STEPS = 10d;
 	private static final double STEADY_STATE_STEPS = 10d;
 
-	public SedMLSBMLSimulatorExecutor(SedML sedml, Output output) {
+	public SedMLSBMLSimulatorExecutor(SedML sedml, Output output, String sedmlDir) {
 		super(sedml, output);
 		this.modelResolver = new ModelResolver(sedml);
 		// add extra model resolvers - only FileModelResolver is included by default.
-		modelResolver.add(new FileModelResolver());
+		modelResolver.add(new FileModelResolver(sedmlDir));
 		modelResolver.add(new BioModelsModelsRetriever());
 		modelResolver.add(new URLResourceRetriever());
 	}
@@ -130,8 +131,8 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	 * @param amountHash
 	 */
 	public SedMLSBMLSimulatorExecutor(SedML sedml, Output wanted,
-			Map<String, Boolean> amountHash) {
-		this(sedml, wanted);
+			Map<String, Boolean> amountHash, String sedmlDir) {
+		this(sedml, wanted, sedmlDir);
 		this.amountHash = amountHash;
 	}
 

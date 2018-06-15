@@ -684,7 +684,7 @@ public class SBMLTestSuiteRunner {
             newPath = convertAbsoluteFilePathToURI(newPath);
             sedml.getModels().get(0).setSource(newPath);
             Output wanted = sedml.getOutputs().get(0);
-            exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, amountHash);
+            exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, amountHash, null);
             double time1 = System.nanoTime();
             Map<AbstractTask, IRawSedmlSimulationResults> res = exe.runSimulations();
             double time2 = System.nanoTime();
