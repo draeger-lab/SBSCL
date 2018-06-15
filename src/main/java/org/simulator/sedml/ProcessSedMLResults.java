@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.Output;
@@ -69,7 +70,7 @@ public class ProcessSedMLResults {
 	 * @param Map<AbstractTask, List<IRawSedmlSimulationResults>>
 	 */
 	public void process(Map<AbstractTask, List<IRawSedmlSimulationResults>> res){
-
+		
 		// Check for nulls
 		if (res == null) {
 			throw new IllegalArgumentException();
@@ -81,14 +82,9 @@ public class ProcessSedMLResults {
 		
 		// calculate total number of rows in all the results
 		int numRows = 0;
-		for (AbstractTask t : res.keySet()) {
-			List<IRawSedmlSimulationResults> result = res.get(t);
-			for(IRawSedmlSimulationResults curRes: result) {
-				numRows += curRes.getNumDataRows();
-			}
-		}
-		Map<AbstractTask, double[][]> rawTask2Results = new HashMap<AbstractTask, double[][]>();
-
+		Map<AbstractTask, List<double[][]>> rawTask2Results = new HashMap<AbstractTask, List<double[][]>>();
+		numRows = makeDefensiveCopyOfData(res, rawTask2Results, numRows);
+		
 		// Iterate over all the data generators to process results
 		List<double[]> processed = new ArrayList<double[]>();
 		IXPathToVariableIDResolver variable2IDResolver = new SBMLSupport();
@@ -110,7 +106,7 @@ public class ProcessSedMLResults {
 			// map varIds to result, based upon task reference
 			for (Variable variable : vars) {
 				String modelID;
-
+				
 				if (variable.isVariable()) {
 					// get the task from which this result variable was generated.
 					modelID = variable2IDResolver.getIdFromXPathIdentifer(variable.getTarget());
@@ -125,28 +121,38 @@ public class ProcessSedMLResults {
 						// It's a repeatedTask so process each iteration
 						int index = 0;
 						for(IRawSedmlSimulationResults curRes: resList) {
-
+							// if concat data like Tellurium is required we use commented code
+							// IRawSedmlSimulationResults reducedStResults = resList.stream()
+							//			.reduce((a, b) -> new MultTableSEDMLWrapper(new MultiTable(
+							//					mergeTimeCols((MultTableSEDMLWrapper) a, (MultTableSEDMLWrapper) b), 
+							//					mergeDataCols(a.getData(), b.getData()), 
+							//					resList.get(0).getColumnHeaders()))).get();
+							
 							// Add _index to the id of variable for one iteration of RepeatedTask
 							var2Result.put(variable.getId() + "_" + Integer.toString(index), curRes);
-							var2Data.put(variable.getId() + "_" + Integer.toString(index), rawTask2Results.get(t));
+							var2Data.put(variable.getId() + "_" + Integer.toString(index), rawTask2Results.get(t).get(index));
 							Var2Model.put(variable.getId() + "_" + Integer.toString(index), modelID);
 							index++;
 						}
 					}else {
 						// Just a Task so get first element
 						var2Result.put(variable.getId(), resList.get(0));
-						var2Data.put(variable.getId(), rawTask2Results.get(t));
+						var2Data.put(variable.getId(), rawTask2Results.get(t).get(0));
 						Var2Model.put(variable.getId(), modelID);
 					}
 
 					// it's a symbol
-				} else if (variable.isSymbol()
-						&& variable.getSymbol().equals(VariableSymbol.TIME)) {
+				} else if (variable.isSymbol() && variable.getSymbol().equals(VariableSymbol.TIME)) {
 					timeID = variable.getId();
-					var2Data.put(variable.getId(), rawTask2Results.values().iterator()
-							.next());
+					
+					// If symbol refers repeatedTasks concat all the individual repeats and add it to output
+					List<double[][]> resList = rawTask2Results.values().iterator().next();
+					if(resList.size() > 1) {
+						var2Data.put(variable.getId(), resList.stream().reduce((a, b) -> mergeData(a, b)).get());
+					}else {
+						var2Data.put(variable.getId(), resList.get(0));
+					}
 					Var2Model.put(variable.getId(), variable.getId());
-
 				}
 			}
 
@@ -215,6 +221,7 @@ public class ProcessSedMLResults {
 								return;
 							}
 						}
+						
 						con.setValueFor(var.getName(),
 								var2Data.get(var.getName())[i][otherVarInx]);
 					}
@@ -292,5 +299,50 @@ public class ProcessSedMLResults {
 
 	public IProcessedSedMLSimulationResults getProcessedResult() {
 		return prRes;
+	}
+	
+	// makes copy of result data and returns num rows
+	private int makeDefensiveCopyOfData(
+			Map<AbstractTask, List<IRawSedmlSimulationResults>> results,
+			Map<AbstractTask, List<double[][]>> rawTask2Results, int numRows) {
+		
+		// makes a defensive copy of all input data
+		for (AbstractTask t : results.keySet()) {
+			List<IRawSedmlSimulationResults> result = results.get(t);
+			
+			List<double[][]> curCopyList = new ArrayList<double[][]>();
+			for(IRawSedmlSimulationResults curRes: result) {
+				numRows = curRes.getNumDataRows();
+
+				double[][] toCopy = curRes.getData(); // for look-up of
+				double[][] original = new double[toCopy.length][];
+
+				int in = 0;
+				for (double[] row : toCopy) {
+					double[] copyRow = new double[row.length];
+					System.arraycopy(row, 0, copyRow, 0, row.length);
+
+					original[in++] = copyRow;
+				}
+				curCopyList.add(original);
+			}
+			rawTask2Results.put(t, curCopyList);
+		}
+		return numRows;
+	}
+	
+	/**
+	 * Merge two 2D arrays into one 2D array in X-direction
+	 * @param double[][]
+	 * @param double[][]
+	 * @return double[][]
+	 */
+	private double[][] mergeData(double[][] a, double[][] b) {
+		double[][] merged = new double[a.length+b.length][];
+
+		System.arraycopy(a, 0, merged, 0, a.length);
+		System.arraycopy(b, 0, merged, a.length, b.length);
+
+		return merged;
 	}
 }

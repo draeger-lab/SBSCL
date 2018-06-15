@@ -542,7 +542,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	 * @param res
 	 * @return MultiTable
 	 */
-	public MultiTable processSimulationResults(Output wanted,
+	public IProcessedSedMLSimulationResults processSimulationResults(Output wanted,
 			Map<AbstractTask, List<IRawSedmlSimulationResults>> res) {
 		
 		// here we post-process the results using our own post-processing module
@@ -556,25 +556,28 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
         // now we restore a MultiTable from the processed results. This basic example assumes a typical
         // simulation where time = xaxis - otherwise, if output is a Plot, we would need to analyse the x-axis
         // datagenerators
-        return createMultiTableFromProcessedResults(wanted, prRes); 
+        //return createMultiTableFromProcessedResults(wanted, prRes);
+        return prRes;
 	}
 
 	// Here we need to check which of the results are the independent axis to create a MultiTable
 	public MultiTable createMultiTableFromProcessedResults(Output wanted,
 			IProcessedSedMLSimulationResults prRes) {
-		String timeColName = findTimeColumn(prRes, wanted, sedml);
-
-		// most of the rest of this code is concerned with adapting a processed result set
-		// back to a multitable.
-
-		double [] time = getTimeData(prRes, timeColName);
-		// we need to get a new datset that does not contain the time-series dataset.
-		double [][] data = getNonTimeData(prRes, timeColName);
-		// now we ignore the time dataset
-		String []hdrs = getNonTimeHeaders(prRes, timeColName);
-
-		MultiTable mt = new MultiTable(time, data, hdrs);
-		return mt;
+//		String timeColName = findTimeColumn(prRes, wanted, sedml);
+//
+//		// most of the rest of this code is concerned with adapting a processed result set
+//		// back to a multitable.
+//
+//		double [] time = getTimeData(prRes, timeColName);
+//		// we need to get a new datset that does not contain the time-series dataset.
+//		double [][] data = getNonTimeData(prRes, timeColName);
+//		// now we ignore the time dataset
+//		String []hdrs = getNonTimeHeaders(prRes, timeColName);
+//
+//		MultiTable mt = new MultiTable(time, data, hdrs);
+//		return mt;
+		
+		return null;
 	}
 
 	private String[] getNonTimeHeaders(IProcessedSedMLSimulationResults prRes,
@@ -605,8 +608,6 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 			}
 		}
 		return rc;
-
-
 	}
 
 	//gets the time data from the processed result array.

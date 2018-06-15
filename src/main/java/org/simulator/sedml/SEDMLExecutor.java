@@ -37,6 +37,7 @@ import org.jlibsedml.Output;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.XMLException;
+import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
 import org.simulator.math.odes.MultiTable;
 
@@ -66,7 +67,7 @@ public class SEDMLExecutor {
    * @throws IOException if {@link InputStream} is not readable.
    * @throws ExecutionException if execution is not possible
    */
-  public MultiTable execute(String outputID, InputStream is) throws ExecutionException,
+  public IProcessedSedMLSimulationResults execute(String outputID, InputStream is) throws ExecutionException,
   IOException {
     //read it with BufferedReader
     BufferedReader br
