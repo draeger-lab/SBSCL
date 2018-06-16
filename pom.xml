@@ -218,7 +218,7 @@
     <dependency>
       <groupId>scpsolver</groupId>
       <artifactId>SCPSolver</artifactId>
-      <version>1.0</version>
+      <version>1.0v2</version>
       <!--
       <scope>system</scope>
       <systemPath>${project.basedir}/src/lib/maven/scpsolver/SCPSolver/1.0/SCPSolver-1.0.jar</systemPath>
@@ -227,7 +227,7 @@
     <dependency>
       <groupId>scpsolver</groupId>
       <artifactId>GLPKSolverPack</artifactId>
-      <version>4.35-v2</version>
+      <version>4.35v2</version>
       <!--
       <scope>system</scope>
       <systemPath>${project.basedir}/src/lib/maven/scpsolver/GLPKSolverPack/4.35/GLPKSolverPack-4.35.jar</systemPath>

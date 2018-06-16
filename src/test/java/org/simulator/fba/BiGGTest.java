@@ -72,9 +72,18 @@ public class BiGGTest {
         logger.info(String.format("%s", resource));
         System.out.println("BiGG Resource:" + resource);
 
-        if (resource.endsWith("Recon3D.xml.gz") || resource.endsWith("RECON1.xml.gz")){
+        if ((resource.endsWith("iAF987.xml.gz") ||
+                (resource.endsWith("iAF692.xml.gz")))) {
+            /*
+            BiGG Resource://home/mkoenig/git/sbscl-shalin/src/test/resources/bigg/v1.5/iAF987.xml.gz
+            glp_free: memory allocation error
+            Error detected in file env/alloc.c at line 72
+
+            Process finished with exit code 134 (interrupted by signal 6: SIGABRT)
+            */
             return;
         }
+
 
         // read SBML
         InputStream is = new FileInputStream(resource);
