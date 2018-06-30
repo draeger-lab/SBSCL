@@ -194,7 +194,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 				interpreter = new SBMLinterpreter(model);
 			}
 			solver.setIncludeIntermediates(false);
-			solver.setStepSize((sim.getOutputEndTime() -sim.getOutputStartTime() )/ (sim.getNumberOfPoints()-1));
+			solver.setStepSize((sim.getOutputEndTime() -sim.getOutputStartTime() )/ (sim.getNumberOfPoints()));
 			MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(),
 					sim.getOutputStartTime(),sim.getOutputEndTime());
 
