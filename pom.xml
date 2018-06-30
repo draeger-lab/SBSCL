@@ -321,7 +321,7 @@
             </descriptorRefs>
             <finalName>${project.artifactId}-${project.version}</finalName>
             <appendAssemblyId>false</appendAssemblyId>
-            <descriptor>assembly.xml</descriptor> <!-- Details of the assembly are described in this file -->
+            <descriptor>src/assembly/assembly.xml</descriptor> <!-- Details of the assembly are described in this file -->
           </configuration>
           <executions>
             <execution>
