@@ -28,13 +28,17 @@ package org.simulator.sedml;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -43,6 +47,7 @@ import org.jlibsedml.ArchiveComponents;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.OneStep;
 import org.jlibsedml.Output;
+import org.jlibsedml.Parameter;
 import org.jlibsedml.Range;
 import org.jlibsedml.RepeatedTask;
 import org.jlibsedml.SedML;
@@ -56,14 +61,21 @@ import org.jlibsedml.Variable;
 import org.jlibsedml.VariableSymbol;
 import org.jlibsedml.execution.AbstractSedmlExecutor;
 import org.jlibsedml.execution.ArchiveModelResolver;
+import org.jlibsedml.execution.IModel2DataMappings;
 import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
+import org.jlibsedml.execution.IXPathToVariableIDResolver;
 import org.jlibsedml.execution.ModelResolver;
 
 import org.jlibsedml.modelsupport.BioModelsModelsRetriever;
 import org.jlibsedml.modelsupport.KisaoOntology;
 import org.jlibsedml.modelsupport.KisaoTerm;
+import org.jlibsedml.modelsupport.SBMLSupport;
 import org.jlibsedml.modelsupport.URLResourceRetriever;
+import org.jmathml.ASTCi;
+import org.jmathml.ASTNode;
+import org.jmathml.ASTNumber;
+import org.jmathml.EvaluationContext;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.simulator.math.odes.AbstractDESSolver;
@@ -88,11 +100,11 @@ import de.binfalse.bflog.LOGGER;
  * 
  * Models can be resolved either from local files, URLs, or
  * <a href="http://www.ebi.ac.uk/biomodels-main/" target="_blank">BioModels</a>
- * <a href="http://www.ebi.ac.uk/miriam/main/">MIRIAM</a>
- * URNs.<br/>
+ * <a href="http://www.ebi.ac.uk/miriam/main/">MIRIAM</a> URNs.<br/>
  * TO resolve models from different sources, see the documentation for
  * {@link AbstractSedmlExecutor} in the
- * <a href="http://jlibsedml.sourceforge.net" target="_blank">jlibsedml.jar</a> library.
+ * <a href="http://jlibsedml.sourceforge.net" target="_blank">jlibsedml.jar</a>
+ * library.
  * 
  * @author Richard Adams
  * @author Shalin Shah
@@ -101,13 +113,16 @@ import de.binfalse.bflog.LOGGER;
  */
 public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	/*
-	 * A list of KISAO Ids corresponding to supported algorithm types in SBMLSimulator.
-	 *  These are used to determine if we are able to perform the simulation.
+	 * A list of KISAO Ids corresponding to supported algorithm types in
+	 * SBMLSimulator. These are used to determine if we are able to perform the
+	 * simulation.
 	 */
-	final static String [] SupportedIDs = new String [] {"KISAO:0000033","KISAO:0000030", "KISAO:0000087", "KISAO:0000088", "KISAO:0000019"};
+	final static String[] SupportedIDs = new String[] { "KISAO:0000033", "KISAO:0000030", "KISAO:0000087",
+			"KISAO:0000088", "KISAO:0000019" };
 
 	/**
-	 * Information for SBML interpreter about the species that an amount should be calculated for
+	 * Information for SBML interpreter about the species that an amount should be
+	 * calculated for
 	 */
 	private Map<String, Boolean> amountHash;
 	private ModelResolver modelResolver;
@@ -130,36 +145,38 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	 * @param wanted
 	 * @param amountHash
 	 */
-	public SedMLSBMLSimulatorExecutor(SedML sedml, Output wanted,
-			Map<String, Boolean> amountHash, String sedmlDir) {
+	public SedMLSBMLSimulatorExecutor(SedML sedml, Output wanted, Map<String, Boolean> amountHash, String sedmlDir) {
 		this(sedml, wanted, sedmlDir);
 		this.amountHash = amountHash;
 	}
 
 	/**
 	 * Enables models to be retrieved from a SED-ML archive format.<br/>
-	 * This method must be called <b>before</b> {@link #runSimulations()}
-	 * is called, if a SED-ML archive is to be used as a model source.
-	 * @param ac A non-{@code null} {@link ArchiveComponents} object.
+	 * This method must be called <b>before</b> {@link #runSimulations()} is called,
+	 * if a SED-ML archive is to be used as a model source.
+	 * 
+	 * @param ac
+	 *            A non-{@code null} {@link ArchiveComponents} object.
 	 */
-	public void setIsArchive (ArchiveComponents ac) {
+	public void setIsArchive(ArchiveComponents ac) {
 		addModelResolver(new ArchiveModelResolver(ac));
 	}
 
 	/*
 	 * test based on kisaoIDs that are available for solvers
-	 * @see org.jlibsedml.execution.AbstractSedmlExecutor#canExecuteSimulation(org.jlibsedml.Simulation)
+	 * 
+	 * @see org.jlibsedml.execution.AbstractSedmlExecutor#canExecuteSimulation(org.
+	 * jlibsedml.Simulation)
 	 */
 	@Override
 	protected boolean canExecuteSimulation(Simulation sim) {
 		String kisaoID = sim.getAlgorithm().getKisaoID();
 		KisaoTerm wanted = KisaoOntology.getInstance().getTermById(kisaoID);
-		for (String supported: SupportedIDs) {
+		for (String supported : SupportedIDs) {
 
-			KisaoTerm offered = KisaoOntology.getInstance().getTermById(
-					supported);
+			KisaoTerm offered = KisaoOntology.getInstance().getTermById(supported);
 			// If the available type is, or is a subtype of the desired algorithm,
-			//we can simulate.
+			// we can simulate.
 			if (wanted != null & offered != null && offered.is_a(wanted)) {
 				return true;
 			}
@@ -167,40 +184,40 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		return false;
 	}
 
-	/** This method performs the actual simulation, using the model and simulation configuration
-	 that are passed in as arguments.It runs UniformTimeCourse simulation
-	 @return An {@link IRawSedmlSimulationResults} object that is used for post-processing by the framework.
-	  The actual implementation class in this implementation will be a {@link MultTableSEDMLWrapper}
-	  which wraps a {@link MultiTable} of raw results.
+	/**
+	 * This method performs the actual simulation, using the model and simulation
+	 * configuration that are passed in as arguments.It runs UniformTimeCourse
+	 * simulation
+	 * 
+	 * @return An {@link IRawSedmlSimulationResults} object that is used for
+	 *         post-processing by the framework. The actual implementation class in
+	 *         this implementation will be a {@link MultTableSEDMLWrapper} which
+	 *         wraps a {@link MultiTable} of raw results.
 	 */
 	@Override
-	protected IRawSedmlSimulationResults executeSimulation(String modelStr,
-			UniformTimeCourse sim) {
+	protected IRawSedmlSimulationResults executeSimulation(String modelStr, UniformTimeCourse sim) {
 
 		AbstractDESSolver solver = getSolverForKisaoID(sim.getAlgorithm().getKisaoID());
 		File tmp = null;
 		try {
 			// get a JSBML object from the model string.
 			tmp = File.createTempFile("Sim", "sbml");
-			FileUtils.writeStringToFile(tmp, modelStr,"UTF-8");
+			FileUtils.writeStringToFile(tmp, modelStr, "UTF-8");
 			Model model = (new SBMLReader()).readSBML(tmp).getModel();
 			// now run simulation
 			SBMLinterpreter interpreter = null;
 			if (amountHash != null) {
-				interpreter = new SBMLinterpreter(model, 0, 0, 1,
-						amountHash);
-			}
-			else {
+				interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);
+			} else {
 				interpreter = new SBMLinterpreter(model);
 			}
 			solver.setIncludeIntermediates(false);
-			solver.setStepSize((sim.getOutputEndTime() -sim.getOutputStartTime() )/ (sim.getNumberOfPoints()));
-			MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(),
-					sim.getOutputStartTime(),sim.getOutputEndTime());
+			solver.setStepSize((sim.getOutputEndTime() - sim.getOutputStartTime()) / (sim.getNumberOfPoints()));
+			MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(), sim.getOutputStartTime(),
+					sim.getOutputEndTime());
 
 			// adapt the MultiTable to jlibsedml interface.
 			return new MultTableSEDMLWrapper(mts);
-
 
 		} catch (Exception e) {
 			LOGGER.warn(e.getMessage());
@@ -208,36 +225,31 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		return null;
 	}
 
-	protected IRawSedmlSimulationResults executeSimulation(String modelStr,
-			OneStep sim) {
+	protected IRawSedmlSimulationResults executeSimulation(String modelStr, OneStep sim) {
 
 		AbstractDESSolver solver = getSolverForKisaoID(sim.getAlgorithm().getKisaoID());
 		File tmp = null;
 		try {
 			// get a JSBML object from the model string.
 			tmp = File.createTempFile("Sim", "sbml");
-			FileUtils.writeStringToFile(tmp, modelStr,"UTF-8");
+			FileUtils.writeStringToFile(tmp, modelStr, "UTF-8");
 			Model model = (new SBMLReader()).readSBML(tmp).getModel();
 			// now run simulation
 			SBMLinterpreter interpreter = null;
 			if (amountHash != null) {
-				interpreter = new SBMLinterpreter(model, 0, 0, 1,
-						amountHash);
-			}
-			else {
+				interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);
+			} else {
 				interpreter = new SBMLinterpreter(model);
 			}
 			solver.setIncludeIntermediates(false);
 			// A step-size randomly taken since SED-ML L1V2 says simulator decides this
 			// A better way to decide step size is essential
-			solver.setStepSize(sim.getStep()/ONE_STEP_SIM_STEPS);
-			MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(),
-					0.0, sim.getStep());
+			solver.setStepSize(sim.getStep() / ONE_STEP_SIM_STEPS);
+			MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(), 0.0, sim.getStep());
 
 			// adapt the MultiTable to jlibsedml interface.
 			// return only 1 point for OneStep simulation: start and end
-			return new MultTableSEDMLWrapper(mts.filter(new double[] {sim.getStep()}));
-
+			return new MultTableSEDMLWrapper(mts.filter(new double[] { sim.getStep() }));
 
 		} catch (Exception e) {
 			LOGGER.warn(e.getMessage());
@@ -245,23 +257,20 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		return null;
 	}
 
-	protected IRawSedmlSimulationResults executeSimulation(String modelStr,
-			SteadyState sim) {
+	protected IRawSedmlSimulationResults executeSimulation(String modelStr, SteadyState sim) {
 
 		AbstractDESSolver solver = getSolverForKisaoID(sim.getAlgorithm().getKisaoID());
 		File tmp = null;
 		try {
 			// get a JSBML object from the model string.
 			tmp = File.createTempFile("Sim", "sbml");
-			FileUtils.writeStringToFile(tmp, modelStr,"UTF-8");
+			FileUtils.writeStringToFile(tmp, modelStr, "UTF-8");
 			Model model = (new SBMLReader()).readSBML(tmp).getModel();
 			// now run simulation
 			SBMLinterpreter interpreter = null;
 			if (amountHash != null) {
-				interpreter = new SBMLinterpreter(model, 0, 0, 1,
-						amountHash);
-			}
-			else {
+				interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);
+			} else {
 				interpreter = new SBMLinterpreter(model);
 			}
 			solver.setIncludeIntermediates(false);
@@ -273,16 +282,16 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 			// adapt the MultiTable to jlibsedml interface.
 			return new MultTableSEDMLWrapper(mts);
 
-
 		} catch (Exception e) {
 			LOGGER.warn(e.getMessage());
 		}
 		return null;
 	}
 
-	/** This method is a wrapper to the runSimulations method from  {@link AbstractSedmlExecutor} to add 
-	 *  additional support for repeatedTasks. It identifies the type of task, before running the
-	 *  simulations.
+	/**
+	 * This method is a wrapper to the runSimulations method from
+	 * {@link AbstractSedmlExecutor} to add additional support for repeatedTasks. It
+	 * identifies the type of task, before running the simulations.
 	 */
 	public Map<AbstractTask, List<IRawSedmlSimulationResults>> run() {
 
@@ -313,10 +322,10 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 
 					// Iterate over master range
 					Range masterRange = range.get(repTask.getRange());
-					for(int element = 0; element < masterRange.getNumElements(); element++) {
+					for (int element = 0; element < masterRange.getNumElements(); element++) {
 
 						List<MultTableSEDMLWrapper> stResults = new ArrayList<MultTableSEDMLWrapper>();
-						for(Entry<String, SubTask> st: subTasks.entrySet()) {
+						for (Entry<String, SubTask> st : subTasks.entrySet()) {
 							SubTask subTask = st.getValue();
 							AbstractTask relatedTask = sedml.getTaskWithId(subTask.getTaskId());
 
@@ -325,12 +334,12 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 							if (relatedTask instanceof RepeatedTask) {
 								// TODO: Handle nested repeatedTask
 								LOGGER.warn("Warning! Nested repeatedTask found and ignored.");
-							}else {
+							} else {
 								// Load original model and update its state
 								org.jlibsedml.Model curModel = sedml.getModelWithId(relatedTask.getModelReference());
 
 								// 1. Check for resetModel, if so clear all the SetValues
-								if(repTask.getResetModel()) {
+								if (repTask.getResetModel()) {
 									modelState.clear();
 								}
 
@@ -340,8 +349,8 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 								// Set model to previously stored state by applying all the current
 								// changes. If resetModel=true then this will be empty and we get fresh
 								// model with no modification
-								if (modelState.size() > 0){
-									for(SetValue change: modelState) {
+								if (modelState.size() > 0) {
+									for (SetValue change : modelState) {
 										curModel.addChange(change);
 									}
 								}
@@ -357,7 +366,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 								}
 								if (sim == null || !canExecuteSimulation(sim)) {
 									LOGGER.warn("Cannot simulate task " + relatedTask.getId()
-									+ " Either the simulation reference is corrupt or the simulation algorithm is not available.");
+											+ " Either the simulation reference is corrupt or the simulation algorithm is not available.");
 									return res;
 
 								}
@@ -366,19 +375,19 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 									return res;
 								}
 
-								if(sim instanceof OneStep) {
-									output = executeSimulation(changedModel, (OneStep) sim);    
-								}else if(sim instanceof SteadyState) {
+								if (sim instanceof OneStep) {
+									output = executeSimulation(changedModel, (OneStep) sim);
+								} else if (sim instanceof SteadyState) {
 									output = executeSimulation(changedModel, (SteadyState) sim);
-								}else if(sim instanceof UniformTimeCourse) {
-									output = executeSimulation(changedModel, (UniformTimeCourse) sim);    
+								} else if (sim instanceof UniformTimeCourse) {
+									output = executeSimulation(changedModel, (UniformTimeCourse) sim);
 								}
 
 								if (output == null) {
 									LOGGER.warn("Simulation failed during execution: "
 											+ relatedTask.getSimulationReference() + " with model: "
 											+ relatedTask.getModelReference());
-								}else {
+								} else {
 									stResults.add((MultTableSEDMLWrapper) output);
 								}
 							}
@@ -387,21 +396,20 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 						// Execute subtasks in order and concat their result
 						// SED-ML specs assume subTasks simulate same Tasks
 						IRawSedmlSimulationResults reducedStResults = stResults.stream()
-								.reduce((a, b) -> new MultTableSEDMLWrapper(new MultiTable(
-										mergeTimeCols(a, b), 
-										mergeDataCols(a.getData(), b.getData()), 
-										stResults.get(0).getColumnHeaders()))).get();
+								.reduce((a, b) -> new MultTableSEDMLWrapper(new MultiTable(mergeTimeCols(a, b),
+										mergeDataCols(a.getData(), b.getData()), stResults.get(0).getColumnHeaders())))
+								.get();
 
 						// Add big subTask result to list of repTask results
-						repTaskResults.add(reducedStResults);	
+						repTaskResults.add(reducedStResults);
 					}
 					// merge all the IRawSimulationResults into a big one and add it to results list
 					// with the ID of repeatedTasks
 					res.put(repTask, repTaskResults);
 				}
-			}else {
-				// Execute a simple Task 
-				Task stdTask = (Task) task; 
+			} else {
+				// Execute a simple Task
+				Task stdTask = (Task) task;
 
 				Simulation sim = sedml.getSimulation(stdTask.getSimulationReference());
 				// Load original model and update its state
@@ -416,7 +424,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 				}
 				if (sim == null || !canExecuteSimulation(sim)) {
 					LOGGER.warn("Cannot simulate task " + stdTask.getId()
-					+ " Either the simulation reference is corrupt or the simulation algorithm is not available.");
+							+ " Either the simulation reference is corrupt or the simulation algorithm is not available.");
 					return res;
 				}
 				if (changedModel == null) {
@@ -425,34 +433,34 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 				}
 
 				// Identify simulation type and run it. Store the results in a Map
-				if(sim instanceof OneStep) {
-					results = executeSimulation(changedModel, (OneStep) sim);    
-				}else if(sim instanceof SteadyState) {
+				if (sim instanceof OneStep) {
+					results = executeSimulation(changedModel, (OneStep) sim);
+				} else if (sim instanceof SteadyState) {
 					results = executeSimulation(changedModel, (SteadyState) sim);
-				}else if(sim instanceof UniformTimeCourse) {
-					results = executeSimulation(changedModel, (UniformTimeCourse) sim);    
+				} else if (sim instanceof UniformTimeCourse) {
+					results = executeSimulation(changedModel, (UniformTimeCourse) sim);
 				}
 
 				if (results == null) {
-					LOGGER.warn("Simulation failed during execution: "
-							+ stdTask.getSimulationReference() + " with model: "
-							+ stdTask.getModelReference());
+					LOGGER.warn("Simulation failed during execution: " + stdTask.getSimulationReference()
+							+ " with model: " + stdTask.getModelReference());
 				}
 				res.put(stdTask, new ArrayList<IRawSedmlSimulationResults>(Arrays.asList(results)));
 			}
 		}
-		
+
 		return res;
 	}
 
 	/**
 	 * Merge two 2D arrays into one 2D array in X-direction
+	 * 
 	 * @param double[][]
 	 * @param double[][]
 	 * @return double[][]
 	 */
 	private double[][] mergeDataCols(double[][] a, double[][] b) {
-		double[][] merged = new double[a.length+b.length][];
+		double[][] merged = new double[a.length + b.length][];
 
 		System.arraycopy(a, 0, merged, 0, a.length);
 		System.arraycopy(b, 0, merged, a.length, b.length);
@@ -462,19 +470,18 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 
 	/**
 	 * Merge time columns from 2 multiTables
+	 * 
 	 * @param MultTableSEDMLWrapper
 	 * @param MultTableSEDMLWrapper
 	 * @return double[]
 	 */
 	private double[] mergeTimeCols(MultTableSEDMLWrapper a, MultTableSEDMLWrapper b) {
-		// Get end time point for taskA 
+		// Get end time point for taskA
 		double[] timeA = a.getMultiTable().getTimePoints();
-		double timeBegin = timeA[timeA.length-1];
+		double timeBegin = timeA[timeA.length - 1];
 
 		// Add end time point to taskB
-		double[] timeB = Arrays.stream(b.getMultiTable().getTimePoints())
-				.map(row -> row + timeBegin)
-				.toArray();
+		double[] timeB = Arrays.stream(b.getMultiTable().getTimePoints()).map(row -> row + timeBegin).toArray();
 
 		// merged all point to one longer double[]
 		double[] merged = new double[timeA.length + timeB.length];
@@ -484,8 +491,11 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		return merged;
 	}
 
-	/** A helper function to sort subTasks by order.
-	 * @param Map<String, SubTask>
+	/**
+	 * A helper function to sort subTasks by order.
+	 * 
+	 * @param Map<String,
+	 *            SubTask>
 	 * @return Map<String, SubTask>
 	 */
 	private static Map<String, SubTask> sortTasks(Map<String, SubTask> unsortMap) {
@@ -496,15 +506,16 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		// 2. Sort list with Collections.sort(), provide a custom Comparator
 		Collections.sort(list, new Comparator<Map.Entry<String, SubTask>>() {
 
-			public int compare(Map.Entry<String, SubTask> o1,Map.Entry<String, SubTask> o2) {
-				if(Double.parseDouble(o1.getValue().getOrder()) > Double.parseDouble(o2.getValue().getOrder()))
+			public int compare(Map.Entry<String, SubTask> o1, Map.Entry<String, SubTask> o2) {
+				if (Double.parseDouble(o1.getValue().getOrder()) > Double.parseDouble(o2.getValue().getOrder()))
 					return 1;
 				else
 					return 0;
 			}
 		});
 
-		// 3. Loop the sorted list and put it into a new insertion order Map LinkedHashMap
+		// 3. Loop the sorted list and put it into a new insertion order Map
+		// LinkedHashMap
 		Map<String, SubTask> sortedMap = new LinkedHashMap<String, SubTask>();
 		for (Map.Entry<String, SubTask> entry : list) {
 			sortedMap.put(entry.getKey(), entry.getValue());
@@ -513,9 +524,12 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		return sortedMap;
 	}
 
-	/* SBMLSimulator can simulate SBML....
-	 * (non-Javadoc)
-	 * @see org.jlibsedml.execution.AbstractSedmlExecutor#supportsLanguage(java.lang.String)
+	/*
+	 * SBMLSimulator can simulate SBML.... (non-Javadoc)
+	 * 
+	 * @see
+	 * org.jlibsedml.execution.AbstractSedmlExecutor#supportsLanguage(java.lang.
+	 * String)
 	 */
 	@Override
 	protected boolean supportsLanguage(String language) {
@@ -528,120 +542,37 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	AbstractDESSolver getSolverForKisaoID(String id) {
 		if (SupportedIDs[0].equals(id)) {
 			return new RosenbrockSolver();
-		}else if (SupportedIDs[1].equals(id)) {
+		} else if (SupportedIDs[1].equals(id)) {
 			return new EulerMethod();
-		}else if (SupportedIDs[2].equals(id)) {
+		} else if (SupportedIDs[2].equals(id)) {
 			return new DormandPrince54Solver();
-		}else {
+		} else {
 			return new RosenbrockSolver(); // default
 		}
 	}
 
 	/**
-	 * Process raw data from simulations and return a output MultiTable which contains wanted Output
+	 * Process raw data from simulations and return a output MultiTable which
+	 * contains wanted Output
+	 * 
 	 * @param wanted
 	 * @param res
 	 * @return MultiTable
 	 */
 	public IProcessedSedMLSimulationResults processSimulationResults(Output wanted,
 			Map<AbstractTask, List<IRawSedmlSimulationResults>> res) {
-		
+
 		// here we post-process the results using our own post-processing module
-        ProcessSedMLResults pcsr = new ProcessSedMLResults(sedml, wanted);
-        pcsr.process(res);
-        
-        // this does not necessarily have time as x-axis - another variable could be  the
-        // independent variable.
-        IProcessedSedMLSimulationResults prRes = pcsr.getProcessedResult();
+		ProcessSedMLResults pcsr = new ProcessSedMLResults(sedml, wanted);
+		pcsr.process(res);
 
-        // now we restore a MultiTable from the processed results. This basic example assumes a typical
-        // simulation where time = xaxis - otherwise, if output is a Plot, we would need to analyse the x-axis
-        // datagenerators
-        //return createMultiTableFromProcessedResults(wanted, prRes);
-        return prRes;
-	}
+		// this does not necessarily have time as x-axis - another variable could be the
+		// independent variable.
+		IProcessedSedMLSimulationResults prRes = pcsr.getProcessedResult();
 
-	// Here we need to check which of the results are the independent axis to create a MultiTable
-	public MultiTable createMultiTableFromProcessedResults(Output wanted,
-			IProcessedSedMLSimulationResults prRes) {
-//		String timeColName = findTimeColumn(prRes, wanted, sedml);
-//
-//		// most of the rest of this code is concerned with adapting a processed result set
-//		// back to a multitable.
-//
-//		double [] time = getTimeData(prRes, timeColName);
-//		// we need to get a new datset that does not contain the time-series dataset.
-//		double [][] data = getNonTimeData(prRes, timeColName);
-//		// now we ignore the time dataset
-//		String []hdrs = getNonTimeHeaders(prRes, timeColName);
-//
-//		MultiTable mt = new MultiTable(time, data, hdrs);
-//		return mt;
-		
-		return null;
-	}
-
-	private String[] getNonTimeHeaders(IProcessedSedMLSimulationResults prRes,
-			String timeColName) {
-		String []rc = new String [prRes.getNumColumns()-1];
-		int rcIndx =0;
-		for (String col:prRes.getColumnHeaders()) {
-			if (!col.equals(timeColName)) {
-				rc[rcIndx++]=col;
-			}
-		}
-		return rc;
-
-	}
-
-	// gets the variable ( or non-time data )
-	private double[][] getNonTimeData(IProcessedSedMLSimulationResults prRes,
-			String timeColName) {
-		double [][] data = prRes.getData();
-		int indx = prRes.getIndexByColumnID(timeColName);
-		double [][] rc = new double [prRes.getNumDataRows() ][prRes.getNumColumns()-1];
-		for (int r = 0; r< data.length;r++) {
-			int colIndx=0;
-			for ( int c = 0; c< data[r].length;c++) {
-				if (c!=indx) {
-					rc[r][colIndx++]=data[r][c];
-				}
-			}
-		}
-		return rc;
-	}
-
-	//gets the time data from the processed result array.
-	private double[] getTimeData(IProcessedSedMLSimulationResults prRes,
-			String timeColName) {
-		Double [] tim = prRes.getDataByColumnId(timeColName);
-
-
-		double [] rc = new double[tim.length];
-		int indx=0;
-		for (Double d: tim) {
-			rc[indx++]=d.doubleValue();
-		}
-		return rc;
-	}
-
-	// Identifies the time column's title. Raw results have column headers equal to the DataGenerator
-	// id in the SEDML file.
-	private String findTimeColumn(IProcessedSedMLSimulationResults prRes,
-			Output wanted, SedML sedml2) {
-		// TODO Auto-generated method stub
-		List<String>dgIds = wanted.getAllDataGeneratorReferences();
-		for (String dgID:dgIds) {
-			DataGenerator dg = sedml.getDataGeneratorWithId(dgID);
-			if (dg != null) {
-				List<Variable> vars = dg.getListOfVariables();
-				for (Variable v: vars) {
-					if (v.isSymbol() && VariableSymbol.TIME.equals(v.getSymbol())) {
-						return dgID;
-					}
-				}
-			}
-		}
-		return null;
+		// now we restore a MultiTable from the processed results. This basic example
+		// assumes a typical simulation where time = xaxis - otherwise, if output is 
+		// a Plot, we would need to analyse the x-axis datagenerators
+		return prRes;
 	}
 }
