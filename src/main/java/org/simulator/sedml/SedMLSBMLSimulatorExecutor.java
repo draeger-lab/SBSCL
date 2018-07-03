@@ -43,6 +43,7 @@ import java.util.Map.Entry;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jlibsedml.AbstractTask;
+import org.jlibsedml.Algorithm;
 import org.jlibsedml.ArchiveComponents;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.OneStep;
@@ -77,7 +78,10 @@ import org.jmathml.ASTNode;
 import org.jmathml.ASTNumber;
 import org.jmathml.EvaluationContext;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.xml.stax.SBMLReader;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.DormandPrince54Solver;
 import org.simulator.math.odes.EulerMethod;
@@ -87,6 +91,8 @@ import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sedml.FileModelResolver;
 
 import de.binfalse.bflog.LOGGER;
+import net.biomodels.kisao.IKiSAOQueryMaker;
+import net.biomodels.kisao.impl.KiSAOQueryMaker;
 
 /**
  * This class extends an abstract class from jlibsedml, which provides various
@@ -172,8 +178,9 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	protected boolean canExecuteSimulation(Simulation sim) {
 		String kisaoID = sim.getAlgorithm().getKisaoID();
 		KisaoTerm wanted = KisaoOntology.getInstance().getTermById(kisaoID);
-		for (String supported : SupportedIDs) {
 
+		for (String supported : SupportedIDs) {
+	
 			KisaoTerm offered = KisaoOntology.getInstance().getTermById(supported);
 			// If the available type is, or is a subtype of the desired algorithm,
 			// we can simulate.
@@ -181,7 +188,42 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 				return true;
 			}
 		}
+		
 		return false;
+	}
+	
+	/*
+	 * When the the algorithm asked for isn't available find closest match using 
+	 * Kisao query and use closest match to run the simulation
+	 * 
+	 * @return Simulation
+	 */
+	protected Simulation tryAlternateAlgo(Simulation sim) throws OWLOntologyCreationException {
+		LOGGER.warn("Required algorithm is not supported. Finding closest available match...");
+		String kisaoID = sim.getAlgorithm().getKisaoID();
+		IKiSAOQueryMaker kisaoQuery = new KiSAOQueryMaker();
+		IRI wanted = kisaoQuery.searchById(kisaoID);
+		
+		double minDist = 0d;
+		// Default is KISAO:0000033 Rosenbrock solver
+		IRI simAlgo = kisaoQuery.searchById(SupportedIDs[0]);
+		
+		// Find the closest available algorithm to what is asked
+		for (String supported : SupportedIDs) {
+			
+			IRI offered = kisaoQuery.searchById(supported);
+			double curDist = kisaoQuery.distance(wanted, offered);
+			
+			if (curDist < minDist) {
+				minDist = curDist;
+				simAlgo = offered;
+			}
+		}
+		
+		LOGGER.warn("Running using " + kisaoQuery.getId(simAlgo) + " " + kisaoQuery.getName(simAlgo));
+		sim.setAlgorithm(new Algorithm(kisaoQuery.getId(simAlgo)));
+		
+		return sim;
 	}
 
 	/**
@@ -292,8 +334,9 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	 * This method is a wrapper to the runSimulations method from
 	 * {@link AbstractSedmlExecutor} to add additional support for repeatedTasks. It
 	 * identifies the type of task, before running the simulations.
+	 * @throws OWLOntologyCreationException 
 	 */
-	public Map<AbstractTask, List<IRawSedmlSimulationResults>> run() {
+	public Map<AbstractTask, List<IRawSedmlSimulationResults>> run() throws OWLOntologyCreationException {
 
 		// Fetch all the tasks: Tasks + RepeatedTasks
 		Map<AbstractTask, List<IRawSedmlSimulationResults>> res = new HashMap<AbstractTask, List<IRawSedmlSimulationResults>>();
@@ -364,16 +407,17 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 									LOGGER.warn("Language not supported: " + curModel.getLanguage());
 									return res;
 								}
-								if (sim == null || !canExecuteSimulation(sim)) {
+								if (sim == null) {
 									LOGGER.warn("Cannot simulate task " + relatedTask.getId()
-											+ " Either the simulation reference is corrupt or the simulation algorithm is not available.");
+											+ " The simulation reference is corrupt.");
 									return res;
-
 								}
 								if (changedModel == null) {
 									LOGGER.warn("XML cannot be resolved");
 									return res;
 								}
+								if(!canExecuteSimulation(sim)) 
+									sim = tryAlternateAlgo(sim);
 
 								if (sim instanceof OneStep) {
 									output = executeSimulation(changedModel, (OneStep) sim);
@@ -422,15 +466,17 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 					LOGGER.warn("Language not supported: " + curModel.getLanguage());
 					return res;
 				}
-				if (sim == null || !canExecuteSimulation(sim)) {
+				if (sim == null) {
 					LOGGER.warn("Cannot simulate task " + stdTask.getId()
-							+ " Either the simulation reference is corrupt or the simulation algorithm is not available.");
+							+ " The simulation reference is corrupt.");
 					return res;
 				}
 				if (changedModel == null) {
 					LOGGER.warn("XML cannot be resolved");
 					return res;
 				}
+				if(!canExecuteSimulation(sim)) 
+					sim = tryAlternateAlgo(sim);
 
 				// Identify simulation type and run it. Store the results in a Map
 				if (sim instanceof OneStep) {
