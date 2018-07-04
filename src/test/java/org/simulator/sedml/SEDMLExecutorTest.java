@@ -29,6 +29,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,7 +76,7 @@ public class SEDMLExecutorTest {
     }
 
     @Test
-    public final void testBasicSEDMLExecutorForLocalFile() throws XMLException, IOException {
+    public final void testBasicSEDMLExecutorForLocalFile() throws XMLException, IOException, OWLOntologyCreationException {
         // get the SED-ML object model from file. The model referred to in this
         //SEDML file is defined by a relative path and is in the top-level folder.
 
@@ -114,10 +115,11 @@ public class SEDMLExecutorTest {
      * Retrieves model from Miriam DB - needs internet connection
      *
      * @throws XMLException
+     * @throws OWLOntologyCreationException 
      */
     @Test
     // @Ignore //https://github.com/shalinshah1993/SBSCL/issues/31
-    public final void testBasicSEDMLExecutorForMiriamURNDefinedModel() throws XMLException, IOException {
+    public final void testBasicSEDMLExecutorForMiriamURNDefinedModel() throws XMLException, IOException, OWLOntologyCreationException {
 
         String miriamPath = TestUtils.getPathForTestResource(miriamtest);
         SEDMLDocument doc = Libsedml.readDocument(new File(miriamPath));
@@ -147,68 +149,68 @@ public class SEDMLExecutorTest {
 
     @Test
     @Ignore
-    public final void testIkappab() throws XMLException{
+    public final void testIkappab() throws XMLException, OWLOntologyCreationException{
         String resource = "/sedml/L1V2/ikappab/ikappab.xml";
         testSpecificationExample(resource);
     }
 
     @Test
     @Ignore
-    public final void testLeloupSBML() throws XMLException {
+    public final void testLeloupSBML() throws XMLException, OWLOntologyCreationException {
         String resource = "/sedml/L1V2/leloup-sbml/leloup-sbml.xml";
         testSpecificationExample(resource);
     }
 
     @Test
     @Ignore
-    public final void testLorenzSBML() throws XMLException {
+    public final void testLorenzSBML() throws XMLException, OWLOntologyCreationException {
         String resource = "/sedml/L1V2/lorenz-sbml/lorenz.xml";
         testSpecificationExample(resource);
     }
 
     @Test
     @Ignore
-    public final void testOscliNestedPulse() throws XMLException {
+    public final void testOscliNestedPulse() throws XMLException, OWLOntologyCreationException {
         String resource = "/sedml/L1V2/oscli-nested-pulse/oscli-nested-pulse.xml";
         testSpecificationExample(resource);
     }
 
     @Test
     @Ignore
-    public final void testParameterScan2D() throws XMLException {
+    public final void testParameterScan2D() throws XMLException, OWLOntologyCreationException {
         String resource = "/sedml/L1V2/parameter-scan-2d/parameter-scan-2d.xml";
         testSpecificationExample(resource);
     }
 
     @Test
     @Ignore
-    public final void testRepeatedScanOscli() throws XMLException {
+    public final void testRepeatedScanOscli() throws XMLException, OWLOntologyCreationException {
         String resource = "/sedml/L1V2/repeated-scan-oscli/repeated-scan-oscli.xml";
         testSpecificationExample(resource);
     }
 
     @Test
     @Ignore
-    public final void testRepeatedSteadyScanOscli() throws XMLException {
+    public final void testRepeatedSteadyScanOscli() throws XMLException, OWLOntologyCreationException {
         String resource = "/sedml/L1V2/repeated-steady-scan-oscli/repeated-steady-scan-oscli.xml";
         testSpecificationExample(resource);
     }
 
     @Test
     @Ignore
-    public final void testRepeatedStochasticRuns() throws XMLException {
+    public final void testRepeatedStochasticRuns() throws XMLException, OWLOntologyCreationException {
         String resource = "/sedml/L1V2/repeated-stochastic-runs/repeated-stochastic-runs.xml";
         testSpecificationExample(resource);
     }
 
     @Test
-    public final void testRepressilator() throws XMLException {
+    public final void testRepressilator() throws XMLException, OWLOntologyCreationException {
         String resource = "/sedml/L1V2/repressilator/repressilator.xml";
         testSpecificationExample(resource);
     }
 
 
-    public void testSpecificationExample(String resource) throws XMLException {
+    public void testSpecificationExample(String resource) throws XMLException, OWLOntologyCreationException {
         String sedmlPath = TestUtils.getPathForTestResource(resource);
 
         File file = new File(sedmlPath);
@@ -239,7 +241,7 @@ public class SEDMLExecutorTest {
     }
 
     @Test
-    public final void testRepressilator1() throws XMLException {
+    public final void testRepressilator1() throws XMLException, OWLOntologyCreationException {
         String resource = "/sedml/L1V2/repressilator/repressilator.xml";
         testSpecificationExample(resource);
         String sedmlPath = TestUtils.getPathForTestResource(resource);
