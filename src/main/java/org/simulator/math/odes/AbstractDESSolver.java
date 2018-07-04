@@ -1077,20 +1077,21 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
 		  double[][] temp = intmdOutput.getBlock(0).getData();
 		  // copy last row of results
 		  nextState = temp[0];
-          System.arraycopy(nextState, 0, curState, 0, initialValues.length);
 		  
 		  // If states are too close steady state is reached
 		  if(!noChange(nextState, curState, 1)) {
+			  System.arraycopy(nextState, 0, curState, 0, initialValues.length);
 			  break;
 		  }
 		  // Stop if max number of steps is reached
 		  if (step == maxSteps){
 		    logger.warning("Steady state could not be reached!");
+		    System.arraycopy(nextState, 0, curState, 0, initialValues.length);
 		    break;
           }
 		  stepSize = stepSize * 10;
 		  step += 1;
-
+		  System.arraycopy(nextState, 0, curState, 0, initialValues.length);
 	  }
 
 	  double[] timepoints = { totalTime };
