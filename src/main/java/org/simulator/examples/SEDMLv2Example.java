@@ -5,6 +5,7 @@ import org.jfree.ui.RefineryUtilities;
 import org.jlibsedml.*;
 import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.plot.PlotMultiTable;
 import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
@@ -28,7 +29,7 @@ import static org.junit.Assert.fail;
 public class SEDMLv2Example {
 	private static SedML sedml = null;
 
-	public static void main(String[] args) throws XMLException {
+	public static void main(String[] args) throws XMLException, OWLOntologyCreationException {
 		if(args[0] == null) {
 			LOGGER.warn("Please give file file name as argument.");
 			return;
