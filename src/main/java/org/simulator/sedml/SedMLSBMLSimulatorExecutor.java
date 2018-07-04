@@ -28,27 +28,21 @@ package org.simulator.sedml;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.Algorithm;
 import org.jlibsedml.ArchiveComponents;
-import org.jlibsedml.DataGenerator;
 import org.jlibsedml.OneStep;
 import org.jlibsedml.Output;
-import org.jlibsedml.Parameter;
 import org.jlibsedml.Range;
 import org.jlibsedml.RepeatedTask;
 import org.jlibsedml.SedML;
@@ -58,27 +52,17 @@ import org.jlibsedml.SteadyState;
 import org.jlibsedml.SubTask;
 import org.jlibsedml.Task;
 import org.jlibsedml.UniformTimeCourse;
-import org.jlibsedml.Variable;
-import org.jlibsedml.VariableSymbol;
 import org.jlibsedml.execution.AbstractSedmlExecutor;
 import org.jlibsedml.execution.ArchiveModelResolver;
-import org.jlibsedml.execution.IModel2DataMappings;
 import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
-import org.jlibsedml.execution.IXPathToVariableIDResolver;
 import org.jlibsedml.execution.ModelResolver;
 
 import org.jlibsedml.modelsupport.BioModelsModelsRetriever;
 import org.jlibsedml.modelsupport.KisaoOntology;
 import org.jlibsedml.modelsupport.KisaoTerm;
-import org.jlibsedml.modelsupport.SBMLSupport;
 import org.jlibsedml.modelsupport.URLResourceRetriever;
-import org.jmathml.ASTCi;
-import org.jmathml.ASTNode;
-import org.jmathml.ASTNumber;
-import org.jmathml.EvaluationContext;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -88,7 +72,6 @@ import org.simulator.math.odes.EulerMethod;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
-import org.simulator.sedml.FileModelResolver;
 
 import de.binfalse.bflog.LOGGER;
 import net.biomodels.kisao.IKiSAOQueryMaker;
@@ -118,13 +101,17 @@ import net.biomodels.kisao.impl.KiSAOQueryMaker;
  * @since 1.1
  */
 public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
-	/*
+	/**
 	 * A list of KISAO Ids corresponding to supported algorithm types in
-	 * SBMLSimulator. These are used to determine if we are able to perform the
-	 * simulation.
+	 * SBMLSimulator. These are used to determine if the simulation can be perform.
 	 */
-	final static String[] SupportedIDs = new String[] { "KISAO:0000033", "KISAO:0000030", "KISAO:0000087",
-			"KISAO:0000088", "KISAO:0000019" };
+	final static String[] SUPPORTED_KISAO_IDS = new String[] {
+			"KISAO:0000033",  // Rosenbrock method
+			"KISAO:0000030",  // Euler forward method
+			"KISAO:0000087",  // Dormand-Prince method
+			"KISAO:0000088",  // LSODA
+			"KISAO:0000019"   // CVODE
+	};
 
 	/**
 	 * Information for SBML interpreter about the species that an amount should be
@@ -179,7 +166,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		String kisaoID = sim.getAlgorithm().getKisaoID();
 		KisaoTerm wanted = KisaoOntology.getInstance().getTermById(kisaoID);
 
-		for (String supported : SupportedIDs) {
+		for (String supported : SUPPORTED_KISAO_IDS) {
 	
 			KisaoTerm offered = KisaoOntology.getInstance().getTermById(supported);
 			// If the available type is, or is a subtype of the desired algorithm,
@@ -206,10 +193,10 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 		
 		double minDist = 0d;
 		// Default is KISAO:0000033 Rosenbrock solver
-		IRI simAlgo = kisaoQuery.searchById(SupportedIDs[0]);
+		IRI simAlgo = kisaoQuery.searchById(SUPPORTED_KISAO_IDS[0]);
 		
 		// Find the closest available algorithm to what is asked
-		for (String supported : SupportedIDs) {
+		for (String supported : SUPPORTED_KISAO_IDS) {
 			
 			IRI offered = kisaoQuery.searchById(supported);
 			double curDist = kisaoQuery.distance(wanted, offered);
@@ -586,11 +573,11 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	 * Simple factory to return a solver based on the KISAO ID.
 	 */
 	AbstractDESSolver getSolverForKisaoID(String id) {
-		if (SupportedIDs[0].equals(id)) {
+		if (SUPPORTED_KISAO_IDS[0].equals(id)) {
 			return new RosenbrockSolver();
-		} else if (SupportedIDs[1].equals(id)) {
+		} else if (SUPPORTED_KISAO_IDS[1].equals(id)) {
 			return new EulerMethod();
-		} else if (SupportedIDs[2].equals(id)) {
+		} else if (SUPPORTED_KISAO_IDS[2].equals(id)) {
 			return new DormandPrince54Solver();
 		} else {
 			return new RosenbrockSolver(); // default
