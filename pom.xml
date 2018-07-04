@@ -235,9 +235,9 @@
 		</dependency>
 		<dependency>
 			<groupId>kisao</groupId>
-			<artifactId>LibKiSAO</artifactId>
-			<version>1.0.3.1</version>
-			<scope>system</scope> <systemPath>${project.basedir}/src/lib/kisao/LibKiSAO/1.0.3.1/libkisao-1.0.3.1-rc.jar</systemPath>
+			<artifactId>libkisao</artifactId>
+			<version>1.0.3.1-rc</version>
+			<!-- <scope>system</scope> <systemPath>${project.basedir}/src/lib/kisao/LibKiSAO/1.0.3.1/libkisao-1.0.3.1-rc.jar</systemPath> -->
 		</dependency>
 		<!-- OMEX archive -->
 		<dependency>
