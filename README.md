@@ -1,5 +1,10 @@
 # The Systems Biology Simulation Core Library
 
+[![License (LGPL version 3)](https://img.shields.io/badge/license-LGPLv3.0-blue.svg?style=plastic)](http://opensource.org/licenses/LGPL-3.0)
+[![Latest version](https://img.shields.io/badge/Latest_version-1.4.0-brightgreen.svg?style=plastic)](https://github.com/draeger-lab/SBSCL/releases/)
+[![DOI](http://img.shields.io/badge/DOI-10.1186%2F1752-0509-7-55-blue.svg?style=plastic)](https://doi.org/10.1186/1752-0509-7-55)
+[![Build Status](https://travis-ci.org/shalinshah1993/SBSCL.svg?branch=master&style=plastic)](https://travis-ci.org/shalinshah1993/SBSCL)
+
 #### Description
 The Systems Biology Simulation Core Library (SBSCL) provides an efficient and exhaustive Java™ implementation of methods to interpret the content of models encoded in the Systems Biology Markup Language ([SBML](http://sbml.org)) and its numerical solution. This library is based on the [JSBML](http://sbml.org/Software/JSBML) project and can be used on every operating system for which a Java Virtual Machine is available. Please note that this project does not contain any user interface, neither a command-line interface, nor a graphical user interface. This project has been developed as a pure programming library. To support the [MIASE](http://co.mbine.org/standards/miase) effort, it understands [SED-ML](http://sed-ml.org) files. Its abstract type and interface hierarchy facilitates the implementation of further community standards, such as [CellML](https://www.cellml.org).
 
