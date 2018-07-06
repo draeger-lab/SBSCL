@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>kisao</groupId>
+  <artifactId>libkisao</artifactId>
+  <versioning>
+    <release>1.0.3.1-rc</release>
+    <versions>
+      <version>1.0.3.1-rc</version>
+    </versions>
+    <lastUpdated>20180704130826</lastUpdated>
+  </versioning>
+</metadata>

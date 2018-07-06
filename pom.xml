@@ -11,6 +11,7 @@
  * 5. EMBL European Bioinformatics Institute (EBML-EBI), Hinxton, UK
  * 6. The University of California, San Diego, La Jolla, CA, USA
  * 7. The Babraham Institute, Cambridge, UK
+ * 8. Duke University, Durham, NC, US
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,36 +20,36 @@
  * this software distribution and also available online as
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.simulator</groupId>
-  <artifactId>sbscl</artifactId>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.simulator</groupId>
+	<artifactId>sbscl</artifactId>
 
-  <!-- Output to jar format -->
-  <packaging>jar</packaging>
+	<!-- Output to jar format -->
+	<packaging>jar</packaging>
 
 
-  <!-- =================================================================== -->
-  <!-- General project information                                         -->
-  <!-- =================================================================== -->
+	<!-- =================================================================== -->
+	<!-- General project information -->
+	<!-- =================================================================== -->
 
-  <name>Simulator-core library</name>
-  <version>1.5</version>
-  <url>https://github.com/draeger-lab/SBSCL/</url>
-  <inceptionYear>2007</inceptionYear>
-  <description>The Systems Biology Simulation Core Library provides an efficient and exhaustive Java™ implementation of methods to interpret the content of models encoded in the Systems Biology Markup Language (SBML) and its numerical solution. This library is based on the JSBML project and can be used on every operating system, for which a Java Virtual Machine is available.</description>
+	<name>Simulator-core library</name>
+	<version>1.5</version>
+	<url>https://github.com/draeger-lab/SBSCL/</url>
+	<inceptionYear>2007</inceptionYear>
+	<description>The Systems Biology Simulation Core Library provides an efficient and exhaustive Java™ implementation of methods to interpret the content of models encoded in the Systems Biology Markup Language (SBML) and its numerical solution. This library is based on the JSBML project and can be used on every operating system, for which a Java Virtual Machine is available.</description>
 
-  <properties>
-    <jdk.version>1.6</jdk.version>
-    <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
-    <year>${maven.build.timestamp}</year><!-- This property is used for filtering the variable ${year} in some resource files -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.license.url>http://www.gnu.org/licenses/lgpl-3.0-standalone.html</project.license.url>
-    <junit.version>4.11</junit.version>
-  </properties>
+	<properties>
+		<jdk.version>1.8</jdk.version>
+		<maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+		<year>${maven.build.timestamp}</year><!-- This property is used for filtering 
+			the variable ${year} in some resource files -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.license.url>http://www.gnu.org/licenses/lgpl-3.0-standalone.html</project.license.url>
+		<junit.version>4.11</junit.version>
+	</properties>
 
   <issueManagement>
     <system>GitHub Issues</system>
@@ -60,261 +61,281 @@
     <url>https://travis-ci.org/shalinshah1993/${project.name}</url>
   </ciManagement>
 
-  <licenses>
-    <license>
-      <name>GNU Lesser General Public License</name>
-      <url>${project.license.url}</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License</name>
+			<url>${project.license.url}</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
-  <developers>
-    <developer>
-      <name>Richard Adams</name>
-    </developer>
-    <developer>
-      <name>Alexander Dörr</name>
-      <email>alexander.doerr@uni-tuebingen.de</email>
-      <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/doerr/</url>
-    </developer>
-    <developer>
-      <name>Andreas Dräger</name>
-      <id>draeger</id>
-      <email>andreas.draeger@uni-tuebingen.de</email>
-      <url>https://github.com/draeger</url>
-    </developer>
-    <developer>
-      <name>Akira Funahashi</name>
-      <email>funa@bio.keio.ac.jp</email>
-      <url>http://fun.bio.keio.ac.jp/people/</url>
-    </developer>
-    <developer>
-      <name>Noriko Hiroi</name>
-      <email>hiroi@bio.keio.ac.jp</email>
-      <url>http://fun.bio.keio.ac.jp/~hiroi/</url>
-    </developer>
-    <developer>
-      <name>Roland Keller</name>
-      <email>http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/</email>
-      <url>roland.keller@gmx.de</url>
-    </developer>
-    <developer>
-      <name>Nicolas Le Novère</name>
-      <email>n.lenovere@gmail.com</email>
-      <url>http://lenoverelab.org/perso/lenov/</url>
-    </developer>
-    <developer>
-      <name>Hannes Planatscher</name>
-      <email>hannes.planatscher@nmi.de</email>
-    </developer>
-    <developer>
-      <name>Nicolas Rodriguez</name>
-      <email>rodriguezn@babraham.ac.uk</email>
-      <url>https://github.com/niko-rodrigue</url>
-    </developer>
-    <developer>
-      <name>Shalin Shah</name>
-      <email>shalin.shah@duke.edu</email>
-      <url>https://ssdoesgsoc.wordpress.com</url>
-    </developer>
-    <developer>
-      <name>Akito Tabira</name>
-      <email>tabira@fun.bio.keio.ac.jp</email>
-      <url>https://github.com/mythosil</url>
-    </developer>
-    <developer>
-      <name>Andreas Zell</name>
-      <email>andreas.zell@uni-tuebingen.de</email>
-      <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/zell/</url>
-    </developer>
-    <developer>
-      <name>Michael J. Ziller</name>
-      <email>michael_ziller@psych.mpg.de</email>
-      <url>https://www.psych.mpg.de/person/47510/2176252</url>
-    </developer>
-  </developers>
-
-
-  <!-- =================================================================== -->
-  <!-- Repositories -->
-  <!-- =================================================================== -->
-
-  <repositories>
-    <!-- Local libraries are an in-project repository -->
-    <!-- Add the dependencies and put them in -->
-    <!-- ${project.basedir}/lib/groupId/artifactId/version/ -->
-    <repository>
-      <id>libs</id>
-      <url>file://${project.basedir}/lib</url>
-    </repository>
-  </repositories>
-
-  <!-- =================================================================== -->
-  <!-- Dependencies                                                        -->
-  <!-- =================================================================== -->
-
-  <dependencies>
-    <dependency>
-      <groupId>cplex</groupId>
-      <artifactId>cplex</artifactId>
-      <version>12.8.1.0</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/cplex/cplex/12.8.1.0/cplex-12.8.1.0.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.sbml</groupId>
-      <artifactId>JSBML</artifactId>
-      <version>1.2</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/org/sbml/JSBML/1.2/JSBML-1.2.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>org.jdom</groupId>
-      <artifactId>jdom</artifactId>
-      <version>1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jmathml</groupId>
-      <artifactId>jmathml</artifactId>
-      <version>2.1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jlibsedml</groupId>
-      <artifactId>jlibsedml</artifactId>
-      <version>2.2.1</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/org/jlibsedml/jlibsedml/2.2.1/jlibsedml-2.2.1.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-math</artifactId>
-      <version>2.2</version>
-    </dependency>
-    <dependency>
-      <groupId>nmi</groupId>
-      <artifactId>scpsolver</artifactId>
-      <version>1.0</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/nmi/scpsolver/1.0/scpsolver-1.0.jar</systemPath>
-    </dependency>
-  </dependencies>
+	<developers>
+		<developer>
+			<name>Richard Adams</name>
+		</developer>
+		<developer>
+			<name>Alexander Dörr</name>
+			<email>alexander.doerr@uni-tuebingen.de</email>
+			<url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/doerr/</url>
+		</developer>
+		<developer>
+			<name>Andreas Dräger</name>
+			<id>draeger</id>
+			<email>andreas.draeger@uni-tuebingen.de</email>
+			<url>https://github.com/draeger</url>
+		</developer>
+		<developer>
+			<name>Akira Funahashi</name>
+			<email>funa@bio.keio.ac.jp</email>
+			<url>http://fun.bio.keio.ac.jp/people/</url>
+		</developer>
+		<developer>
+			<name>Noriko Hiroi</name>
+			<email>hiroi@bio.keio.ac.jp</email>
+			<url>http://fun.bio.keio.ac.jp/~hiroi/</url>
+		</developer>
+		<developer>
+			<name>Roland Keller</name>
+			<email>http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/</email>
+			<url>roland.keller@gmx.de</url>
+		</developer>
+		<developer>
+			<name>Nicolas Le Novère</name>
+			<email>n.lenovere@gmail.com</email>
+			<url>http://lenoverelab.org/perso/lenov/</url>
+		</developer>
+		<developer>
+			<name>Hannes Planatscher</name>
+			<email>hannes.planatscher@nmi.de</email>
+		</developer>
+		<developer>
+			<name>Nicolas Rodriguez</name>
+			<email>rodriguezn@babraham.ac.uk</email>
+			<url>https://github.com/niko-rodrigue</url>
+		</developer>
+		<developer>
+			<name>Akito Tabira</name>
+			<email>tabira@fun.bio.keio.ac.jp</email>
+			<url>https://github.com/mythosil</url>
+		</developer>
+		<developer>
+			<name>Andreas Zell</name>
+			<email>andreas.zell@uni-tuebingen.de</email>
+			<url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/zell/</url>
+		</developer>
+		<developer>
+			<name>Michael J. Ziller</name>
+			<email>michael_ziller@psych.mpg.de</email>
+			<url>https://www.psych.mpg.de/person/47510/2176252</url>
+		</developer>
+		<developer>
+			<name>Shalin Shah</name>
+			<email>shalin.shah@duke.edu</email>
+			<url>http://people.duke.edu/~sns37</url>
+		</developer>
+		<developer>
+			<name>Matthias König</name>
+			<email>konigmatt@googlemail.com</email>
+			<url>https://github.com/matthiaskoenig</url>
+		</developer>
+	</developers>
 
 
-  <!-- =================================================================== -->
-  <!-- Building                                                            -->
-  <!-- =================================================================== -->
+	<!-- =================================================================== -->
+	<!-- Repositories -->
+	<!-- =================================================================== -->
 
-  <!-- To build the project run: -->
-  <!-- mvn clean compile package assembly:single -->
+	<repositories>
+		<repository>
+			<id>in-project</id>
+			<name>In project repository</name>
+			<url>file:${project.basedir}/src/lib/maven</url>
+		</repository>
 
-  <build>
-    <finalName>${project.artifactId}-${project.version}</finalName>
-    <sourceDirectory>src</sourceDirectory>
-    <testSourceDirectory>test</testSourceDirectory>
+		<!-- Adding repository to download latest jlibSBML -->
+		<repository>
+			<id>JSBML-SNAPSHOT</id>
+			<name>The JSBML Snapshot repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
+		<!-- Adding repository to download CombineArchive -->
 
-    <resources>
-      <resource>
-        <directory>resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
+		<repository>
+			<id>sems-maven-repository-releases</id>
+			<name>SEMS Maven Repo</name>
+			<url>http://mvn.sems.uni-rostock.de/releases/</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
-    <pluginManagement>
-      <plugins>
+	<!-- =================================================================== -->
+	<!-- Dependencies -->
+	<!-- =================================================================== -->
 
-      <!-- Add extra plugin to build all the source folders -->
-      <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <executions>
-              <execution>
-                  <phase>generate-sources</phase>
-                  <goals>
-                      <goal>add-source</goal>
-                  </goals>
-                  <configuration>
-                      <sources>
-                          <source>src/</source>
-                          <source>examples/</source>
-                          <source>test/</source>
-                          <source>resources/</source>
-                      </sources>
-                  </configuration>
-              </execution>
-          </executions>
-      </plugin>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<!--<scope>test</scope> -->
+		</dependency>
+		<dependency>
+			<groupId>org.sbml.jsbml</groupId>
+			<artifactId>jsbml</artifactId>
+			<version>1.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom2</artifactId>
+			<version>2.0.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jmathml</groupId>
+			<artifactId>jmathml</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jlibsedml</groupId>
+			<artifactId>jlibsedml</artifactId>
+			<version>2.2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.7</version>
+		</dependency>
 
-        <!-- Download source code in Eclipse, best practice [OPTIONAL!] -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-eclipse-plugin</artifactId>
-          <version>2.9</version>
-          <configuration>
-            <downloadSources>true</downloadSources>
-            <downloadJavadocs>false</downloadJavadocs>
-          </configuration>
-        </plugin>
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.19</version>
+		</dependency>
 
-        <!-- Set a JDK compiler level -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.3</version>
-          <configuration>
-            <source>${jdk.version}</source>
-            <target>${jdk.version}</target>
-          </configuration>
-        </plugin>
+		<!-- LP solvers -->
+		<dependency>
+			<groupId>scpsolver</groupId>
+			<artifactId>SCPSolver</artifactId>
+			<version>1.0v2</version>
+			<!-- <scope>system</scope> <systemPath>${project.basedir}/src/lib/maven/scpsolver/SCPSolver/1.0/SCPSolver-1.0.jar</systemPath> -->
+		</dependency>
+		<dependency>
+			<groupId>scpsolver</groupId>
+			<artifactId>GLPKSolverPack</artifactId>
+			<version>4.35v2</version>
+			<!-- <scope>system</scope> <systemPath>${project.basedir}/src/lib/maven/scpsolver/GLPKSolverPack/4.35/GLPKSolverPack-4.35.jar</systemPath> -->
+		</dependency>
+		<dependency>
+			<groupId>scpsolver</groupId>
+			<artifactId>LPSOLVESolverPack</artifactId>
+			<version>5.5.2.5</version>
+			<!-- <scope>system</scope> <systemPath>${project.basedir}/src/lib/maven/scpsolver/LPSOLVESolverPack/5.5.2.5/LPSOLVESolverPack-5.5.2.5.jar</systemPath> -->
+		</dependency>
+		<dependency>
+			<groupId>kisao</groupId>
+			<artifactId>libkisao</artifactId>
+			<version>1.0.3.1-rc</version>
+			<!-- <scope>system</scope> <systemPath>${project.basedir}/src/lib/kisao/LibKiSAO/1.0.3.1/libkisao-1.0.3.1-rc.jar</systemPath> -->
+		</dependency>
+		<!-- OMEX archive -->
+		<dependency>
+			<groupId>de.uni-rostock.sbi</groupId>
+			<artifactId>CombineArchive</artifactId>
+			<version>1.3.6</version>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
 
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <testFailureIgnore>false</testFailureIgnore>
-          </configuration>
-        </plugin>
 
-        <!-- Assemble executable JAR -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.6</version>
-          <configuration>
-            <archive>
-              <manifest>
-                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-              </manifest>
-            </archive>
-            <descriptorRefs>
-              <descriptorRef>jar-with-dependencies</descriptorRef>
-            </descriptorRefs>
-            <finalName>${project.artifactId}-${project.version}</finalName>
-            <appendAssemblyId>false</appendAssemblyId>
-            <descriptor>assembly.xml</descriptor> <!-- Details of the assembly are described in this file -->
-          </configuration>
-          <executions>
-            <execution>
-              <id>make-assembly</id> <!-- this is used for inheritance merges -->
-              <phase>package</phase> <!-- bind to the packaging phase -->
-              <goals>
-                <!-- This will create a JAR with all dependencies -->
-                <!-- mvn clean compile assembly:single -->
-                <goal>single</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
+	<!-- =================================================================== -->
+	<!-- Building -->
+	<!-- =================================================================== -->
 
-      </plugins>
-    </pluginManagement>
+	<!-- To build the project run: -->
+	<!-- mvn clean compile package assembly:single -->
 
-  </build>
+	<build>
+		<finalName>${project.artifactId}-${project.version}</finalName>
+
+		<pluginManagement>
+			<plugins>
+				<!-- Download source code in Eclipse, best practice [OPTIONAL!] -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-eclipse-plugin</artifactId>
+					<version>2.9</version>
+					<configuration>
+						<downloadSources>true</downloadSources>
+						<downloadJavadocs>false</downloadJavadocs>
+					</configuration>
+				</plugin>
+
+				<!-- Set a JDK compiler level -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.3</version>
+					<configuration>
+						<source>${jdk.version}</source>
+						<target>${jdk.version}</target>
+						<!-- <excludes> <exclude>**/org/simulator/fba/COBRAsolver.java</exclude> 
+							<exclude>**/org/simulator/fba/COBRAsolverExample.java</exclude> </excludes> -->
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<testFailureIgnore>false</testFailureIgnore>
+					</configuration>
+				</plugin>
+
+				<!-- Assemble executable JAR -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.6</version>
+					<configuration>
+						<archive>
+							<manifest>
+								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+								<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+							</manifest>
+						</archive>
+						<descriptorRefs>
+							<descriptorRef>jar-with-dependencies</descriptorRef>
+						</descriptorRefs>
+						<finalName>${project.artifactId}-${project.version}</finalName>
+						<appendAssemblyId>false</appendAssemblyId>
+						<descriptor>src/assembly/assembly.xml</descriptor> <!-- Details of the assembly are described in this file -->
+					</configuration>
+					<executions>
+						<execution>
+							<id>make-assembly</id> <!-- this is used for inheritance merges -->
+							<phase>package</phase> <!-- bind to the packaging phase -->
+							<goals>
+								<!-- This will create a JAR with all dependencies -->
+								<!-- mvn clean compile package assembly:single -->
+								<goal>single</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 
 </project>
