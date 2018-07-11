@@ -45,26 +45,24 @@ Most importantly, see
 The package structure in more detail:
 ```
  /
- |- dist        -> Contains a JAR file of the library
  |- doc
-    |- api      -> JavaDoc including examples for usage of the library
- |- lib         -> 3rd party libraries needed for compilation and execution
- |- licenses    -> License agreements of all 3rd party libs and a list of 
- |                 authors of this library
- |- resources   -> A source folder containing required resource files.
- |- src         -> The main source folder containing all Java files and the 
- |                 overview.html providing a brief overview of the project.
- |- test        -> Source code for testing, including BioModels and SBML Test
- |                 Suite
- |- build.xml   -> an Apache ANT script which compiles the source code and
- |                 provides several options to create distribution files.
- |- LICENSE.txt -> the license, under which this project is distributed
- |- pom.xml     -> Maven support for the project
- |- README.txt  -> this file
+    |- api         -> JavaDoc including examples for usage of the library
+ |- src            -> The main source folder containing all the code and test files
+    |- assembly    -> assembly files for maven plugins
+    |- lib         -> 3rd party libraries needed for compilation and execution
+    |- main        -> Core java files of simulation library
+    |- test        -> JUnit test files along with resources required
+ |- licenses       -> License agreements of all 3rd party libs and a list of 
+ |                    authors of this library
+ |- build.xml      -> an Apache ANT script which compiles the source code and
+ |                    provides several options to create distribution files. (deprecated)
+ |- LICENSE.txt    -> the license, under which this project is distributed
+ |- pom.xml        -> Maven file for building the project
+ |- README.md      -> this file
 ```
 
 ## Troubleshooting
 
 Please e-mail any bugs, problems, suggestions, or issues regarding this library to the mailing list: simulation-core-development@lists.sourceforge.net
 
-Or use the bug tracker at https://github.com/cogsys-tuebingen/SBSCL/issues
+Or use the bug tracker at http://simulation-core.sourceforge.net
