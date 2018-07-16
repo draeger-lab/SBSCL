@@ -1,20 +1,24 @@
 package org.simulator.examples;
 
-import de.binfalse.bflog.LOGGER;
-import org.jfree.ui.RefineryUtilities;
-import org.jlibsedml.*;
-import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
-import org.jlibsedml.execution.IRawSedmlSimulationResults;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.simulator.math.odes.MultiTable;
-import org.simulator.plot.PlotMultiTable;
-import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.fail;
+import org.jfree.ui.RefineryUtilities;
+import org.jlibsedml.AbstractTask;
+import org.jlibsedml.Libsedml;
+import org.jlibsedml.Output;
+import org.jlibsedml.SedML;
+import org.jlibsedml.XMLException;
+import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
+import org.jlibsedml.execution.IRawSedmlSimulationResults;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.simulator.plot.PlotProcessedSedmlResults;
+import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
+
+import de.binfalse.bflog.LOGGER;
 
 /**
  * This test class shows how a SED-ML file can be interpreted and executed using
@@ -26,7 +30,7 @@ import static org.junit.Assert.fail;
  * @author Shalin Shah
  * @since 1.5
  */
-public class SEDMLv2Example {
+public class SEDMLExample {
 	private static SedML sedml = null;
 
 	public static void main(String[] args) throws XMLException, OWLOntologyCreationException {
@@ -55,7 +59,14 @@ public class SEDMLv2Example {
 		// now process.In this case, there's no processing performed - we're displaying the
 		// raw results.
 		LOGGER.warn("Outputs wanted: " + wanted.getAllDataGeneratorReferences());
-		IProcessedSedMLSimulationResults mt = exe.processSimulationResults(wanted, res);
+		IProcessedSedMLSimulationResults prRes = exe.processSimulationResults(wanted, res);
+		
+		// plot all processed results
+		PlotProcessedSedmlResults p = new PlotProcessedSedmlResults(prRes, "Data generators");
+		p.pack();
+	    RefineryUtilities.centerFrameOnScreen(p);
+	    p.setVisible( true );
+		
 	}
 
 }

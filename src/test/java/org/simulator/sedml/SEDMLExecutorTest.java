@@ -1,6 +1,4 @@
 /*
- * $Id$
- * $URL$
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
@@ -13,6 +11,7 @@
  * 5. EMBL European Bioinformatics Institute (EBML-EBI), Hinxton, UK
  * 6. The University of California, San Diego, La Jolla, CA, USA
  * 7. The Babraham Institute, Cambridge, UK
+ * 8. Duke University, USA
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -58,9 +57,10 @@ import de.binfalse.bflog.LOGGER;
  * It makes extensive use of jlibsedml's Execution framework which performs boiler-plate
  * code for operations such as post-processing of results, etc.,
  *
- * @author Richard Adams, Matthias König, Shalin Shah
+ * @author Matthias König
+ * @author Shalin Shah
  * @version $Rev$
- * @since 1.1
+ * @since 1.5
  */
 public class SEDMLExecutorTest {
 
