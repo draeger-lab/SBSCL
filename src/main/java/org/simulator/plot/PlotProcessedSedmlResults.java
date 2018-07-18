@@ -24,9 +24,13 @@
 package org.simulator.plot;
 
 import org.jfree.chart.ChartPanel;
+
+import java.util.List;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
+import org.jlibsedml.Curve;
 import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -42,6 +46,7 @@ public class PlotProcessedSedmlResults extends ApplicationFrame {
 	private IProcessedSedMLSimulationResults species;
 	private DefaultCategoryDataset graphData;
 	private String title;
+	private List<Curve> curves;
 
 	/**
 	 * Initializes the JFreeChart and dataSet for the chart using MultiTable
@@ -65,11 +70,13 @@ public class PlotProcessedSedmlResults extends ApplicationFrame {
 
 	}
 	
-	public PlotProcessedSedmlResults(IProcessedSedMLSimulationResults data) {
+	public PlotProcessedSedmlResults(IProcessedSedMLSimulationResults data, List<Curve> curves, String title) {
 		super("Output plot");
 
 		this.title = "Output plot";
-		species = data;
+		this.species = data;
+		this.curves = curves;
+		
 		JFreeChart lineChart = ChartFactory.createLineChart(title, 
 				"time", "Population", createDataset(),
 				PlotOrientation.VERTICAL, true, true, false);
@@ -89,11 +96,12 @@ public class PlotProcessedSedmlResults extends ApplicationFrame {
 		double[][] data = species.getData();
 		String[] headers = species.getColumnHeaders();
 		
-		// Add all the data generators to the chart
-		for(int col = 0; col < data[0].length; col++) {
+		for(Curve cur: this.curves) {
+			Double[] xData = species.getDataByColumnId(cur.getXDataReference());
+			Double[] yData = species.getDataByColumnId(cur.getYDataReference());
 			
-			for(int row = 0; row < data.length; row++) {
-				graphData.addValue(data[row][col], headers[col],  String.valueOf(row));
+			for(int row = 0; row < Math.min(xData.length, yData.length); row++) {
+				graphData.addValue(yData[row], cur.getYDataReference(),  String.valueOf(xData[row]));
 			}
 		}
 
