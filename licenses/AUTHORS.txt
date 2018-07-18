@@ -41,6 +41,8 @@
             rodrigue@ebi.ac.uk
          Hannes Planatscher, NMI Reutlingen, Germany,
            Hannes.Planatscher@nmi.de
+         Shalin Shah, Duke University USA,
+           shalin.shah@duke.edu
            
                              -- Thanks to --
                                       
