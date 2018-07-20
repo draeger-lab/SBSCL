@@ -49,7 +49,7 @@ public class SEDMLExample {
 
 		// in this SED-ML file there's just one output. If there were several,
 		// we could either iterate or get user to  decide what they want to run.
-		Output wanted = sedml.getOutputs().get(1);
+		Output wanted = sedml.getOutputs().get(2);
 		
 		SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, sedmlDir);
 		// This gets the raw simulation results - one for each Task that was run.

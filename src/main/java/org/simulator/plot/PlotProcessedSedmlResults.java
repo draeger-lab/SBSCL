@@ -27,7 +27,6 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -43,7 +42,8 @@ import org.simulator.TestUtils;
 import de.binfalse.bflog.LOGGER;
 
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 /**
  * This class adds output data-plot support to SBSCL
@@ -54,7 +54,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 @SuppressWarnings("serial")
 public class PlotProcessedSedmlResults extends ApplicationFrame {
 	private IProcessedSedMLSimulationResults species;
-	private DefaultCategoryDataset graphData;
+	private XYSeriesCollection graphData;
 	private String title;
 	private List<Curve> curves;
 	private JFreeChart lineChart;
@@ -62,23 +62,23 @@ public class PlotProcessedSedmlResults extends ApplicationFrame {
 	private static final int CHART_HEIGHT = 768;
 
 	/**
-	 * Initializes the JFreeChart and dataSet for the chart using MultiTable
+	 * Initializes the JFreeChart and dataSet for the chart using IProcessedSedMLSimulationResults
 	 * 
-	 * @param MultiTable
-	 *        The input data type to the plot API is MultiTable which gets converted
-	 *        internally to DefaultCategoryDataset
+	 * @param IProcessedSedMLSimulationResults
+	 *        The input data type to the plot API is 2D data wrapped with jsedmllib data structure
+	 *        which gets converted internally to XY line plot
 	 */
 	public PlotProcessedSedmlResults(IProcessedSedMLSimulationResults data, String title) {
 		super(title);
 
 		this.title = title;
-		species = data;
-		this.lineChart = ChartFactory.createLineChart(title, 
-				"time", "Population", createDataset(),
+		this.species = data;
+		this.lineChart = ChartFactory.createXYLineChart(this.title, 
+				".", ".", createDataset(),
 				PlotOrientation.VERTICAL, true, true, false);
 
 		ChartPanel chartPanel = new ChartPanel( this.lineChart );
-		chartPanel.setPreferredSize( new java.awt.Dimension(CHART_WIDTH , CHART_HEIGHT) );
+		chartPanel.setPreferredSize( new java.awt.Dimension(CHART_WIDTH, CHART_HEIGHT));
 		setContentPane(chartPanel);
 
 	}
@@ -90,41 +90,49 @@ public class PlotProcessedSedmlResults extends ApplicationFrame {
 		this.species = data;
 		this.curves = curves;
 		
-		this.lineChart = ChartFactory.createLineChart(title, 
+		this.lineChart = ChartFactory.createXYLineChart(this.title, 
 				".", ".", createDataset(),
 				PlotOrientation.VERTICAL, true, true, false);
+		
 
 		ChartPanel chartPanel = new ChartPanel( this.lineChart );
-		chartPanel.setPreferredSize( new java.awt.Dimension(CHART_WIDTH , CHART_HEIGHT) );
+		chartPanel.setPreferredSize( new java.awt.Dimension(CHART_WIDTH, CHART_HEIGHT));
 		setContentPane(chartPanel);
-
 	}
 
 	/**
 	 * Helper function that converts IProcessedSedMLSimulationResults to DataSet for LineChart
 	 */
-	private DefaultCategoryDataset createDataset() {
-		graphData = new DefaultCategoryDataset();
-
+	private XYSeriesCollection createDataset() {
+		graphData = new XYSeriesCollection();
+		
+		// For each curve in the current output element of sedml file
+		// simple extract data generators and plot them
 		for(Curve cur: this.curves) {
 			Double[] xData = species.getDataByColumnId(cur.getXDataReference());
 			Double[] yData = species.getDataByColumnId(cur.getYDataReference());
+			XYSeries series = new XYSeries(cur.getId(), false);
 			
 			for(int row = 0; row < Math.min(xData.length, yData.length); row++) {
-				graphData.addValue(yData[row], cur.getYDataReference(),  String.valueOf(xData[row]));
+				series.add(xData[row], yData[row]);
 			}
+			graphData.addSeries(series);
 		}
 
 		return graphData;
 	}
 	
+	/**
+	 * Helper function that can save the generated plot (simulationPath sedml file) as a PNG image
+	 * with fileName in the results folder
+	 */
 	public void savePlot(String simulationPath, String fileName) throws IOException {
-		// save the plot
+		// Get full folder for sedml xml file
 		String outputPath = TestUtils.getFolderPathForTestResource(simulationPath);
+		// Store the plots in the results folder in the same directory
 		outputPath = outputPath + "/results/simulation_core/" + fileName + ".png";
 		OutputStream out = FileUtils.openOutputStream(new File(outputPath));
-		
-	    LOGGER.warn("Saving chart " + this.title);
+		// Use default width and height for chart size and save as png
 	    ChartUtilities.writeChartAsPNG(out, this.lineChart, CHART_WIDTH, CHART_HEIGHT);
 	}
 }

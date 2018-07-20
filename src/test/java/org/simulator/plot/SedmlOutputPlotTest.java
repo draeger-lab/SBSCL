@@ -76,7 +76,6 @@ public class SedmlOutputPlotTest {
     }
 
     @Test
-    @Ignore
     public final void testBasicSEDMLExecutorForLocalFile() throws XMLException, IOException, OWLOntologyCreationException {
         // get the SED-ML object model from file. The model referred to in this
         //SEDML file is defined by a relative path and is in the top-level folder.
@@ -114,7 +113,6 @@ public class SedmlOutputPlotTest {
      * @throws OWLOntologyCreationException 
      */
     @Test
-    @Ignore
     public final void testBasicSEDMLExecutorForMiriamURNDefinedModel() throws XMLException, IOException, OWLOntologyCreationException {
 
         String miriamPath = TestUtils.getPathForTestResource(miriamtest);
@@ -162,35 +160,30 @@ public class SedmlOutputPlotTest {
     }
 
     @Test
-    @Ignore
     public final void testOscliNestedPulse() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/oscli-nested-pulse/oscli-nested-pulse.xml";
         testSpecificationExample(resource);
     }
 
     @Test
-    @Ignore
     public final void testParameterScan2D() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/parameter-scan-2d/parameter-scan-2d.xml";
         testSpecificationExample(resource);
     }
 
     @Test
-    @Ignore
     public final void testRepeatedScanOscli() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/repeated-scan-oscli/repeated-scan-oscli.xml";
         testSpecificationExample(resource);
     }
 
     @Test
-    @Ignore
     public final void testRepeatedSteadyScanOscli() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/repeated-steady-scan-oscli/repeated-steady-scan-oscli.xml";
         testSpecificationExample(resource);
     }
 
     @Test
-    @Ignore
     public final void testRepeatedStochasticRuns() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/repeated-stochastic-runs/repeated-stochastic-runs.xml";
         testSpecificationExample(resource);
@@ -241,7 +234,6 @@ public class SedmlOutputPlotTest {
 	    			p.savePlot(resource, wanted.getId());
     			}
         }
-
     }
 
     @Test
