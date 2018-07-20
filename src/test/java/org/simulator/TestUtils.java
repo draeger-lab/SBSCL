@@ -81,9 +81,27 @@ public class TestUtils {
         String path = null;
         File currentDir = new File(System.getProperty("user.dir"));
         path = currentDir.getAbsolutePath() + "/src/test/resources" + resourcePath;
-        System.out.println("currentDir: " + currentDir);
-        System.out.println("path: " + path);
+        //System.out.println("currentDir: " + currentDir);
+        //System.out.println("path: " + path);
         return path;
+    }
+    
+    /**
+     * Get absolute parent path for given test resource.
+     * Due to the relative paths of SBML and SED-ML files the resource loading is not working
+     * in maven.
+     *
+     * Example:
+     *  resourcePath="/fba/e_coli_core.xml"
+     */
+    public static String getFolderPathForTestResource(String resourcePath) {
+        String path = null;
+        File currentDir = new File(System.getProperty("user.dir"));
+        path = currentDir.getAbsolutePath() + "/src/test/resources" + resourcePath;
+        File pwd = new File(path);
+        //System.out.println("currentDir: " + currentDir);
+        //System.out.println("path: " + path);
+        return pwd.getParentFile().getAbsolutePath();
     }
 
     /**

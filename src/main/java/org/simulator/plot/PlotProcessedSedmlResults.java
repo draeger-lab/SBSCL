@@ -24,14 +24,24 @@
 package org.simulator.plot;
 
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtilities;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 import org.jlibsedml.Curve;
 import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
+import org.simulator.TestUtils;
+
+import de.binfalse.bflog.LOGGER;
+
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
@@ -47,6 +57,9 @@ public class PlotProcessedSedmlResults extends ApplicationFrame {
 	private DefaultCategoryDataset graphData;
 	private String title;
 	private List<Curve> curves;
+	private JFreeChart lineChart;
+	private static final int CHART_WIDTH = 1366;
+	private static final int CHART_HEIGHT = 768;
 
 	/**
 	 * Initializes the JFreeChart and dataSet for the chart using MultiTable
@@ -60,29 +73,29 @@ public class PlotProcessedSedmlResults extends ApplicationFrame {
 
 		this.title = title;
 		species = data;
-		JFreeChart lineChart = ChartFactory.createLineChart(title, 
+		this.lineChart = ChartFactory.createLineChart(title, 
 				"time", "Population", createDataset(),
 				PlotOrientation.VERTICAL, true, true, false);
 
-		ChartPanel chartPanel = new ChartPanel( lineChart );
-		chartPanel.setPreferredSize( new java.awt.Dimension( 560 , 367 ) );
+		ChartPanel chartPanel = new ChartPanel( this.lineChart );
+		chartPanel.setPreferredSize( new java.awt.Dimension(CHART_WIDTH , CHART_HEIGHT) );
 		setContentPane(chartPanel);
 
 	}
 	
 	public PlotProcessedSedmlResults(IProcessedSedMLSimulationResults data, List<Curve> curves, String title) {
-		super("Output plot");
+		super(title);
 
-		this.title = "Output plot";
+		this.title = title;
 		this.species = data;
 		this.curves = curves;
 		
-		JFreeChart lineChart = ChartFactory.createLineChart(title, 
-				"time", "Population", createDataset(),
+		this.lineChart = ChartFactory.createLineChart(title, 
+				".", ".", createDataset(),
 				PlotOrientation.VERTICAL, true, true, false);
 
-		ChartPanel chartPanel = new ChartPanel( lineChart );
-		chartPanel.setPreferredSize( new java.awt.Dimension( 560 , 367 ) );
+		ChartPanel chartPanel = new ChartPanel( this.lineChart );
+		chartPanel.setPreferredSize( new java.awt.Dimension(CHART_WIDTH , CHART_HEIGHT) );
 		setContentPane(chartPanel);
 
 	}
@@ -93,9 +106,6 @@ public class PlotProcessedSedmlResults extends ApplicationFrame {
 	private DefaultCategoryDataset createDataset() {
 		graphData = new DefaultCategoryDataset();
 
-		double[][] data = species.getData();
-		String[] headers = species.getColumnHeaders();
-		
 		for(Curve cur: this.curves) {
 			Double[] xData = species.getDataByColumnId(cur.getXDataReference());
 			Double[] yData = species.getDataByColumnId(cur.getYDataReference());
@@ -106,5 +116,15 @@ public class PlotProcessedSedmlResults extends ApplicationFrame {
 		}
 
 		return graphData;
+	}
+	
+	public void savePlot(String simulationPath, String fileName) throws IOException {
+		// save the plot
+		String outputPath = TestUtils.getFolderPathForTestResource(simulationPath);
+		outputPath = outputPath + "/results/simulation_core/" + fileName + ".png";
+		OutputStream out = FileUtils.openOutputStream(new File(outputPath));
+		
+	    LOGGER.warn("Saving chart " + this.title);
+	    ChartUtilities.writeChartAsPNG(out, this.lineChart, CHART_WIDTH, CHART_HEIGHT);
 	}
 }
