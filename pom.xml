@@ -166,10 +166,30 @@
 
         <contributors>
           <contributor>
+            <name>Michael T. Cooling</name>
+            <url>https://www.linkedin.com/in/mikecooling/</url>
+            <organization>University of Auckland</organization>
+          </contributor>
+          <contributor>
             <name>Noriko Hiroi</name>
             <email>hiroi@bio.keio.ac.jp</email>
             <url>http://fun.bio.keio.ac.jp/~hiroi/</url>
             <organization>Keio University</organization>
+          </contributor>
+          <contributor>
+            <name>Marcel Kronfeld</name>
+            <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/kronfeld</url>
+            <organization>University of Tübingen</organization>
+          </contributor>
+          <contributor>
+            <name>Adrian Schröder</name>
+            <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/schroeder/</url>
+            <organization>University of Tübingen</organization>
+          </contributor>
+          <contributor>
+            <name>Dieudonné M. Wouamba</name>
+            <url>https://www.linkedin.com/in/dieudonné-motsou-wouamba-2952a018/</url>
+            <organization>University of Tübingen</organization>
           </contributor>
           <contributor>
               <name>Andreas Zell</name>
