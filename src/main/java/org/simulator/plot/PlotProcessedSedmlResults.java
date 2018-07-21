@@ -37,9 +37,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 import org.jlibsedml.Curve;
 import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
-import org.simulator.TestUtils;
-
-import de.binfalse.bflog.LOGGER;
 
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
@@ -128,11 +125,29 @@ public class PlotProcessedSedmlResults extends ApplicationFrame {
 	 */
 	public void savePlot(String simulationPath, String fileName) throws IOException {
 		// Get full folder for sedml xml file
-		String outputPath = TestUtils.getFolderPathForTestResource(simulationPath);
+		String outputPath = getFolderPathForTestResource(simulationPath);
 		// Store the plots in the results folder in the same directory
 		outputPath = outputPath + "/results/simulation_core/" + fileName + ".png";
 		OutputStream out = FileUtils.openOutputStream(new File(outputPath));
 		// Use default width and height for chart size and save as png
 	    ChartUtilities.writeChartAsPNG(out, this.lineChart, CHART_WIDTH, CHART_HEIGHT);
+	}
+
+	/**
+     * Get absolute parent path for given test resource.
+     * Due to the relative paths of SBML and SED-ML files the resource loading is not working
+     * in maven.
+     *
+     * Example:
+     *  resourcePath="/fba/e_coli_core.xml"
+     */
+	private static String getFolderPathForTestResource(String resourcePath) {
+
+        String path = null;
+        File currentDir = new File(System.getProperty("user.dir"));
+        path = currentDir.getAbsolutePath() + "/src/test/resources" + resourcePath;
+        File pwd = new File(path);
+        
+        return pwd.getParentFile().getAbsolutePath();
 	}
 }
