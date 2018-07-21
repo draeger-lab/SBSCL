@@ -231,9 +231,9 @@ public class SEDMLExecutorTest {
 	    			
 	    			// plot all processed results as per curve descriptions
 	    			String title = wanted.getId() + "(" + wanted.getName() + ")";
-	    			PlotProcessedSedmlResults p = new PlotProcessedSedmlResults(pr, curves, title);
-	    			assertNotNull(p);
 	    			// UNCOMMENT THIS TO SAVE PLOT
+	    			// PlotProcessedSedmlResults p = new PlotProcessedSedmlResults(pr, curves, title);
+	    			// assertNotNull(p);
 	    			// p.savePlot(resource, wanted.getId());
     			}
         }
@@ -301,9 +301,9 @@ public class SEDMLExecutorTest {
 	    			
 	    			// plot all processed results as per curve descriptions
 	    			String title = wanted.getId() + "(" + wanted.getName() + ")";
-	    			PlotProcessedSedmlResults p = new PlotProcessedSedmlResults(pr, curves,  title);
-	    			assertNotNull(p);
 	    			// UNCOMMENT THIS TO SAVE PLOT
+	    			//PlotProcessedSedmlResults p = new PlotProcessedSedmlResults(pr, curves,  title);
+	    			//assertNotNull(p);
 	    			// p.savePlot(resource, wanted.getId());
     			}
         }
