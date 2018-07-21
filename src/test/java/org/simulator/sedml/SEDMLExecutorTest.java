@@ -37,9 +37,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.jlibsedml.AbstractTask;
+import org.jlibsedml.Curve;
 import org.jlibsedml.Libsedml;
 import org.jlibsedml.Output;
-import org.jlibsedml.Plot3D;
+import org.jlibsedml.Plot2D;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.XMLException;
@@ -47,17 +48,16 @@ import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
 
 import org.simulator.TestUtils;
-import org.simulator.math.odes.MultiTable;
-
-import de.binfalse.bflog.LOGGER;
+import org.simulator.plot.PlotProcessedSedmlResults;
+import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
 
 /**
  * This test class shows how a SED-ML file can be interpreted and executed using
  * SBML Simulator Core solvers. <br/>
  * It makes extensive use of jlibsedml's Execution framework which performs boiler-plate
- * code for operations such as post-processing of results, etc.,
+ * code for operations such as post-processing of results, etc., Finally plots 
+ * are generated and saved in the folder
  *
- * @author Matthias König
  * @author Shalin Shah
  * @version $Rev$
  * @since 1.5
@@ -104,11 +104,6 @@ public class SEDMLExecutorTest {
         IProcessedSedMLSimulationResults mt = exe.processSimulationResults(wanted, res);
         assertNotNull(mt);
         assertTrue(5 == mt.getNumColumns());
-
-        //assertEquals("Time", mt.getTimeName());
-        //assertEquals(1, mt.getBlock(0).getColumn(0).getValue(0), 0.001);
-        //assertEquals("A_dg", mt.getBlock(0).getColumn(0).getColumnName());
-
     }
 
     /**
@@ -118,7 +113,6 @@ public class SEDMLExecutorTest {
      * @throws OWLOntologyCreationException 
      */
     @Test
-    // @Ignore //https://github.com/shalinshah1993/SBSCL/issues/31
     public final void testBasicSEDMLExecutorForMiriamURNDefinedModel() throws XMLException, IOException, OWLOntologyCreationException {
 
         String miriamPath = TestUtils.getPathForTestResource(miriamtest);
@@ -148,69 +142,62 @@ public class SEDMLExecutorTest {
 
 
     @Test
-    @Ignore
-    public final void testIkappab() throws XMLException, OWLOntologyCreationException{
+    public final void testIkappab() throws XMLException, OWLOntologyCreationException, IOException{
         String resource = "/sedml/L1V2/ikappab/ikappab.xml";
         testSpecificationExample(resource);
     }
 
     @Test
-    @Ignore
-    public final void testLeloupSBML() throws XMLException, OWLOntologyCreationException {
+    public final void testLeloupSBML() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/leloup-sbml/leloup-sbml.xml";
         testSpecificationExample(resource);
     }
 
     @Test
-    @Ignore
-    public final void testLorenzSBML() throws XMLException, OWLOntologyCreationException {
+    public final void testLorenzSBML() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/lorenz-sbml/lorenz.xml";
         testSpecificationExample(resource);
     }
 
     @Test
-    @Ignore
-    public final void testOscliNestedPulse() throws XMLException, OWLOntologyCreationException {
+    public final void testOscliNestedPulse() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/oscli-nested-pulse/oscli-nested-pulse.xml";
         testSpecificationExample(resource);
     }
 
     @Test
     @Ignore
-    public final void testParameterScan2D() throws XMLException, OWLOntologyCreationException {
+    public final void testParameterScan2D() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/parameter-scan-2d/parameter-scan-2d.xml";
         testSpecificationExample(resource);
     }
 
     @Test
-    @Ignore
-    public final void testRepeatedScanOscli() throws XMLException, OWLOntologyCreationException {
+    public final void testRepeatedScanOscli() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/repeated-scan-oscli/repeated-scan-oscli.xml";
         testSpecificationExample(resource);
     }
 
     @Test
-    @Ignore
-    public final void testRepeatedSteadyScanOscli() throws XMLException, OWLOntologyCreationException {
+    public final void testRepeatedSteadyScanOscli() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/repeated-steady-scan-oscli/repeated-steady-scan-oscli.xml";
         testSpecificationExample(resource);
     }
 
     @Test
-    @Ignore
-    public final void testRepeatedStochasticRuns() throws XMLException, OWLOntologyCreationException {
+    public final void testRepeatedStochasticRuns() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/repeated-stochastic-runs/repeated-stochastic-runs.xml";
         testSpecificationExample(resource);
     }
 
     @Test
-    public final void testRepressilator() throws XMLException, OWLOntologyCreationException {
+    public final void testRepressilator() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/repressilator/repressilator.xml";
         testSpecificationExample(resource);
     }
 
 
-    public void testSpecificationExample(String resource) throws XMLException, OWLOntologyCreationException {
+    public void testSpecificationExample(String resource) throws XMLException, OWLOntologyCreationException, IOException {
         String sedmlPath = TestUtils.getPathForTestResource(resource);
 
         File file = new File(sedmlPath);
@@ -236,12 +223,22 @@ public class SEDMLExecutorTest {
             // postprocess
             IProcessedSedMLSimulationResults pr = exe.processSimulationResults(wanted, res);
             assertNotNull(pr);
+            
+            // save the output plot
+            if(wanted.isPlot2d()) {
+	    			Plot2D plots = (Plot2D) wanted;
+	    			List<Curve> curves = plots.getListOfCurves();
+	    			
+	    			// plot all processed results as per curve descriptions
+	    			String title = wanted.getId() + "(" + wanted.getName() + ")";
+	    			PlotProcessedSedmlResults p = new PlotProcessedSedmlResults(pr, curves, title);
+	    			p.savePlot(resource, wanted.getId());
+    			}
         }
-
     }
 
     @Test
-    public final void testRepressilator1() throws XMLException, OWLOntologyCreationException {
+    public final void testRepressilator1() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/repressilator/repressilator.xml";
         testSpecificationExample(resource);
         String sedmlPath = TestUtils.getPathForTestResource(resource);
@@ -278,9 +275,6 @@ public class SEDMLExecutorTest {
             int ncol = pr.getNumColumns();
             int nrow = pr.getNumDataRows();
 
-            // https://github.com/shalinshah1993/SBSCL/issues/44
-            // assertEquals(1001, nrow);
-
             if (outputId == "timecourse"){
                 assertEquals(3, ncol);
                 assertEquals("plot_0__plot_0_0_0__plot_0_0_1", headers[0]);
@@ -297,6 +291,17 @@ public class SEDMLExecutorTest {
                 assertEquals("plot_2__plot_2_1_0__plot_2_0_0", headers[1]);
                 assertEquals("plot_2__plot_2_0_1__plot_2_1_0", headers[2]);
             }
+            
+            // save the output plot
+            if(wanted.isPlot2d()) {
+	    			Plot2D plots = (Plot2D) wanted;
+	    			List<Curve> curves = plots.getListOfCurves();
+	    			
+	    			// plot all processed results as per curve descriptions
+	    			String title = wanted.getId() + "(" + wanted.getName() + ")";
+	    			PlotProcessedSedmlResults p = new PlotProcessedSedmlResults(pr, curves,  title);
+	    			p.savePlot(resource, wanted.getId());
+    			}
         }
     }
 
