@@ -142,7 +142,7 @@ public class SEDMLExecutorTest {
 
 
     @Test
-    public final void testIkappab() throws XMLException, OWLOntologyCreationException, IOException{
+    public final void testIkappab() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/ikappab/ikappab.xml";
         testSpecificationExample(resource);
     }
@@ -160,13 +160,15 @@ public class SEDMLExecutorTest {
     }
 
     @Test
+    @Ignore
     public final void testOscliNestedPulse() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/oscli-nested-pulse/oscli-nested-pulse.xml";
         testSpecificationExample(resource);
     }
 
     @Test
-    @Ignore
+    @Ignore 
+    //Contains nested repeated task https://github.com/shalinshah1993/SBSCL/issues/55
     public final void testParameterScan2D() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/parameter-scan-2d/parameter-scan-2d.xml";
         testSpecificationExample(resource);
@@ -179,12 +181,14 @@ public class SEDMLExecutorTest {
     }
 
     @Test
+    @Ignore
     public final void testRepeatedSteadyScanOscli() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/repeated-steady-scan-oscli/repeated-steady-scan-oscli.xml";
         testSpecificationExample(resource);
     }
 
     @Test
+    @Ignore
     public final void testRepeatedStochasticRuns() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/repeated-stochastic-runs/repeated-stochastic-runs.xml";
         testSpecificationExample(resource);
@@ -302,8 +306,8 @@ public class SEDMLExecutorTest {
 	    			// plot all processed results as per curve descriptions
 	    			String title = wanted.getId() + "(" + wanted.getName() + ")";
 	    			// UNCOMMENT THIS TO SAVE PLOT
-	    			//PlotProcessedSedmlResults p = new PlotProcessedSedmlResults(pr, curves,  title);
-	    			//assertNotNull(p);
+	    			// PlotProcessedSedmlResults p = new PlotProcessedSedmlResults(pr, curves,  title);
+	    			// assertNotNull(p);
 	    			// p.savePlot(resource, wanted.getId());
     			}
         }
