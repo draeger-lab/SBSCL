@@ -9,7 +9,7 @@ Please note that this project does not contain any user interface, neither a com
 Its abstract type and interface hierarchy facilitates the implementation of further community standards, such as [CellML](http://www.cellml.org).
 
 When using the Simulation Core Library, please cite:
-Roland Keller, Alexander Dörr, Akito Tabira, Akira Funahashi, Michael J. Ziller, Richard Adams, Nicolas Rodriguez, Nicolas Le Novère, Noriko Hiroi, Hannes Planatscher, Andreas Zell, and Andreas Dräger. The systems biology simulation core algorithm. BMC Systems Biology, 7:55, July 2013. [ DOI | link | pdf ]
+Roland Keller, Alexander Dörr, Akito Tabira, Akira Funahashi, Michael J. Ziller, Richard Adams, Nicolas Rodriguez, Nicolas Le Novère, Noriko Hiroi, Hannes Planatscher, Andreas Zell, and Andreas Dräger. The systems biology simulation core algorithm. *BMC Systems Biology*, 7:55, July 2013. [ [DOI](https://doi.org/10.1186/1752-0509-7-55) | [link](https://bmcsystbiol.biomedcentral.com/articles/10.1186/1752-0509-7-55) | [pdf](https://bmcsystbiol.biomedcentral.com/track/pdf/10.1186/1752-0509-7-55) ]
 
 ## Capabilities
 
