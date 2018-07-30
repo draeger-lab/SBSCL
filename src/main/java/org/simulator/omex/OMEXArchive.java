@@ -89,7 +89,7 @@ public class OMEXArchive {
 	
 	/**
 	 * A simple method to uncompress combine archives at desired location
-	 * @param File
+	 * @param destination
 	 * @return boolean
 	 */
 	public boolean extractArchive(File destination) {

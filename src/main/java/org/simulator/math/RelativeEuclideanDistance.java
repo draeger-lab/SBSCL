@@ -29,7 +29,7 @@ package org.simulator.math;
  * 
  * @author Roland Keller
  * @version $Rev$
- * @since
+ * @since 1.0
  */
 public class RelativeEuclideanDistance extends Relative_N_Metric {
 
