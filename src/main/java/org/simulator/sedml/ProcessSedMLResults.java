@@ -351,7 +351,7 @@ public class ProcessSedMLResults {
 								mergeTimeCols(a, b),
 								mergeDataCols(a.getData(), b.getData()), 
 								results.get(0).getColumnHeaders()))).get();
-			return flat;
+		return flat;
 	}
 
 	/**
@@ -396,7 +396,9 @@ public class ProcessSedMLResults {
 	private double[] mergeTimeCols(IRawSedmlSimulationResults a, IRawSedmlSimulationResults b) {
 		// Get end time point for taskA
 		double[] timeA = ((MultTableSEDMLWrapper)a).getMultiTable().getTimePoints();
-		double timeBegin = timeA[timeA.length - 1];
+		// Following tellurim we concat all the iterations of repeated tasks
+		// so start time from 0
+		double timeBegin = 0d;
 
 		// Add end time point to taskB
 		double[] timeB = Arrays.stream(((MultTableSEDMLWrapper)b).getMultiTable().getTimePoints()).map(row -> row + timeBegin).toArray();
