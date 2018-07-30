@@ -459,6 +459,7 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>3.0.1</version>
 				<configuration>
+					<overview>${project.basedir}/src/main/javadoc/overview.html</overview>
 					<additionalparam>${javadoc.opts}</additionalparam>
 					<failOnError>false</failOnError>
 				</configuration>
