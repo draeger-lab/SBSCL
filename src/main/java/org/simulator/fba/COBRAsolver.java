@@ -336,7 +336,7 @@ public class COBRAsolver {
 	 * Returns the objective value of the current solution.
 	 * 
 	 * @return the objective value of the current solution.
-	 * @throws IloException
+	 * @throws NullPointerException
 	 *         If the method fails, an exception of type IloException, or one of
 	 *         its derived classes, is thrown.
 	 */

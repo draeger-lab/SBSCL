@@ -16,8 +16,8 @@ import org.w3c.dom.Document;
 
 /**
  * This resolver will resolve relative URIs with no scheme, i.e., relative URIs
- * to files.<br/>
- * For example:<br/>
+ * to files.<br>
+ * For example:<br>
  * <ul>
  * <li>"Myfile.xml"
  * <li>a/b/c/d.xml

@@ -48,7 +48,7 @@ import org.simulator.math.odes.MultiTable.Block.Column;
  * object therefore puts both elements together, i.e., the time column is
  * considered to be the first column in the table.
  * 
- * @author Andreas Dr&auml;ger
+ * @author draeger
  * @version $Rev$
  * @since 0.9
  */

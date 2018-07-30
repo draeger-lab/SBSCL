@@ -18,7 +18,7 @@ import static org.junit.Assert.fail;
 
 /**
  * This test class shows how a SED-ML file can be interpreted and executed using
- *  SBML Simulator Core solvers. <br/> It makes extensive use of jlibsedml's 
+ *  SBML Simulator Core solvers. <br> It makes extensive use of jlibsedml's 
  *  Execution framework which performs boiler-plate code for operations such as 
  *  post-processing of results, etc., This is main test file L1V2 SED-ML elements
  *  such as repeatedTasks and FunctionalRange
@@ -26,7 +26,7 @@ import static org.junit.Assert.fail;
  * @author Shalin Shah
  * @since 1.5
  */
-public class SEDMLv2Example {
+public class SEDMLExample {
 	private static SedML sedml = null;
 
 	public static void main(String[] args) throws XMLException, OWLOntologyCreationException {

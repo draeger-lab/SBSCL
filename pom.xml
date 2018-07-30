@@ -51,6 +51,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.license.url>http://www.gnu.org/licenses/lgpl-3.0-standalone.html</project.license.url>
 		<junit.version>4.11</junit.version>
+		<maven-javadoc-plugin.version>2.10.2</maven-javadoc-plugin.version>
 	</properties>
 
 	<issueManagement>
@@ -389,13 +390,7 @@
 					</configuration>
 				</plugin>
 
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<configuration>
-						<testFailureIgnore>false</testFailureIgnore>
-					</configuration>
-				</plugin>
+				
 
 				<!-- Assemble executable JAR -->
 				<plugin>
@@ -438,14 +433,41 @@
 			</plugins>
 		</pluginManagement>
 
-	<!-- Resources copied by resources plug-in. Note that mvn site needs to run before mvn install to
-	make sure the website code exists inside target/site folder -->
-	<resources>
-		<resource>
-			<directory>${project.build.directory}/site/</directory>
-			<targetPath>${basedir}/docs/</targetPath>
-		</resource>
-	</resources>  
+		<!-- Resources copied by resources plug-in. Note that mvn site needs to run before mvn install to
+		make sure the website code exists inside target/site folder -->
+		<resources>
+			<resource>
+				<directory>${project.build.directory}/site/</directory>
+				<targetPath>${basedir}/docs/</targetPath>
+			</resource>
+		</resources>  
 	</build>
 	
+	<!--  To stop maven errors from javadoc warnings -->
+	<profiles>
+		<profile>
+			<id>java8-doclint-disabled</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<properties>
+				<javadoc.opts>-Xdoclint:none</javadoc.opts>
+			</properties>
+		</profile>
+	</profiles>
+
+	<!-- Generate javadoc and integrate with generated website -->
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.0.1</version>
+				<configuration>
+					<additionalparam>${javadoc.opts}</additionalparam>
+					<failOnError>false</failOnError>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>
