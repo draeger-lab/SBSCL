@@ -1,20 +1,26 @@
 package org.simulator.examples;
 
-import de.binfalse.bflog.LOGGER;
-import org.jfree.ui.RefineryUtilities;
-import org.jlibsedml.*;
-import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
-import org.jlibsedml.execution.IRawSedmlSimulationResults;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.simulator.math.odes.MultiTable;
-import org.simulator.plot.PlotMultiTable;
-import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.fail;
+import org.jfree.ui.RefineryUtilities;
+import org.jlibsedml.AbstractTask;
+import org.jlibsedml.Curve;
+import org.jlibsedml.Libsedml;
+import org.jlibsedml.Output;
+import org.jlibsedml.Plot2D;
+import org.jlibsedml.SedML;
+import org.jlibsedml.XMLException;
+import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
+import org.jlibsedml.execution.IRawSedmlSimulationResults;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.simulator.plot.PlotProcessedSedmlResults;
+import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
+
+import de.binfalse.bflog.LOGGER;
 
 /**
  * This test class shows how a SED-ML file can be interpreted and executed using
@@ -43,7 +49,7 @@ public class SEDMLExample {
 
 		// in this SED-ML file there's just one output. If there were several,
 		// we could either iterate or get user to  decide what they want to run.
-		Output wanted = sedml.getOutputs().get(0);
+		Output wanted = sedml.getOutputs().get(2);
 		SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, sedmlDir);
 		// This gets the raw simulation results - one for each Task that was run.
 		LOGGER.warn("Collecting tasks...");
@@ -52,10 +58,22 @@ public class SEDMLExample {
 			fail ("Simulatation failed: " + exe.getFailureMessages().get(0));
 			return;
 		}
+    
 		// now process.In this case, there's no processing performed - we're displaying the
 		// raw results.
-		LOGGER.warn("Outputs wanted: " + wanted.getAllDataGeneratorReferences());
-		IProcessedSedMLSimulationResults mt = exe.processSimulationResults(wanted, res);
+		LOGGER.warn("Outputs wanted: " + wanted.getId());
+		IProcessedSedMLSimulationResults prRes = exe.processSimulationResults(wanted, res);
+		
+		if(wanted.isPlot2d()) {
+			Plot2D plots = (Plot2D) wanted;
+			List<Curve> curves = plots.getListOfCurves();
+			
+			// plot all processed results as per curve descriptions
+			PlotProcessedSedmlResults p = new PlotProcessedSedmlResults(prRes, curves, plots.getElementName());
+			p.pack();
+			RefineryUtilities.centerFrameOnScreen(p);
+			p.setVisible( true );
+		}
 	}
 
 }

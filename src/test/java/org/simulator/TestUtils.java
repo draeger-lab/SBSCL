@@ -1,18 +1,14 @@
 package org.simulator;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.stream.XMLStreamException;
 import org.apache.commons.lang3.ArrayUtils;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.junit.Assert.*;
 
 /**
  * Helper functions for tests.
@@ -33,7 +29,7 @@ public class TestUtils {
         String rootPath = resourcePath;
         if (mvnResource) {
             File currentDir = new File(System.getProperty("user.dir"));
-            System.out.println("curDir: " + currentDir);
+            //System.out.println("curDir: " + currentDir);
             // String rootPath = new File(currentDir, resourcePath).getPath();
             rootPath = currentDir.getAbsolutePath() + "/src/test/resources" + resourcePath;
         }
@@ -81,9 +77,10 @@ public class TestUtils {
         String path = null;
         File currentDir = new File(System.getProperty("user.dir"));
         path = currentDir.getAbsolutePath() + "/src/test/resources" + resourcePath;
-        System.out.println("currentDir: " + currentDir);
-        System.out.println("path: " + path);
+        //System.out.println("currentDir: " + currentDir);
+        //System.out.println("path: " + path);
         return path;
+    
     }
 
     /**
