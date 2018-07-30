@@ -255,7 +255,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
 
   /**
    * This {@link Map} saves the current stoichiometric coefficients for those
-   * {@link SpeciesReference} objects that are a target to an {@link Assignment}
+   * {@link SpeciesReference} objects that are a target to an Assignment
    * .
    */
   protected Map<String, Double> stoichiometricCoefHash;

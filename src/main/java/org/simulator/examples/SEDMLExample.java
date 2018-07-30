@@ -24,7 +24,7 @@ import de.binfalse.bflog.LOGGER;
 
 /**
  * This test class shows how a SED-ML file can be interpreted and executed using
- *  SBML Simulator Core solvers. <br/> It makes extensive use of jlibsedml's 
+ *  SBML Simulator Core solvers. <br> It makes extensive use of jlibsedml's 
  *  Execution framework which performs boiler-plate code for operations such as 
  *  post-processing of results, etc., This is main test file L1V2 SED-ML elements
  *  such as repeatedTasks and FunctionalRange
@@ -50,7 +50,6 @@ public class SEDMLExample {
 		// in this SED-ML file there's just one output. If there were several,
 		// we could either iterate or get user to  decide what they want to run.
 		Output wanted = sedml.getOutputs().get(2);
-		
 		SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, sedmlDir);
 		// This gets the raw simulation results - one for each Task that was run.
 		LOGGER.warn("Collecting tasks...");
@@ -59,6 +58,7 @@ public class SEDMLExample {
 			fail ("Simulatation failed: " + exe.getFailureMessages().get(0));
 			return;
 		}
+    
 		// now process.In this case, there's no processing performed - we're displaying the
 		// raw results.
 		LOGGER.warn("Outputs wanted: " + wanted.getId());

@@ -53,7 +53,7 @@ public class AddMetaInfo{
 	/**
 	 * A static method which add id information of each element to userObjects map
 	 * which is an element of AbstractTreeNode SBML class to store extra information
-	 * @param SBMLDocument
+	 * @param doc
 	 */
 	public static SBMLDocument putOrigId(SBMLDocument doc) {
 		doc = (SBMLDocument) recurse(doc);

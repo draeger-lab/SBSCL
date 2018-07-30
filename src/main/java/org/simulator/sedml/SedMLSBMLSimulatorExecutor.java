@@ -82,11 +82,11 @@ import net.biomodels.kisao.impl.KiSAOQueryMaker;
  * <p>
  * Typical usage for this class is demonstrated in the
  * <a href="http://www.junit.org/" target="_blank">JUnit</a> test for this
- * class.<br/>
+ * class.<br>
  * 
  * Models can be resolved either from local files, URLs, or
  * <a href="http://www.ebi.ac.uk/biomodels-main/" target="_blank">BioModels</a>
- * <a href="http://www.ebi.ac.uk/miriam/main/">MIRIAM</a> URNs.<br/>
+ * <a href="http://www.ebi.ac.uk/miriam/main/">MIRIAM</a> URNs.<br>
  * TO resolve models from different sources, see the documentation for
  * {@link AbstractSedmlExecutor} in the
  * <a href="http://jlibsedml.sourceforge.net" target="_blank">jlibsedml.jar</a>
@@ -141,7 +141,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 	}
 
 	/**
-	 * Enables models to be retrieved from a SED-ML archive format.<br/>
+	 * Enables models to be retrieved from a SED-ML archive format.<br>
 	 * This method must be called <b>before</b> {@link #runSimulations()} is called,
 	 * if a SED-ML archive is to be used as a model source.
 	 * 

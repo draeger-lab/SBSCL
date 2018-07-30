@@ -31,7 +31,7 @@ import de.binfalse.bflog.LOGGER;
 
 /**
  * Processes raw simulation results according to instructions specified in the
- * {@link DataGenerator} elements specified in the output. <br/>
+ * {@link DataGenerator} elements specified in the output. <br>
  * This class is used to process results using information in dataGenerator
  * elements. It is similar to jlibsedml's ProcessSedMLResults2 with the added
  * support for working with repeatedTasks.
@@ -68,8 +68,6 @@ public class ProcessSedMLResults {
 	 * This method modifies jlibsedml's process method to support dataGenerators for
 	 * repeatedTasks. Processed results can be extracted using getProcessedResult().
 	 * 
-	 * @param Map<AbstractTask,
-	 *            List<IRawSedmlSimulationResults>>
 	 */
 	public void process(Map<AbstractTask, List<IRawSedmlSimulationResults>> res) {
 

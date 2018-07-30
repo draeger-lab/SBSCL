@@ -48,9 +48,10 @@ public class PlotMultiTable extends ApplicationFrame {
 	/**
 	 * Initializes the JFreeChart and dataSet for the chart using MultiTable
 	 * 
-	 * @param MultiTable
+	 * @param table
 	 *        The input data type to the plot API is MultiTable which gets converted
 	 *        internally to DefaultCategoryDataset
+	 * @param title
 	 */
 	public PlotMultiTable(MultiTable table, String title) {
 		super(title);
