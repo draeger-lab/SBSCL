@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- * This file is part of Simulation Core Library, a Java-based library 
-	* for efficient numerical simulation of biological models. * * Copyright 
-	(C) 2007-2018 jointly by the following organizations: * 1. University of 
-	Tuebingen, Germany * 2. Keio University, Japan * 3. Harvard University, USA 
-	* 4. The University of Edinburgh, UK * 5. EMBL European Bioinformatics Institute 
-	(EBML-EBI), Hinxton, UK * 6. The University of California, San Diego, La 
-	Jolla, CA, USA * 7. The Babraham Institute, Cambridge, UK * 8. Duke University, 
-	Durham, NC, US * * This library is free software; you can redistribute it 
-	and/or modify * it under the terms of the GNU Lesser General Public License 
-	as * published by the Free Software Foundation. A copy of the license * agreement 
-	is provided in the file named "LICENSE.txt" included with * this software 
-	distribution and also available online as * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<!-- 
+	* This file is part of Simulation Core Library, a Java-based library 
+	* for efficient numerical simulation of biological models. 
+	* 
+	* Copyright (C) 2007-2018 jointly by the following organizations: 
+	* 1. University of Tuebingen, Germany 
+	* 2. Keio University, Japan 
+	* 3. Harvard University, USA 
+	* 4. The University of Edinburgh, UK 
+	* 5. EMBL European Bioinformatics Institute (EBML-EBI), Hinxton, UK 
+	* 6. The University of California, San Diego, La Jolla, CA, USA 
+	* 7. The Babraham Institute, Cambridge, UK 
+	* 8. Duke University, Durham, NC, US 
+	* 
+	* This library is free software; you can redistribute it and/or modify 
+	* it under the terms of the GNU Lesser General Public License as 
+	* published by the Free Software Foundation. A copy of the license 
+	* agreement is provided in the file named "LICENSE.txt" included with 
+	* this software distribution and also available online as 
+	* <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>. 
+	-->
+	
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
@@ -36,8 +45,9 @@
 	<properties>
 		<jdk.version>1.8</jdk.version>
 		<maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
-		<year>${maven.build.timestamp}</year><!-- This property is used for filtering 
-			the variable ${year} in some resource files -->
+		<year>${maven.build.timestamp}</year>
+		<!-- This property is used for filtering the variable ${year} in some resource 
+			files -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.license.url>http://www.gnu.org/licenses/lgpl-3.0-standalone.html</project.license.url>
 		<junit.version>4.11</junit.version>
@@ -50,8 +60,8 @@
 
 	<distributionManagement>
 		<site>
-		  <id>SBSCL</id>
-		  <url>https://draeger-lab.github.io/SBSCL</url>
+			<id>SBSCL</id>
+			<url>https://draeger-lab.github.io/SBSCL</url>
 		</site>
 	</distributionManagement>
 
@@ -71,286 +81,289 @@
 	<developers>
 		<developer>
 			<name>Richard Adams</name>
-                        <id>otter606</id>
-                        <email>ra22597@gmail.com</email>
-                        <url>https://github.com/otter606</url>
+			<id>otter606</id>
+			<email>ra22597@gmail.com</email>
+			<url>https://github.com/otter606</url>
 		</developer>
 		<developer>
 			<name>Alexander Dörr</name>
 			<email>alexander.doerr@uni-tuebingen.de</email>
 			<url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/doerr/</url>
-                        <timezone>Germany/Berlin</timezone>
+			<timezone>Germany/Berlin</timezone>
 		</developer>
 		<developer>
 			<name>Andreas Dräger</name>
 			<id>draeger</id>
 			<email>andreas.draeger@uni-tuebingen.de</email>
 			<url>https://github.com/draeger</url>
-                        <organization>University of Tübingen</organization>
-                        <roles>
-                          <role>architect</role>
-                          <role>developer</role>
-                        </roles>
-                        <timezone>Germany/Berlin</timezone>
+			<organization>University of Tübingen</organization>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>Germany/Berlin</timezone>
 		</developer>
 		<developer>
 			<name>Akira Funahashi</name>
 			<id>funasoul</id>
-                        <email>funa@bio.keio.ac.jp</email>
+			<email>funa@bio.keio.ac.jp</email>
 			<url>http://fun.bio.keio.ac.jp/people/</url>
-                        <organization>Keio University</organization>
-                        <timezone>Japan/Tokyo</timezone>
+			<organization>Keio University</organization>
+			<timezone>Japan/Tokyo</timezone>
 		</developer>
 		<developer>
 			<name>Roland Keller</name>
-                        <id>RolandKeller5</id>
+			<id>RolandKeller5</id>
 			<email>http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/</email>
 			<url>roland.keller@gmx.de</url>
-                        <timezone>Germany/Berlin</timezone>
+			<timezone>Germany/Berlin</timezone>
 		</developer>
-                <developer>
-                        <name>Matthias König</name>
-                        <id>matthiaskoenig</id>
-                        <email>konigmatt@googlemail.com</email>
-                        <url>https://github.com/matthiaskoenig</url>
-                        <organization>Humboldt University</organization>
-                        <timezone>Germany/Berlin</timezone>
-                </developer>
+		<developer>
+			<name>Matthias König</name>
+			<id>matthiaskoenig</id>
+			<email>konigmatt@googlemail.com</email>
+			<url>https://github.com/matthiaskoenig</url>
+			<organization>Humboldt University</organization>
+			<timezone>Germany/Berlin</timezone>
+		</developer>
 		<developer>
 			<name>Nicolas Le Novère</name>
-                        <id>lenov</id>
+			<id>lenov</id>
 			<email>n.lenovere@gmail.com</email>
 			<url>http://lenoverelab.org/perso/lenov/</url>
-                        <organization>The Babraham Institute</organization>
-                        <timezone>UK/London</timezone>
+			<organization>The Babraham Institute</organization>
+			<timezone>UK/London</timezone>
 		</developer>
 		<developer>
 			<name>Hannes Planatscher</name>
-                        <id>planatscher</id>
+			<id>planatscher</id>
 			<email>hannes.planatscher@nmi.de</email>
-                        <url>https://github.com/planatscher</url>
-                        <timezone>Germany/Berlin</timezone>
+			<url>https://github.com/planatscher</url>
+			<timezone>Germany/Berlin</timezone>
 		</developer>
 		<developer>
 			<name>Nicolas Rodriguez</name>
-                        <id>niko-rodrigue</id>
+			<id>niko-rodrigue</id>
 			<email>rodriguezn@babraham.ac.uk</email>
 			<url>https://github.com/niko-rodrigue</url>
-                        <organization>The Babraham Institute</organization>
-                        <timezone>UK/London</timezone>
-                        <properties>
-                          <picUrl>https://www.lenoverelab.org/sites/default/files/pictures/Nicolas_Rodriguez-170x150.jpg</picUrl>
-                        </properties>
-		</developer>
-                <developer>
-                        <name>Shalin Shah</name>
-                        <id>shalinshah1993</id>
-                        <email>shalin.shah@duke.edu</email>
-                        <url>http://people.duke.edu/~sns37</url>
-                        <organization>Duke University</organization>
-                </developer>
-                <developer>
-			<name>Akito Tabira</name>
-                        <id>mythosil</id>
-			<email>tabira@fun.bio.keio.ac.jp</email>
-			<url>https://github.com/mythosil</url>
-                        <organization>Keio University</organization>
-                        <timezone>Japan/Tokyo</timezone>
+			<organization>The Babraham Institute</organization>
+			<timezone>UK/London</timezone>
+			<properties>
+				<picUrl>https://www.lenoverelab.org/sites/default/files/pictures/Nicolas_Rodriguez-170x150.jpg</picUrl>
+			</properties>
 		</developer>
 		<developer>
-                  <name>Max Zwießele</name>
-                  <id>mzwiessele</id>
-                  <url>https://github.com/mzwiessele</url>           
+			<name>Shalin Shah</name>
+			<id>shalinshah1993</id>
+			<email>shalin.shah@duke.edu</email>
+			<url>https://github.com/shalinshah1993</url>
+			<organization>Duke University</organization>
+			<timezone>US/EST</timezone>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>Akito Tabira</name>
+			<id>mythosil</id>
+			<email>tabira@fun.bio.keio.ac.jp</email>
+			<url>https://github.com/mythosil</url>
+			<organization>Keio University</organization>
+			<timezone>Japan/Tokyo</timezone>
+		</developer>
+		<developer>
+			<name>Max Zwießele</name>
+			<id>mzwiessele</id>
+			<url>https://github.com/mzwiessele</url>
 		</developer>
 	</developers>
 
-        <contributors>
-          <contributor>
-            <name>Michael T. Cooling</name>
-            <url>https://www.linkedin.com/in/mikecooling/</url>
-            <organization>University of Auckland</organization>
-          </contributor>
-          <contributor>
-            <name>Noriko Hiroi</name>
-            <email>hiroi@bio.keio.ac.jp</email>
-            <url>http://fun.bio.keio.ac.jp/~hiroi/</url>
-            <organization>Keio University</organization>
-          </contributor>
-          <contributor>
-            <name>Marcel Kronfeld</name>
-            <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/kronfeld</url>
-            <organization>University of Tübingen</organization>
-          </contributor>
-          <contributor>
-            <name>Adrian Schröder</name>
-            <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/schroeder/</url>
-            <organization>University of Tübingen</organization>
-          </contributor>
-          <contributor>
-            <name>Dieudonné M. Wouamba</name>
-            <url>https://www.linkedin.com/in/dieudonné-motsou-wouamba-2952a018/</url>
-            <organization>University of Tübingen</organization>
-          </contributor>
-          <contributor>
-              <name>Andreas Zell</name>
-              <email>andreas.zell@uni-tuebingen.de</email>
-              <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/zell/</url>
-              <organization>University of Tübingen</organization>
-          </contributor>
-          <contributor>
-            <name>Michael J. Ziller</name>
-            <email>michael_ziller@psych.mpg.de</email>
-            <url>https://www.psych.mpg.de/person/47510/2176252</url>
-            <organization>Max Planck Institute of Psychatry</organization>
-          </contributor>
-        </contributors>
+	<contributors>
+		<contributor>
+			<name>Michael T. Cooling</name>
+			<url>https://www.linkedin.com/in/mikecooling/</url>
+			<organization>University of Auckland</organization>
+		</contributor>
+		<contributor>
+			<name>Noriko Hiroi</name>
+			<email>hiroi@bio.keio.ac.jp</email>
+			<url>http://fun.bio.keio.ac.jp/~hiroi/</url>
+			<organization>Keio University</organization>
+		</contributor>
+		<contributor>
+			<name>Marcel Kronfeld</name>
+			<url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/kronfeld</url>
+			<organization>University of Tübingen</organization>
+		</contributor>
+		<contributor>
+			<name>Adrian Schröder</name>
+			<url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/schroeder/</url>
+			<organization>University of Tübingen</organization>
+		</contributor>
+		<contributor>
+			<name>Dieudonné M. Wouamba</name>
+			<url>https://www.linkedin.com/in/dieudonné-motsou-wouamba-2952a018/</url>
+			<organization>University of Tübingen</organization>
+		</contributor>
+		<contributor>
+			<name>Andreas Zell</name>
+			<email>andreas.zell@uni-tuebingen.de</email>
+			<url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/zell/</url>
+			<organization>University of Tübingen</organization>
+		</contributor>
+		<contributor>
+			<name>Michael J. Ziller</name>
+			<email>michael_ziller@psych.mpg.de</email>
+			<url>https://www.psych.mpg.de/person/47510/2176252</url>
+			<organization>Max Planck Institute of Psychatry</organization>
+		</contributor>
+	</contributors>
 
 
-      <!-- =================================================================== -->
-      <!-- Repositories -->
-      <!-- =================================================================== -->
-      
-      <repositories>
-	<repository>
-		<id>in-project</id>
-		<name>In project repository</name>
-		<url>file:${project.basedir}/src/lib/maven</url>
-	</repository>
+	<!-- =================================================================== -->
+	<!-- Repositories -->
+	<!-- =================================================================== -->
 
-	<!-- Adding repository to download latest jlibSBML -->
-	<repository>
-		<id>JSBML-SNAPSHOT</id>
-		<name>The JSBML Snapshot repository</name>
-		<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-	</repository>
-	<!-- Adding repository to download CombineArchive -->
+	<repositories>
+		<repository>
+			<id>in-project</id>
+			<name>In project repository</name>
+			<url>file:${project.basedir}/src/lib/maven</url>
+		</repository>
 
-	<repository>
-		<id>sems-maven-repository-releases</id>
-		<name>SEMS Maven Repo</name>
-		<url>http://mvn.sems.uni-rostock.de/releases/</url>
-		<layout>default</layout>
-		<snapshots>
-			<enabled>false</enabled>
-		</snapshots>
-	</repository>
-</repositories>
+		<!-- Adding repository to download latest jlibSBML -->
+		<repository>
+			<id>JSBML-SNAPSHOT</id>
+			<name>The JSBML Snapshot repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
+		<!-- Adding repository to download CombineArchive -->
 
-<!-- =================================================================== -->
-<!-- Dependencies -->
-<!-- =================================================================== -->
+		<repository>
+			<id>sems-maven-repository-releases</id>
+			<name>SEMS Maven Repo</name>
+			<url>http://mvn.sems.uni-rostock.de/releases/</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
-<dependencies>
-	<dependency>
-		<groupId>junit</groupId>
-		<artifactId>junit</artifactId>
-		<version>${junit.version}</version>
-		<!--<scope>test</scope> -->
-	</dependency>
-	<dependency>
-		<groupId>org.sbml.jsbml</groupId>
-		<artifactId>jsbml</artifactId>
-		<version>1.4-SNAPSHOT</version>
-	</dependency>
-	<dependency>
-		<groupId>org.jdom</groupId>
-		<artifactId>jdom2</artifactId>
-		<version>2.0.5</version>
-	</dependency>
-	<dependency>
-		<groupId>org.jmathml</groupId>
-		<artifactId>jmathml</artifactId>
-		<version>2.1.0</version>
-	</dependency>
-	<dependency>
-		<groupId>org.jlibsedml</groupId>
-		<artifactId>jlibsedml</artifactId>
-		<version>2.2.3</version>
-	</dependency>
-	<dependency>
-		<groupId>org.apache.commons</groupId>
-		<artifactId>commons-math</artifactId>
-		<version>2.2</version>
-	</dependency>
-	<dependency>
-		<groupId>org.apache.commons</groupId>
-		<artifactId>commons-lang3</artifactId>
-		<version>3.7</version>
-	</dependency>
+	<!-- =================================================================== -->
+	<!-- Dependencies -->
+	<!-- =================================================================== -->
 
-	<dependency>
-		<groupId>org.jfree</groupId>
-		<artifactId>jfreechart</artifactId>
-		<version>1.0.19</version>
-	</dependency>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<!--<scope>test</scope> -->
+		</dependency>
+		<dependency>
+			<groupId>org.sbml.jsbml</groupId>
+			<artifactId>jsbml</artifactId>
+			<version>1.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom2</artifactId>
+			<version>2.0.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jmathml</groupId>
+			<artifactId>jmathml</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jlibsedml</groupId>
+			<artifactId>jlibsedml</artifactId>
+			<version>2.2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.7</version>
+		</dependency>
 
-	<!-- LP solvers -->
-	<dependency>
-		<groupId>scpsolver</groupId>
-		<artifactId>SCPSolver</artifactId>
-		<version>1.0v2</version>
-		<!-- <scope>system</scope> <systemPath>${project.basedir}/src/lib/maven/scpsolver/SCPSolver/1.0/SCPSolver-1.0.jar</systemPath> -->
-	</dependency>
-	<dependency>
-		<groupId>scpsolver</groupId>
-		<artifactId>GLPKSolverPack</artifactId>
-		<version>4.35v2</version>
-		<!-- <scope>system</scope> <systemPath>${project.basedir}/src/lib/maven/scpsolver/GLPKSolverPack/4.35/GLPKSolverPack-4.35.jar</systemPath> -->
-	</dependency>
-	<dependency>
-		<groupId>scpsolver</groupId>
-		<artifactId>LPSOLVESolverPack</artifactId>
-		<version>5.5.2.5</version>
-		<!-- <scope>system</scope> <systemPath>${project.basedir}/src/lib/maven/scpsolver/LPSOLVESolverPack/5.5.2.5/LPSOLVESolverPack-5.5.2.5.jar</systemPath> -->
-	</dependency>
-	<dependency>
-		<groupId>kisao</groupId>
-		<artifactId>libkisao</artifactId>
-		<version>1.0.3.1-rc</version>
-		<!-- <scope>system</scope> <systemPath>${project.basedir}/src/lib/kisao/LibKiSAO/1.0.3.1/libkisao-1.0.3.1-rc.jar</systemPath> -->
-	</dependency>
-	<!-- OMEX archive -->
-	<dependency>
-		<groupId>de.uni-rostock.sbi</groupId>
-		<artifactId>CombineArchive</artifactId>
-		<version>1.3.6</version>
-		<exclusions>
-			<exclusion>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-			</exclusion>
-		</exclusions>
-	</dependency>
-</dependencies>
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.19</version>
+		</dependency>
+
+		<!-- LP solvers -->
+		<dependency>
+			<groupId>scpsolver</groupId>
+			<artifactId>SCPSolver</artifactId>
+			<version>1.0v2</version>
+			<!-- <scope>system</scope> <systemPath>${project.basedir}/src/lib/maven/scpsolver/SCPSolver/1.0/SCPSolver-1.0.jar</systemPath> -->
+		</dependency>
+		<dependency>
+			<groupId>scpsolver</groupId>
+			<artifactId>GLPKSolverPack</artifactId>
+			<version>4.35v2</version>
+			<!-- <scope>system</scope> <systemPath>${project.basedir}/src/lib/maven/scpsolver/GLPKSolverPack/4.35/GLPKSolverPack-4.35.jar</systemPath> -->
+		</dependency>
+		<dependency>
+			<groupId>scpsolver</groupId>
+			<artifactId>LPSOLVESolverPack</artifactId>
+			<version>5.5.2.5</version>
+			<!-- <scope>system</scope> <systemPath>${project.basedir}/src/lib/maven/scpsolver/LPSOLVESolverPack/5.5.2.5/LPSOLVESolverPack-5.5.2.5.jar</systemPath> -->
+		</dependency>
+		<dependency>
+			<groupId>kisao</groupId>
+			<artifactId>libkisao</artifactId>
+			<version>1.0.3.1-rc</version>
+			<!-- <scope>system</scope> <systemPath>${project.basedir}/src/lib/kisao/LibKiSAO/1.0.3.1/libkisao-1.0.3.1-rc.jar</systemPath> -->
+		</dependency>
+		<!-- OMEX archive -->
+		<dependency>
+			<groupId>de.uni-rostock.sbi</groupId>
+			<artifactId>CombineArchive</artifactId>
+			<version>1.3.6</version>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
 
 
-<!-- =================================================================== -->
-<!-- Building -->
-<!-- =================================================================== -->
+	<!-- =================================================================== -->
+	<!-- Building -->
+	<!-- =================================================================== -->
 
-<!-- To build the project run: -->
-<!-- mvn clean compile package assembly:single -->
+	<!-- To build the project run: -->
+	<!-- mvn clean compile package assembly:single -->
 
-<build>
-	<finalName>${project.artifactId}-${project.version}</finalName>
+	<build>
+		<finalName>${project.artifactId}-${project.version}</finalName>
 
-	<pluginManagement>
-		<plugins>
+		<pluginManagement>
+			<plugins>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>3.7.1</version>
-				<configuration>
-					<locales>en</locales>
-				</configuration>
-			</plugin>
-
-			<plugin>
-			  <groupId>org.apache.maven.plugins</groupId>
-			  <artifactId>maven-surefire-plugin</artifactId>
-                                  <version>2.22.0</version>
-                                </plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.7.1</version>
+					<configuration>
+						<locales>en</locales>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.22.0</version>
+				</plugin>
 
 				<!-- Download source code in Eclipse, best practice [OPTIONAL!] -->
 				<plugin>
@@ -415,8 +428,24 @@
 						</execution>
 					</executions>
 				</plugin>
+				<!-- This plug-in copies resources from target/site to docs/ so Github can render it  -->
+				<plugin>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.7</version>
+					<configuration>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
-	</build>
 
+	<!-- Resources copied by resources plug-in. Note that mvn site needs to run before mvn install to
+	make sure the website code exists inside target/site folder -->
+	<resources>
+		<resource>
+			<directory>${project.build.directory}/site/</directory>
+			<targetPath>${basedir}/docs/</targetPath>
+		</resource>
+	</resources>  
+	</build>
+	
 </project>
