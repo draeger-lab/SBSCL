@@ -35,7 +35,7 @@ import org.simulator.math.odes.MultiTable.Block.Column;
  * to post-process results.
  * This class can be used to access the raw results via the {@link #getMultiTable()} method.
  * <p>
- * All methods accessing data access the underlying {@link MultiTable} object.<br/>
+ * All methods accessing data access the underlying {@link MultiTable} object.<br>
  * Changes to a {@link MultiTable} object will therefore be visible to this class,
  * i.e., it does not make a separate copy of the data.
  * 

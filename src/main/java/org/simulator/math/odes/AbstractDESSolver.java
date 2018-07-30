@@ -301,7 +301,7 @@ public abstract class AbstractDESSolver implements DelayValueHolder, DESSolver, 
    * @param steadyState
    * 
    * @return The change.
-   * @throws Exception
+   * @throws DerivativeException
    */
   public abstract double[] computeChange(DESystem DES, double[] y, double t,
     double stepSize, double[] change, boolean steadyState) throws DerivativeException;
