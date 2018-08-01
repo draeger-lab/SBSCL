@@ -29,14 +29,14 @@ Roland Keller, Alexander Dörr, Akito Tabira, Akira Funahashi, Michael J. Ziller
 
 ## Documentation of the application programing interfaces
 
-To get startet with this library, please see the API documentation (JavaDoc) for the most recent Version 1.4. See the introduction, use-cases, and coding examples here: Description. 
+To get startet with this library, please see the API documentation (JavaDoc) for the most recent Version 1.5. See the introduction, use-cases, and coding examples here: ([Description](project-reports.html)). 
 
 In case you like to use older versions, you can find the documentation here:
-* Version 1.4
-* Version 1.3
-* Version 1.2
-* Version 1.1
-* Version 1.0
+* ([Version 1.4](old_javadoc/version_1.4/index.html))
+* ([Version 1.3](old_javadoc/version_1.3/index.html))
+* ([Version 1.2](old_javadoc/version_1.2/index.html))
+* ([Version 1.1](old_javadoc/version_1.1/index.html))
+* ([Version 1.0](old_javadoc/version_1.0/index.html))
 
 ## Download
 
