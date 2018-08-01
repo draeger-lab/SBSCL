@@ -346,7 +346,9 @@
 
 		<pluginManagement>
 			<plugins>
-
+			<!--  Run mvn license:third-party-report to build report of licenses -->
+			<!--  Download license files for 3rd party libraries and put them in website code -->
+			<!--  at src/target/generated-sources/THIRD-PARTY.txt and src/target/site/third-party-report.html -->
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>license-maven-plugin</artifactId>
@@ -359,6 +361,18 @@
 							</goals>
 						</execution>
 					</executions>
+					<dependencies>
+						<dependency>
+							<groupId>org.apache.maven.doxia</groupId>
+							<artifactId>doxia-core</artifactId>
+							<version>1.6</version>
+						</dependency>
+						<dependency>
+							<groupId>org.apache.maven.doxia</groupId>
+							<artifactId>doxia-site-renderer</artifactId>
+							<version>1.6</version>
+						</dependency>
+					</dependencies>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
