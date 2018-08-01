@@ -1,0 +1,56 @@
+<!--<project>
+
+
+	
+  	<body>
+    	<links>
+      		<item name="Github" href="https://github.com/draeger-lab/SBSCL" />
+      		<item name="Website" href="https://draeger-lab.github.io/SBSCL/"/>
+      		<item name="NRNB" href="http://nrnb.org/" />
+    	</links>
+
+    	<menu ref="reports"/>
+	</body>
+
+	<skin>
+		<groupId>org.apache.maven.skins</groupId>
+		<artifactId>maven-fluido-skin</artifactId>
+		<version>1.7</version>
+  	</skin>
+
+</project>-->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/DECORATION/1.6.0"
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.6.0
+         http://maven.apache.org/xsd/decoration-1.6.0.xsd">
+    <bannerLeft>
+        <name>${project.name}</name>
+        <href>${project.url}</href>
+    </bannerLeft>
+    <bannerRight>
+    	<name>icon</name>
+    	<src>images/SCL_icon.png</src>
+    	<href>https://draeger-lab.github.io/SBSCL/</href>
+  	</bannerRight>
+ 
+    <publishDate position="right" format="MMMM dd, yyyy"/>
+    <version/>
+  	<poweredBy>
+    	<logo name="GSoC" href="https://g.co/gsoc" img="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/GSoC.png/220px-GSoC.png"/>
+    	<logo name="NRNB" href="http://nrnb.org/" img="http://nrnb.org/images/NRNB_black.png"/>
+  	</poweredBy>
+ 
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.7</version>
+    </skin>
+ 
+    <body>
+    	<menu>
+            <item name="Introduction" href="markup.html"/>
+        </menu>
+        <menu ref="reports"/>
+        <footer/>
+    </body>
+</project>
