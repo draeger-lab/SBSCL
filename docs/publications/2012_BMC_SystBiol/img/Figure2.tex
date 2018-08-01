@@ -1,0 +1,64 @@
+\documentclass{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage{tikz}
+\usepackage{scalefnt}
+\usepackage{amssymb}
+\usepackage[papersize={12.3cm,23.5cm},left=.13cm,right=.5cm,bottom=.1cm,top=.1cm]{geometry}
+\begin{document}
+\usetikzlibrary{shapes,arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
+\pagestyle{empty}
+
+
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, fill=blue!20, 
+    text width=4.5em, text badly centered, node distance=2cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=8em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
+    minimum height=2em]
+
+\tikzstyle{io} = [trapezium,trapezium left angle=70,trapezium right angle=-70,minimum height=0.8cm, draw, fill=blue!20, text width=8em, text badly centered, node distance=3cm, inner sep=0pt,minimum height=2.5em]
+
+
+\begin{figure}
+\begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+	\node [cloud] (start) {Start};
+	\node [block, below of=start] (graph) {Create bipartite graph and greedy matching};
+	\node [block, below of=graph] (findpaths) {Find augmenting paths};
+	\node [decision, below of=findpaths, node distance=3cm] (matching?) {At least one path available?};
+	\node [block, left of=matching?, node distance=4.5cm] (augment) {Augment matching};
+	\node [decision, below of=matching?, node distance=3.5cm] (overdetermined?) {Model overdetermined?};
+	\node [block, below of=overdetermined?, node distance=3cm] (i0) {$i := 0$};
+	\node [block, right of=overdetermined?, node distance=4.5cm] (exception) {Throw exception};
+	\node [block, below of=i0, node distance=2.5cm] (solve) {Solve $i$\textsuperscript{th} algebraic rule according to matching};
+	\node [block, left of=solve, node distance=4.5cm] (i++) {$i := i + 1$};
+	\node [io, below of=solve, node distance=1.75cm] (newassignment) {New assignment rule};
+
+	\node [decision, below of=newassignment, node distance=2.25cm] (rulesleft?) {More algebraic rules?};
+	\node [cloud, below of=rulesleft?, node distance=2.5cm] (stop) {Stop};
+
+
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (start) -- (graph);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (graph) -- (findpaths);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (findpaths) -- (matching?);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (matching?) -- node {Yes}(augment);		
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (augment) |- (findpaths);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (matching?) -- node {No} (overdetermined?);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (overdetermined?) -- node {No} (i0);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (overdetermined?) -- node {Yes}(exception);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (i0) -- (solve);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (i++) -- (solve);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (solve) -- (newassignment);
+
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (newassignment) -- (rulesleft?);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (rulesleft?) -| node {Yes} (i++);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (rulesleft?) -- node {No} (stop);
+	\draw [color = black, line width = 1.0pt, ->, -triangle 60] (exception) |- (stop);
+
+\end{tikzpicture}
+\end{figure}
+
+\end{document}
