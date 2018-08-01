@@ -2,7 +2,7 @@
 
 [![License (LGPL version 3)](https://img.shields.io/badge/license-LGPLv3.0-blue.svg?style=plastic)](http://opensource.org/licenses/LGPL-3.0)
 [![Latest version](https://img.shields.io/badge/Latest_version-1.4.0-brightgreen.svg?style=plastic)](https://github.com/draeger-lab/SBSCL/releases/)
-[![DOI](http://img.shields.io/badge/DOI-10.1186%2F1752-0509-7-55-blue.svg?style=plastic)](https://doi.org/10.1186/1752-0509-7-55)
+[![DOI](https://img.shields.io/badge/DOI-10.1186%2F1752--0509--7--55-blue.svg?style=plastic)](https://doi.org/10.1186/1752-0509-7-55)
 [![Build Status](https://travis-ci.org/shalinshah1993/SBSCL.svg?branch=master&style=plastic)](https://travis-ci.org/shalinshah1993/SBSCL)
 
 #### Description
@@ -54,8 +54,6 @@ The package structure in more detail:
     |- test        -> JUnit test files along with resources required
  |- licenses       -> License agreements of all 3rd party libs and a list of 
  |                    authors of this library
- |- build.xml      -> an Apache ANT script which compiles the source code and
- |                    provides several options to create distribution files. (deprecated)
  |- LICENSE.txt    -> the license, under which this project is distributed
  |- pom.xml        -> Maven file for building the project
  |- README.md      -> this file
