@@ -32,28 +32,27 @@ Please cite the original work and the authors when using this program. See the [
 
 ## Getting started
 
-The folder doc/api contains a directory called version_XX, where XX stands for the current version of the library. For an introduction of how to use this library, please open the index.html file from this folder in your system's web browser. There you can find instructions and source code examples, including some use cases. The dist folder contains a JAR files of the simulation core library to work with.
+For an introduction of how to use this library, please open the javadoc [homepage](https://draeger-lab.github.io/SBSCL/apidocs/overview-summary.html). There you can find instructions and source code examples, including some use cases. Once a maven build is ran, the binaries will be generated in the target folder. This folder will also include a JAR files of the simulation core library to work with.
 
 ## File structure
 
 Just a brief explanation of the folders and files contained in this distribution.
 
 Most importantly, see 
- * the dist folder containing the JAR files
- * the doc folder containing an exhaustive source code and api documentation
+ * the `INSTALL.md` file for instruction to run maven build
+ * the docs folder containing an exhaustive documentation under apidocs
 
 The package structure in more detail:
 ```
  /
- |- doc
-    |- api         -> JavaDoc including examples for usage of the library
+ |- docs           -> Contains code for the maven built website
  |- src            -> The main source folder containing all the code and test files
     |- assembly    -> assembly files for maven plugins
     |- lib         -> 3rd party libraries needed for compilation and execution
     |- main        -> Core java files of simulation library
     |- test        -> JUnit test files along with resources required
-    |- site		   -> Contains markup files, old javadoc, site.xml and other website
-    				  resources 
+    |- site        -> Contains markup files, old javadoc, site.xml and other website 
+                      resources 
  |- LICENSE.txt    -> the license, under which this project is distributed
  |- pom.xml        -> Maven file for building the project
  |- README.md      -> this file
