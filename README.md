@@ -28,7 +28,7 @@ Copyright (C) 2007 jointly held by the individual authors.
 
 This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation. A copy of the license agreement is provided in the file named "LICENSE.txt" included with this software distribution and also available online as http://www.gnu.org/licenses/lgpl-3.0-standalone.html.
 
-Please cite the original work and the authors when using this program. See the [project homepage](https://github.com/cogsys-tuebingen/SBSCL/wiki/The-Systems-Biology-Simulation-Core-Library) for details.
+Please cite the original work and the authors when using this program. See the [project homepage](https://draeger-lab.github.io/SBSCL/) for details.
 
 ## Getting started
 
@@ -52,8 +52,8 @@ The package structure in more detail:
     |- lib         -> 3rd party libraries needed for compilation and execution
     |- main        -> Core java files of simulation library
     |- test        -> JUnit test files along with resources required
- |- licenses       -> License agreements of all 3rd party libs and a list of 
- |                    authors of this library
+    |- site		   -> Contains markup files, old javadoc, site.xml and other website
+    				  resources 
  |- LICENSE.txt    -> the license, under which this project is distributed
  |- pom.xml        -> Maven file for building the project
  |- README.md      -> this file
@@ -63,4 +63,4 @@ The package structure in more detail:
 
 Please e-mail any bugs, problems, suggestions, or issues regarding this library to the mailing list: simulation-core-development@lists.sourceforge.net
 
-Or use the bug tracker at http://simulation-core.sourceforge.net
+Or use the bug tracker at https://github.com/draeger-lab/SBSCL/issues
