@@ -39,7 +39,7 @@ For an introduction of how to use this library, please open the javadoc [homepag
 Just a brief explanation of the folders and files contained in this distribution.
 
 Most importantly, see 
- * the `INSTALL.md` file for instruction to run maven build
+ * the [`INSTALL.md`](INSTALL.md) file for instruction to run maven build
  * the docs folder containing an exhaustive documentation under apidocs
 
 The package structure in more detail:
@@ -60,6 +60,4 @@ The package structure in more detail:
 
 ## Troubleshooting
 
-Please e-mail any bugs, problems, suggestions, or issues regarding this library to the mailing list: simulation-core-development@lists.sourceforge.net
-
-Or use the bug tracker at https://github.com/draeger-lab/SBSCL/issues
+Please e-mail any bugs, problems, suggestions, or issues regarding this library to the bug tracker at https://github.com/draeger-lab/SBSCL/issues
