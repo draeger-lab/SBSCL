@@ -1,12 +1,12 @@
+org.simulator.plot
 org.simulator
-org.simulator.comp
-org.simulator.examples
-org.simulator.fba
 org.simulator.io
+org.simulator.comp
 org.simulator.math
 org.simulator.math.odes
 org.simulator.omex
-org.simulator.plot
+org.simulator.examples
 org.simulator.sbml
 org.simulator.sbml.astnode
+org.simulator.fba
 org.simulator.sedml

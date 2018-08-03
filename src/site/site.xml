@@ -26,10 +26,6 @@
     </skin>
  
     <body>
-    	<menu>
-            <item name="About" href="markup.html"/>
-        </menu>
         <menu ref="reports"/>
-        <footer/>
     </body>
 </project>
