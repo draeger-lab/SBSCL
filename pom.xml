@@ -1,284 +1,516 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
- * $Id$
- * $URL$
- *
- * This file is part of Simulation Core Library, a Java-based library
- * for efficient numerical simulation of biological models.
- *
- * Copyright (C) 2007-2016 jointly by the following organizations:
- * 1. University of Tuebingen, Germany
- * 2. Keio University, Japan
- * 3. Harvard University, USA
- * 4. The University of Edinburgh, UK
- * 5. EMBL European Bioinformatics Institute (EBML-EBI), Hinxton, UK
- * 6. The University of California, San Diego, La Jolla, CA, USA
- * 7. The Babraham Institute, Cambridge, UK
- *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation. A copy of the license
- * agreement is provided in the file named "LICENSE.txt" included with
- * this software distribution and also available online as
- * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
- *
- * Version: $Rev$
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.simulator</groupId>
-  <artifactId>sbscl</artifactId>
-  
-  <!-- Output to jar format -->
-  <packaging>jar</packaging>
-  
-  
-  <!-- =================================================================== -->
-  <!-- General project information                                         -->
-  <!-- =================================================================== -->  
-  
-  <name>Simulator-core library</name>
-  <version>1.5</version>
-  <url>http://simulation-core.sourceforge.net</url>
-  <inceptionYear>2007</inceptionYear>
-  <description>The Systems Biology Simulation Core Library provides an efficient and exhaustive Java™ implementation of methods to interpret the content of models encoded in the Systems Biology Markup Language (SBML) and its numerical solution. This library is based on the JSBML project and can be used on every operating system, for which a Java Virtual Machine is available.</description>
+<!-- 
+	* This file is part of Simulation Core Library, a Java-based library 
+	* for efficient numerical simulation of biological models. 
+	* 
+	* Copyright (C) 2007-2018 jointly by the following organizations: 
+	* 1. University of Tuebingen, Germany 
+	* 2. Keio University, Japan 
+	* 3. Harvard University, USA 
+	* 4. The University of Edinburgh, UK 
+	* 5. EMBL European Bioinformatics Institute (EBML-EBI), Hinxton, UK 
+	* 6. The University of California, San Diego, La Jolla, CA, USA 
+	* 7. The Babraham Institute, Cambridge, UK 
+	* 8. Duke University, Durham, NC, US 
+	* 
+	* This library is free software; you can redistribute it and/or modify 
+	* it under the terms of the GNU Lesser General Public License as 
+	* published by the Free Software Foundation. A copy of the license 
+	* agreement is provided in the file named "LICENSE.txt" included with 
+	* this software distribution and also available online as 
+	* <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>. 
+	-->
+	
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <properties>
-    <jdk.version>1.6</jdk.version>
-    <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
-    <year>${maven.build.timestamp}</year><!-- This property is used for filtering the variable ${year} in some resource files -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.license.url>http://www.gnu.org/licenses/lgpl-3.0-standalone.html</project.license.url>
-    <junit.version>4.11</junit.version>
-  </properties>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.simulator</groupId>
+	<artifactId>sbscl</artifactId>
 
-  <issueManagement>
-    <system>Sourceforge Tickets</system>
-    <url>http://sourceforge.net/p/simulation-core/tickets/</url>
-  </issueManagement>
-  
-  <licenses>
-    <license>
-      <name>GNU Lesser General Public License</name>
-      <url>${project.license.url}</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  
-  <developers>
-    <developer>
-      <name>Andreas Dräger</name>
-      <id>draeger</id>
-      <email>andreas.draeger@uni-tuebingen.de</email>
-      <url>https://github.com/draeger</url>
-    </developer>
-    <developer>
-      <name>Roland Keller</name>
-      <email>http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/</email>
-      <url>roland.keller@gmx.de</url>
-    </developer>
-    <developer>
-      <name>Alexander Dörr</name>
-      <email>alexander.doerr@uni-tuebingen.de</email>
-      <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/doerr/</url>
-    </developer>
-    <developer>
-      <name>Richard Adams</name>
-    </developer>
-    <developer>
-      <name>Akira Funahashi</name>
-      <email>funa@bio.keio.ac.jp</email>
-      <url>http://fun.bio.keio.ac.jp/people/</url>
-    </developer>
-    <developer>
-      <name>Noriko Hiroi</name>
-      <email>hiroi@bio.keio.ac.jp</email>
-      <url>http://fun.bio.keio.ac.jp/~hiroi/</url>
-    </developer>
-    <developer>
-      <name>Nicolas Le Novère</name>
-      <email>n.lenovere@gmail.com</email>
-      <url>http://lenoverelab.org/perso/lenov/</url>
-    </developer>
-    <developer>
-      <name>Hannes Planatscher</name>
-      <email>hannes.planatscher@nmi.de</email>
-    </developer>
-    <developer>
-      <name>Nicolas Rodriguez</name>
-      <email>rodrigue@ebi.ac.uk</email>
-      <url>http://www.ebi.ac.uk/about/people/nicolas-rodriguez</url>
-    </developer>
-    <developer>
-      <name>Akito Tabira</name>
-      <email>tabira@fun.bio.keio.ac.jp</email>
-    </developer>
-    <developer>
-      <name>Andreas Zell</name>
-      <email>andreas.zell@uni-tuebingen.de</email>
-      <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/zell/</url>
-    </developer>
-    <developer>
-      <name>Michael J. Ziller</name>
-      <email>michael_ziller@harvard.edu</email>
-      <url>http://connects.catalyst.harvard.edu/Profiles/display/Person/15411</url>
-    </developer>
-  </developers>
-  
-  
-  <!-- =================================================================== -->
-  <!-- Repositories -->
-  <!-- =================================================================== -->
+	<!-- Output to jar format -->
+	<packaging>jar</packaging>
 
-  <repositories>
-    <!-- Local libraries are an in-project repository -->
-    <!-- Add the dependencies and put them in -->
-    <!-- ${project.basedir}/lib/groupId/artifactId/version/ -->
-    <repository>
-      <id>libs</id>
-      <url>file://${project.basedir}/lib</url>
-    </repository>
-  </repositories>
-  
-  <!-- =================================================================== -->
-  <!-- Dependencies                                                        -->
-  <!-- =================================================================== -->
-  
-  <dependencies>
-    <dependency>
-      <groupId>cplex</groupId>
-      <artifactId>cplex</artifactId>
-      <version>12.6.1.0</version>
-    </dependency>
-    <dependency>    
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.sbml</groupId>
-      <artifactId>JSBML</artifactId>
-      <version>1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jdom</groupId>
-      <artifactId>jdom</artifactId>
-      <version>1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jmathml</groupId>
-      <artifactId>jmathml</artifactId>
-      <version>2.1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jlibsedml</groupId>
-      <artifactId>jlibsedml</artifactId>
-      <version>2.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-math</artifactId>
-      <version>2.2</version>
-    </dependency>
-    <dependency>
-      <groupId>nmi</groupId>
-      <artifactId>scpsolver</artifactId>
-      <version>1.0</version>
-    </dependency>
-  </dependencies>
-    
-  
-  <!-- =================================================================== -->
-  <!-- Building                                                            -->
-  <!-- =================================================================== -->
-  
-  <!-- To build the project run: -->
-  <!-- mvn clean compile package assembly:single -->
-  
-  <build>
-    <finalName>${project.artifactId}-${project.version}</finalName>
-    <sourceDirectory>src</sourceDirectory>
-    <testSourceDirectory>test</testSourceDirectory>
-    
-    <resources>
-      <resource>
-        <directory>resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-    
-    <pluginManagement>
-      <plugins>
-      
-        <!-- Download source code in Eclipse, best practice [OPTIONAL!] -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-eclipse-plugin</artifactId>
-          <version>2.9</version>
-          <configuration>
-            <downloadSources>true</downloadSources>
-            <downloadJavadocs>false</downloadJavadocs>
-          </configuration>
-        </plugin>
-              
-        <!-- Set a JDK compiler level -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.3</version>
-          <configuration>
-            <source>${jdk.version}</source>
-            <target>${jdk.version}</target>
-          </configuration>
-        </plugin>
-        
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <testFailureIgnore>false</testFailureIgnore>
-          </configuration>
-        </plugin>
-        
-        <!-- Assemble executable JAR -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.6</version>
-          <configuration>
-            <archive>
-              <manifest>
-                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-              </manifest>
-            </archive>
-            <descriptorRefs>
-              <descriptorRef>jar-with-dependencies</descriptorRef>
-            </descriptorRefs>
-            <finalName>${project.artifactId}-${project.version}</finalName>
-            <appendAssemblyId>false</appendAssemblyId>
-            <descriptor>assembly.xml</descriptor> <!-- Details of the assembly are described in this file -->
-          </configuration>
-          <executions>
-            <execution>
-              <id>make-assembly</id> <!-- this is used for inheritance merges -->
-              <phase>package</phase> <!-- bind to the packaging phase -->
-              <goals>
-                <!-- This will create a JAR with all dependencies -->
-                <!-- mvn clean compile assembly:single -->
-                <goal>single</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        
-      </plugins>
-    </pluginManagement>
 
-  </build>
-  
+	<!-- =================================================================== -->
+	<!-- General project information -->
+	<!-- =================================================================== -->
+
+	<name>Systems Biology Simulation Core Library (SBSCL)</name>
+	<version>1.5</version>
+	<url>https://github.com/draeger-lab/SBSCL/</url>
+	<inceptionYear>2007</inceptionYear>
+	<description>The Systems Biology Simulation Core Library provides an efficient and exhaustive Java™ implementation of methods to interpret the content of models encoded in the Systems Biology Markup Language (SBML) and its numerical solution. This library is based on the JSBML project and can be used on every operating system, for which a Java Virtual Machine is available.</description>
+
+	<properties>
+		<jdk.version>1.8</jdk.version>
+		<maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+		<year>${maven.build.timestamp}</year>
+		<!-- This property is used for filtering the variable ${year} in some resource 
+			files -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.license.url>http://www.gnu.org/licenses/lgpl-3.0-standalone.html</project.license.url>
+		<junit.version>4.11</junit.version>
+		<maven-javadoc-plugin.version>2.10.2</maven-javadoc-plugin.version>
+	</properties>
+
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/draeger-lab/SBSCL/issues</url>
+	</issueManagement>
+
+	<distributionManagement>
+		<site>
+			<id>SBSCL</id>
+			<url>https://draeger-lab.github.io/SBSCL</url>
+		</site>
+	</distributionManagement>
+
+	<ciManagement>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/shalinshah1993/${project.name}</url>
+	</ciManagement>
+
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License</name>
+			<url>${project.license.url}</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Richard Adams</name>
+			<id>otter606</id>
+			<email>ra22597@gmail.com</email>
+			<url>https://github.com/otter606</url>
+		</developer>
+		<developer>
+			<name>Alexander Dörr</name>
+			<email>alexander.doerr@uni-tuebingen.de</email>
+			<url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/doerr/</url>
+			<timezone>Germany/Berlin</timezone>
+		</developer>
+		<developer>
+			<name>Andreas Dräger</name>
+			<id>draeger</id>
+			<email>andreas.draeger@uni-tuebingen.de</email>
+			<url>https://github.com/draeger</url>
+			<organization>University of Tübingen</organization>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>Germany/Berlin</timezone>
+		</developer>
+		<developer>
+			<name>Akira Funahashi</name>
+			<id>funasoul</id>
+			<email>funa@bio.keio.ac.jp</email>
+			<url>http://fun.bio.keio.ac.jp/people/</url>
+			<organization>Keio University</organization>
+			<timezone>Japan/Tokyo</timezone>
+		</developer>
+		<developer>
+			<name>Roland Keller</name>
+			<id>RolandKeller5</id>
+			<email>http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/</email>
+			<url>roland.keller@gmx.de</url>
+			<timezone>Germany/Berlin</timezone>
+		</developer>
+		<developer>
+			<name>Matthias König</name>
+			<id>matthiaskoenig</id>
+			<email>konigmatt@googlemail.com</email>
+			<url>https://github.com/matthiaskoenig</url>
+			<organization>Humboldt University</organization>
+			<timezone>Germany/Berlin</timezone>
+		</developer>
+		<developer>
+			<name>Nicolas Le Novère</name>
+			<id>lenov</id>
+			<email>n.lenovere@gmail.com</email>
+			<url>http://lenoverelab.org/perso/lenov/</url>
+			<organization>The Babraham Institute</organization>
+			<timezone>UK/London</timezone>
+		</developer>
+		<developer>
+			<name>Hannes Planatscher</name>
+			<id>planatscher</id>
+			<email>hannes.planatscher@nmi.de</email>
+			<url>https://github.com/planatscher</url>
+			<timezone>Germany/Berlin</timezone>
+		</developer>
+		<developer>
+			<name>Nicolas Rodriguez</name>
+			<id>niko-rodrigue</id>
+			<email>rodriguezn@babraham.ac.uk</email>
+			<url>https://github.com/niko-rodrigue</url>
+			<organization>The Babraham Institute</organization>
+			<timezone>UK/London</timezone>
+			<properties>
+				<picUrl>https://www.lenoverelab.org/sites/default/files/pictures/Nicolas_Rodriguez-170x150.jpg</picUrl>
+			</properties>
+		</developer>
+		<developer>
+			<name>Shalin Shah</name>
+			<id>shalinshah1993</id>
+			<email>shalin.shah@duke.edu</email>
+			<url>https://github.com/shalinshah1993</url>
+			<organization>Duke University</organization>
+			<timezone>US/EST</timezone>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>Akito Tabira</name>
+			<id>mythosil</id>
+			<email>tabira@fun.bio.keio.ac.jp</email>
+			<url>https://github.com/mythosil</url>
+			<organization>Keio University</organization>
+			<timezone>Japan/Tokyo</timezone>
+		</developer>
+		<developer>
+			<name>Max Zwießele</name>
+			<id>mzwiessele</id>
+			<url>https://github.com/mzwiessele</url>
+		</developer>
+	</developers>
+
+	<contributors>
+		<contributor>
+			<name>Michael T. Cooling</name>
+			<url>https://www.linkedin.com/in/mikecooling/</url>
+			<organization>University of Auckland</organization>
+		</contributor>
+		<contributor>
+			<name>Noriko Hiroi</name>
+			<email>hiroi@bio.keio.ac.jp</email>
+			<url>http://fun.bio.keio.ac.jp/~hiroi/</url>
+			<organization>Keio University</organization>
+		</contributor>
+		<contributor>
+			<name>Marcel Kronfeld</name>
+			<url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/kronfeld</url>
+			<organization>University of Tübingen</organization>
+		</contributor>
+		<contributor>
+			<name>Adrian Schröder</name>
+			<url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/schroeder/</url>
+			<organization>University of Tübingen</organization>
+		</contributor>
+		<contributor>
+			<name>Dieudonné M. Wouamba</name>
+			<url>https://www.linkedin.com/in/dieudonné-motsou-wouamba-2952a018/</url>
+			<organization>University of Tübingen</organization>
+		</contributor>
+		<contributor>
+			<name>Andreas Zell</name>
+			<email>andreas.zell@uni-tuebingen.de</email>
+			<url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/zell/</url>
+			<organization>University of Tübingen</organization>
+		</contributor>
+		<contributor>
+			<name>Michael J. Ziller</name>
+			<email>michael_ziller@psych.mpg.de</email>
+			<url>https://www.psych.mpg.de/person/47510/2176252</url>
+			<organization>Max Planck Institute of Psychatry</organization>
+		</contributor>
+	</contributors>
+
+
+	<!-- =================================================================== -->
+	<!-- Repositories -->
+	<!-- =================================================================== -->
+
+	<repositories>
+		<repository>
+			<id>in-project</id>
+			<name>In project repository</name>
+			<url>file:${project.basedir}/src/lib/maven</url>
+		</repository>
+
+		<!-- Adding repository to download latest jlibSBML -->
+		<repository>
+			<id>JSBML-SNAPSHOT</id>
+			<name>The JSBML Snapshot repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
+		<!-- Adding repository to download CombineArchive -->
+
+		<repository>
+			<id>sems-maven-repository-releases</id>
+			<name>SEMS Maven Repo</name>
+			<url>http://mvn.sems.uni-rostock.de/releases/</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<!-- =================================================================== -->
+	<!-- Dependencies -->
+	<!-- =================================================================== -->
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sbml.jsbml</groupId>
+			<artifactId>jsbml</artifactId>
+			<version>1.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom2</artifactId>
+			<version>2.0.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jmathml</groupId>
+			<artifactId>jmathml</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jlibsedml</groupId>
+			<artifactId>jlibsedml</artifactId>
+			<version>2.2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.19</version>
+		</dependency>
+
+		<!-- LP solvers -->
+		<dependency>
+			<groupId>scpsolver</groupId>
+			<artifactId>SCPSolver</artifactId>
+			<version>1.0v2</version>
+		</dependency>
+		<dependency>
+			<groupId>scpsolver</groupId>
+			<artifactId>GLPKSolverPack</artifactId>
+			<version>4.35v2</version>
+		</dependency>
+		<dependency>
+			<groupId>scpsolver</groupId>
+			<artifactId>LPSOLVESolverPack</artifactId>
+			<version>5.5.2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>kisao</groupId>
+			<artifactId>libkisao</artifactId>
+			<version>1.0.3.1-rc</version>
+		</dependency>
+		<!-- OMEX archive -->
+		<dependency>
+			<groupId>de.uni-rostock.sbi</groupId>
+			<artifactId>CombineArchive</artifactId>
+			<version>1.3.6</version>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+
+
+	<!-- =================================================================== -->
+	<!-- Building -->
+	<!-- =================================================================== -->
+
+	<!-- To build the project run: -->
+	<!-- mvn clean compile package assembly:single -->
+
+	<build>
+		<finalName>${project.artifactId}-${project.version}</finalName>
+
+		<pluginManagement>
+			<plugins>
+			<!--  Run mvn license:third-party-report to build report of licenses -->
+			<!--  Download license files for 3rd party libraries and put them in website code -->
+			<!--  at src/target/generated-sources/THIRD-PARTY.txt and src/target/site/third-party-report.html -->
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>1.16</version>
+					<executions>
+						<execution>
+							<id>download-licenses</id>
+							<goals>
+								<goal>download-licenses</goal>
+							</goals>
+						</execution>
+					</executions>
+					<dependencies>
+						<dependency>
+							<groupId>org.apache.maven.doxia</groupId>
+							<artifactId>doxia-core</artifactId>
+							<version>1.6</version>
+						</dependency>
+						<dependency>
+							<groupId>org.apache.maven.doxia</groupId>
+							<artifactId>doxia-site-renderer</artifactId>
+							<version>1.6</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.7.1</version>
+					<configuration>
+						<locales>en</locales>
+					</configuration>
+					<executions>
+						<execution>
+							<id>attach-descriptor</id>
+							<goals>
+								<goal>attach-descriptor</goal>
+							</goals>
+						</execution>
+					</executions>
+					<dependencies>
+						<dependency>
+							<groupId>org.apache.maven.doxia</groupId>
+							<artifactId>doxia-module-markdown</artifactId>
+							<version>1.7</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.22.0</version>
+				</plugin>
+
+				<!-- Download source code in Eclipse, best practice [OPTIONAL!] -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-eclipse-plugin</artifactId>
+					<version>2.9</version>
+					<configuration>
+						<downloadSources>true</downloadSources>
+						<downloadJavadocs>false</downloadJavadocs>
+					</configuration>
+				</plugin>
+
+				<!-- Set a JDK compiler level -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.3</version>
+					<configuration>
+						<source>${jdk.version}</source>
+						<target>${jdk.version}</target>
+						<!-- <excludes> <exclude>**/org/simulator/fba/COBRAsolver.java</exclude> 
+							<exclude>**/org/simulator/fba/COBRAsolverExample.java</exclude> </excludes> -->
+					</configuration>
+				</plugin>
+
+				<!-- Assemble executable JAR -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.6</version>
+					<configuration>
+						<archive>
+							<manifest>
+								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+								<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+							</manifest>
+						</archive>
+						<descriptorRefs>
+							<descriptorRef>jar-with-dependencies</descriptorRef>
+						</descriptorRefs>
+						<finalName>${project.artifactId}-${project.version}</finalName>
+						<appendAssemblyId>false</appendAssemblyId>
+						<descriptor>src/assembly/assembly.xml</descriptor> <!-- Details of the assembly are described in this file -->
+					</configuration>
+					<executions>
+						<execution>
+							<id>make-assembly</id> <!-- this is used for inheritance merges -->
+							<phase>package</phase> <!-- bind to the packaging phase -->
+							<goals>
+								<!-- This will create a JAR with all dependencies -->
+								<!-- mvn clean compile package assembly:single -->
+								<goal>single</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<!-- This plug-in copies resources from target/site to docs/ so Github can render it  -->
+				<plugin>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.7</version>
+					<configuration>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<!-- Resources copied by resources plug-in. Note that mvn site needs to run before mvn install to
+		make sure the website code exists inside target/site folder -->
+		<resources>
+			<resource>
+				<directory>${project.build.directory}/site/</directory>
+				<targetPath>${basedir}/docs/</targetPath>
+			</resource>
+		</resources>  
+	</build>
+	
+	<!--  To stop maven errors from javadoc warnings -->
+	<profiles>
+		<profile>
+			<id>java8-doclint-disabled</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<properties>
+				<javadoc.opts>-Xdoclint:none</javadoc.opts>
+			</properties>
+		</profile>
+	</profiles>
+
+	<!-- Generate javadoc and integrate with generated website -->
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.0.1</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>javadoc</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+				<configuration>
+					<overview>${project.basedir}/src/main/javadoc/overview.html</overview>
+					<additionalparam>${javadoc.opts}</additionalparam>
+					<failOnError>false</failOnError>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>
