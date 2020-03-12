@@ -238,6 +238,7 @@ public class COBRAsolver {
 		// Add weighted constraints equations for each reaction.
 		for (Species species : model.getListOfSpecies()) {
 			double[] weights = new double[reaction2Index.size()];
+			int numberOfReactions = 0;
 			
 			if (!species2Reaction.containsKey(species.getId())) {
 				logger.warning(MessageFormat.format(
@@ -246,10 +247,13 @@ public class COBRAsolver {
 			} else {
 				for (Pair<String, Double> pair : species2Reaction.get(species.getId())) {
 					weights[reaction2Index.get(pair.getKey())] = pair.getValue();
+					numberOfReactions++;
 				}
 			}
 			
-			problem.addConstraint(new LinearEqualsConstraint(weights, 0.0, "cnstrt_" + species.getId()));
+			if (numberOfReactions > 1){
+				problem.addConstraint(new LinearEqualsConstraint(weights, 0.0, "cnstrt_" + species.getId()));
+			}
 		}	
 	}
 
