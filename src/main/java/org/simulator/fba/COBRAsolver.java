@@ -249,7 +249,9 @@ public class COBRAsolver {
 				}
 			}
 			
-			problem.addConstraint(new LinearEqualsConstraint(weights, 0.0, "cnstrt_" + species.getId()));
+			if (species2Reaction.get(species.getId()).size() > 1){
+				problem.addConstraint(new LinearEqualsConstraint(weights, 0.0, "cnstrt_" + species.getId()));
+			}
 		}	
 	}
 
