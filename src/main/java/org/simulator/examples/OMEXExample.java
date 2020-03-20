@@ -29,6 +29,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Map;
 
 import org.jdom2.JDOMException;
@@ -39,6 +40,7 @@ import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.XMLException;
 import org.jlibsedml.execution.IRawSedmlSimulationResults;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.simulator.omex.OMEXArchive;
 import org.simulator.sedml.MultTableSEDMLWrapper;
 import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
@@ -53,7 +55,7 @@ import de.unirostock.sems.cbarchive.CombineArchiveException;
 public class OMEXExample {
 	
 	public static void main(String[] args) throws IOException, ParseException, CombineArchiveException,
-	JDOMException, XMLException {
+			JDOMException, XMLException, OWLOntologyCreationException {
 		String file = args[0];
 		if (file.isEmpty()) {
 			LOGGER.warn("Please enter a valid omex file as argument.");
@@ -68,15 +70,17 @@ public class OMEXExample {
 			SedML sedml = doc.getSedMLModel();
 
 			Output wanted = sedml.getOutputs().get(0);
-			SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, null);
+			SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, archive.getSEDMLDescp().getParentFile().getAbsolutePath());
 
-			Map<AbstractTask, IRawSedmlSimulationResults> res = exe.runSimulations();
+			Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
 			if ((res == null) || res.isEmpty() || !exe.isExecuted()) {
-				fail ("Simulatation failed: " + exe.getFailureMessages().get(0).getMessage());
+				fail ("Simulation failed: " + exe.getFailureMessages().get(0).getMessage());
 			}
 			
-			for (IRawSedmlSimulationResults re: res.values()) {
-				assertTrue(re instanceof MultTableSEDMLWrapper);
+			for (List<IRawSedmlSimulationResults> re_list: res.values()) {
+				for (IRawSedmlSimulationResults re: re_list){
+					assertTrue(re instanceof MultTableSEDMLWrapper);
+				}
 			}
 		}
 		
