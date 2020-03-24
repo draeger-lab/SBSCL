@@ -46,7 +46,7 @@ public class OMEXArchive {
 	private Map<String, ArchiveEntry> entryMap;
 	private boolean has_models;
 	private boolean has_sim_descp;
-	private File sed_ml;
+	private File sed_ml, sb_ml;
 
 	public OMEXArchive(File zipFile) throws IOException, ParseException, CombineArchiveException, JDOMException{
 		entryMap = new HashMap<String, ArchiveEntry>();
@@ -55,15 +55,23 @@ public class OMEXArchive {
 		
 		archive = new CombineArchive(zipFile);
 
+		File parent = new File(System.getProperty("java.io.tmpdir"));
+
 		// iterate over all entries in the archive and create a Map
 		for (ArchiveEntry entry : archive.getEntries())
 		{
 			entryMap.put(entry.getFilePath(), entry);
-			if(entry.getFormat().toString().contains("SBML") || entry.getFormat().toString().contains("sbml"))
+			if(entry.getFormat().toString().contains("SBML") || entry.getFormat().toString().contains("sbml")){
 				has_models = true;
+
+				File sb_ml_file = new File(parent, entry.getFileName());
+				sb_ml = entry.extractFile(sb_ml_file);
+			}
 			if(entry.getFormat().toString().contains("SED-ML") || entry.getFormat().toString().contains("sed-ml")) {
 				has_sim_descp = true;
-				sed_ml = entry.getFile();
+
+				File sed_ml_file = new File(parent, entry.getFileName());
+				sed_ml = entry.extractFile(sed_ml_file);
 			}
 		}
 
