@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="92"
+   name=""
+   committed-date="2007-06-30T22:32:12.081963Z"
+   url="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi/FERN/doc/fern/class-use"
+   last-author="erhardf"
+   kind="dir"
+   uuid="076530bb-1e10-0410-8fe9-deb4812d201b"
+   repos="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi"
+   revision="99"/>
+<entry
+   committed-rev="92"
+   name="Start.html"
+   text-time="2008-10-06T14:13:58.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="3792332a974556ee8778e09f29d6e1a7"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:13:58.000000Z"/>
+</wc-entries>

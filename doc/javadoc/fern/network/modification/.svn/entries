@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="92"
+   name=""
+   committed-date="2007-06-30T22:32:12.081963Z"
+   url="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi/FERN/doc/fern/network/modification"
+   last-author="erhardf"
+   kind="dir"
+   uuid="076530bb-1e10-0410-8fe9-deb4812d201b"
+   repos="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi"
+   revision="99"/>
+<entry
+   name="class-use"
+   kind="dir"/>
+<entry
+   committed-rev="92"
+   name="ReversibleNetwork.html"
+   text-time="2008-10-06T14:15:49.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="1c7d1aec204cd4c5b3902778e9e7c628"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:45.000000Z"/>
+<entry
+   committed-rev="92"
+   name="ExtractSubNetwork.html"
+   text-time="2008-10-06T14:15:50.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="58e23cc985f9cb48fc9fd9012e1af2f4"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:48.000000Z"/>
+<entry
+   committed-rev="92"
+   name="CatalysedNetwork.html"
+   text-time="2008-10-06T14:15:50.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="3f0acf797a2f12640eef0f9b1f1b6aec"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:48.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-frame.html"
+   text-time="2008-10-06T14:15:50.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="2fd29c89b718388a87a6cec1125fc5fa"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:48.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-use.html"
+   text-time="2008-10-06T14:15:50.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="e34b71290629a0c2f44efd48a33b0dd7"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:48.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-summary.html"
+   text-time="2008-10-06T14:15:50.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="d5817a3d147242fc05d731b7fbb4fcab"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:49.000000Z"/>
+<entry
+   committed-rev="92"
+   name="ModifierNetwork.html"
+   text-time="2008-10-06T14:15:51.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="4f39f0368cd6683acde7ef6d27edab48"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:49.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-tree.html"
+   text-time="2008-10-06T14:15:51.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="d74ed28bdcbcd646a23cc4f4ae67fed9"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:49.000000Z"/>
+</wc-entries>

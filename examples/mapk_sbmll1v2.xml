@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level1" level="1" version="2">
+  <model name="mapk.xml">
+  	<listOfUnitDefinitions>
+	  	<unitDefinition name="substance">
+	  		<listOfUnits>
+	  			<unit kind="item" />
+	  		</listOfUnits>
+	  	</unitDefinition>
+	</listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment name="Cell"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species name="L" compartment="Cell" initialAmount="680"/>
+      <species name="R" compartment="Cell" initialAmount="100"/>
+      <species name="C" compartment="Cell" initialAmount="0"/>
+      <species name="C2" compartment="Cell" initialAmount="0"/>
+      <species name="Cstern" compartment="Cell" initialAmount="0"/>
+      <species name="A1" compartment="Cell" initialAmount="85"/>
+      <species name="A2" compartment="Cell" initialAmount="34"/>
+      <species name="E1" compartment="Cell" initialAmount="180"/>
+      <species name="E2" compartment="Cell" initialAmount="180"/>
+      <species name="E3" compartment="Cell" initialAmount="180"/>
+      <species name="E4" compartment="Cell" initialAmount="180"/>
+      <species name="E5" compartment="Cell" initialAmount="180"/>
+      <species name="P1" compartment="Cell" initialAmount="90"/>
+      <species name="P2" compartment="Cell" initialAmount="90"/>
+      <species name="P3" compartment="Cell" initialAmount="90"/>
+      <species name="P4" compartment="Cell" initialAmount="90"/>
+      <species name="P5" compartment="Cell" initialAmount="90"/>
+      <species name="E0stern" compartment="Cell" initialAmount="0"/>
+      <species name="E1stern" compartment="Cell" initialAmount="0"/>
+      <species name="E2stern" compartment="Cell" initialAmount="0"/>
+      <species name="E3stern" compartment="Cell" initialAmount="0"/>
+      <species name="E4stern" compartment="Cell" initialAmount="0"/>
+      <species name="E5stern" compartment="Cell" initialAmount="0"/>
+      <species name="A2minus" compartment="Cell" initialAmount="0"/>
+      <species name="E2minus" compartment="Cell" initialAmount="0"/>
+      <species name="CsternA1" compartment="Cell" initialAmount="0"/>
+      <species name="A1A2" compartment="Cell" initialAmount="0"/>
+      <species name="E1E0stern" compartment="Cell" initialAmount="0"/>
+      <species name="E1sternP1" compartment="Cell" initialAmount="0"/>
+      <species name="E2E1stern" compartment="Cell" initialAmount="0"/>
+      <species name="E2sternP2" compartment="Cell" initialAmount="0"/>
+      <species name="E3E2stern" compartment="Cell" initialAmount="0"/>
+      <species name="E3sternP3" compartment="Cell" initialAmount="0"/>
+      <species name="E4E3stern" compartment="Cell" initialAmount="0"/>
+      <species name="E4sternP4" compartment="Cell" initialAmount="0"/>
+      <species name="E5E4stern" compartment="Cell" initialAmount="0"/>
+      <species name="E5sternP5" compartment="Cell" initialAmount="0"/>
+      <species name="E0sternE4stern" compartment="Cell" initialAmount="0"/>
+      <species name="E2sternE4stern" compartment="Cell" initialAmount="0"/>
+    </listOfSpecies>
+    <listOfReactions>
+      <reaction name="L+R-&gt;C" reversible="false">
+        <listOfReactants>
+          <speciesReference species="L"/>
+          <speciesReference species="R"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="C"/>
+        </listOfProducts>
+        <kineticLaw formula="0.003 * L * R"/>
+      </reaction>
+      <reaction name="C-&gt;L+R" reversible="false">
+        <listOfReactants>
+          <speciesReference species="C"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="L"/>
+          <speciesReference species="R"/>
+        </listOfProducts>
+        <kineticLaw formula="0.06 * C"/>
+      </reaction>
+      <reaction name="C+C-&gt;C2" reversible="false">
+        <listOfReactants>
+          <speciesReference species="C" stoichiometry="2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="C2"/>
+        </listOfProducts>
+        <kineticLaw formula="0.01 * C * (C - 1) * 0.5"/>
+      </reaction>
+      <reaction name="C2-&gt;C+C" reversible="false">
+        <listOfReactants>
+          <speciesReference species="C2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="C" stoichiometry="2"/>
+        </listOfProducts>
+        <kineticLaw formula="0.1 * C2"/>
+      </reaction>
+      <reaction name="C2-&gt;Cstern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="C2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="Cstern"/>
+        </listOfProducts>
+        <kineticLaw formula="1 * C2"/>
+      </reaction>
+      <reaction name="Cstern-&gt;C2" reversible="false">
+        <listOfReactants>
+          <speciesReference species="Cstern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="C2"/>
+        </listOfProducts>
+        <kineticLaw formula="0.01 * Cstern"/>
+      </reaction>
+      <reaction name="Cstern+A1-&gt;CsternA1" reversible="false">
+        <listOfReactants>
+          <speciesReference species="Cstern"/>
+          <speciesReference species="A1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="CsternA1"/>
+        </listOfProducts>
+        <kineticLaw formula="0.003 * Cstern * A1"/>
+      </reaction>
+      <reaction name="CsternA1-&gt;Cstern+A1" reversible="false">
+        <listOfReactants>
+          <speciesReference species="CsternA1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="Cstern"/>
+          <speciesReference species="A1"/>
+        </listOfProducts>
+        <kineticLaw formula="0.05 * CsternA1"/>
+      </reaction>
+      <reaction name="CsternA1+A2minus&gt;E0stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="CsternA1"/>
+          <speciesReference species="A2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E0stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.01 * CsternA1 * A2"/>
+      </reaction>
+      <reaction name="E0stern-&gt;CsternA1+A2" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E0stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="CsternA1"/>
+          <speciesReference species="A2"/>
+        </listOfProducts>
+        <kineticLaw formula="0.06 * E0stern"/>
+      </reaction>
+      <reaction name="A1+A2minus&gt;A1A2" reversible="false">
+        <listOfReactants>
+          <speciesReference species="A1"/>
+          <speciesReference species="A2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="A1A2"/>
+        </listOfProducts>
+        <kineticLaw formula="0.0001 * A1 * A2"/>
+      </reaction>
+      <reaction name="A1A2minus&gt;A1+A2" reversible="false">
+        <listOfReactants>
+          <speciesReference species="A1A2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="A1"/>
+          <speciesReference species="A2"/>
+        </listOfProducts>
+        <kineticLaw formula="0.0015 * A1A2"/>
+      </reaction>
+      <reaction name="Cstern+A1A2minus&gt;E0stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="Cstern"/>
+          <speciesReference species="A1A2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E0stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.0045 * Cstern * A1A2"/>
+      </reaction>
+      <reaction name="E0stern-&gt;Cstern+A1A2" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E0stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="Cstern"/>
+          <speciesReference species="A1A2"/>
+        </listOfProducts>
+        <kineticLaw formula="0.03 * E0stern"/>
+      </reaction>
+      <reaction name="E1+E0stern-&gt;E1E0stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E1"/>
+          <speciesReference species="E0stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E1E0stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.01 * E1 * E0stern"/>
+      </reaction>
+      <reaction name="E1E0stern-&gt;E1+E0stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E1E0stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E1"/>
+          <speciesReference species="E0stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.5 * E1E0stern"/>
+      </reaction>
+      <reaction name="E1E0stern-&gt;E0stern+E1stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E1E0stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E0stern"/>
+          <speciesReference species="E1stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.1 * E1E0stern"/>
+      </reaction>
+      <reaction name="E1stern+P1-&gt;E1sternP1" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E1stern"/>
+          <speciesReference species="P1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E1sternP1"/>
+        </listOfProducts>
+        <kineticLaw formula="0.01 * E1stern * P1"/>
+      </reaction>
+      <reaction name="E1sternP1-&gt;E1stern+P1" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E1sternP1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E1stern"/>
+          <speciesReference species="P1"/>
+        </listOfProducts>
+        <kineticLaw formula="0.5 * E1sternP1"/>
+      </reaction>
+      <reaction name="E1sternP1-&gt;P1+E1" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E1sternP1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="P1"/>
+          <speciesReference species="E1"/>
+        </listOfProducts>
+        <kineticLaw formula="0.1 * E1sternP1"/>
+      </reaction>
+      <reaction name="E2+E1stern-&gt;E2E1stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E2"/>
+          <speciesReference species="E1stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E2E1stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.01 * E2 * E1stern"/>
+      </reaction>
+      <reaction name="E2E1stern-&gt;E2+E1stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E2E1stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E2"/>
+          <speciesReference species="E1stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.5 * E2E1stern"/>
+      </reaction>
+      <reaction name="E2E1stern-&gt;E1stern+E2stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E2E1stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E1stern"/>
+          <speciesReference species="E2stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.1 * E2E1stern"/>
+      </reaction>
+      <reaction name="E2stern+P2-&gt;E2sternP2" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E2stern"/>
+          <speciesReference species="P2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E2sternP2"/>
+        </listOfProducts>
+        <kineticLaw formula="0.01 * E2stern * P2"/>
+      </reaction>
+      <reaction name="E2sternP2-&gt;E2stern+P2" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E2sternP2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E2stern"/>
+          <speciesReference species="P2"/>
+        </listOfProducts>
+        <kineticLaw formula="0.5 * E2sternP2"/>
+      </reaction>
+      <reaction name="E2sternP2-&gt;P2+E2" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E2sternP2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="P2"/>
+          <speciesReference species="E2"/>
+        </listOfProducts>
+        <kineticLaw formula="0.1 * E2sternP2"/>
+      </reaction>
+      <reaction name="E3+E2stern-&gt;E3E2stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E3"/>
+          <speciesReference species="E2stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E3E2stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.01 * E3 * E2stern"/>
+      </reaction>
+      <reaction name="E3E2stern-&gt;E3+E2stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E3E2stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E3"/>
+          <speciesReference species="E2stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.5 * E3E2stern"/>
+      </reaction>
+      <reaction name="E3E2stern-&gt;E2stern+E3stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E3E2stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E2stern"/>
+          <speciesReference species="E3stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.1 * E3E2stern"/>
+      </reaction>
+      <reaction name="E3stern+P3-&gt;E3sternP3" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E3stern"/>
+          <speciesReference species="P3"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E3sternP3"/>
+        </listOfProducts>
+        <kineticLaw formula="0.01 * E3stern * P3"/>
+      </reaction>
+      <reaction name="E3sternP3-&gt;E3stern+P3" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E3sternP3"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E3stern"/>
+          <speciesReference species="P3"/>
+        </listOfProducts>
+        <kineticLaw formula="0.5 * E3sternP3"/>
+      </reaction>
+      <reaction name="E3sternP3-&gt;P3+E3" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E3sternP3"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="P3"/>
+          <speciesReference species="E3"/>
+        </listOfProducts>
+        <kineticLaw formula="0.1 * E3sternP3"/>
+      </reaction>
+      <reaction name="E4+E3stern-&gt;E4E3stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E4"/>
+          <speciesReference species="E3stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E4E3stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.01 * E4 * E3stern"/>
+      </reaction>
+      <reaction name="E4E3stern-&gt;E4+E3stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E4E3stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E4"/>
+          <speciesReference species="E3stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.5 * E4E3stern"/>
+      </reaction>
+      <reaction name="E4E3stern-&gt;E3stern+E4stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E4E3stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E3stern"/>
+          <speciesReference species="E4stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.1 * E4E3stern"/>
+      </reaction>
+      <reaction name="E4stern+P4-&gt;E4sternP4" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E4stern"/>
+          <speciesReference species="P4"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E4sternP4"/>
+        </listOfProducts>
+        <kineticLaw formula="0.01 * E4stern * P4"/>
+      </reaction>
+      <reaction name="E4sternP4-&gt;E4stern+P4" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E4sternP4"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E4stern"/>
+          <speciesReference species="P4"/>
+        </listOfProducts>
+        <kineticLaw formula="0.5 * E4sternP4"/>
+      </reaction>
+      <reaction name="E4sternP4-&gt;P4+E4" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E4sternP4"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="P4"/>
+          <speciesReference species="E4"/>
+        </listOfProducts>
+        <kineticLaw formula="0.1 * E4sternP4"/>
+      </reaction>
+      <reaction name="E5+E4stern-&gt;E5E4stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E5"/>
+          <speciesReference species="E4stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E5E4stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.01 * E5 * E4stern"/>
+      </reaction>
+      <reaction name="E5E4stern-&gt;E5+E4stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E5E4stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E5"/>
+          <speciesReference species="E4stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.5 * E5E4stern"/>
+      </reaction>
+      <reaction name="E5E4stern-&gt;E4stern+E5stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E5E4stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E4stern"/>
+          <speciesReference species="E5stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.1 * E5E4stern"/>
+      </reaction>
+      <reaction name="E5stern+P5-&gt;E5sternP5" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E5stern"/>
+          <speciesReference species="P5"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E5sternP5"/>
+        </listOfProducts>
+        <kineticLaw formula="0.01 * E5stern * P5"/>
+      </reaction>
+      <reaction name="E5sternP5-&gt;E5stern+P5" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E5sternP5"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E5stern"/>
+          <speciesReference species="P5"/>
+        </listOfProducts>
+        <kineticLaw formula="0.5 * E5sternP5"/>
+      </reaction>
+      <reaction name="E5sternP5-&gt;P5+E5" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E5sternP5"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="P5"/>
+          <speciesReference species="E5"/>
+        </listOfProducts>
+        <kineticLaw formula="0.1 * E5sternP5"/>
+      </reaction>
+      <reaction name="E0stern+E4stern-&gt;E0sternE4stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E0stern"/>
+          <speciesReference species="E4stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E0sternE4stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.01 * E0stern * E4stern"/>
+      </reaction>
+      <reaction name="E0sternE4stern-&gt;E0stern+E4stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E0sternE4stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E0stern"/>
+          <speciesReference species="E4stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.5 * E0sternE4stern"/>
+      </reaction>
+      <reaction name="E0sternE4stern-&gt;E4stern+CsternA1+A2minus" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E0sternE4stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E4stern"/>
+          <speciesReference species="CsternA1"/>
+          <speciesReference species="A2minus"/>
+        </listOfProducts>
+        <kineticLaw formula="0.1 * E0sternE4stern"/>
+      </reaction>
+      <reaction name="E2stern+E4stern-&gt;E2sternE4stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E2stern"/>
+          <speciesReference species="E4stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E2sternE4stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.01 * E2stern * E4stern"/>
+      </reaction>
+      <reaction name="E2sternE4stern-&gt;E2stern+E4stern" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E2sternE4stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E2stern"/>
+          <speciesReference species="E4stern"/>
+        </listOfProducts>
+        <kineticLaw formula="0.5 * E2sternE4stern"/>
+      </reaction>
+      <reaction name="E2sternE4stern-&gt;E4stern+E2minus" reversible="false">
+        <listOfReactants>
+          <speciesReference species="E2sternE4stern"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="E4stern"/>
+          <speciesReference species="E2minus"/>
+        </listOfProducts>
+        <kineticLaw formula="0.1 * E2sternE4stern"/>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

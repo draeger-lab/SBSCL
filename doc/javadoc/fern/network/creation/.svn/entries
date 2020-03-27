@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="92"
+   name=""
+   committed-date="2007-06-30T22:32:12.081963Z"
+   url="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi/FERN/doc/fern/network/creation"
+   last-author="erhardf"
+   kind="dir"
+   uuid="076530bb-1e10-0410-8fe9-deb4812d201b"
+   repos="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi"
+   revision="99"/>
+<entry
+   name="class-use"
+   kind="dir"/>
+<entry
+   committed-rev="92"
+   name="CatalystIterator.html"
+   text-time="2008-10-06T14:15:42.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="f287acd33917593666b7fd4339697e17"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:41.000000Z"/>
+<entry
+   committed-rev="92"
+   name="AutocatalyticNetwork.html"
+   text-time="2008-10-06T14:15:42.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="91ee25e9f1a4c7fc99d00aaa20536e92"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:41.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-frame.html"
+   text-time="2008-10-06T14:15:42.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="f79455f36cf10c6455235c76cd722cc1"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:41.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-use.html"
+   text-time="2008-10-06T14:15:43.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="24ff6fb68176365d05b49d59a441c213"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:41.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-summary.html"
+   text-time="2008-10-06T14:15:43.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="8b821b867a20c76ce6941f603d284ffb"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:41.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-tree.html"
+   text-time="2008-10-06T14:15:43.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="e99b849cd9bbf2b8831fa261d272878b"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:42.000000Z"/>
+</wc-entries>

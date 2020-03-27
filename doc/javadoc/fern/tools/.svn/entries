@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="92"
+   name=""
+   committed-date="2007-06-30T22:32:12.081963Z"
+   url="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi/FERN/doc/fern/tools"
+   last-author="erhardf"
+   kind="dir"
+   uuid="076530bb-1e10-0410-8fe9-deb4812d201b"
+   repos="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi"
+   revision="99"/>
+<entry
+   name="class-use"
+   kind="dir"/>
+<entry
+   committed-rev="92"
+   name="ColorSpectrum.html"
+   text-time="2008-10-06T14:14:20.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="fab04060b876a3f3659bff2046756a6c"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:03.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-frame.html"
+   text-time="2008-10-06T14:14:20.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="1682a9961e2e6ff2120da05968913036"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:03.000000Z"/>
+<entry
+   name="functions"
+   kind="dir"/>
+<entry
+   name="gnuplot"
+   kind="dir"/>
+<entry
+   committed-rev="92"
+   name="package-use.html"
+   text-time="2008-10-06T14:14:21.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="2811556f38097097e7e1b969e96887df"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:19.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-summary.html"
+   text-time="2008-10-06T14:14:21.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="9ba5096073f4c55a4e33c64af4360f95"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:19.000000Z"/>
+<entry
+   committed-rev="92"
+   name="Stochastics.html"
+   text-time="2008-10-06T14:14:21.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="c84185e319e8da0fc41ccb32630604b2"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:19.000000Z"/>
+<entry
+   committed-rev="92"
+   name="ConfigReader.html"
+   text-time="2008-10-06T14:14:21.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="5b2b97c8e071a27e90a9b15b4e174039"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:19.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-tree.html"
+   text-time="2008-10-06T14:14:22.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="8bd85db5d5cbc26d3c66bf3c936c256f"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:19.000000Z"/>
+<entry
+   committed-rev="92"
+   name="NumberTools.html"
+   text-time="2008-10-06T14:14:22.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="532733c1b4bfe7e237f61f053b23b28e"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:20.000000Z"/>
+<entry
+   committed-rev="92"
+   name="NetworkTools.html"
+   text-time="2008-10-06T14:14:22.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="b0e1705e56312ecc542179bdee67de68"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:20.000000Z"/>
+</wc-entries>

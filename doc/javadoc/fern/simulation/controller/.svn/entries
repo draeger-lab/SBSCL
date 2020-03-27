@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="92"
+   name=""
+   committed-date="2007-06-30T22:32:12.081963Z"
+   url="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi/FERN/doc/fern/simulation/controller"
+   last-author="erhardf"
+   kind="dir"
+   uuid="076530bb-1e10-0410-8fe9-deb4812d201b"
+   repos="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi"
+   revision="99"/>
+<entry
+   name="class-use"
+   kind="dir"/>
+<entry
+   committed-rev="92"
+   name="package-frame.html"
+   text-time="2008-10-06T14:14:46.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="e1b744c1cf8c040d7e34ef3bfeefd8d1"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:45.000000Z"/>
+<entry
+   committed-rev="92"
+   name="OrController.html"
+   text-time="2008-10-06T14:14:47.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="4af1207753ec8ac06517e8ae9d7fa76d"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:45.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-use.html"
+   text-time="2008-10-06T14:14:47.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="b8007b86b1ef31e491e7b86479509025"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:45.000000Z"/>
+<entry
+   committed-rev="92"
+   name="AndController.html"
+   text-time="2008-10-06T14:14:47.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="30195eeb5a25c98f7ddc4825b6b5f532"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:45.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-summary.html"
+   text-time="2008-10-06T14:14:47.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="f7abbfa98c1d8d5c6a9fd3f5db4df512"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:45.000000Z"/>
+<entry
+   committed-rev="92"
+   name="DefaultController.html"
+   text-time="2008-10-06T14:14:48.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="f8be6df6042bcf66784deb9f7af33922"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:46.000000Z"/>
+<entry
+   committed-rev="92"
+   name="SimulationController.html"
+   text-time="2008-10-06T14:14:48.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="07748348e0853b3facca7f5a71c820ed"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:46.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-tree.html"
+   text-time="2008-10-06T14:14:48.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="51d78884885662ba331ab32f1038b2c3"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:46.000000Z"/>
+</wc-entries>

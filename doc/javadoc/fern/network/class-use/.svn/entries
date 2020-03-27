@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="92"
+   name=""
+   committed-date="2007-06-30T22:32:12.081963Z"
+   url="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi/FERN/doc/fern/network/class-use"
+   last-author="erhardf"
+   kind="dir"
+   uuid="076530bb-1e10-0410-8fe9-deb4812d201b"
+   repos="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi"
+   revision="99"/>
+<entry
+   committed-rev="92"
+   name="AmountManager.html"
+   text-time="2008-10-06T14:15:34.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="3a374428b7a473251d5dd50f030a1973"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:32.000000Z"/>
+<entry
+   committed-rev="92"
+   name="AbstractNetworkImpl.html"
+   text-time="2008-10-06T14:15:35.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="3972b8b04136659b28742e220a28b87b"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:32.000000Z"/>
+<entry
+   committed-rev="92"
+   name="NetworkLoader.html"
+   text-time="2008-10-06T14:15:35.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="eddf8d384026d17adc42610cf1933eb7"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:33.000000Z"/>
+<entry
+   committed-rev="92"
+   name="FeatureNotSupportedException.html"
+   text-time="2008-10-06T14:15:35.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="464d48912d80f7ae37ba55c80030f67e"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:33.000000Z"/>
+<entry
+   committed-rev="92"
+   name="AnnotationManager.html"
+   text-time="2008-10-06T14:15:35.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="7720c1ed78dbb527268ad33f8568f9b1"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:33.000000Z"/>
+<entry
+   committed-rev="92"
+   name="ArrayKineticConstantPropensityCalculator.html"
+   text-time="2008-10-06T14:15:36.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="6097b35e6f960dfaba90777a4dbe4562"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:33.000000Z"/>
+<entry
+   committed-rev="92"
+   name="PropensityCalculator.html"
+   text-time="2008-10-06T14:15:36.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="a4b53c035b71a30f4b80048edd12c518"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:33.000000Z"/>
+<entry
+   committed-rev="92"
+   name="AnnotationManagerImpl.html"
+   text-time="2008-10-06T14:15:36.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="6ab9b6ec3e2e9598432d8a5739178444"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:34.000000Z"/>
+<entry
+   committed-rev="92"
+   name="Network.html"
+   text-time="2008-10-06T14:15:36.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="641fd04f00196b915790f84e1de9b43f"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:34.000000Z"/>
+<entry
+   committed-rev="92"
+   name="AbstractKineticConstantPropensityCalculator.html"
+   text-time="2008-10-06T14:15:37.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="e74699050f78d91f8e6ba1badf66b86d"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:34.000000Z"/>
+</wc-entries>

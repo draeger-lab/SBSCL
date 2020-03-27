@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="92"
+   name=""
+   committed-date="2007-06-30T22:32:12.081963Z"
+   url="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi/FERN/doc/fern/simulation/observer/class-use"
+   last-author="erhardf"
+   kind="dir"
+   uuid="076530bb-1e10-0410-8fe9-deb4812d201b"
+   repos="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi"
+   revision="99"/>
+<entry
+   committed-rev="92"
+   name="IntervalObserver.html"
+   text-time="2008-10-06T14:15:09.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="088e8556122b5028cc5c7af5349d32a6"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:07.000000Z"/>
+<entry
+   committed-rev="92"
+   name="FireTypeObserver.html"
+   text-time="2008-10-06T14:15:09.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="2409fe851da33fb0e1e08881d7397207"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:07.000000Z"/>
+<entry
+   committed-rev="92"
+   name="AmountAtMomentObserver.html"
+   text-time="2008-10-06T14:15:10.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="201c212420987c1aaabdf6e0e6abd6b4"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:08.000000Z"/>
+<entry
+   committed-rev="92"
+   name="AmountIntervalObserver.html"
+   text-time="2008-10-06T14:15:10.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="e56bc0b7cfd369464af8a32c8e78ffb6"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:08.000000Z"/>
+<entry
+   committed-rev="92"
+   name="GnuPlotObserver.html"
+   text-time="2008-10-06T14:15:10.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="26c3c2d569b076366f03e07a3bdc81d8"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:08.000000Z"/>
+<entry
+   committed-rev="92"
+   name="ReactionIntervalObserver.html"
+   text-time="2008-10-06T14:15:10.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="dec0f02f8f15789cd010d7734459476c"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:08.000000Z"/>
+<entry
+   committed-rev="92"
+   name="RandomNumberGeneratorCallObserver.html"
+   text-time="2008-10-06T14:15:11.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="b318913db6f7e35b61882e2cbb7faaa9"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:08.000000Z"/>
+<entry
+   committed-rev="92"
+   name="Observer.html"
+   text-time="2008-10-06T14:15:11.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="ace901916f3317ebdc1219bbfb232a69"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:09.000000Z"/>
+<entry
+   committed-rev="92"
+   name="InstantOutputObserver.html"
+   text-time="2008-10-06T14:15:11.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="80134b8494a953f13af19b520a5be3f1"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:09.000000Z"/>
+<entry
+   committed-rev="92"
+   name="LeapObserver.html"
+   text-time="2008-10-06T14:15:11.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="84a78a801de8c7b7420a893e1d535aad"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:09.000000Z"/>
+</wc-entries>

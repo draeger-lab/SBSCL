@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="92"
+   name=""
+   committed-date="2007-06-30T22:32:12.081963Z"
+   url="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi/FERN/doc/fern/tools/functions"
+   last-author="erhardf"
+   kind="dir"
+   uuid="076530bb-1e10-0410-8fe9-deb4812d201b"
+   repos="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi"
+   revision="99"/>
+<entry
+   name="class-use"
+   kind="dir"/>
+<entry
+   committed-rev="92"
+   name="Probability.html"
+   text-time="2008-10-06T14:14:08.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="1e2406b68afb60e2d48ccc181c929542"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:06.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-frame.html"
+   text-time="2008-10-06T14:14:08.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="e5043494ad32de1b0fdda8cb94063ec7"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:07.000000Z"/>
+<entry
+   committed-rev="92"
+   name="Probability.ReactionProbability.html"
+   text-time="2008-10-06T14:14:08.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="a636cd4261c046c6394b9f42ebbb5942"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:07.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-use.html"
+   text-time="2008-10-06T14:14:09.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="c2699e62a5f4a007d064dbf8296161c8"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:07.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-summary.html"
+   text-time="2008-10-06T14:14:09.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="33b2ba0edd56173aa099fdcb8d8ac2a5"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:07.000000Z"/>
+<entry
+   committed-rev="92"
+   name="Probability.Constant.html"
+   text-time="2008-10-06T14:14:09.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="1a367d7a53013f8d424f9ba94059c0cb"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:07.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-tree.html"
+   text-time="2008-10-06T14:14:09.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="27c9e6f97cb265f40491d9c338995892"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:08.000000Z"/>
+</wc-entries>

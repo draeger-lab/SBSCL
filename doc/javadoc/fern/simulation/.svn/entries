@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="92"
+   name=""
+   committed-date="2007-06-30T22:32:12.081963Z"
+   url="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi/FERN/doc/fern/simulation"
+   last-author="erhardf"
+   kind="dir"
+   uuid="076530bb-1e10-0410-8fe9-deb4812d201b"
+   repos="https://www.cip.ifi.lmu.de/~erhardf/svn/hiwi"
+   revision="99"/>
+<entry
+   name="class-use"
+   kind="dir"/>
+<entry
+   committed-rev="92"
+   name="Simulator.html"
+   text-time="2008-10-06T14:15:20.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="ed7c1e8a220405acf3ccc624bcaea9b7"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:14:41.000000Z"/>
+<entry
+   name="controller"
+   kind="dir"/>
+<entry
+   name="algorithm"
+   kind="dir"/>
+<entry
+   committed-rev="92"
+   name="package-frame.html"
+   text-time="2008-10-06T14:15:20.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="0801a48316a588767a75fa9de9f16ec4"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:05.000000Z"/>
+<entry
+   name="observer"
+   kind="dir"/>
+<entry
+   committed-rev="92"
+   name="Simulator.FireType.html"
+   text-time="2008-10-06T14:15:21.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="8b6be4dd8204de450d19014053527926"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:19.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-use.html"
+   text-time="2008-10-06T14:15:21.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="1a19bb965a612fc1ac9c22198f005faa"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:19.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-summary.html"
+   text-time="2008-10-06T14:15:21.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="ae18d50a109d0bfbec5885896052aba1"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:20.000000Z"/>
+<entry
+   committed-rev="92"
+   name="package-tree.html"
+   text-time="2008-10-06T14:15:21.000000Z"
+   committed-date="2007-06-30T22:32:12.081963Z"
+   checksum="f2e0412d08e8ecc05e8780a1ee92f884"
+   last-author="erhardf"
+   kind="file"
+   prop-time="2008-10-06T14:15:20.000000Z"/>
+</wc-entries>
