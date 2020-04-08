@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>fern</groupId>
+    <artifactId>FERN</artifactId>
+
+    <!-- Output to jar format -->
+    <packaging>jar</packaging>
+
+    <!-- =================================================================== -->
+    <!-- General project information -->
+    <!-- =================================================================== -->
+
+    <name>${project.artifactId}</name>
+    <version>0.5</version>
+    <url>https://github.com/draeger-lab/FERN</url>
+    <description>FERN (Framework for Evaluation of Reaction Networks) is an extensible and comprehensive framework for
+        efficient simulations and analysis of chemical reaction networks written in Java.
+    </description>
+
+    <properties>
+        <jdk.version>1.8</jdk.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.license.url>http://www.gnu.org/licenses/lgpl-3.0-standalone.html</project.license.url>
+        <junit.version>4.11</junit.version>
+        <maven-javadoc-plugin.version>2.10.2</maven-javadoc-plugin.version>
+    </properties>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/draeger-lab/FERN/issues</url>
+    </issueManagement>
+
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License</name>
+            <url>${project.license.url}</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <email>Florian.Erhard@uni-wuerzburg.de</email>
+            <name>Florian Erhard</name>
+            <url>https://github.com/florianerhard</url>
+            <id>florianerhard</id>
+        </developer>
+    </developers>
+
+    <!-- =================================================================== -->
+    <!-- Repositories -->
+    <!-- =================================================================== -->
+
+    <repositories>
+        <repository>
+            <id>libs</id>
+            <url>file://${project.basedir}/lib</url>
+        </repository>
+    </repositories>
+
+    <!-- =================================================================== -->
+    <!-- Dependencies -->
+    <!-- =================================================================== -->
+
+    <dependencies>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.sbml.jsbml</groupId>
+            <artifactId>jsbml</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.surefire</groupId>
+            <artifactId>surefire-junit47</artifactId>
+            <version>3.0.0-M4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.jdom/jdom -->
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.blazegraph</groupId>
+            <artifactId>colt</artifactId>
+            <version>2.1.4</version>
+        </dependency>
+
+    </dependencies>
+
+    <!-- =================================================================== -->
+    <!-- Building -->
+    <!-- =================================================================== -->
+
+    <!-- To build the project run: -->
+    <!-- mvn clean compile package assembly:single -->
+
+    <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}/doc</directory>
+                <targetPath>${basedir}/doc</targetPath>
+            </resource>
+        </resources>
+
+        <pluginManagement>
+            <plugins>
+
+                <!-- [Optional] if working in eclipse -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-eclipse-plugin</artifactId>
+                    <version>2.10</version>
+                    <configuration>
+                        <downloadSources>true</downloadSources>
+                        <downloadJavadocs>true</downloadJavadocs>
+                    </configuration>
+                </plugin>
+
+                <!-- Set a JDK compiler level -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
+                    <configuration>
+                        <source>${jdk.version}</source>
+                        <target>${jdk.version}</target>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            </manifest>
+                        </archive>
+                        <descriptorRefs>
+                            <descriptorRef>jar-with-dependencies</descriptorRef>
+                        </descriptorRefs>
+                        <finalName>${project.artifactId}-${project.version}</finalName>
+                        <appendAssemblyId>false</appendAssemblyId>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                            <phase>package</phase> <!-- bind to the packaging phase -->
+                            <goals>
+                                <!-- This will create a JAR with all dependencies -->
+                                <!-- mvn clean compile assembly:single -->
+                                <goal>single</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+
+                <!-- Run Tests -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M4</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.surefire</groupId>
+                            <artifactId>surefire-junit47</artifactId>
+                            <version>3.0.0-M4</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <systemProperties>
+                            <property>
+                                <name>java.util.logging.config.file</name>
+                                <value>logging.properties</value>
+                            </property>
+                        </systemProperties>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+    </build>
+
+    <!-- =================================================================== -->
+    <!-- Building project documentation files -->
+    <!-- =================================================================== -->
+
+    <!-- see https://maven.apache.org/plugins/maven-javadoc-plugin/examples/javadoc-resources.html -->
+
+    <!--    <reporting>-->
+    <!--        <outputDirectory>target/site</outputDirectory>-->
+    <!--        <plugins>-->
+    <!--            <plugin>-->
+    <!--                <groupId>org.apache.maven.plugins</groupId>-->
+    <!--                <artifactId>maven-project-info-reports-plugin</artifactId>-->
+    <!--                <version>2.7</version>-->
+    <!--            </plugin>-->
+    <!--        </plugins>-->
+    <!--    </reporting>-->
+
+
+</project>
