@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version3" level="2" version="3">
+  <model id="mm.xml">
+    <listOfCompartments>
+      <compartment id="Cell"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="S" compartment="Cell" initialAmount="100" hasOnlySubstanceUnits="true"/>
+      <species id="E" compartment="Cell" initialAmount="20" hasOnlySubstanceUnits="true"/>
+      <species id="P" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true"/>
+      <species id="ES" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true"/>
+    </listOfSpecies>
+    <listOfReactions>
+      <reaction id="S+E-&gt;ES" reversible="false">
+        <listOfReactants>
+          <speciesReference species="S"/>
+          <speciesReference species="E"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ES"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 5 </cn>
+              <ci> S </ci>
+              <ci> E </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="ES-&gt;S+E" reversible="false">
+        <listOfReactants>
+          <speciesReference species="ES"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="S"/>
+          <speciesReference species="E"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 4 </cn>
+              <ci> ES </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="ES-&gt;P+E" reversible="false">
+        <listOfReactants>
+          <speciesReference species="ES"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="P"/>
+          <speciesReference species="E"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 1 </cn>
+              <ci> ES </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>
