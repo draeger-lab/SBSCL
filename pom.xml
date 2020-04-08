@@ -101,6 +101,13 @@
             <version>2.1.4</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.sbml/sbmlj -->
+        <dependency>
+            <groupId>org.sbml</groupId>
+            <artifactId>sbmlj</artifactId>
+            <version>3.2</version>
+        </dependency>
+
     </dependencies>
 
     <!-- =================================================================== -->
