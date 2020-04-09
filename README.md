@@ -28,13 +28,15 @@ doc/slides.pdf 			presentation about FERN's structure / features
 doc/guide.pdf  			user guide
 doc/cytoscape.pdf		documentation / tutorial for the Cytoscape plugin
 
-src/ 				FERN's source code
-examples/ 			example FernML and SBML files
+lib                             3rd party libraries needed for compilation and execution
 
-jar_files/jarcolt.jar		necessary library (*)
-jar_files/concurrent.jar	necessary library (*)
-jar_files/jdom.jar		necessary library
-jar_files/fern.jar 		complete FERN library
+src/main/java/fern		source code
+src/main/resources/examples     example FernML and SBML files
+src/test/java                   test files for FERN 			
+
+LICENSE                         license under which project is distributed
+pom.xml                         Maven file for building the project
+README.md                       this file
 start* 				examples of running FERN's command line class under different environments
 ```
 
