@@ -1,9 +1,10 @@
 import java.io.File;
 import java.io.IOException;
 
+import fern.network.fernml.FernMLNetwork;
 import org.jdom.JDOMException;
 
-import fern.network.rnml.RNMLNetwork;
+//import fern.network.rnml.RNMLNetwork;
 import fern.simulation.Simulator;
 import fern.simulation.algorithm.AbstractBaseTauLeaping;
 import fern.simulation.algorithm.TauLeapingAbsoluteBoundSimulator;
@@ -18,7 +19,7 @@ public class IrreversibleIzomerizationTest {
 	 * @throws JDOMException 
 	 */
 	public static void main(String[] args) throws IOException, JDOMException {
-		RNMLNetwork net = new RNMLNetwork(new File("test/data/rnml/isomerization.xml"));
+		FernMLNetwork net = new FernMLNetwork(new File("/home/blackreaper/Documents/GSOC/FERN/src/main/resources/examples/isomerization.xml"));
 		
 		AbstractBaseTauLeaping sim = new TauLeapingAbsoluteBoundSimulator(net);
 		sim.setEpsilon(0.05);

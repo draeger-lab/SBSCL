@@ -16,7 +16,7 @@ import fern.network.Network;
 import fern.network.creation.AutocatalyticNetwork;
 import fern.network.modification.ExtractSubNetwork;
 import fern.network.modification.ReversibleNetwork;
-import fern.network.rnml.RNMLNetwork;
+//import fern.network.rnml.RNMLNetwork;
 import fern.network.sbml.SBMLNetwork;
 import fern.tools.Stochastics;
 import fern.tools.NetworkTools;

@@ -51,7 +51,7 @@ public class FernMLNetwork extends AbstractNetworkImpl {
 	 */
 	public FernMLNetwork(File file) throws IOException, JDOMException  {
 		super(file.getName());
-		
+
 		URL schemeFile = getClass().getResource("FernMLSchema.xsd");
 
 		SAXBuilder sax = new SAXBuilder(true);

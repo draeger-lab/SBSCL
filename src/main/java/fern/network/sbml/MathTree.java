@@ -6,13 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-
-import org.sbml.libsbml.ASTNode;
-import org.sbml.libsbml.libsbmlConstants;
-
 import fern.network.AmountManager;
 import fern.network.Network;
 import fern.simulation.Simulator;
+import org.sbml.jsbml.ASTNode;
 
 /**
  * Representation of am evaluation tree. Within a sbml file, MathML branches may occur at 
@@ -96,105 +93,105 @@ public class MathTree {
 				c[i] = calculateNode(((InnerNode)n).Children[i], amount,sim);
 
 			switch (((InnerNode)n).AstNodeType) {
-			case libsbmlConstants.AST_PLUS:
-				return c[0]+c[1];
-			case libsbmlConstants.AST_MINUS:
-				return c.length==1 ? -c[0] : c[0]-c[1];
-			case libsbmlConstants.AST_TIMES:
-				return c[0]*c[1];
+				case PLUS:
+					return c[0] + c[1];
+				case MINUS:
+					return c.length == 1 ? -c[0] : c[0] - c[1];
+				case TIMES:
+					return c[0] * c[1];
 
-			case libsbmlConstants.AST_DIVIDE:
-				return c[0]/c[1];
+				case DIVIDE:
+					return c[0] / c[1];
 
-			case libsbmlConstants.AST_POWER:
-				return Math.pow(c[0], c[1]);
-			case libsbmlConstants.AST_FUNCTION_ABS:
-				return Math.abs(c[0]);
-			case libsbmlConstants.AST_FUNCTION_ARCCOS:
-				return Math.acos(c[0]);
-			case libsbmlConstants.AST_FUNCTION_ARCCOT:
-				/* arccot x =  arctan (1 / x) */
-				return Math.atan(1. / c[0]);
-			case libsbmlConstants.AST_FUNCTION_ARCCOTH:
-				return ((1. / 2.) *
-						Math.log((c[0]+ 1.) /
-								(c[1] - 1.) ));
-			case libsbmlConstants.AST_FUNCTION_ARCCSC:
-				/* arccsc(x) = Arctan(1 / sqrt((x - 1)(x + 1))) */
-				return Math.atan(1. / Math.sqrt((c[0] - 1.) * (c[0] + 1.) ));
-			case libsbmlConstants.AST_FUNCTION_ARCCSCH:
-				/* arccsch(x) = ln((1 + sqrt(1 + x^2)) / x) */
-				return Math.log((1. + Math.pow(1 + Math.pow(c[0], 2), 2))/ c[0]);
-			case libsbmlConstants.AST_FUNCTION_ARCSEC:
-				/* arcsec(x) = arctan(sqrt((x - 1)(x + 1))) */
-				return Math.atan(Math.sqrt((c[0] - 1.) * (c[0] + 1.) ));
-			case libsbmlConstants.AST_FUNCTION_ARCSECH:
-				/* arcsech(x) = ln((1 + sqrt(1 - x^2)) / x) */
-				return  Math.log((1. + Math.pow(1 - Math.pow(c[0], 2), 0.5)) / c[0]);
-			case libsbmlConstants.AST_FUNCTION_ARCSIN:
-				return Math.asin(c[0]);
-			case libsbmlConstants.AST_FUNCTION_ARCSINH:
-				return Math.asin(c[0]); // TODO : fix to have asinh
-			case libsbmlConstants.AST_FUNCTION_ARCTAN:
-				return Math.atan(c[0]);
-			case libsbmlConstants.AST_FUNCTION_ARCTANH:
-				return Math.atan(c[0]); // TODO : fix to have atanh
-			case libsbmlConstants.AST_FUNCTION_CEILING:
-				return Math.ceil(c[0]);
-			case libsbmlConstants.AST_FUNCTION_COS:
-				return Math.cos(c[0]);
-			case libsbmlConstants.AST_FUNCTION_COSH:
-				return Math.cosh(c[0]);
-			case libsbmlConstants.AST_FUNCTION_COT:
-				/* cot x = 1 / tan x */
-				return 1. / Math.tan(c[0]);
-			case libsbmlConstants.AST_FUNCTION_COTH:
-				/* coth x = cosh x / sinh x */
-				return Math.cosh(c[0]) / Math.sinh(c[0]);
-			case libsbmlConstants.AST_FUNCTION_CSC:
-				/* csc x = 1 / sin x */
-				return (1. / Math.sin(c[0]));
-			case libsbmlConstants.AST_FUNCTION_CSCH:
-				/* csch x = 1 / cosh x  */
-				return (1. / Math.cosh(c[0]));
-			case libsbmlConstants.AST_FUNCTION_EXP:
-				return Math.exp(c[0]);
-			case libsbmlConstants.AST_FUNCTION_FLOOR:
-				return Math.floor(c[0]);
-			case libsbmlConstants.AST_FUNCTION_LN:
-				return Math.log(c[0]);
-			case libsbmlConstants.AST_FUNCTION_LOG:
-				return Math.log10(c[0]);
-			case libsbmlConstants.AST_FUNCTION_POWER:
-				return Math.pow(c[0], c[1]);
-			case libsbmlConstants.AST_FUNCTION_ROOT:
-				return Math.pow(c[1], 1. / c[0]);
-			case libsbmlConstants.AST_FUNCTION_SEC:
-				/* sec x = 1 / cos x */
-				return 1. / Math.cos(c[0]);
-			case libsbmlConstants.AST_FUNCTION_SECH:
-				/* sech x = 1 / sinh x */
-				return 1. / Math.sinh(c[0]);
-			case libsbmlConstants.AST_FUNCTION_SIN:
-				return Math.sin(c[0]);
-			case libsbmlConstants.AST_FUNCTION_SINH:
-				return Math.sinh(c[0]);
-			case libsbmlConstants.AST_FUNCTION_TAN:
-				return Math.tan(c[0]);
-			case libsbmlConstants.AST_FUNCTION_TANH:
-				return Math.tanh(c[0]);
-			case libsbmlConstants.AST_RELATIONAL_EQ:
-				return c[0]==c[1] ? 1 : 0;
-			case libsbmlConstants.AST_RELATIONAL_GEQ:
-				return c[0]>=c[1] ? 1 : 0;
-			case libsbmlConstants.AST_RELATIONAL_GT:
-				return c[0]>c[1] ? 1 : 0;
-			case libsbmlConstants.AST_RELATIONAL_LEQ:
-				return c[0]<=c[1] ? 1 : 0;
-			case libsbmlConstants.AST_RELATIONAL_LT:
-				return c[0]<c[1] ? 1 : 0;
-			case libsbmlConstants.AST_RELATIONAL_NEQ:
-				return c[0]!=c[1] ? 1 : 0;
+				case POWER:
+					return Math.pow(c[0], c[1]);
+				case FUNCTION_ABS:
+					return Math.abs(c[0]);
+				case FUNCTION_ARCCOS:
+					return Math.acos(c[0]);
+				case FUNCTION_ARCCOT:
+					/* arccot x =  arctan (1 / x) */
+					return Math.atan(1. / c[0]);
+				case FUNCTION_ARCCOTH:
+					return ((1. / 2.) *
+							Math.log((c[0] + 1.) /
+									(c[1] - 1.)));
+				case FUNCTION_ARCCSC:
+					/* arccsc(x) = Arctan(1 / sqrt((x - 1)(x + 1))) */
+					return Math.atan(1. / Math.sqrt((c[0] - 1.) * (c[0] + 1.)));
+				case FUNCTION_ARCCSCH:
+					/* arccsch(x) = ln((1 + sqrt(1 + x^2)) / x) */
+					return Math.log((1. + Math.pow(1 + Math.pow(c[0], 2), 2)) / c[0]);
+				case FUNCTION_ARCSEC:
+					/* arcsec(x) = arctan(sqrt((x - 1)(x + 1))) */
+					return Math.atan(Math.sqrt((c[0] - 1.) * (c[0] + 1.)));
+				case FUNCTION_ARCSECH:
+					/* arcsech(x) = ln((1 + sqrt(1 - x^2)) / x) */
+					return Math.log((1. + Math.pow(1 - Math.pow(c[0], 2), 0.5)) / c[0]);
+				case FUNCTION_ARCSIN:
+					return Math.asin(c[0]);
+				case FUNCTION_ARCSINH:
+					return Math.log(c[0] + Math.sqrt(c[0] * c[0] + 1.0));
+				case FUNCTION_ARCTAN:
+					return Math.atan(c[0]);
+				case FUNCTION_ARCTANH:
+					return 0.5 * Math.log((c[0] + 1.0) / (c[0] - 1.0));
+				case FUNCTION_CEILING:
+					return Math.ceil(c[0]);
+				case FUNCTION_COS:
+					return Math.cos(c[0]);
+				case FUNCTION_COSH:
+					return Math.cosh(c[0]);
+				case FUNCTION_COT:
+					/* cot x = 1 / tan x */
+					return 1. / Math.tan(c[0]);
+				case FUNCTION_COTH:
+					/* coth x = cosh x / sinh x */
+					return Math.cosh(c[0]) / Math.sinh(c[0]);
+				case FUNCTION_CSC:
+					/* csc x = 1 / sin x */
+					return (1. / Math.sin(c[0]));
+				case FUNCTION_CSCH:
+					/* csch x = 1 / cosh x  */
+					return (1. / Math.cosh(c[0]));
+				case FUNCTION_EXP:
+					return Math.exp(c[0]);
+				case FUNCTION_FLOOR:
+					return Math.floor(c[0]);
+				case FUNCTION_LN:
+					return Math.log(c[0]);
+				case FUNCTION_LOG:
+					return Math.log10(c[0]);
+				case FUNCTION_POWER:
+					return Math.pow(c[0], c[1]);
+				case FUNCTION_ROOT:
+					return Math.pow(c[1], 1. / c[0]);
+				case FUNCTION_SEC:
+					/* sec x = 1 / cos x */
+					return 1. / Math.cos(c[0]);
+				case FUNCTION_SECH:
+					/* sech x = 1 / sinh x */
+					return 1. / Math.sinh(c[0]);
+				case FUNCTION_SIN:
+					return Math.sin(c[0]);
+				case FUNCTION_SINH:
+					return Math.sinh(c[0]);
+				case FUNCTION_TAN:
+					return Math.tan(c[0]);
+				case FUNCTION_TANH:
+					return Math.tanh(c[0]);
+				case RELATIONAL_EQ:
+					return c[0] == c[1] ? 1 : 0;
+				case RELATIONAL_GEQ:
+					return c[0] >= c[1] ? 1 : 0;
+				case RELATIONAL_GT:
+					return c[0] > c[1] ? 1 : 0;
+				case RELATIONAL_LEQ:
+					return c[0] <= c[1] ? 1 : 0;
+				case RELATIONAL_LT:
+					return c[0] < c[1] ? 1 : 0;
+				case RELATIONAL_NEQ:
+					return c[0] != c[1] ? 1 : 0;
 			
 			default:
 				throw new IllegalArgumentException("Type "+((InnerNode)n).AstNodeType+" not supported");
@@ -207,33 +204,33 @@ public class MathTree {
 		ASTNode[] child = new ASTNode[childnum];
 		for(int i = 0; i < childnum; i++)
 			child[i] = ast.getChild(i);
-		int astNodeType = ast.getType();
+		ASTNode.Type astNodeType = ast.getType();
 
 		if (childnum==0) {
 			switch (astNodeType) {
-			case libsbmlConstants.AST_INTEGER: 
-				return new ConstLeaf( (double) ast.getInteger());
-			case libsbmlConstants.AST_REAL:
-			case libsbmlConstants.AST_REAL_E:
-			case libsbmlConstants.AST_RATIONAL:
-				return new ConstLeaf(ast.getReal());
-			case libsbmlConstants.AST_NAME:
-				if (locals.containsKey(ast.getName()))
-					return new ConstLeaf(locals.get(ast.getName()));
-				else if (bindings.containsKey(ast.getName()))
-					return new VarLeaf(ast.getName(),bindings.get(ast.getName()));
-				else
-					return new GlobalLeaf(ast.getName());
-			case libsbmlConstants.AST_CONSTANT_E:
-				return new ConstLeaf(Math.exp(1));
-			case libsbmlConstants.AST_CONSTANT_FALSE:
-				return new ConstLeaf(0);
-			case libsbmlConstants.AST_CONSTANT_PI:
-				return new ConstLeaf(4 * Math.atan(1.));
-			case libsbmlConstants.AST_CONSTANT_TRUE:
-				return new ConstLeaf(1);
-			case 261:
-				return new GlobalLeaf("TIME");
+				case INTEGER:
+					return new ConstLeaf((double) ast.getInteger());
+				case REAL:
+				case REAL_E:
+				case RATIONAL:
+					return new ConstLeaf(ast.getReal());
+				case NAME:
+					if (locals.containsKey(ast.getName()))
+						return new ConstLeaf(locals.get(ast.getName()));
+					else if (bindings.containsKey(ast.getName()))
+						return new VarLeaf(ast.getName(), bindings.get(ast.getName()));
+					else
+						return new GlobalLeaf(ast.getName());
+				case CONSTANT_E:
+					return new ConstLeaf(Math.exp(1));
+				case CONSTANT_FALSE:
+					return new ConstLeaf(0);
+				case CONSTANT_PI:
+					return new ConstLeaf(4 * Math.atan(1.));
+				case CONSTANT_TRUE:
+					return new ConstLeaf(1);
+//                case 261:
+//                    return new GlobalLeaf("TIME");
 			default:
 				throw new IllegalArgumentException("Type "+astNodeType+" not supported for MathML-Node without children");
 			}
@@ -248,8 +245,8 @@ public class MathTree {
 	public static abstract class Node {}
 	public static class InnerNode extends Node {
 		public Node[] Children;
-		public int AstNodeType;
-		public InnerNode(Node[] Children, int AstNodeType) { this.Children = Children; this.AstNodeType = AstNodeType; }
+		public ASTNode.Type AstNodeType;
+		public InnerNode(Node[] Children, ASTNode.Type AstNodeType) { this.Children = Children; this.AstNodeType = AstNodeType; }
 		public String toString() { return inferStringFromSBMLConstant("AST",AstNodeType); }
 	}
 	public static class VarLeaf extends Node {
@@ -278,7 +275,7 @@ public class MathTree {
 	 */
 	public static String inferStringFromSBMLConstant(String prefix, Object c) {
 		// not the most efficient way, but that will do
-		for (Field f : libsbmlConstants.class.getDeclaredFields())
+		for (Field f : ASTNode.Type.class.getDeclaredFields())
 			try {
 				if (f.getName().startsWith(prefix) && f.get(null).equals(c)) return f.getName();
 			} catch (Exception e) {}

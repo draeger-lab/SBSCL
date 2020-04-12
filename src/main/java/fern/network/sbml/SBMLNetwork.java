@@ -13,17 +13,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import org.sbml.libsbml.ASTNode;
-import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLReader;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.SpeciesReference;
-import org.sbml.libsbml.libsbmlConstants;
-
 import fern.network.AbstractNetworkImpl;
 import fern.network.AnnotationManagerImpl;
 import fern.network.DefaultAmountManager;
@@ -31,6 +20,9 @@ import fern.network.FeatureNotSupportedException;
 import fern.network.Network;
 import fern.simulation.Simulator;
 import fern.tools.NetworkTools;
+import org.sbml.jsbml.*;
+
+import javax.xml.stream.XMLStreamException;
 
 /**
  * For specifications of the sbml format refer to http:\\www.sbml.org.
@@ -62,7 +54,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	 * @param file	SBML file
 	 * @throws FeatureNotSupportedException
 	 */
-	public SBMLNetwork(File file) throws FeatureNotSupportedException {
+	public SBMLNetwork(File file) throws FeatureNotSupportedException, IOException, XMLStreamException {
 		this(file,false);
 	}
 	
@@ -74,17 +66,13 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	 * @param ignoreExceptions	wheter or not exceptions should be thrown
 	 * @throws FeatureNotSupportedException
 	 */
-	public SBMLNetwork(File file, boolean ignoreExceptions) throws FeatureNotSupportedException  {
+	public SBMLNetwork(File file, boolean ignoreExceptions) throws FeatureNotSupportedException, IOException, XMLStreamException {
 		super(file.toString());
 		
-		System.loadLibrary("sbmlj");
+//		System.loadLibrary("sbmlj");
 		document = new SBMLReader().readSBML(file.toString());
 		
 		if (!ignoreExceptions) {
-			if (document.getModel().getNumSpecies()>Integer.MAX_VALUE)
-				throw new FeatureNotSupportedException("Too many species in network!");
-			if (document.getModel().getNumReactions()>Integer.MAX_VALUE)
-				throw new FeatureNotSupportedException("Too many reactions in network!");
 			if (document.getModel().getNumRules()>0)
 				throw new FeatureNotSupportedException("Rules are not allowed at the moment!");
 			if (document.getModel().getNumConstraints()>0)
@@ -112,7 +100,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	 */
 	public SBMLNetwork(Network net) {
 		super(net.getName());
-		System.loadLibrary("sbmlj");
+//		System.loadLibrary("sbmlj");
 		
 		
 		document = createDocument(net);
@@ -227,12 +215,18 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	 * @param file			the file to save the network in
 	 * @throws IOException	if the file cannot be written
 	 */
-	public void saveToFile(File file) throws IOException {
-		FileWriter fw = new FileWriter(file);
-		fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		fw.write(document.toSBML());
-		fw.flush();
-		fw.close();
+	public void saveToFile(File file) throws IOException, XMLStreamException {
+//		FileWriter fw = new FileWriter(file);
+//		fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+//		fw.write(document.toSBML());
+//		fw.flush();
+//		fw.close();
+		/**
+		 * [Changes made]
+		 * As currently JSBML is lacking in toSBML() method so I am using SBML Writer here
+		 */
+		SBMLWriter sbmlWriter = new SBMLWriter();
+		sbmlWriter.writeSBMLToFile(document, file.toString());
 	}
 	
 	
@@ -245,16 +239,22 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	 * @param version		sbml version
 	 * @throws IOException	if the file cannot be written
 	 */
-	public void saveToFile(File file, long level, long version) throws IOException {
-		long oldlevel = document.getLevel();
-		long oldversion = document.getVersion();
-		document.setLevelAndVersion(level, version);
-		FileWriter fw = new FileWriter(file);
-		fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		fw.write(document.toSBML());
-		fw.flush();
-		fw.close();
-		document.setLevelAndVersion(oldlevel, oldversion);
+	public void saveToFile(File file, int level, int version) throws IOException, XMLStreamException {
+		int oldlevel = document.getLevel();
+		int oldversion = document.getVersion();
+		document.setLevelAndVersion(Math.toIntExact(level), Math.toIntExact(version));
+//		FileWriter fw = new FileWriter(file);
+//		fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+//		fw.write(document.toSBML());
+//		fw.flush();
+//		fw.close();
+		/**
+		 * [Changes made]
+		 * As currently JSBML is lacking in toSBML() method so I am using SBML Writer here
+		 */
+		SBMLWriter sbmlWriter = new SBMLWriter();
+		sbmlWriter.writeSBMLToFile(document, file.toString());
+		document.setLevelAndVersion(Math.toIntExact(oldlevel), Math.toIntExact(oldversion));
 	}
 	
 	private SBMLDocument createDocument(Network net) {
@@ -280,7 +280,16 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 				rea.addReactant(new SpeciesReference(net.getSpeciesName(net.getReactants(r)[s])));	
 			for (int s=0; s<net.getProducts(r).length; s++)
 				rea.addProduct(new SpeciesReference(net.getSpeciesName(net.getProducts(r)[s])));
-			KineticLaw law = new KineticLaw(getASTTree(net,r));
+
+			/**
+			 * [Changes made]
+			 *
+			 * As KineticLaw class is updated in JSBML
+			 * It takes parameters as reaction now. So updated it.
+			 *
+			 * Previous statement: KineticLaw law = new KineticLaw(getASTTree(net,r));
+			 */
+			KineticLaw law = new KineticLaw(rea);
 			rea.setKineticLaw(law);
 			re.addReaction(rea);
 		}
@@ -291,21 +300,21 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	private ASTNode getASTTree(Network net, int r) {
 		int[] reactants = net.getReactants(r);
 		
-		ASTNode node = new ASTNode(libsbmlConstants.AST_REAL);
+		ASTNode node = new ASTNode(ASTNode.Type.REAL);
 		node.setValue(NetworkTools.getConstantBySettingReactantsToStoich(net, r));
 		
 		int[] stoich = new int[net.getNumSpecies()];
 		
 		for (int reac=0; reac<reactants.length; reac++) {
-			ASTNode times = new ASTNode(libsbmlConstants.AST_TIMES);
-			ASTNode reacNode = new ASTNode(libsbmlConstants.AST_NAME);
+			ASTNode times = new ASTNode(ASTNode.Type.TIMES);
+			ASTNode reacNode = new ASTNode(ASTNode.Type.NAME);
 			reacNode.setName(net.getSpeciesName(reactants[reac]));
 			times.addChild(node);
 			if(stoich[reactants[reac]]==0)
 				times.addChild(reacNode);
 			else {
-				ASTNode minus = new ASTNode(libsbmlConstants.AST_MINUS);
-				ASTNode stoichNode = new ASTNode(libsbmlConstants.AST_REAL);
+				ASTNode minus = new ASTNode(ASTNode.Type.MINUS);
+				ASTNode stoichNode = new ASTNode(ASTNode.Type.REAL);
 				stoichNode.setValue(stoich[reactants[reac]]);
 				minus.addChild(reacNode);
 				minus.addChild(stoichNode);
@@ -317,8 +326,8 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 		
 		for (int i=0; i<stoich.length; i++) {
 			if (stoich[i]>1) {
-				ASTNode times = new ASTNode(libsbmlConstants.AST_TIMES);
-				ASTNode reacNode = new ASTNode(libsbmlConstants.AST_REAL);
+				ASTNode times = new ASTNode(ASTNode.Type.TIMES);
+				ASTNode reacNode = new ASTNode(ASTNode.Type.REAL);
 				reacNode.setValue(1.0/stoich[i]);
 				times.addChild(node);
 				times.addChild(reacNode);

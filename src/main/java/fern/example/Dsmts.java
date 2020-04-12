@@ -18,6 +18,8 @@ import fern.simulation.observer.IntervalObserver;
 import fern.tools.NumberTools;
 import fern.tools.gnuplot.GnuPlot;
 
+import javax.xml.stream.XMLStreamException;
+
 /**
  * Perform a series of tests (refer to http://www.calibayes.ncl.ac.uk/Resources/dsmts).
  * You have to specify the path to the unpacked dsmts archive. The method test produces
@@ -52,7 +54,7 @@ public class Dsmts {
 		//System.out.println(test("dsmts3/dsmts-001-01",runs, true));
 	}
 	
-	private static String test(String test, int runs, boolean producePlot) throws FeatureNotSupportedException, IOException {
+	private static String test(String test, int runs, boolean producePlot) throws FeatureNotSupportedException, IOException, XMLStreamException {
 		
 		// usual stuff: load network, create simulator and add the observer
 		SBMLNetwork net = new SBMLNetwork(new File(test+".xml"));

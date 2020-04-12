@@ -10,12 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Reaction;
-
 import fern.network.AmountManager;
 import fern.network.ComplexDependenciesPropensityCalculator;
 import fern.simulation.Simulator;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Reaction;
 
 /**
  * Propensity calculator which is used for {@link SBMLNetwork}s. The propensities are 
@@ -51,8 +50,12 @@ public class SBMLPropensityCalculator implements ComplexDependenciesPropensityCa
 		for (int i=0; i<model.getNumReactions(); i++) {
 			Map<String,Double> localParameter = new HashMap<String, Double>();
 			Reaction reaction = model.getReaction(i);
-			for (int j=0; j<reaction.getKineticLaw().getNumParameters(); j++) {
-	    		localParameter.put(reaction.getKineticLaw().getParameter(j).getId(), reaction.getKineticLaw().getParameter(j).getValue());
+			/**
+			 * [Changes made]
+			 * Removed deprecated method call
+			 */
+			for (int j=0; j<reaction.getKineticLaw().getLocalParameterCount(); j++) {
+	    		localParameter.put(reaction.getKineticLaw().getLocalParameter(j).getId(), reaction.getKineticLaw().getLocalParameter(j).getValue());
 	    	}
 			propensities[i] = new MathTree(net,reaction.getKineticLaw().getMath(),globalParameter,localParameter,net.getSpeciesMapping());
 		}

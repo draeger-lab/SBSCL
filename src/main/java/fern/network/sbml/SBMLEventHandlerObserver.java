@@ -3,7 +3,7 @@ package fern.network.sbml;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sbml.libsbml.Event;
+import org.sbml.jsbml.Event;
 
 import fern.simulation.Simulator;
 import fern.simulation.Simulator.FireType;
