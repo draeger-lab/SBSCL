@@ -101,13 +101,6 @@
             <version>2.1.4</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.fern</groupId>
-            <artifactId>fern</artifactId>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/fern.jar</systemPath>
-        </dependency>
-
     </dependencies>
 
     <!-- =================================================================== -->

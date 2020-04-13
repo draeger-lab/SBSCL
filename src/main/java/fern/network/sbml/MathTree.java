@@ -94,12 +94,22 @@ public class MathTree {
 
 			switch (((InnerNode)n).AstNodeType) {
 				case PLUS:
-					return c[0] + c[1];
+					double sum = 0;
+					for (double v : c) sum += v;
+					return sum;
 				case MINUS:
-					return c.length == 1 ? -c[0] : c[0] - c[1];
+					double sub = 0;
+					if (c.length > 0){
+						sub = -1 * c[0];
+					}
+					for(int i = 1;i < c.length;i++){
+						sub -= c[i];
+					}
+					return sub;
 				case TIMES:
-					return c[0] * c[1];
-
+					double mul = 1;
+					for(double v : c) mul *= v;
+					return mul;
 				case DIVIDE:
 					return c[0] / c[1];
 
@@ -118,13 +128,13 @@ public class MathTree {
 									(c[1] - 1.)));
 				case FUNCTION_ARCCSC:
 					/* arccsc(x) = Arctan(1 / sqrt((x - 1)(x + 1))) */
-					return Math.atan(1. / Math.sqrt((c[0] - 1.) * (c[0] + 1.)));
+					return Math.atan(1. / Math.sqrt((c[0] - 1.0) * (c[0] + 1.0)));
 				case FUNCTION_ARCCSCH:
 					/* arccsch(x) = ln((1 + sqrt(1 + x^2)) / x) */
 					return Math.log((1. + Math.pow(1 + Math.pow(c[0], 2), 2)) / c[0]);
 				case FUNCTION_ARCSEC:
 					/* arcsec(x) = arctan(sqrt((x - 1)(x + 1))) */
-					return Math.atan(Math.sqrt((c[0] - 1.) * (c[0] + 1.)));
+					return Math.atan(Math.sqrt((c[0] - 1.0) * (c[0] + 1.0)));
 				case FUNCTION_ARCSECH:
 					/* arcsech(x) = ln((1 + sqrt(1 - x^2)) / x) */
 					return Math.log((1. + Math.pow(1 - Math.pow(c[0], 2), 0.5)) / c[0]);

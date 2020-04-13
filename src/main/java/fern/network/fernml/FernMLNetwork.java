@@ -16,7 +16,6 @@ import org.jdom.output.XMLOutputter;
 
 import fern.network.AbstractKineticConstantPropensityCalculator;
 import fern.network.AbstractNetworkImpl;
-import fern.network.AmountManager;
 import fern.network.AnnotationManager;
 import fern.network.ArrayKineticConstantPropensityCalculator;
 import fern.network.DefaultAmountManager;
@@ -52,12 +51,13 @@ public class FernMLNetwork extends AbstractNetworkImpl {
 	public FernMLNetwork(File file) throws IOException, JDOMException  {
 		super(file.getName());
 
-		URL schemeFile = getClass().getResource("FernMLSchema.xsd");
+		File schemeFile = new File("FernMLSchema.xsd");
+		String schemeFilePath = schemeFile.getAbsolutePath();
 
 		SAXBuilder sax = new SAXBuilder(true);
 		sax.setFeature("http://apache.org/xml/features/validation/schema", true);
 		sax.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage","http://www.w3.org/2001/XMLSchema" );
-		sax.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource",schemeFile.toString());;
+		sax.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource",schemeFilePath);;
 		document = sax.build(file);
 		
 		init();
