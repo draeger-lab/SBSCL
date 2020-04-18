@@ -10,12 +10,13 @@ import fern.network.AmountManager;
 import fern.network.Network;
 import fern.simulation.Simulator;
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.util.Maths;
 
 /**
- * Representation of am evaluation tree. Within a sbml file, MathML branches may occur at 
+ * Representation of am evaluation tree. Within a sbml file, MathML branches may occur at
  * different positions. These are represented as MathTrees in FERN.
- * 
- * 
+ *
+ *
  * @author Florian Erhard
  *
  */
@@ -23,10 +24,10 @@ public class MathTree {
 
 	private Node root;
 	private Network net;
-	
+
 	/**
 	 * Creates a MathTree from an libsbml {@link ASTNode}.
-	 * 
+	 *
 	 * @param net	sbml network
 	 * @param ast	ASTNode
 	 * @param globals	pointer to the global variable mapping
@@ -37,10 +38,10 @@ public class MathTree {
 		this.net = net;
 		root = cloneTree(ast, locals, bindings);
 	}
-	
+
 	/**
 	 * Gets the species present in this tree.
-	 * 
+	 *
 	 * @return indices of the species.
 	 */
 	public List<Integer> getSpecies() {
@@ -52,15 +53,15 @@ public class MathTree {
 			if (n instanceof InnerNode)
 				for (Node child : ((InnerNode)n).Children)
 					dfs.add(child);
-			else if (n instanceof VarLeaf) 
+			else if (n instanceof VarLeaf)
 				re.add(((VarLeaf)n).Index);
 		}
 		return re;
 	}
-	
+
 	/**
-	 * Gets the root of this MathTree. Feature versions may implement the Visitor pattern, 
-	 * but for now traversing by using instanceof will do. 
+	 * Gets the root of this MathTree. Feature versions may implement the Visitor pattern,
+	 * but for now traversing by using instanceof will do.
 	 * @return the root of this MathTree
 	 */
 	public Node getRoot() {
@@ -69,7 +70,7 @@ public class MathTree {
 
 	/**
 	 * Evaluate the MathTree.
-	 * 
+	 *
 	 * @param amount AmountManager
 	 * @param sim		Simulator
 	 * @return			value of the expression
@@ -190,6 +191,27 @@ public class MathTree {
 					return Math.tan(c[0]);
 				case FUNCTION_TANH:
 					return Math.tanh(c[0]);
+				case FUNCTION_FACTORIAL:
+					return Maths.factorial(Math.toIntExact(Math.round(c[0])));
+				case FUNCTION_PIECEWISE:
+				case LAMBDA:
+					return 0;
+				case FUNCTION_QUOTIENT:
+					return (int) (c[0] / c[1]);
+				case FUNCTION_REM:
+					return (int) (c[0] % c[1]);
+				case FUNCTION_MAX:
+					double max = c[0];
+					for (int i = 1; i < c.length; i++) {
+						max = Math.max(max, c[i]);
+					}
+					return max;
+				case FUNCTION_MIN:
+					double min = c[0];
+					for (int i = 1; i < c.length; i++) {
+						min = Math.min(min, c[i]);
+					}
+					return min;
 				case RELATIONAL_EQ:
 					return c[0] == c[1] ? 1 : 0;
 				case RELATIONAL_GEQ:
@@ -202,7 +224,7 @@ public class MathTree {
 					return c[0] < c[1] ? 1 : 0;
 				case RELATIONAL_NEQ:
 					return c[0] != c[1] ? 1 : 0;
-			
+
 			default:
 				throw new IllegalArgumentException("Type "+((InnerNode)n).AstNodeType+" not supported");
 			}
@@ -236,7 +258,7 @@ public class MathTree {
 				case CONSTANT_FALSE:
 					return new ConstLeaf(0);
 				case CONSTANT_PI:
-					return new ConstLeaf(4 * Math.atan(1.));
+					return new ConstLeaf(Math.PI);
 				case CONSTANT_TRUE:
 					return new ConstLeaf(1);
 //                case 261:
@@ -275,8 +297,8 @@ public class MathTree {
 		public GlobalLeaf(String Value) { this.Value=Value; }
 		public String toString() { return Value+""; }
 	}
-	
-	
+
+
 	/**
 	 * Uses reflection to get a string representation of a libsml constant.
 	 * @param prefix a prefix for the constant name e.g. AST
@@ -291,5 +313,5 @@ public class MathTree {
 			} catch (Exception e) {}
 		return c+"";
 	}
-	
+
 }
