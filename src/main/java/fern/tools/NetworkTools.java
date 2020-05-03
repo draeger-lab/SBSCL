@@ -18,6 +18,7 @@ import fern.network.NetworkLoader;
 import fern.network.sbml.MathTree;
 import fern.simulation.Simulator;
 import fern.simulation.algorithm.GillespieSimple;
+import org.sbml.jsbml.ASTNode;
 
 /**
  * Contains various helper methods dealing with the {@link Network} interface.
@@ -326,20 +327,18 @@ public class NetworkTools {
 	 * @param tree	 mathtree
 	 */
 	public static void dumpMathTree(MathTree tree, Writer writer) throws IOException {
-		dumbMathTreeNode(tree.getRoot(), writer, new StringBuilder());
+		dumpMathTreeNode(tree.getCopiedAST(), writer, new StringBuilder());
 		writer.flush();
 	}
-	
-	private static void dumbMathTreeNode(MathTree.Node node, Writer writer, StringBuilder indend) throws IOException {
+
+	private static void dumpMathTreeNode(ASTNode astNode, Writer writer, StringBuilder indend) throws IOException {
 		writer.write(indend.toString());
-		writer.write(node.toString());
+		writer.write(astNode.toString());
 		writer.write("\n");
-		if (node instanceof MathTree.InnerNode) {
-			indend.append(" ");
-			for (MathTree.Node child : ((MathTree.InnerNode)node).Children)
-				dumbMathTreeNode(child, writer, indend);
-			indend.deleteCharAt(0);
-		}
+		indend.append(" ");
+		for (ASTNode child : astNode.getChildren())
+			dumpMathTreeNode(child, writer, indend);
+		indend.deleteCharAt(0);
 	}
 
 	/**
