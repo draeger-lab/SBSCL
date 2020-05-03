@@ -8,6 +8,7 @@ import org.sbml.jsbml.Event;
 import fern.simulation.Simulator;
 import fern.simulation.Simulator.FireType;
 import fern.simulation.observer.TriggerObserver;
+import org.sbml.jsbml.validator.ModelOverdeterminedException;
 
 /**
  * Observer which handles an event of a sbml model.
@@ -32,14 +33,14 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
 	 * @param net	the sbml network
 	 * @param event the event object of the sbml model
 	 */
-	public SBMLEventHandlerObserver(Simulator sim, SBMLNetwork net, Event event) {
+	public SBMLEventHandlerObserver(Simulator sim, SBMLNetwork net, Event event) throws ModelOverdeterminedException {
 		super(sim);
 		
 		this.net = net;
 		parse(event);
 	}
 	
-	private void parse(Event event) {
+	private void parse(Event event) throws ModelOverdeterminedException {
 		this.name = event.getId();
 		this.trigger = new MathTree(net,
 				event.getTrigger().getMath(),

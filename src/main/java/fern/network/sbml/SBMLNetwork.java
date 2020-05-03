@@ -21,6 +21,7 @@ import fern.network.Network;
 import fern.simulation.Simulator;
 import fern.tools.NetworkTools;
 import org.sbml.jsbml.*;
+import org.sbml.jsbml.validator.ModelOverdeterminedException;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -54,7 +55,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	 * @param file	SBML file
 	 * @throws FeatureNotSupportedException
 	 */
-	public SBMLNetwork(File file) throws FeatureNotSupportedException, IOException, XMLStreamException {
+	public SBMLNetwork(File file) throws FeatureNotSupportedException, IOException, XMLStreamException, ModelOverdeterminedException {
 		this(file,false);
 	}
 	
@@ -66,7 +67,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	 * @param ignoreExceptions	wheter or not exceptions should be thrown
 	 * @throws FeatureNotSupportedException
 	 */
-	public SBMLNetwork(File file, boolean ignoreExceptions) throws FeatureNotSupportedException, IOException, XMLStreamException {
+	public SBMLNetwork(File file, boolean ignoreExceptions) throws FeatureNotSupportedException, IOException, XMLStreamException, ModelOverdeterminedException {
 		super(file.toString());
 		
 //		System.loadLibrary("sbmlj");
@@ -98,7 +99,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	 * 
 	 * @param net 	the network to create a <code>SBMLNetwork</code> from
 	 */
-	public SBMLNetwork(Network net) {
+	public SBMLNetwork(Network net) throws ModelOverdeterminedException {
 		super(net.getName());
 //		System.loadLibrary("sbmlj");
 		
@@ -109,7 +110,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 		init();
 	}
 	
-	private void init() {
+	private void init() throws ModelOverdeterminedException {
 		createAnnotationManager();
 		createSpeciesMapping();
 		createAdjacencyLists();
@@ -122,7 +123,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 			initialAmount[i] = (long) getSBMLModel().getSpecies(i).getInitialAmount();
 	}
 	
-	protected void createEventHandlers() {
+	protected void createEventHandlers() throws ModelOverdeterminedException {
 		events = new LinkedList<SBMLEventHandlerObserver>();
 		for (int i=0; i<model.getNumEvents(); i++)
 			events.add(new SBMLEventHandlerObserver(null, this, model.getEvent(i)));
@@ -205,7 +206,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 		amountManager = new DefaultAmountManager(this);
 	}
 	@Override
-	protected void createPropensityCalulator() {
+	protected void createPropensityCalulator() throws ModelOverdeterminedException {
 		propensitiyCalculator = new SBMLPropensityCalculator(this);		
 	}
 	

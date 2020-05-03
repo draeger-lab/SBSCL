@@ -17,6 +17,7 @@ import fern.simulation.observer.AmountIntervalObserver;
 import fern.simulation.observer.IntervalObserver;
 import fern.tools.NumberTools;
 import fern.tools.gnuplot.GnuPlot;
+import org.sbml.jsbml.validator.ModelOverdeterminedException;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -54,7 +55,7 @@ public class Dsmts {
 		//System.out.println(test("dsmts3/dsmts-001-01",runs, true));
 	}
 	
-	private static String test(String test, int runs, boolean producePlot) throws FeatureNotSupportedException, IOException, XMLStreamException {
+	private static String test(String test, int runs, boolean producePlot) throws FeatureNotSupportedException, IOException, XMLStreamException, ModelOverdeterminedException {
 		
 		// usual stuff: load network, create simulator and add the observer
 		SBMLNetwork net = new SBMLNetwork(new File(test+".xml"));

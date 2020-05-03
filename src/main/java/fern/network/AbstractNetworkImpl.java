@@ -1,5 +1,7 @@
 package fern.network;
 
+import org.sbml.jsbml.validator.ModelOverdeterminedException;
+
 import java.util.Map;
 
 /**
@@ -67,7 +69,7 @@ public abstract class AbstractNetworkImpl implements Network {
 	/**
 	 * Reminds extending class to fill {@link AbstractNetworkImpl#propensitiyCalculator}.
 	 */
-	protected abstract void createPropensityCalulator();
+	protected abstract void createPropensityCalulator() throws ModelOverdeterminedException;
 	
 	
 	/**

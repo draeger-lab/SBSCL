@@ -5,6 +5,7 @@ import fern.network.Network;
 import fern.network.sbml.SBMLNetwork;
 import fern.network.sbml.SBMLPropensityCalculator;
 import fern.tools.NetworkTools;
+import org.sbml.jsbml.validator.ModelOverdeterminedException;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class SBMLMathTreeTest {
 	 * @param args
 	 * @throws FeatureNotSupportedException 
 	 */
-	public static void main(String[] args) throws FeatureNotSupportedException, IOException, XMLStreamException {
+	public static void main(String[] args) throws FeatureNotSupportedException, IOException, XMLStreamException, ModelOverdeterminedException {
 		Network net = new SBMLNetwork(ExamplePath.find("mapk_sbml.xml"));
 		for (int i=0; i<net.getNumReactions(); i++) {
 			System.out.println("Reaction "+NetworkTools.getReactionNameWithAmounts(net, i));

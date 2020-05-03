@@ -15,6 +15,7 @@ import fern.network.ComplexDependenciesPropensityCalculator;
 import fern.simulation.Simulator;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.validator.ModelOverdeterminedException;
 
 /**
  * Propensity calculator which is used for {@link SBMLNetwork}s. The propensities are 
@@ -35,7 +36,7 @@ public class SBMLPropensityCalculator implements ComplexDependenciesPropensityCa
 	 * 
 	 * @param net	sbml netowrk
 	 */
-	public SBMLPropensityCalculator(SBMLNetwork net) {
+	public SBMLPropensityCalculator(SBMLNetwork net) throws ModelOverdeterminedException {
 		if (net==null) return;
 		
 		Model model = net.getSBMLModel();
