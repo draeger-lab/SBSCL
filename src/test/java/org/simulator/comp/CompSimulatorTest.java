@@ -29,7 +29,12 @@ public class CompSimulatorTest {
 
     @Parameterized.Parameters(name= "{index}: {0}")
     public static Iterable<Object[]> data(){
-        HashSet<String> skip = null;
+        HashSet<String> skip = new HashSet<>();
+        skip.add("test6.xml");
+        skip.add("test7.xml");
+        skip.add("test8.xml");
+        skip.add("test9.xml");
+        skip.add("test10.xml");
         String filter = null;
 
         // find all comp models
