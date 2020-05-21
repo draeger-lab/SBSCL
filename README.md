@@ -3,7 +3,7 @@
 [![License (LGPL version 3)](https://img.shields.io/badge/license-LGPLv3.0-blue.svg?style=plastic)](http://opensource.org/licenses/LGPL-3.0)
 [![Latest version](https://img.shields.io/badge/Latest_version-1.4.0-brightgreen.svg?style=plastic)](https://github.com/draeger-lab/SBSCL/releases/)
 [![DOI](https://img.shields.io/badge/DOI-10.1186%2F1752--0509--7--55-blue.svg?style=plastic)](https://doi.org/10.1186/1752-0509-7-55)
-[![Build Status](https://travis-ci.org/shalinshah1993/SBSCL.svg?branch=master&style=plastic)](https://travis-ci.org/shalinshah1993/SBSCL)
+[![Build Status](https://travis-ci.com/draeger-lab/SBSCL.svg?branch=master&style=plastic)](https://travis-ci.com/draeger-lab/SBSCL)
 
 *Authors*: [Roland Keller](https://github.com/RolandKeller5), [Andreas Dräger](https://github.com/draeger), [Shalin Shah](https://github.com/shalinshah1993), [Matthias König](https://github.com/matthiaskoenig), [Alexander Dörr](https://github.com/a-doerr), [Richard Adams](https://github.com/otter606), [Nicolas Le Novère](https://github.com/lenov), [Max Zwiessele](https://github.com/mzwiessele)
 
