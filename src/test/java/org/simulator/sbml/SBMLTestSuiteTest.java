@@ -48,16 +48,16 @@ public class SBMLTestSuiteTest {
     public static Iterable<Object[]> data(){
 
         // environment variable for semantic test case folder
-        String testsuite_path = System.getenv(SBML_TEST_SUITE_PATH);
+        String testsuite_path = TestUtils.getPathForTestResource("/sbml-test-suite/cases/semantic/");
         System.out.println(SBML_TEST_SUITE_PATH + ": " + testsuite_path);
 
-        if ((testsuite_path == null) || (testsuite_path.length() == 0)){
+        if (testsuite_path.length() == 0){
             Object[][] resources = new String[0][1];
             logger.warn(String.format("%s environment variable not set.", SBML_TEST_SUITE_PATH));
             return Arrays.asList(resources);
         }
 
-        int N = 1123;
+        int N = 1780;
         Object[][] resources = new String[N][1];
         for (int model_number = 1; model_number <= N; model_number++){
             // System.out.println("model " + model_number);
@@ -90,8 +90,8 @@ public class SBMLTestSuiteTest {
         Properties props = new Properties();
         props.load(new BufferedReader(new FileReader(configfile)));
         // int start = Integer.valueOf(props.getProperty("start"));
-        double duration = Double.valueOf(props.getProperty("duration"));
-        double steps = Double.valueOf(props.getProperty("steps"));
+        double duration;
+        double steps = (!props.getProperty("steps").equals("")) ? Double.parseDouble(props.getProperty("steps")) : 0;
         Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
         String[] amounts = String.valueOf(props.getProperty("amount"))
                 .trim().split(",");

@@ -882,8 +882,8 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
               // store values from trigger time for later
               // execution
               List<AssignmentRuleValue> ruleObjects = events[i].getRuleObjects();
-              triggerTimeValues = new Double[ruleObjects.size()];
               if (ruleObjects!=null) {
+                triggerTimeValues = new Double[ruleObjects.size()];
                 int j = 0;
                 for (AssignmentRuleValue obj:ruleObjects) {
                   obj.processRule(Y, astNodeTime, false);
@@ -1509,9 +1509,9 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
   private void createSimplifiedSyntaxTree() {
     nodes.clear();
 
+    initializeRules();
     initializeKineticLaws();
     initializeConstraints();
-    initializeRules();
     initializeEvents();
   }
 
@@ -2421,24 +2421,26 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         Double[] triggerTimeValues = events[index].getValues();
 
         int j = 0;
-        for (AssignmentRuleValue obj: events[index].getRuleObjects()) {
-          //for (int j = 0; j < triggerTimeValues.length; j++) {
-          newVal = triggerTimeValues[j];
+        if (events[index].getRuleObjects() != null){
+          for (AssignmentRuleValue obj: events[index].getRuleObjects()) {
+            //for (int j = 0; j < triggerTimeValues.length; j++) {
+            newVal = triggerTimeValues[j];
 
-          symbolIndex=obj.getIndex();
-          if (symbolIndex >= 0) {
-            if (compartmentHash.containsValue(symbolIndex)) {
-              updateSpeciesConcentrationAtEvents(symbolIndex, Y, Y[symbolIndex], newVal, index);
+            symbolIndex=obj.getIndex();
+            if (symbolIndex >= 0) {
+              if (compartmentHash.containsValue(symbolIndex)) {
+                updateSpeciesConcentrationAtEvents(symbolIndex, Y, Y[symbolIndex], newVal, index);
+              }
+              events[index].addAssignment(symbolIndex, newVal);
             }
-            events[index].addAssignment(symbolIndex, newVal);
-          }
-          else {
-            String id=obj.getSpeciesReferenceID();
-            if (id != null) {
-              stoichiometricCoefHash.put(id, newVal);
+            else {
+              String id=obj.getSpeciesReferenceID();
+              if (id != null) {
+                stoichiometricCoefHash.put(id, newVal);
+              }
             }
+            j++;
           }
-          j++;
         }
       }
       events[index].executed(currentTime);
