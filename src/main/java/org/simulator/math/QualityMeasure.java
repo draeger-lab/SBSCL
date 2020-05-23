@@ -158,9 +158,42 @@ public abstract class QualityMeasure implements Serializable {
       right = expected.filter(x.getTimePoints());
     }
 
+    // Get results by calling to newly added getAbsDistances method
+    ArrayList<Double> pp = getMaxAbsDistances(left, right);
+    System.out.println("MaxAbsDistanceResults: " + meanFunction.computeMean(pp));
+
     ArrayList<Double> distances = new ArrayList<Double>();
     distances.addAll(getColumnDistances(left, right));
+    System.out.println("Current Distance Function results: " + meanFunction.computeMean(distances));
     return meanFunction.computeMean(distances);
+  }
+
+  public ArrayList<Double> getMaxAbsDistances(MultiTable x, MultiTable expected) {
+    ArrayList<Double> distances= new ArrayList<Double>();
+    for(int block = 0; block < x.getBlockCount(); block++) {
+      String identifiers[] = x.getBlock(block).getIdentifiers();
+      for (int i = 0; i < identifiers.length; i++) {
+        if ((identifiers[i]!=null) && (expected.getColumn(identifiers[i]) != null)) {
+          Column a = x.getBlock(block).getColumn(i);
+          Column b = expected.getColumn(identifiers[i]);
+          double x_i;
+          double y_i;
+          double d = Double.MIN_VALUE;
+
+          for (int z = 0 ; z < Math.min(a.getRowCount(), b.getRowCount()); z++){
+            x_i = a.getValue(z);
+            y_i = b.getValue(z);
+            if (!Double.isNaN(y_i) && !Double.isNaN(x_i) && (y_i != x_i)){
+              d = Math.max(d, Math.abs(x_i - y_i));
+            }
+          }
+
+          distances.add(d);
+        }
+      }
+    }
+
+    return distances;
   }
 
   /**
