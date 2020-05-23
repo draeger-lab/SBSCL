@@ -82,6 +82,12 @@ public class SBMLTestSuiteTest {
     @Test
     public void testModel() throws FileNotFoundException, IOException {
 
+        if (path.contains("01592")){
+            // FIXME: skipping test which takes 20-30 minutes to run (see https://github.com/draeger-lab/SBSCL/issues/39)
+            return;
+        }
+
+
         //System.out.println(path);
         String sbmlfile, csvfile, configfile;
         csvfile = path + "-results.csv";
