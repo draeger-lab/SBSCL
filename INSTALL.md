@@ -1,4 +1,23 @@
 # Installation
+This document provides important information on how to setup and install SBSCL and its optional dependencies.
+
+
+SBSCL can be build with maven. To build without running the tests use
+```
+mvn clean install -DskipTests
+```
+
+The tests require additional resources which have to be downloaded. These include the sbml-testsuite and the BiGG models.
+```
+source ./src/test/download_bigg_models.sh
+source ./src/test/download_sbml-test-suite.sh
+```
+which then can be run as part of the build step
+```
+mvn clean install
+```
+
+
 
 ## LP solver
 For running flux balance analysis simulations a LP solver is required. The respective jars have to be made available.
