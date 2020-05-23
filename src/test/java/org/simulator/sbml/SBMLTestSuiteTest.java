@@ -3,12 +3,14 @@ package org.simulator.sbml;
 import org.apache.commons.math.ode.DerivativeException;
 import org.junit.*;
 import org.sbml.jsbml.*;
+import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.simulator.TestUtils;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.simulator.comp.CompSimulator;
 import org.simulator.io.CSVImporter;
 import org.simulator.math.QualityMeasure;
 import org.simulator.math.RelativeEuclideanDistance;
@@ -18,6 +20,7 @@ import org.simulator.math.odes.RosenbrockSolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.util.*;
 
@@ -82,7 +85,7 @@ public class SBMLTestSuiteTest {
 
 
     @Test
-    public void testModel() throws FileNotFoundException, IOException {
+    public void testModel() throws FileNotFoundException, IOException, XMLStreamException {
 
         if (path.contains("01592")){
             // FIXME: skipping test which takes 20-30 minutes to run (see https://github.com/draeger-lab/SBSCL/issues/39)
@@ -144,21 +147,6 @@ public class SBMLTestSuiteTest {
                 Assert.assertNotNull(model);
                 Assert.assertFalse(errorInModelReading);
 
-                AbstractDESSolver solver = new RosenbrockSolver();
-                // initialize interpreter
-                SBMLinterpreter interpreter = null;
-                boolean exceptionInInterpreter = false;
-                try {
-                    interpreter = new SBMLinterpreter(model, 0, 0, 1,
-                            amountHash);
-                } catch (SBMLException e) {
-                    exceptionInInterpreter = true;
-                } catch (ModelOverdeterminedException e) {
-                    exceptionInInterpreter = true;
-                }
-                Assert.assertNotNull(interpreter);
-                Assert.assertFalse(exceptionInInterpreter);
-
                 // get timepoints
                 CSVImporter csvimporter = new CSVImporter();
                 MultiTable inputData = csvimporter.convert(model, csvfile);
@@ -166,28 +154,70 @@ public class SBMLTestSuiteTest {
                 duration = timepoints[timepoints.length - 1]
                         - timepoints[0];
 
-                if ((solver != null) && (interpreter != null)) {
-                    // System.out.println(sbmlFileType + " " + solver.getName());
-                    solver.setStepSize(duration / steps);
+                if (model.getExtension(CompConstants.shortLabel) == null){
 
-                    // solve
+                    AbstractDESSolver solver = new RosenbrockSolver();
+                    // initialize interpreter
+                    SBMLinterpreter interpreter = null;
+                    boolean exceptionInInterpreter = false;
+                    try {
+                        interpreter = new SBMLinterpreter(model, 0, 0, 1,
+                                amountHash);
+                    } catch (Exception e) {
+                        exceptionInInterpreter = true;
+                    }
+                    Assert.assertNotNull(interpreter);
+                    Assert.assertFalse(exceptionInInterpreter);
+
+                    if ((solver != null) && (interpreter != null)) {
+
+                        solver.setStepSize(duration / steps);
+
+                        // solve
+                        MultiTable solution = null;
+                        boolean errorInSolve = false;
+                        try {
+                            solution = solver.solve(interpreter,
+                                    interpreter.getInitialValues(), timepoints);
+                        } catch (DerivativeException e) {
+                            errorInSolve = true;
+                        }
+                        Assert.assertNotNull(solution);
+                        Assert.assertFalse(errorInSolve);
+                        Assert.assertFalse(solver.isUnstable());
+
+                        // compute distance
+                        QualityMeasure distance = new RelativeEuclideanDistance();
+                        double dist = distance.distance(solution, inputData);
+                        Assert.assertTrue(dist <= 0.2);
+
+                    }
+                }else {
+
+                    // initialize simulator
+                    CompSimulator compSimulator = null;
+                    boolean errorInCompSimulator = false;
+                    try {
+                        compSimulator = new CompSimulator(sbmlFile);
+                    }catch (Exception e) {
+                        errorInCompSimulator = true;
+                    }
+                    Assert.assertNotNull(compSimulator);
+                    Assert.assertFalse(errorInCompSimulator);
+
+                    //solve
                     MultiTable solution = null;
                     boolean errorInSolve = false;
                     try {
-                        solution = solver.solve(interpreter,
-                                interpreter.getInitialValues(), timepoints);
-                    } catch (DerivativeException e) {
+                        double stepSize = (duration / steps);
+                        solution = compSimulator.solve(stepSize, duration);
+                    } catch (Exception e) {
                         errorInSolve = true;
                     }
                     Assert.assertNotNull(solution);
                     Assert.assertFalse(errorInSolve);
-                    Assert.assertFalse(solver.isUnstable());
 
-                    // compute distance
-                    QualityMeasure distance = new RelativeEuclideanDistance();
-                    double dist = distance.distance(solution, inputData);
-                    Assert.assertTrue(dist <= 0.2);
-
+                    //TODO: Add quality measure to check whether solution meets the correct results
                 }
             }
         }
