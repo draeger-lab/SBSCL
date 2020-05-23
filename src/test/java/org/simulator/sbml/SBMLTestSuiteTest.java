@@ -60,20 +60,22 @@ public class SBMLTestSuiteTest {
         int N = 1780;
         Object[][] resources = new String[N][1];
         for (int model_number = 1; model_number <= N; model_number++){
-            // System.out.println("model " + model_number);
+            if (model_number != 1592){
+                // System.out.println("model " + model_number);
 
-            StringBuilder modelFile = new StringBuilder();
-            modelFile.append(model_number);
-            while (modelFile.length() < 5) {
-                modelFile.insert(0, '0');
+                StringBuilder modelFile = new StringBuilder();
+                modelFile.append(model_number);
+                while (modelFile.length() < 5) {
+                    modelFile.insert(0, '0');
+                }
+                String path = modelFile.toString();
+                modelFile.append('/');
+                modelFile.append(path);
+                modelFile.insert(0, testsuite_path);
+                path = modelFile.toString();
+
+                resources[(model_number-1)][0] = path;
             }
-            String path = modelFile.toString();
-            modelFile.append('/');
-            modelFile.append(path);
-            modelFile.insert(0, testsuite_path);
-            path = modelFile.toString();
-
-            resources[(model_number-1)][0] = path;
         }
         return Arrays.asList(resources);
     }
