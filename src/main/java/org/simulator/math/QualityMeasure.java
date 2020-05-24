@@ -26,6 +26,7 @@ package org.simulator.math;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.MultiTable.Block.Column;
@@ -160,7 +161,8 @@ public abstract class QualityMeasure implements Serializable {
 
     // Get results by calling to newly added getAbsDistances method
     ArrayList<Double> pp = getMaxAbsDistances(left, right);
-    System.out.println("MaxAbsDistanceResults: " + meanFunction.computeMean(pp));
+    System.out.println(pp);
+    System.out.println("MaxAbsDistanceResults: " + Collections.max(pp));
 
     ArrayList<Double> distances = new ArrayList<Double>();
     distances.addAll(getColumnDistances(left, right));
@@ -168,6 +170,12 @@ public abstract class QualityMeasure implements Serializable {
     return meanFunction.computeMean(distances);
   }
 
+  /**
+   *
+   * @param x
+   * @param expected
+   * @return maxAbsDistances the list of maximum absolute distances in the blocks
+   */
   public ArrayList<Double> getMaxAbsDistances(MultiTable x, MultiTable expected) {
     ArrayList<Double> distances= new ArrayList<Double>();
     for(int block = 0; block < x.getBlockCount(); block++) {
