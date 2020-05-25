@@ -1,10 +1,10 @@
 package org.simulator.sbml;
 
 import org.apache.commons.math.ode.DerivativeException;
+import org.apache.xpath.operations.Bool;
 import org.junit.*;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.ext.comp.CompConstants;
-import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.simulator.TestUtils;
 import org.junit.runner.RunWith;
@@ -12,8 +12,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.simulator.comp.CompSimulator;
 import org.simulator.io.CSVImporter;
+import org.simulator.math.MaxAbsDistance;
 import org.simulator.math.QualityMeasure;
-import org.simulator.math.RelativeEuclideanDistance;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
@@ -32,6 +32,7 @@ public class SBMLTestSuiteTest {
     private String path;
     private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
     private static final String SBML_TEST_SUITE_PATH = "SBML_TEST_SUITE_PATH";
+    private static final double THRESHOLD = 1E-4;
 
     @Before
     public void setUp(){ }
@@ -186,10 +187,29 @@ public class SBMLTestSuiteTest {
                         Assert.assertFalse(errorInSolve);
                         Assert.assertFalse(solver.isUnstable());
 
+                        MultiTable left = solution;
+                        MultiTable right = inputData;
+                        if (solution.isSetTimePoints() && inputData.isSetTimePoints()) {
+                            left = solution.filter(inputData.getTimePoints());
+                            right = inputData.filter(solution.getTimePoints());
+                        }
+
+                        // compute maximum absolute distance
+                        QualityMeasure maxAbsDistance = new MaxAbsDistance();
+                        HashMap<String, Double> distances = maxAbsDistance.getMaxAbsDistances(left, right);
+                        HashMap<String, Boolean> checker = new HashMap<>();
+                        for (Map.Entry<String, Double> mapElement: distances.entrySet()){
+                            if (mapElement.getValue() > THRESHOLD){
+                                System.out.println(mapElement.getKey() + " failing with max distance " + mapElement.getValue());
+                                checker.put(mapElement.getKey(), false);
+                            }
+                        }
+                        Assert.assertTrue(checker.isEmpty());
+
                         // compute distance
-                        QualityMeasure distance = new RelativeEuclideanDistance();
-                        double dist = distance.distance(solution, inputData);
-                        Assert.assertTrue(dist <= 0.2);
+//                        QualityMeasure distance = new RelativeEuclideanDistance();
+//                        double dist = distance.distance(solution, inputData);
+//                        Assert.assertTrue(dist <= 0.2);
 
                     }
                 }else {
