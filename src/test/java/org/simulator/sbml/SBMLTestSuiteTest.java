@@ -14,6 +14,7 @@ import org.simulator.comp.CompSimulator;
 import org.simulator.io.CSVImporter;
 import org.simulator.math.MaxAbsDistance;
 import org.simulator.math.QualityMeasure;
+import org.simulator.math.RelativeMaxDistance;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
@@ -32,7 +33,7 @@ public class SBMLTestSuiteTest {
     private String path;
     private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
     private static final String SBML_TEST_SUITE_PATH = "SBML_TEST_SUITE_PATH";
-    private static final double THRESHOLD = 1E-4;
+    private static final double THRESHOLD = 0.001;
 
     @Before
     public void setUp(){ }
@@ -197,14 +198,20 @@ public class SBMLTestSuiteTest {
                         // compute maximum absolute distance
                         QualityMeasure maxAbsDistance = new MaxAbsDistance();
                         HashMap<String, Double> distances = maxAbsDistance.getMaxAbsDistances(left, right);
-                        HashMap<String, Boolean> checker = new HashMap<>();
                         for (Map.Entry<String, Double> mapElement: distances.entrySet()){
-                            if (mapElement.getValue() > THRESHOLD){
+                            if (mapElement.getValue() > (1E-12 * THRESHOLD)){
                                 System.out.println(mapElement.getKey() + " failing with max distance " + mapElement.getValue());
-                                checker.put(mapElement.getKey(), false);
                             }
+                            Assert.assertTrue(mapElement.getValue() < (1E-12 * THRESHOLD));
                         }
-                        Assert.assertTrue(checker.isEmpty());
+
+                        // compute relative maximum distance
+                        QualityMeasure distance = new RelativeMaxDistance();
+                        ArrayList<Double> relMaxDistances = distance.getColumnDistances(left, right);
+                        for (Double relMaxDistance : relMaxDistances) {
+                            Assert.assertTrue(relMaxDistance < (1E-6d * THRESHOLD));
+                        }
+                        System.out.println("Rel Max: " + relMaxDistances);
 
                         // compute distance
 //                        QualityMeasure distance = new RelativeEuclideanDistance();

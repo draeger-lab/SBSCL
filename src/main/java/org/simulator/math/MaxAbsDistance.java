@@ -1,6 +1,6 @@
 package org.simulator.math;
 
-import org.simulator.math.odes.MultiTable;
+import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
  * An implementation of maxAbsDistance. A maxAbsDistance is basically the maximum
@@ -11,7 +11,7 @@ public class MaxAbsDistance extends QualityMeasure {
 
 
     @Override
-    public double distance(MultiTable.Block.Column x, MultiTable.Block.Column y, double defaultValue) {
+    public double distance(Column x, Column y, double defaultValue) {
         double x_i;
         double y_i;
         double d = Double.MIN_VALUE;
@@ -24,6 +24,23 @@ public class MaxAbsDistance extends QualityMeasure {
             }
         }
 
+        return d;
+    }
+
+    public double distanceToZero(Column x, double defaultValue) {
+        double x_i;
+        double d = Double.MIN_VALUE;
+
+        for (int i = 0; i< x.getRowCount(); i++){
+            x_i = x.getValue(i);
+            if (!Double.isNaN(x_i) && !Double.isInfinite(x_i)){
+                d = Math.max(d, Math.abs(x_i));
+            }
+        }
+
+        if (d == Double.MIN_VALUE){
+            return defaultValue;
+        }
         return d;
     }
 
