@@ -14,6 +14,8 @@ import org.simulator.sbml.SBMLinterpreter;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Properties;
 
 /**
@@ -74,6 +76,22 @@ public class SBMLTestSuiteRunnerWrapper {
             left = solution.filter(inputData.getTimePoints());
         }
 
+        // Map of variables present in the test suite results file
+        HashMap<String, Integer> resultColumns = new HashMap<>();
+        for (int i=0;i<inputData.getColumnCount();i++){
+            resultColumns.put(inputData.getColumnName(i), 1);
+        }
+
+        // Boolean array to check which variables are present in the test suite results file
+        boolean[] variablesToAdd = new boolean[solution.getColumnCount()];
+        System.out.println(solution.getColumnCount());
+        variablesToAdd[0] = true;
+        for (int i=1;i<left.getColumnCount();i++){
+            if (resultColumns.containsKey(left.getColumnName(i))) {
+                variablesToAdd[i] = true;
+            }
+        }
+
         // writes results to the output file in CSV format
         File outputFile = new File(outputFilePath);
         outputFile.createNewFile();
@@ -81,24 +99,34 @@ public class SBMLTestSuiteRunnerWrapper {
         System.out.println(Paths.get(outputFilePath));
         FileWriter csvWriter = new FileWriter(outputFilePath);
 
-        csvWriter.append(left.getColumnName(0).toLowerCase()).append(",");
-        System.out.print(left.getColumnName(0).toLowerCase() + ",");
+        StringBuilder output = new StringBuilder(left.getColumnName(0).toLowerCase() + ",");
         for (int i=1;i<left.getColumnCount()-1;i++){
-            System.out.print(left.getColumnName(i) + ",");
-            csvWriter.append(left.getColumnName(i)).append(",");
+            if (variablesToAdd[i]){
+                output.append(left.getColumnName(i)).append(",");
+            }
         }
-        System.out.println(left.getColumnName(left.getColumnCount()-1));
-        csvWriter.append(left.getColumnName(left.getColumnCount()-1)).append("\n");
+        if (variablesToAdd[left.getColumnCount()-1]){
+            output.append(left.getColumnName(left.getColumnCount()-1)).append("\n");
+        }else {
+            output.deleteCharAt(output.length() - 1);
+            output.append("\n");
+        }
 
         for (int i = 0 ; i < left.getRowCount(); i++){
             for (int j = 0; j < left.getColumnCount()-1; j++){
-                System.out.print(left.getValueAt(i, j) + ",");
-                csvWriter.append(Double.toString(left.getValueAt(i, j))).append(",");
+                if (variablesToAdd[j]){
+                    output.append(left.getValueAt(i, j)).append(",");
+                }
             }
-            csvWriter.append(Double.toString(left.getValueAt(i, left.getColumnCount()-1))).append("\n");
-            System.out.println(left.getValueAt(i, left.getColumnCount()-1));
+            if (variablesToAdd[left.getColumnCount()-1]){
+                output.append(left.getValueAt(i, left.getColumnCount()-1)).append("\n");
+            }else {
+                output.deleteCharAt(output.length() - 1);
+                output.append("\n");
+            }
         }
 
+        csvWriter.append(output);
         csvWriter.flush();
         csvWriter.close();
 
