@@ -85,7 +85,9 @@ public class SBMLTestSuiteRunnerWrapper {
         // Boolean array to check which variables are present in the test suite results file
         boolean[] variablesToAdd = new boolean[solution.getColumnCount()];
         System.out.println(solution.getColumnCount());
-        variablesToAdd[0] = true;
+        if (resultColumns.containsKey(left.getColumnName(0))) {
+            variablesToAdd[0] = true;
+        }
         for (int i=1;i<left.getColumnCount();i++){
             if (resultColumns.containsKey(left.getColumnName(i))) {
                 variablesToAdd[i] = true;
@@ -99,7 +101,10 @@ public class SBMLTestSuiteRunnerWrapper {
         System.out.println(Paths.get(outputFilePath));
         FileWriter csvWriter = new FileWriter(outputFilePath);
 
-        StringBuilder output = new StringBuilder(left.getColumnName(0).toLowerCase() + ",");
+        StringBuilder output = new StringBuilder("");
+        if (variablesToAdd[0]) {
+            output.append(left.getColumnName(0).toLowerCase()).append(",");
+        }
         for (int i=1;i<left.getColumnCount()-1;i++){
             if (variablesToAdd[i]){
                 output.append(left.getColumnName(i)).append(",");
@@ -108,8 +113,10 @@ public class SBMLTestSuiteRunnerWrapper {
         if (variablesToAdd[left.getColumnCount()-1]){
             output.append(left.getColumnName(left.getColumnCount()-1)).append("\n");
         }else {
-            output.deleteCharAt(output.length() - 1);
-            output.append("\n");
+            if (output.length() > 0) {
+                output.deleteCharAt(output.length() - 1);
+                output.append("\n");
+            }
         }
 
         for (int i = 0 ; i < left.getRowCount(); i++){
@@ -121,8 +128,10 @@ public class SBMLTestSuiteRunnerWrapper {
             if (variablesToAdd[left.getColumnCount()-1]){
                 output.append(left.getValueAt(i, left.getColumnCount()-1)).append("\n");
             }else {
-                output.deleteCharAt(output.length() - 1);
-                output.append("\n");
+                if (output.length() > 0) {
+                    output.deleteCharAt(output.length() - 1);
+                    output.append("\n");
+                }
             }
         }
 
