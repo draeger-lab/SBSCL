@@ -84,8 +84,7 @@ public class SBMLTestSuiteRunnerWrapper {
 
         // Boolean array to check which variables are present in the test suite results file
         boolean[] variablesToAdd = new boolean[solution.getColumnCount()];
-        System.out.println(solution.getColumnCount());
-        if (resultColumns.containsKey(left.getColumnName(0))) {
+        if (resultColumns.containsKey(left.getColumnName(0).toLowerCase())) {
             variablesToAdd[0] = true;
         }
         for (int i=1;i<left.getColumnCount();i++){
