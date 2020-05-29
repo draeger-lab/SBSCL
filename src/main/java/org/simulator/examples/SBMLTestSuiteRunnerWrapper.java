@@ -19,7 +19,14 @@ import java.util.HashMap;
 import java.util.Properties;
 
 /**
- * A wrapper class used to verify tests in the SBML Test Runner
+ * <p>A wrapper class used to verify tests in the SBML Test Runner</p>
+ *
+ * <p>
+ * The results of the simulation by this class are stored as a CSV file in the specified output
+ * directory in SBML Test Runner. Then the SBML Test Runner creates the distance plots comparing
+ * this results with the pre-defined results from SBML Test Suite under the criteria given at this
+ * <a href="http://sbml.org/Software/SBML_Test_Suite/Case_Descriptions#The_.22settings.22_file" target="_blank">link</a>
+ * </p>
  */
 public class SBMLTestSuiteRunnerWrapper {
 

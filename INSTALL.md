@@ -29,6 +29,7 @@ After installing the SBML Test Runner, you need to add a wrapper to simulate the
 - Then just add the Wrapper path (absolute path to `sbml_test_suite_runner_wrapper.sh` present in SBSCL source code) and output directory path (wherever you want to store the results of the simulator).
 - And, just click on Save and it's done!
 - Now, you can simulate any of the SBML Test Suite case and see the results and the distance plot (in reference to predefined solutions from SBML Test Suite) in the test runner.
+- The distance plots in the test runner is calculated under the criteria given at this [link](http://sbml.org/Software/SBML_Test_Suite/Case_Descriptions#The_.22settings.22_file).
 
 For complete guidelines about the SBML Test Runner and the wrapper, go to the [SBML Test Runner repository](https://github.com/sbmlteam/sbml-test-suite/tree/master/src/test-runner/testsuite-ui).  
 
