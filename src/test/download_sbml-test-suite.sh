@@ -25,3 +25,5 @@ echo $SBML_TEST_SUITE_PATH
 
 # move back
 cd $_CWD
+
+exit 0
