@@ -18,8 +18,8 @@ cd $TEST_DIR/../resources/bigg
 mkdir -p $TEST_DIR/../resources/bigg
 cd $TEST_DIR/../resources/bigg
 wget $BIGG_MODELS_BASE_URL/$FILE_NAME
-tar xzf bigg_models_v1.5.tar.gz
-rm bigg_models_v1.5.tar.gz
+tar xzf $FILE_NAME
+rm $FILE_NAME
 
 # set environment variable
 export BIGG_MODELS_PATH=${TEST_DIR}/../resources/bigg/v1.5
