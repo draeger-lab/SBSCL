@@ -6,16 +6,17 @@
 #  source ./download_sbml-test-suite.sh
 #################################################
 
+SBML_TEST_SUITE_LINK="https://github.com/sbmlteam/sbml-test-suite/branches/develop/cases"
+
 _CWD="$PWD"
 TEST_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # download and extract the bigg models for testing
 cd $TEST_DIR
+rm -rf $TEST_DIR/resources/sbml-test-suite
 mkdir -p $TEST_DIR/resources/sbml-test-suite
 cd $TEST_DIR/resources/sbml-test-suite
-wget https://github.com/sbmlteam/sbml-test-suite/releases/download/3.3.0/sbml-semantic-test-cases-2017-12-12.zip
-unzip -q sbml-semantic-test-cases-2017-12-12.zip
-rm sbml-semantic-test-cases-2017-12-12.zip
+svn checkout $SBML_TEST_SUITE_LINK
 
 # set environment variable
 export SBML_TEST_SUITE_PATH=${TEST_DIR}/resources/sbml-test-suite/cases/semantic/
