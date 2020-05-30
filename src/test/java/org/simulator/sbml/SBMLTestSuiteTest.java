@@ -62,7 +62,7 @@ public class SBMLTestSuiteTest {
             return Arrays.asList(resources);
         }
 
-        int N = 1780;
+        int N = 1809;
         Object[][] resources = new String[N][1];
         for (int model_number = 1; model_number <= N; model_number++){
 

@@ -17,6 +17,8 @@ rm -rf $TEST_DIR/resources/sbml-test-suite
 mkdir -p $TEST_DIR/resources/sbml-test-suite
 cd $TEST_DIR/resources/sbml-test-suite
 svn checkout $SBML_TEST_SUITE_LINK
+cd cases
+rm NEWS.md
 
 # set environment variable
 export SBML_TEST_SUITE_PATH=${TEST_DIR}/resources/sbml-test-suite/cases/semantic/
