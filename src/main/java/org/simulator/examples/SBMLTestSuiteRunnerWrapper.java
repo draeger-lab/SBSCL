@@ -4,7 +4,9 @@ import org.apache.commons.math.ode.DerivativeException;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
+import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
+import org.simulator.comp.CompSimulator;
 import org.simulator.io.CSVImporter;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.MultiTable;
@@ -69,14 +71,23 @@ public class SBMLTestSuiteRunnerWrapper {
         duration = timepoints[timepoints.length - 1]
                 - timepoints[0];
 
-        AbstractDESSolver solver = new RosenbrockSolver();
-        solver.setStepSize(duration / steps);
-        SBMLinterpreter interpreter = new SBMLinterpreter(model);
+        MultiTable solution;
 
-        ((AbstractDESSolver) solver).setIncludeIntermediates(false);
+        if (model.getExtension(CompConstants.shortLabel) == null){
+            AbstractDESSolver solver = new RosenbrockSolver();
+            solver.setStepSize(duration / steps);
+            SBMLinterpreter interpreter = new SBMLinterpreter(model);
 
-        // Compute the numerical solution of the problem
-        MultiTable solution = solver.solve(interpreter, interpreter.getInitialValues(), timepoints);
+            ((AbstractDESSolver) solver).setIncludeIntermediates(false);
+
+            // Compute the numerical solution of the problem
+            solution = solver.solve(interpreter, interpreter.getInitialValues(), timepoints);
+        }else {
+            CompSimulator compSimulator = new CompSimulator(sbmlfile);
+            double stepSize = (duration / steps);
+
+            solution = compSimulator.solve(stepSize, duration);
+        }
 
         MultiTable left = solution;
         if (solution.isSetTimePoints() && inputData.isSetTimePoints()) {
