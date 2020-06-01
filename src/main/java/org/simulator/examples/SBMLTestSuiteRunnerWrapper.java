@@ -96,7 +96,7 @@ public class SBMLTestSuiteRunnerWrapper {
         if (model.getExtension(CompConstants.shortLabel) == null){
             AbstractDESSolver solver = new RosenbrockSolver();
             solver.setStepSize(duration / steps);
-            SBMLinterpreter interpreter = new SBMLinterpreter(model);
+            SBMLinterpreter interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);
 
             ((AbstractDESSolver) solver).setIncludeIntermediates(false);
 
