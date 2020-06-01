@@ -12,9 +12,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.simulator.comp.CompSimulator;
 import org.simulator.io.CSVImporter;
-import org.simulator.math.MaxAbsDistance;
+import org.simulator.math.MaxDivergenceTolerance;
 import org.simulator.math.QualityMeasure;
-import org.simulator.math.RelativeMaxDistance;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
@@ -110,8 +109,8 @@ public class SBMLTestSuiteTest {
                 .trim().split(",");
         String[] concentrations = String.valueOf(
                 props.getProperty("concentration")).split(",");
-        // double absolute = Double.valueOf(props.getProperty("absolute"));
-        // double relative = Double.valueOf(props.getProperty("relative"));
+         double absolute = (!props.getProperty("absolute").equals("")) ? Double.parseDouble(props.getProperty("absolute")) : 0;
+         double relative = (!props.getProperty("relative").equals("")) ? Double.parseDouble(props.getProperty("relative")) : 0;
 
         for (String s : amounts) {
             s = s.trim();
@@ -195,28 +194,12 @@ public class SBMLTestSuiteTest {
                             right = inputData.filter(solution.getTimePoints());
                         }
 
-                        // compute maximum absolute distance
-                        QualityMeasure maxAbsDistance = new MaxAbsDistance();
-                        HashMap<String, Double> distances = maxAbsDistance.getMaxAbsDistances(left, right);
-                        for (Map.Entry<String, Double> mapElement: distances.entrySet()){
-                            if (mapElement.getValue() > (1E-12 * THRESHOLD)){
-                                System.out.println(mapElement.getKey() + " failing with max distance " + mapElement.getValue());
-                            }
-                            Assert.assertTrue(mapElement.getValue() < (1E-12 * THRESHOLD));
+                        // compute the maximum divergence from the pre-defined results
+                        QualityMeasure distance = new MaxDivergenceTolerance(absolute, relative);
+                        ArrayList<Double> maxDivTolerances = distance.getColumnDistances(left, right);
+                        for (Double maxDivTolerance: maxDivTolerances) {
+                            Assert.assertTrue(maxDivTolerance <= 1.0);
                         }
-
-                        // compute relative maximum distance
-                        QualityMeasure distance = new RelativeMaxDistance();
-                        ArrayList<Double> relMaxDistances = distance.getColumnDistances(left, right);
-                        for (Double relMaxDistance : relMaxDistances) {
-                            Assert.assertTrue(relMaxDistance < (1E-6d * THRESHOLD));
-                        }
-                        System.out.println("Rel Max: " + relMaxDistances);
-
-                        // compute distance
-//                        QualityMeasure distance = new RelativeEuclideanDistance();
-//                        double dist = distance.distance(solution, inputData);
-//                        Assert.assertTrue(dist <= 0.2);
 
                     }
                 }else {

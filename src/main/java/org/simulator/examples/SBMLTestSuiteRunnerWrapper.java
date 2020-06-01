@@ -18,6 +18,7 @@ import java.io.*;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -58,6 +59,25 @@ public class SBMLTestSuiteRunnerWrapper {
         properties.load(new BufferedReader(new FileReader(settingsPath)));
         double duration;
         double steps = (!properties.getProperty("steps").equals("")) ? Double.parseDouble(properties.getProperty("steps")) : 0;
+        Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
+        String[] amounts = String.valueOf(properties.getProperty("amount"))
+                .trim().split(",");
+        String[] concentrations = String.valueOf(
+                properties.getProperty("concentration")).split(",");
+
+        for (String s : amounts) {
+            s = s.trim();
+            if (!s.equals("")) {
+                amountHash.put(s, true);
+            }
+        }
+
+        for (String s : concentrations) {
+            s = s.trim();
+            if (!s.equals("")) {
+                amountHash.put(s, false);
+            }
+        }
 
         // Read the model and initialize solver
         File sbmlfile = new File(filePath);
