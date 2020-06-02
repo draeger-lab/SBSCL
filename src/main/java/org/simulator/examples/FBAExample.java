@@ -124,7 +124,7 @@ public class FBAExample {
 	public static void main(String[] args) throws FileNotFoundException {
 		PropertyConfigurator.configure("MyLog4j.properties");
 		try {
-			new FBAExample(new File("/home/blackreaper/Documents/GSOC-NRNB/SBSCL/src/test/resources/sbml-test-suite/cases/semantic/01190/01190-sbml-l3v1.xml"));
+			new FBAExample(new File(args[0]));
 		} catch (Throwable exc) {
 			exc.printStackTrace();
 		}
