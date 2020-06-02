@@ -29,7 +29,7 @@ public class MaxAbsDistance extends QualityMeasure {
 
     public double distanceToZero(Column x, double defaultValue) {
         double x_i;
-        double d = -1 * Double.MAX_VALUE;
+        double d = -Double.MAX_VALUE;
 
         for (int i = 0; i< x.getRowCount(); i++){
             x_i = x.getValue(i);

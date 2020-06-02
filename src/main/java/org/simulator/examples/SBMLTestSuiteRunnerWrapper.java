@@ -58,23 +58,22 @@ public class SBMLTestSuiteRunnerWrapper {
         Properties properties = new Properties();
         properties.load(new BufferedReader(new FileReader(settingsPath)));
         double duration;
-        double steps = (!properties.getProperty("steps").equals("")) ? Double.parseDouble(properties.getProperty("steps")) : 0;
+        double steps = (!properties.getProperty("steps").isEmpty()) ? Double.parseDouble(properties.getProperty("steps")) : 0d;
         Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
-        String[] amounts = String.valueOf(properties.getProperty("amount"))
-                .trim().split(",");
+        String[] amounts = String.valueOf(properties.getProperty("amount")).split(",");
         String[] concentrations = String.valueOf(
                 properties.getProperty("concentration")).split(",");
 
         for (String s : amounts) {
             s = s.trim();
-            if (!s.equals("")) {
+            if (!s.isEmpty()) {
                 amountHash.put(s, true);
             }
         }
 
         for (String s : concentrations) {
             s = s.trim();
-            if (!s.equals("")) {
+            if (!s.isEmpty()) {
                 amountHash.put(s, false);
             }
         }

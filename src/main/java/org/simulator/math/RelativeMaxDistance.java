@@ -38,11 +38,9 @@ public class RelativeMaxDistance extends QualityMeasure {
     public double distance(Column x, Column y, double defaultValue) {
 
         for (int i = 0; i < Math.min(x.getRowCount(), y.getRowCount()); i++) {
-            if (y.getValue(i) != 0) {
-                x.setValue((y.getValue(i) - x.getValue(i)) / y.getValue(i), i);
-            } else {
-                x.setValue(Double.POSITIVE_INFINITY, i);
-            }
+
+            x.setValue((y.getValue(i) != 0) ? ((y.getValue(i) - x.getValue(i)) / y.getValue(i)) : Double.POSITIVE_INFINITY, i);
+
         }
 
         return metric.distanceToZero(x, defaultValue);

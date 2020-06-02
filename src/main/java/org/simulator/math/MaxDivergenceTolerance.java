@@ -2,7 +2,7 @@ package org.simulator.math;
 
 import org.simulator.math.odes.MultiTable.Block.Column;
 
-public class MaxDivergenceTolerance extends QualityMeasure{
+public class MaxDivergenceTolerance extends QualityMeasure {
 
     /**
      * The metric the relative distance is based on
@@ -35,16 +35,12 @@ public class MaxDivergenceTolerance extends QualityMeasure{
     @Override
     public double distance(Column x, Column y, double defaultValue) {
 
-        for (int i=0;i<Math.min(x.getRowCount(), y.getRowCount()); i++){
+        for (int i = 0; i < Math.min(x.getRowCount(), y.getRowCount()); i++) {
 
             double p = Math.abs(y.getValue(i) - x.getValue(i));
             double q = this.absTol + (this.relTol * Math.abs(y.getValue(i)));
 
-            if (q != 0) {
-                x.setValue(p / q, i);
-            }else {
-                x.setValue(Double.POSITIVE_INFINITY, i);
-            }
+            x.setValue((q != 0) ? (p / q) : Double.POSITIVE_INFINITY, i);
 
         }
 

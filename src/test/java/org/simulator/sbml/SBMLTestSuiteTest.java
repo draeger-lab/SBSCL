@@ -103,25 +103,24 @@ public class SBMLTestSuiteTest {
         props.load(new BufferedReader(new FileReader(configfile)));
         // int start = Integer.valueOf(props.getProperty("start"));
         double duration;
-        double steps = (!props.getProperty("steps").equals("")) ? Double.parseDouble(props.getProperty("steps")) : 0;
+        double steps = (!props.getProperty("steps").isEmpty()) ? Double.parseDouble(props.getProperty("steps")) : 0d;
         Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
-        String[] amounts = String.valueOf(props.getProperty("amount"))
-                .trim().split(",");
+        String[] amounts = String.valueOf(props.getProperty("amount")).split(",");
         String[] concentrations = String.valueOf(
                 props.getProperty("concentration")).split(",");
-         double absolute = (!props.getProperty("absolute").equals("")) ? Double.parseDouble(props.getProperty("absolute")) : 0;
-         double relative = (!props.getProperty("relative").equals("")) ? Double.parseDouble(props.getProperty("relative")) : 0;
+         double absolute = (!props.getProperty("absolute").isEmpty()) ? Double.parseDouble(props.getProperty("absolute")) : 0d;
+         double relative = (!props.getProperty("relative").isEmpty()) ? Double.parseDouble(props.getProperty("relative")) : 0d;
 
         for (String s : amounts) {
             s = s.trim();
-            if (!s.equals("")) {
+            if (!s.isEmpty()) {
                 amountHash.put(s, true);
             }
         }
 
         for (String s : concentrations) {
             s = s.trim();
-            if (!s.equals("")) {
+            if (!s.isEmpty()) {
                 amountHash.put(s, false);
             }
         }
@@ -196,9 +195,9 @@ public class SBMLTestSuiteTest {
 
                         // compute the maximum divergence from the pre-defined results
                         QualityMeasure distance = new MaxDivergenceTolerance(absolute, relative);
-                        ArrayList<Double> maxDivTolerances = distance.getColumnDistances(left, right);
+                        List<Double> maxDivTolerances = distance.getColumnDistances(left, right);
                         for (Double maxDivTolerance: maxDivTolerances) {
-                            Assert.assertTrue(maxDivTolerance <= 1.0);
+                            Assert.assertTrue(maxDivTolerance <= 1d);
                         }
 
                     }
