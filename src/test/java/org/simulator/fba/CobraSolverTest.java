@@ -34,7 +34,7 @@ public class CobraSolverTest {
         assertNotNull(doc);
         logger.info(doc.toString());
 
-        COBRAsolver solver = new COBRAsolver(doc);
+        FluxBalanceAnalysis solver = new FluxBalanceAnalysis(doc);
         
         // Solver should return non-null object
         assertNotNull(solver.solve());
@@ -56,7 +56,7 @@ public class CobraSolverTest {
         assertNotNull(doc);
         logger.info(doc.toString());
 
-        COBRAsolver solver = new COBRAsolver(doc);
+        FluxBalanceAnalysis solver = new FluxBalanceAnalysis(doc);
 
         // Solver should return non-null object
         assertNotNull(solver.solve());

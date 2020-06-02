@@ -38,7 +38,7 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
-import org.simulator.fba.COBRAsolver;
+import org.simulator.fba.FluxBalanceAnalysis;
 
 /**
  * A simple test class to demonstrate the capabilities of the FBA implementation
@@ -52,12 +52,12 @@ import org.simulator.fba.COBRAsolver;
  * @author Shalin Shah
  * @version 1.5
  */
-public class COBRAsolverExample {
+public class FBAExample {
 
 	/**
 	 * 
 	 */
-	private static final Logger logger = Logger.getLogger(COBRAsolverExample.class);
+	private static final Logger logger = Logger.getLogger(FBAExample.class);
 	PrintWriter writer;
 	/**
 	 * 
@@ -72,7 +72,7 @@ public class COBRAsolverExample {
 	 * @throws SBMLException
 	 *         if the model is invalid or inappropriate for flux balance analysis.
 	 */
-	public COBRAsolverExample(File file) throws SBMLException, ModelOverdeterminedException, XMLStreamException, IOException {
+	public FBAExample(File file) throws SBMLException, ModelOverdeterminedException, XMLStreamException, IOException {
 		solve(file);
 	}
 
@@ -98,7 +98,7 @@ public class COBRAsolverExample {
 		} else {
 			logger.error(file.getName());
 			try {
-				COBRAsolver solver = new COBRAsolver(SBMLReader.read(file));
+				FluxBalanceAnalysis solver = new FluxBalanceAnalysis(SBMLReader.read(file));
 				if (solver.solve()) {
 					System.out.println(file.getName());
 					System.out.println("Objective value:\t" + solver.getObjetiveValue());
@@ -124,7 +124,7 @@ public class COBRAsolverExample {
 	public static void main(String[] args) throws FileNotFoundException {
 		PropertyConfigurator.configure("MyLog4j.properties");
 		try {
-			new COBRAsolverExample(new File(args[0]));
+			new FBAExample(new File("/home/blackreaper/Documents/GSOC-NRNB/SBSCL/src/test/resources/sbml-test-suite/cases/semantic/01190/01190-sbml-l3v1.xml"));
 		} catch (Throwable exc) {
 			exc.printStackTrace();
 		}

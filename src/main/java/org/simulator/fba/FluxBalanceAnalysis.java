@@ -71,12 +71,12 @@ import scpsolver.problems.LinearProgram;
  * @since 1.5
  */
 @SuppressWarnings("deprecation")
-public class COBRAsolver {
+public class FluxBalanceAnalysis {
 
 	/**
 	 * A Logger for this class.
 	 */
-	private static final transient Logger logger = Logger.getLogger(COBRAsolver.class.getName());
+	private static final transient Logger logger = Logger.getLogger(FluxBalanceAnalysis.class.getName());
 
 	/**
 	 * The linear programming solver.
@@ -118,7 +118,7 @@ public class COBRAsolver {
 	 *         if the {@link Model} is invalid or inappropriate for flux balance
 	 *         analysis.
 	 */
-	public COBRAsolver(SBMLDocument doc) throws SBMLException, ModelOverdeterminedException {
+	public FluxBalanceAnalysis(SBMLDocument doc) throws SBMLException, ModelOverdeterminedException {
 		super();
 
 
