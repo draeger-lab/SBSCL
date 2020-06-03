@@ -97,7 +97,7 @@ public class BiGGTest {
         boolean success = solver.solve();
         assertNotNull(success);
 
-        double objectiveValue = solver.getObjetiveValue();
+        double objectiveValue = solver.getObjectiveValue();
         assertTrue(objectiveValue>=0.0);
         double[] fluxes = solver.getValues();
         assertNotNull(fluxes);

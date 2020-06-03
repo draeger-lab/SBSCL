@@ -101,8 +101,8 @@ public class FBAExample {
 				FluxBalanceAnalysis solver = new FluxBalanceAnalysis(SBMLReader.read(file));
 				if (solver.solve()) {
 					System.out.println(file.getName());
-					System.out.println("Objective value:\t" + solver.getObjetiveValue());
-					System.out.println("Fluxes:\t" + Arrays.toString(solver.getValues()));
+					System.out.println("Objective value:\t" + solver.getObjectiveValue());
+					System.out.println("Fluxes:\t" + solver.getSolution());
 				}else {
 					logger.error("\nSolver returned null for "+ file.getName());
 				}

@@ -26,11 +26,7 @@ package org.simulator.fba;
 import static org.sbml.jsbml.util.Pair.pairOf;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.AlgebraicRule;
@@ -369,8 +365,8 @@ public class FluxBalanceAnalysis {
 	 *         If the method fails, an exception of type IloException, or one of
 	 *         its derived classes, is thrown.
 	 */
-	public double getObjetiveValue() throws NullPointerException {
-			return  problem.evaluate(solution);
+	public double getObjectiveValue() throws NullPointerException {
+		return problem.evaluate(solution);
 	}
 
 	/**
@@ -400,6 +396,21 @@ public class FluxBalanceAnalysis {
 	 */
 	public double[] getValues() throws NullPointerException{
 		return solution;
+	}
+
+	/**
+	 * Returns solution values as a HashMap with key as reaction Id and value as the flux.
+	 *
+	 * @return The flux values for the each of the reactions
+	 */
+	public HashMap<String, Double> getSolution() {
+
+		HashMap<String, Double> result = new HashMap<>();
+		for (Map.Entry<String, Integer> mapElement: reaction2Index.entrySet()) {
+			result.put(mapElement.getKey(), solution[mapElement.getValue()]);
+		}
+
+		return result;
 	}
 
 	/**
