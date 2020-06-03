@@ -397,9 +397,9 @@ public class FluxBalanceAnalysis {
 	 *
 	 * @return The flux values for the each of the reactions
 	 */
-	public HashMap<String, Double> getSolution() {
+	public Map<String, Double> getSolution() {
 
-		HashMap<String, Double> result = new HashMap<>();
+		Map<String, Double> result = new HashMap<>();
 		for (Map.Entry<String, Integer> mapElement: reaction2Index.entrySet()) {
 			result.put(mapElement.getKey(), solution[mapElement.getValue()]);
 		}
