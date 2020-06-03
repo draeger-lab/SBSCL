@@ -24,8 +24,8 @@
 package org.simulator.fba;
 
 import static org.sbml.jsbml.util.Pair.pairOf;
+import static java.text.MessageFormat.format;
 
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -80,7 +80,7 @@ public class FluxBalanceAnalysis {
 	private LinearProgramSolver scpSolver;
 	private LinearProgram problem;
 	private double[] solution;
-	private static double EPS = 1E-10;
+	private double EPS = 1E-10;
 	/**
 	 * This interpreter is only used if the model contains
 	 * {@link InitialAssignment}s or {@link org.sbml.jsbml.StoichiometryMath}.
@@ -94,7 +94,7 @@ public class FluxBalanceAnalysis {
 	 * A dictionary to lookup the position of a {@link Reaction} in the list of
 	 * reactions of the {@link Model} based on the reaction's identifier.
 	 */
-	private HashMap<String, Integer> reaction2Index;
+	private Map<String, Integer> reaction2Index;
 
 	/**
 	 * Initializes the linear program and all data structures based on the
@@ -142,24 +142,21 @@ public class FluxBalanceAnalysis {
 		// Mapping from species id to reaction id and stoichiometric coefficient in that reaction.
 		Map<String, Set<Pair<String, Double>>> species2Reaction = new HashMap<String, Set<Pair<String, Double>>>();
 
-		if (model.getReactionCount() > 0) {
-			int i = 0;
-			
-			for (Reaction r : model.getListOfReactions()) {
+		for (int i = 0; i < model.getReactionCount(); i++) {
+			Reaction r = model.getReaction(i);
+			if (r.isSetPlugin(fbcNamespaceV2)) {
+				FBCReactionPlugin rPlug = (FBCReactionPlugin) r.getPlugin(fbcNamespaceV2);
+				Parameter upperBound = rPlug.getUpperFluxBoundInstance();
+				Parameter lowerBound = rPlug.getLowerFluxBoundInstance();
 
-				if (r.isSetPlugin(fbcNamespaceV2)) {
-					FBCReactionPlugin rPlug = (FBCReactionPlugin) r.getPlugin(fbcNamespaceV2);
-					Parameter upperBound = rPlug.getUpperFluxBoundInstance();
-					Parameter lowerBound = rPlug.getLowerFluxBoundInstance();
+				lb[i] = interpreter != null ? interpreter.getCurrentValueOf(lowerBound.getId()) : lowerBound.getValue();
+				ub[i] = interpreter != null ? interpreter.getCurrentValueOf(upperBound.getId()) : upperBound.getValue();
 
-					lb[i] = interpreter != null ? interpreter.getCurrentValueOf(lowerBound.getId()) : lowerBound.getValue();
-					ub[i] = interpreter != null ? interpreter.getCurrentValueOf(upperBound.getId()) : upperBound.getValue();
-				}
-				reaction2Index.put(r.getId(), i);
-				buildSpeciesReactionMap(species2Reaction, r.getListOfReactants());
-				buildSpeciesReactionMap(species2Reaction, r.getListOfProducts());
-				i++;
+				updateBound(lb, ub, i);
 			}
+			reaction2Index.put(r.getId(), i);
+			buildSpeciesReactionMap(species2Reaction, r.getListOfReactants());
+			buildSpeciesReactionMap(species2Reaction, r.getListOfProducts());
 		}
 
 		FBCModelPlugin mPlug = null;
@@ -170,7 +167,7 @@ public class FluxBalanceAnalysis {
 			if (mPlug.isSetListOfFluxBounds()) {
 				for (FluxBound fb : mPlug.getListOfFluxBounds()) {
 					if (!fb.isSetReaction()) {
-						logger.warning(MessageFormat.format("Encountered fluxBound ''{0}'' without reaction identifier.", fb.getId()));
+						logger.warning(format("Encountered fluxBound ''{0}'' without reaction identifier.", fb.getId()));
 					} else {
 						int index = reaction2Index.get(fb.getReaction());
 						if (fb.isSetOperation()) {
@@ -181,21 +178,20 @@ public class FluxBalanceAnalysis {
 							} else if (fb.getOperation() == FluxBound.Operation.EQUAL) {
 								lb[index] = ub[index] = fb.getValue();
 							} else {
-								logger.severe(MessageFormat.format("Encountered fluxBound ''{0}'' with invalid operation.", fb.getId()));
+								logger.severe(format("Encountered fluxBound ''{0}'' with invalid operation.", fb.getId()));
 							}
+							updateBound(lb, ub, index);
 						} else {
-							logger.severe(MessageFormat.format("Encountered fluxBound ''{0}'' without defined operation.", fb.getId()));
+							logger.severe(format("Encountered fluxBound ''{0}'' without defined operation.", fb.getId()));
 						}
 					}
 				}
 			}
 		} else {
-			throw new IllegalArgumentException(MessageFormat.format(
+			throw new IllegalArgumentException(format(
 					"Cannot conduct flux balance analysis without defined objective function in model ''{0}''.",
 					model.getId()));
 		}
-
-		updateBounds(lb, ub);
 
 		// define objective function
 		double objvals[] = new double[model.getReactionCount()];
@@ -224,7 +220,7 @@ public class FluxBalanceAnalysis {
 			problem.setMinProblem(true);
 			break;
 		default:
-			throw new SBMLException(MessageFormat.format("Unspecified operation {0}", type));
+			throw new SBMLException(format("Unspecified operation {0}", type));
 		}
 
 		// Add weighted constraints equations for each reaction.
@@ -232,7 +228,7 @@ public class FluxBalanceAnalysis {
 			double[] weights = new double[reaction2Index.size()];
 			
 			if (!species2Reaction.containsKey(species.getId())) {
-				logger.warning(MessageFormat.format(
+				logger.warning(format(
 						"Species ''{0}'' does not participate in any reaction.",
 						species.getId()));
 			} else {
@@ -248,34 +244,32 @@ public class FluxBalanceAnalysis {
 	}
 
 	/**
-	 * This method updates the lower bounds as well as the upper bounds as per the standards
-	 * of the SCPSolver.
+	 * This method updates a particular index of
+	 * the lower bounds as well as the upper bounds as per the standards of the SCPSolver.
 	 *
 	 * @param lowerBound
 	 * 		the array of lower flux bounds
 	 * @param upperBound
 	 * 		the array of the upper flux bounds
+	 * @param index
+	 * 		the index of lower bound and upper bound
 	 */
-	public void updateBounds(double[] lowerBound, double[] upperBound) {
-		int totalBounds = lowerBound.length;
+	void updateBound(double[] lowerBound, double[] upperBound, int index) {
 
-		for (int i = 0; i < totalBounds; i++) {
-
-			// SCPSolver doesn't allow same values for upper bound and lower bound
-			// therefore adding a small EPSILON
-			if (lowerBound[i] == upperBound[i]) {
-				upperBound[i] += EPS;
-			}
-
-			// SCPSolver doesn't allow the bounds to be +Infinity or -Infinity
-			// therefore changing them to +Double.MAX_VALUE and -Double.MAX_VALUE respectively
-			// for both lower as well as upper bounds
-			if (lowerBound[i] == Double.POSITIVE_INFINITY) lowerBound[i] = Double.MAX_VALUE;
-			if (lowerBound[i] == -Double.POSITIVE_INFINITY) lowerBound[i] = -Double.MAX_VALUE;
-
-			if (upperBound[i] == Double.POSITIVE_INFINITY) upperBound[i] = Double.MAX_VALUE;
-			if (upperBound[i] == -Double.POSITIVE_INFINITY) upperBound[i] = -Double.MAX_VALUE;
+		// SCPSolver doesn't allow same values for upper bound and lower bound
+		// therefore adding a small EPSILON
+		if (lowerBound[index] == upperBound[index]) {
+			upperBound[index] += EPS;
 		}
+
+		// SCPSolver doesn't allow the bounds to be +Infinity or -Infinity
+		// therefore changing them to +Double.MAX_VALUE and -Double.MAX_VALUE respectively
+		// for both lower as well as upper bounds
+		if (lowerBound[index] == Double.POSITIVE_INFINITY) lowerBound[index] = Double.MAX_VALUE;
+		if (lowerBound[index] == -Double.POSITIVE_INFINITY) lowerBound[index] = -Double.MAX_VALUE;
+
+		if (upperBound[index] == Double.POSITIVE_INFINITY) upperBound[index] = Double.MAX_VALUE;
+		if (upperBound[index] == -Double.POSITIVE_INFINITY) upperBound[index] = -Double.MAX_VALUE;
 	}
 
 	/**
@@ -305,7 +299,7 @@ public class FluxBalanceAnalysis {
 			Model model = listOfParticipants.getModel();
 			Reaction r = (Reaction) listOfParticipants.getParent();
 			String id = SBMLtools.getIdOrName(model);
-			throw new SBMLException(MessageFormat.format(
+			throw new SBMLException(format(
 					"Incomplete model{0}: encountered {1} without identifier.",
 					(id.length() > 0) ? " '" + id + "'" : "",
 							(r.isSetName() ? "reaction '" + r.getName() + "'" : "a reaction")));
@@ -314,7 +308,7 @@ public class FluxBalanceAnalysis {
 
 		for (SpeciesReference specRef : listOfParticipants) {
 			if (!specRef.isSetSpecies()) {
-				throw new SBMLException(MessageFormat.format(
+				throw new SBMLException(format(
 						"Incomplete model: no species defined for a species reference in the {0} of reaction ''{1}''",
 						listOfParticipants.getSBaseListType(), rId));
 			}
@@ -454,6 +448,16 @@ public class FluxBalanceAnalysis {
 			}
 		}
 		return Double.NaN;
+	}
+
+	// Gets the value of the EPSILON
+	public double getEPS() {
+		return EPS;
+	}
+
+	// Set the value of the EPSILON specific to a particular FBC instance
+	public void setEPS(double EPS) {
+		this.EPS = EPS;
 	}
 
 }
