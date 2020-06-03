@@ -84,7 +84,7 @@ public class FluxBalanceAnalysis {
 	private LinearProgramSolver scpSolver;
 	private LinearProgram problem;
 	private double[] solution;
-	private static double EPS = 0.0001;
+	private static double EPS = 1E-10;
 	/**
 	 * This interpreter is only used if the model contains
 	 * {@link InitialAssignment}s or {@link org.sbml.jsbml.StoichiometryMath}.
@@ -158,12 +158,6 @@ public class FluxBalanceAnalysis {
 
 					lb[i] = interpreter != null ? interpreter.getCurrentValueOf(lowerBound.getId()) : lowerBound.getValue();
 					ub[i] = interpreter != null ? interpreter.getCurrentValueOf(upperBound.getId()) : upperBound.getValue();
-					
-					// SCPsolver doesn't allow same values for upper bound and lower bound
-					// therefore adding a small ESPILON
-					if (ub[i] == lb[i]) 
-						ub[i] += EPS;
-						
 				}
 				reaction2Index.put(r.getId(), i);
 				buildSpeciesReactionMap(species2Reaction, r.getListOfReactants());
@@ -173,9 +167,9 @@ public class FluxBalanceAnalysis {
 		}
 
 		FBCModelPlugin mPlug = null;
-		if (model.isSetPlugin(fbcNamespaceV2)) {
+		if (model.getExtension(FBCConstants.shortLabel).getPackageVersion() == 2) {
 			mPlug = (FBCModelPlugin) model.getPlugin(fbcNamespaceV2);
-		} else if (model.isSetPlugin(fbcNamespaceV1)) {
+		} else if (model.getExtension(FBCConstants.shortLabel).getPackageVersion() == 1) {
 			mPlug = (FBCModelPlugin) model.getPlugin(fbcNamespaceV1);
 			if (mPlug.isSetListOfFluxBounds()) {
 				for (FluxBound fb : mPlug.getListOfFluxBounds()) {
@@ -204,6 +198,8 @@ public class FluxBalanceAnalysis {
 					"Cannot conduct flux balance analysis without defined objective function in model ''{0}''.",
 					model.getId()));
 		}
+
+		updateBounds(lb, ub);
 
 		// define objective function
 		double objvals[] = new double[model.getReactionCount()];
@@ -253,6 +249,37 @@ public class FluxBalanceAnalysis {
 				problem.addConstraint(new LinearEqualsConstraint(weights, 0.0, "cnstrt_" + species.getId()));
 			}
 		}	
+	}
+
+	/**
+	 * This method updates the lower bounds as well as the upper bounds as per the standards
+	 * of the SCPSolver.
+	 *
+	 * @param lowerBound
+	 * 		the array of lower flux bounds
+	 * @param upperBound
+	 * 		the array of the upper flux bounds
+	 */
+	public void updateBounds(double[] lowerBound, double[] upperBound) {
+		int totalBounds = lowerBound.length;
+
+		for (int i = 0; i < totalBounds; i++) {
+
+			// SCPSolver doesn't allow same values for upper bound and lower bound
+			// therefore adding a small EPSILON
+			if (lowerBound[i] == upperBound[i]) {
+				upperBound[i] += EPS;
+			}
+
+			// SCPSolver doesn't allow the bounds to be +Infinity or -Infinity
+			// therefore changing them to +Double.MAX_VALUE and -Double.MAX_VALUE respectively
+			// for both lower as well as upper bounds
+			if (lowerBound[i] == Double.POSITIVE_INFINITY) lowerBound[i] = Double.MAX_VALUE;
+			if (lowerBound[i] == -Double.POSITIVE_INFINITY) lowerBound[i] = -Double.MAX_VALUE;
+
+			if (upperBound[i] == Double.POSITIVE_INFINITY) upperBound[i] = Double.MAX_VALUE;
+			if (upperBound[i] == -Double.POSITIVE_INFINITY) upperBound[i] = -Double.MAX_VALUE;
+		}
 	}
 
 	/**
