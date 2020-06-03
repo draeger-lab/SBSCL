@@ -77,10 +77,10 @@ public class MaxAbsDistanceTest {
 
         // calculates max absolute distance
         MaxAbsDistance maxAbsDistance = new MaxAbsDistance();
-        HashMap<String, Double> distances = maxAbsDistance.getMaxAbsDistances(a, b);
+        Map<String, Double> distances = maxAbsDistance.getMaxAbsDistances(a, b);
 
         // get pre-defined results from the test case
-        HashMap<String, Double> inputData = new HashMap<>();
+        Map<String, Double> inputData = new HashMap<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(result))) {
             String line;

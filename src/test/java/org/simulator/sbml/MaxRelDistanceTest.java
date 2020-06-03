@@ -6,7 +6,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.simulator.TestUtils;
 import org.simulator.io.CSVImporter;
-import org.simulator.math.MaxAbsDistance;
 import org.simulator.math.QualityMeasure;
 import org.simulator.math.RelativeMaxDistance;
 import org.simulator.math.odes.MultiTable;
@@ -18,6 +17,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @RunWith(value = Parameterized.class)
 public class MaxRelDistanceTest {
@@ -76,10 +76,10 @@ public class MaxRelDistanceTest {
 
         // calculates max relative distance
         QualityMeasure distance = new RelativeMaxDistance();
-        ArrayList<Double> relMaxDistances = distance.getColumnDistances(a, b);
+        List<Double> relMaxDistances = distance.getColumnDistances(a, b);
 
         // get pre-defined results from the test case
-        ArrayList<Double> inputData = new ArrayList<>();
+        List<Double> inputData = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(result))) {
             String line;

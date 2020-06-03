@@ -25,9 +25,7 @@
 package org.simulator.math;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.MultiTable.Block.Column;
@@ -160,8 +158,7 @@ public abstract class QualityMeasure implements Serializable {
       right = expected.filter(x.getTimePoints());
     }
 
-    ArrayList<Double> distances = new ArrayList<Double>();
-    distances.addAll(getColumnDistances(left, right));
+    List<Double> distances = new ArrayList<Double>(getColumnDistances(left, right));
     return meanFunction.computeMean(distances);
   }
 
@@ -177,8 +174,8 @@ public abstract class QualityMeasure implements Serializable {
    * @param expected
    * @return columnDistances the list of distances for the columns in the blocks
    */
-  public ArrayList<Double> getColumnDistances(MultiTable x, MultiTable expected) {
-    ArrayList<Double> distances= new ArrayList<Double>();
+  public List<Double> getColumnDistances(MultiTable x, MultiTable expected) {
+    List<Double> distances= new ArrayList<Double>();
     for(int block = 0; block < x.getBlockCount(); block++) {
       String identifiers[] = x.getBlock(block).getIdentifiers();
       for (int i = 0; i < identifiers.length; i++) {
@@ -196,9 +193,9 @@ public abstract class QualityMeasure implements Serializable {
    * @param expected
    * @return maxAbsDistances the list of maximum absolute distances in the blocks
    */
-  public HashMap<String, Double> getMaxAbsDistances(MultiTable x, MultiTable expected) {
+  public Map<String, Double> getMaxAbsDistances(MultiTable x, MultiTable expected) {
 
-    HashMap<String, Double> distances = new HashMap<>();
+    Map<String, Double> distances = new HashMap<>();
     for(int block = 0; block < x.getBlockCount(); block++) {
       String identifiers[] = x.getBlock(block).getIdentifiers();
       for (int i = 0; i < identifiers.length; i++) {

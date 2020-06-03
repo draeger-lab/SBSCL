@@ -1,15 +1,17 @@
 package org.simulator.sbml;
 
 import org.apache.commons.math.ode.DerivativeException;
-import org.apache.xpath.operations.Bool;
-import org.junit.*;
-import org.sbml.jsbml.*;
-import org.sbml.jsbml.ext.comp.CompConstants;
-import org.sbml.jsbml.xml.stax.SBMLReader;
-import org.simulator.TestUtils;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.ext.comp.CompConstants;
+import org.sbml.jsbml.xml.stax.SBMLReader;
+import org.simulator.TestUtils;
 import org.simulator.comp.CompSimulator;
 import org.simulator.io.CSVImporter;
 import org.simulator.math.MaxDivergenceTolerance;
