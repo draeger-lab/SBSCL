@@ -450,13 +450,21 @@ public class FluxBalanceAnalysis {
 		return Double.NaN;
 	}
 
-	// Gets the value of the EPSILON
-	public double getEPS() {
+	/**
+	 * Gets the value of the EPSILON
+	 *
+	 * @return the epsilon value
+	 */
+	public double getEpsilon() {
 		return EPS;
 	}
 
-	// Set the value of the EPSILON specific to a particular FBC instance
-	public void setEPS(double EPS) {
+	/**
+	 * Set the value of the EPSILON specific to a particular FBC instance
+	 *
+	 * @param EPS
+	 */
+	public void setEpsilon(double EPS) {
 		this.EPS = EPS;
 	}
 
