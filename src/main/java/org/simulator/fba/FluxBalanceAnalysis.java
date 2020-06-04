@@ -154,7 +154,7 @@ public class FluxBalanceAnalysis {
 				lb[i] = interpreter != null ? interpreter.getCurrentValueOf(lowerBound.getId()) : lowerBound.getValue();
 				ub[i] = interpreter != null ? interpreter.getCurrentValueOf(upperBound.getId()) : upperBound.getValue();
 
-				addBoundsEpsilon(lb, ub, i);
+				adjustBoundNumerics(lb, ub, i);
 			}
 			reaction2Index.put(r.getId(), i);
 			buildSpeciesReactionMap(species2Reaction, r.getListOfReactants());
@@ -183,7 +183,7 @@ public class FluxBalanceAnalysis {
 							} else {
 								logger.severe(format("Encountered fluxBound ''{0}'' with invalid operation.", fb.getId()));
 							}
-							addBoundsEpsilon(lb, ub, index);
+							adjustBoundNumerics(lb, ub, index);
 						} else {
 							logger.severe(format("Encountered fluxBound ''{0}'' without defined operation.", fb.getId()));
 						}
@@ -257,7 +257,7 @@ public class FluxBalanceAnalysis {
 	 * @param index
 	 * 		the index of lower bound and upper bound
 	 */
-	void addBoundsEpsilon(double[] lowerBound, double[] upperBound, int index) {
+	void adjustBoundNumerics(double[] lowerBound, double[] upperBound, int index) {
 
 		// SCPSolver doesn't allow same values for upper bound and lower bound
 		// therefore adding a small EPSILON
