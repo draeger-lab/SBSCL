@@ -80,6 +80,8 @@ public class FluxBalanceAnalysis {
 	private LinearProgramSolver scpSolver;
 	private LinearProgram problem;
 	private double[] solution;
+	// SCPSolver does not allow same values for lower and upper bounds.
+	// So, eps is used to add to one of the bounds when both the bounds have equal values.
 	private double eps = 1E-10;
 	/**
 	 * This interpreter is only used if the model contains
