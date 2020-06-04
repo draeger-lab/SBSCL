@@ -1,4 +1,4 @@
-package org.simulator.sbml;
+package org.simulator.distance;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -6,39 +6,44 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.simulator.TestUtils;
 import org.simulator.io.CSVImporter;
+import org.simulator.math.MaxDivergenceTolerance;
 import org.simulator.math.QualityMeasure;
-import org.simulator.math.RelativeMaxDistance;
 import org.simulator.math.odes.MultiTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @RunWith(value = Parameterized.class)
-public class MaxRelDistanceTest {
+public class MaxDivergenceToleranceTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(MaxRelDistanceTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(MaxDivergenceTolerance.class);
     private String resource;
-    private static final String REL_DISTANCE_PATH = "DISTANCE_PATH";
+    private static final String MAX_DIVERGENCE_TOLERANCE_PATH = "MAX_DIVERGENCE_TOLERANCE_PATH";
+    private static final Double absTol = 1E-6;
+    private static final Double relTol = 1E-3;
 
-    public MaxRelDistanceTest(String resource) {
+    public MaxDivergenceToleranceTest(String resource) {
         this.resource = resource;
     }
 
+    /**
+     * Max absolute distance test cases
+     * @return
+     */
     @Parameterized.Parameters(name = "{index}: {0}")
     public static Iterable<Object[]> data() {
 
-        String distance_path = TestUtils.getPathForTestResource("/distance/test");
-        System.out.println(REL_DISTANCE_PATH + ": " + distance_path);
+        String distance_path = TestUtils.getPathForTestResource(File.separator + "distance" + File.separator + "test");
+        System.out.println(MAX_DIVERGENCE_TOLERANCE_PATH + ": " + distance_path);
 
         if (distance_path.length() == 0){
             Object[][] resources = new String[0][1];
-            logger.warn(String.format("%s environment variable not set.", REL_DISTANCE_PATH));
+            logger.warn(String.format("%s environment variable not set.", MAX_DIVERGENCE_TOLERANCE_PATH));
             return Arrays.asList(resources);
         }
 
@@ -60,23 +65,23 @@ public class MaxRelDistanceTest {
     }
 
     @Test
-    public void testMaxRelDistance() throws IOException {
+    public void testMaxDivergenceTolerance() throws IOException {
 
         // configuration
         String filePath = resource;
 
         String first = filePath + "a.csv";
         String second = filePath + "b.csv";
-        String result = filePath + "rel_result.csv";
+        String result = filePath + "max_div_tol_result.csv";
 
         // convert the test files to MultiTable
         CSVImporter csvImporter = new CSVImporter();
         MultiTable a = csvImporter.convert(null, first);
         MultiTable b = csvImporter.convert(null, second);
 
-        // calculates max relative distance
-        QualityMeasure distance = new RelativeMaxDistance();
-        List<Double> relMaxDistances = distance.getColumnDistances(a, b);
+        // calculates max absolute distance
+        QualityMeasure maxAbsDistance = new MaxDivergenceTolerance(absTol, relTol);
+        List<Double> distances = maxAbsDistance.getColumnDistances(a, b);
 
         // get pre-defined results from the test case
         List<Double> inputData = new ArrayList<>();
@@ -89,11 +94,11 @@ public class MaxRelDistanceTest {
             }
         }
 
-        System.out.println("Results: " + relMaxDistances);
+        System.out.println("Results: " + distances);
         System.out.println("Pre-defined Results: " + inputData);
 
-        for (int i = 0; i < relMaxDistances.size(); i++) {
-            Assert.assertEquals(relMaxDistances.get(i), inputData.get(i), 0.02);
+        for (int i = 0; i < distances.size(); i++) {
+            Assert.assertEquals(distances.get(i), inputData.get(i), 0.02);
         }
 
     }

@@ -16,9 +16,7 @@ import org.simulator.comp.CompSimulator;
 import org.simulator.io.CSVImporter;
 import org.simulator.math.MaxDivergenceTolerance;
 import org.simulator.math.QualityMeasure;
-import org.simulator.math.odes.AbstractDESSolver;
-import org.simulator.math.odes.MultiTable;
-import org.simulator.math.odes.RosenbrockSolver;
+import org.simulator.math.odes.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +52,7 @@ public class SBMLTestSuiteTest {
     public static Iterable<Object[]> data(){
 
         // environment variable for semantic test case folder
-        String testsuite_path = TestUtils.getPathForTestResource("/sbml-test-suite/cases/semantic/");
+        String testsuite_path = TestUtils.getPathForTestResource(File.separator + "sbml-test-suite" + File.separator + "cases" + File.separator + "semantic" + File.separator);
         System.out.println(SBML_TEST_SUITE_PATH + ": " + testsuite_path);
 
         if (testsuite_path.length() == 0){
@@ -75,7 +73,7 @@ public class SBMLTestSuiteTest {
                 modelFile.insert(0, '0');
             }
             String path = modelFile.toString();
-            modelFile.append('/');
+            modelFile.append(File.separator);
             modelFile.append(path);
             modelFile.insert(0, testsuite_path);
             path = modelFile.toString();
@@ -158,7 +156,7 @@ public class SBMLTestSuiteTest {
 
                 if (model.getExtension(CompConstants.shortLabel) == null){
 
-                    AbstractDESSolver solver = new RosenbrockSolver();
+                    DESSolver solver = new RosenbrockSolver();
                     // initialize interpreter
                     SBMLinterpreter interpreter = null;
                     boolean exceptionInInterpreter = false;
@@ -174,6 +172,15 @@ public class SBMLTestSuiteTest {
                     if ((solver != null) && (interpreter != null)) {
 
                         solver.setStepSize(duration / steps);
+
+                        if (solver instanceof AbstractDESSolver) {
+                            ((AbstractDESSolver) solver).setIncludeIntermediates(false);
+                        }
+
+                        if (solver instanceof AdaptiveStepsizeIntegrator) {
+                            ((AdaptiveStepsizeIntegrator) solver).setAbsTol(absolute);
+                            ((AdaptiveStepsizeIntegrator) solver).setRelTol(relative);
+                        }
 
                         // solve
                         MultiTable solution = null;

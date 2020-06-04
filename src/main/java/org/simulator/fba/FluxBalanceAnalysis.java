@@ -80,7 +80,7 @@ public class FluxBalanceAnalysis {
 	private LinearProgramSolver scpSolver;
 	private LinearProgram problem;
 	private double[] solution;
-	private double EPS = 1E-10;
+	private double eps = 1E-10;
 	/**
 	 * This interpreter is only used if the model contains
 	 * {@link InitialAssignment}s or {@link org.sbml.jsbml.StoichiometryMath}.
@@ -152,7 +152,7 @@ public class FluxBalanceAnalysis {
 				lb[i] = interpreter != null ? interpreter.getCurrentValueOf(lowerBound.getId()) : lowerBound.getValue();
 				ub[i] = interpreter != null ? interpreter.getCurrentValueOf(upperBound.getId()) : upperBound.getValue();
 
-				updateBound(lb, ub, i);
+				addBoundsEpsilon(lb, ub, i);
 			}
 			reaction2Index.put(r.getId(), i);
 			buildSpeciesReactionMap(species2Reaction, r.getListOfReactants());
@@ -160,9 +160,10 @@ public class FluxBalanceAnalysis {
 		}
 
 		FBCModelPlugin mPlug = null;
-		if (model.getExtension(FBCConstants.shortLabel).getPackageVersion() == 2) {
+		int fbcVersion = model.getExtension(FBCConstants.shortLabel).getPackageVersion();
+		if (fbcVersion == 2) {
 			mPlug = (FBCModelPlugin) model.getPlugin(fbcNamespaceV2);
-		} else if (model.getExtension(FBCConstants.shortLabel).getPackageVersion() == 1) {
+		} else if (fbcVersion == 1) {
 			mPlug = (FBCModelPlugin) model.getPlugin(fbcNamespaceV1);
 			if (mPlug.isSetListOfFluxBounds()) {
 				for (FluxBound fb : mPlug.getListOfFluxBounds()) {
@@ -180,7 +181,7 @@ public class FluxBalanceAnalysis {
 							} else {
 								logger.severe(format("Encountered fluxBound ''{0}'' with invalid operation.", fb.getId()));
 							}
-							updateBound(lb, ub, index);
+							addBoundsEpsilon(lb, ub, index);
 						} else {
 							logger.severe(format("Encountered fluxBound ''{0}'' without defined operation.", fb.getId()));
 						}
@@ -213,14 +214,14 @@ public class FluxBalanceAnalysis {
 		problem.setUpperbound(ub);
 
 		switch (type) {
-		case MAXIMIZE:
-			problem.setMinProblem(false);
-			break;
-		case MINIMIZE:
-			problem.setMinProblem(true);
-			break;
-		default:
-			throw new SBMLException(format("Unspecified operation {0}", type));
+			case MAXIMIZE:
+				problem.setMinProblem(false);
+				break;
+			case MINIMIZE:
+				problem.setMinProblem(true);
+				break;
+			default:
+				throw new SBMLException(format("Unspecified operation {0}", type));
 		}
 
 		// Add weighted constraints equations for each reaction.
@@ -254,22 +255,30 @@ public class FluxBalanceAnalysis {
 	 * @param index
 	 * 		the index of lower bound and upper bound
 	 */
-	void updateBound(double[] lowerBound, double[] upperBound, int index) {
+	void addBoundsEpsilon(double[] lowerBound, double[] upperBound, int index) {
 
 		// SCPSolver doesn't allow same values for upper bound and lower bound
 		// therefore adding a small EPSILON
 		if (lowerBound[index] == upperBound[index]) {
-			upperBound[index] += EPS;
+			upperBound[index] += eps;
 		}
 
 		// SCPSolver doesn't allow the bounds to be +Infinity or -Infinity
 		// therefore changing them to +Double.MAX_VALUE and -Double.MAX_VALUE respectively
 		// for both lower as well as upper bounds
-		if (lowerBound[index] == Double.POSITIVE_INFINITY) lowerBound[index] = Double.MAX_VALUE;
-		if (lowerBound[index] == -Double.POSITIVE_INFINITY) lowerBound[index] = -Double.MAX_VALUE;
+		if (lowerBound[index] == Double.POSITIVE_INFINITY) {
+			lowerBound[index] = Double.MAX_VALUE;
+		}
+		if (lowerBound[index] == -Double.POSITIVE_INFINITY) {
+			lowerBound[index] = -Double.MAX_VALUE;
+		}
 
-		if (upperBound[index] == Double.POSITIVE_INFINITY) upperBound[index] = Double.MAX_VALUE;
-		if (upperBound[index] == -Double.POSITIVE_INFINITY) upperBound[index] = -Double.MAX_VALUE;
+		if (upperBound[index] == Double.POSITIVE_INFINITY) {
+			upperBound[index] = Double.MAX_VALUE;
+		}
+		if (upperBound[index] == -Double.POSITIVE_INFINITY) {
+			upperBound[index] = -Double.MAX_VALUE;
+		}
 	}
 
 	/**
@@ -456,16 +465,16 @@ public class FluxBalanceAnalysis {
 	 * @return the epsilon value
 	 */
 	public double getEpsilon() {
-		return EPS;
+		return eps;
 	}
 
 	/**
 	 * Set the value of the EPSILON specific to a particular FBC instance
 	 *
-	 * @param EPS
+	 * @param eps
 	 */
-	public void setEpsilon(double EPS) {
-		this.EPS = EPS;
+	public void setEpsilon(double eps) {
+		this.eps = eps;
 	}
 
 }

@@ -5,12 +5,10 @@ jdk:
   - oraclejdk11
 
 install:
-   - cd src/test/scripts
    # get BiGG models for testing
-   - source ./download_bigg_models.sh
+   - source ./src/test/scripts/download_bigg_models.sh
    # get sbml-test-case models for testing
-   - source ./download_sbml-test-suite.sh
-   - cd ../../..
+   - source ./src/test/scripts/download_sbml-test-suite.sh
 
 script:
 - mvn clean install

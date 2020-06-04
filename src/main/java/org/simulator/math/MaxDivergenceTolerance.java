@@ -2,6 +2,63 @@ package org.simulator.math;
 
 import org.simulator.math.odes.MultiTable.Block.Column;
 
+/**
+ * An implementation of core comparison metric of the simulator's
+ * result with the pre-defined results. MaxDivergenceTolerance class
+ * basically calculates the LHS of the below given metric.
+ *
+ * Metric Formula:
+ *
+ * <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+ *   <mfrac>
+ *     <mrow>
+ *       <mo>|</mo>
+ *       <msub>
+ *         <mi>c</mi>
+ *         <mrow class="MJX-TeXAtom-ORD">
+ *           <mi>i</mi>
+ *           <mi>j</mi>
+ *         </mrow>
+ *       </msub>
+ *       <mo>&#x2212;<!-- − --></mo>
+ *       <msub>
+ *         <mi>u</mi>
+ *         <mrow class="MJX-TeXAtom-ORD">
+ *           <mi>i</mi>
+ *           <mi>j</mi>
+ *         </mrow>
+ *       </msub>
+ *       <mo>|</mo>
+ *     </mrow>
+ *     <mrow>
+ *       <msub>
+ *         <mi>T</mi>
+ *         <mi>a</mi>
+ *       </msub>
+ *       <mo>+</mo>
+ *       <msub>
+ *         <mi>T</mi>
+ *         <mi>r</mi>
+ *       </msub>
+ *       <mo>&#x22C5;<!-- ⋅ --></mo>
+ *       <mrow>
+ *         <mo>|</mo>
+ *         <msub>
+ *           <mi>c</mi>
+ *           <mrow class="MJX-TeXAtom-ORD">
+ *             <mi>i</mi>
+ *             <mi>j</mi>
+ *           </mrow>
+ *         </msub>
+ *         <mo>|</mo>
+ *       </mrow>
+ *     </mrow>
+ *   </mfrac>
+ *   <mo>&#x2264;<!-- ≤ --></mo>
+ *   <mn>1</mn>
+ * </math>
+ *
+ */
 public class MaxDivergenceTolerance extends QualityMeasure {
 
     /**

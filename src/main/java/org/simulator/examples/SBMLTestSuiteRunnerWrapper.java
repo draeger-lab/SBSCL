@@ -8,9 +8,7 @@ import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.comp.CompSimulator;
 import org.simulator.io.CSVImporter;
-import org.simulator.math.odes.AbstractDESSolver;
-import org.simulator.math.odes.MultiTable;
-import org.simulator.math.odes.RosenbrockSolver;
+import org.simulator.math.odes.*;
 import org.simulator.sbml.SBMLinterpreter;
 
 import javax.xml.stream.XMLStreamException;
@@ -50,10 +48,10 @@ public class SBMLTestSuiteRunnerWrapper {
         String level = args[3];
         String  version = args[4];
 
-        String filePath = dirPath + '/' + currentCase + '/' + currentCase + "-sbml-l" + level + 'v' + version + ".xml";
-        String settingsPath = dirPath + '/' + currentCase + '/' + currentCase + "-settings.txt";
-        String outputFilePath = outputDirPath + '/' + currentCase + ".csv";
-        String resultsPath = dirPath + '/' + currentCase + '/' + currentCase + "-results.csv";
+        String filePath = dirPath + File.separator + currentCase + File.separator + currentCase + "-sbml-l" + level + 'v' + version + ".xml";
+        String settingsPath = dirPath + File.separator + currentCase + File.separator + currentCase + "-settings.txt";
+        String outputFilePath = outputDirPath + File.separator + currentCase + ".csv";
+        String resultsPath = dirPath + File.separator + currentCase + File.separator + currentCase + "-results.csv";
 
         Properties properties = new Properties();
         properties.load(new BufferedReader(new FileReader(settingsPath)));
@@ -63,6 +61,8 @@ public class SBMLTestSuiteRunnerWrapper {
         String[] amounts = String.valueOf(properties.getProperty("amount")).split(",");
         String[] concentrations = String.valueOf(
                 properties.getProperty("concentration")).split(",");
+        double absolute = (!properties.getProperty("absolute").isEmpty()) ? Double.parseDouble(properties.getProperty("absolute")) : 0d;
+        double relative = (!properties.getProperty("relative").isEmpty()) ? Double.parseDouble(properties.getProperty("relative")) : 0d;
 
         for (String s : amounts) {
             s = s.trim();
@@ -93,11 +93,19 @@ public class SBMLTestSuiteRunnerWrapper {
         MultiTable solution;
 
         if (model.getExtension(CompConstants.shortLabel) == null){
-            AbstractDESSolver solver = new RosenbrockSolver();
+            DESSolver solver = new RosenbrockSolver();
             solver.setStepSize(duration / steps);
-            SBMLinterpreter interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);
 
-            ((AbstractDESSolver) solver).setIncludeIntermediates(false);
+            if (solver instanceof AbstractDESSolver) {
+                solver.setIncludeIntermediates(false);
+            }
+
+            if (solver instanceof AdaptiveStepsizeIntegrator) {
+                ((AdaptiveStepsizeIntegrator) solver).setAbsTol(absolute);
+                ((AdaptiveStepsizeIntegrator) solver).setRelTol(relative);
+            }
+
+            SBMLinterpreter interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);
 
             // Compute the numerical solution of the problem
             solution = solver.solve(interpreter, interpreter.getInitialValues(), timepoints);

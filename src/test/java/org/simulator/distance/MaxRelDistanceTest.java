@@ -1,4 +1,4 @@
-package org.simulator.sbml;
+package org.simulator.distance;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -6,40 +6,40 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.simulator.TestUtils;
 import org.simulator.io.CSVImporter;
-import org.simulator.math.MaxAbsDistance;
+import org.simulator.math.QualityMeasure;
+import org.simulator.math.RelativeMaxDistance;
 import org.simulator.math.odes.MultiTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @RunWith(value = Parameterized.class)
-public class MaxAbsDistanceTest {
+public class MaxRelDistanceTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(MaxAbsDistanceTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(MaxRelDistanceTest.class);
     private String resource;
-    private static final String ABS_DISTANCE_PATH = "ABS_DISTANCE_PATH";
+    private static final String REL_DISTANCE_PATH = "DISTANCE_PATH";
 
-    public MaxAbsDistanceTest(String resource) {
+    public MaxRelDistanceTest(String resource) {
         this.resource = resource;
     }
 
-    /**
-     * Max absolute distance test cases
-     * @return
-     */
     @Parameterized.Parameters(name = "{index}: {0}")
     public static Iterable<Object[]> data() {
 
-        String distance_path = TestUtils.getPathForTestResource("/distance/test");
-        System.out.println(ABS_DISTANCE_PATH + ": " + distance_path);
+        String distance_path = TestUtils.getPathForTestResource(File.separator + "distance" + File.separator + "test");
+        System.out.println(REL_DISTANCE_PATH + ": " + distance_path);
 
         if (distance_path.length() == 0){
             Object[][] resources = new String[0][1];
-            logger.warn(String.format("%s environment variable not set.", ABS_DISTANCE_PATH));
+            logger.warn(String.format("%s environment variable not set.", REL_DISTANCE_PATH));
             return Arrays.asList(resources);
         }
 
@@ -61,40 +61,40 @@ public class MaxAbsDistanceTest {
     }
 
     @Test
-    public void testMaxAbsDistance() throws IOException {
+    public void testMaxRelDistance() throws IOException {
 
         // configuration
         String filePath = resource;
 
         String first = filePath + "a.csv";
         String second = filePath + "b.csv";
-        String result = filePath + "abs_result.csv";
+        String result = filePath + "rel_result.csv";
 
         // convert the test files to MultiTable
         CSVImporter csvImporter = new CSVImporter();
         MultiTable a = csvImporter.convert(null, first);
         MultiTable b = csvImporter.convert(null, second);
 
-        // calculates max absolute distance
-        MaxAbsDistance maxAbsDistance = new MaxAbsDistance();
-        Map<String, Double> distances = maxAbsDistance.getMaxAbsDistances(a, b);
+        // calculates max relative distance
+        QualityMeasure distance = new RelativeMaxDistance();
+        List<Double> relMaxDistances = distance.getColumnDistances(a, b);
 
         // get pre-defined results from the test case
-        Map<String, Double> inputData = new HashMap<>();
+        List<Double> inputData = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(result))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
-                inputData.put(values[0], Double.parseDouble(values[1]));
+                inputData.add(Double.parseDouble(values[0]));
             }
         }
 
-        System.out.println("Results: " + distances);
+        System.out.println("Results: " + relMaxDistances);
         System.out.println("Pre-defined Results: " + inputData);
 
-        for (Map.Entry<String, Double> mapElement: distances.entrySet()) {
-            Assert.assertEquals(inputData.get(mapElement.getKey()), mapElement.getValue(), 0.02);
+        for (int i = 0; i < relMaxDistances.size(); i++) {
+            Assert.assertEquals(relMaxDistances.get(i), inputData.get(i), 0.02);
         }
 
     }
