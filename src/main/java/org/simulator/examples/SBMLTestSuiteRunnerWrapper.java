@@ -31,6 +31,12 @@ import java.util.Properties;
  */
 public class SBMLTestSuiteRunnerWrapper {
 
+    public static final String STEPS = "steps";
+    public static final String AMOUNT = "amount";
+    public static final String CONCENTRATION = "concentration";
+    public static final String ABSOLUTE = "absolute";
+    public static final String RELATIVE = "relative";
+
     /**
      * Runs a simulation of a SBML file and writes result to a specified CSV file
      * @param args
@@ -56,13 +62,13 @@ public class SBMLTestSuiteRunnerWrapper {
         Properties properties = new Properties();
         properties.load(new BufferedReader(new FileReader(settingsPath)));
         double duration;
-        double steps = (!properties.getProperty("steps").isEmpty()) ? Double.parseDouble(properties.getProperty("steps")) : 0d;
+        double steps = (!properties.getProperty(STEPS).isEmpty()) ? Double.parseDouble(properties.getProperty(STEPS)) : 0d;
         Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
-        String[] amounts = String.valueOf(properties.getProperty("amount")).split(",");
+        String[] amounts = String.valueOf(properties.getProperty(AMOUNT)).split(",");
         String[] concentrations = String.valueOf(
-                properties.getProperty("concentration")).split(",");
-        double absolute = (!properties.getProperty("absolute").isEmpty()) ? Double.parseDouble(properties.getProperty("absolute")) : 0d;
-        double relative = (!properties.getProperty("relative").isEmpty()) ? Double.parseDouble(properties.getProperty("relative")) : 0d;
+                properties.getProperty(CONCENTRATION)).split(",");
+        double absolute = (!properties.getProperty(ABSOLUTE).isEmpty()) ? Double.parseDouble(properties.getProperty(ABSOLUTE)) : 0d;
+        double relative = (!properties.getProperty(RELATIVE).isEmpty()) ? Double.parseDouble(properties.getProperty(RELATIVE)) : 0d;
 
         for (String s : amounts) {
             s = s.trim();

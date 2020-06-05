@@ -30,6 +30,11 @@ import java.util.*;
 @RunWith(value = Parameterized.class)
 public class SBMLTestSuiteTest {
     private String path;
+    public static final String STEPS = "steps";
+    public static final String AMOUNT = "amount";
+    public static final String CONCENTRATION = "concentration";
+    public static final String ABSOLUTE = "absolute";
+    public static final String RELATIVE = "relative";
     private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
     private static final String SBML_TEST_SUITE_PATH = "SBML_TEST_SUITE_PATH";
     private static final double THRESHOLD = 0.001;
@@ -103,13 +108,13 @@ public class SBMLTestSuiteTest {
         props.load(new BufferedReader(new FileReader(configfile)));
         // int start = Integer.valueOf(props.getProperty("start"));
         double duration;
-        double steps = (!props.getProperty("steps").isEmpty()) ? Double.parseDouble(props.getProperty("steps")) : 0d;
+        double steps = (!props.getProperty(STEPS).isEmpty()) ? Double.parseDouble(props.getProperty(STEPS)) : 0d;
         Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
-        String[] amounts = String.valueOf(props.getProperty("amount")).split(",");
+        String[] amounts = String.valueOf(props.getProperty(AMOUNT)).split(",");
         String[] concentrations = String.valueOf(
-                props.getProperty("concentration")).split(",");
-         double absolute = (!props.getProperty("absolute").isEmpty()) ? Double.parseDouble(props.getProperty("absolute")) : 0d;
-         double relative = (!props.getProperty("relative").isEmpty()) ? Double.parseDouble(props.getProperty("relative")) : 0d;
+                props.getProperty(CONCENTRATION)).split(",");
+         double absolute = (!props.getProperty(ABSOLUTE).isEmpty()) ? Double.parseDouble(props.getProperty(ABSOLUTE)) : 0d;
+         double relative = (!props.getProperty(RELATIVE).isEmpty()) ? Double.parseDouble(props.getProperty(RELATIVE)) : 0d;
 
         for (String s : amounts) {
             s = s.trim();
