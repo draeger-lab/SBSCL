@@ -37,10 +37,7 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.SBMLReader;
-import org.simulator.math.odes.AbstractDESSolver;
-import org.simulator.math.odes.DESSolver;
-import org.simulator.math.odes.MultiTable;
-import org.simulator.math.odes.RosenbrockSolver;
+import org.simulator.math.odes.*;
 import org.simulator.plot.PlotMultiTable;
 import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.plot.PlotMultiTable;
@@ -73,6 +70,8 @@ public class SimulatorExample {
     String fileName = args[0];
     double stepSize = Double.parseDouble(args[1]);
     double timeEnd = Double.parseDouble(args[2]);
+    double absTol = Double.parseDouble(args[3]);
+    double relTol = Double.parseDouble(args[4]);
 
     // Read the model and initialize solver
     SBMLDocument document = (new SBMLReader()).readSBML(fileName);
@@ -86,7 +85,10 @@ public class SimulatorExample {
     }
 
     // Compute the numerical solution of the initial value problem
-    // TODO: Rel-Tolerance, Abs-Tolerance.
+    if (solver instanceof AdaptiveStepsizeIntegrator) {
+      ((AdaptiveStepsizeIntegrator) solver).setAbsTol(absTol);
+      ((AdaptiveStepsizeIntegrator) solver).setRelTol(relTol);
+    }
     MultiTable solution = solver.solve(interpreter, interpreter
       .getInitialValues(), 0d, timeEnd);
 

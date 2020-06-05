@@ -724,6 +724,9 @@ public class ASTNodeInterpreter {
    * @return doubleValue the interpreted double value of the node
    */
   public double arcsech(ASTNodeValue userObject, double time, double delay) {
+    if (userObject.compileDouble(time, delay) == 0d) {
+      return Double.POSITIVE_INFINITY;
+    }
     return Maths.arcsech(userObject.compileDouble(time, delay));
   }
 

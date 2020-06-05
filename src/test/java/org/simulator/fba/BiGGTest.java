@@ -93,11 +93,11 @@ public class BiGGTest {
         logger.info(doc.toString());
         assertNotNull(doc);
 
-        COBRAsolver solver = new COBRAsolver(doc);
+        FluxBalanceAnalysis solver = new FluxBalanceAnalysis(doc);
         boolean success = solver.solve();
         assertNotNull(success);
 
-        double objectiveValue = solver.getObjetiveValue();
+        double objectiveValue = solver.getObjectiveValue();
         assertTrue(objectiveValue>=0.0);
         double[] fluxes = solver.getValues();
         assertNotNull(fluxes);

@@ -24,13 +24,9 @@
 package org.simulator.fba;
 
 import static org.sbml.jsbml.util.Pair.pairOf;
+import static java.text.MessageFormat.format;
 
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.AlgebraicRule;
@@ -71,12 +67,12 @@ import scpsolver.problems.LinearProgram;
  * @since 1.5
  */
 @SuppressWarnings("deprecation")
-public class COBRAsolver {
+public class FluxBalanceAnalysis {
 
 	/**
 	 * A Logger for this class.
 	 */
-	private static final transient Logger logger = Logger.getLogger(COBRAsolver.class.getName());
+	private static final transient Logger logger = Logger.getLogger(FluxBalanceAnalysis.class.getName());
 
 	/**
 	 * The linear programming solver.
@@ -84,7 +80,9 @@ public class COBRAsolver {
 	private LinearProgramSolver scpSolver;
 	private LinearProgram problem;
 	private double[] solution;
-	private static double EPS = 0.0001;
+	// SCPSolver does not allow same values for lower and upper bounds.
+	// So, eps is used to add to one of the bounds when both the bounds have equal values.
+	private double eps = 1E-10;
 	/**
 	 * This interpreter is only used if the model contains
 	 * {@link InitialAssignment}s or {@link org.sbml.jsbml.StoichiometryMath}.
@@ -98,7 +96,7 @@ public class COBRAsolver {
 	 * A dictionary to lookup the position of a {@link Reaction} in the list of
 	 * reactions of the {@link Model} based on the reaction's identifier.
 	 */
-	private HashMap<String, Integer> reaction2Index;
+	private Map<String, Integer> reaction2Index;
 
 	/**
 	 * Initializes the linear program and all data structures based on the
@@ -118,7 +116,7 @@ public class COBRAsolver {
 	 *         if the {@link Model} is invalid or inappropriate for flux balance
 	 *         analysis.
 	 */
-	public COBRAsolver(SBMLDocument doc) throws SBMLException, ModelOverdeterminedException {
+	public FluxBalanceAnalysis(SBMLDocument doc) throws SBMLException, ModelOverdeterminedException {
 		super();
 
 
@@ -146,41 +144,33 @@ public class COBRAsolver {
 		// Mapping from species id to reaction id and stoichiometric coefficient in that reaction.
 		Map<String, Set<Pair<String, Double>>> species2Reaction = new HashMap<String, Set<Pair<String, Double>>>();
 
-		if (model.getReactionCount() > 0) {
-			int i = 0;
-			
-			for (Reaction r : model.getListOfReactions()) {
+		for (int i = 0; i < model.getReactionCount(); i++) {
+			Reaction r = model.getReaction(i);
+			if (r.isSetPlugin(fbcNamespaceV2)) {
+				FBCReactionPlugin rPlug = (FBCReactionPlugin) r.getPlugin(fbcNamespaceV2);
+				Parameter upperBound = rPlug.getUpperFluxBoundInstance();
+				Parameter lowerBound = rPlug.getLowerFluxBoundInstance();
 
-				if (r.isSetPlugin(fbcNamespaceV2)) {
-					FBCReactionPlugin rPlug = (FBCReactionPlugin) r.getPlugin(fbcNamespaceV2);
-					Parameter upperBound = rPlug.getUpperFluxBoundInstance();
-					Parameter lowerBound = rPlug.getLowerFluxBoundInstance();
+				lb[i] = interpreter != null ? interpreter.getCurrentValueOf(lowerBound.getId()) : lowerBound.getValue();
+				ub[i] = interpreter != null ? interpreter.getCurrentValueOf(upperBound.getId()) : upperBound.getValue();
 
-					lb[i] = interpreter != null ? interpreter.getCurrentValueOf(lowerBound.getId()) : lowerBound.getValue();
-					ub[i] = interpreter != null ? interpreter.getCurrentValueOf(upperBound.getId()) : upperBound.getValue();
-					
-					// SCPsolver doesn't allow same values for upper bound and lower bound
-					// therefore adding a small ESPILON
-					if (ub[i] == lb[i]) 
-						ub[i] += EPS;
-						
-				}
-				reaction2Index.put(r.getId(), i);
-				buildSpeciesReactionMap(species2Reaction, r.getListOfReactants());
-				buildSpeciesReactionMap(species2Reaction, r.getListOfProducts());
-				i++;
+				adjustBoundNumerics(lb, ub, i);
 			}
+			reaction2Index.put(r.getId(), i);
+			buildSpeciesReactionMap(species2Reaction, r.getListOfReactants());
+			buildSpeciesReactionMap(species2Reaction, r.getListOfProducts());
 		}
 
 		FBCModelPlugin mPlug = null;
-		if (model.isSetPlugin(fbcNamespaceV2)) {
+		int fbcVersion = model.getExtension(FBCConstants.shortLabel).getPackageVersion();
+		if (fbcVersion == 2) {
 			mPlug = (FBCModelPlugin) model.getPlugin(fbcNamespaceV2);
-		} else if (model.isSetPlugin(fbcNamespaceV1)) {
+		} else if (fbcVersion == 1) {
 			mPlug = (FBCModelPlugin) model.getPlugin(fbcNamespaceV1);
 			if (mPlug.isSetListOfFluxBounds()) {
 				for (FluxBound fb : mPlug.getListOfFluxBounds()) {
 					if (!fb.isSetReaction()) {
-						logger.warning(MessageFormat.format("Encountered fluxBound ''{0}'' without reaction identifier.", fb.getId()));
+						logger.warning(format("Encountered fluxBound ''{0}'' without reaction identifier.", fb.getId()));
 					} else {
 						int index = reaction2Index.get(fb.getReaction());
 						if (fb.isSetOperation()) {
@@ -191,16 +181,17 @@ public class COBRAsolver {
 							} else if (fb.getOperation() == FluxBound.Operation.EQUAL) {
 								lb[index] = ub[index] = fb.getValue();
 							} else {
-								logger.severe(MessageFormat.format("Encountered fluxBound ''{0}'' with invalid operation.", fb.getId()));
+								logger.severe(format("Encountered fluxBound ''{0}'' with invalid operation.", fb.getId()));
 							}
+							adjustBoundNumerics(lb, ub, index);
 						} else {
-							logger.severe(MessageFormat.format("Encountered fluxBound ''{0}'' without defined operation.", fb.getId()));
+							logger.severe(format("Encountered fluxBound ''{0}'' without defined operation.", fb.getId()));
 						}
 					}
 				}
 			}
 		} else {
-			throw new IllegalArgumentException(MessageFormat.format(
+			throw new IllegalArgumentException(format(
 					"Cannot conduct flux balance analysis without defined objective function in model ''{0}''.",
 					model.getId()));
 		}
@@ -225,14 +216,14 @@ public class COBRAsolver {
 		problem.setUpperbound(ub);
 
 		switch (type) {
-		case MAXIMIZE:
-			problem.setMinProblem(false);
-			break;
-		case MINIMIZE:
-			problem.setMinProblem(true);
-			break;
-		default:
-			throw new SBMLException(MessageFormat.format("Unspecified operation {0}", type));
+			case MAXIMIZE:
+				problem.setMinProblem(false);
+				break;
+			case MINIMIZE:
+				problem.setMinProblem(true);
+				break;
+			default:
+				throw new SBMLException(format("Unspecified operation {0}", type));
 		}
 
 		// Add weighted constraints equations for each reaction.
@@ -240,7 +231,7 @@ public class COBRAsolver {
 			double[] weights = new double[reaction2Index.size()];
 			
 			if (!species2Reaction.containsKey(species.getId())) {
-				logger.warning(MessageFormat.format(
+				logger.warning(format(
 						"Species ''{0}'' does not participate in any reaction.",
 						species.getId()));
 			} else {
@@ -253,6 +244,43 @@ public class COBRAsolver {
 				problem.addConstraint(new LinearEqualsConstraint(weights, 0.0, "cnstrt_" + species.getId()));
 			}
 		}	
+	}
+
+	/**
+	 * This method updates a particular index of
+	 * the lower bounds as well as the upper bounds as per the standards of the SCPSolver.
+	 *
+	 * @param lowerBound
+	 * 		the array of lower flux bounds
+	 * @param upperBound
+	 * 		the array of the upper flux bounds
+	 * @param index
+	 * 		the index of lower bound and upper bound
+	 */
+	void adjustBoundNumerics(double[] lowerBound, double[] upperBound, int index) {
+
+		// SCPSolver doesn't allow same values for upper bound and lower bound
+		// therefore adding a small EPSILON
+		if (lowerBound[index] == upperBound[index]) {
+			upperBound[index] += eps;
+		}
+
+		// SCPSolver doesn't allow the bounds to be +Infinity or -Infinity
+		// therefore changing them to +Double.MAX_VALUE and -Double.MAX_VALUE respectively
+		// for both lower as well as upper bounds
+		if (lowerBound[index] == Double.POSITIVE_INFINITY) {
+			lowerBound[index] = Double.MAX_VALUE;
+		}
+		if (lowerBound[index] == -Double.POSITIVE_INFINITY) {
+			lowerBound[index] = -Double.MAX_VALUE;
+		}
+
+		if (upperBound[index] == Double.POSITIVE_INFINITY) {
+			upperBound[index] = Double.MAX_VALUE;
+		}
+		if (upperBound[index] == -Double.POSITIVE_INFINITY) {
+			upperBound[index] = -Double.MAX_VALUE;
+		}
 	}
 
 	/**
@@ -282,7 +310,7 @@ public class COBRAsolver {
 			Model model = listOfParticipants.getModel();
 			Reaction r = (Reaction) listOfParticipants.getParent();
 			String id = SBMLtools.getIdOrName(model);
-			throw new SBMLException(MessageFormat.format(
+			throw new SBMLException(format(
 					"Incomplete model{0}: encountered {1} without identifier.",
 					(id.length() > 0) ? " '" + id + "'" : "",
 							(r.isSetName() ? "reaction '" + r.getName() + "'" : "a reaction")));
@@ -291,7 +319,7 @@ public class COBRAsolver {
 
 		for (SpeciesReference specRef : listOfParticipants) {
 			if (!specRef.isSetSpecies()) {
-				throw new SBMLException(MessageFormat.format(
+				throw new SBMLException(format(
 						"Incomplete model: no species defined for a species reference in the {0} of reaction ''{1}''",
 						listOfParticipants.getSBaseListType(), rId));
 			}
@@ -342,8 +370,8 @@ public class COBRAsolver {
 	 *         If the method fails, an exception of type IloException, or one of
 	 *         its derived classes, is thrown.
 	 */
-	public double getObjetiveValue() throws NullPointerException {
-			return  problem.evaluate(solution);
+	public double getObjectiveValue() throws NullPointerException {
+		return problem.evaluate(solution);
 	}
 
 	/**
@@ -373,6 +401,21 @@ public class COBRAsolver {
 	 */
 	public double[] getValues() throws NullPointerException{
 		return solution;
+	}
+
+	/**
+	 * Returns solution values as a HashMap with key as reaction Id and value as the flux.
+	 *
+	 * @return The flux values for the each of the reactions
+	 */
+	public Map<String, Double> getSolution() {
+
+		Map<String, Double> result = new HashMap<>();
+		for (Map.Entry<String, Integer> mapElement: reaction2Index.entrySet()) {
+			result.put(mapElement.getKey(), solution[mapElement.getValue()]);
+		}
+
+		return result;
 	}
 
 	/**
@@ -416,6 +459,24 @@ public class COBRAsolver {
 			}
 		}
 		return Double.NaN;
+	}
+
+	/**
+	 * Gets the value of the EPSILON
+	 *
+	 * @return the epsilon value
+	 */
+	public double getEpsilon() {
+		return eps;
+	}
+
+	/**
+	 * Set the value of the EPSILON specific to a particular FBC instance
+	 *
+	 * @param eps
+	 */
+	public void setEpsilon(double eps) {
+		this.eps = eps;
 	}
 
 }

@@ -104,9 +104,9 @@ public class CSVImporter {
 
       Map<String, Integer> nameToColumn = new HashMap<String, Integer>();
       i = 0;
-      for (String head : header) {
-        if (!head.equalsIgnoreCase(data.getTimeName())) {
-          newHead[i++] = head.trim();
+      for (int p = 1; p < header.length; p++) {
+        if (!header[p].equalsIgnoreCase(data.getTimeName())) {
+          newHead[i++] = header[p].trim();
           nameToColumn.put(newHead[i - 1],
             i);
         }

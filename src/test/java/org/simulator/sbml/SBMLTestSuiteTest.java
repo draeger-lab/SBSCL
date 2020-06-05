@@ -1,23 +1,26 @@
 package org.simulator.sbml;
 
 import org.apache.commons.math.ode.DerivativeException;
-import org.junit.*;
-import org.sbml.jsbml.*;
-import org.sbml.jsbml.validator.ModelOverdeterminedException;
-import org.sbml.jsbml.xml.stax.SBMLReader;
-import org.simulator.TestUtils;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.ext.comp.CompConstants;
+import org.sbml.jsbml.xml.stax.SBMLReader;
+import org.simulator.TestUtils;
+import org.simulator.comp.CompSimulator;
 import org.simulator.io.CSVImporter;
+import org.simulator.math.MaxDivergenceTolerance;
 import org.simulator.math.QualityMeasure;
-import org.simulator.math.RelativeEuclideanDistance;
-import org.simulator.math.odes.AbstractDESSolver;
-import org.simulator.math.odes.MultiTable;
-import org.simulator.math.odes.RosenbrockSolver;
+import org.simulator.math.odes.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.util.*;
 
@@ -27,8 +30,14 @@ import java.util.*;
 @RunWith(value = Parameterized.class)
 public class SBMLTestSuiteTest {
     private String path;
+    public static final String STEPS = "steps";
+    public static final String AMOUNT = "amount";
+    public static final String CONCENTRATION = "concentration";
+    public static final String ABSOLUTE = "absolute";
+    public static final String RELATIVE = "relative";
     private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
     private static final String SBML_TEST_SUITE_PATH = "SBML_TEST_SUITE_PATH";
+    private static final double THRESHOLD = 0.001;
 
     @Before
     public void setUp(){ }
@@ -48,18 +57,19 @@ public class SBMLTestSuiteTest {
     public static Iterable<Object[]> data(){
 
         // environment variable for semantic test case folder
-        String testsuite_path = System.getenv(SBML_TEST_SUITE_PATH);
+        String testsuite_path = TestUtils.getPathForTestResource(File.separator + "sbml-test-suite" + File.separator + "cases" + File.separator + "semantic" + File.separator);
         System.out.println(SBML_TEST_SUITE_PATH + ": " + testsuite_path);
 
-        if ((testsuite_path == null) || (testsuite_path.length() == 0)){
+        if (testsuite_path.length() == 0){
             Object[][] resources = new String[0][1];
             logger.warn(String.format("%s environment variable not set.", SBML_TEST_SUITE_PATH));
             return Arrays.asList(resources);
         }
 
-        int N = 1123;
+        int N = 1809;
         Object[][] resources = new String[N][1];
         for (int model_number = 1; model_number <= N; model_number++){
+
             // System.out.println("model " + model_number);
 
             StringBuilder modelFile = new StringBuilder();
@@ -68,19 +78,26 @@ public class SBMLTestSuiteTest {
                 modelFile.insert(0, '0');
             }
             String path = modelFile.toString();
-            modelFile.append('/');
+            modelFile.append(File.separator);
             modelFile.append(path);
             modelFile.insert(0, testsuite_path);
             path = modelFile.toString();
 
             resources[(model_number-1)][0] = path;
+
         }
         return Arrays.asList(resources);
     }
 
 
     @Test
-    public void testModel() throws FileNotFoundException, IOException {
+    public void testModel() throws FileNotFoundException, IOException, XMLStreamException {
+
+        if (path.contains("01592")){
+            // FIXME: skipping test which takes 20-30 minutes to run (see https://github.com/draeger-lab/SBSCL/issues/39)
+            assert(false);
+        }
+
 
         //System.out.println(path);
         String sbmlfile, csvfile, configfile;
@@ -90,26 +107,25 @@ public class SBMLTestSuiteTest {
         Properties props = new Properties();
         props.load(new BufferedReader(new FileReader(configfile)));
         // int start = Integer.valueOf(props.getProperty("start"));
-        double duration = Double.valueOf(props.getProperty("duration"));
-        double steps = Double.valueOf(props.getProperty("steps"));
+        double duration;
+        double steps = (!props.getProperty(STEPS).isEmpty()) ? Double.parseDouble(props.getProperty(STEPS)) : 0d;
         Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
-        String[] amounts = String.valueOf(props.getProperty("amount"))
-                .trim().split(",");
+        String[] amounts = String.valueOf(props.getProperty(AMOUNT)).split(",");
         String[] concentrations = String.valueOf(
-                props.getProperty("concentration")).split(",");
-        // double absolute = Double.valueOf(props.getProperty("absolute"));
-        // double relative = Double.valueOf(props.getProperty("relative"));
+                props.getProperty(CONCENTRATION)).split(",");
+         double absolute = (!props.getProperty(ABSOLUTE).isEmpty()) ? Double.parseDouble(props.getProperty(ABSOLUTE)) : 0d;
+         double relative = (!props.getProperty(RELATIVE).isEmpty()) ? Double.parseDouble(props.getProperty(RELATIVE)) : 0d;
 
         for (String s : amounts) {
             s = s.trim();
-            if (!s.equals("")) {
+            if (!s.isEmpty()) {
                 amountHash.put(s, true);
             }
         }
 
         for (String s : concentrations) {
             s = s.trim();
-            if (!s.equals("")) {
+            if (!s.isEmpty()) {
                 amountHash.put(s, false);
             }
         }
@@ -136,21 +152,6 @@ public class SBMLTestSuiteTest {
                 Assert.assertNotNull(model);
                 Assert.assertFalse(errorInModelReading);
 
-                AbstractDESSolver solver = new RosenbrockSolver();
-                // initialize interpreter
-                SBMLinterpreter interpreter = null;
-                boolean exceptionInInterpreter = false;
-                try {
-                    interpreter = new SBMLinterpreter(model, 0, 0, 1,
-                            amountHash);
-                } catch (SBMLException e) {
-                    exceptionInInterpreter = true;
-                } catch (ModelOverdeterminedException e) {
-                    exceptionInInterpreter = true;
-                }
-                Assert.assertNotNull(interpreter);
-                Assert.assertFalse(exceptionInInterpreter);
-
                 // get timepoints
                 CSVImporter csvimporter = new CSVImporter();
                 MultiTable inputData = csvimporter.convert(model, csvfile);
@@ -158,28 +159,88 @@ public class SBMLTestSuiteTest {
                 duration = timepoints[timepoints.length - 1]
                         - timepoints[0];
 
-                if ((solver != null) && (interpreter != null)) {
-                    // System.out.println(sbmlFileType + " " + solver.getName());
-                    solver.setStepSize(duration / steps);
+                if (model.getExtension(CompConstants.shortLabel) == null){
 
-                    // solve
+                    DESSolver solver = new RosenbrockSolver();
+                    // initialize interpreter
+                    SBMLinterpreter interpreter = null;
+                    boolean exceptionInInterpreter = false;
+                    try {
+                        interpreter = new SBMLinterpreter(model, 0, 0, 1,
+                                amountHash);
+                    } catch (Exception e) {
+                        exceptionInInterpreter = true;
+                    }
+                    Assert.assertNotNull(interpreter);
+                    Assert.assertFalse(exceptionInInterpreter);
+
+                    if ((solver != null) && (interpreter != null)) {
+
+                        solver.setStepSize(duration / steps);
+
+                        if (solver instanceof AbstractDESSolver) {
+                            ((AbstractDESSolver) solver).setIncludeIntermediates(false);
+                        }
+
+                        if (solver instanceof AdaptiveStepsizeIntegrator) {
+                            ((AdaptiveStepsizeIntegrator) solver).setAbsTol(absolute);
+                            ((AdaptiveStepsizeIntegrator) solver).setRelTol(relative);
+                        }
+
+                        // solve
+                        MultiTable solution = null;
+                        boolean errorInSolve = false;
+                        try {
+                            solution = solver.solve(interpreter,
+                                    interpreter.getInitialValues(), timepoints);
+                        } catch (DerivativeException e) {
+                            errorInSolve = true;
+                        }
+                        Assert.assertNotNull(solution);
+                        Assert.assertFalse(errorInSolve);
+                        Assert.assertFalse(solver.isUnstable());
+
+                        MultiTable left = solution;
+                        MultiTable right = inputData;
+                        if (solution.isSetTimePoints() && inputData.isSetTimePoints()) {
+                            left = solution.filter(inputData.getTimePoints());
+                            right = inputData.filter(solution.getTimePoints());
+                        }
+
+                        // compute the maximum divergence from the pre-defined results
+                        QualityMeasure distance = new MaxDivergenceTolerance(absolute, relative);
+                        List<Double> maxDivTolerances = distance.getColumnDistances(left, right);
+                        for (Double maxDivTolerance: maxDivTolerances) {
+                            Assert.assertTrue(maxDivTolerance <= 1d);
+                        }
+
+                    }
+                }else {
+
+                    // initialize simulator
+                    CompSimulator compSimulator = null;
+                    boolean errorInCompSimulator = false;
+                    try {
+                        compSimulator = new CompSimulator(sbmlFile);
+                    }catch (Exception e) {
+                        errorInCompSimulator = true;
+                    }
+                    Assert.assertNotNull(compSimulator);
+                    Assert.assertFalse(errorInCompSimulator);
+
+                    //solve
                     MultiTable solution = null;
                     boolean errorInSolve = false;
                     try {
-                        solution = solver.solve(interpreter,
-                                interpreter.getInitialValues(), timepoints);
-                    } catch (DerivativeException e) {
+                        double stepSize = (duration / steps);
+                        solution = compSimulator.solve(stepSize, duration);
+                    } catch (Exception e) {
                         errorInSolve = true;
                     }
                     Assert.assertNotNull(solution);
                     Assert.assertFalse(errorInSolve);
-                    Assert.assertFalse(solver.isUnstable());
 
-                    // compute distance
-                    QualityMeasure distance = new RelativeEuclideanDistance();
-                    double dist = distance.distance(solution, inputData);
-                    Assert.assertTrue(dist <= 0.2);
-
+                    //TODO: Add quality measure to check whether solution meets the correct results
                 }
             }
         }

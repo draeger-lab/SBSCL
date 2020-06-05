@@ -34,13 +34,13 @@ public class CobraSolverTest {
         assertNotNull(doc);
         logger.info(doc.toString());
 
-        COBRAsolver solver = new COBRAsolver(doc);
+        FluxBalanceAnalysis solver = new FluxBalanceAnalysis(doc);
         
         // Solver should return non-null object
         assertNotNull(solver.solve());
         
         // Objective value should math CobraPy answer with some tolerance
-        assertEquals(COBRA_OBJ_VAL, solver.getObjetiveValue(), eps);
+        assertEquals(COBRA_OBJ_VAL, solver.getObjectiveValue(), eps);
     }
 
     @Test
@@ -56,13 +56,13 @@ public class CobraSolverTest {
         assertNotNull(doc);
         logger.info(doc.toString());
 
-        COBRAsolver solver = new COBRAsolver(doc);
+        FluxBalanceAnalysis solver = new FluxBalanceAnalysis(doc);
 
         // Solver should return non-null object
         assertNotNull(solver.solve());
 
         // Objective value should math CobraPy answer with some tolerance
-        assertEquals(COBRA_OBJ_VAL, solver.getObjetiveValue(), eps);
+        assertEquals(COBRA_OBJ_VAL, solver.getObjectiveValue(), eps);
         gzis.close();
         is.close();
     }
