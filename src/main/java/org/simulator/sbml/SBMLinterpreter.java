@@ -1343,9 +1343,9 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     boolean slowReactions = false;
     boolean fastReactions = false;
     for (Reaction r : model.getListOfReactions()) {
-      reactionFast[reactionIndex] = r.isFast();
+      reactionFast[reactionIndex] = r.isSetFast();
       reactionReversible[reactionIndex] = r.isReversible();
-      if (r.isFast()) {
+      if (r.isSetFast()) {
         fastReactions = true;
       }
       else {

@@ -133,7 +133,7 @@ public class SBMLTestSuiteTest {
         // Test all the SBML versions of test file
         String[] sbmlFileTypes = {"-sbml-l1v2.xml", "-sbml-l2v1.xml",
                 "-sbml-l2v2.xml", "-sbml-l2v3.xml", "-sbml-l2v4.xml",
-                "-sbml-l3v1.xml"};
+                "-sbml-l3v1.xml", "-sbml-l3v2.xml"};
 
         for (String sbmlFileType : sbmlFileTypes) {
             sbmlfile = path + sbmlFileType;
