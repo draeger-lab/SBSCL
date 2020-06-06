@@ -856,54 +856,57 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
 
       // check the trigger of all events in the model
       for (i = 0; i < events.length; i++) {
-        if (events[i].getTriggerObject().compileBoolean(astNodeTime)) {
-          // event has not fired recently -> can fire
-          if (!events[i].getFireStatus(currentTime)) {
-            execTime = currentTime;
-            // event has a delay
-            ASTNodeValue delayObject = events[i].getDelayObject();
-            if (delayObject != null) {
-              execTime += delayObject.compileDouble(astNodeTime, 0d);
-              if (!delayedEvents.contains(i)) {
-                delayedEvents.add(i);
-              }
-              hasNewDelayedEvents=true;
-            } else {
-              ASTNodeValue priorityObject = events[i].getPriorityObject();
-              if (priorityObject != null) {
-                priority = events[i].getPriorityObject().compileDouble(astNodeTime, 0d);
-                priorities.add(priority);
-                events[i].changePriority(priority);
-              }
-              runningEvents.add(i);
-            }
-            triggerTimeValues = null;
-            if (events[i].getUseValuesFromTriggerTime()) {
-              // store values from trigger time for later
-              // execution
-              List<AssignmentRuleValue> ruleObjects = events[i].getRuleObjects();
-              if (ruleObjects!=null) {
-                triggerTimeValues = new Double[ruleObjects.size()];
-                int j = 0;
-                for (AssignmentRuleValue obj:ruleObjects) {
-                  obj.processRule(Y, astNodeTime, false);
-                  triggerTimeValues[j]=obj.getValue();
-                  j++;
+
+        if (events[i] != null) {
+          if (events[i].getTriggerObject().compileBoolean(astNodeTime)) {
+            // event has not fired recently -> can fire
+            if (!events[i].getFireStatus(currentTime)) {
+              execTime = currentTime;
+              // event has a delay
+              ASTNodeValue delayObject = events[i].getDelayObject();
+              if (delayObject != null) {
+                execTime += delayObject.compileDouble(astNodeTime, 0d);
+                if (!delayedEvents.contains(i)) {
+                  delayedEvents.add(i);
                 }
+                hasNewDelayedEvents=true;
+              } else {
+                ASTNodeValue priorityObject = events[i].getPriorityObject();
+                if (priorityObject != null) {
+                  priority = events[i].getPriorityObject().compileDouble(astNodeTime, 0d);
+                  priorities.add(priority);
+                  events[i].changePriority(priority);
+                }
+                runningEvents.add(i);
+              }
+              triggerTimeValues = null;
+              if (events[i].getUseValuesFromTriggerTime()) {
+                // store values from trigger time for later
+                // execution
+                List<AssignmentRuleValue> ruleObjects = events[i].getRuleObjects();
+                if (ruleObjects!=null) {
+                  triggerTimeValues = new Double[ruleObjects.size()];
+                  int j = 0;
+                  for (AssignmentRuleValue obj:ruleObjects) {
+                    obj.processRule(Y, astNodeTime, false);
+                    triggerTimeValues[j]=obj.getValue();
+                    j++;
+                  }
+                }
+
               }
 
+              events[i].addValues(triggerTimeValues, execTime);
+
+              events[i].fired(currentTime);
             }
 
-            events[i].addValues(triggerTimeValues, execTime);
-
-            events[i].fired(currentTime);
           }
-
-        }
-        // event has fired recently -> can not fire
-        else {
-          if (events[i].getFireStatus(currentTime)) {
-            events[i].recovered(currentTime);
+          // event has fired recently -> can not fire
+          else {
+            if (events[i].getFireStatus(currentTime)) {
+              events[i].recovered(currentTime);
+            }
           }
         }
 
@@ -1072,7 +1075,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
        * Check the model's constraints
        */
       for (int i = 0; i < model.getConstraintCount(); i++) {
-        if (constraintRoots.get(i).compileBoolean(time)) {
+        if (model.getConstraint(i).isSetMath() && constraintRoots.get(i).compileBoolean(time)) {
           ConstraintEvent evt = new ConstraintEvent(model.getConstraint(i), Double.valueOf(time));
           // Notify all listeners about the violation of the current constraint.
           for (ConstraintListener listener : listOfConstraintListeners) {
@@ -1174,7 +1177,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     astNodeTime = 0d;
     containsDelays = false;
     noDerivatives = false;
-    if ((model.getReactionCount() == 0) && (model.getConstraintCount() == 0)) {
+    if ((model.getReactionCount() == 0) && (constraintRoots == null)) {
       noDerivatives = true;
       for (int k = 0; k < model.getRuleCount(); k++) {
         Rule rule = model.getRule(k);
@@ -1352,7 +1355,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         slowReactions = true;
       }
       if (r.getKineticLaw() != null) {
-        if (r.getKineticLaw().getListOfLocalParameters().size() > 0) {
+        if (r.getKineticLaw().getListOfLocalParameters().size() > 0 && r.getKineticLaw().isSetMath()) {
           r.getKineticLaw().getMath().updateVariables();
         }
       }
@@ -1403,7 +1406,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
      */
     boolean containsAlgebraicRules = false;
     for (i = 0; i < model.getRuleCount(); i++) {
-      if (model.getRule(i).isAlgebraic()) {
+      if (model.getRule(i).isAlgebraic() && model.getRule(i).isSetMath()) {
         containsAlgebraicRules = true;
         break;
       }
@@ -1459,7 +1462,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
       }
 
       for (i = 0; i < model.getConstraintCount(); i++) {
-        if (constraintRoots.get(i).compileBoolean(astNodeTime)) {
+        if (model.getConstraint(i).isSetMath() && constraintRoots.get(i).compileBoolean(astNodeTime)) {
           ConstraintEvent evt = new ConstraintEvent(model.getConstraint(i), 0d);
           for (ConstraintListener listener : listOfConstraintListeners) {
             listener.processViolation(evt);
@@ -1521,60 +1524,72 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
   private void initializeConstraints() {
     constraintRoots = new ArrayList<ASTNodeValue>();
     for (Constraint c : model.getListOfConstraints()) {
-      ASTNodeValue currentConstraint = (ASTNodeValue) copyAST(c.getMath(),
-        true, null, null).getUserObject(TEMP_VALUE);
-      constraintRoots.add(currentConstraint);
-      c.getMath().putUserObject(TEMP_VALUE, currentConstraint);
+      if (c.isSetMath()) {
+        ASTNodeValue currentConstraint = (ASTNodeValue) copyAST(c.getMath(),
+                true, null, null).getUserObject(TEMP_VALUE);
+        constraintRoots.add(currentConstraint);
+        c.getMath().putUserObject(TEMP_VALUE, currentConstraint);
+      }
     }
   }
 
   /**
    * Includes the math of the events in the syntax tree.
    */
-  private void initializeEvents() {
+  private void  initializeEvents() {
     if (events != null) {
       for (int i = 0; i != events.length; i++) {
         Event e=model.getEvent(i);
-        events[i].setUseValuesFromTriggerTime(e.getUseValuesFromTriggerTime());
-        events[i].setPersistent(e.getTrigger().getPersistent());
-        events[i].setTriggerObject((ASTNodeValue) copyAST(e.getTrigger().getMath(), true, null, null).getUserObject(TEMP_VALUE));
-        if (e.getPriority() != null) {
-          events[i].setPriorityObject((ASTNodeValue)copyAST(e.getPriority().getMath(), true, null, null).getUserObject(TEMP_VALUE));
-        }
-        if (e.getDelay() != null) {
-          events[i].setDelayObject((ASTNodeValue)copyAST(e.getDelay().getMath(), true, null, null).getUserObject(TEMP_VALUE));
-        }
 
-        events[i].clearRuleObjects();
-        for (EventAssignment as: e.getListOfEventAssignments()) {
-          Integer symbolIndex = symbolHash.get(as.getVariable());
-          if (symbolIndex != null) {
-            Species sp = model.getSpecies(as.getVariable());
-            if (sp != null) {
-              Compartment c = sp.getCompartmentInstance();
-              boolean hasZeroSpatialDimensions = true;
-              if ((c!=null) && (c.getSpatialDimensions()>0)) {
-                hasZeroSpatialDimensions=false;
+        if (e.isSetTrigger() && e.getTrigger().isSetMath()) {
+          events[i].setUseValuesFromTriggerTime(e.getUseValuesFromTriggerTime());
+          events[i].setPersistent(e.getTrigger().getPersistent());
+          events[i].setTriggerObject((ASTNodeValue) copyAST(e.getTrigger().getMath(), true, null, null).getUserObject(TEMP_VALUE));
+          if (e.getPriority() != null && e.getPriority().isSetMath()) {
+            events[i].setPriorityObject((ASTNodeValue)copyAST(e.getPriority().getMath(), true, null, null).getUserObject(TEMP_VALUE));
+          }
+          if (e.getDelay() != null && e.getDelay().isSetMath()) {
+            events[i].setDelayObject((ASTNodeValue)copyAST(e.getDelay().getMath(), true, null, null).getUserObject(TEMP_VALUE));
+          }
+
+          events[i].clearRuleObjects();
+          for (EventAssignment as: e.getListOfEventAssignments()) {
+            Integer symbolIndex = symbolHash.get(as.getVariable());
+            if (symbolIndex != null) {
+              Species sp = model.getSpecies(as.getVariable());
+              if (sp != null) {
+                Compartment c = sp.getCompartmentInstance();
+                boolean hasZeroSpatialDimensions = true;
+                if ((c!=null) && (c.getSpatialDimensions()>0)) {
+                  hasZeroSpatialDimensions=false;
+                }
+                if (as.isSetMath()) {
+                  events[i].addRuleObject(new AssignmentRuleValue(
+                          (ASTNodeValue) copyAST(as.getMath(), true, null, null)
+                                  .getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
+                          .getId()), hasZeroSpatialDimensions, this));
+                }
+              } else {
+                if (as.isSetMath()) {
+                  events[i].addRuleObject(new AssignmentRuleValue(
+                          (ASTNodeValue) copyAST(as.getMath(), true, null, null)
+                                  .getUserObject(TEMP_VALUE), symbolIndex));
+                }
               }
-              events[i].addRuleObject(new AssignmentRuleValue(
-                (ASTNodeValue) copyAST(as.getMath(), true, null, null)
-                .getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
-                  .getId()), hasZeroSpatialDimensions, this));
-            } else {
-              events[i].addRuleObject(new AssignmentRuleValue(
-                (ASTNodeValue) copyAST(as.getMath(), true, null, null)
-                .getUserObject(TEMP_VALUE), symbolIndex));
-            }
-          } else if (model.findSpeciesReference(as.getVariable()) != null) {
-            SpeciesReference sr = model.findSpeciesReference(as.getVariable());
-            if (!sr.isConstant()) {
-              events[i].addRuleObject(new AssignmentRuleValue(
-                (ASTNodeValue) copyAST(as.getMath(), true, null, null)
-                .getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
+            } else if (model.findSpeciesReference(as.getVariable()) != null) {
+              SpeciesReference sr = model.findSpeciesReference(as.getVariable());
+              if (!sr.isConstant() && as.isSetMath()) {
+                events[i].addRuleObject(new AssignmentRuleValue(
+                        (ASTNodeValue) copyAST(as.getMath(), true, null, null)
+                                .getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
+              }
             }
           }
+          events[i].setUseValuesFromTriggerTime(e.getUseValuesFromTriggerTime());
+        }else {
+          events[i] = null;
         }
-        events[i].setUseValuesFromTriggerTime(e.getUseValuesFromTriggerTime());
+
       }
 
     }
@@ -1597,7 +1612,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     List<ASTNodeValue> kineticLawRootsList = new ArrayList<ASTNodeValue>();
     for (Reaction r : model.getListOfReactions()) {
       KineticLaw kl = r.getKineticLaw();
-      if (kl != null) {
+      if (kl != null && kl.isSetMath()) {
         ASTNodeValue currentLaw = (ASTNodeValue) copyAST(kl.getMath(), true, null, null)
             .getUserObject(TEMP_VALUE);
         kineticLawRootsList.add(currentLaw);
@@ -1619,7 +1634,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
           }
           //Value for stoichiometry math
           ASTNodeValue currentMathValue = null;
-          if (speciesRef.isSetStoichiometryMath()) {
+          if (speciesRef.isSetStoichiometryMath() && speciesRef.getStoichiometryMath().isSetMath()) {
             @SuppressWarnings("deprecation")
             ASTNode currentMath = speciesRef.getStoichiometryMath().getMath();
             currentMathValue = (ASTNodeValue) copyAST(currentMath, true, null, null)
@@ -1673,7 +1688,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
           }
           //Value for stoichiometry math
           ASTNodeValue currentMathValue = null;
-          if (speciesRef.isSetStoichiometryMath()) {
+          if (speciesRef.isSetStoichiometryMath() && speciesRef.getStoichiometryMath().isSetMath()) {
             @SuppressWarnings("deprecation")
             ASTNode currentMath = speciesRef.getStoichiometryMath().getMath();
             currentMathValue = (ASTNodeValue) copyAST(currentMath, true, null, null)
@@ -1761,22 +1776,26 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
             if ((c != null) && (c.getSpatialDimensions() > 0)) {
               hasZeroSpatialDimensions = false;
             }
-            assignmentRulesRootsInit.add(new AssignmentRuleValue(
-              (ASTNodeValue) copyAST(as.getMath(), true,
-                null, null).getUserObject(TEMP_VALUE),
-                symbolIndex, sp,
-                compartmentHash.get(sp.getId()),
-                hasZeroSpatialDimensions, this));
+            if (as.isSetMath()) {
+              assignmentRulesRootsInit.add(new AssignmentRuleValue(
+                      (ASTNodeValue) copyAST(as.getMath(), true,
+                              null, null).getUserObject(TEMP_VALUE),
+                      symbolIndex, sp,
+                      compartmentHash.get(sp.getId()),
+                      hasZeroSpatialDimensions, this));
+            }
           } else {
-            assignmentRulesRootsInit.add(new AssignmentRuleValue(
-              (ASTNodeValue) copyAST(as.getMath(), true,
-                null, null).getUserObject(TEMP_VALUE),
-                symbolIndex));
+            if (as.isSetMath()) {
+              assignmentRulesRootsInit.add(new AssignmentRuleValue(
+                      (ASTNodeValue) copyAST(as.getMath(), true,
+                              null, null).getUserObject(TEMP_VALUE),
+                      symbolIndex));
+            }
           }
         } else if (model.findSpeciesReference(as.getVariable()) != null) {
           SpeciesReference sr = model.findSpeciesReference(as
             .getVariable());
-          if (!sr.isConstant()) {
+          if (!sr.isConstant() && as.isSetMath()) {
             assignmentRulesRootsInit.add(new AssignmentRuleValue(
               (ASTNodeValue) copyAST(as.getMath(), true,
                 null, null).getUserObject(TEMP_VALUE),
@@ -1794,12 +1813,14 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
             if ((c != null) && (c.getSpatialDimensions() > 0)) {
               hasZeroSpatialDimensions = false;
             }
-            rateRulesRoots.add(new RateRuleValue(
-              (ASTNodeValue) copyAST(rr.getMath(), true,
-                null, null).getUserObject(TEMP_VALUE),
-                symbolIndex, sp,
-                compartmentHash.get(sp.getId()),
-                hasZeroSpatialDimensions, this));
+            if (rr.isSetMath()) {
+              rateRulesRoots.add(new RateRuleValue(
+                      (ASTNodeValue) copyAST(rr.getMath(), true,
+                              null, null).getUserObject(TEMP_VALUE),
+                      symbolIndex, sp,
+                      compartmentHash.get(sp.getId()),
+                      hasZeroSpatialDimensions, this));
+            }
           } else if (compartmentHash.containsValue(symbolIndex)) {
             List<Integer> speciesIndices = new LinkedList<Integer>();
             for (Entry<String, Integer> entry : compartmentHash
@@ -1814,17 +1835,21 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
                 }
               }
             }
-            rateRulesRoots.add(new RateRuleValue(
-              (ASTNodeValue) copyAST(rr.getMath(), true,
-                null, null).getUserObject(TEMP_VALUE),
-                symbolIndex, speciesIndices, this));
+            if (rr.isSetMath()) {
+              rateRulesRoots.add(new RateRuleValue(
+                      (ASTNodeValue) copyAST(rr.getMath(), true,
+                              null, null).getUserObject(TEMP_VALUE),
+                      symbolIndex, speciesIndices, this));
+            }
           }
 
           else {
-            rateRulesRoots.add(new RateRuleValue(
-              (ASTNodeValue) copyAST(rr.getMath(), true,
-                null, null).getUserObject(TEMP_VALUE),
-                symbolIndex));
+            if (rr.isSetMath()) {
+              rateRulesRoots.add(new RateRuleValue(
+                      (ASTNodeValue) copyAST(rr.getMath(), true,
+                              null, null).getUserObject(TEMP_VALUE),
+                      symbolIndex));
+            }
           }
         }
       }
@@ -1840,22 +1865,26 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
             if ((c != null) && (c.getSpatialDimensions() > 0)) {
               hasZeroSpatialDimensions = false;
             }
-            assignmentRulesRootsInit.add(new AssignmentRuleValue(
-              (ASTNodeValue) copyAST(as.getMath(), true,
-                null, null).getUserObject(TEMP_VALUE),
-                symbolIndex, sp,
-                compartmentHash.get(sp.getId()),
-                hasZeroSpatialDimensions, this));
+            if (as.isSetMath()) {
+              assignmentRulesRootsInit.add(new AssignmentRuleValue(
+                      (ASTNodeValue) copyAST(as.getMath(), true,
+                              null, null).getUserObject(TEMP_VALUE),
+                      symbolIndex, sp,
+                      compartmentHash.get(sp.getId()),
+                      hasZeroSpatialDimensions, this));
+            }
           } else {
-            assignmentRulesRootsInit.add(new AssignmentRuleValue(
-              (ASTNodeValue) copyAST(as.getMath(), true,
-                null, null).getUserObject(TEMP_VALUE),
-                symbolIndex));
+            if (as.isSetMath()) {
+              assignmentRulesRootsInit.add(new AssignmentRuleValue(
+                      (ASTNodeValue) copyAST(as.getMath(), true,
+                              null, null).getUserObject(TEMP_VALUE),
+                      symbolIndex));
+            }
           }
         } else if (model.findSpeciesReference(as.getVariable()) != null) {
           SpeciesReference sr = model.findSpeciesReference(as
             .getVariable());
-          if (!sr.isConstant()) {
+          if (!sr.isConstant() && as.isSetMath()) {
             assignmentRulesRootsInit.add(new AssignmentRuleValue(
               (ASTNodeValue) copyAST(as.getMath(), true,
                 null, null).getUserObject(TEMP_VALUE),
@@ -1956,23 +1985,29 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
           if ((c != null) && (c.getSpatialDimensions() > 0)) {
             hasZeroSpatialDimensions = false;
           }
-          initialAssignmentRoots.add(new AssignmentRuleValue(
-            (ASTNodeValue) copyAST(iA.getMath(), true, null,
-              null).getUserObject(TEMP_VALUE),
-              symbolIndex, sp, compartmentHash.get(sp.getId()),
-              hasZeroSpatialDimensions, this));
+          if (iA.isSetMath()) {
+            initialAssignmentRoots.add(new AssignmentRuleValue(
+                    (ASTNodeValue) copyAST(iA.getMath(), true, null,
+                            null).getUserObject(TEMP_VALUE),
+                    symbolIndex, sp, compartmentHash.get(sp.getId()),
+                    hasZeroSpatialDimensions, this));
+          }
         } else {
-          initialAssignmentRoots.add(new AssignmentRuleValue(
-            (ASTNodeValue) copyAST(iA.getMath(), true, null,
-              null).getUserObject(TEMP_VALUE),
-              symbolIndex));
+          if (iA.isSetMath()) {
+            initialAssignmentRoots.add(new AssignmentRuleValue(
+                    (ASTNodeValue) copyAST(iA.getMath(), true, null,
+                            null).getUserObject(TEMP_VALUE),
+                    symbolIndex));
+          }
         }
       } else if (model.findSpeciesReference(iA.getVariable()) != null) {
         SpeciesReference sr = model.findSpeciesReference(iA.getVariable());
-        initialAssignmentRoots.add(new AssignmentRuleValue(
-          (ASTNodeValue) copyAST(iA.getMath(), true, null, null)
-          .getUserObject(TEMP_VALUE), sr.getId(),
-          stoichiometricCoefHash));
+        if (iA.isSetMath()) {
+          initialAssignmentRoots.add(new AssignmentRuleValue(
+                  (ASTNodeValue) copyAST(iA.getMath(), true, null, null)
+                          .getUserObject(TEMP_VALUE), sr.getId(),
+                  stoichiometricCoefHash));
+        }
       }
     }
     nRateRules = rateRulesRoots.size();
@@ -2292,25 +2327,30 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
   private void initEvents() throws SBMLException {
     for (int i = 0; i < model.getEventCount(); i++) {
 
-      if (model.getEvent(i).getDelay() == null) {
-        if (events[i]!=null) {
-          events[i].refresh(model.getEvent(i).getTrigger()
-            .getInitialValue());
-        }
-        else {
-          events[i] = new SBMLEventInProgress(model.getEvent(i).getTrigger()
-            .getInitialValue());
+      if (model.getEvent(i).isSetTrigger()) {
+        if (model.getEvent(i).getDelay() == null) {
+          if (events[i]!=null) {
+            events[i].refresh(model.getEvent(i).getTrigger()
+                    .getInitialValue());
+          }
+          else {
+            events[i] = new SBMLEventInProgress(model.getEvent(i).getTrigger()
+                    .getInitialValue());
+          }
+        } else {
+          if (events[i]!=null) {
+            events[i].refresh(model.getEvent(i).getTrigger()
+                    .getInitialValue());
+          }
+          else {
+            events[i] = new SBMLEventInProgressWithDelay(model.getEvent(i).getTrigger()
+                    .getInitialValue());
+          }
         }
       } else {
-        if (events[i]!=null) {
-          events[i].refresh(model.getEvent(i).getTrigger()
-            .getInitialValue());
-        }
-        else {
-          events[i] = new SBMLEventInProgressWithDelay(model.getEvent(i).getTrigger()
-            .getInitialValue());
-        }
+        events[i] = null;
       }
+
     }
   }
 
