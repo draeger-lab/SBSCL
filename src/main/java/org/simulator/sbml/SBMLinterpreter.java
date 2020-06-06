@@ -58,6 +58,7 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Symbol;
+import org.sbml.jsbml.util.ValuePair;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.validator.OverdeterminationValidator;
 import org.simulator.math.RNG;
@@ -1331,9 +1332,13 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
         boolean slowReactions = false;
         boolean fastReactions = false;
         for (Reaction r : model.getListOfReactions()) {
-            reactionFast[reactionIndex] = r.isSetFast();
-            reactionReversible[reactionIndex] = r.isReversible();
             if (r.isSetFast()) {
+                reactionFast[reactionIndex] = r.getFast();
+            } else {
+                reactionFast[reactionIndex] = false;
+            }
+            reactionReversible[reactionIndex] = r.isReversible();
+            if (r.isSetFast() && r.getFast()) {
                 fastReactions = true;
             } else {
                 slowReactions = true;
