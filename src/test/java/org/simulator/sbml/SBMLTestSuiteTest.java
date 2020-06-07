@@ -183,8 +183,8 @@ public class SBMLTestSuiteTest {
                         }
 
                         if (solver instanceof AdaptiveStepsizeIntegrator) {
-                            ((AdaptiveStepsizeIntegrator) solver).setAbsTol(absolute);
-                            ((AdaptiveStepsizeIntegrator) solver).setRelTol(relative);
+                            ((AdaptiveStepsizeIntegrator) solver).setAbsTol(1E-12);
+                            ((AdaptiveStepsizeIntegrator) solver).setRelTol(1E-12);
                         }
 
                         // solve

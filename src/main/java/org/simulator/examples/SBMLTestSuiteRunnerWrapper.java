@@ -107,8 +107,8 @@ public class SBMLTestSuiteRunnerWrapper {
             }
 
             if (solver instanceof AdaptiveStepsizeIntegrator) {
-                ((AdaptiveStepsizeIntegrator) solver).setAbsTol(absolute);
-                ((AdaptiveStepsizeIntegrator) solver).setRelTol(relative);
+                ((AdaptiveStepsizeIntegrator) solver).setAbsTol(1E-12);
+                ((AdaptiveStepsizeIntegrator) solver).setRelTol(1E-12);
             }
 
             SBMLinterpreter interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);

@@ -86,8 +86,8 @@ public class SimulatorExample {
 
     // Compute the numerical solution of the initial value problem
     if (solver instanceof AdaptiveStepsizeIntegrator) {
-      ((AdaptiveStepsizeIntegrator) solver).setAbsTol(absTol);
-      ((AdaptiveStepsizeIntegrator) solver).setRelTol(relTol);
+      ((AdaptiveStepsizeIntegrator) solver).setAbsTol(1E-12);
+      ((AdaptiveStepsizeIntegrator) solver).setRelTol(1E-12);
     }
     MultiTable solution = solver.solve(interpreter, interpreter
       .getInitialValues(), 0d, timeEnd);
