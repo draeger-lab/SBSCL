@@ -126,9 +126,7 @@ public class FluxBalanceAnalysis {
 
 		Model model = doc.getModel();
 
-		if (model.getInitialAssignmentCount() > 0) {
-			interpreter = new SBMLinterpreter(model);
-		}
+		interpreter = new SBMLinterpreter(model);
 
 		int level = doc.getLevel(), version = doc.getVersion();
 
