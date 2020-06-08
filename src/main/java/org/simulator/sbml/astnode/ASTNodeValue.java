@@ -476,6 +476,52 @@ public class ASTNodeValue {
     case LAMBDA:
       doubleValue = interpreter.lambdaDouble(children, time);
       break;
+
+    /*
+     * Logical operators (with double values)
+     */
+    case LOGICAL_AND:
+      doubleValue = interpreter.and(children, numChildren, time) ? 1d : 0d;
+      break;
+    case LOGICAL_XOR:
+      doubleValue = interpreter.xor(children, time) ? 1d : 0d;
+      break;
+    case LOGICAL_OR:
+      doubleValue = interpreter.or(children, time) ? 1d : 0d;
+      break;
+    case LOGICAL_NOT:
+      doubleValue = interpreter.not(leftChild,time) ? 1d : 0d;
+      break;
+    case RELATIONAL_EQ:
+      doubleValue = interpreter.eq(leftChild, rightChild,time) ? 1d : 0d;
+      break;
+    case RELATIONAL_GEQ:
+      doubleValue = interpreter.geq(leftChild, rightChild,time) ? 1d : 0d;
+      break;
+    case RELATIONAL_GT:
+      doubleValue = interpreter.gt(leftChild, rightChild,time) ? 1d : 0d;
+      break;
+    case RELATIONAL_NEQ:
+      doubleValue = interpreter.neq(leftChild, rightChild,time) ? 1d : 0d;
+      break;
+    case RELATIONAL_LEQ:
+      doubleValue = interpreter.leq(leftChild, rightChild,time) ? 1d : 0d;
+      break;
+    case RELATIONAL_LT:
+      doubleValue = interpreter.lt(leftChild, rightChild,time) ? 1d : 0d;
+      break;
+    case CONSTANT_TRUE:
+      doubleValue = 1d;
+      break;
+    case CONSTANT_FALSE:
+      doubleValue = 0d;
+      break;
+    case NAME:
+      CallableSBase variable = node.getVariable();
+      if (variable != null) {
+        doubleValue = interpreter.compileBoolean(variable, time) ? 1d : 0d;
+      }
+      break;
     default: // UNKNOWN:
       doubleValue = Double.NaN;
       break;
