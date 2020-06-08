@@ -5,8 +5,10 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.ext.comp.CompConstants;
+import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.comp.CompSimulator;
+import org.simulator.fba.FluxBalanceAnalysis;
 import org.simulator.io.CSVImporter;
 import org.simulator.math.odes.*;
 import org.simulator.sbml.SBMLinterpreter;
@@ -14,7 +16,6 @@ import org.simulator.sbml.SBMLinterpreter;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -34,8 +35,6 @@ public class SBMLTestSuiteRunnerWrapper {
     public static final String STEPS = "steps";
     public static final String AMOUNT = "amount";
     public static final String CONCENTRATION = "concentration";
-    public static final String ABSOLUTE = "absolute";
-    public static final String RELATIVE = "relative";
 
     /**
      * Runs a simulation of a SBML file and writes result to a specified CSV file
@@ -97,52 +96,6 @@ public class SBMLTestSuiteRunnerWrapper {
 
         MultiTable solution;
 
-        if (model.getExtension(CompConstants.shortLabel) == null) {
-            DESSolver solver = new RosenbrockSolver();
-            solver.setStepSize(duration / steps);
-
-            if (solver instanceof AbstractDESSolver) {
-                solver.setIncludeIntermediates(false);
-            }
-
-            if (solver instanceof AdaptiveStepsizeIntegrator) {
-                ((AdaptiveStepsizeIntegrator) solver).setAbsTol(1E-12);
-                ((AdaptiveStepsizeIntegrator) solver).setRelTol(1E-12);
-            }
-
-            SBMLinterpreter interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);
-
-            // Compute the numerical solution of the problem
-            solution = solver.solve(interpreter, interpreter.getInitialValues(), timepoints);
-        } else {
-            CompSimulator compSimulator = new CompSimulator(sbmlfile);
-            double stepSize = (duration / steps);
-
-            solution = compSimulator.solve(stepSize, duration);
-        }
-
-        MultiTable left = solution;
-        if (solution.isSetTimePoints() && inputData.isSetTimePoints()) {
-            left = solution.filter(inputData.getTimePoints());
-        }
-
-        // Map of variables present in the test suite results file
-        HashMap<String, Integer> resultColumns = new HashMap<>();
-        for (int i = 0; i < inputData.getColumnCount(); i++) {
-            resultColumns.put(inputData.getColumnName(i), 1);
-        }
-
-        // Boolean array to check which variables are present in the test suite results file
-        boolean[] variablesToAdd = new boolean[solution.getColumnCount()];
-        if (resultColumns.containsKey(left.getColumnName(0).toLowerCase())) {
-            variablesToAdd[0] = true;
-        }
-        for (int i = 1; i < left.getColumnCount(); i++) {
-            if (resultColumns.containsKey(left.getColumnName(i))) {
-                variablesToAdd[i] = true;
-            }
-        }
-
         // writes results to the output file in CSV format
         File outputFile = new File(outputFilePath);
         outputFile.createNewFile();
@@ -151,35 +104,114 @@ public class SBMLTestSuiteRunnerWrapper {
         FileWriter csvWriter = new FileWriter(outputFilePath);
 
         StringBuilder output = new StringBuilder("");
-        if (variablesToAdd[0]) {
-            output.append(left.getColumnName(0).toLowerCase()).append(",");
-        }
-        for (int i = 1; i < left.getColumnCount() - 1; i++) {
-            if (variablesToAdd[i]) {
-                output.append(left.getColumnName(i)).append(",");
-            }
-        }
-        if (variablesToAdd[left.getColumnCount() - 1]) {
-            output.append(left.getColumnName(left.getColumnCount() - 1)).append("\n");
-        } else {
-            if (output.length() > 0) {
+
+        if (model.getExtension(FBCConstants.shortLabel) != null) {
+
+            FluxBalanceAnalysis solver = new FluxBalanceAnalysis(document);
+            if (solver.solve()) {
+                Map<String, Double> fbcSolution = solver.getSolution();
+                fbcSolution.put("OBJF", solver.getObjectiveValue());
+
+                System.out.println(fbcSolution);
+
+                BufferedReader reader = new BufferedReader(new FileReader(resultsPath));
+                String[] keys = reader.readLine().trim().split(",");
+                String[] values = reader.readLine().trim().split(",");
+
+                Map<String, Double> inputSolution = new HashMap<>();
+                for (int i = 0; i < keys.length; i++) {
+                    inputSolution.put(keys[i], Double.valueOf(values[i]));
+                }
+
+                for (int i = 0; i < keys.length - 1; i++) {
+                    output.append(keys[i]).append(",");
+                }
+                output.append(keys[keys.length - 1]).append("\n");
+
+                for (Map.Entry<String, Double> mapElement : inputSolution.entrySet()) {
+                    output.append(fbcSolution.get(mapElement.getKey())).append(",");
+                }
                 output.deleteCharAt(output.length() - 1);
                 output.append("\n");
             }
-        }
 
-        for (int i = 0; i < left.getRowCount(); i++) {
-            for (int j = 0; j < left.getColumnCount() - 1; j++) {
-                if (variablesToAdd[j]) {
-                    output.append(left.getValueAt(i, j)).append(",");
+        } else {
+            if (model.getExtension(CompConstants.shortLabel) == null) {
+                DESSolver solver = new RosenbrockSolver();
+                solver.setStepSize(duration / steps);
+
+                if (solver instanceof AbstractDESSolver) {
+                    solver.setIncludeIntermediates(false);
+                }
+
+                if (solver instanceof AdaptiveStepsizeIntegrator) {
+                    ((AdaptiveStepsizeIntegrator) solver).setAbsTol(1E-12);
+                    ((AdaptiveStepsizeIntegrator) solver).setRelTol(1E-12);
+                }
+
+                SBMLinterpreter interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);
+
+                // Compute the numerical solution of the problem
+                solution = solver.solve(interpreter, interpreter.getInitialValues(), timepoints);
+            } else {
+                CompSimulator compSimulator = new CompSimulator(sbmlfile);
+                double stepSize = (duration / steps);
+
+                solution = compSimulator.solve(stepSize, duration);
+            }
+
+            MultiTable left = solution;
+            if (solution.isSetTimePoints() && inputData.isSetTimePoints()) {
+                left = solution.filter(inputData.getTimePoints());
+            }
+
+            // Map of variables present in the test suite results file
+            Map<String, Integer> resultColumns = new HashMap<>();
+            for (int i = 0; i < inputData.getColumnCount(); i++) {
+                resultColumns.put(inputData.getColumnName(i), 1);
+            }
+
+            // Boolean array to check which variables are present in the test suite results file
+            boolean[] variablesToAdd = new boolean[solution.getColumnCount()];
+            if (resultColumns.containsKey(left.getColumnName(0).toLowerCase())) {
+                variablesToAdd[0] = true;
+            }
+            for (int i = 1; i < left.getColumnCount(); i++) {
+                if (resultColumns.containsKey(left.getColumnName(i))) {
+                    variablesToAdd[i] = true;
+                }
+            }
+
+            if (variablesToAdd[0]) {
+                output.append(left.getColumnName(0).toLowerCase()).append(",");
+            }
+            for (int i = 1; i < left.getColumnCount() - 1; i++) {
+                if (variablesToAdd[i]) {
+                    output.append(left.getColumnName(i)).append(",");
                 }
             }
             if (variablesToAdd[left.getColumnCount() - 1]) {
-                output.append(left.getValueAt(i, left.getColumnCount() - 1)).append("\n");
+                output.append(left.getColumnName(left.getColumnCount() - 1)).append("\n");
             } else {
                 if (output.length() > 0) {
                     output.deleteCharAt(output.length() - 1);
                     output.append("\n");
+                }
+            }
+
+            for (int i = 0; i < left.getRowCount(); i++) {
+                for (int j = 0; j < left.getColumnCount() - 1; j++) {
+                    if (variablesToAdd[j]) {
+                        output.append(left.getValueAt(i, j)).append(",");
+                    }
+                }
+                if (variablesToAdd[left.getColumnCount() - 1]) {
+                    output.append(left.getValueAt(i, left.getColumnCount() - 1)).append("\n");
+                } else {
+                    if (output.length() > 0) {
+                        output.deleteCharAt(output.length() - 1);
+                        output.append("\n");
+                    }
                 }
             }
         }
