@@ -39,6 +39,7 @@ public class SBMLTestSuiteRunnerWrapper {
 
     /**
      * Runs a simulation of a SBML file and writes result to a specified CSV file
+     *
      * @param args
      * @throws IOException
      * @throws XMLStreamException
@@ -52,7 +53,7 @@ public class SBMLTestSuiteRunnerWrapper {
         String currentCase = args[1];
         String outputDirPath = args[2];
         String level = args[3];
-        String  version = args[4];
+        String version = args[4];
 
         String filePath = dirPath + File.separator + currentCase + File.separator + currentCase + "-sbml-l" + level + 'v' + version + ".xml";
         String settingsPath = dirPath + File.separator + currentCase + File.separator + currentCase + "-settings.txt";
@@ -67,8 +68,6 @@ public class SBMLTestSuiteRunnerWrapper {
         String[] amounts = String.valueOf(properties.getProperty(AMOUNT)).split(",");
         String[] concentrations = String.valueOf(
                 properties.getProperty(CONCENTRATION)).split(",");
-        double absolute = (!properties.getProperty(ABSOLUTE).isEmpty()) ? Double.parseDouble(properties.getProperty(ABSOLUTE)) : 0d;
-        double relative = (!properties.getProperty(RELATIVE).isEmpty()) ? Double.parseDouble(properties.getProperty(RELATIVE)) : 0d;
 
         for (String s : amounts) {
             s = s.trim();
@@ -98,7 +97,7 @@ public class SBMLTestSuiteRunnerWrapper {
 
         MultiTable solution;
 
-        if (model.getExtension(CompConstants.shortLabel) == null){
+        if (model.getExtension(CompConstants.shortLabel) == null) {
             DESSolver solver = new RosenbrockSolver();
             solver.setStepSize(duration / steps);
 
@@ -115,7 +114,7 @@ public class SBMLTestSuiteRunnerWrapper {
 
             // Compute the numerical solution of the problem
             solution = solver.solve(interpreter, interpreter.getInitialValues(), timepoints);
-        }else {
+        } else {
             CompSimulator compSimulator = new CompSimulator(sbmlfile);
             double stepSize = (duration / steps);
 
@@ -129,7 +128,7 @@ public class SBMLTestSuiteRunnerWrapper {
 
         // Map of variables present in the test suite results file
         HashMap<String, Integer> resultColumns = new HashMap<>();
-        for (int i=0;i<inputData.getColumnCount();i++){
+        for (int i = 0; i < inputData.getColumnCount(); i++) {
             resultColumns.put(inputData.getColumnName(i), 1);
         }
 
@@ -138,7 +137,7 @@ public class SBMLTestSuiteRunnerWrapper {
         if (resultColumns.containsKey(left.getColumnName(0).toLowerCase())) {
             variablesToAdd[0] = true;
         }
-        for (int i=1;i<left.getColumnCount();i++){
+        for (int i = 1; i < left.getColumnCount(); i++) {
             if (resultColumns.containsKey(left.getColumnName(i))) {
                 variablesToAdd[i] = true;
             }
@@ -155,29 +154,29 @@ public class SBMLTestSuiteRunnerWrapper {
         if (variablesToAdd[0]) {
             output.append(left.getColumnName(0).toLowerCase()).append(",");
         }
-        for (int i=1;i<left.getColumnCount()-1;i++){
-            if (variablesToAdd[i]){
+        for (int i = 1; i < left.getColumnCount() - 1; i++) {
+            if (variablesToAdd[i]) {
                 output.append(left.getColumnName(i)).append(",");
             }
         }
-        if (variablesToAdd[left.getColumnCount()-1]){
-            output.append(left.getColumnName(left.getColumnCount()-1)).append("\n");
-        }else {
+        if (variablesToAdd[left.getColumnCount() - 1]) {
+            output.append(left.getColumnName(left.getColumnCount() - 1)).append("\n");
+        } else {
             if (output.length() > 0) {
                 output.deleteCharAt(output.length() - 1);
                 output.append("\n");
             }
         }
 
-        for (int i = 0 ; i < left.getRowCount(); i++){
-            for (int j = 0; j < left.getColumnCount()-1; j++){
-                if (variablesToAdd[j]){
+        for (int i = 0; i < left.getRowCount(); i++) {
+            for (int j = 0; j < left.getColumnCount() - 1; j++) {
+                if (variablesToAdd[j]) {
                     output.append(left.getValueAt(i, j)).append(",");
                 }
             }
-            if (variablesToAdd[left.getColumnCount()-1]){
-                output.append(left.getValueAt(i, left.getColumnCount()-1)).append("\n");
-            }else {
+            if (variablesToAdd[left.getColumnCount() - 1]) {
+                output.append(left.getValueAt(i, left.getColumnCount() - 1)).append("\n");
+            } else {
                 if (output.length() > 0) {
                     output.deleteCharAt(output.length() - 1);
                     output.append("\n");
