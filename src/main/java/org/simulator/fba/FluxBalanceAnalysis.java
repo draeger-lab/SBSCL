@@ -99,6 +99,11 @@ public class FluxBalanceAnalysis {
 	private Map<String, Integer> reaction2Index;
 
 	/**
+	 * A String that keeps track of id of the active objective function
+	 */
+	private String actObjFunc;
+
+	/**
 	 * Initializes the linear program and all data structures based on the
 	 * definitions in the given {@link SBMLDocument}.
 	 * This implementation should work for diverse levels and versions of SBML
@@ -199,6 +204,7 @@ public class FluxBalanceAnalysis {
 		Arrays.fill(objvals, 0d);
 		Objective objective = mPlug.getActiveObjectiveInstance();
 		Objective.Type type = objective.getType(); // max or min
+		actObjFunc = objective.getId();
 
 		for (FluxObjective fo : objective.getListOfFluxObjectives()) {
 			int rIndex = reaction2Index.get(fo.getReaction());
@@ -409,6 +415,7 @@ public class FluxBalanceAnalysis {
 	public Map<String, Double> getSolution() {
 
 		Map<String, Double> result = new HashMap<>();
+		result.put(actObjFunc, getObjectiveValue());
 		for (Map.Entry<String, Integer> mapElement: reaction2Index.entrySet()) {
 			result.put(mapElement.getKey(), solution[mapElement.getValue()]);
 		}
@@ -477,4 +484,12 @@ public class FluxBalanceAnalysis {
 		this.eps = eps;
 	}
 
+	/**
+	 * Gets the id of the active objective function
+	 *
+	 * @return
+	 */
+	public String getActObjFunc() {
+		return actObjFunc;
+	}
 }

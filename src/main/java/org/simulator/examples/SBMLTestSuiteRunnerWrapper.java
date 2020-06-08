@@ -110,7 +110,6 @@ public class SBMLTestSuiteRunnerWrapper {
             FluxBalanceAnalysis solver = new FluxBalanceAnalysis(document);
             if (solver.solve()) {
                 Map<String, Double> fbcSolution = solver.getSolution();
-                fbcSolution.put("OBJF", solver.getObjectiveValue());
 
                 System.out.println(fbcSolution);
 
@@ -125,7 +124,7 @@ public class SBMLTestSuiteRunnerWrapper {
                 for (String key : keys) {
                     output.append(fbcSolution.get(key)).append(",");
                 }
-                
+
                 if (output.length() > 0) {
                     output.deleteCharAt(output.length() - 1);
                     output.append("\n");

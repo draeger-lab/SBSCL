@@ -24,10 +24,7 @@
  */
 package org.simulator.sbml.astnode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.ASTNode;
@@ -260,7 +257,7 @@ public class ASTNodeInterpreter {
   public double piecewise(ASTNodeValue[] children, double time, double delay) {
     int i;
     for (i = 1; i < children.length - 1; i += 2) {
-      if (children[i].compileBoolean(time)) { return (children[i - 1]
+      if ((children[i].compileDouble(time, delay)) > 0d) { return (children[i - 1]
           .compileDouble(time, delay)); }
     }
     return children[i - 1].compileDouble(time, delay);

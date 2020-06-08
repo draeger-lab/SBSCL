@@ -213,7 +213,6 @@ public class SBMLTestSuiteTest {
                     Assert.assertFalse(errorInSolve);
 
                     Map<String, Double> solution = solver.getSolution();
-                    solution.put("OBJF", solver.getObjectiveValue());
 
                     System.out.println(solution);
 
