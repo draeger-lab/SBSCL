@@ -103,6 +103,7 @@ public class SBMLTestSuiteTest {
             assert (false);
         }
 
+        System.out.println("Testing test case: " + path);
 
         //System.out.println(path);
         String sbmlfile, csvfile, configfile;
