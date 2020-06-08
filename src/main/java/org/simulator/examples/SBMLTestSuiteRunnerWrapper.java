@@ -116,23 +116,20 @@ public class SBMLTestSuiteRunnerWrapper {
 
                 BufferedReader reader = new BufferedReader(new FileReader(resultsPath));
                 String[] keys = reader.readLine().trim().split(",");
-                String[] values = reader.readLine().trim().split(",");
-
-                Map<String, Double> inputSolution = new HashMap<>();
-                for (int i = 0; i < keys.length; i++) {
-                    inputSolution.put(keys[i], Double.valueOf(values[i]));
-                }
 
                 for (int i = 0; i < keys.length - 1; i++) {
                     output.append(keys[i]).append(",");
                 }
                 output.append(keys[keys.length - 1]).append("\n");
 
-                for (Map.Entry<String, Double> mapElement : inputSolution.entrySet()) {
-                    output.append(fbcSolution.get(mapElement.getKey())).append(",");
+                for (String key : keys) {
+                    output.append(fbcSolution.get(key)).append(",");
                 }
-                output.deleteCharAt(output.length() - 1);
-                output.append("\n");
+                
+                if (output.length() > 0) {
+                    output.deleteCharAt(output.length() - 1);
+                    output.append("\n");
+                }
             }
 
         } else {
