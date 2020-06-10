@@ -51,6 +51,8 @@ import org.simulator.plot.PlotMultiTable;
  */
 public class SimulatorExample {
 
+    private static final double TOLERANCE_FACTOR = 1E-3;
+
     /**
      * Starts a simulation at the command line.
      *
@@ -69,6 +71,8 @@ public class SimulatorExample {
         String fileName = args[0];
         double stepSize = Double.parseDouble(args[1]);
         double timeEnd = Double.parseDouble(args[2]);
+        double absTol = TOLERANCE_FACTOR * Double.parseDouble(args[3]);
+        double relTol = TOLERANCE_FACTOR * Double.parseDouble(args[4]);
 
         // Read the model and initialize solver
         SBMLDocument document = (new SBMLReader()).readSBML(fileName);
@@ -83,8 +87,8 @@ public class SimulatorExample {
 
         // Compute the numerical solution of the initial value problem
         if (solver instanceof AdaptiveStepsizeIntegrator) {
-            ((AdaptiveStepsizeIntegrator) solver).setAbsTol(1E-12);
-            ((AdaptiveStepsizeIntegrator) solver).setRelTol(1E-12);
+            ((AdaptiveStepsizeIntegrator) solver).setAbsTol(absTol);
+            ((AdaptiveStepsizeIntegrator) solver).setRelTol(relTol);
         }
         MultiTable solution = solver.solve(interpreter, interpreter
                 .getInitialValues(), 0d, timeEnd);

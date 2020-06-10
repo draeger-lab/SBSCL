@@ -1498,8 +1498,8 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     private void createSimplifiedSyntaxTree() {
         nodes.clear();
 
-        initializeRules();
         initializeKineticLaws();
+        initializeRules();
         initializeConstraints();
         initializeEvents();
     }

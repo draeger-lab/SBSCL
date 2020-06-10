@@ -35,6 +35,9 @@ public class SBMLTestSuiteRunnerWrapper {
     public static final String STEPS = "steps";
     public static final String AMOUNT = "amount";
     public static final String CONCENTRATION = "concentration";
+    public static final String ABSOLUTE = "absolute";
+    public static final String RELATIVE = "relative";
+    private static final double TOLERANCE_FACTOR = 1E-3;
 
     /**
      * Runs a simulation of a SBML file and writes result to a specified CSV file
@@ -67,6 +70,8 @@ public class SBMLTestSuiteRunnerWrapper {
         String[] amounts = String.valueOf(properties.getProperty(AMOUNT)).split(",");
         String[] concentrations = String.valueOf(
                 properties.getProperty(CONCENTRATION)).split(",");
+        double absolute = (!properties.getProperty(ABSOLUTE).isEmpty()) ? Double.parseDouble(properties.getProperty(ABSOLUTE)) : 0d;
+        double relative = (!properties.getProperty(RELATIVE).isEmpty()) ? Double.parseDouble(properties.getProperty(RELATIVE)) : 0d;
 
         for (String s : amounts) {
             s = s.trim();
@@ -141,8 +146,8 @@ public class SBMLTestSuiteRunnerWrapper {
                 }
 
                 if (solver instanceof AdaptiveStepsizeIntegrator) {
-                    ((AdaptiveStepsizeIntegrator) solver).setAbsTol(1E-12);
-                    ((AdaptiveStepsizeIntegrator) solver).setRelTol(1E-12);
+                    ((AdaptiveStepsizeIntegrator) solver).setAbsTol(TOLERANCE_FACTOR * absolute);
+                    ((AdaptiveStepsizeIntegrator) solver).setRelTol(TOLERANCE_FACTOR * relative);
                 }
 
                 SBMLinterpreter interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);
