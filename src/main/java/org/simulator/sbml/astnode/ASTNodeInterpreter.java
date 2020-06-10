@@ -303,6 +303,72 @@ public class ASTNodeInterpreter {
   }
 
   /**
+   *
+   * @param left
+   * @param right
+   * @param time
+   * @param delay
+   * @return doubleValue the interpreted double value of the node
+   */
+  public double quotient(ASTNodeValue left, ASTNodeValue right, double time, double delay) {
+    return Math.floorDiv((int) left.compileDouble(time, delay), (int) right.compileDouble(time, delay));
+  }
+
+  /**
+   *
+   * @param left
+   * @param right
+   * @param time
+   * @param delay
+   * @return doubleValue the interpreted double value of the node
+   */
+  public double remainder(ASTNodeValue left, ASTNodeValue right, double time, double delay) {
+    return Math.floorMod((int) left.compileDouble(time, delay), (int) right.compileDouble(time, delay));
+  }
+
+  /**
+   *
+   * @param children
+   * @param time
+   * @param delay
+   * @return doubleValue the interpreted double value of the node
+   */
+  public double maximum(ASTNodeValue[] children, double time, double delay) {
+    double ans = children[0].compileDouble(time, delay);
+    for (int i = 1; i < children.length; i++) {
+      ans = Math.max(ans, children[i].compileDouble(time, delay));
+    }
+    return ans;
+  }
+
+  /**
+   *
+   * @param children
+   * @param time
+   * @param delay
+   * @return doubleValue the interpreted double value of the node
+   */
+  public double minimum(ASTNodeValue[] children, double time, double delay) {
+    double ans = children[0].compileDouble(time, delay);
+    for (int i = 1; i < children.length; i++) {
+      ans = Math.min(ans, children[i].compileDouble(time, delay));
+    }
+    return ans;
+  }
+
+  /**
+   *
+   * @param left
+   * @param right
+   * @param time
+   * @param delay
+   * @return doubleValue the interpreted double value of the node
+   */
+  public double implies(ASTNodeValue left, ASTNodeValue right, double time, double delay) {
+    return (left.compileDouble(time, delay) > 0) ? ((right.compileDouble(time, delay) > 0) ? 1 : 0) : 1;
+  }
+
+  /**
    * 
    * @param userObject
    * @param time

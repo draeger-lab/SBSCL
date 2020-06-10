@@ -476,6 +476,21 @@ public class ASTNodeValue {
     case LAMBDA:
       doubleValue = interpreter.lambdaDouble(children, time);
       break;
+    case FUNCTION_QUOTIENT:
+      doubleValue = interpreter.quotient(leftChild, rightChild, time, delay);
+      break;
+    case FUNCTION_REM:
+      doubleValue = interpreter.remainder(leftChild, rightChild, time, delay);
+      break;
+    case FUNCTION_MAX:
+      doubleValue = interpreter.maximum(children, time, delay);
+      break;
+    case FUNCTION_MIN:
+      doubleValue = interpreter.minimum(children, time, delay);
+      break;
+    case LOGICAL_IMPLIES:
+      doubleValue = interpreter.implies(leftChild, rightChild, time, delay);
+      break;
 
     /*
      * Logical operators (with double values)
