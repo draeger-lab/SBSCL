@@ -39,7 +39,7 @@ public class SBMLTestSuiteTest {
     public static final String RELATIVE = "relative";
     private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
     private static final String SBML_TEST_SUITE_PATH = "SBML_TEST_SUITE_PATH";
-    private static final double THRESHOLD = 0.001;
+    private static final double TOLERANCE_FACTOR = 1E-3;
 
     @Before
     public void setUp() {
@@ -255,8 +255,8 @@ public class SBMLTestSuiteTest {
                         }
 
                         if (solver instanceof AdaptiveStepsizeIntegrator) {
-                            ((AdaptiveStepsizeIntegrator) solver).setAbsTol(1E-12);
-                            ((AdaptiveStepsizeIntegrator) solver).setRelTol(1E-12);
+                            ((AdaptiveStepsizeIntegrator) solver).setAbsTol(TOLERANCE_FACTOR * absolute);
+                            ((AdaptiveStepsizeIntegrator) solver).setRelTol(TOLERANCE_FACTOR * relative);
                         }
 
                         // solve
