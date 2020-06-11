@@ -304,26 +304,26 @@ public class ASTNodeInterpreter {
 
   /**
    *
-   * @param left
-   * @param right
+   * @param dividend
+   * @param divisor
    * @param time
    * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double quotient(ASTNodeValue left, ASTNodeValue right, double time, double delay) {
-    return Math.floorDiv((int) left.compileDouble(time, delay), (int) right.compileDouble(time, delay));
+  public double quotient(ASTNodeValue dividend, ASTNodeValue divisor, double time, double delay) {
+    return Math.floorDiv((int) dividend.compileDouble(time, delay), (int) divisor.compileDouble(time, delay));
   }
 
   /**
    *
-   * @param left
-   * @param right
+   * @param dividend
+   * @param divisor
    * @param time
    * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double remainder(ASTNodeValue left, ASTNodeValue right, double time, double delay) {
-    return Math.floorMod((int) left.compileDouble(time, delay), (int) right.compileDouble(time, delay));
+  public double remainder(ASTNodeValue dividend, ASTNodeValue divisor, double time, double delay) {
+    return Math.floorMod((int) dividend.compileDouble(time, delay), (int) divisor.compileDouble(time, delay));
   }
 
   /**
@@ -334,9 +334,9 @@ public class ASTNodeInterpreter {
    * @return doubleValue the interpreted double value of the node
    */
   public double maximum(ASTNodeValue[] children, double time, double delay) {
-    double ans = children[0].compileDouble(time, delay);
-    for (int i = 1; i < children.length; i++) {
-      ans = Math.max(ans, children[i].compileDouble(time, delay));
+    double ans = Double.MIN_VALUE;
+    for (ASTNodeValue child : children) {
+      ans = Math.max(ans, child.compileDouble(time, delay));
     }
     return ans;
   }
@@ -349,23 +349,23 @@ public class ASTNodeInterpreter {
    * @return doubleValue the interpreted double value of the node
    */
   public double minimum(ASTNodeValue[] children, double time, double delay) {
-    double ans = children[0].compileDouble(time, delay);
-    for (int i = 1; i < children.length; i++) {
-      ans = Math.min(ans, children[i].compileDouble(time, delay));
+    double ans = Double.MAX_VALUE;
+    for (ASTNodeValue child : children) {
+      ans = Math.min(ans, child.compileDouble(time, delay));
     }
     return ans;
   }
 
   /**
    *
-   * @param left
-   * @param right
+   * @param antecedent
+   * @param consequent
    * @param time
    * @param delay
    * @return doubleValue the interpreted double value of the node
    */
-  public double implies(ASTNodeValue left, ASTNodeValue right, double time, double delay) {
-    return (left.compileDouble(time, delay) > 0) ? ((right.compileDouble(time, delay) > 0) ? 1 : 0) : 1;
+  public double implies(ASTNodeValue antecedent, ASTNodeValue consequent, double time, double delay) {
+    return (antecedent.compileDouble(time, delay) > 0) ? ((consequent.compileDouble(time, delay) > 0) ? 1 : 0) : 1;
   }
 
   /**
