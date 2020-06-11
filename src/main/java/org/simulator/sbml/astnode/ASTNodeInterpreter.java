@@ -624,69 +624,96 @@ public class ASTNodeInterpreter {
 
   /**
    * 
-   * @param left
-   * @param right
+   * @param children
    * @param time
    * @return booleanValue the interpreted boolean value of the node
    */
-  public boolean lt(ASTNodeValue left, ASTNodeValue right, double time) {
-    return (left.compileDouble(time, 0d) < right.compileDouble(time, 0d));
+  public boolean lt(ASTNodeValue[] children, double time) {
+    for (int i = 0; i < children.length - 1; i++) {
+      if (children[i].compileDouble(time, 0d) >= children[i + 1].compileDouble(time, 0d)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
    * 
-   * @param left
-   * @param right
+   * @param children
    * @param time
    * @return booleanValue the interpreted boolean value of the node
    */
-  public boolean leq(ASTNodeValue left, ASTNodeValue right, double time) {
-    return (left.compileDouble(time, 0d) <= right.compileDouble(time, 0d));
+  public boolean leq(ASTNodeValue[] children, double time) {
+    for (int i = 0; i < children.length - 1; i++) {
+      if (children[i].compileDouble(time, 0d) > children[i + 1].compileDouble(time, 0d)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
    * 
-   * @param left
-   * @param right
+   * @param children
    * @param time
    * @return booleanValue the interpreted boolean value of the node
    */
-  public boolean neq(ASTNodeValue left, ASTNodeValue right, double time) {
-    return (left.compileDouble(time, 0d) != right.compileDouble(time, 0d));
+  public boolean neq(ASTNodeValue[] children, double time) {
+    Set<Double> values = new HashSet<Double>();
+    for (ASTNodeValue num : children) {
+      if(values.contains(num.compileDouble(time, 0d))){
+        return false;
+      }
+      values.add(num.compileDouble(time, 0d));
+    }
+    return true;
+  }
+
+  /**
+   *
+   * @param children
+   * @param time
+   * @return booleanValue the interpreted boolean value of the node
+   */
+  public boolean gt(ASTNodeValue[] children, double time) {
+    for (int i = 0; i < children.length - 1; i++) {
+      if (children[i].compileDouble(time, 0d) <= children[i + 1].compileDouble(time, 0d)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
    * 
-   * @param left
-   * @param right
+   * @param children
    * @param time
    * @return booleanValue the interpreted boolean value of the node
    */
-  public boolean gt(ASTNodeValue left, ASTNodeValue right, double time) {
-    return (left.compileDouble(time, 0d) > right.compileDouble(time, 0d));
+  public boolean geq(ASTNodeValue[] children, double time) {
+    for (int i = 0; i < children.length - 1; i++) {
+      if (children[i].compileDouble(time, 0d) < children[i + 1].compileDouble(time, 0d)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
    * 
-   * @param left
-   * @param right
-   * @param time
-   * @return booleanValue the interpreted boolean value of the node
-   */
-  public boolean geq(ASTNodeValue left, ASTNodeValue right, double time) {
-    return (left.compileDouble(time, 0d) >= right.compileDouble(time, 0d));
-  }
-
-  /**
-   * 
-   * @param left
-   * @param right
+   * @param children
    * @param time
 
    * @return booleanValue the interpreted boolean value of the node
    */
-  public boolean eq(ASTNodeValue left, ASTNodeValue right, double time) {
-    return (left.compileDouble(time, 0d) == right.compileDouble(time, 0d));
+  public boolean eq(ASTNodeValue[] children, double time) {
+    double first = children[0].compileDouble(time, 0d);
+    for (int i = 1; i < children.length; i++) {
+      if (children[i].compileDouble(time, 0d) != first) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**

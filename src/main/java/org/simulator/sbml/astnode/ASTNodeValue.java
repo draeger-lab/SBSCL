@@ -330,216 +330,216 @@ public class ASTNodeValue {
    */
   protected void computeDoubleValue(double delay) {
     switch (nodeType) {
-    /*
-     * Numbers
-     */
-    case REAL:
-      if (isInfinite) {
-        doubleValue = (real > 0d) ? Double.POSITIVE_INFINITY
-          : Double.NEGATIVE_INFINITY;
-      } else {
-        doubleValue = interpreter.compile(real, units);
-      }
-      break;
+      /*
+       * Numbers
+       */
+      case REAL:
+        if (isInfinite) {
+          doubleValue = (real > 0d) ? Double.POSITIVE_INFINITY
+                  : Double.NEGATIVE_INFINITY;
+        } else {
+          doubleValue = interpreter.compile(real, units);
+        }
+        break;
       /*
        * Operators
        */
-    case RATIONAL:
-      doubleValue = interpreter.frac(numerator, denominator);
-      break;
-    case NAME_TIME:
-      doubleValue = interpreter.symbolTime();
-      break;
-    case FUNCTION_DELAY:
-      doubleValue = interpreter.delay(leftChild,
-        rightChild, units, time);
-      break;
+      case RATIONAL:
+        doubleValue = interpreter.frac(numerator, denominator);
+        break;
+      case NAME_TIME:
+        doubleValue = interpreter.symbolTime();
+        break;
+      case FUNCTION_DELAY:
+        doubleValue = interpreter.delay(leftChild,
+                rightChild, units, time);
+        break;
       /*
        * Type: pi, e, true, false, Avogadro
        */
-    case CONSTANT_PI:
-      doubleValue = Math.PI;
-      break;
-    case CONSTANT_E:
-      doubleValue = Math.E;
-      break;
-    case NAME_AVOGADRO:
-      doubleValue = Maths.AVOGADRO_L3V1;
-      break;
-    case REAL_E:
-      doubleValue = interpreter.compile(mantissa, exponent,
-        units);
-      break;
+      case CONSTANT_PI:
+        doubleValue = Math.PI;
+        break;
+      case CONSTANT_E:
+        doubleValue = Math.E;
+        break;
+      case NAME_AVOGADRO:
+        doubleValue = Maths.AVOGADRO_L3V1;
+        break;
+      case REAL_E:
+        doubleValue = interpreter.compile(mantissa, exponent,
+                units);
+        break;
       /*
        * Basic Functions
        */
-    case FUNCTION_LOG:
-      if (numChildren == 2) {
-        doubleValue = interpreter.log(leftChild, rightChild, time, delay);
-      } else {
-        doubleValue = interpreter.log(rightChild, time, delay);
-      }
-      break;
-    case FUNCTION_ABS:
-      doubleValue = interpreter.abs(rightChild, time, delay);
-      break;
-    case FUNCTION_ARCCOS:
-      doubleValue = interpreter.arccos(leftChild, time, delay);
-      break;
-    case FUNCTION_ARCCOSH:
-      doubleValue = interpreter.arccosh(leftChild, time, delay);
-      break;
-    case FUNCTION_ARCCOT:
-      doubleValue = interpreter.arccot(leftChild, time, delay);
-      break;
-    case FUNCTION_ARCCOTH:
-      doubleValue = interpreter.arccoth(leftChild, time, delay);
-      break;
-    case FUNCTION_ARCCSC:
-      doubleValue = interpreter.arccsc(leftChild, time, delay);
-      break;
-    case FUNCTION_ARCCSCH:
-      doubleValue = interpreter.arccsch(leftChild, time, delay);
-      break;
-    case FUNCTION_ARCSEC:
-      doubleValue = interpreter.arcsec(leftChild, time, delay);
-      break;
-    case FUNCTION_ARCSECH:
-      doubleValue = interpreter.arcsech(leftChild, time, delay);
-      break;
-    case FUNCTION_ARCSIN:
-      doubleValue = interpreter.arcsin(leftChild, time, delay);
-      break;
-    case FUNCTION_ARCSINH:
-      doubleValue = interpreter.arcsinh(leftChild, time, delay);
-      break;
-    case FUNCTION_ARCTAN:
-      doubleValue = interpreter.arctan(leftChild, time, delay);
-      break;
-    case FUNCTION_ARCTANH:
-      doubleValue = interpreter.arctanh(leftChild, time, delay);
-      break;
-    case FUNCTION_CEILING:
-      doubleValue = interpreter.ceiling(leftChild, time, delay);
-      break;
-    case FUNCTION_COS:
-      doubleValue = interpreter.cos(leftChild, time, delay);
-      break;
-    case FUNCTION_COSH:
-      doubleValue = interpreter.cosh(leftChild, time, delay);
-      break;
-    case FUNCTION_COT:
-      doubleValue = interpreter.cot(leftChild, time, delay);
-      break;
-    case FUNCTION_COTH:
-      doubleValue = interpreter.coth(leftChild, time, delay);
-      break;
-    case FUNCTION_CSC:
-      doubleValue = interpreter.csc(leftChild, time, delay);
-      break;
-    case FUNCTION_CSCH:
-      doubleValue = interpreter.csch(leftChild, time, delay);
-      break;
-    case FUNCTION_EXP:
-      doubleValue = interpreter.exp(leftChild, time, delay);
-      break;
-    case FUNCTION_FACTORIAL:
-      doubleValue = interpreter.factorial(leftChild, time, delay);
-      break;
-    case FUNCTION_FLOOR:
-      doubleValue = interpreter.floor(leftChild, time, delay);
-      break;
-    case FUNCTION_LN:
-      doubleValue = interpreter.ln(leftChild, time, delay);
-      break;
-    case FUNCTION_SEC:
-      doubleValue = interpreter.sec(leftChild, time, delay);
-      break;
-    case FUNCTION_SECH:
-      doubleValue = interpreter.sech(leftChild, time, delay);
-      break;
-    case FUNCTION_SIN:
-      doubleValue = interpreter.sin(leftChild, time, delay);
-      break;
-    case FUNCTION_SINH:
-      doubleValue = interpreter.sinh(leftChild, time, delay);
-      break;
-    case FUNCTION_TAN:
-      doubleValue = interpreter.tan(leftChild, time, delay);
-      break;
-    case FUNCTION_TANH:
-      doubleValue = interpreter.tanh(leftChild, time, delay);
-      break;
-    case FUNCTION_PIECEWISE:
-      doubleValue = interpreter.piecewise(children, time, delay);
-      break;
-    case LAMBDA:
-      doubleValue = interpreter.lambdaDouble(children, time);
-      break;
-    case FUNCTION_QUOTIENT:
-      doubleValue = interpreter.quotient(leftChild, rightChild, time, delay);
-      break;
-    case FUNCTION_REM:
-      doubleValue = interpreter.remainder(leftChild, rightChild, time, delay);
-      break;
-    case FUNCTION_MAX:
-      doubleValue = interpreter.maximum(children, time, delay);
-      break;
-    case FUNCTION_MIN:
-      doubleValue = interpreter.minimum(children, time, delay);
-      break;
-    case LOGICAL_IMPLIES:
-      doubleValue = interpreter.implies(leftChild, rightChild, time, delay);
-      break;
+      case FUNCTION_LOG:
+        if (numChildren == 2) {
+          doubleValue = interpreter.log(leftChild, rightChild, time, delay);
+        } else {
+          doubleValue = interpreter.log(rightChild, time, delay);
+        }
+        break;
+      case FUNCTION_ABS:
+        doubleValue = interpreter.abs(rightChild, time, delay);
+        break;
+      case FUNCTION_ARCCOS:
+        doubleValue = interpreter.arccos(leftChild, time, delay);
+        break;
+      case FUNCTION_ARCCOSH:
+        doubleValue = interpreter.arccosh(leftChild, time, delay);
+        break;
+      case FUNCTION_ARCCOT:
+        doubleValue = interpreter.arccot(leftChild, time, delay);
+        break;
+      case FUNCTION_ARCCOTH:
+        doubleValue = interpreter.arccoth(leftChild, time, delay);
+        break;
+      case FUNCTION_ARCCSC:
+        doubleValue = interpreter.arccsc(leftChild, time, delay);
+        break;
+      case FUNCTION_ARCCSCH:
+        doubleValue = interpreter.arccsch(leftChild, time, delay);
+        break;
+      case FUNCTION_ARCSEC:
+        doubleValue = interpreter.arcsec(leftChild, time, delay);
+        break;
+      case FUNCTION_ARCSECH:
+        doubleValue = interpreter.arcsech(leftChild, time, delay);
+        break;
+      case FUNCTION_ARCSIN:
+        doubleValue = interpreter.arcsin(leftChild, time, delay);
+        break;
+      case FUNCTION_ARCSINH:
+        doubleValue = interpreter.arcsinh(leftChild, time, delay);
+        break;
+      case FUNCTION_ARCTAN:
+        doubleValue = interpreter.arctan(leftChild, time, delay);
+        break;
+      case FUNCTION_ARCTANH:
+        doubleValue = interpreter.arctanh(leftChild, time, delay);
+        break;
+      case FUNCTION_CEILING:
+        doubleValue = interpreter.ceiling(leftChild, time, delay);
+        break;
+      case FUNCTION_COS:
+        doubleValue = interpreter.cos(leftChild, time, delay);
+        break;
+      case FUNCTION_COSH:
+        doubleValue = interpreter.cosh(leftChild, time, delay);
+        break;
+      case FUNCTION_COT:
+        doubleValue = interpreter.cot(leftChild, time, delay);
+        break;
+      case FUNCTION_COTH:
+        doubleValue = interpreter.coth(leftChild, time, delay);
+        break;
+      case FUNCTION_CSC:
+        doubleValue = interpreter.csc(leftChild, time, delay);
+        break;
+      case FUNCTION_CSCH:
+        doubleValue = interpreter.csch(leftChild, time, delay);
+        break;
+      case FUNCTION_EXP:
+        doubleValue = interpreter.exp(leftChild, time, delay);
+        break;
+      case FUNCTION_FACTORIAL:
+        doubleValue = interpreter.factorial(leftChild, time, delay);
+        break;
+      case FUNCTION_FLOOR:
+        doubleValue = interpreter.floor(leftChild, time, delay);
+        break;
+      case FUNCTION_LN:
+        doubleValue = interpreter.ln(leftChild, time, delay);
+        break;
+      case FUNCTION_SEC:
+        doubleValue = interpreter.sec(leftChild, time, delay);
+        break;
+      case FUNCTION_SECH:
+        doubleValue = interpreter.sech(leftChild, time, delay);
+        break;
+      case FUNCTION_SIN:
+        doubleValue = interpreter.sin(leftChild, time, delay);
+        break;
+      case FUNCTION_SINH:
+        doubleValue = interpreter.sinh(leftChild, time, delay);
+        break;
+      case FUNCTION_TAN:
+        doubleValue = interpreter.tan(leftChild, time, delay);
+        break;
+      case FUNCTION_TANH:
+        doubleValue = interpreter.tanh(leftChild, time, delay);
+        break;
+      case FUNCTION_PIECEWISE:
+        doubleValue = interpreter.piecewise(children, time, delay);
+        break;
+      case LAMBDA:
+        doubleValue = interpreter.lambdaDouble(children, time);
+        break;
+      case FUNCTION_QUOTIENT:
+        doubleValue = interpreter.quotient(leftChild, rightChild, time, delay);
+        break;
+      case FUNCTION_REM:
+        doubleValue = interpreter.remainder(leftChild, rightChild, time, delay);
+        break;
+      case FUNCTION_MAX:
+        doubleValue = interpreter.maximum(children, time, delay);
+        break;
+      case FUNCTION_MIN:
+        doubleValue = interpreter.minimum(children, time, delay);
+        break;
+      case LOGICAL_IMPLIES:
+        doubleValue = interpreter.implies(leftChild, rightChild, time, delay);
+        break;
 
-    /*
-     * Logical operators (with double values)
-     */
-    case LOGICAL_AND:
-      doubleValue = interpreter.and(children, numChildren, time) ? 1d : 0d;
-      break;
-    case LOGICAL_XOR:
-      doubleValue = interpreter.xor(children, time) ? 1d : 0d;
-      break;
-    case LOGICAL_OR:
-      doubleValue = interpreter.or(children, time) ? 1d : 0d;
-      break;
-    case LOGICAL_NOT:
-      doubleValue = interpreter.not(leftChild,time) ? 1d : 0d;
-      break;
-    case RELATIONAL_EQ:
-      doubleValue = interpreter.eq(leftChild, rightChild,time) ? 1d : 0d;
-      break;
-    case RELATIONAL_GEQ:
-      doubleValue = interpreter.geq(leftChild, rightChild,time) ? 1d : 0d;
-      break;
-    case RELATIONAL_GT:
-      doubleValue = interpreter.gt(leftChild, rightChild,time) ? 1d : 0d;
-      break;
-    case RELATIONAL_NEQ:
-      doubleValue = interpreter.neq(leftChild, rightChild,time) ? 1d : 0d;
-      break;
-    case RELATIONAL_LEQ:
-      doubleValue = interpreter.leq(leftChild, rightChild,time) ? 1d : 0d;
-      break;
-    case RELATIONAL_LT:
-      doubleValue = interpreter.lt(leftChild, rightChild,time) ? 1d : 0d;
-      break;
-    case CONSTANT_TRUE:
-      doubleValue = 1d;
-      break;
-    case CONSTANT_FALSE:
-      doubleValue = 0d;
-      break;
-    case NAME:
-      CallableSBase variable = node.getVariable();
-      if (variable != null) {
-        doubleValue = interpreter.compileBoolean(variable, time) ? 1d : 0d;
-      }
-      break;
-    default: // UNKNOWN:
-      doubleValue = Double.NaN;
-      break;
+      /*
+       * Logical operators (with double values)
+       */
+      case LOGICAL_AND:
+        doubleValue = interpreter.and(children, numChildren, time) ? 1d : 0d;
+        break;
+      case LOGICAL_XOR:
+        doubleValue = interpreter.xor(children, time) ? 1d : 0d;
+        break;
+      case LOGICAL_OR:
+        doubleValue = interpreter.or(children, time) ? 1d : 0d;
+        break;
+      case LOGICAL_NOT:
+        doubleValue = interpreter.not(leftChild, time) ? 1d : 0d;
+        break;
+      case RELATIONAL_EQ:
+        doubleValue = interpreter.eq(children, time) ? 1d : 0d;
+        break;
+      case RELATIONAL_GEQ:
+        doubleValue = interpreter.geq(children, time) ? 1d : 0d;
+        break;
+      case RELATIONAL_GT:
+        doubleValue = interpreter.gt(children, time) ? 1d : 0d;
+        break;
+      case RELATIONAL_NEQ:
+        doubleValue = interpreter.neq(children, time) ? 1d : 0d;
+        break;
+      case RELATIONAL_LEQ:
+        doubleValue = interpreter.leq(children, time) ? 1d : 0d;
+        break;
+      case RELATIONAL_LT:
+        doubleValue = interpreter.lt(children, time) ? 1d : 0d;
+        break;
+      case CONSTANT_TRUE:
+        doubleValue = 1d;
+        break;
+      case CONSTANT_FALSE:
+        doubleValue = 0d;
+        break;
+      case NAME:
+        CallableSBase variable = node.getVariable();
+        if (variable != null) {
+          doubleValue = interpreter.compileBoolean(variable, time) ? 1d : 0d;
+        }
+        break;
+      default: // UNKNOWN:
+        doubleValue = Double.NaN;
+        break;
     }
   }
 
@@ -548,54 +548,54 @@ public class ASTNodeValue {
    */
   protected void computeBooleanValue() {
     switch (nodeType) {
-    case LOGICAL_AND:
-      booleanValue = interpreter.and(children,numChildren, time);
-      break;
-    case LOGICAL_XOR:
-      booleanValue = interpreter.xor(children,time);
-      break;
-    case LOGICAL_OR:
-      booleanValue = interpreter.or(children,time);
-      break;
-    case LOGICAL_NOT:
-      booleanValue = interpreter.not(leftChild,time);
-      break;
-    case RELATIONAL_EQ:
-      booleanValue = interpreter.eq(leftChild, rightChild,time);
-      break;
-    case RELATIONAL_GEQ:
-      booleanValue = interpreter.geq(leftChild, rightChild,time);
-      break;
-    case RELATIONAL_GT:
-      booleanValue = interpreter.gt(leftChild, rightChild,time);
-      break;
-    case RELATIONAL_NEQ:
-      booleanValue = interpreter.neq(leftChild, rightChild,time);
-      break;
-    case RELATIONAL_LEQ:
-      booleanValue = interpreter.leq(leftChild, rightChild,time);
-      break;
-    case RELATIONAL_LT:
-      booleanValue = interpreter.lt(leftChild, rightChild,time);
-      break;
-    case CONSTANT_TRUE:
-      booleanValue = true;
-      break;
-    case CONSTANT_FALSE:
-      booleanValue = false;
-      break;
-    case NAME:
-      CallableSBase variable = node.getVariable();
-      if (variable != null) {
-        booleanValue = interpreter.compileBoolean(variable, time);
-      }
-      break;
-    case LAMBDA:
-      booleanValue = interpreter.lambdaBoolean(children, time);
-      break;
-    default:
-      booleanValue = false;
-      break;
+      case LOGICAL_AND:
+        booleanValue = interpreter.and(children, numChildren, time);
+        break;
+      case LOGICAL_XOR:
+        booleanValue = interpreter.xor(children, time);
+        break;
+      case LOGICAL_OR:
+        booleanValue = interpreter.or(children, time);
+        break;
+      case LOGICAL_NOT:
+        booleanValue = interpreter.not(leftChild, time);
+        break;
+      case RELATIONAL_EQ:
+        booleanValue = interpreter.eq(children, time);
+        break;
+      case RELATIONAL_GEQ:
+        booleanValue = interpreter.geq(children, time);
+        break;
+      case RELATIONAL_GT:
+        booleanValue = interpreter.gt(children, time);
+        break;
+      case RELATIONAL_NEQ:
+        booleanValue = interpreter.neq(children, time);
+        break;
+      case RELATIONAL_LEQ:
+        booleanValue = interpreter.leq(children, time);
+        break;
+      case RELATIONAL_LT:
+        booleanValue = interpreter.lt(children, time);
+        break;
+      case CONSTANT_TRUE:
+        booleanValue = true;
+        break;
+      case CONSTANT_FALSE:
+        booleanValue = false;
+        break;
+      case NAME:
+        CallableSBase variable = node.getVariable();
+        if (variable != null) {
+          booleanValue = interpreter.compileBoolean(variable, time);
+        }
+        break;
+      case LAMBDA:
+        booleanValue = interpreter.lambdaBoolean(children, time);
+        break;
+      default:
+        booleanValue = false;
+        break;
     }
   }
 
