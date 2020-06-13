@@ -1094,8 +1094,10 @@ public class ASTNodeInterpreter {
     Map<String, Integer> symbolHash = sbmlInterpreter.getSymbolHash();
     double[] Y = sbmlInterpreter.getY();
 
-    if ((sbmlInterpreter.getRateRulesRoots().size() != 0) && (sbmlInterpreter.getRateRulesRoots().get(symbolHash.get(sBase.getId())) != null)) {
-      return sbmlInterpreter.getRateRulesRoots().get(sbmlInterpreter.getSymbolHash().get(sBase.getId())).getNodeObject().compileDouble(time, 0d);
+    for (int i = 0; i < sbmlInterpreter.getRateRulesRoots().size(); i++) {
+      if (sbmlInterpreter.getRateRulesRoots().get(i).getVariable().equals(sBase.getId())) {
+        return sbmlInterpreter.getRateRulesRoots().get(i).getNodeObject().compileDouble(time, 0d);
+      }
     }
 
     double[] derivatives = new double[Y.length];

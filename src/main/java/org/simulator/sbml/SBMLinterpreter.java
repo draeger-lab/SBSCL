@@ -1785,7 +1785,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
                                             null, null).getUserObject(TEMP_VALUE),
                                     symbolIndex, sp,
                                     compartmentHash.get(sp.getId()),
-                                    hasZeroSpatialDimensions, this));
+                                    hasZeroSpatialDimensions, this, rr.getVariable()));
                         }
                     } else if (compartmentHash.containsValue(symbolIndex)) {
                         List<Integer> speciesIndices = new LinkedList<Integer>();
@@ -1805,14 +1805,14 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
                             rateRulesRoots.add(new RateRuleValue(
                                     (ASTNodeValue) copyAST(rr.getMath(), true,
                                             null, null).getUserObject(TEMP_VALUE),
-                                    symbolIndex, speciesIndices, this));
+                                    symbolIndex, speciesIndices, this, rr.getVariable()));
                         }
                     } else {
                         if (rr.isSetMath()) {
                             rateRulesRoots.add(new RateRuleValue(
                                     (ASTNodeValue) copyAST(rr.getMath(), true,
                                             null, null).getUserObject(TEMP_VALUE),
-                                    symbolIndex));
+                                    symbolIndex, rr.getVariable()));
                         }
                     }
                 }

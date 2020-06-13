@@ -47,13 +47,16 @@ public class RateRuleValue extends RuleValue{
    */
   private List<Integer> speciesIndices;
 
+  private String variable;
+
   /**
    * 
    * @param nodeObject
    * @param index
    */
-  public RateRuleValue(ASTNodeValue nodeObject, int index) {
+  public RateRuleValue(ASTNodeValue nodeObject, int index, String variable) {
     super(nodeObject, index);
+    this.variable = variable;
   }
 
   /**
@@ -66,8 +69,9 @@ public class RateRuleValue extends RuleValue{
    * @param valueHolder
    */
   public RateRuleValue(ASTNodeValue nodeObject, int index,
-    Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder) {
+    Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder, String variable) {
     super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder);
+    this.variable = variable;
   }
 
   /**
@@ -78,10 +82,15 @@ public class RateRuleValue extends RuleValue{
    * @param valueHolder
    */
   public RateRuleValue(ASTNodeValue nodeObject, int index,
-    List<Integer> speciesIndices, SBMLValueHolder valueHolder) {
+    List<Integer> speciesIndices, SBMLValueHolder valueHolder, String variable) {
     super(nodeObject, index);
     isCompartment = true;
+    this.variable = variable;
     this.speciesIndices = speciesIndices;
+  }
+
+  public String getVariable() {
+    return variable;
   }
 
   /**
