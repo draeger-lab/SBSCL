@@ -47,6 +47,9 @@ public class RateRuleValue extends RuleValue{
    */
   private List<Integer> speciesIndices;
 
+  /**
+   * The variable for which the rateRule is defined
+   */
   private String variable;
 
   /**
@@ -89,6 +92,10 @@ public class RateRuleValue extends RuleValue{
     this.speciesIndices = speciesIndices;
   }
 
+  /**
+   *
+   * @return the value of the variable
+   */
   public String getVariable() {
     return variable;
   }

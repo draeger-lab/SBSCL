@@ -329,7 +329,7 @@ public class ASTNodeInterpreter {
    * @return doubleValue the interpreted double value of the node
    */
   public double maximum(ASTNodeValue[] children, double time, double delay) {
-    double ans = Double.MIN_VALUE;
+    double ans = -Double.MAX_VALUE;
     for (ASTNodeValue child : children) {
       ans = Math.max(ans, child.compileDouble(time, delay));
     }
@@ -1085,6 +1085,13 @@ public class ASTNodeInterpreter {
     return -userObject.compileDouble(time, delay);
   }
 
+  /**
+   *
+   * @param sbmlInterpreter
+   * @param sBase
+   * @param time
+   * @return doubleValue the interpreted double value of the node
+   */
   public double rateOf(SBMLinterpreter sbmlInterpreter, CallableSBase sBase, double time) {
 
     if ((time < 0d) || (sBase instanceof LocalParameter)) {

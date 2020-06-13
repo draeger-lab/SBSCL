@@ -586,8 +586,6 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     /**
      * Evaluates the algebraic rules of the given model to assignment rules
      *
-     * @param ar
-     * @param changeRate
      * @throws ModelOverdeterminedException
      */
     private void evaluateAlgebraicRules() throws ModelOverdeterminedException {
@@ -998,7 +996,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
      * Returns the value of the ODE system at the time t given the current values
      * of Y
      *
-     * @param t
+     * @param time
      * @param Y
      * @return
      * @throws DerivativeException
