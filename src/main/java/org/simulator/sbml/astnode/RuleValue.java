@@ -156,4 +156,7 @@ public class RuleValue {
     return index;
   }
 
+  public ASTNodeValue getNodeObject() {
+    return nodeObject;
+  }
 }

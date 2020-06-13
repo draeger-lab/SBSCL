@@ -27,16 +27,11 @@ package org.simulator.sbml.astnode;
 import java.util.*;
 import java.util.logging.Logger;
 
-import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.CallableSBase;
-import org.sbml.jsbml.Compartment;
-import org.sbml.jsbml.FunctionDefinition;
-import org.sbml.jsbml.LocalParameter;
-import org.sbml.jsbml.Parameter;
-import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.Species;
+import org.apache.commons.math.ode.DerivativeException;
+import org.sbml.jsbml.*;
 import org.sbml.jsbml.util.Maths;
 import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
+import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sbml.SBMLValueHolder;
 
@@ -1088,6 +1083,29 @@ public class ASTNodeInterpreter {
    */
   public double uMinus(ASTNodeValue userObject, double time, double delay) {
     return -userObject.compileDouble(time, delay);
+  }
+
+  public double rateOf(SBMLinterpreter sbmlInterpreter, CallableSBase sBase, double time) {
+
+    if ((time < 0d) || (sBase instanceof LocalParameter)) {
+      return 0d;
+    }
+
+    Map<String, Integer> symbolHash = sbmlInterpreter.getSymbolHash();
+    double[] Y = sbmlInterpreter.getY();
+
+    if ((sbmlInterpreter.getRateRulesRoots().size() != 0) && (sbmlInterpreter.getRateRulesRoots().get(symbolHash.get(sBase.getId())) != null)) {
+      return sbmlInterpreter.getRateRulesRoots().get(sbmlInterpreter.getSymbolHash().get(sBase.getId())).getNodeObject().compileDouble(time, 0d);
+    }
+
+    double[] derivatives = new double[Y.length];
+    try {
+      sbmlInterpreter.computeDerivatives(time, Y, derivatives);
+    } catch (DerivativeException e) {
+      e.printStackTrace();
+    }
+
+    return derivatives[symbolHash.get(sBase.getId())];
   }
 
 }

@@ -70,25 +70,7 @@ import org.simulator.math.odes.EventDESystem;
 import org.simulator.math.odes.EventInProgress;
 import org.simulator.math.odes.FastProcessDESystem;
 import org.simulator.math.odes.RichDESystem;
-import org.simulator.sbml.astnode.ASTNodeInterpreter;
-import org.simulator.sbml.astnode.ASTNodeValue;
-import org.simulator.sbml.astnode.AssignmentRuleValue;
-import org.simulator.sbml.astnode.CompartmentOrParameterValue;
-import org.simulator.sbml.astnode.DivideValue;
-import org.simulator.sbml.astnode.FunctionValue;
-import org.simulator.sbml.astnode.IntegerValue;
-import org.simulator.sbml.astnode.LocalParameterValue;
-import org.simulator.sbml.astnode.MinusValue;
-import org.simulator.sbml.astnode.NamedValue;
-import org.simulator.sbml.astnode.PlusValue;
-import org.simulator.sbml.astnode.PowerValue;
-import org.simulator.sbml.astnode.RateRuleValue;
-import org.simulator.sbml.astnode.ReactionValue;
-import org.simulator.sbml.astnode.RootFunctionValue;
-import org.simulator.sbml.astnode.SpeciesReferenceValue;
-import org.simulator.sbml.astnode.SpeciesValue;
-import org.simulator.sbml.astnode.StoichiometryValue;
-import org.simulator.sbml.astnode.TimesValue;
+import org.simulator.sbml.astnode.*;
 
 /**
  * <p>
@@ -2242,7 +2224,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
                             copiedAST));
                     break;
                 default:
-                    copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
+                    copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(this, nodeInterpreter,
                             copiedAST));
                     break;
             }
@@ -2857,6 +2839,18 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     @Override
     public void setDelaysIncluded(boolean delaysIncluded) {
         this.delaysIncluded = delaysIncluded;
+    }
+
+    public List<RateRuleValue> getRateRulesRoots() {
+        return rateRulesRoots;
+    }
+
+    public Map<String, Integer> getSymbolHash() {
+        return symbolHash;
+    }
+
+    public double[] getY() {
+        return Y;
     }
 
 }
