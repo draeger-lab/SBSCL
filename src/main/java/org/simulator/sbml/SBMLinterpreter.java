@@ -160,6 +160,12 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     private List<ConstraintListener> listOfConstraintListeners;
 
     /**
+     * An array that stores derivatives of each species in the model system at
+     * current time.
+     */
+    public double[] changeRate;
+
+    /**
      * Adds the given {@link ConstraintListener} to this interpreter's list of
      * listeners.
      *
@@ -1062,6 +1068,17 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
             throw new DerivativeException(exc);
         }
 
+        this.changeRate = changeRate;
+
+    }
+
+    /**
+     *
+     * @return the array of derivatives of each species of the model system at
+     * the current time.
+     */
+    public double[] getNewChangeRate() {
+        return changeRate;
     }
 
     /* (non-Javadoc)

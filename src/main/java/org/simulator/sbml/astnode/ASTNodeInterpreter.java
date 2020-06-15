@@ -718,7 +718,7 @@ public class ASTNodeInterpreter {
    * @return booleanValue the interpreted boolean value of the node
    */
   public boolean not(ASTNodeValue node, double time) {
-    return node.compileBoolean(time) ? false : true;
+    return !(node.compileDouble(time, 0d) > 0d);
   }
 
   /**
@@ -729,7 +729,7 @@ public class ASTNodeInterpreter {
    */
   public boolean or(ASTNodeValue[] children, double time) {
     for (int i = 0; i < children.length; i++) {
-      if (children[i].compileBoolean(time)) { return true; }
+      if (children[i].compileDouble(time, 0d) > 0d) { return true; }
     }
     return false;
   }
@@ -744,7 +744,7 @@ public class ASTNodeInterpreter {
     boolean value = false;
     int size = children.length;
     for (int i = 0; i < size; i++) {
-      if (children[i].compileBoolean(time)) {
+      if (children[i].compileDouble(time, 0d) > 0d) {
         if (value) {
           return false;
         } else {
@@ -763,7 +763,7 @@ public class ASTNodeInterpreter {
    */
   public boolean and(ASTNodeValue[] children, int size, double time) {
     for (int i = 0; i < size; i++) {
-      if (!(children[i].compileBoolean(time))) { return false; }
+      if (!(children[i].compileDouble(time, 0d) > 0d)) { return false; }
     }
     return true;
   }
@@ -1099,7 +1099,6 @@ public class ASTNodeInterpreter {
     }
 
     Map<String, Integer> symbolHash = sbmlInterpreter.getSymbolHash();
-    double[] Y = sbmlInterpreter.getY();
 
     for (int i = 0; i < sbmlInterpreter.getRateRulesRoots().size(); i++) {
       if (sbmlInterpreter.getRateRulesRoots().get(i).getVariable().equals(sBase.getId())) {
@@ -1107,14 +1106,14 @@ public class ASTNodeInterpreter {
       }
     }
 
-    double[] derivatives = new double[Y.length];
-    try {
-      sbmlInterpreter.computeDerivatives(time, Y, derivatives);
-    } catch (DerivativeException e) {
-      e.printStackTrace();
+    double[] changeRate = sbmlInterpreter.getNewChangeRate();
+
+    if (changeRate != null) {
+      return changeRate[symbolHash.get(sBase.getId())];
+    } else {
+      return 0d;
     }
 
-    return derivatives[symbolHash.get(sBase.getId())];
   }
 
 }
