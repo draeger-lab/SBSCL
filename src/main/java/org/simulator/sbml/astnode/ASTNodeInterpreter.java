@@ -1098,10 +1098,24 @@ public class ASTNodeInterpreter {
       return 0d;
     }
 
+    if ((sBase instanceof Parameter) && (((Parameter) sBase).isConstant())) {
+      return 0d;
+    }
+
+    if ((sBase instanceof Compartment) && (((Compartment) sBase).isConstant())) {
+      return 0d;
+    }
+
+    if ((sBase instanceof Species) && (((Species) sBase).isConstant())) {
+      return 0d;
+    }
+
     Map<String, Integer> symbolHash = sbmlInterpreter.getSymbolHash();
 
+    List<RateRuleValue> rateRulesRoots = sbmlInterpreter.getRateRulesRoots();
     for (int i = 0; i < sbmlInterpreter.getRateRulesRoots().size(); i++) {
-      if (sbmlInterpreter.getRateRulesRoots().get(i).getVariable().equals(sBase.getId())) {
+      RateRuleValue rrRoot = rateRulesRoots.get(i);
+      if (rrRoot.getVariable().equals(sBase.getId())) {
         return sbmlInterpreter.getRateRulesRoots().get(i).getNodeObject().compileDouble(time, 0d);
       }
     }

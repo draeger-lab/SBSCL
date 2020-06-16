@@ -528,6 +528,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
                 + model.getParameterCount() + speciesReferencesInRateRules];
         oldY = new double[Y.length];
         oldY2 = new double[Y.length];
+        changeRate = new double[Y.length];
 
         isAmount = new boolean[Y.length];
         compartmentIndexes = new int[Y.length];
@@ -1468,6 +1469,12 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
         astNodeTime += 0.01d;
         processInitialAssignments(astNodeTime, Y);
+
+        try {
+            computeDerivatives(0d, Y, changeRate);
+        } catch (DerivativeException e) {
+            e.printStackTrace();
+        }
 
         astNodeTime += 0.01d;
         processRules(astNodeTime, null, Y, true);
