@@ -228,6 +228,14 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     private Map<String, Integer> symbolHash;
 
     /**
+     * Hashes the id of all {@link Compartment}s, {@link Species}, global
+     * {@link Parameter}s, and, if necessary, {@link SpeciesReference}s in
+     * {@link RateRule}s to an boolean object which contains whether it is
+     * constant or not
+     */
+    private Map<String, Boolean> constantHash;
+
+    /**
      * An array of strings that memorizes at each position the identifier of the
      * corresponding element in the Y array.
      */
@@ -502,6 +510,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
         this.model = model;
         v = new double[this.model.getListOfReactions().size()];
         symbolHash = new HashMap<String, Integer>();
+        constantHash = new HashMap<String, Boolean>();
         compartmentHash = new HashMap<String, Integer>();
         stoichiometricCoefHash = new HashMap<String, Double>();
         nodeInterpreter = new ASTNodeInterpreter(this);
@@ -1162,6 +1171,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
     public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue, Map<String, Boolean> amountHash) throws ModelOverdeterminedException, SBMLException {
         int i;
         symbolHash.clear();
+        constantHash.clear();
         compartmentHash.clear();
         Integer compartmentIndex, yIndex = Integer.valueOf(0);
         currentTime = 0d;
@@ -1216,6 +1226,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
             }
 
             symbolHash.put(c.getId(), yIndex);
+            constantHash.put(c.getId(), c.isConstant());
             symbolIdentifiers[yIndex] = c.getId();
             yIndex++;
         }
@@ -1285,6 +1296,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
             }
 
             symbolHash.put(s.getId(), yIndex);
+            constantHash.put(s.getId(), s.isConstant());
             compartmentHash.put(s.getId(), compartmentIndex);
             compartmentIndexes[yIndex] = compartmentIndex;
             symbolIdentifiers[yIndex] = s.getId();
@@ -1299,6 +1311,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
             SpeciesReference sr = model.findSpeciesReference(id);
             Y[yIndex] = sr.getStoichiometry();
             symbolHash.put(id, yIndex);
+            constantHash.put(id, sr.isConstant());
             symbolIdentifiers[yIndex] = id;
             yIndex++;
         }
@@ -1314,6 +1327,7 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
                 Y[yIndex] = p.getValue();
             }
             symbolHash.put(p.getId(), yIndex);
+            constantHash.put(p.getId(), p.isConstant());
             symbolIdentifiers[yIndex] = p.getId();
             yIndex++;
         }
@@ -2875,6 +2889,10 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
     public Map<String, Integer> getSymbolHash() {
         return symbolHash;
+    }
+
+    public Map<String, Boolean> getConstantHash() {
+        return constantHash;
     }
 
     public double[] getY() {

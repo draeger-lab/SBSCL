@@ -1094,19 +1094,8 @@ public class ASTNodeInterpreter {
    */
   public double rateOf(SBMLinterpreter sbmlInterpreter, CallableSBase sBase, double time) {
 
-    if ((time < 0d) || (sBase instanceof LocalParameter)) {
-      return 0d;
-    }
-
-    if ((sBase instanceof Parameter) && (((Parameter) sBase).isConstant())) {
-      return 0d;
-    }
-
-    if ((sBase instanceof Compartment) && (((Compartment) sBase).isConstant())) {
-      return 0d;
-    }
-
-    if ((sBase instanceof Species) && (((Species) sBase).isConstant())) {
+    Map<String, Boolean> constantHash = sbmlInterpreter.getConstantHash();
+    if ((time < 0d) || (sBase instanceof LocalParameter) || (constantHash.get(sBase.getId()))) {
       return 0d;
     }
 
