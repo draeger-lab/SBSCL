@@ -1455,6 +1455,12 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
             }
         }
 
+        try {
+            computeDerivatives(0d, Y, changeRate);
+        } catch (DerivativeException e) {
+            e.printStackTrace();
+        }
+
         /*
          * All other rules
          */
