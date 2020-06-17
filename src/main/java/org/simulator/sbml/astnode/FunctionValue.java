@@ -118,7 +118,7 @@ public class FunctionValue extends ASTNodeValue {
   @Override
   protected void computeDoubleValue(double delay) {
     if (math != null) {
-      doubleValue = interpreter.functionDouble(evaluationBlock, variables, children, numChildren, argumentValues, time);
+      doubleValue = interpreter.functionDouble(evaluationBlock, variables, children, numChildren, argumentValues, time, delay);
     } else {
       doubleValue = Double.NaN;
     }

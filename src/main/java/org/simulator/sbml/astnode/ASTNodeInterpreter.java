@@ -177,11 +177,11 @@ public class ASTNodeInterpreter {
    * @return  doubleValue the interpreted double value of the node
    */
   public double functionDouble(ASTNodeValue rightChild,
-    List<String> variables, ASTNodeValue[] children, int nArguments, double[] values, double time) {
+    List<String> variables, ASTNodeValue[] children, int nArguments, double[] values, double time, double delay) {
     for (int i = 0; i < nArguments; i++) {
-      values[i] = children[i].compileDouble(time, 0d);
+      values[i] = children[i].compileDouble(time, delay);
     }
-    double value = rightChild.compileDouble(time, 0d);
+    double value = rightChild.compileDouble(time, delay);
     return value;
   }
 
