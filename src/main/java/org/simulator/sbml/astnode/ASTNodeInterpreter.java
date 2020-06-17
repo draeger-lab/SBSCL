@@ -1094,12 +1094,9 @@ public class ASTNodeInterpreter {
    */
   public double rateOf(SBMLinterpreter sbmlInterpreter, CallableSBase sBase, double time) {
 
-    Map<String, Boolean> constantHash = sbmlInterpreter.getConstantHash();
-    if ((time < 0d) || (sBase instanceof LocalParameter) || (constantHash.get(sBase.getId()))) {
+    if ((time < 0d) || (sBase instanceof LocalParameter) || (sbmlInterpreter.getConstantHash().get(sBase.getId()))) {
       return 0d;
     }
-
-    Map<String, Integer> symbolHash = sbmlInterpreter.getSymbolHash();
 
     List<RateRuleValue> rateRulesRoots = sbmlInterpreter.getRateRulesRoots();
     for (int i = 0; i < sbmlInterpreter.getRateRulesRoots().size(); i++) {
@@ -1112,7 +1109,7 @@ public class ASTNodeInterpreter {
     double[] changeRate = sbmlInterpreter.getNewChangeRate();
 
     if (changeRate != null) {
-      return changeRate[symbolHash.get(sBase.getId())];
+      return changeRate[sbmlInterpreter.getSymbolHash().get(sBase.getId())];
     } else {
       return 0d;
     }

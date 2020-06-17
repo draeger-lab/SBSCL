@@ -1469,11 +1469,10 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
             }
         }
 
-        try {
-            computeDerivatives(0d, Y, changeRate);
-        } catch (DerivativeException e) {
-            e.printStackTrace();
-        }
+        /*
+         * Compute changes due to reactions
+         */
+        processVelocities(changeRate, astNodeTime);
 
         /*
          * All other rules
@@ -1489,12 +1488,6 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
 
         astNodeTime += 0.01d;
         processInitialAssignments(astNodeTime, Y);
-
-        try {
-            computeDerivatives(0d, Y, changeRate);
-        } catch (DerivativeException e) {
-            e.printStackTrace();
-        }
 
         astNodeTime += 0.01d;
         processRules(astNodeTime, null, Y, true);
