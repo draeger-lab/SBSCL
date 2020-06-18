@@ -1479,24 +1479,23 @@ public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
          */
         astNodeTime += 0.01d;
         processRules(astNodeTime, null, Y, true);
+
         /*
-         * Process initial assignments a 2nd time because there can be rules
-         * dependent on initial assignments and vice versa, so one of both has to be
-         * evaluated twice at the start
+         * Process initial assignments and rules till the Y array
+         * becomes unchanged on running further initial assignments and rules.
+         *
+         * Reason: Initial assignments and rules can be dependent on each other.
          */
 
-        while (true) {
-            double[] check = Y.clone();
+        double[] check;
+        do {
+            check = Y.clone();
             astNodeTime += 0.01d;
             processInitialAssignments(astNodeTime, Y);
 
             astNodeTime += 0.01d;
             processRules(astNodeTime, null, Y, true);
-
-            if (Arrays.equals(check, Y)) {
-                break;
-            }
-        }
+        } while (!Arrays.equals(check, Y));
 
         // save the initial values of this system
         System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
