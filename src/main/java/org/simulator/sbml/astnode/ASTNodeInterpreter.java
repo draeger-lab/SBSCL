@@ -1092,9 +1092,9 @@ public class ASTNodeInterpreter {
    * @param time
    * @return doubleValue the interpreted double value of the node
    */
-  public double rateOf(SBMLinterpreter sbmlInterpreter, CallableSBase sBase, double time) {
+  public double rateOf(SBMLinterpreter sbmlInterpreter, CallableSBase sBase, double time, double delay) {
 
-    if ((time < 0d) || (sBase instanceof LocalParameter) || (sbmlInterpreter.getConstantHash().get(sBase.getId()))) {
+    if ((time < delay) || (sBase instanceof LocalParameter) || (sbmlInterpreter.getConstantHash().get(sBase.getId()))) {
       return 0d;
     }
 

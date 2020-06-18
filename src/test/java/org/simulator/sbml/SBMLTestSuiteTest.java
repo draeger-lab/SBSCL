@@ -98,7 +98,7 @@ public class SBMLTestSuiteTest {
     @Test
     public void testModel() throws FileNotFoundException, IOException, XMLStreamException {
 
-        if (path.contains("01592") && path.contains("01287")) {
+        if (path.contains("01592") || path.contains("01287")) {
             // FIXME: skipping test which takes 20-30 minutes to run (see https://github.com/draeger-lab/SBSCL/issues/39)
             assert (false);
         }

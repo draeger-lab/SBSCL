@@ -549,7 +549,7 @@ public class ASTNodeValue {
         ASTNode child = node.getChild(0);
         if (child.isVariable()) {
           CallableSBase variable1 = child.getVariable();
-          doubleValue = interpreter.rateOf(sbmlInterpreter, variable1, time);
+          doubleValue = interpreter.rateOf(sbmlInterpreter, variable1, time, delay);
         } else {
           System.out.println("Error");
         }
