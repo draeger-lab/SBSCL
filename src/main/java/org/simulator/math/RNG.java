@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 
 /**
  * A Random Number Generator.
- * 
+ *
  * @author Marcel Kronfeld
  * @version $Rev$
  * @since 0.9
@@ -38,15 +38,17 @@ import java.util.logging.Logger;
 public class RNG {
 
   /**
-   * 
+   *
    */
   private static Random RANDOM;
+
   /**
-   * 
+   *
    */
   private static long RANDOM_SEED;
+
   /**
-   * 
+   *
    */
   private static final Logger logger = Logger.getLogger(RNG.class.getName());
 
@@ -60,6 +62,7 @@ public class RNG {
 
   /**
    * Generates a random integer between first and second input value.
+   *
    * @param low
    * @param high
    * @return randomNumber
@@ -71,12 +74,9 @@ public class RNG {
     }
     int result = (Math.abs(RANDOM.nextInt()) % (high - low + 1)) + low;
     if ((result < low) || (result > high)) {
-      logger.fine(MessageFormat.format(
-        "Error, invalid value {0,number} in RNG.randomInt! boundaries were low = {1,number}\thigh = {2,number}",
-        result, low, high));
+      logger.fine(MessageFormat.format("Error, invalid value {0,number} in RNG.randomInt! boundaries were low = {1,number}\thigh = {2,number}", result, low, high));
       result = Math.abs(RANDOM.nextInt() % (high - low + 1)) + low;
     }
     return result;
   }
-
 }

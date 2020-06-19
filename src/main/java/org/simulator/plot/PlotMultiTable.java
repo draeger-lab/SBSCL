@@ -24,7 +24,9 @@
 package org.simulator.plot;
 
 import org.jfree.chart.ChartPanel;
+
 import java.util.Iterator;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
@@ -35,70 +37,58 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
  * This class adds output data-plot support to SBSCL
- * 
+ *
  * @author Shalin Shah
  * @since 1.5
  */
 @SuppressWarnings("serial")
 public class PlotMultiTable extends ApplicationFrame {
-	private MultiTable species;
-	private DefaultCategoryDataset data;
-	private String title;
 
-	/**
-	 * Initializes the JFreeChart and dataSet for the chart using MultiTable
-	 * 
-	 * @param table
-	 *        The input data type to the plot API is MultiTable which gets converted
-	 *        internally to DefaultCategoryDataset
-	 * @param title
-	 */
-	public PlotMultiTable(MultiTable table, String title) {
-		super(title);
+  private MultiTable species;
 
-		this.title = title;
-		species = table;
-		JFreeChart lineChart = ChartFactory.createLineChart(title, 
-				"time", "conentration (nM)", createDataset(),
-				PlotOrientation.VERTICAL, true, true, false);
+  private DefaultCategoryDataset data;
 
-		ChartPanel chartPanel = new ChartPanel( lineChart );
-		chartPanel.setPreferredSize( new java.awt.Dimension( 560 , 367 ) );
-		setContentPane(chartPanel);
+  private String title;
 
-	}
-	
-	public PlotMultiTable(MultiTable table) {
-		super("Output plot");
+  /**
+   * Initializes the JFreeChart and dataSet for the chart using MultiTable
+   *
+   * @param table The input data type to the plot API is MultiTable which gets converted
+   *              internally to DefaultCategoryDataset
+   * @param title
+   */
+  public PlotMultiTable(MultiTable table, String title) {
+    super(title);
+    this.title = title;
+    species = table;
+    JFreeChart lineChart = ChartFactory.createLineChart(title, "time", "conentration (nM)", createDataset(), PlotOrientation.VERTICAL, true, true, false);
+    ChartPanel chartPanel = new ChartPanel(lineChart);
+    chartPanel.setPreferredSize(new java.awt.Dimension(560, 367));
+    setContentPane(chartPanel);
+  }
 
-		this.title = "Output plot";
-		species = table;
-		JFreeChart lineChart = ChartFactory.createLineChart(title, 
-				"time", "conentration (nM)", createDataset(),
-				PlotOrientation.VERTICAL, true, true, false);
+  public PlotMultiTable(MultiTable table) {
+    super("Output plot");
+    this.title = "Output plot";
+    species = table;
+    JFreeChart lineChart = ChartFactory.createLineChart(title, "time", "conentration (nM)", createDataset(), PlotOrientation.VERTICAL, true, true, false);
+    ChartPanel chartPanel = new ChartPanel(lineChart);
+    chartPanel.setPreferredSize(new java.awt.Dimension(560, 367));
+    setContentPane(chartPanel);
+  }
 
-		ChartPanel chartPanel = new ChartPanel( lineChart );
-		chartPanel.setPreferredSize( new java.awt.Dimension( 560 , 367 ) );
-		setContentPane(chartPanel);
-
-	}
-
-	/**
-	 * Helper function that converts MultiTable to DataSet for LineChart
-	 */
-	private DefaultCategoryDataset createDataset() {
-		data = new DefaultCategoryDataset();
-
-
-		for(int i = 1; i < species.getColumnCount(); i++) {
-			Column col = species.getColumn(i);
-
-			int time_step = 0;
-			for (Iterator<Double> iter = col.iterator(); iter.hasNext(); time_step++){
-				data.addValue(iter.next().doubleValue(), col.getColumnName(),  String.valueOf(species.getTimePoint(time_step)));
-			}
-		}
-
-		return data;
-	}
+  /**
+   * Helper function that converts MultiTable to DataSet for LineChart
+   */
+  private DefaultCategoryDataset createDataset() {
+    data = new DefaultCategoryDataset();
+    for (int i = 1; i < species.getColumnCount(); i++) {
+      Column col = species.getColumn(i);
+      int time_step = 0;
+      for (Iterator<Double> iter = col.iterator(); iter.hasNext(); time_step++) {
+        data.addValue(iter.next().doubleValue(), col.getColumnName(), String.valueOf(species.getTimePoint(time_step)));
+      }
+    }
+    return data;
+  }
 }

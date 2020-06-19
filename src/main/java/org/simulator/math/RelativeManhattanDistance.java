@@ -26,7 +26,7 @@ package org.simulator.math;
 
 /**
  * Class for computation of the relative Manhattan distance of two vectors.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
@@ -52,5 +52,4 @@ public class RelativeManhattanDistance extends Relative_N_Metric {
   public void setRoot(double root) {
     //root should not be changed
   }
-
 }

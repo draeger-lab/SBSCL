@@ -28,7 +28,7 @@ import org.sbml.jsbml.ASTNode;
 
 /**
  * This class can compute and store the value of a minus node.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  */
@@ -53,5 +53,4 @@ public class MinusValue extends ASTNodeValue {
       doubleValue = interpreter.minus(children, numChildren, time, delay);
     }
   }
-
 }

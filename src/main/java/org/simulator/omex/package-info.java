@@ -21,8 +21,8 @@
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
+
 /**
  * @author Shalin
- *
  */
 package org.simulator.omex;

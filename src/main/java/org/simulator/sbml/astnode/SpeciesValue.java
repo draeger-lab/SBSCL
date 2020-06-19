@@ -31,12 +31,13 @@ import org.simulator.sbml.SBMLValueHolder;
 /**
  * This class computes and stores values of {@link ASTNode}s that refer to a
  * {@link Species}.
- * 
+ *
  * @author Roland Keller
  * @version $Rev: 205 $
  * @since 1.0
  */
 public class SpeciesValue extends ASTNodeValue {
+
   /**
    * The corresponding species
    */
@@ -89,7 +90,6 @@ public class SpeciesValue extends ASTNodeValue {
   private String compartmentID;
 
   /**
-   * 
    * @param interpreter
    * @param node
    * @param s
@@ -100,8 +100,7 @@ public class SpeciesValue extends ASTNodeValue {
    * @param zeroSpatialDimensions
    * @param isAmount
    */
-  public SpeciesValue(ASTNodeInterpreter interpreter, ASTNode node,
-    Species s, SBMLValueHolder valueHolder, int position, int compartmentPosition, String compartmentID, boolean zeroSpatialDimensions, boolean isAmount) {
+  public SpeciesValue(ASTNodeInterpreter interpreter, ASTNode node, Species s, SBMLValueHolder valueHolder, int position, int compartmentPosition, String compartmentID, boolean zeroSpatialDimensions, boolean isAmount) {
     super(interpreter, node);
     this.s = s;
     id = s.getId();
@@ -124,66 +123,48 @@ public class SpeciesValue extends ASTNodeValue {
   protected void computeDoubleValue(double delay) {
     if (delay == 0) {
       if (isAmount && !hasOnlySubstanceUnits) {
-        double compartmentValue = valueHolder
-            .getCurrentValueOf(compartmentPosition);
+        double compartmentValue = valueHolder.getCurrentValueOf(compartmentPosition);
         if ((compartmentValue == 0d) || zeroSpatialDimensions) {
           doubleValue = valueHolder.getCurrentValueOf(position);
         } else {
-          doubleValue = valueHolder.getCurrentValueOf(position)
-              / compartmentValue;
-
+          doubleValue = valueHolder.getCurrentValueOf(position) / compartmentValue;
         }
       } else if (!isAmount && hasOnlySubstanceUnits) {
-        double compartmentValue = valueHolder
-            .getCurrentValueOf(compartmentPosition);
+        double compartmentValue = valueHolder.getCurrentValueOf(compartmentPosition);
         if ((compartmentValue == 0d) || zeroSpatialDimensions) {
           doubleValue = valueHolder.getCurrentValueOf(position);
         } else {
-          doubleValue = valueHolder.getCurrentValueOf(position)
-              * compartmentValue;
+          doubleValue = valueHolder.getCurrentValueOf(position) * compartmentValue;
         }
       } else {
         doubleValue = valueHolder.getCurrentValueOf(position);
-
       }
-    }
-    else {
+    } else {
       double valueTime = interpreter.symbolTime() - delay;
-
-
       if (isAmount && !hasOnlySubstanceUnits) {
-        double compartmentValue = valueHolder
-            .computeDelayedValue(valueTime, compartmentID, null, null, 0);
+        double compartmentValue = valueHolder.computeDelayedValue(valueTime, compartmentID, null, null, 0);
         if ((compartmentValue == 0d) || zeroSpatialDimensions) {
           doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
         } else {
-          doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0)
-              / compartmentValue;
-
+          doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0) / compartmentValue;
         }
       } else if (!isAmount && hasOnlySubstanceUnits) {
-        double compartmentValue = valueHolder
-            .computeDelayedValue(valueTime, compartmentID, null, null, 0);
+        double compartmentValue = valueHolder.computeDelayedValue(valueTime, compartmentID, null, null, 0);
         if ((compartmentValue == 0d) || zeroSpatialDimensions) {
           doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
         } else {
-          doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0)
-              * compartmentValue;
+          doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0) * compartmentValue;
         }
       } else {
         doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
-
       }
     }
     if (isConstant) {
       if ((valueHolder.getCurrentTime() > 0) && (delay == 0)) {
         alreadyProcessed = true;
-      }
-      else {
+      } else {
         alreadyProcessed = false;
       }
     }
-
   }
-
 }

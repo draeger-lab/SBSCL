@@ -30,7 +30,7 @@ import org.simulator.math.Mathematics;
 /**
  * In this class the Euler method for integration a differential equation system
  * is implemented.
- * 
+ *
  * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 0.9
@@ -50,7 +50,6 @@ public class EulerMethod extends AbstractDESSolver {
   }
 
   /**
-   * 
    * @param stepSize
    */
   public EulerMethod(double stepSize) {
@@ -58,10 +57,8 @@ public class EulerMethod extends AbstractDESSolver {
   }
 
   /**
-   * 
    * @param stepSize
-   * @param nonnegative
-   *            the nonnegative flag of the super class
+   * @param nonnegative the nonnegative flag of the super class
    * @see AbstractDESSolver
    */
   public EulerMethod(double stepSize, boolean nonnegative) {
@@ -70,6 +67,7 @@ public class EulerMethod extends AbstractDESSolver {
 
   /**
    * clone constructor
+   *
    * @param eulerMethod
    */
   public EulerMethod(EulerMethod eulerMethod) {
@@ -88,8 +86,8 @@ public class EulerMethod extends AbstractDESSolver {
    * @see org.simulator.math.odes.AbstractDESSolver#computeChange(org.simulator.math.odes.DESystem, double[], double, double, double[], boolean)
    */
   @Override
-  public double[] computeChange(DESystem DES, double[] yPrev, double t,
-    double stepSize, double[] change, boolean steadyState) throws DerivativeException {
+  public double[] computeChange(DESystem DES, double[] yPrev, double t, double stepSize, double[] change, boolean steadyState)
+      throws DerivativeException {
     DES.computeDerivatives(t, yPrev, change);
     Mathematics.scale(stepSize, change);
     return change;
@@ -118,5 +116,4 @@ public class EulerMethod extends AbstractDESSolver {
   public int getKiSAOterm() {
     return 261;
   }
-
 }

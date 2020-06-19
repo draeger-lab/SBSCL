@@ -30,14 +30,13 @@ import org.simulator.math.odes.MultiTable.Block.Column;
  * An implementation of an n-metric. An n-metric is basically the n<sup>th</sup>
  * root of the sum of the distances of every single element in two vectors
  * (arrays), where this distance will always be exponentiated by the value of n.
- * 
+ *
  * @author Andreas Dr&auml;ger
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
  */
 public class N_Metric extends QualityMeasure {
-
 
   /**
    * Generated serial identifier.
@@ -68,7 +67,7 @@ public class N_Metric extends QualityMeasure {
    * <li>two is the Euclidean metric.</li>
    * <li>Infinity is the maximum norm.</li>
    * </ul>
-   * 
+   *
    * @param root
    */
   public N_Metric(double root) {
@@ -77,7 +76,6 @@ public class N_Metric extends QualityMeasure {
   }
 
   /**
-   * 
    * @param x_i
    * @param y_i
    * @param root
@@ -89,18 +87,17 @@ public class N_Metric extends QualityMeasure {
   }
 
   /*
-   * 
+   *
    */
   @Override
-  public double distance(Column x,
-    Column y, double defaultValue) {
+  public double distance(Column x, Column y, double defaultValue) {
     if (root == 0d) {
       return defaultValue;
     }
     double d = 0;
     double x_i;
     double y_i;
-    for (int i = 0; i!= Math.min(x.getRowCount(), y.getRowCount()); i++) {
+    for (int i = 0; i != Math.min(x.getRowCount(), y.getRowCount()); i++) {
       x_i = x.getValue(i);
       y_i = y.getValue(i);
       if (computeDistanceFor(x_i, y_i, root, defaultValue)) {
@@ -110,9 +107,9 @@ public class N_Metric extends QualityMeasure {
     return overallDistance(d, root, defaultValue);
   }
 
-
   /**
    * Returns the n of the metric.
+   *
    * @return n
    */
   public double getRoot() {
@@ -121,7 +118,7 @@ public class N_Metric extends QualityMeasure {
 
   /**
    * Helper method, which can be overridden in extending classes.
-   * 
+   *
    * @param distance
    * @param root
    * @param defaultValue
@@ -133,6 +130,7 @@ public class N_Metric extends QualityMeasure {
 
   /**
    * Sets the root.
+   *
    * @param root
    */
   public void setRoot(double root) {
@@ -140,7 +138,7 @@ public class N_Metric extends QualityMeasure {
   }
 
   /**
-   * @param x expected
+   * @param x            expected
    * @param defaultValue
    * @return the distance of the column vector x to the point of origin.
    */
@@ -156,7 +154,6 @@ public class N_Metric extends QualityMeasure {
         d += additiveTerm(x_i, 0d, root, defaultValue);
       }
     }
-    return overallDistance(d,root,defaultValue);
+    return overallDistance(d, root, defaultValue);
   }
-
 }

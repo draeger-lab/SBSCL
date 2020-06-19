@@ -34,7 +34,7 @@ import org.simulator.sbml.SBMLValueHolder;
 /**
  * This class can compute and store the value of an {@link AssignmentRule}
  * together with the variable of the rule.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  */
@@ -49,10 +49,9 @@ public class AssignmentRuleValue extends RuleValue {
    * The map of the values of the species references that are contained in
    * rules
    */
-  private Map<String,Double> stoichiometricCoefHash;
+  private Map<String, Double> stoichiometricCoefHash;
 
   /**
-   * 
    * @param nodeObject
    * @param index
    */
@@ -62,19 +61,20 @@ public class AssignmentRuleValue extends RuleValue {
 
   /**
    * Constructor for rules that refer to a species reference
+   *
    * @param nodeObject
    * @param speciesReferenceID
    * @param stoichiometricCoefHash
    */
-  public AssignmentRuleValue(ASTNodeValue nodeObject, String speciesReferenceID,
-    Map<String, Double> stoichiometricCoefHash) {
-    super(nodeObject,-1);
+  public AssignmentRuleValue(ASTNodeValue nodeObject, String speciesReferenceID, Map<String, Double> stoichiometricCoefHash) {
+    super(nodeObject, -1);
     this.speciesReferenceID = speciesReferenceID;
     this.stoichiometricCoefHash = stoichiometricCoefHash;
   }
 
   /**
    * Constructor for rules that refer to a species
+   *
    * @param nodeObject
    * @param index
    * @param sp
@@ -82,15 +82,14 @@ public class AssignmentRuleValue extends RuleValue {
    * @param hasZeroSpatialDimensions
    * @param valueHolder
    */
-  public AssignmentRuleValue(ASTNodeValue nodeObject, int index,
-    Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder) {
+  public AssignmentRuleValue(ASTNodeValue nodeObject, int index, Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder) {
     super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder);
   }
 
   /**
    * Processes the rule and saves the new value of the corresponding variable
    * in the Y vector if changeY is set to true.
-   * 
+   *
    * @param Y
    * @param time
    * @param changeY
@@ -106,22 +105,20 @@ public class AssignmentRuleValue extends RuleValue {
       if (oldValue != value) {
         return true;
       }
-    }
-    else if (speciesReferenceID != null) {
+    } else if (speciesReferenceID != null) {
       processAssignmentVariable(time);
-      Double v=stoichiometricCoefHash.get(speciesReferenceID);
+      Double v = stoichiometricCoefHash.get(speciesReferenceID);
       stoichiometricCoefHash.put(speciesReferenceID, value);
-
       if ((v != null) && (v.doubleValue() != value)) {
         return true;
       }
     }
     return false;
-
   }
 
   /**
    * Returns the id of the species reference (if present), null otherwise.
+   *
    * @return id
    */
   public String getSpeciesReferenceID() {
@@ -131,5 +128,4 @@ public class AssignmentRuleValue extends RuleValue {
   public ASTNode getMath() {
     return nodeObject.getNode();
   }
-
 }

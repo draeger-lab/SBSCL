@@ -31,7 +31,7 @@ import org.simulator.sbml.SBMLinterpreter;
 /**
  * This class computes and stores values of {@link ASTNode}s that refer to a
  * {@link Reaction}.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
@@ -49,13 +49,11 @@ public class ReactionValue extends ASTNodeValue {
   protected ASTNodeValue kineticLawUserObject;
 
   /**
-   * 
    * @param interpreter
    * @param node
    * @param r
    */
-  public ReactionValue(ASTNodeInterpreter interpreter, ASTNode node,
-    Reaction r) {
+  public ReactionValue(ASTNodeInterpreter interpreter, ASTNode node, Reaction r) {
     super(interpreter, node);
     this.r = r;
     if (r.isSetKineticLaw()) {
@@ -75,5 +73,4 @@ public class ReactionValue extends ASTNodeValue {
       doubleValue = kineticLawUserObject.compileDouble(time, delay);
     }
   }
-
 }

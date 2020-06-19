@@ -38,11 +38,12 @@ import org.simulator.sbml.SBMLinterpreter;
 /**
  * This class computes and stores values of {@link ASTNode}s that refer to the
  * application of a {@link FunctionDefinition}.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  */
 public class FunctionValue extends ASTNodeValue {
+
   /**
    * The value of the evaluation block of the function stored in an ASTNodeObject.
    */
@@ -61,7 +62,7 @@ public class FunctionValue extends ASTNodeValue {
   /**
    * A map for storing the indexes of the arguments in the array argumentValues.
    */
-  protected Map<String,Integer> indexMap;
+  protected Map<String, Integer> indexMap;
 
   /**
    * The math of the function definition.
@@ -69,47 +70,33 @@ public class FunctionValue extends ASTNodeValue {
   protected ASTNode math;
 
   /**
-   * 
-   * @param interpreter
-   *            the interpreter
-   * @param node
-   *            the corresponding ASTNode
-   * @param variableNodes
-   *            the variables of the function as ASTNodes
+   * @param interpreter   the interpreter
+   * @param node          the corresponding ASTNode
+   * @param variableNodes the variables of the function as ASTNodes
    */
-  public FunctionValue(ASTNodeInterpreter interpreter,
-    ASTNode node, List<ASTNode> variableNodes) {
+  public FunctionValue(ASTNodeInterpreter interpreter, ASTNode node, List<ASTNode> variableNodes) {
     super(interpreter, node);
     CallableSBase variable = node.getVariable();
     if ((variable != null)) {
       if (variable instanceof FunctionDefinition) {
-        variables=new ArrayList<String>(variableNodes.size());
-        indexMap=new HashMap<String,Integer>();
-        int index=0;
-        for (ASTNode argument:variableNodes) {
-          String argumentName=interpreter.compileString(argument);
+        variables = new ArrayList<String>(variableNodes.size());
+        indexMap = new HashMap<String, Integer>();
+        int index = 0;
+        for (ASTNode argument : variableNodes) {
+          String argumentName = interpreter.compileString(argument);
           variables.add(argumentName);
           indexMap.put(argumentName, index);
           index++;
         }
-        argumentValues=new double[variables.size()];
+        argumentValues = new double[variables.size()];
       } else {
-        logger
-        .warning("ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! ("
-            + node.getName() + ", " + node.getParentSBMLObject() + ")");
-        throw new SBMLException(
-          "ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! ("
-              + node.getName() + ", " + node.getParentSBMLObject() + ")");
+        logger.warning("ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! (" + node.getName() + ", " + node.getParentSBMLObject() + ")");
+        throw new SBMLException("ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! (" + node.getName() + ", " + node.getParentSBMLObject() + ")");
         // doubleValue = compiler.compile(variable);
       }
-
     } else {
-      logger.warning("ASTNode of type FUNCTION but the variable is null !! ("
-          + node.getName() + ", " + node.getParentSBMLObject() + "). "
-          + "Check that your object is linked to a Model.");
+      logger.warning("ASTNode of type FUNCTION but the variable is null !! (" + node.getName() + ", " + node.getParentSBMLObject() + "). " + "Check that your object is linked to a Model.");
     }
-
-
   }
 
   /* (non-Javadoc)
@@ -138,15 +125,17 @@ public class FunctionValue extends ASTNodeValue {
 
   /**
    * Sets the math and evaluation block of the function definition.
+   *
    * @param math
    */
   public void setMath(ASTNode math) {
     this.math = math;
-    evaluationBlock=(ASTNodeValue) math.getRightChild().getUserObject(SBMLinterpreter.TEMP_VALUE);
+    evaluationBlock = (ASTNodeValue) math.getRightChild().getUserObject(SBMLinterpreter.TEMP_VALUE);
   }
 
   /**
    * Returns the values of the arguments.
+   *
    * @return argumentValues
    */
   public double[] getArgumentValues() {
@@ -155,11 +144,11 @@ public class FunctionValue extends ASTNodeValue {
 
   /**
    * Returns the index of a specific argument.
+   *
    * @param argumentName
    * @return index
    */
   public int getIndex(String argumentName) {
     return indexMap.get(argumentName);
   }
-
 }

@@ -32,7 +32,7 @@ import org.sbml.jsbml.SpeciesReference;
 /**
  * Computes for a {@link SpeciesReference} with a stoichiometry occuring in some
  * {@link Reaction} the stoichiometry.
- * 
+ *
  * @author Roland Keller
  * @version $Rev: 205 $
  */
@@ -90,16 +90,13 @@ public class StoichiometryValue {
   private boolean stoichiometrySet;
 
   /**
-   * 
    * @param sr
    * @param speciesRefIndex
    * @param stoichiometricCoefHash
    * @param Y
    * @param stoichiometryMathValue
    */
-  public StoichiometryValue(SpeciesReference sr,
-    int speciesRefIndex, Map<String, Double> stoichiometricCoefHash,
-    double[] Y, ASTNodeValue stoichiometryMathValue) {
+  public StoichiometryValue(SpeciesReference sr, int speciesRefIndex, Map<String, Double> stoichiometricCoefHash, double[] Y, ASTNodeValue stoichiometryMathValue) {
     isSetStoichiometryMath = sr.isSetStoichiometryMath();
     this.sr = sr;
     id = sr.getId();
@@ -108,14 +105,13 @@ public class StoichiometryValue {
     this.Y = Y;
     this.stoichiometryMathValue = stoichiometryMathValue;
     time = Double.NaN;
-
     computeStoichiometricValue();
   }
 
   /**
    * Computes the value of the stoichiometry at the current time if it has not
    * been computed yet or is not constant.
-   * 
+   *
    * @param time
    * @return doubleValue the value of the stoichiometry
    */
@@ -134,25 +130,23 @@ public class StoichiometryValue {
     if (speciesRefIndex >= 0) {
       stoichiometry = Y[speciesRefIndex];
       stoichiometricCoefHash.put(id, stoichiometry);
-      stoichiometrySet=true;
-    } else if (stoichiometricCoefHash != null
-        && stoichiometricCoefHash.containsKey(id)) {
+      stoichiometrySet = true;
+    } else if (stoichiometricCoefHash != null && stoichiometricCoefHash.containsKey(id)) {
       stoichiometry = stoichiometricCoefHash.get(id);
-      stoichiometrySet=true;
+      stoichiometrySet = true;
     } else {
       if (isSetStoichiometryMath) {
         stoichiometry = stoichiometryMathValue.compileDouble(time, 0d);
-        stoichiometrySet=true;
+        stoichiometrySet = true;
       } else if ((!sr.isSetStoichiometry()) && (sr.getLevel() >= 3)) {
         stoichiometry = 1d;
-        stoichiometrySet=false;
+        stoichiometrySet = false;
       } else {
         stoichiometry = sr.getCalculatedStoichiometry();
         if (id.equals("")) {
-          stoichiometrySet=true;
-        }
-        else {
-          stoichiometrySet=false;
+          stoichiometrySet = true;
+        } else {
+          stoichiometrySet = false;
         }
       }
     }
@@ -178,5 +172,4 @@ public class StoichiometryValue {
   public double getStoichiometry() {
     return stoichiometry;
   }
-
 }

@@ -29,11 +29,12 @@ import org.sbml.jsbml.ASTNode;
 /**
  * This class computes and stores values of {@link ASTNode}s that refer to a
  * root function.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  */
-public class RootFunctionValue extends ASTNodeValue{
+public class RootFunctionValue extends ASTNodeValue {
+
   /**
    * The value of the left child of the corresponding ASTNode (if applicable)
    */
@@ -45,21 +46,20 @@ public class RootFunctionValue extends ASTNodeValue{
   private boolean leftChildrenNumeric;
 
   /**
-   * 
    * @param interpreter
    * @param node
    */
   public RootFunctionValue(ASTNodeInterpreter interpreter, ASTNode node) {
     super(interpreter, node);
     ASTNode left = node.getLeftChild();
-    leftChildrenNumeric=false;
+    leftChildrenNumeric = false;
     if (numChildren == 2) {
       if (left.isInteger()) {
         leftDoubleValue = left.getInteger();
-        leftChildrenNumeric=true;
+        leftChildrenNumeric = true;
       } else if (left.isReal()) {
         leftDoubleValue = left.getReal();
-        leftChildrenNumeric=true;
+        leftChildrenNumeric = true;
       }
     }
   }
@@ -77,15 +77,12 @@ public class RootFunctionValue extends ASTNodeValue{
           doubleValue = interpreter.root(leftDoubleValue, rightChild, time, delay);
         }
       } else {
-        doubleValue = interpreter.root(leftChild,
-          rightChild, time, delay);
+        doubleValue = interpreter.root(leftChild, rightChild, time, delay);
       }
     } else if (numChildren == 1) {
       doubleValue = interpreter.sqrt(rightChild, time, delay);
     } else {
-      doubleValue = interpreter.root(leftChild,
-        rightChild, time, delay);
+      doubleValue = interpreter.root(leftChild, rightChild, time, delay);
     }
   }
-
 }

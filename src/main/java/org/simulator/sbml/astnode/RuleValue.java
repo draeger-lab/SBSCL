@@ -30,7 +30,7 @@ import org.simulator.sbml.SBMLValueHolder;
 /**
  * This class can compute and store the value of a rule together with the
  * variable of the rule.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  */
@@ -87,7 +87,6 @@ public class RuleValue {
   protected int index;
 
   /**
-   * 
    * @param nodeObject
    * @param index
    */
@@ -99,6 +98,7 @@ public class RuleValue {
 
   /**
    * Constructor for rules that refer to a species.
+   *
    * @param nodeObject
    * @param index
    * @param sp
@@ -106,8 +106,7 @@ public class RuleValue {
    * @param hasZeroSpatialDimensions
    * @param valueHolder
    */
-  public RuleValue(ASTNodeValue nodeObject, int index,
-    Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder) {
+  public RuleValue(ASTNodeValue nodeObject, int index, Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder) {
     this.nodeObject = nodeObject;
     this.index = index;
     isSpecies = true;
@@ -121,19 +120,17 @@ public class RuleValue {
 
   /**
    * Calculates the math of the rule and returns the new value of the variable.
+   *
    * @param time
    * @return value the computed value of the variable
    */
   protected double processAssignmentVariable(double time) {
     value = nodeObject.compileDouble(time, 0d);
     if (isSpecies && !hasZeroSpatialDimensions) {
-      double compartmentValue = valueHolder
-          .getCurrentValueOf(compartmentIndex);
+      double compartmentValue = valueHolder.getCurrentValueOf(compartmentIndex);
       if (isSetInitialAmount && !hasOnlySubstanceUnits) {
         value = value * compartmentValue;
-
-      }
-      else if (isSetInitialConcentration && hasOnlySubstanceUnits) {
+      } else if (isSetInitialConcentration && hasOnlySubstanceUnits) {
         value = value / compartmentValue;
       }
     }
@@ -142,6 +139,7 @@ public class RuleValue {
 
   /**
    * Returns the value of the rule.
+   *
    * @return value
    */
   public double getValue() {
@@ -150,6 +148,7 @@ public class RuleValue {
 
   /**
    * Returns the index of the variable in the Y vector of the value holder.
+   *
    * @return index
    */
   public int getIndex() {

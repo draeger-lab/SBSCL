@@ -39,10 +39,9 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.UniqueNamedSBase;
 import org.simulator.math.odes.MultiTable;
 
-
 /**
  * This class is for importing CSV files.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  */
@@ -60,11 +59,9 @@ public class CSVImporter {
 
   /**
    * Function for importing a file and adapting the data to the current model
-   * 
-   * @param model
-   *            the current model
-   * @param pathname
-   *            the path of the file to import
+   *
+   * @param model    the current model
+   * @param pathname the path of the file to import
    * @return the data as a multi table
    * @throws IOException
    */
@@ -72,7 +69,6 @@ public class CSVImporter {
     MultiTable data = new MultiTable();
     List<String> cols;
     String expectedHeader[];
-
     if (model != null) {
       expectedHeader = expectedTableHead(model); // According to the
       // model: which symbols
@@ -85,10 +81,7 @@ public class CSVImporter {
       cols = new ArrayList<String>(1);
     }
     cols.add(data.getTimeName());
-
-
     int i, j, timeColumn;
-
     String stringData[][] = read(pathname);
     timeColumn = 0;
     if (timeColumn > -1) {
@@ -97,24 +90,19 @@ public class CSVImporter {
         timePoints[i] = Double.parseDouble(stringData[i][timeColumn]);
       }
       data.setTimePoints(timePoints);
+
       // exclude time column
-
-      String newHead[] = new String[Math.max(0,
-        header.length - 1)];
-
+      String newHead[] = new String[Math.max(0, header.length - 1)];
       Map<String, Integer> nameToColumn = new HashMap<String, Integer>();
       i = 0;
       for (int p = 1; p < header.length; p++) {
         if (!header[p].equalsIgnoreCase(data.getTimeName())) {
           newHead[i++] = header[p].trim();
-          nameToColumn.put(newHead[i - 1],
-            i);
+          nameToColumn.put(newHead[i - 1], i);
         }
       }
       data.addBlock(newHead); // alphabetically sorted
-
       double dataBlock[][] = data.getBlock(0).getData();
-
       for (i = 0; i < dataBlock.length; i++) {
         j = 0; // timeCorrection(j, timeColumn)
         for (String head : newHead) {
@@ -133,22 +121,19 @@ public class CSVImporter {
           j++;
         }
       }
-
       if (model != null) {
         String colNames[] = new String[newHead.length];
         UniqueNamedSBase sbase;
         j = 0;
         for (String head : newHead) {
           sbase = model.findUniqueNamedSBase(head);
-          colNames[j++] = (sbase != null) && (sbase.isSetName()) ? sbase
-            .getName() : null;
+          colNames[j++] =
+              (sbase != null) && (sbase.isSetName()) ? sbase.getName() : null;
         }
         data.getBlock(0).setColumnNames(colNames);
       }
       data.setTimeName("time");
-
       return data;
-
     } else {
       logger.fine("The file is not correctly formatted!");
     }
@@ -162,34 +147,29 @@ public class CSVImporter {
    */
   private String[][] read(String pathname) throws IOException {
     String[][] result = null;
-
     BufferedReader reader = new BufferedReader(new FileReader(pathname));
     List<String> lines = new LinkedList<String>();
     String line = reader.readLine();
     if (line != null) {
       header = line.split(",");
-
       line = reader.readLine();
-      while(line != null) {
+      while (line != null) {
         lines.add(line);
         line = reader.readLine();
       }
-
       result = new String[lines.size()][header.length];
       int i = 0;
-      for (String l: lines) {
+      for (String l : lines) {
         result[i] = l.split(",");
         i++;
       }
     }
     reader.close();
-
     return result;
   }
 
   /**
    * @param model
-   * @param timeName
    * @return
    */
   private String[] expectedTableHead(Model model) {
@@ -206,7 +186,7 @@ public class CSVImporter {
 
       /*
        * (non-Javadoc)
-       * 
+       *
        * @see java.util.AbstractList#get(int)
        */
       @Override
@@ -224,15 +204,13 @@ public class CSVImporter {
 
       /*
        * (non-Javadoc)
-       * 
+       *
        * @see java.util.AbstractCollection#size()
        */
       @Override
       public int size() {
-        return model.getCompartmentCount() + model.getSpeciesCount()
-            + model.getParameterCount();
+        return model.getCompartmentCount() + model.getSpeciesCount() + model.getParameterCount();
       }
     };
   }
-
 }

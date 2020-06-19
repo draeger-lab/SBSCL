@@ -38,7 +38,7 @@ import org.simulator.sbml.SBMLinterpreter;
 /**
  * This class can test the simulation of all models from
  * <a href="http://www.ebi.ac.uk/biomodels-main/" target="_blank">BioModels database</a>.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  */
@@ -52,6 +52,7 @@ public class BiomodelsExample {
 
   /**
    * Tests the models of biomodels.org using the {@link RosenbrockSolver} as integrator
+   *
    * @param file
    * @param from
    * @param to
@@ -89,14 +90,10 @@ public class BiomodelsExample {
         try {
           double time1 = System.nanoTime();
           SBMLinterpreter interpreter = new SBMLinterpreter(model);
-
           if ((solver != null) && (interpreter != null)) {
             solver.setStepSize(0.01);
-
             // solve
-            solver.solve(interpreter,
-              interpreter.getInitialValues(), 0, 10);
-
+            solver.solve(interpreter, interpreter.getInitialValues(), 0, 10);
             if (solver.isUnstable()) {
               logger.warning("unstable!");
               errors++;
@@ -116,12 +113,12 @@ public class BiomodelsExample {
     }
     System.out.println("Models: " + nModels);
     System.out.println("Models with errors in simulation: " + errors);
-    System.out.println("Models with correct simulation: "
-        + (nModels - errors));
-    for(int slowModel: slowModels) {
+    System.out.println("Models with correct simulation: " + (nModels - errors));
+    for (int slowModel : slowModels) {
       System.out.println("Slow: #" + slowModel);
     }
   }
+
 
   /**
    * * Input:
@@ -130,13 +127,13 @@ public class BiomodelsExample {
    * <li>first model to be simulated,
    * <li>last model to be simulated,
    * </ol>
-   * 
+   *
    * @param args
    * @throws IOException
    * @throws URISyntaxException
    */
-  public static void main(String[] args) throws IOException,URISyntaxException {
+  public static void main(String[] args)
+      throws IOException, URISyntaxException {
     testBiomodels(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]));
   }
-
 }

@@ -8,41 +8,39 @@ import org.simulator.math.odes.MultiTable.Block.Column;
  */
 public class RelativeMaxDistance extends QualityMeasure {
 
-    /**
-     * The metric the relative distance is based on
-     */
-    protected MaxAbsDistance metric;
+  /**
+   * The metric the relative distance is based on
+   */
+  protected MaxAbsDistance metric;
 
-    /**
-     * Default Constructor
-     */
-    public RelativeMaxDistance() {
-        super(Double.NaN);
-        metric = new MaxAbsDistance();
+  /**
+   * Default Constructor
+   */
+  public RelativeMaxDistance() {
+    super(Double.NaN);
+    metric = new MaxAbsDistance();
+  }
+
+  /**
+   * Initialization with a given {@link MaxAbsDistance}
+   *
+   * @param metric
+   */
+  public RelativeMaxDistance(MaxAbsDistance metric) {
+    super(Double.NaN);
+    this.metric = metric;
+  }
+
+  /* (non-Javadoc)
+   * @see org.sbml.simulator.math.Distance#distance(java.lang.Iterable, java.lang.Iterable, double)
+   */
+  @Override
+  public double distance(Column x, Column y, double defaultValue) {
+    for (int i = 0; i < Math.min(x.getRowCount(), y.getRowCount()); i++) {
+      x.setValue((y.getValue(i) != 0) ?
+          ((y.getValue(i) - x.getValue(i)) / y.getValue(i)) :
+          Double.POSITIVE_INFINITY, i);
     }
-
-    /**
-     * Initialization with a given {@link MaxAbsDistance}
-     *
-     * @param metric
-     */
-    public RelativeMaxDistance(MaxAbsDistance metric) {
-        super(Double.NaN);
-        this.metric = metric;
-    }
-
-    /* (non-Javadoc)
-     * @see org.sbml.simulator.math.Distance#distance(java.lang.Iterable, java.lang.Iterable, double)
-     */
-    @Override
-    public double distance(Column x, Column y, double defaultValue) {
-
-        for (int i = 0; i < Math.min(x.getRowCount(), y.getRowCount()); i++) {
-
-            x.setValue((y.getValue(i) != 0) ? ((y.getValue(i) - x.getValue(i)) / y.getValue(i)) : Double.POSITIVE_INFINITY, i);
-
-        }
-
-        return metric.distanceToZero(x, defaultValue);
-    }
+    return metric.distanceToZero(x, defaultValue);
+  }
 }

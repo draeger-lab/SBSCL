@@ -32,7 +32,7 @@ import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
  * This class is the basis of various implementations of distance functions.
- * 
+ *
  * @author Roland Keller
  * @author Andreas Dr&auml;ger
  * @version $Rev$
@@ -52,7 +52,7 @@ public abstract class QualityMeasure implements Serializable {
   protected double defaultValue;
 
   /**
-   * 
+   *
    */
   protected MeanFunction meanFunction;
 
@@ -68,7 +68,7 @@ public abstract class QualityMeasure implements Serializable {
 
   /**
    * Constructor, which allows setting the parameter value for default value.
-   * 
+   *
    * @param defaultValue
    */
   public QualityMeasure(double defaultValue) {
@@ -79,7 +79,7 @@ public abstract class QualityMeasure implements Serializable {
   /**
    * Constructor, which allows setting the parameter values for
    * {@link #meanFunction} and {@link #defaultValue}.
-   * 
+   *
    * @param defaultValue
    * @param meanFunction
    */
@@ -93,16 +93,15 @@ public abstract class QualityMeasure implements Serializable {
    * computation of a distance. This method checks if both arguments x_i and
    * y_i are not {@link Double#NaN} and differ from each other. If other
    * conditions should be checked, this method can be overridden.
-   * 
+   *
    * @param x_i
    * @param y_i
    * @param root
    * @param defaultValue
    * @return True if the given values x_i and y_i are valid and should be
-   *         considered to compute the distance.
+   * considered to compute the distance.
    */
-  boolean computeDistanceFor(double x_i, double y_i, double root,
-    double defaultValue) {
+  boolean computeDistanceFor(double x_i, double y_i, double root, double defaultValue) {
     return !Double.isNaN(y_i) && !Double.isNaN(x_i) && (y_i != x_i);
   }
 
@@ -113,15 +112,14 @@ public abstract class QualityMeasure implements Serializable {
    * If so, the additional values in the bigger matrix are ignored and do not
    * contribute to the distance. <code>NaN</code> values do also not
    * contribute to the distance.
-   * 
+   *
    * @param x
    * @param y
    * @return distance the distance between the two vectors
    * @throws IllegalArgumentException
    */
-  public double distance(Column x,
-    Column y) {
-    return distance(x, y,defaultValue);
+  public double distance(Column x, Column y) {
+    return distance(x, y, defaultValue);
   }
 
   /**
@@ -130,22 +128,17 @@ public abstract class QualityMeasure implements Serializable {
    * distance uses a non defined operation. If one array is longer than the
    * other one additional values do not contribute to the distance.
    * {@link Double#NaN} values are also ignored.
-   * 
-   * @param x
-   *            an array
-   * @param y
-   *            another array
-   * @param defaultValue
-   *            The value to be returned in cases in which no distance
-   *            computation is possible.
+   *
+   * @param x            an array
+   * @param y            another array
+   * @param defaultValue The value to be returned in cases in which no distance
+   *                     computation is possible.
    * @return The distance between the two arrays x and y.
    * @throws IllegalArgumentException
    */
-  public abstract double distance(Column x,
-    Column y,double defaultValue);
+  public abstract double distance(Column x, Column y, double defaultValue);
 
   /**
-   * 
    * @param x
    * @param expected
    * @return distance the distance between the two tables
@@ -157,7 +150,6 @@ public abstract class QualityMeasure implements Serializable {
       left = x.filter(expected.getTimePoints());
       right = expected.filter(x.getTimePoints());
     }
-
     List<Double> distances = new ArrayList<Double>(getColumnDistances(left, right));
     return meanFunction.computeMean(distances);
   }
@@ -169,17 +161,17 @@ public abstract class QualityMeasure implements Serializable {
    * not contribute to the distance. {@link Double#NaN} values do also not
    * contribute to the distance. Only columns with matching identifiers are
    * considered for the distance computation.
-   * 
+   *
    * @param x
    * @param expected
    * @return columnDistances the list of distances for the columns in the blocks
    */
   public List<Double> getColumnDistances(MultiTable x, MultiTable expected) {
-    List<Double> distances= new ArrayList<Double>();
-    for(int block = 0; block < x.getBlockCount(); block++) {
+    List<Double> distances = new ArrayList<Double>();
+    for (int block = 0; block < x.getBlockCount(); block++) {
       String identifiers[] = x.getBlock(block).getIdentifiers();
       for (int i = 0; i < identifiers.length; i++) {
-        if ((identifiers[i]!=null) && (expected.getColumn(identifiers[i]) != null)) {
+        if ((identifiers[i] != null) && (expected.getColumn(identifiers[i]) != null)) {
           distances.add(distance(x.getBlock(block).getColumn(i), expected.getColumn(identifiers[i])));
         }
       }
@@ -188,33 +180,29 @@ public abstract class QualityMeasure implements Serializable {
   }
 
   /**
-   *
    * @param x
    * @param expected
    * @return maxAbsDistances the list of maximum absolute distances in the blocks
    */
   public Map<String, Double> getMaxAbsDistances(MultiTable x, MultiTable expected) {
-
     Map<String, Double> distances = new HashMap<>();
-    for(int block = 0; block < x.getBlockCount(); block++) {
+    for (int block = 0; block < x.getBlockCount(); block++) {
       String identifiers[] = x.getBlock(block).getIdentifiers();
       for (int i = 0; i < identifiers.length; i++) {
-        if ((identifiers[i]!=null) && (expected.getColumn(identifiers[i]) != null)) {
+        if ((identifiers[i] != null) && (expected.getColumn(identifiers[i]) != null)) {
           MultiTable.Block.Column a = x.getBlock(block).getColumn(i);
           MultiTable.Block.Column b = expected.getColumn(identifiers[i]);
-
           distances.put(x.getBlock(block).getColumn(i).getColumnName(), distance(a, b, defaultValue));
         }
       }
     }
-
     return distances;
   }
 
   /**
    * Returns the default value that is returned by the distance function in
    * cases in which the computation of the distance is not possible.
-   * 
+   *
    * @return defaultValue
    */
   public double getDefaultValue() {
@@ -228,11 +216,10 @@ public abstract class QualityMeasure implements Serializable {
     return meanFunction;
   }
 
-
   /**
    * Set the value to be returned by the distance function in cases, in which
    * no distance can be computed.
-   * 
+   *
    * @param defaultValue
    */
   public void setDefaultValue(double defaultValue) {
@@ -245,5 +232,4 @@ public abstract class QualityMeasure implements Serializable {
   public final void setMeanFunction(MeanFunction meanFunction) {
     this.meanFunction = meanFunction;
   }
-
 }

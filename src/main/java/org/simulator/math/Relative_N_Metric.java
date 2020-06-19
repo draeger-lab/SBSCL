@@ -29,7 +29,7 @@ import org.simulator.math.odes.MultiTable.Block.Column;
 /**
  * Computes the relative distance of two vectors based on the {@link N_Metric}
  * distance.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
@@ -62,6 +62,7 @@ public class Relative_N_Metric extends QualityMeasure {
 
   /**
    * Initialization with a certain n
+   *
    * @param root
    */
   public Relative_N_Metric(double root) {
@@ -72,6 +73,7 @@ public class Relative_N_Metric extends QualityMeasure {
 
   /**
    * Initialization with a given {@link N_Metric}
+   *
    * @param metric
    */
   public Relative_N_Metric(N_Metric metric) {
@@ -79,8 +81,7 @@ public class Relative_N_Metric extends QualityMeasure {
     this.metric = metric;
     if (Double.isNaN(metric.getDefaultValue())) {
       defaultNaN = true;
-    }
-    else {
+    } else {
       defaultNaN = false;
     }
   }
@@ -89,23 +90,20 @@ public class Relative_N_Metric extends QualityMeasure {
    * @see org.sbml.simulator.math.Distance#distance(java.lang.Iterable, java.lang.Iterable, double)
    */
   @Override
-  public double distance(Column x,
-    Column expected, double defaultValue) {
-    double numerator=metric.distance(x, expected, defaultValue);
+  public double distance(Column x, Column expected, double defaultValue) {
+    double numerator = metric.distance(x, expected, defaultValue);
     double denominator = metric.distanceToZero(expected, defaultValue);
     double denominator2 = metric.distanceToZero(x, defaultValue);
-    if ((denominator != 0) && (denominator2 != 0) ) {
+    if ((denominator != 0) && (denominator2 != 0)) {
       return numerator / denominator;
     } else if ((denominator == 0) && (denominator2 == 0)) {
       return numerator;
     } else if (defaultNaN) {
       return numerator;
-    }
-    else {
+    } else {
       return this.defaultValue;
     }
   }
-
 
   /* (non-Javadoc)
    * @see org.sbml.simulator.math.QualityMeasure#setDefaultValue(double)
@@ -115,18 +113,17 @@ public class Relative_N_Metric extends QualityMeasure {
     super.setDefaultValue(value);
     if (Double.isNaN(defaultValue)) {
       defaultNaN = true;
-    }
-    else {
+    } else {
       defaultNaN = false;
     }
   }
 
   /**
    * Sets the root
+   *
    * @param root
    */
   public void setRoot(double root) {
     metric.setRoot(root);
   }
-
 }

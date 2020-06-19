@@ -28,7 +28,7 @@ import org.sbml.jsbml.ASTNode;
 
 /**
  * This class can compute and store the value of an integer node.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  */
@@ -57,5 +57,4 @@ public class IntegerValue extends ASTNodeValue {
   public boolean getConstant() {
     return true;
   }
-
 }

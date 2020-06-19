@@ -30,7 +30,7 @@ import java.util.LinkedList;
  * This class represents a compilation of all information calculated during
  * simulation concerning events in SBML. An {@link SBMLEventInProgressWithDelay}
  * especially stands for an event with delay.
- * 
+ *
  * @author Alexander D&ouml;rr
  * @version $Rev$
  * @since 0.9
@@ -50,13 +50,13 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
   /**
    * Creates a new SBMLEventInProcessWithDelay with the given boolean value
    * indicating whether or not it can fire at time point 0d.
-   * 
+   *
    * @param fired
    */
   public SBMLEventInProgressWithDelay(boolean fired) {
     super(fired);
-    previousExecutionTimes = new LinkedList<Double> ();
-    previousExecutionValues = new LinkedList<Double[]> ();
+    previousExecutionTimes = new LinkedList<Double>();
+    previousExecutionValues = new LinkedList<Double[]>();
   }
 
   /*
@@ -66,8 +66,8 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
   @Override
   public void refresh(boolean fired) {
     super.refresh(fired);
-    previousExecutionTimes = new LinkedList<Double> ();
-    previousExecutionValues = new LinkedList<Double[]> ();
+    previousExecutionTimes = new LinkedList<Double>();
+    previousExecutionValues = new LinkedList<Double[]>();
   }
 
   /*
@@ -90,7 +90,6 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
     index = insertTime(time);
     execTimes.add(index, time);
     this.values.add(index, values);
-
   }
 
   /*
@@ -109,7 +108,7 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
    * Due to the fact that events with delay can trigger multiple times before
    * execution, the time of execution and the corresponding values have to be
    * inserted at the chronological correct position in the list.
-   * 
+   *
    * @param time
    * @return the index where time has been inserted
    */
@@ -117,15 +116,12 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
     if (execTimes.isEmpty()) {
       return 0;
     }
-
     for (int i = 0; i < execTimes.size(); i++) {
       if (time < execTimes.get(i)) {
         return i;
       }
     }
-
     return execTimes.size();
-
   }
 
   /* (non-Javadoc)
@@ -133,13 +129,13 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
    */
   @Override
   public void refresh(double currentTime) {
-    if ( lastTimeFired > currentTime) {
+    if (lastTimeFired > currentTime) {
       execTimes.pollLast();
       values.pollLast();
       recovered(currentTime);
       lastTimeFired = -1;
     } else {
-      while((previousExecutionTimes.peekLast() != null) && (previousExecutionTimes.peekLast() > currentTime)) {
+      while ((previousExecutionTimes.peekLast() != null) && (previousExecutionTimes.peekLast() > currentTime)) {
         double time = previousExecutionTimes.pollLast();
         int index = insertTime(time);
         execTimes.add(index, time);
@@ -153,5 +149,4 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
       }
     }
   }
-
 }

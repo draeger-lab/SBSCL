@@ -26,7 +26,7 @@
 /**
  * The various solver classes that are all derived from
  * {@link org.simulator.math.odes.AbstractDESSolver}.
- * 
+ *
  * @version $Rev$
  */
 package org.simulator.math.odes;

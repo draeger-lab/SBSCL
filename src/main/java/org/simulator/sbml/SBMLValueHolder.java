@@ -41,7 +41,7 @@ import org.simulator.math.odes.DelayValueHolder;
  * to the current simulation time. In this way, it is possible to separate
  * the interpretation and simulation of a {@link Model} from the pure evaluation
  * of {@link ASTNode}s.
- * 
+ *
  * @author Andreas Dr&auml;ger
  * @author Roland Keller
  * @version $Rev$
@@ -51,6 +51,7 @@ public interface SBMLValueHolder extends DelayValueHolder, Serializable {
 
   /**
    * Returns the size of the compartment with the given id.
+   *
    * @param id
    * @return compartmentSize
    */
@@ -58,6 +59,7 @@ public interface SBMLValueHolder extends DelayValueHolder, Serializable {
 
   /**
    * Returns the size of the compartment of the species with the given id.
+   *
    * @param speciesId
    * @return compartmentValue
    */
@@ -65,6 +67,7 @@ public interface SBMLValueHolder extends DelayValueHolder, Serializable {
 
   /**
    * Returns the value of the parameter with the given id.
+   *
    * @param id
    * @return parameterValue
    */
@@ -72,6 +75,7 @@ public interface SBMLValueHolder extends DelayValueHolder, Serializable {
 
   /**
    * Returns the value of the species with the given id.
+   *
    * @param id
    * @return speciesValue
    */
@@ -79,6 +83,7 @@ public interface SBMLValueHolder extends DelayValueHolder, Serializable {
 
   /**
    * Returns the value of the stoichiometry of the species reference with the given id.
+   *
    * @param id
    * @return stoichiometry
    */
@@ -86,12 +91,14 @@ public interface SBMLValueHolder extends DelayValueHolder, Serializable {
 
   /**
    * Returns the current simulation time.
+   *
    * @return time
    */
   public double getCurrentTime();
 
   /**
    * Returns the current value of the SBase with the given id.
+   *
    * @param id
    * @return value
    */
@@ -99,9 +106,9 @@ public interface SBMLValueHolder extends DelayValueHolder, Serializable {
 
   /**
    * Returns the current value of the Y vector at the given position.
+   *
    * @param position
    * @return value
    */
   public double getCurrentValueOf(int position);
-
 }
