@@ -42,13 +42,9 @@ import de.unirostock.sems.cbarchive.CombineArchiveException;
 public class OMEXArchive {
 
   private CombineArchive archive;
-
   private Map<String, ArchiveEntry> entryMap;
-
   private boolean has_models;
-
   private boolean has_sim_descp;
-
   private File sed_ml, sb_ml;
 
   public OMEXArchive(File zipFile)

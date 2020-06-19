@@ -28,9 +28,7 @@ import java.io.IOException;
 public class CompSimulator {
 
   private static Logger logger = Logger.getLogger(CompSimulator.class.getName());
-
   private SBMLDocument doc;
-
   private SBMLDocument docFlat;
 
   public CompSimulator(File file) throws IOException, XMLStreamException {

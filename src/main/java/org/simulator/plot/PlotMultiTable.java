@@ -45,9 +45,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public class PlotMultiTable extends ApplicationFrame {
 
   private MultiTable species;
-
   private DefaultCategoryDataset data;
-
   private String title;
 
   /**

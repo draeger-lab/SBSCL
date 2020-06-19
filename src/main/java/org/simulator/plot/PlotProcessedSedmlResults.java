@@ -51,17 +51,12 @@ import org.jfree.data.xy.XYSeriesCollection;
 public class PlotProcessedSedmlResults extends ApplicationFrame {
 
   private IProcessedSedMLSimulationResults species;
-
   private XYSeriesCollection graphData;
-
   private String title;
-
   private List<Curve> curves;
-
   private JFreeChart lineChart;
 
   private static final int CHART_WIDTH = 1366;
-
   private static final int CHART_HEIGHT = 768;
 
   /**

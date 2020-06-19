@@ -38,17 +38,11 @@ import java.util.Map;
 public class EventInProgress {
 
   protected boolean fired;
-
   protected double lastTimeFired;
-
   protected double lastTimeRecovered;
-
   protected double lastTimeExecuted;
-
   protected LinkedList<Double> execTimes;
-
   protected LinkedList<Double[]> values;
-
   protected Map<Integer, Double> assignments;
 
   /**

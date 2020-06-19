@@ -41,9 +41,7 @@ import de.binfalse.bflog.LOGGER;
 public class ProcessSedMLResults {
 
   private Output wanted;
-
   private SedML sedml;
-
   IProcessedSedMLSimulationResults prRes;
 
   public ProcessSedMLResults(SedML sedml, Output output) {

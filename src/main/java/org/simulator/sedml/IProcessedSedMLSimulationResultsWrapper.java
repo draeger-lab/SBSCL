@@ -13,7 +13,6 @@ class IProcessedSedMLSimulationResultsWrapper
     implements IProcessedSedMLSimulationResults {
 
   private double[][] _data;
-
   private String[] _headers;
 
   IProcessedSedMLSimulationResultsWrapper(double[][] data, String[] headers) {
