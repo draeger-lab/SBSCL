@@ -56,12 +56,16 @@ import scpsolver.lpsolver.SolverFactory;
 import scpsolver.problems.LinearProgram;
 
 /**
- * This solver implementation only accepts SBML models with FBC package versions
- * 1 or 2.
+ * Support for Flux Balance Analysis (FBA).
+ *
+ * This class provides implementation of fba using the information from the
+ * SBML fbc packages. This solver implementation supports SBML models with
+ * FBC package versions 1 or 2.
  *
  * @author Andreas Dr&auml;ger
  * @author Ali Ebrahim
  * @author Shalin Shah
+ * @author Matthias König
  * @since 1.5
  */
 @SuppressWarnings("deprecation")
@@ -238,8 +242,8 @@ public class FluxBalanceAnalysis {
   }
 
   /**
-   * This method updates a particular index of
-   * the lower bounds as well as the upper bounds as per the standards of the SCPSolver.
+   * This method updates the lower bounds and upper bounds
+   * as per the standards of the SCPSolver.
    *
    * @param lowerBound the array of lower flux bounds
    * @param upperBound the array of the upper flux bounds
@@ -259,13 +263,14 @@ public class FluxBalanceAnalysis {
     if (lowerBound[index] == Double.POSITIVE_INFINITY) {
       lowerBound[index] = Double.MAX_VALUE;
     }
-    if (lowerBound[index] == -Double.POSITIVE_INFINITY) {
+    else if (lowerBound[index] == -Double.POSITIVE_INFINITY) {
       lowerBound[index] = -Double.MAX_VALUE;
     }
+
     if (upperBound[index] == Double.POSITIVE_INFINITY) {
       upperBound[index] = Double.MAX_VALUE;
     }
-    if (upperBound[index] == -Double.POSITIVE_INFINITY) {
+    else if (upperBound[index] == -Double.POSITIVE_INFINITY) {
       upperBound[index] = -Double.MAX_VALUE;
     }
   }
