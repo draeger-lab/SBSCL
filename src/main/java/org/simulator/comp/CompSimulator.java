@@ -17,11 +17,17 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Class for simulating comp models.
+ * Class for simulating models encoded in the SBML comp package.
  * <p>
- * TODO: support different simulation types (FBA, stochastic), currently limited to ode
+ * This class allows to simulate models encoded in the SBML hierarchical model
+ * composition package comp (http://sbml.org/Documents/Specifications/SBML_Level_3/Packages/comp).
+ * The models are simulated by applying model flattening, i.e., reducing the hierarchical
+ * models to standard (flat) SBML models.
  *
- * @author Shalin Shah, atthias König
+ * This class currently is limited to SBML core models (ODE).
+ * TODO: support additional simulations (FBA, stochastic)
+ *
+ * @author Shalin Shah, Matthias König
  * @version $Rev$
  * @since 1.5
  */
