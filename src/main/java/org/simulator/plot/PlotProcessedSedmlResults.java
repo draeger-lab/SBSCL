@@ -123,12 +123,9 @@ public class PlotProcessedSedmlResults extends ApplicationFrame {
   }
 
   /**
-   * Get absolute parent path for given test resource.
-   * Due to the relative paths of SBML and SED-ML files the resource loading is not working
-   * in maven.
-   * <p>
-   * Example:
-   * resourcePath="/fba/e_coli_core.xml"
+   * Gets a folder path for given test resource.
+   *
+   * @param resourcePath Example: resourcePath="/fba/e_coli_core.xml"
    */
   private static String getFolderPathForTestResource(String resourcePath) {
     String path = null;

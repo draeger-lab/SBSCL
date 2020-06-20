@@ -63,7 +63,7 @@ public class CompSimulator {
     return doc;
   }
 
-  public SBMLDocument getDocFlat() {
+  public SBMLDocument getFlattenedDoc() {
     return docFlat;
   }
 

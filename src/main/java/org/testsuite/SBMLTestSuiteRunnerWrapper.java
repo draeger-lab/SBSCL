@@ -111,18 +111,23 @@ public class SBMLTestSuiteRunnerWrapper {
         }
         Model model = document.getModel();
 
-        // get timepoints
+        // get timePoints
         CSVImporter csvimporter = new CSVImporter();
         MultiTable inputData = csvimporter.convert(model, resultsPath);
-        double[] timepoints = inputData.getTimePoints();
-        duration = timepoints[timepoints.length - 1]
-                - timepoints[0];
+        double[] timePoints = inputData.getTimePoints();
+        duration = timePoints[timePoints.length - 1]
+                - timePoints[0];
 
         MultiTable solution = null;
 
         // writes results to the output file in CSV format
         File outputFile = new File(outputFilePath);
-        outputFile.createNewFile();
+        try {
+            outputFile.createNewFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error("Error in creating the output file");
+        }
 
         LOGGER.info(Paths.get(outputFilePath));
         FileWriter csvWriter = new FileWriter(outputFilePath);
@@ -185,7 +190,7 @@ public class SBMLTestSuiteRunnerWrapper {
                 SBMLinterpreter interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);
 
                 // Compute the numerical solution of the problem
-                solution = solver.solve(interpreter, interpreter.getInitialValues(), timepoints);
+                solution = solver.solve(interpreter, interpreter.getInitialValues(), timePoints);
             } else {
                 CompSimulator compSimulator = new CompSimulator(sbmlfile);
                 double stepSize = (duration / steps);

@@ -1,7 +1,6 @@
 package org.simulator.comp;
 
 import org.apache.commons.math.ode.DerivativeException;
-import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -51,7 +50,7 @@ public class CompSimulatorTest {
 
         assertNotNull(compSimulator);
         assertNotNull(compSimulator.getDoc());
-        assertNotNull(compSimulator.getDocFlat());
+        assertNotNull(compSimulator.getFlattenedDoc());
 
         double stepSize = 1.0;
         double timeEnd = 100.0;
