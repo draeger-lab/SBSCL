@@ -87,6 +87,11 @@ public class RuleValue {
   protected int index;
 
   /**
+   * This flag is true if the species has amount units
+   */
+  protected boolean isAmount = false;
+
+  /**
    * @param nodeObject
    * @param index
    */
@@ -106,7 +111,7 @@ public class RuleValue {
    * @param hasZeroSpatialDimensions
    * @param valueHolder
    */
-  public RuleValue(ASTNodeValue nodeObject, int index, Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder) {
+  public RuleValue(ASTNodeValue nodeObject, int index, Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder, boolean isAmount) {
     this.nodeObject = nodeObject;
     this.index = index;
     isSpecies = true;
@@ -116,6 +121,7 @@ public class RuleValue {
     isSetInitialConcentration = sp.isSetInitialConcentration();
     this.hasZeroSpatialDimensions = hasZeroSpatialDimensions;
     this.valueHolder = valueHolder;
+    this.isAmount = isAmount;
   }
 
   /**
@@ -132,6 +138,8 @@ public class RuleValue {
         value = value * compartmentValue;
       } else if (isSetInitialConcentration && hasOnlySubstanceUnits) {
         value = value / compartmentValue;
+      } else if (isSetInitialConcentration && isAmount) {
+        value = value * compartmentValue;
       }
     }
     return value;

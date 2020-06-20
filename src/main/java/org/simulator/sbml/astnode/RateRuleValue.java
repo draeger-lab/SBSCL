@@ -65,16 +65,17 @@ public class RateRuleValue extends RuleValue {
 
   /**
    * Constructor for a rule with a species as variable
-   *
    * @param nodeObject
    * @param index
    * @param sp
    * @param compartmentIndex
    * @param hasZeroSpatialDimensions
    * @param valueHolder
+   * @param variable
+   * @param isAmount
    */
-  public RateRuleValue(ASTNodeValue nodeObject, int index, Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder, String variable) {
-    super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder);
+  public RateRuleValue(ASTNodeValue nodeObject, int index, Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder, String variable, boolean isAmount) {
+    super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder, isAmount);
     this.variable = variable;
   }
 

@@ -1557,7 +1557,7 @@ public class SBMLinterpreter
                   hasZeroSpatialDimensions = false;
                 }
                 if (as.isSetMath()) {
-                  events[i].addRuleObject(new AssignmentRuleValue((ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this));
+                  events[i].addRuleObject(new AssignmentRuleValue((ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this, isAmount[symbolIndex]));
                 }
               } else {
                 if (as.isSetMath()) {
@@ -1731,7 +1731,7 @@ public class SBMLinterpreter
               hasZeroSpatialDimensions = false;
             }
             if (as.isSetMath()) {
-              assignmentRulesRootsInit.add(new AssignmentRuleValue((ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this));
+              assignmentRulesRootsInit.add(new AssignmentRuleValue((ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this, isAmount[symbolIndex]));
             }
           } else {
             if (as.isSetMath()) {
@@ -1756,7 +1756,7 @@ public class SBMLinterpreter
               hasZeroSpatialDimensions = false;
             }
             if (rr.isSetMath()) {
-              rateRulesRoots.add(new RateRuleValue((ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this, rr.getVariable()));
+              rateRulesRoots.add(new RateRuleValue((ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this, rr.getVariable(), isAmount[symbolIndex]));
             }
           } else if (compartmentHash.containsValue(symbolIndex)) {
             List<Integer> speciesIndices = new LinkedList<Integer>();
@@ -1792,7 +1792,7 @@ public class SBMLinterpreter
               hasZeroSpatialDimensions = false;
             }
             if (as.isSetMath()) {
-              assignmentRulesRootsInit.add(new AssignmentRuleValue((ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this));
+              assignmentRulesRootsInit.add(new AssignmentRuleValue((ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this, isAmount[symbolIndex]));
             }
           } else {
             if (as.isSetMath()) {
@@ -1886,7 +1886,7 @@ public class SBMLinterpreter
             hasZeroSpatialDimensions = false;
           }
           if (iA.isSetMath()) {
-            initialAssignmentRoots.add(new AssignmentRuleValue((ASTNodeValue) copyAST(iA.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this));
+            initialAssignmentRoots.add(new AssignmentRuleValue((ASTNodeValue) copyAST(iA.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this, isAmount[symbolIndex]));
           }
         } else {
           if (iA.isSetMath()) {

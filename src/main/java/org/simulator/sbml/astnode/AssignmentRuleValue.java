@@ -81,9 +81,10 @@ public class AssignmentRuleValue extends RuleValue {
    * @param compartmentIndex
    * @param hasZeroSpatialDimensions
    * @param valueHolder
+   * @param isAmount
    */
-  public AssignmentRuleValue(ASTNodeValue nodeObject, int index, Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder) {
-    super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder);
+  public AssignmentRuleValue(ASTNodeValue nodeObject, int index, Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder, boolean isAmount) {
+    super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder, isAmount);
   }
 
   /**
