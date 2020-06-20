@@ -76,17 +76,22 @@ public class MaxDivergenceTolerance extends QualityMeasure {
   protected double relTol;
 
   /**
-   * Default Constructor
+   * Default constructor. Initializes the metric {@link MaxAbsDistance}
+   * and sets the absolute and relative tolerances.
+   *
+   * @param absTol
+   * @param relTol
    */
   public MaxDivergenceTolerance(double absTol, double relTol) {
+    // sets the default value in case any error occurs
     super(Double.NaN);
     metric = new MaxAbsDistance();
     this.absTol = absTol;
     this.relTol = relTol;
   }
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.Distance#distance(java.lang.Iterable, java.lang.Iterable, double)
+  /**
+   * {@inheritDoc}
    */
   @Override
   public double distance(Column x, Column y, double defaultValue) {

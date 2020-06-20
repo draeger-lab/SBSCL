@@ -31,12 +31,14 @@ import javax.swing.JTable;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.math.ode.DerivativeException;
+import org.apache.log4j.Logger;
 import org.jfree.ui.RefineryUtilities;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.SBMLReader;
+import org.simulator.comp.CompSimulator;
 import org.simulator.math.odes.*;
 import org.simulator.plot.PlotMultiTable;
 import org.simulator.sbml.SBMLinterpreter;
@@ -51,7 +53,10 @@ import org.simulator.plot.PlotMultiTable;
  */
 public class SimulatorExample {
 
+    private static Logger logger = Logger.getLogger(SimulatorExample.class.getName());
     private static final double TOLERANCE_FACTOR = 1E-3;
+    private static final int WIDTH = 400;
+    private static final int HEIGHT = 400;
 
     /**
      * Starts a simulation at the command line.
@@ -67,12 +72,24 @@ public class SimulatorExample {
             IOException, ModelOverdeterminedException, SBMLException,
             DerivativeException {
 
+        String fileName = "";
+        double stepSize = 0d;
+        double timeEnd = 0d;
+        double absTol = 0d;
+        double relTol = 0d;
+
         // Configuration
-        String fileName = args[0];
-        double stepSize = Double.parseDouble(args[1]);
-        double timeEnd = Double.parseDouble(args[2]);
-        double absTol = TOLERANCE_FACTOR * Double.parseDouble(args[3]);
-        double relTol = TOLERANCE_FACTOR * Double.parseDouble(args[4]);
+        try {
+            fileName = args[0];
+            stepSize = Double.parseDouble(args[1]);
+            timeEnd = Double.parseDouble(args[2]);
+            absTol = TOLERANCE_FACTOR * Double.parseDouble(args[3]);
+            relTol = TOLERANCE_FACTOR * Double.parseDouble(args[4]);
+        } catch (NumberFormatException e) {
+            logger.warn("Please enter numerical values wherever needed");
+        } catch (IllegalArgumentException e){
+            logger.error("Provide proper arguments");
+        }
 
         // Read the model and initialize solver
         SBMLDocument document = (new SBMLReader()).readSBML(fileName);
@@ -95,7 +112,7 @@ public class SimulatorExample {
 
         // Display simulation result to the user
         JScrollPane resultDisplay = new JScrollPane(new JTable(solution));
-        resultDisplay.setPreferredSize(new Dimension(400, 400));
+        resultDisplay.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         JOptionPane.showMessageDialog(null, resultDisplay, "The solution of model "
                 + model.getId(), JOptionPane.INFORMATION_MESSAGE);
 

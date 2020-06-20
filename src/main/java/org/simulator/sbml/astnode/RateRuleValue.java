@@ -95,7 +95,7 @@ public class RateRuleValue extends RuleValue {
   }
 
   /**
-   * @return the value of the variable
+   * @return the name of the variable
    */
   public String getVariable() {
     return variable;

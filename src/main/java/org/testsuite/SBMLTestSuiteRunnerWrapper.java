@@ -1,6 +1,7 @@
 package org.testsuite;
 
 import org.apache.commons.math.ode.DerivativeException;
+import org.apache.log4j.Logger;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
@@ -8,6 +9,7 @@ import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.comp.CompSimulator;
+import org.simulator.examples.CompExample;
 import org.simulator.fba.FluxBalanceAnalysis;
 import org.simulator.io.CSVImporter;
 import org.simulator.math.odes.*;
@@ -48,6 +50,7 @@ public class SBMLTestSuiteRunnerWrapper {
     public static final String ABSOLUTE = "absolute";
     public static final String RELATIVE = "relative";
     private static final double TOLERANCE_FACTOR = 1E-3;
+    private static Logger LOGGER = Logger.getLogger(CompExample.class.getName());
 
     /**
      * The wrapper executes the simulation of a given SBML file and writes result to a specified CSV file.
@@ -100,7 +103,12 @@ public class SBMLTestSuiteRunnerWrapper {
 
         // Read the model and initialize solver
         File sbmlfile = new File(filePath);
-        SBMLDocument document = (new SBMLReader()).readSBML(sbmlfile);
+        SBMLDocument document = null;
+        try {
+            document = (new SBMLReader()).readSBML(sbmlfile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Model model = document.getModel();
 
         // get timepoints
@@ -110,13 +118,13 @@ public class SBMLTestSuiteRunnerWrapper {
         duration = timepoints[timepoints.length - 1]
                 - timepoints[0];
 
-        MultiTable solution;
+        MultiTable solution = null;
 
         // writes results to the output file in CSV format
         File outputFile = new File(outputFilePath);
         outputFile.createNewFile();
 
-        System.out.println(Paths.get(outputFilePath));
+        LOGGER.info(Paths.get(outputFilePath));
         FileWriter csvWriter = new FileWriter(outputFilePath);
 
         StringBuilder output = new StringBuilder("");
@@ -124,10 +132,16 @@ public class SBMLTestSuiteRunnerWrapper {
         if (model.getExtension(FBCConstants.shortLabel) != null) {
 
             FluxBalanceAnalysis solver = new FluxBalanceAnalysis(document);
-            if (solver.solve()) {
-                Map<String, Double> fbcSolution = solver.getSolution();
 
-                System.out.println(fbcSolution);
+            boolean isSolved = false;
+            try {
+                isSolved = solver.solve();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (isSolved) {
+                Map<String, Double> fbcSolution = solver.getSolution();
 
                 BufferedReader reader = new BufferedReader(new FileReader(resultsPath));
                 String[] keys = reader.readLine().trim().split(",");
@@ -161,6 +175,13 @@ public class SBMLTestSuiteRunnerWrapper {
                     ((AdaptiveStepsizeIntegrator) solver).setRelTol(TOLERANCE_FACTOR * relative);
                 }
 
+                /**
+                 * Initialize the SBMLinterpreter
+                 *
+                 * Parameters passed:
+                 * SBML model, defaultSpeciesValue, defaultParameterValue,
+                 * defaultCompartmentValue, amountHash
+                 */
                 SBMLinterpreter interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);
 
                 // Compute the numerical solution of the problem
@@ -169,7 +190,11 @@ public class SBMLTestSuiteRunnerWrapper {
                 CompSimulator compSimulator = new CompSimulator(sbmlfile);
                 double stepSize = (duration / steps);
 
-                solution = compSimulator.solve(stepSize, duration);
+                try {
+                    solution = compSimulator.solve(stepSize, duration);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
             }
 
             MultiTable left = solution;

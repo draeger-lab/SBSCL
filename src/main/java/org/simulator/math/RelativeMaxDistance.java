@@ -17,6 +17,7 @@ public class RelativeMaxDistance extends QualityMeasure {
    * Default Constructor
    */
   public RelativeMaxDistance() {
+    // sets the default value in case any error occurs
     super(Double.NaN);
     metric = new MaxAbsDistance();
   }

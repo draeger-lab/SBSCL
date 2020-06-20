@@ -55,16 +55,18 @@ public class OMEXArchive {
     has_sim_descp = false;
     archive = new CombineArchive(zipFile);
     File parent = new File(System.getProperty("java.io.tmpdir"));
+    String entryFormat;
 
     // iterate over all entries in the archive and create a Map
     for (ArchiveEntry entry : archive.getEntries()) {
       entryMap.put(entry.getFilePath(), entry);
-      if (entry.getFormat().toString().contains("SBML") || entry.getFormat().toString().contains("sbml")) {
+      entryFormat = entry.getFormat().toString();
+      if (entryFormat.contains("SBML") || entryFormat.contains("sbml")) {
         has_models = true;
         File sb_ml_file = new File(parent, entry.getFileName());
         sb_ml = entry.extractFile(sb_ml_file);
       }
-      if (entry.getFormat().toString().contains("SED-ML") || entry.getFormat().toString().contains("sed-ml")) {
+      if (entryFormat.contains("SED-ML") || entryFormat.contains("sed-ml")) {
         has_sim_descp = true;
         File sed_ml_file = new File(parent, entry.getFileName());
         sed_ml = entry.extractFile(sed_ml_file);
@@ -87,7 +89,7 @@ public class OMEXArchive {
     return has_sim_descp;
   }
 
-  public File getSEDMLDescp() {
+  public File getSEDMLDescription() {
     return sed_ml;
   }
 
@@ -95,23 +97,18 @@ public class OMEXArchive {
    * A simple method to uncompress combine archives at desired location
    *
    * @param destination
-   * @return boolean
+   * @return whether combine archive is uncompressed or not
    */
-  public boolean extractArchive(File destination) {
+  public boolean extractArchive(File destination) throws IOException {
     try {
       archive.extractTo(destination);
       return true;
     } catch (IOException ex) {
+      LOGGER.error(ex, "Error in extracting archives!");
       return false;
+    } finally {
+      archive.close();
     }
   }
 
-  /**
-   * Since we directly work with zip archive, it needs to be closed after use
-   *
-   * @throws IOException
-   */
-  public void close() throws IOException {
-    archive.close();
-  }
 }

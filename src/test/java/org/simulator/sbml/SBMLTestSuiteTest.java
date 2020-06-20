@@ -1,9 +1,7 @@
 package org.simulator.sbml;
 
 import org.apache.commons.math.ode.DerivativeException;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -40,14 +38,7 @@ public class SBMLTestSuiteTest {
     private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
     private static final String SBML_TEST_SUITE_PATH = "SBML_TEST_SUITE_PATH";
     private static final double TOLERANCE_FACTOR = 1E-3;
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+    private static final double DELTA = 0.0002d;
 
     public SBMLTestSuiteTest(String path) {
         this.path = path;
@@ -154,6 +145,7 @@ public class SBMLTestSuiteTest {
                             .getModel();
                 } catch (Exception e) {
                     errorInModelReading = true;
+                    e.printStackTrace();
                 }
                 Assert.assertNotNull(model);
                 Assert.assertFalse(errorInModelReading);
@@ -174,11 +166,11 @@ public class SBMLTestSuiteTest {
                         compSimulator = new CompSimulator(sbmlFile);
                     } catch (Exception e) {
                         errorInCompSimulator = true;
+                        e.printStackTrace();
                     }
                     Assert.assertNotNull(compSimulator);
                     Assert.assertFalse(errorInCompSimulator);
 
-                    //solve
                     MultiTable solution = null;
                     boolean errorInSolve = false;
                     try {
@@ -186,6 +178,7 @@ public class SBMLTestSuiteTest {
                         solution = compSimulator.solve(stepSize, duration);
                     } catch (Exception e) {
                         errorInSolve = true;
+                        e.printStackTrace();
                     }
                     Assert.assertNotNull(solution);
                     Assert.assertFalse(errorInSolve);
@@ -200,6 +193,7 @@ public class SBMLTestSuiteTest {
                         solver = new FluxBalanceAnalysis(org.sbml.jsbml.SBMLReader.read(sbmlFile));
                     } catch (Exception e) {
                         errorInFBASimulator = true;
+                        e.printStackTrace();
                     }
                     Assert.assertNotNull(solver);
                     Assert.assertFalse(errorInFBASimulator);
@@ -209,12 +203,11 @@ public class SBMLTestSuiteTest {
                         solver.solve();
                     } catch (Exception e) {
                         errorInSolve = true;
+                        e.printStackTrace();
                     }
                     Assert.assertFalse(errorInSolve);
 
                     Map<String, Double> solution = solver.getSolution();
-
-                    System.out.println(solution);
 
                     BufferedReader reader = new BufferedReader(new FileReader(csvfile));
                     String[] keys = reader.readLine().trim().split(",");
@@ -227,7 +220,7 @@ public class SBMLTestSuiteTest {
 
                     for (Map.Entry<String, Double> mapElement : inputSolution.entrySet()) {
                         if (solution.containsKey(mapElement.getKey())) {
-                            Assert.assertEquals(mapElement.getValue(), solution.get(mapElement.getKey()), 0.0002);
+                            Assert.assertEquals(mapElement.getValue(), solution.get(mapElement.getKey()), DELTA);
                         }
                     }
 
@@ -242,6 +235,7 @@ public class SBMLTestSuiteTest {
                                 amountHash);
                     } catch (Exception e) {
                         exceptionInInterpreter = true;
+                        e.printStackTrace();
                     }
                     Assert.assertNotNull(interpreter);
                     Assert.assertFalse(exceptionInInterpreter);
@@ -267,6 +261,7 @@ public class SBMLTestSuiteTest {
                                     interpreter.getInitialValues(), timepoints);
                         } catch (DerivativeException e) {
                             errorInSolve = true;
+                            e.printStackTrace();
                         }
                         Assert.assertNotNull(solution);
                         Assert.assertFalse(errorInSolve);

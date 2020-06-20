@@ -47,6 +47,9 @@ public class PlotMultiTable extends ApplicationFrame {
   private MultiTable species;
   private DefaultCategoryDataset data;
   private String title;
+  private static final int WIDTH = 560;
+  private static final int HEIGHT = 367;
+  private static final String DEFAULT_TITLE = "Output plot";
 
   /**
    * Initializes the JFreeChart and dataSet for the chart using MultiTable
@@ -61,17 +64,24 @@ public class PlotMultiTable extends ApplicationFrame {
     species = table;
     JFreeChart lineChart = ChartFactory.createLineChart(title, "time", "conentration (nM)", createDataset(), PlotOrientation.VERTICAL, true, true, false);
     ChartPanel chartPanel = new ChartPanel(lineChart);
-    chartPanel.setPreferredSize(new java.awt.Dimension(560, 367));
+    chartPanel.setPreferredSize(new java.awt.Dimension(WIDTH, HEIGHT));
     setContentPane(chartPanel);
   }
 
+  /**
+   * Initializes the JFreeChart and dataSet for the chart using MultiTable
+   * with a default title
+   *
+   * @param table The input data type to the plot API is MultiTable which gets converted
+   *              internally to DefaultCategoryDataset
+   */
   public PlotMultiTable(MultiTable table) {
-    super("Output plot");
-    this.title = "Output plot";
+    super(DEFAULT_TITLE);
+    this.title = DEFAULT_TITLE;
     species = table;
     JFreeChart lineChart = ChartFactory.createLineChart(title, "time", "conentration (nM)", createDataset(), PlotOrientation.VERTICAL, true, true, false);
     ChartPanel chartPanel = new ChartPanel(lineChart);
-    chartPanel.setPreferredSize(new java.awt.Dimension(560, 367));
+    chartPanel.setPreferredSize(new java.awt.Dimension(WIDTH, HEIGHT));
     setContentPane(chartPanel);
   }
 

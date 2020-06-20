@@ -1,6 +1,7 @@
 package org.simulator.comp;
 
 import org.apache.commons.math.ode.DerivativeException;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.ext.comp.util.CompFlatteningConverter;
@@ -37,6 +38,16 @@ public class CompSimulator {
   private SBMLDocument doc;
   private SBMLDocument docFlat;
 
+  /**
+   * Constructor for the CompSimulator class. It reads the {@link SBMLDocument}
+   * and flattens the hierarchical SBML {@link Model} (consisting of multiple sub-models)
+   * into the non-hierarchical version by using the CompFlatteningConverter
+   * class of JSBML.
+   *
+   * @param file the input SBML file with comp extension that is to be simulated
+   * @throws IOException
+   * @throws XMLStreamException
+   */
   public CompSimulator(File file) throws IOException, XMLStreamException {
 
     // Read original SBML file and add meta-info about original ID
@@ -46,7 +57,6 @@ public class CompSimulator {
     // Flatten the model extra information in userObjects
     CompFlatteningConverter compFlatteningConverter = new CompFlatteningConverter();
     docFlat = compFlatteningConverter.flatten(doc);
-    assert docFlat != null;
   }
 
   public SBMLDocument getDoc() {
@@ -57,17 +67,43 @@ public class CompSimulator {
     return docFlat;
   }
 
+  /**
+   * This method initializes the {@link RosenbrockSolver} and passes
+   * it to solve the flattened model.
+   *
+   * @param timeEnd
+   * @param stepSize
+   * @return
+   * @throws DerivativeException
+   * @throws ModelOverdeterminedException
+   */
   public MultiTable solve(double timeEnd, double stepSize)
       throws DerivativeException, ModelOverdeterminedException {
+    /**
+     * Initialization of the {@link RosenbrockSolver} used for simulating the
+     * model.
+     */
     DESSolver solver = new RosenbrockSolver();
     return solve(timeEnd, stepSize, solver);
   }
 
+  /**
+   * This method computes the numerical solution of the flattened
+   * SBML {@link Model} simulated using the {@link RosenbrockSolver} and
+   * then maps the solutions from the flattened model back to
+   * the original model.
+   *
+   * @param timeEnd
+   * @param stepSize
+   * @param solver
+   * @return
+   * @throws DerivativeException
+   * @throws ModelOverdeterminedException
+   */
   public MultiTable solve(double timeEnd, double stepSize, DESSolver solver)
       throws DerivativeException, ModelOverdeterminedException {
     solver.setStepSize(stepSize);
 
-    // Execute the model using solver
     Model model = docFlat.getModel();
     SBMLinterpreter interpreter = new SBMLinterpreter(model);
     if (solver instanceof AbstractDESSolver) {
@@ -86,7 +122,7 @@ public class CompSimulator {
       for (int index = 1; index < solution.getColumnCount(); index++) {
         AbstractTreeNode node = (AbstractTreeNode) doc.getElementBySId(solution.getColumnIdentifier(index));
         if (node.isSetUserObjects()) {
-          System.out.println("flat id: " + solution.getColumnIdentifier(index) + "\t old id:" + node.getUserObject(AddMetaInfo.ORIG_ID) + "\t model enclosing it: " + node.getUserObject(AddMetaInfo.MODEL_ID));
+          logger.info("flat id: " + solution.getColumnIdentifier(index) + "\t old id:" + node.getUserObject(AddMetaInfo.ORIG_ID) + "\t model enclosing it: " + node.getUserObject(AddMetaInfo.MODEL_ID));
         }
       }
     }

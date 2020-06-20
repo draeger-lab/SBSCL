@@ -29,6 +29,7 @@ import org.jfree.chart.ChartUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -118,6 +119,7 @@ public class PlotProcessedSedmlResults extends ApplicationFrame {
     OutputStream out = FileUtils.openOutputStream(new File(outputPath));
     // Use default width and height for chart size and save as png
     ChartUtilities.writeChartAsPNG(out, this.lineChart, CHART_WIDTH, CHART_HEIGHT);
+    out.close();
   }
 
   /**
@@ -132,7 +134,6 @@ public class PlotProcessedSedmlResults extends ApplicationFrame {
     String path = null;
     File currentDir = new File(System.getProperty("user.dir"));
     path = currentDir.getAbsolutePath() + "/src/test/resources" + resourcePath;
-    File pwd = new File(path);
-    return pwd.getParentFile().getAbsolutePath();
+    return Paths.get(path).getParent().getFileName().toString();
   }
 }
