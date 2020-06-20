@@ -21,12 +21,22 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * <p>A wrapper class used to verify tests in the SBML Test Runner</p>
- *
+ * Wrapper for the SBML Test Suite
  * <p>
- * The results of the simulation by this class are stored as a CSV file in the specified output
- * directory in SBML Test Runner. Then the SBML Test Runner creates the distance plots comparing
- * this results with the pre-defined results from SBML Test Suite under the criteria given at this
+ * The <a href="https://github.com/sbmlteam/sbml-test-suite" target="_blank">SBML Test Suite</a>
+ * is a conformance testing system. It allows developers and users to test the degree and
+ * correctness of the SBML support provided in a software package. The SBML Test Suite consists of
+ * (1) a collection of SBML models, each with associated simulated results where appropriate;
+ * (2) a testing framework for running software tools through the suite;
+ * and (3) basic documentation on the test cases and the use of the suite.
+ * This class provides the required wrapper class used to verify tests with the SBML Test Runner.
+ * </p>
+ * <p>
+ * The simulation results of SBSCL by the wrapper are stored as a CSV file in the specified output
+ * directory in SBML Test Runner. The SBML Test Runner then performs the comparison of the simulation
+ * results against the reference output and creates the distance plots comparing
+ * this results with the pre-defined results from SBML Test Suite. The comparison is performed using the criteria
+ * specified in
  * <a href="http://sbml.org/Software/SBML_Test_Suite/Case_Descriptions#The_.22settings.22_file" target="_blank">link</a>
  * </p>
  */
@@ -40,7 +50,8 @@ public class SBMLTestSuiteRunnerWrapper {
     private static final double TOLERANCE_FACTOR = 1E-3;
 
     /**
-     * Runs a simulation of a SBML file and writes result to a specified CSV file
+     * The wrapper executes the simulation of a given SBML file and writes result to a specified CSV file.
+     * The information for the wrapper is parsed via command line arguments.
      *
      * @param args
      * @throws IOException
@@ -51,11 +62,11 @@ public class SBMLTestSuiteRunnerWrapper {
     public static void main(String[] args) throws IOException, XMLStreamException, ModelOverdeterminedException, DerivativeException {
 
         // Configuration
-        String dirPath = args[0];
-        String currentCase = args[1];
-        String outputDirPath = args[2];
-        String level = args[3];
-        String version = args[4];
+        String dirPath = args[0];  // path of sbml-test-suite
+        String currentCase = args[1];  // current test case
+        String outputDirPath = args[2];  // output directory for results
+        String level = args[3];  // SBML level
+        String version = args[4]; // SBML version
 
         String filePath = dirPath + File.separator + currentCase + File.separator + currentCase + "-sbml-l" + level + 'v' + version + ".xml";
         String settingsPath = dirPath + File.separator + currentCase + File.separator + currentCase + "-settings.txt";
