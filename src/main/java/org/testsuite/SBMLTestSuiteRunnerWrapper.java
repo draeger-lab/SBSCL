@@ -1,4 +1,4 @@
-package org.simulator.examples;
+package org.testsuite;
 
 import org.apache.commons.math.ode.DerivativeException;
 import org.sbml.jsbml.Model;
