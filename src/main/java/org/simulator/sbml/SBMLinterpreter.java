@@ -2444,6 +2444,9 @@ public class SBMLinterpreter
       }
       changeRate[i] *= conversionFactors[i];
     }
+    for (int i = 0; i < nRateRules; i++) {
+      changeRate[symbolHash.get(rateRulesRoots.get(i).getVariable())] /= conversionFactors[symbolHash.get(rateRulesRoots.get(i).getVariable())];
+    }
   }
 
 
