@@ -134,12 +134,10 @@ public class RuleValue {
     value = nodeObject.compileDouble(time, 0d);
     if (isSpecies && !hasZeroSpatialDimensions) {
       double compartmentValue = valueHolder.getCurrentValueOf(compartmentIndex);
-      if (isSetInitialAmount && !hasOnlySubstanceUnits) {
+      if (isAmount && !hasOnlySubstanceUnits) {
         value = value * compartmentValue;
-      } else if (isSetInitialConcentration && hasOnlySubstanceUnits) {
+      } else if (!isAmount && hasOnlySubstanceUnits) {
         value = value / compartmentValue;
-      } else if (isSetInitialConcentration && isAmount) {
-        value = value * compartmentValue;
       }
     }
     return value;

@@ -574,9 +574,8 @@ public class SBMLinterpreter
     init(true, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, amountHash);
   }
 
-
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.odes.FastProcessDESystem#containsFastProcesses()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public boolean containsFastProcesses() {
@@ -635,9 +634,8 @@ public class SBMLinterpreter
     algebraicRules = arc.getAssignmentRules();
   }
 
-
-  /* (non-Javadoc)
-   * @see eva2.tools.math.des.RichDESystem#getIntermediateIds()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public String[] getAdditionalValueIds() {
@@ -649,9 +647,8 @@ public class SBMLinterpreter
     return ids;
   }
 
-
-  /* (non-Javadoc)
-   * @see eva2.tools.math.des.RichDESystem#getIntermediates(double, double[])
+  /**
+   * {@inheritDoc}
    */
   @Override
   public double[] getAdditionalValues(double t, double[] Y)
@@ -691,38 +688,32 @@ public class SBMLinterpreter
     return 1d;
   }
 
-
-  /*
-   * (non-Javadoc)
-   * @see org.simulator.sbml.ValueHolder#getCurrentCompartmentSize(java.lang.String)
+  /**
+   * {@inheritDoc}
    */
   @Override
   public double getCurrentCompartmentSize(String id) {
     return Y[symbolHash.get(id)];
   }
 
-
-  /*
-   * (non-Javadoc)
-   * @see org.simulator.sbml.ValueHolder#getCurrentParameterValue(java.lang.String)
+  /**
+   * {@inheritDoc}
    */
   @Override
   public double getCurrentParameterValue(String id) {
     return Y[symbolHash.get(id)];
   }
 
-
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.ValueHolder#getSpeciesValue()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public double getCurrentSpeciesValue(String id) {
     return Y[symbolHash.get(id)];
   }
 
-
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.ValueHolder#getCurrentStoichiometry()
+  /**
+   * {@inheritDoc}
    */
   @Override
   @SuppressWarnings("deprecation")
@@ -750,18 +741,16 @@ public class SBMLinterpreter
     return 1d;
   }
 
-
-  /* (non-Javadoc)
-   * @see org.apache.commons.math.ode.FirstOrderDifferentialEquations#getDimension ()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public int getDimension() {
     return initialValues.length;
   }
 
-
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.odes.EventDESystem#getEventAssignments(double, double[])
+  /**
+   * {@inheritDoc}
    */
   @Override
   public EventInProgress getNextEventAssignments(double t, double previousTime, double[] Y)
@@ -918,9 +907,8 @@ public class SBMLinterpreter
     }
   }
 
-
-  /* (non-Javadoc)
-   * @see eva2.tools.math.des.DESystem#getIdentifiers()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public String[] getIdentifiers() {
@@ -947,18 +935,16 @@ public class SBMLinterpreter
     return model;
   }
 
-
-  /* (non-Javadoc)
-   * @see eva2.tools.math.des.RichDESystem#getNumIntermediates()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public int getAdditionalValueCount() {
     return v.length;
   }
 
-
-  /* (non-Javadoc)
-   * @see eva2.tools.math.des.EventDESystem#getEventCount()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public int getEventCount() {
@@ -986,9 +972,8 @@ public class SBMLinterpreter
     return p;
   }
 
-
-  /* (non-Javadoc)
-   * @see eva2.tools.math.des.EventDESystem#getRuleCount()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public int getRuleCount() {
@@ -996,8 +981,8 @@ public class SBMLinterpreter
   }
 
 
-  /* (non-Javadoc)
-   * @see eva2.tools.math.des.EventDESystem#getPositionOfParameters()
+  /**
+   * {@inheritDoc}
    */
   public int getPositionOfParameters() {
     return Y.length - model.getParameterCount();
@@ -1034,8 +1019,8 @@ public class SBMLinterpreter
   }
 
 
-  /* (non-Javadoc)
-   * @see eva2.tools.math.des.DESystem#getValue(double, double[], double[])
+  /**
+   * {@inheritDoc}
    */
   @Override
   public void computeDerivatives(double time, double[] Y, double[] changeRate)
@@ -1093,8 +1078,8 @@ public class SBMLinterpreter
   }
 
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.ValueHolder#getSpeciesValue()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public double getCurrentValueOf(String id) {
@@ -2193,8 +2178,8 @@ public class SBMLinterpreter
   }
 
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.odes.EventDESystem#processAssignmentRules(double, double[])
+  /**
+   * {@inheritDoc}
    */
   @Override
   public boolean processAssignmentRules(double t, double Y[])
@@ -2450,8 +2435,8 @@ public class SBMLinterpreter
   }
 
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.odes.FastProcessDESystem#setFastProcessComputation(boolean)
+  /**
+   * {@inheritDoc}
    */
   @Override
   public void setFastProcessComputation(boolean isProcessing) {
@@ -2585,8 +2570,8 @@ public class SBMLinterpreter
   }
 
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.odes.DESystem#containsEventsOrRules()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public boolean containsEventsOrRules() {
@@ -2598,8 +2583,8 @@ public class SBMLinterpreter
   }
 
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.ValueHolder#getCurrentValueOf(int)
+  /**
+   * {@inheritDoc}
    */
   @Override
   public double getCurrentValueOf(int position) {
@@ -2607,8 +2592,8 @@ public class SBMLinterpreter
   }
 
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.odes.DESystem#getNumPositiveValues()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public int getPositiveValueCount() {
@@ -2617,8 +2602,8 @@ public class SBMLinterpreter
   }
 
 
-  /* (non-Javadoc)
-   * @see org.simulator.math.odes.DelayedDESSystem#registerDelayValueHolder(org.simulator.math.odes.DelayValueHolder)
+  /**
+   * {@inheritDoc}
    */
   @Override
   public void registerDelayValueHolder(DelayValueHolder dvh) {
@@ -2626,9 +2611,8 @@ public class SBMLinterpreter
   }
 
 
-  /*
-   * (non-Javadoc)
-   * @see org.simulator.math.odes.DelayValueHolder#computeDelayedValue(double, java.lang.String, org.simulator.math.odes.DESystem, double[], int)
+  /**
+   * {@inheritDoc}
    */
   @Override
   public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues, int yIndex) {
@@ -2671,8 +2655,8 @@ public class SBMLinterpreter
   }
 
 
-  /* (non-Javadoc)
-   * @see org.simulator.math.odes.EventDESystem#getNoDerivatives()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public boolean getNoDerivatives() {
@@ -2690,8 +2674,8 @@ public class SBMLinterpreter
   }
 
 
-  /* (non-Javadoc)
-   * @see org.simulator.math.odes.DESystem#setDelaysIncluded(boolean)
+  /**
+   * {@inheritDoc}
    */
   @Override
   public void setDelaysIncluded(boolean delaysIncluded) {
