@@ -782,7 +782,7 @@ public class SBMLinterpreter
         }
         persistent = events[index].getPersistent();
         if (!persistent) {
-          if (!events[index].getTriggerObject().compileBoolean(astNodeTime)) {
+          if (events[index].getTriggerObject().compileDouble(astNodeTime, 0d) == 0d) {
             runningEvents.remove(i);
             events[index].aborted(currentTime);
             i--;
@@ -819,7 +819,7 @@ public class SBMLinterpreter
         }
         persistent = ev.getTrigger().getPersistent();
         if (!persistent && !aborted) {
-          if (!events[index].getTriggerObject().compileBoolean(astNodeTime)) {
+          if (events[index].getTriggerObject().compileDouble(astNodeTime, 0d) == 0d) {
             //delayedEvents.remove(i);
             events[index].aborted(currentTime);
             //i--;
@@ -843,7 +843,7 @@ public class SBMLinterpreter
       // check the trigger of all events in the model
       for (i = 0; i < events.length; i++) {
         if (events[i] != null) {
-          if (events[i].getTriggerObject().compileBoolean(astNodeTime)) {
+          if (events[i].getTriggerObject().compileDouble(astNodeTime, 0d) != 0d) {
             // event has not fired recently -> can fire
             if (!events[i].getFireStatus(currentTime)) {
               execTime = currentTime;
