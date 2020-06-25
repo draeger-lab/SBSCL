@@ -2522,29 +2522,6 @@ public class SBMLinterpreter
     }
   }
 
-
-  /**
-   * Updates the amount of a species due to a change in the size of their
-   * compartment caused by an assignment rule overwriting the initial value
-   *
-   * @param compartmentIndex
-   * @param Y
-   * @param oldCompartmentValue
-   * @param newCompartmentValue
-   */
-  private void refreshSpeciesAmount(int compartmentIndex, double Y[], double oldCompartmentValue, double newCompartmentValue) {
-    int speciesIndex;
-    for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
-      if (entry.getValue() == compartmentIndex) {
-        speciesIndex = symbolHash.get(entry.getKey());
-        if ((isAmount[speciesIndex]) && (speciesMap.get(symbolIdentifiers[speciesIndex]).isSetInitialConcentration())) {
-          Y[speciesIndex] = (Y[speciesIndex] / oldCompartmentValue) * newCompartmentValue;
-        }
-      }
-    }
-  }
-
-
   /**
    * Updates the concentration of species due to a change in the size of their
    * compartment (at events)
@@ -2563,6 +2540,28 @@ public class SBMLinterpreter
         if ((!isAmount[speciesIndex]) && (!speciesMap.get(symbolIdentifiers[speciesIndex]).getConstant())) {
           Y[speciesIndex] = (Y[speciesIndex] * oldCompartmentValue) / newCompartmentValue;
           events[eventIndex].addAssignment(speciesIndex, Y[speciesIndex]);
+        }
+      }
+    }
+  }
+
+
+  /**
+   * Updates the amount of a species due to a change in the size of their
+   * compartment caused by an assignment rule overwriting the initial value
+   *
+   * @param compartmentIndex
+   * @param Y
+   * @param oldCompartmentValue
+   * @param newCompartmentValue
+   */
+  private void refreshSpeciesAmount(int compartmentIndex, double Y[], double oldCompartmentValue, double newCompartmentValue) {
+    int speciesIndex;
+    for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
+      if (entry.getValue() == compartmentIndex) {
+        speciesIndex = symbolHash.get(entry.getKey());
+        if ((isAmount[speciesIndex]) && (speciesMap.get(symbolIdentifiers[speciesIndex]).isSetInitialConcentration())) {
+          Y[speciesIndex] = (Y[speciesIndex] / oldCompartmentValue) * newCompartmentValue;
         }
       }
     }
