@@ -2251,11 +2251,11 @@ public class SBMLinterpreter
           obj.processRule(Y, astNodeTime, false);
           newVal = obj.getValue();
           symbolIndex = obj.getIndex();
-          ;
-          if ((symbolIndex >= 0) && (compartmentHash.containsValue(symbolIndex))) {
-            updateSpeciesConcentration(symbolIndex, Y, Y[symbolIndex], newVal, false);
-          }
+
           if (symbolIndex >= 0) {
+            if (compartmentHash.containsValue(symbolIndex)) {
+              updateSpeciesConcentration(symbolIndex, Y, Y[symbolIndex], newVal, false);
+            }
             events[index].addAssignment(symbolIndex, newVal);
           }
         }
