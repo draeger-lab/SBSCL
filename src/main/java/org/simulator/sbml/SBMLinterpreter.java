@@ -2254,7 +2254,7 @@ public class SBMLinterpreter
 
           if (symbolIndex >= 0) {
             if (compartmentHash.containsValue(symbolIndex)) {
-              updateSpeciesConcentration(symbolIndex, Y, Y[symbolIndex], newVal, false);
+              updateSpeciesConcentrationByCompartmentChange(symbolIndex, Y, Y[symbolIndex], newVal, -1);
             }
             events[index].addAssignment(symbolIndex, newVal);
           }
@@ -2270,7 +2270,7 @@ public class SBMLinterpreter
             symbolIndex = obj.getIndex();
             if (symbolIndex >= 0) {
               if (compartmentHash.containsValue(symbolIndex)) {
-                updateSpeciesConcentrationAtEvents(symbolIndex, Y, Y[symbolIndex], newVal, index);
+                updateSpeciesConcentrationByCompartmentChange(symbolIndex, Y, Y[symbolIndex], newVal, index);
               }
               events[index].addAssignment(symbolIndex, newVal);
             } else {
@@ -2358,7 +2358,7 @@ public class SBMLinterpreter
             Y[index] = newValue;
           }
           if (currentChange && (!initialCalculations) && (index >= 0) && (compartmentHash.containsValue(index))) {
-            updateSpeciesConcentration(index, Y, oldValue, newValue, false);
+            updateSpeciesConcentrationByCompartmentChange(index, Y, oldValue, newValue, -1);
           } else if (currentChange && initialCalculations && (index >= 0) && (compartmentHash.containsValue(index))) {
             refreshSpeciesAmount(index, Y, oldValue, newValue);
           }
@@ -2494,28 +2494,25 @@ public class SBMLinterpreter
     }
   }
 
-
   /**
    * Updates the concentration of species due to a change in the size of their
    * compartment
    *
    * @param compartmentIndex    the index of the compartment
-   * @param changeRate          the changeRate vector
+   * @param Y                   the Y vector
    * @param oldCompartmentValue the old value of the compartment
    * @param newCompartmentValue the new value of the compartment
-   * @param causedByRateRule    flag that is true if a rate rule has set the change rate of
-   *                            the compartment
+   * @param eventIndex
    */
-  private void updateSpeciesConcentration(int compartmentIndex, double changeRate[], double oldCompartmentValue, double newCompartmentValue, boolean causedByRateRule) {
+  private void updateSpeciesConcentrationByCompartmentChange(int compartmentIndex, double Y[], double oldCompartmentValue, double newCompartmentValue, int eventIndex){
     int speciesIndex;
-    for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
+    for (Entry<String, Integer> entry: compartmentHash.entrySet()) {
       if (entry.getValue() == compartmentIndex) {
         speciesIndex = symbolHash.get(entry.getKey());
         if ((!isAmount[speciesIndex]) && (!speciesMap.get(symbolIdentifiers[speciesIndex]).getConstant())) {
-          if (causedByRateRule) {
-            changeRate[speciesIndex] = -changeRate[compartmentIndex] * Y[speciesIndex] / Y[compartmentIndex];
-          } else {
-            changeRate[speciesIndex] = (changeRate[speciesIndex] * oldCompartmentValue) / newCompartmentValue;
+          Y[speciesIndex] = (Y[speciesIndex] * oldCompartmentValue) / newCompartmentValue;
+          if (eventIndex != -1){
+            events[eventIndex].addAssignment(speciesIndex, Y[speciesIndex]);
           }
         }
       }
@@ -2524,22 +2521,18 @@ public class SBMLinterpreter
 
   /**
    * Updates the concentration of species due to a change in the size of their
-   * compartment (at events)
+   * compartment
    *
    * @param compartmentIndex
-   * @param Y
-   * @param oldCompartmentValue
-   * @param newCompartmentValue
-   * @param eventIndex
+   * @param changeRate
    */
-  private void updateSpeciesConcentrationAtEvents(int compartmentIndex, double Y[], double oldCompartmentValue, double newCompartmentValue, int eventIndex) {
+  private void updateSpeciesConcentrationByCompartmentRateRule(int compartmentIndex, double changeRate[]) {
     int speciesIndex;
-    for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
+    for (Entry<String, Integer> entry: compartmentHash.entrySet()) {
       if (entry.getValue() == compartmentIndex) {
         speciesIndex = symbolHash.get(entry.getKey());
         if ((!isAmount[speciesIndex]) && (!speciesMap.get(symbolIdentifiers[speciesIndex]).getConstant())) {
-          Y[speciesIndex] = (Y[speciesIndex] * oldCompartmentValue) / newCompartmentValue;
-          events[eventIndex].addAssignment(speciesIndex, Y[speciesIndex]);
+          changeRate[speciesIndex] = -changeRate[compartmentIndex] * Y[speciesIndex] / Y[compartmentIndex];
         }
       }
     }
