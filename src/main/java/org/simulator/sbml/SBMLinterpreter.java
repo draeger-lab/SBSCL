@@ -2496,7 +2496,7 @@ public class SBMLinterpreter
 
   /**
    * Updates the concentration of species due to a change in the size of their
-   * compartment
+   * compartment (also at events)
    *
    * @param compartmentIndex    the index of the compartment
    * @param Y                   the Y vector
@@ -2520,8 +2520,8 @@ public class SBMLinterpreter
   }
 
   /**
-   * Updates the concentration of species due to a change in the size of their
-   * compartment
+   * Updates the changeRate of species due to a change in the size of their
+   * compartment (by RateRule)
    *
    * @param compartmentIndex
    * @param changeRate
