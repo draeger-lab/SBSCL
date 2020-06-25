@@ -2263,10 +2263,9 @@ public class SBMLinterpreter
         // event uses values from trigger time -> get stored values
         // from the HashMap
         Double[] triggerTimeValues = events[index].getValues();
-        int j = 0;
         if (events[index].getRuleObjects() != null) {
+          int j = 0;
           for (AssignmentRuleValue obj : events[index].getRuleObjects()) {
-            //for (int j = 0; j < triggerTimeValues.length; j++) {
             newVal = triggerTimeValues[j];
             symbolIndex = obj.getIndex();
             if (symbolIndex >= 0) {
