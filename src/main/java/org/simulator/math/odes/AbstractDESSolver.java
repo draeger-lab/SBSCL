@@ -38,6 +38,7 @@ import org.apache.commons.math.ode.events.EventException;
 import org.apache.commons.math.ode.events.EventHandler;
 import org.simulator.math.Mathematics;
 import org.simulator.math.odes.MultiTable.Block.Column;
+import org.simulator.sbml.SBMLinterpreter;
 
 /**
  * This Class represents an abstract solver for event-driven DES
@@ -122,6 +123,12 @@ public abstract class AbstractDESSolver
    * Key used when informing listeners about progress by this solver.
    */
   public static final String PROGRESS = "progress";
+
+  /**
+   * Key used when informing listeners about change in the result by this
+   * solver.
+   */
+  public static final String RESULT = "result";
 
   /**
    * Initialize with default integration step size and non-negative attribute
@@ -272,8 +279,8 @@ public abstract class AbstractDESSolver
     return !unstableFlag;
   }
 
-  /* (non-Javadoc)
-   * @see java.lang.Object#clone()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public abstract AbstractDESSolver clone();
@@ -431,16 +438,18 @@ public abstract class AbstractDESSolver
     return STOP;
   }
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.odes.DESSolver#firePropertyChanged(double, double)
+  /**
+   * {@inheritDoc}
    */
   @Override
-  public void firePropertyChange(double oldValue, double newValue /*, double[] currResult, double[] additionalResult*/) {
+  public void firePropertyChange(double oldValue, double newValue, double[] currResult) {
     if (!listenerList.isEmpty()) {
-      PropertyChangeEvent evt = new PropertyChangeEvent(this, PROGRESS, oldValue, newValue);
+      PropertyChangeEvent evt1 = new PropertyChangeEvent(this, PROGRESS, oldValue, newValue);
+      PropertyChangeEvent evt2 = new PropertyChangeEvent(this, RESULT, currResult, currResult);
       // logger.info(String.format("Progress: %s %%", StringTools.toString(newValue)));
       for (PropertyChangeListener listener : listenerList) {
-        listener.propertyChange(evt);
+        listener.propertyChange(evt1);
+        listener.propertyChange(evt2);
       }
     }
   }
@@ -770,10 +779,12 @@ public abstract class AbstractDESSolver
     if (fastFlag) {
       result[0] = computeSteadyState(((FastProcessDESystem) DES), result[0], timeBegin);
     }
+    addPropertyChangeListener((SBMLinterpreter) DES);
 
     // execute events that trigger at 0.0
     processEvents((EventDESystem) DES, 0d, 0d, result[0]);
     System.arraycopy(result[0], 0, yTemp, 0, yTemp.length);
+    firePropertyChange(0d, 0d, result[0]);
     for (int i = 1; (i < result.length) && (!Thread.currentThread().isInterrupted()); i++) {
       double oldT = t;
       System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
@@ -790,7 +801,7 @@ public abstract class AbstractDESSolver
       //			if (logger.getLevel().intValue() < Level.INFO.intValue()) {
       //				logger.fine("additional results: " + Arrays.toString(v));
       //			}
-      firePropertyChange(oldT * intervalFactor, t * intervalFactor);
+      firePropertyChange(oldT * intervalFactor, t * intervalFactor, yTemp);
     }
     return data;
   }
@@ -837,9 +848,11 @@ public abstract class AbstractDESSolver
       result[0] = computeSteadyState(((FastProcessDESystem) DES), result[0], timePoints[0]);
     }
 
+    addPropertyChangeListener((SBMLinterpreter) DES);
     // execute events that trigger at 0.0
     processEvents((EventDESystem) DES, 0d, 0d, result[0]);
     System.arraycopy(result[0], 0, yTemp, 0, result[0].length);
+    firePropertyChange(0d, 0d, result[0]);
     for (int i = 1; (i < timePoints.length) && (!Thread.currentThread().isInterrupted()); i++) {
       h = stepSize;
       // h = h / 10;
@@ -866,7 +879,7 @@ public abstract class AbstractDESSolver
       //			if (logger.getLevel().intValue() < Level.INFO.intValue()) {
       //				logger.fine("additional results: " + Arrays.toString(v));
       //			}
-      firePropertyChange(timePoints[i - 1] * intervalFactor, timePoints[i] * intervalFactor);
+      firePropertyChange(timePoints[i - 1], timePoints[i], yTemp);
       t = timePoints[i];
     }
     return data;
@@ -881,6 +894,7 @@ public abstract class AbstractDESSolver
     if (DES instanceof DelayedDESystem) {
       ((DelayedDESystem) DES).registerDelayValueHolder(this);
     }
+    addPropertyChangeListener((SBMLinterpreter) DES);
     double[] timePoints = initConditions.getTimePoints();
 
     // of items to be simulated, this will cause a problem!
@@ -909,6 +923,7 @@ public abstract class AbstractDESSolver
     double[] change = new double[DES.getDimension()];
     double t = timePoints[0];
     double v[] = additionalResults(DES, t, result[0], data, 0);
+    firePropertyChange(0d, 0d, result[0]);
     for (i = 1; (i < timePoints.length) && (!Thread.currentThread().isInterrupted()); i++) {
       double h = stepSize;
       if (!missingIds.isEmpty()) {
@@ -940,7 +955,7 @@ public abstract class AbstractDESSolver
       //			if ((logger != null) && (logger.getLevel().intValue() < Level.INFO.intValue())) {
       //				logger.fine("additional results: " + Arrays.toString(v));
       //			}
-      firePropertyChange(timePoints[i - 1] * intervalFactor, timePoints[i] * intervalFactor);
+      firePropertyChange(timePoints[i - 1] * intervalFactor, timePoints[i] * intervalFactor, yTemp);
       t = timePoints[i];
     }
     return data;

@@ -24,6 +24,8 @@
  */
 package org.simulator.sbml;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,7 +60,6 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Symbol;
-import org.sbml.jsbml.util.ValuePair;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.validator.OverdeterminationValidator;
 import org.simulator.math.RNG;
@@ -108,7 +109,7 @@ import org.simulator.sbml.astnode.TimesValue;
  */
 public class SBMLinterpreter
     implements DelayedDESystem, EventDESystem, FastProcessDESystem,
-    RichDESystem, SBMLValueHolder {
+    RichDESystem, SBMLValueHolder, PropertyChangeListener {
 
   /**
    * A {@link Logger}.
@@ -480,6 +481,17 @@ public class SBMLinterpreter
 
   private boolean containsDelays;
 
+  /**
+   * The value of the last time point processed
+   */
+  private double lastTimePoint;
+
+  /**
+   * An array of the concentration of each species at last processed time point
+   * within the model system.
+   */
+  private double[] lastTimePointResult;
+
 
   /**
    * <p>
@@ -571,6 +583,8 @@ public class SBMLinterpreter
     reactionReversible = new boolean[model.getReactionCount()];
     initialValues = new double[Y.length];
     nodes = new LinkedList<ASTNode>();
+    lastTimePoint = 0d;
+    lastTimePointResult = new double[Y.length];
     init(true, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, amountHash);
   }
 
@@ -2691,5 +2705,32 @@ public class SBMLinterpreter
 
   public double[] getY() {
     return Y;
+  }
+
+  @Override
+  public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+
+    if (propertyChangeEvent.getPropertyName().equals("result")){
+      setLastTimePointResult((double[]) propertyChangeEvent.getNewValue());
+    }else {
+      setLastTimePoint((Double) propertyChangeEvent.getNewValue());
+    }
+
+  }
+
+  public double getLastTimePoint() {
+    return lastTimePoint;
+  }
+
+  public void setLastTimePoint(double lastTimePoint) {
+    this.lastTimePoint = lastTimePoint;
+  }
+
+  public double[] getLastTimePointResult() {
+    return lastTimePointResult;
+  }
+
+  public void setLastTimePointResult(double[] lastTimePointResult) {
+    this.lastTimePointResult = lastTimePointResult;
   }
 }
