@@ -530,7 +530,7 @@ public class MultiTable extends AbstractTableModel
   /**
    * The name of the time column. Default is the English word "Time".
    */
-  private String timeName = "Time";
+  private String timeName = "time";
 
   /**
    * The array to gather the time points in this data structure. This array
