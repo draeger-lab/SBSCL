@@ -442,9 +442,9 @@ public abstract class AbstractDESSolver
    * {@inheritDoc}
    */
   @Override
-  public void firePropertyChange(double oldValue, double newValue, double[] currResult) {
+  public void firePropertyChange(double currTime, double[] currResult) {
     if (!listenerList.isEmpty()) {
-      PropertyChangeEvent evt1 = new PropertyChangeEvent(this, PROGRESS, oldValue, newValue);
+      PropertyChangeEvent evt1 = new PropertyChangeEvent(this, PROGRESS, currTime, currTime);
       PropertyChangeEvent evt2 = new PropertyChangeEvent(this, RESULT, currResult, currResult);
       // logger.info(String.format("Progress: %s %%", StringTools.toString(newValue)));
       for (PropertyChangeListener listener : listenerList) {
@@ -784,7 +784,7 @@ public abstract class AbstractDESSolver
     // execute events that trigger at 0.0
     processEvents((EventDESystem) DES, 0d, 0d, result[0]);
     System.arraycopy(result[0], 0, yTemp, 0, yTemp.length);
-    firePropertyChange(0d, 0d, result[0]);
+    firePropertyChange(0d, result[0]);
     for (int i = 1; (i < result.length) && (!Thread.currentThread().isInterrupted()); i++) {
       double oldT = t;
       System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
@@ -801,7 +801,7 @@ public abstract class AbstractDESSolver
       //			if (logger.getLevel().intValue() < Level.INFO.intValue()) {
       //				logger.fine("additional results: " + Arrays.toString(v));
       //			}
-      firePropertyChange(oldT * intervalFactor, t * intervalFactor, yTemp);
+      firePropertyChange(t * intervalFactor, yTemp);
     }
     return data;
   }
@@ -852,7 +852,7 @@ public abstract class AbstractDESSolver
     // execute events that trigger at 0.0
     processEvents((EventDESystem) DES, 0d, 0d, result[0]);
     System.arraycopy(result[0], 0, yTemp, 0, result[0].length);
-    firePropertyChange(0d, 0d, result[0]);
+    firePropertyChange(0d, result[0]);
     for (int i = 1; (i < timePoints.length) && (!Thread.currentThread().isInterrupted()); i++) {
       h = stepSize;
       // h = h / 10;
@@ -879,7 +879,7 @@ public abstract class AbstractDESSolver
       //			if (logger.getLevel().intValue() < Level.INFO.intValue()) {
       //				logger.fine("additional results: " + Arrays.toString(v));
       //			}
-      firePropertyChange(timePoints[i - 1], timePoints[i], yTemp);
+      firePropertyChange(timePoints[i], yTemp);
       t = timePoints[i];
     }
     return data;
@@ -923,7 +923,7 @@ public abstract class AbstractDESSolver
     double[] change = new double[DES.getDimension()];
     double t = timePoints[0];
     double v[] = additionalResults(DES, t, result[0], data, 0);
-    firePropertyChange(0d, 0d, result[0]);
+    firePropertyChange(0d, result[0]);
     for (i = 1; (i < timePoints.length) && (!Thread.currentThread().isInterrupted()); i++) {
       double h = stepSize;
       if (!missingIds.isEmpty()) {
@@ -955,7 +955,7 @@ public abstract class AbstractDESSolver
       //			if ((logger != null) && (logger.getLevel().intValue() < Level.INFO.intValue())) {
       //				logger.fine("additional results: " + Arrays.toString(v));
       //			}
-      firePropertyChange(timePoints[i - 1] * intervalFactor, timePoints[i] * intervalFactor, yTemp);
+      firePropertyChange(timePoints[i] * intervalFactor, yTemp);
       t = timePoints[i];
     }
     return data;

@@ -484,13 +484,13 @@ public class SBMLinterpreter
   /**
    * The value of the last time point processed
    */
-  private double lastTimePoint;
+  private double latestTimePoint;
 
   /**
    * An array of the concentration of each species at last processed time point
    * within the model system.
    */
-  private double[] lastTimePointResult;
+  private double[] latestTimePointResult;
 
 
   /**
@@ -583,8 +583,8 @@ public class SBMLinterpreter
     reactionReversible = new boolean[model.getReactionCount()];
     initialValues = new double[Y.length];
     nodes = new LinkedList<ASTNode>();
-    lastTimePoint = 0d;
-    lastTimePointResult = new double[Y.length];
+    latestTimePoint = 0d;
+    latestTimePointResult = new double[Y.length];
     init(true, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, amountHash);
   }
 
@@ -2707,30 +2707,33 @@ public class SBMLinterpreter
     return Y;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 
     if (propertyChangeEvent.getPropertyName().equals("result")){
-      setLastTimePointResult((double[]) propertyChangeEvent.getNewValue());
+      setLatestTimePointResult((double[]) propertyChangeEvent.getNewValue());
     }else {
-      setLastTimePoint((Double) propertyChangeEvent.getNewValue());
+      setLatestTimePoint((Double) propertyChangeEvent.getNewValue());
     }
 
   }
 
-  public double getLastTimePoint() {
-    return lastTimePoint;
+  public double getLatestTimePoint() {
+    return latestTimePoint;
   }
 
-  public void setLastTimePoint(double lastTimePoint) {
-    this.lastTimePoint = lastTimePoint;
+  private void setLatestTimePoint(double latestTimePoint) {
+    this.latestTimePoint = latestTimePoint;
   }
 
-  public double[] getLastTimePointResult() {
-    return lastTimePointResult;
+  public double[] getLatestTimePointResult() {
+    return latestTimePointResult;
   }
 
-  public void setLastTimePointResult(double[] lastTimePointResult) {
-    this.lastTimePointResult = lastTimePointResult;
+  private void setLatestTimePointResult(double[] latestTimePointResult) {
+    this.latestTimePointResult = latestTimePointResult;
   }
 }

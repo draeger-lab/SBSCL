@@ -53,15 +53,14 @@ public interface DESSolver extends Cloneable, Serializable {
   public DESSolver clone();
 
   /**
-   * Tell each listener that property value changed. OldValue and newValue are
-   * the old and current time point of simulation, respectively. CurrResult
+   * Tell each listener that property value changed. CurrTime is the
+   * current time point of simulation, respectively. CurrResult
    * is the row of the result at the current time point of simulation.
    *
-   * @param oldValue
-   * @param newValue
+   * @param currTime
    * @param currResult
    */
-  public void firePropertyChange(double oldValue, double newValue, double[] currResult);
+  public void firePropertyChange(double currTime, double[] currResult);
 
   /**
    * For details about the Kinetic Simulation Algorithm Ontology (KiSAO) see
