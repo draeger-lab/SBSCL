@@ -65,17 +65,11 @@ public class SBMLTestSuiteRunnerWrapper {
     public static void main(String[] args) throws IOException, XMLStreamException, ModelOverdeterminedException, DerivativeException {
 
         // Configuration
-//        String dirPath = args[0];  // path of sbml-test-suite
-//        String currentCase = args[1];  // current test case
-//        String outputDirPath = args[2];  // output directory for results
-//        String level = args[3];  // SBML level
-//        String version = args[4]; // SBML version
-
-        String dirPath = "/home/blackreaper/Documents/GSOC-NRNB/SBSCL/src/test/resources/sbml-test-suite/cases/semantic";  // path of sbml-test-suite
-        String currentCase = "01466";  // current test case
-        String outputDirPath = "/home/blackreaper/Documents/temp/newones/";  // output directory for results
-        String level = "3";  // SBML level
-        String version = "2"; // SBML version
+        String dirPath = args[0];  // path of sbml-test-suite
+        String currentCase = args[1];  // current test case
+        String outputDirPath = args[2];  // output directory for results
+        String level = args[3];  // SBML level
+        String version = args[4]; // SBML version
 
         String filePath = dirPath + File.separator + currentCase + File.separator + currentCase + "-sbml-l" + level + 'v' + version + ".xml";
         String settingsPath = dirPath + File.separator + currentCase + File.separator + currentCase + "-settings.txt";
@@ -263,8 +257,6 @@ public class SBMLTestSuiteRunnerWrapper {
                 }
             }
         }
-
-        System.out.println(output);
 
         csvWriter.append(output);
         csvWriter.flush();
