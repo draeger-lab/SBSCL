@@ -781,8 +781,8 @@ public abstract class AbstractDESSolver
     }
     addPropertyChangeListener((SBMLinterpreter) DES);
 
-    // execute events that trigger at 0.0
-    processEvents((EventDESystem) DES, 0d, 0d, result[0]);
+    // execute events that trigger at 0.0 and process rules on changes due to the events
+    processEventsAndRules(true, (EventDESystem) DES, 0d, 0d, result[0]);
     System.arraycopy(result[0], 0, yTemp, 0, yTemp.length);
     firePropertyChange(0d, result[0]);
     for (int i = 1; (i < result.length) && (!Thread.currentThread().isInterrupted()); i++) {
@@ -849,8 +849,8 @@ public abstract class AbstractDESSolver
     }
 
     addPropertyChangeListener((SBMLinterpreter) DES);
-    // execute events that trigger at 0.0
-    processEvents((EventDESystem) DES, 0d, 0d, result[0]);
+    // execute events that trigger at 0.0 and process rules on changes due to the events
+    processEventsAndRules(true, (EventDESystem) DES, 0d, 0d, result[0]);
     System.arraycopy(result[0], 0, yTemp, 0, result[0].length);
     firePropertyChange(0d, result[0]);
     for (int i = 1; (i < timePoints.length) && (!Thread.currentThread().isInterrupted()); i++) {
