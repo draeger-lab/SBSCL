@@ -1439,6 +1439,22 @@ public class SBMLinterpreter
     processInitialAssignments(astNodeTime, Y);
 
     /*
+     * Sometimes conversion factors are assigned values in the
+     * initialAssignments. So, updating the conversion factors
+     * after processing the initialAssignments.
+     */
+    for (int pp = 0; pp < model.getSpeciesCount(); pp++) {
+      Species sp = model.getSpecies(pp);
+      String conversionFactor = sp.getConversionFactor();
+      if (conversionFactor == null) {
+        conversionFactor = model.getConversionFactor();
+      }
+      if (!conversionFactor.equals("")) {
+        conversionFactors[symbolHash.get(sp.getId())] = Y[symbolHash.get(conversionFactor)];
+      }
+    }
+
+    /*
      * Evaluate Constraints
      */
     if (model.getConstraintCount() > 0) {
