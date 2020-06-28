@@ -49,6 +49,12 @@ public class SpeciesReferenceValue extends ASTNodeValue {
   private String id;
 
   /**
+   * The boolean variable that says whether species reference is constant or
+   * not
+   */
+  private boolean isConstant;
+
+  /**
    * @param interpreter
    * @param node
    * @param sr
@@ -57,6 +63,7 @@ public class SpeciesReferenceValue extends ASTNodeValue {
   public SpeciesReferenceValue(ASTNodeInterpreter interpreter, ASTNode node, SpeciesReference sr, SBMLValueHolder valueHolder) {
     super(interpreter, node);
     id = sr.getId();
+    isConstant = sr.isConstant();
     this.valueHolder = valueHolder;
   }
 
@@ -65,6 +72,13 @@ public class SpeciesReferenceValue extends ASTNodeValue {
    */
   @Override
   protected void computeDoubleValue(double delay) {
-    doubleValue = valueHolder.getCurrentStoichiometry(id);
+
+    if ((delay == 0d) || (isConstant)){
+      doubleValue = valueHolder.getCurrentStoichiometry(id);
+    } else {
+      double valueTime = interpreter.symbolTime() - delay;
+      doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
+    }
+
   }
 }

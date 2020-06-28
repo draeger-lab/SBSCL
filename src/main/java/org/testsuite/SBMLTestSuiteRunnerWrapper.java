@@ -49,7 +49,7 @@ public class SBMLTestSuiteRunnerWrapper {
     public static final String CONCENTRATION = "concentration";
     public static final String ABSOLUTE = "absolute";
     public static final String RELATIVE = "relative";
-    private static final double TOLERANCE_FACTOR = 1E-3;
+    private static final double TOLERANCE_FACTOR = 1E-4;
     private static Logger LOGGER = Logger.getLogger(CompExample.class.getName());
 
     /**
