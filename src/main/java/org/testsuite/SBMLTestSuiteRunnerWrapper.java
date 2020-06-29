@@ -18,6 +18,7 @@ import org.simulator.sbml.SBMLinterpreter;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -49,6 +50,7 @@ public class SBMLTestSuiteRunnerWrapper {
     public static final String CONCENTRATION = "concentration";
     public static final String ABSOLUTE = "absolute";
     public static final String RELATIVE = "relative";
+    public static final String NAN = "NaN";
     private static final double TOLERANCE_FACTOR = 1E-4;
     private static Logger LOGGER = Logger.getLogger(CompExample.class.getName());
 
@@ -145,25 +147,23 @@ public class SBMLTestSuiteRunnerWrapper {
                 e.printStackTrace();
             }
 
+            BufferedReader reader = new BufferedReader(new FileReader(resultsPath));
+            String[] keys = reader.readLine().trim().split(",");
             if (isSolved) {
                 Map<String, Double> fbcSolution = solver.getSolution();
-
-                BufferedReader reader = new BufferedReader(new FileReader(resultsPath));
-                String[] keys = reader.readLine().trim().split(",");
-
                 for (int i = 0; i < keys.length - 1; i++) {
                     output.append(keys[i]).append(",");
                 }
                 output.append(keys[keys.length - 1]).append("\n");
-
                 for (String key : keys) {
                     output.append(fbcSolution.get(key)).append(",");
                 }
-
                 if (output.length() > 0) {
                     output.deleteCharAt(output.length() - 1);
                     output.append("\n");
                 }
+            } else {
+                output.append(keys[0]).append("\n").append(NAN).append("\n");
             }
 
         } else {

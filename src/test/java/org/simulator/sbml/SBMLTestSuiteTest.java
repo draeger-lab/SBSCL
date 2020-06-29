@@ -35,6 +35,7 @@ public class SBMLTestSuiteTest {
     public static final String CONCENTRATION = "concentration";
     public static final String ABSOLUTE = "absolute";
     public static final String RELATIVE = "relative";
+    public static final String NAN = "NaN";
     private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
     private static final String SBML_TEST_SUITE_PATH = "SBML_TEST_SUITE_PATH";
     private static final double TOLERANCE_FACTOR = 1E-4;
@@ -199,28 +200,36 @@ public class SBMLTestSuiteTest {
                     Assert.assertFalse(errorInFBASimulator);
 
                     boolean errorInSolve = false;
+                    boolean isSolved = false;
                     try {
-                        solver.solve();
+                        isSolved = solver.solve();
                     } catch (Exception e) {
                         errorInSolve = true;
                         e.printStackTrace();
                     }
                     Assert.assertFalse(errorInSolve);
 
-                    Map<String, Double> solution = solver.getSolution();
-
                     BufferedReader reader = new BufferedReader(new FileReader(csvfile));
                     String[] keys = reader.readLine().trim().split(",");
                     String[] values = reader.readLine().trim().split(",");
 
-                    Map<String, Double> inputSolution = new HashMap<>();
-                    for (int i = 0; i < keys.length; i++) {
-                        inputSolution.put(keys[i], Double.valueOf(values[i]));
-                    }
+                    if (isSolved) {
+                        Map<String, Double> solution = solver.getSolution();
+                        Map<String, Double> inputSolution = new HashMap<>();
+                        for (int i = 0; i < keys.length; i++) {
+                            inputSolution.put(keys[i], Double.valueOf(values[i]));
+                        }
 
-                    for (Map.Entry<String, Double> mapElement : inputSolution.entrySet()) {
-                        if (solution.containsKey(mapElement.getKey())) {
-                            Assert.assertEquals(mapElement.getValue(), solution.get(mapElement.getKey()), DELTA);
+                        for (Map.Entry<String, Double> mapElement : inputSolution.entrySet()) {
+                            if (solution.containsKey(mapElement.getKey())) {
+                                Assert.assertEquals(mapElement.getValue(), solution.get(mapElement.getKey()), DELTA);
+                            }
+                        }
+                    } else {
+                        if ((keys[0].equals(solver.getActObjFunc())) && (values[0].equals(NAN))) {
+                            Assert.assertTrue(true);
+                        } else {
+                            Assert.fail();
                         }
                     }
 
