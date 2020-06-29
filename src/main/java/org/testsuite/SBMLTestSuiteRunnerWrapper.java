@@ -18,7 +18,6 @@ import org.simulator.sbml.SBMLinterpreter;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
