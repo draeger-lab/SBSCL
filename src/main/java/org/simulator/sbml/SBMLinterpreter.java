@@ -1587,6 +1587,9 @@ public class SBMLinterpreter
             }
           }
           events[i].setUseValuesFromTriggerTime(e.getUseValuesFromTriggerTime());
+          if (events[i].getRuleObjects() == null) {
+            events[i] = null;
+          }
         } else {
           events[i] = null;
         }
