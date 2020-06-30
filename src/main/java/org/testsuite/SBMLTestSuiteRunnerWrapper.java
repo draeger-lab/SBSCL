@@ -50,7 +50,7 @@ public class SBMLTestSuiteRunnerWrapper {
     public static final String ABSOLUTE = "absolute";
     public static final String RELATIVE = "relative";
     public static final String NAN = "NaN";
-    private static final double TOLERANCE_FACTOR = 1E-4;
+    private static final double TOLERANCE_FACTOR = 1E-5;
     private static Logger LOGGER = Logger.getLogger(CompExample.class.getName());
 
     /**

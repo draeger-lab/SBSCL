@@ -38,7 +38,7 @@ public class SBMLTestSuiteTest {
     public static final String NAN = "NaN";
     private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
     private static final String SBML_TEST_SUITE_PATH = "SBML_TEST_SUITE_PATH";
-    private static final double TOLERANCE_FACTOR = 1E-4;
+    private static final double TOLERANCE_FACTOR = 1E-5;
     private static final double DELTA = 0.0002d;
 
     public SBMLTestSuiteTest(String path) {
