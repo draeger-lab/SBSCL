@@ -51,7 +51,6 @@ import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sbml.astnode.ASTNodeValue;
 import scpsolver.constraints.LinearEqualsConstraint;
-import scpsolver.lpsolver.LinearProgramSolver;
 import scpsolver.lpsolver.SolverFactory;
 import scpsolver.problems.LinearProgram;
 
@@ -79,7 +78,7 @@ public class FluxBalanceAnalysis {
   /**
    * The linear programming solver.
    */
-  private LinearProgramSolver scpSolver;
+  private NewGLPKSolver glpkSolver;
 
   private LinearProgram problem;
 
@@ -210,7 +209,8 @@ public class FluxBalanceAnalysis {
     /*
      * Create linear solver
      */
-    scpSolver = SolverFactory.newDefault();
+    SolverFactory.newDefault();
+    glpkSolver = new NewGLPKSolver();
     problem = new LinearProgram(objvals);
     problem.setLowerbound(lb);
     problem.setUpperbound(ub);
@@ -341,7 +341,7 @@ public class FluxBalanceAnalysis {
    *                              its derived classes, is thrown.
    */
   public boolean solve() throws NullPointerException {
-    solution = scpSolver.solve(problem);
+    solution = glpkSolver.solve(problem);
     if (solution != null)
       return true;
     return false;
