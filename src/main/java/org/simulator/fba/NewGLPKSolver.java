@@ -9,6 +9,28 @@ import scpsolver.problems.LinearProgram;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Class for solving the linear programs.
+ *
+ * This class is added temporarily till issue of freeing the memory of the
+ * instance of the GlpkSolver in the solve() method gets resolved in SCPSolver.
+ *
+ * Currently, while running the SBML Test Suite, it crashes in between due to
+ * the memory allocation error for GlpkSolver class.
+ *
+ * The error: glp_free: memory allocation error
+ *            Error detected in file env/alloc.c at line 72
+ *
+ * This happened as the memory of the GlpkSolver instance was not freed. So,
+ * this class is the copy of the GLPKSolver class from the SCPSolver. The only
+ * change here is that the `solver.deleteProb();` is called in the solve()
+ * method after its use is done which deletes the object, i.e., frees the
+ * memory.
+ *
+ * This class will be removed from SBSCL as this issue gets resolved in the
+ * SCPSolver.
+ *
+ */
 public class NewGLPKSolver implements LinearProgramSolver {
 
   GlpkSolver solver;
