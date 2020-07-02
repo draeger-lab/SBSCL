@@ -1336,7 +1336,6 @@ public class SBMLinterpreter
       reactionFast = new boolean[model.getReactionCount()];
     }
     int reactionIndex = 0;
-    boolean slowReactions = false;
     boolean fastReactions = false;
     for (Reaction r : model.getListOfReactions()) {
       if (r.isSetFast()) {
@@ -1347,8 +1346,6 @@ public class SBMLinterpreter
       reactionReversible[reactionIndex] = r.isReversible();
       if (r.isSetFast() && r.getFast()) {
         fastReactions = true;
-      } else {
-        slowReactions = true;
       }
       if (r.getKineticLaw() != null) {
         if (r.getKineticLaw().getListOfLocalParameters().size() > 0 && r.getKineticLaw().isSetMath()) {
@@ -1381,7 +1378,7 @@ public class SBMLinterpreter
       }
       reactionIndex++;
     }
-    if (fastReactions && slowReactions) {
+    if (fastReactions) {
       hasFastReactions = true;
     }
     for (i = 0; i != inConcentrationValues.length; i++) {

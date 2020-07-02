@@ -97,10 +97,6 @@ public class SBMLTestSuiteTest {
             "01198", "01462", "01478", "01498", "01504", "01505", "01506", "01507", "01508", "01509", "01510", "01511", "01512", "01513", "01514", // sbml model with changing compartment size (see issue #50)
             "01208",
             "01287", "01592", // failing due to long run time (see issue #39)
-            "01396",
-            "01397",
-            "01398",
-            "01399",
             "01400", "01401", "01403", "01406", "01409", // failing due to delay in rateOf (see issue #46)
             "01422", "01426", "01427", "01432",
             "01444", "01445", "01446", "01447", "01448", // failing due to event triggers before mentioned condition (see issue #44)
@@ -111,9 +107,7 @@ public class SBMLTestSuiteTest {
             "01492", "01493", // failing due to misinterpretation of function variables with parameters (see issue #45)
             "01520",
             "01539",
-            "01544", "01545", "01546", "01547", "01548", "01549", "01550", "01551", // models below sbml l3v2
-            "01558", "01559", "01560", "01565", "01567", "01568", // models below sbml l3v2
-            "01569", "01570", "01571", "01572", "01787", // models below sbml l3v2
+            "01560", "01568", "01570", "01787", // models below sbml l3v2
             "01575",
             "01583",
             "01589",
