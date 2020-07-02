@@ -98,7 +98,6 @@ public class SBMLTestSuiteTest {
             "01208",
             "01287", "01592", // failing due to long run time (see issue #39)
             "01400", "01401", "01403", "01406", "01409", // failing due to delay in rateOf (see issue #46)
-            "01422", "01426", "01427", "01432",
             "01444", "01445", "01446", "01447", "01448", // failing due to event triggers before mentioned condition (see issue #44)
             "01454",
             "01456",
