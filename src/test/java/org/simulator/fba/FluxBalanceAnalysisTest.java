@@ -21,10 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class CobraSolverTest {
-    private static final Logger logger = LoggerFactory.getLogger(CobraSolverTest.class);
-	private double eps = 1E-4;
-	private double COBRA_OBJ_VAL = 0.8739215069684307;
+public class FluxBalanceAnalysisTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(FluxBalanceAnalysisTest.class);
+	  private double EPS = 1E-4;
+	  private double ACTIVE_OBJECTIVE_VALUE = 0.8739215069684307;
 
     @Test
     //@Ignore
@@ -35,12 +36,12 @@ public class CobraSolverTest {
         logger.info(doc.toString());
 
         FluxBalanceAnalysis solver = new FluxBalanceAnalysis(doc);
-        
+
         // Solver should return non-null object
         assertNotNull(solver.solve());
-        
+
         // Objective value should math CobraPy answer with some tolerance
-        assertEquals(COBRA_OBJ_VAL, solver.getObjectiveValue(), eps);
+        assertEquals(ACTIVE_OBJECTIVE_VALUE, solver.getObjectiveValue(), EPS);
     }
 
     @Test
@@ -62,7 +63,7 @@ public class CobraSolverTest {
         assertNotNull(solver.solve());
 
         // Objective value should math CobraPy answer with some tolerance
-        assertEquals(COBRA_OBJ_VAL, solver.getObjectiveValue(), eps);
+        assertEquals(ACTIVE_OBJECTIVE_VALUE, solver.getObjectiveValue(), EPS);
         gzis.close();
         is.close();
     }

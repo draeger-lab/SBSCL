@@ -72,7 +72,7 @@ public class SimulatorExample {
             IOException, ModelOverdeterminedException, SBMLException,
             DerivativeException {
 
-        String fileName = "";
+        String fileName = null;
         double stepSize = 0d;
         double timeEnd = 0d;
         double absTol = 0d;

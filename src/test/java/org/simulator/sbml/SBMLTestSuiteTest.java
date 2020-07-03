@@ -102,7 +102,7 @@ public class SBMLTestSuiteTest {
             "01454",
             "01456",
             "01480",
-            "01481",
+            "01481", // model below sbml l3v1
             "01492", "01493", // failing due to misinterpretation of function variables with parameters (see issue #45)
             "01520",
             "01539",
@@ -256,7 +256,7 @@ public class SBMLTestSuiteTest {
                             }
                         }
                     } else {
-                        if ((keys[0].equals(solver.getActObjFunc())) && (values[0].equals(NAN))) {
+                        if ((keys[0].equals(solver.getActiveObjective())) && (values[0].equals(NAN))) {
                             Assert.assertTrue(true);
                         } else {
                             Assert.fail();
