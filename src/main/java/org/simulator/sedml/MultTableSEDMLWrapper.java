@@ -38,7 +38,7 @@ import org.simulator.math.odes.MultiTable.Block.Column;
  * All methods accessing data access the underlying {@link MultiTable} object.<br>
  * Changes to a {@link MultiTable} object will therefore be visible to this class,
  * i.e., it does not make a separate copy of the data.
- * 
+ *
  * @author Richard Adams
  * @version $Rev$
  * @since 1.1
@@ -46,7 +46,6 @@ import org.simulator.math.odes.MultiTable.Block.Column;
 public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 
   /**
-   * 
    * @param mTable
    */
   public MultTableSEDMLWrapper(MultiTable mTable) {
@@ -56,6 +55,7 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
 
   /**
    * Gets the underlying {@link MultiTable} wrapped by this class.
+   *
    * @return table
    */
   public MultiTable getMultiTable() {
@@ -72,9 +72,9 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
    */
   @Override
   public String[] getColumnHeaders() {
-    String [] hdrs = new String [mTable.getColumnCount()];
-    for (int i = 0; i < hdrs.length;i++) {
-      hdrs[i]=mTable.getColumnIdentifier(i);
+    String[] hdrs = new String[mTable.getColumnCount()];
+    for (int i = 0; i < hdrs.length; i++) {
+      hdrs[i] = mTable.getColumnIdentifier(i);
     }
     return hdrs;
   }
@@ -84,13 +84,11 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
    */
   @Override
   public double[][] getData() {
-    double [][] data = new double [mTable.getRowCount()][mTable.getColumnCount()];
-    for (int i = 0; i < mTable.getRowCount();i++) {
-      for (int j =0; j< mTable.getColumnCount();j++) {
+    double[][] data = new double[mTable.getRowCount()][mTable.getColumnCount()];
+    for (int i = 0; i < mTable.getRowCount(); i++) {
+      for (int j = 0; j < mTable.getColumnCount(); j++) {
         data[i][j] = mTable.getValueAt(i, j);
-
       }
-
     }
     return data;
   }
@@ -100,11 +98,10 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
    */
   @Override
   public Double[] getDataByColumnId(String id) {
-
-    Double [] rc = new Double[mTable.getRowCount()];
+    Double[] rc = new Double[mTable.getRowCount()];
     Column col = mTable.getColumn(id);
-    for (int i =0; i< mTable.getRowCount();i++) {
-      rc[i]=col.getValue(i);
+    for (int i = 0; i < mTable.getRowCount(); i++) {
+      rc[i] = col.getValue(i);
     }
     return rc;
   }
@@ -114,10 +111,10 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
    */
   @Override
   public Double[] getDataByColumnIndex(int indx) {
-    Double [] rc = new Double[mTable.getRowCount()];
+    Double[] rc = new Double[mTable.getRowCount()];
     Column col = mTable.getColumn(indx);
-    for (int i =0; i< mTable.getRowCount();i++) {
-      rc[i]=col.getValue(i);
+    for (int i = 0; i < mTable.getRowCount(); i++) {
+      rc[i] = col.getValue(i);
     }
     return rc;
   }
@@ -161,7 +158,7 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
        */
       @Override
       public boolean hasMappingFor(String id) {
-        return mTable.getColumn(id)!=null;
+        return mTable.getColumn(id) != null;
       }
 
       /* (non-Javadoc)
@@ -179,8 +176,6 @@ public class MultTableSEDMLWrapper implements IRawSedmlSimulationResults {
       public int getColumnIndexFor(String colID) {
         return mTable.getColumnIndex(colID);
       }
-
     };
   }
-
 }

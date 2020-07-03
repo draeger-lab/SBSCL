@@ -31,21 +31,22 @@ import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 /**
  * A differential equation system describes how to compute the rate of change at
  * a given state of the system.
- * 
+ *
  * @author Hannes Planatscher
  * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 0.9
  */
-public interface DESystem extends Serializable, FirstOrderDifferentialEquations {
+public interface DESystem
+    extends Serializable, FirstOrderDifferentialEquations {
 
   /**
    * Delivers an array of {@link String}s that describe the content of each
    * dimension of the resulting array of this {@link DESystem}.
-   * 
+   *
    * @return An array of {@link String}s which has the same length than the
-   *         number given by {@link #getDimension()}. Each
-   *         {@link String} describes the content of the given dimension.
+   * number given by {@link #getDimension()}. Each
+   * {@link String} describes the content of the given dimension.
    */
   public String[] getIdentifiers();
 
@@ -53,22 +54,19 @@ public interface DESystem extends Serializable, FirstOrderDifferentialEquations 
    * This method is used to check if this differential equation system contains
    * any events or rules that would require a special treatment by the numerical
    * solver.
-   * 
+   *
    * @return flag that is {@code true} if any events or rules are contained
-   *         in the differential equation system.
+   * in the differential equation system.
    */
   public boolean containsEventsOrRules();
 
   /**
-   * 
    * @return the number of values in Y that have to be positive.
    */
   public int getPositiveValueCount();
 
   /**
-   * @param delaysIncluded
-   * 			Determines whether delay expression should be included in the calculation.
+   * @param delaysIncluded Determines whether delay expression should be included in the calculation.
    */
   public void setDelaysIncluded(boolean delaysIncluded);
-
 }

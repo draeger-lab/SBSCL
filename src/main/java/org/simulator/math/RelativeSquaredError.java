@@ -29,7 +29,7 @@ package org.simulator.math;
  * division by zero. Actually, the exponent in this error function is 2 (squared
  * error). Irrespectively, it is possible to set the exponent to different
  * values.
- * 
+ *
  * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 1.0
@@ -64,5 +64,4 @@ public class RelativeSquaredError extends N_Metric {
   double overallDistance(double distance, double root, double defaultValue) {
     return distance;
   }
-
 }

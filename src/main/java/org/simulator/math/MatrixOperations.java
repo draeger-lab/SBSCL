@@ -58,7 +58,7 @@ package org.simulator.math;
  * </li>
  * <li>elmhes - Reduces the given matrix to upper Hessenberg form.
  * </ul>
- * 
+ *
  * <h1>
  * Utility Functions. Call these methods!
  * </h1>
@@ -70,7 +70,7 @@ package org.simulator.math;
  * <p>
  * References: _Numerical Recipies in C_ (2nd Edition) by Press, Teutolsky,
  * Vetterling, and Flannery Cambridge University Press, 1992
- * 
+ *
  * @author Chris Moore
  * @author Roland Keller
  * @version $Rev$
@@ -83,25 +83,39 @@ public class MatrixOperations {
    * running on the JVM using 32 bit doubles instead of 16 bit floats.
    */
 
-  /** Ensures sufficient decrease in function value */
+  /**
+   * Ensures sufficient decrease in function value
+   */
   public static final double ALF = 1.0e-4d;
 
-  /** Approximate square root of the JVM precision */
+  /**
+   * Approximate square root of the JVM precision
+   */
   public static final double EPS = 1.0e-8d;
 
-  /** Scaled maximum step length allowed in line searches */
+  /**
+   * Scaled maximum step length allowed in line searches
+   */
   public static final double STPMX = 100.0d;
 
-  /** Extremely small value. Nigh zero. */
+  /**
+   * Extremely small value. Nigh zero.
+   */
   public static final double TINY = 1.0e-20d;
 
-  /** Convergence criterion on function values */
+  /**
+   * Convergence criterion on function values
+   */
   public static final double TOLF = 1.0e-4d;
 
-  /** Criterion deciding whether spurious convergence to a minimum of min */
+  /**
+   * Criterion deciding whether spurious convergence to a minimum of min
+   */
   public static final double TOLMIN = 1.0e-6d;
 
-  /** Convergence criterion on delta X */
+  /**
+   * Convergence criterion on delta X
+   */
   public static final double TOLX = 1.0e-7d;
 
   private static double[] vv;
@@ -114,25 +128,18 @@ public class MatrixOperations {
    * d (return value) is output +/- 1 depending on whether the number of row
    * interchanges was even or odd respectively. This routine is used in
    * combination with lubksb to solve linear equations or invert a matrix.
-   * 
-   * @param a
-   *            the matrix to be decomposed
-   * @param indx
-   *            the array to put the return index into
+   *
+   * @param a    the matrix to be decomposed
+   * @param indx the array to put the return index into
    * @return +1 or -1 signifying whether the number of row interchanges is odd
-   *         or even
+   * or even
    */
-  public static double ludcmp(double a[][], int indx[])
-      throws MatrixException {
-
+  public static double ludcmp(double a[][], int indx[]) throws MatrixException {
     int n = a.length;
-
     int i = 0, imax = 0, j = 0, k = 0;
-
     double big, dum, sum, temp;
     double d = 1;
-
-    if ((vv==null)||vv.length!=n) {
+    if ((vv == null) || vv.length != n) {
       vv = new double[n];
     }
     for (i = 0; i < n; i++) {
@@ -148,14 +155,10 @@ public class MatrixOperations {
       }
       if (big == 0.0) {
         // no non-zero largest element
-
-        throw new MatrixException(
-            "Error: Singular linearized system. Computation cannot proceed.");
-
+        throw new MatrixException("Error: Singular linearized system. Computation cannot proceed.");
       }
       vv[i] = 1.0 / big;
     }
-
     for (j = 0; j < n; j++) {
       for (i = 0; i < j; i++) {
         sum = a[i][j];
@@ -195,7 +198,6 @@ public class MatrixOperations {
         // we don't get any divisions by zero.
         a[j][j] = TINY;
       }
-
       if (j != n) {
         dum = 1.0 / (a[j][j]);
         for (i = j + 1; i < n; i++) {
@@ -216,52 +218,35 @@ public class MatrixOperations {
    * sides b. This routine takes into account the possibility that b will
    * begin with many zero elements, so it is efficient for use in matrix
    * inversion.
-   * 
-   * @param a
-   *            the matrix to be solved as described
-   * @param indx
-   *            the array returned by ludcmp
-   * @param b
-   *            the vector to be solbed as described
+   *
+   * @param a    the matrix to be solved as described
+   * @param indx the array returned by ludcmp
+   * @param b    the vector to be solbed as described
    */
-
   public static void lubksb(double a[][], int indx[], double[] b) {
     int ii = 0, ip = 0;
-
     double sum = 0.0;
-
     int n = a.length;
-
     for (int i = 1; i <= n; i++) {
-
       ip = indx[i - 1] + 1;
       sum = b[ip - 1];
       b[ip - 1] = b[i - 1];
-
       if (ii != 0) {
-
         for (int j = ii; j <= i - 1; j++) {
           sum -= a[i - 1][j - 1] * b[j - 1];
         }
-
       } else if (sum != 0.0) {
         ii = i;
       }
-
       b[i - 1] = sum;
     }
-
     for (int i = n; i >= 1; i--) {
-
       sum = b[i - 1];
-
       for (int j = i + 1; j <= n; j++) {
         sum -= a[i - 1][j - 1] * b[j - 1];
       }
-
       b[i - 1] = sum / a[i - 1][i - 1];
     }
-
   }
 
   /**
@@ -269,54 +254,40 @@ public class MatrixOperations {
    * matrix with identical eigenvalues. A symmetric matrix is already balanced
    * and is unaffected by this procedure. The parameter RADIX should be the
    * machine's floating-point radix.
-   * 
-   * @param a
-   *            the matrix to be balanced
+   *
+   * @param a the matrix to be balanced
    */
   public static void balance(double a[][]) {
     // The JVM is a binary machine, ie radix base 2
     final int RADIX = 2;
-
     int last = 0;
-
     int n = a.length;
-
     double s = 0.0, r = 0.0, g = 0.0, f = 0.0, c = 0.0;
-
     double sqrdx = RADIX * RADIX;
-
     while (last == 0) {
       last = 1;
       for (int i = 1; i <= n; i++) {
-
         r = 0.0;
         c = 0.0;
-
         for (int j = 1; j <= n; j++) {
           if (j != i) {
             c += Math.abs(a[j - 1][i - 1]);
             r += Math.abs(a[i - 1][j - 1]);
           }
         }
-
         if ((c != 0.0) && (r != 0.0)) {
-
           g = r / RADIX;
           f = 1.0;
           s = c + r;
-
           while (c < g) {
             f *= RADIX;
             c *= sqrdx;
           }
-
           g = r * RADIX;
-
           while (c > g) {
             f /= RADIX;
             c /= sqrdx;
           }
-
           if ((c + r) / f < 0.95 * s) {
             last = 0;
             g = 1.0 / f;
@@ -327,72 +298,53 @@ public class MatrixOperations {
               a[j - 1][i - 1] *= f;
             }
           }
-
         }
-
       }
     }
   }
 
   /**
    * Reduces a[1..n][1..n] to upper Hessenberg form
-   * 
-   * @param a
-   *            the matrix to be reduced
+   *
+   * @param a the matrix to be reduced
    */
   public static void elmhes(double a[][]) {
     int m, j, i;
-
     int n = a.length;
-
     double y, x;
-
     for (m = 2; m < n; m++) {
-
       x = 0.0;
       i = m;
-
       for (j = m; j <= n; j++) {
         if (Math.abs(a[j - 1][m - 2]) > Math.abs(x)) {
-
           x = a[j - 1][m - 2];
           i = j;
-
         }
       }
-
       if (i != m) {
         double temp;
         for (j = m - 1; j <= n; j++) {
           temp = a[i - 1][j - 1];
           a[i - 1][j - 1] = a[m - 1][j - 1];
           a[m - 1][j - 1] = temp;
-
         }
-
         for (j = 1; j <= n; j++) {
           temp = a[j - 1][i - 1];
           a[j - 1][i - 1] = a[j - 1][m - 1];
           a[j - 1][m - 1] = temp;
-
         }
       }
-
       if (x != 0.0) {
         for (i = m + 1; i <= n; i++) {
           if ((y = a[i - 1][m - 2]) != 0.0) {
-
             y /= x;
             a[i - 1][m - 2] = y;
-
             for (j = m; j <= n; j++) {
               a[i - 1][j - 1] -= y * a[m - 1][j - 1];
             }
-
             for (j = 1; j <= n; j++) {
               a[j - 1][m - 1] += y * a[j - 1][i - 1];
             }
-
           }
         }
       }
@@ -401,11 +353,9 @@ public class MatrixOperations {
 
   /**
    * Returns the value of a or |a| with the same sign as b
-   * 
-   * @param a
-   *            the input as specified above
-   * @param b
-   *            the input as specified above
+   *
+   * @param a the input as specified above
+   * @param b the input as specified above
    * @return the value of a or |a| with the same sign as b
    */
   public static double sign(double a, double b) {
@@ -421,40 +371,28 @@ public class MatrixOperations {
    * input a can be exactly as output from elmhes (� 11.5); on output it is
    * destroyed. The real and imaginary parts of the eigenvalues are returned
    * in wr[1..n] and wi[1..n], respectively.
-   * 
-   * @param a
-   *            the input matrix
-   * @param wr
-   *            the array specified in the function description
-   * @param wi
-   *            the array specified in the function description
+   *
+   * @param a  the input matrix
+   * @param wr the array specified in the function description
+   * @param wi the array specified in the function description
    * @return 0 iff success
    */
   public static int hqr(double a[][], double wr[], double wi[])
       throws MatrixException {
-
     // Initialize variables
-
     int nn = 0, m = 0, l = 0, k = 0, j = 0, its = 0, i = 0, mmin = 0;
-
     int n = a.length;
-
     double z = 0.0, y = 0.0, x = 0.0, w = 0.0, v = 0.0, u = 0.0, t = 0.0, s = 0.0, r = 0.0, q = 0.0, p = 0.0, anorm = 0.0;
-
     anorm = Math.abs(a[0][0]);
     for (i = 2; i <= n; i++) {
       for (j = i - 1; j <= n; j++) {
         anorm += Math.abs(a[i - 1][j - 1]);
       }
     }
-
     nn = n;
     t = 0.0;
-
     while (nn >= 1) {
-
       its = 0;
-
       do {
         for (l = nn; l >= 2; l--) {
           s = Math.abs(a[l - 2][l - 2]) + Math.abs(a[l - 1][l - 1]);
@@ -494,19 +432,14 @@ public class MatrixOperations {
           } else {
             if (its == 30) {
               // Too many iterations in hqr
-              throw new MatrixException(
-                "Error: Could not find acceptable equilibrium point in "
-                    + its
-                    + " iterations. Please try another initial guess.");
+              throw new MatrixException("Error: Could not find acceptable equilibrium point in " + its + " iterations. Please try another initial guess.");
             }
-
             if (its == 10 || its == 20) {
               t += x;
               for (i = 1; i <= nn; i++) {
                 a[i - 1][i - 1] -= x;
               }
-              s = Math.abs(a[nn - 1][nn - 2])
-                  + Math.abs(a[nn - 2][nn - 3]);
+              s = Math.abs(a[nn - 1][nn - 2]) + Math.abs(a[nn - 2][nn - 3]);
               y = x = 0.75 * s;
               w = -0.4375 * s * s;
             }
@@ -525,11 +458,8 @@ public class MatrixOperations {
               if (m == l) {
                 break;
               }
-              u = Math.abs(a[m - 1][m - 2])
-                  * (Math.abs(q) + Math.abs(r));
-              v = Math.abs(p)
-                  * (Math.abs(a[m - 2][m - 2]) + Math.abs(z) + Math
-                      .abs(a[m][m]));
+              u = Math.abs(a[m - 1][m - 2]) * (Math.abs(q) + Math.abs(r));
+              v = Math.abs(p) * (Math.abs(a[m - 2][m - 2]) + Math.abs(z) + Math.abs(a[m][m]));
               if ((u + v) == v) {
                 break;
               }
@@ -548,14 +478,12 @@ public class MatrixOperations {
                 if (k != (nn - 1)) {
                   r = a[k + 1][k - 2];
                 }
-                if ((x = Math.abs(p) + Math.abs(q)
-                    + Math.abs(r)) != 0.0) {
+                if ((x = Math.abs(p) + Math.abs(q) + Math.abs(r)) != 0.0) {
                   p /= x;
                   q /= x;
                   r /= x;
                 }
               }
-
               if ((s = sign(Math.sqrt(p * p + q * q + r * r), p)) != 0.0) {
                 if (k == m) {
                   if (l != m) {
@@ -579,13 +507,11 @@ public class MatrixOperations {
                   a[k][j - 1] -= p * y;
                   a[k - 1][j - 1] -= p * x;
                 }
-
                 if (nn < k + 3) {
                   mmin = nn;
                 } else {
                   mmin = k + 3;
                 }
-
                 for (i = l; i <= mmin; i++) {
                   p = x * a[i - 1][k - 1] + y * a[i - 1][k];
                   if (k != (nn - 1)) {
@@ -612,6 +538,7 @@ public class MatrixOperations {
    */
   @SuppressWarnings("serial")
   public static class MatrixException extends Exception {
+
     /**
      * Constructor for MatrixException
      */
@@ -625,7 +552,5 @@ public class MatrixOperations {
     public MatrixException(String message) {
       super(message);
     }
-
   }
-
 }

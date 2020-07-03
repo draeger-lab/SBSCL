@@ -30,7 +30,7 @@ import org.sbml.jsbml.LocalParameter;
 /**
  * This class computes and stores values of {@link ASTNode}s that refer to a
  * {@link LocalParameter}.
- * 
+ *
  * @author Roland Keller
  * @version $Rev: 205 $
  * @since 1.0
@@ -43,17 +43,15 @@ public class LocalParameterValue extends ASTNodeValue {
   protected LocalParameter lp;
 
   /**
-   * 
    * @param interpreter
    * @param node
    * @param lp
    */
-  public LocalParameterValue(ASTNodeInterpreter interpreter, ASTNode node,
-    LocalParameter lp) {
+  public LocalParameterValue(ASTNodeInterpreter interpreter, ASTNode node, LocalParameter lp) {
     super(interpreter, node);
     this.lp = lp;
-    doubleValue=lp.getValue();
-    isDouble=true;
+    doubleValue = lp.getValue();
+    isDouble = true;
     isConstant = true;
   }
 
@@ -62,12 +60,11 @@ public class LocalParameterValue extends ASTNodeValue {
    */
   @Override
   public double compileDouble(double time, double delay) {
-    this.time=time;
+    this.time = time;
     if (alreadyProcessed == false) {
       doubleValue = lp.getValue();
       alreadyProcessed = true;
     }
     return doubleValue;
   }
-
 }

@@ -26,16 +26,15 @@ package org.simulator.math;
 
 /**
  * Class for computation of the Manhattan distance of two vectors.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
  */
 public class ManhattanDistance extends N_Metric {
 
-
   /**
-   * 
+   *
    */
   private static final long serialVersionUID = -7863697829237313786L;
 
@@ -53,5 +52,4 @@ public class ManhattanDistance extends N_Metric {
   public void setRoot(double root) {
     // root should not be changed
   }
-
 }

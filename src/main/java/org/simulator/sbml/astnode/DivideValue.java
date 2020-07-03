@@ -32,11 +32,11 @@ import org.sbml.jsbml.SBMLException;
 /**
  * This class computes and stores values of {@link ASTNode}s that refer to a
  * division object.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  */
-public class DivideValue extends ASTNodeValue{
+public class DivideValue extends ASTNodeValue {
 
   /**
    * @param interpreter
@@ -52,11 +52,8 @@ public class DivideValue extends ASTNodeValue{
   @Override
   protected void computeDoubleValue(double delay) {
     if (numChildren != 2) {
-      throw new SBMLException(MessageFormat.format(
-        "Fractions must have one numerator and one denominator, here {0,number,integer} elements are given.",
-        node.getChildCount()));
+      throw new SBMLException(MessageFormat.format("Fractions must have one numerator and one denominator, here {0,number,integer} elements are given.", node.getChildCount()));
     }
     doubleValue = interpreter.frac(leftChild, rightChild, time, delay);
   }
-
 }

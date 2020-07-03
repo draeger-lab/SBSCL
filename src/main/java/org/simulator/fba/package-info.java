@@ -26,7 +26,7 @@
 /**
  * This package contains an implementation of flux balance analysis for COBRA
  * models.
- * 
+ *
  * @author Andreas Dr&auml;ger
  * @since 1.5
  */

@@ -33,12 +33,13 @@ import org.simulator.sbml.SBMLValueHolder;
 /**
  * This class computes and stores values of {@link ASTNode}s that refer to a
  * {@link Compartment} or a {@link Parameter}.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  * @since 1.0
  */
 public class CompartmentOrParameterValue extends ASTNodeValue {
+
   /**
    * The compartment or parameter the corresponding ASTNode is referring to
    */
@@ -60,21 +61,19 @@ public class CompartmentOrParameterValue extends ASTNodeValue {
   protected int position;
 
   /**
-   * 
    * @param interpreter
    * @param node
    * @param sb
    * @param valueHolder
    * @param position
    */
-  public CompartmentOrParameterValue(ASTNodeInterpreter interpreter, ASTNode node,
-    Symbol sb, SBMLValueHolder valueHolder, int position) {
+  public CompartmentOrParameterValue(ASTNodeInterpreter interpreter, ASTNode node, Symbol sb, SBMLValueHolder valueHolder, int position) {
     super(interpreter, node);
     this.sb = sb;
-    id=sb.getId();
+    id = sb.getId();
     isConstant = sb.getConstant();
     this.valueHolder = valueHolder;
-    this.position=position;
+    this.position = position;
   }
 
   /* (non-Javadoc)
@@ -84,19 +83,16 @@ public class CompartmentOrParameterValue extends ASTNodeValue {
   protected void computeDoubleValue(double delay) {
     if (delay == 0) {
       doubleValue = valueHolder.getCurrentValueOf(position);
-    }
-    else {
+    } else {
       double valueTime = interpreter.symbolTime() - delay;
       doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
     }
     if (isConstant) {
       if ((valueHolder.getCurrentTime() > 0) && (delay == 0)) {
         alreadyProcessed = true;
-      }
-      else {
+      } else {
         alreadyProcessed = false;
       }
     }
   }
-
 }

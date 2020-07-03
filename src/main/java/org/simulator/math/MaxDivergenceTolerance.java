@@ -6,7 +6,7 @@ import org.simulator.math.odes.MultiTable.Block.Column;
  * An implementation of core comparison metric of the simulator's
  * result with the pre-defined results. MaxDivergenceTolerance class
  * basically calculates the LHS of the below given metric.
- *
+ * <p>
  * Metric Formula:
  *
  * <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
@@ -56,52 +56,50 @@ import org.simulator.math.odes.MultiTable.Block.Column;
  *   </mfrac>
  *   <mo>&#x2264;<!-- ≤ --></mo>
  *   <mn>1</mn>
- * </math>
- *
+ * <mfrac>
  */
 public class MaxDivergenceTolerance extends QualityMeasure {
 
-    /**
-     * The metric the relative distance is based on
-     */
-    protected MaxAbsDistance metric;
+  /**
+   * The metric the relative distance is based on
+   */
+  protected MaxAbsDistance metric;
 
-    /**
-     * Absolute tolerance for the reaction
-     */
-    protected double absTol;
+  /**
+   * Absolute tolerance for the reaction
+   */
+  protected double absTol;
 
-    /**
-     * Relative tolerance for the reaction
-     */
-    protected double relTol;
+  /**
+   * Relative tolerance for the reaction
+   */
+  protected double relTol;
 
-    /**
-     * Default Constructor
-     */
-    public MaxDivergenceTolerance(double absTol, double relTol) {
-        super(Double.NaN);
-        metric = new MaxAbsDistance();
-        this.absTol = absTol;
-        this.relTol = relTol;
+  /**
+   * Default constructor. Initializes the metric {@link MaxAbsDistance}
+   * and sets the absolute and relative tolerances.
+   *
+   * @param absTol
+   * @param relTol
+   */
+  public MaxDivergenceTolerance(double absTol, double relTol) {
+    // sets the default value in case any error occurs
+    super(Double.NaN);
+    metric = new MaxAbsDistance();
+    this.absTol = absTol;
+    this.relTol = relTol;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public double distance(Column x, Column y, double defaultValue) {
+    for (int i = 0; i < Math.min(x.getRowCount(), y.getRowCount()); i++) {
+      double p = Math.abs(y.getValue(i) - x.getValue(i));
+      double q = this.absTol + (this.relTol * Math.abs(y.getValue(i)));
+      x.setValue((q != 0) ? (p / q) : Double.POSITIVE_INFINITY, i);
     }
-
-    /* (non-Javadoc)
-     * @see org.sbml.simulator.math.Distance#distance(java.lang.Iterable, java.lang.Iterable, double)
-     */
-    @Override
-    public double distance(Column x, Column y, double defaultValue) {
-
-        for (int i = 0; i < Math.min(x.getRowCount(), y.getRowCount()); i++) {
-
-            double p = Math.abs(y.getValue(i) - x.getValue(i));
-            double q = this.absTol + (this.relTol * Math.abs(y.getValue(i)));
-
-            x.setValue((q != 0) ? (p / q) : Double.POSITIVE_INFINITY, i);
-
-        }
-
-        return metric.distanceToZero(x, defaultValue);
-    }
-
+    return metric.distanceToZero(x, defaultValue);
+  }
 }

@@ -31,7 +31,7 @@ import org.sbml.jsbml.Constraint;
 /**
  * A listener interface that allows the processing of {@link Constraint}s that
  * triggered during simulation.
- * 
+ *
  * @author Alexander D&ouml;rr
  * @author Andreas Dr&auml;ger
  * @version $Rev$
@@ -41,9 +41,8 @@ public interface ConstraintListener extends EventListener {
 
   /**
    * Processes the given {@link ConstraintEvent}.
-   * 
+   *
    * @param evt
    */
   public abstract void processViolation(ConstraintEvent evt);
-
 }

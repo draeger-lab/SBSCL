@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jdom2.JDOMException;
-
 import de.binfalse.bflog.LOGGER;
 import de.unirostock.sems.cbarchive.ArchiveEntry;
 import de.unirostock.sems.cbarchive.CombineArchive;
@@ -42,78 +41,74 @@ import de.unirostock.sems.cbarchive.CombineArchiveException;
  */
 public class OMEXArchive {
 
-	private CombineArchive archive;
-	private Map<String, ArchiveEntry> entryMap;
-	private boolean has_models;
-	private boolean has_sim_descp;
-	private File sed_ml, sb_ml;
+  private CombineArchive archive;
+  private Map<String, ArchiveEntry> entryMap;
+  private boolean has_models;
+  private boolean has_sim_descp;
+  private File sed_ml, sb_ml;
 
-	public OMEXArchive(File zipFile) throws IOException, ParseException, CombineArchiveException, JDOMException{
-		entryMap = new HashMap<String, ArchiveEntry>();
-		has_models = false;
-		has_sim_descp = false;
-		
-		archive = new CombineArchive(zipFile);
+  public OMEXArchive(File zipFile)
+      throws IOException, ParseException, CombineArchiveException,
+      JDOMException {
+    entryMap = new HashMap<String, ArchiveEntry>();
+    has_models = false;
+    has_sim_descp = false;
+    archive = new CombineArchive(zipFile);
+    File parent = new File(System.getProperty("java.io.tmpdir"));
+    String entryFormat;
 
-		File parent = new File(System.getProperty("java.io.tmpdir"));
+    // iterate over all entries in the archive and create a Map
+    for (ArchiveEntry entry : archive.getEntries()) {
+      entryMap.put(entry.getFilePath(), entry);
+      entryFormat = entry.getFormat().toString();
+      if (entryFormat.contains("SBML") || entryFormat.contains("sbml")) {
+        has_models = true;
+        File sb_ml_file = new File(parent, entry.getFileName());
+        sb_ml = entry.extractFile(sb_ml_file);
+      }
+      if (entryFormat.contains("SED-ML") || entryFormat.contains("sed-ml")) {
+        has_sim_descp = true;
+        File sed_ml_file = new File(parent, entry.getFileName());
+        sed_ml = entry.extractFile(sed_ml_file);
+      }
+    }
 
-		// iterate over all entries in the archive and create a Map
-		for (ArchiveEntry entry : archive.getEntries())
-		{
-			entryMap.put(entry.getFilePath(), entry);
-			if(entry.getFormat().toString().contains("SBML") || entry.getFormat().toString().contains("sbml")){
-				has_models = true;
+    // read description of the archive itself
+    LOGGER.debug("found " + archive.getDescriptions().size() + " meta data entries describing the archive.");
+  }
 
-				File sb_ml_file = new File(parent, entry.getFileName());
-				sb_ml = entry.extractFile(sb_ml_file);
-			}
-			if(entry.getFormat().toString().contains("SED-ML") || entry.getFormat().toString().contains("sed-ml")) {
-				has_sim_descp = true;
+  public Map<String, ArchiveEntry> getFileEntries() {
+    return entryMap;
+  }
 
-				File sed_ml_file = new File(parent, entry.getFileName());
-				sed_ml = entry.extractFile(sed_ml_file);
-			}
-		}
+  public boolean containsSBMLModel() {
+    return has_models;
+  }
 
-		// read description of the archive itself
-		LOGGER.debug("found " + archive.getDescriptions().size() + " meta data entries describing the archive.");
-	}
+  public boolean containsSEDMLDescp() {
+    return has_sim_descp;
+  }
 
-	public Map<String, ArchiveEntry> getFileEntries() {
-		return entryMap;
-	}
+  public File getSEDMLDescription() {
+    return sed_ml;
+  }
 
-	public boolean containsSBMLModel() {
-		return has_models;
-	}
-	
-	public boolean containsSEDMLDescp() {
-		return has_sim_descp;
-	}
-	
-	public File getSEDMLDescp() {
-		return sed_ml;
-	}
-	
-	/**
-	 * A simple method to uncompress combine archives at desired location
-	 * @param destination
-	 * @return boolean
-	 */
-	public boolean extractArchive(File destination) {
-		try {
-			archive.extractTo(destination);
-			return true;
-		}catch(IOException ex) {
-			return false;
-		}
-	}
+  /**
+   * A simple method to uncompress combine archives at desired location
+   *
+   * @param destination
+   * @return whether combine archive is uncompressed or not
+   */
+  public boolean extractArchive(File destination) throws IOException {
+    try {
+      archive.extractTo(destination);
+      return true;
+    } catch (IOException ex) {
+      LOGGER.error(ex, "Error in extracting archives!");
+      return false;
+    } finally {
+      archive.close();
+    }
+  }
 
-	/**
-	 * Since we directly work with zip archive, it needs to be closed after use
-	 * @throws IOException
-	 */
-	public void close() throws IOException {
-		archive.close();
-	}
 }

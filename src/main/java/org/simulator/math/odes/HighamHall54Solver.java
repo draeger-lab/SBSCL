@@ -29,7 +29,7 @@ import org.apache.commons.math.ode.nonstiff.HighamHall54Integrator;
 /**
  * This class is a wrapper for the Higham-Hall-54 solver in the
  * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  * @since 0.9
@@ -51,7 +51,6 @@ public class HighamHall54Solver extends FirstOrderSolver {
   }
 
   /**
-   * 
    * @param stepSize
    */
   public HighamHall54Solver(double stepSize) {
@@ -61,9 +60,7 @@ public class HighamHall54Solver extends FirstOrderSolver {
   }
 
   /**
-   * 
-   * @param stepSize
-   *            the nonnegative flag of the super class
+   * @param stepSize    the nonnegative flag of the super class
    * @param nonnegative
    * @see AbstractDESSolver
    */
@@ -75,11 +72,12 @@ public class HighamHall54Solver extends FirstOrderSolver {
 
   /**
    * clone constructor
+   *
    * @param solver
    */
   public HighamHall54Solver(HighamHall54Solver solver) {
     super(solver);
-    integrator=solver.getIntegrator();
+    integrator = solver.getIntegrator();
   }
 
   /* (non-Javadoc)
@@ -95,7 +93,7 @@ public class HighamHall54Solver extends FirstOrderSolver {
    */
   @Override
   protected void createIntegrator() {
-    integrator=new HighamHall54Integrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
+    integrator = new HighamHall54Integrator(Math.min(1e-8, Math.min(1.0, getStepSize())), Math.min(1.0, getStepSize()), getAbsTol(), getRelTol());
   }
 
   /* (non-Javadoc)

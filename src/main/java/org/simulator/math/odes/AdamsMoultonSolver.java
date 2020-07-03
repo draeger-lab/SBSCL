@@ -29,7 +29,7 @@ import org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegrator;
 /**
  * This class is a wrapper for the Adams-Moulton solver in the
  * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  * @since 0.9
@@ -42,7 +42,7 @@ public class AdamsMoultonSolver extends FirstOrderSolver {
   private static final long serialVersionUID = -2601862472447650296L;
 
   /**
-   * 
+   *
    */
   public AdamsMoultonSolver() {
     super();
@@ -50,15 +50,15 @@ public class AdamsMoultonSolver extends FirstOrderSolver {
 
   /**
    * clone constructor
+   *
    * @param adamsSolver
    */
   public AdamsMoultonSolver(AdamsMoultonSolver adamsSolver) {
     super(adamsSolver);
-    integrator=adamsSolver.getIntegrator();
+    integrator = adamsSolver.getIntegrator();
   }
 
   /**
-   * 
    * @param stepSize
    */
   public AdamsMoultonSolver(double stepSize) {
@@ -66,10 +66,8 @@ public class AdamsMoultonSolver extends FirstOrderSolver {
   }
 
   /**
-   * 
    * @param stepSize
-   * @param nonnegative
-   *            the nonnegative flag of the super class
+   * @param nonnegative the nonnegative flag of the super class
    * @see AbstractDESSolver
    */
   public AdamsMoultonSolver(double stepSize, boolean nonnegative) {
@@ -89,7 +87,7 @@ public class AdamsMoultonSolver extends FirstOrderSolver {
    */
   @Override
   protected void createIntegrator() {
-    integrator = new AdamsMoultonIntegrator(5, Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
+    integrator = new AdamsMoultonIntegrator(5, Math.min(1e-8, Math.min(1.0, getStepSize())), Math.min(1.0, getStepSize()), getAbsTol(), getRelTol());
   }
 
   /* (non-Javadoc)
@@ -107,5 +105,4 @@ public class AdamsMoultonSolver extends FirstOrderSolver {
   public int getKiSAOterm() {
     return 280;
   }
-
 }

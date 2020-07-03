@@ -37,8 +37,5 @@ public class OMEXArchiveTest {
 
         // archive contains SED-ML model
         assertTrue(archive.containsSEDMLDescp());
-
-        // close the file object
-        archive.close();
     }
 }

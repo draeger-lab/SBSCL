@@ -34,7 +34,7 @@ import org.simulator.math.Mathematics;
 /**
  * This class is the superclass of the wrapper classes for the solvers of the
  * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  * @since 0.9
@@ -49,8 +49,7 @@ public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
   /**
    * A logger.
    */
-  private static final Logger logger = Logger.getLogger(FirstOrderSolver.class
-    .getName());
+  private static final Logger logger = Logger.getLogger(FirstOrderSolver.class.getName());
 
   /**
    * The result of the integration.
@@ -91,8 +90,7 @@ public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
 
   /**
    * @param stepSize
-   * @param nonnegative
-   *            the nonnegative flag of the super class
+   * @param nonnegative the nonnegative flag of the super class
    * @see AbstractDESSolver
    */
   public FirstOrderSolver(double stepSize, boolean nonnegative) {
@@ -103,6 +101,7 @@ public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
 
   /**
    * clone constructor
+   *
    * @param firstOrderSolver
    */
   public FirstOrderSolver(FirstOrderSolver firstOrderSolver) {
@@ -112,7 +111,7 @@ public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
   }
 
   /**
-   * 
+   *
    */
   private void addHandler() {
     integrator.addEventHandler(this, 1, 1, 1);
@@ -128,16 +127,14 @@ public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
    * @see org.sbml.simulator.math.odes.AbstractDESSolver#computeChange(org.sbml.simulator.math.odes.DESystem, double[], double, double, double[])
    */
   @Override
-  public double[] computeChange(DESystem DES, double[] y, double t,
-    double stepSize, double[] change, boolean steadyState) throws DerivativeException {
-    if ((integrationResult==null)||(integrationResult.length!=y.length)) {
+  public double[] computeChange(DESystem DES, double[] y, double t, double stepSize, double[] change, boolean steadyState)
+      throws DerivativeException {
+    if ((integrationResult == null) || (integrationResult.length != y.length)) {
       integrationResult = new double[y.length];
     }
-
     double tstart = t;
     double tend = t + stepSize;
-    if (FastMath.abs(tstart - tend) <= (1.0e-12 * FastMath.max(
-      FastMath.abs(tstart), FastMath.abs(tend)))) {
+    if (FastMath.abs(tstart - tend) <= (1.0e-12 * FastMath.max(FastMath.abs(tstart), FastMath.abs(tend)))) {
       for (int i = 0; i != change.length; i++) {
         change[i] = 0;
       }
@@ -172,5 +169,4 @@ public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
   protected boolean hasSolverEventProcessing() {
     return false;
   }
-
 }

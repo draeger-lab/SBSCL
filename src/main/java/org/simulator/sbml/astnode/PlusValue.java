@@ -28,7 +28,7 @@ import org.sbml.jsbml.ASTNode;
 
 /**
  * This class can compute and store the value of a plus node.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  */
@@ -49,5 +49,4 @@ public class PlusValue extends ASTNodeValue {
   protected void computeDoubleValue(double delay) {
     doubleValue = interpreter.plus(children, numChildren, time, delay);
   }
-
 }

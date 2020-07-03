@@ -43,26 +43,25 @@ public class EventInProgress {
   protected double lastTimeExecuted;
   protected LinkedList<Double> execTimes;
   protected LinkedList<Double[]> values;
-  protected Map<Integer,Double> assignments;
+  protected Map<Integer, Double> assignments;
 
   /**
    * Creates a new EventInProcess with the given boolean value indicating
    * whether or not it can fire at the initial time point.
-   * 
+   *
    * @param fired
    */
   public EventInProgress(boolean fired) {
     this.fired = fired;
     execTimes = new LinkedList<Double>();
     values = new LinkedList<Double[]>();
-    lastTimeFired=-1;
+    lastTimeFired = -1;
     lastTimeRecovered = -1;
     lastTimeExecuted = -1;
-    assignments = new HashMap<Integer,Double>();
+    assignments = new HashMap<Integer, Double>();
   }
 
   /**
-   * 
    * @param fired
    */
   public void refresh(boolean fired) {
@@ -72,7 +71,7 @@ public class EventInProgress {
     lastTimeFired = -1;
     lastTimeRecovered = -1;
     lastTimeExecuted = -1;
-    assignments = new HashMap<Integer,Double>();
+    assignments = new HashMap<Integer, Double>();
   }
 
   /**
@@ -88,14 +87,13 @@ public class EventInProgress {
    * the time of execution and the values used at this point in time. Please
    * note that values can be null when the event does not use values from
    * trigger time.
-   * 
+   *
    * @param values
    * @param time
    */
   public void addValues(Double[] values, double time) {
     execTimes.add(time);
     this.values.add(values);
-
   }
 
   /**
@@ -108,7 +106,6 @@ public class EventInProgress {
     lastTimeExecuted = time;
   }
 
-
   /**
    * Associated event has triggered therefore current value of fired to true
    */
@@ -120,24 +117,21 @@ public class EventInProgress {
   /**
    * Returns a boolean value indication if the associated event has recently
    * been triggered / fired
-   * 
+   *
    * @return fireStatus
    */
   public boolean getFireStatus(double time) {
     if ((lastTimeFired <= time) && (lastTimeRecovered <= time)) {
       return fired;
-    }
-    else if ((lastTimeFired <= time) && (lastTimeRecovered > time)) {
+    } else if ((lastTimeFired <= time) && (lastTimeRecovered > time)) {
       lastTimeRecovered = -1;
       fired = true;
       return true;
-    }
-    else if ((lastTimeFired>time) && (lastTimeRecovered <= time)) {
+    } else if ((lastTimeFired > time) && (lastTimeRecovered <= time)) {
       lastTimeFired = -1;
       fired = false;
       return false;
-    }
-    else {
+    } else {
       lastTimeRecovered = -1;
       lastTimeFired = -1;
       return fired;
@@ -146,7 +140,7 @@ public class EventInProgress {
 
   /**
    * Return the next time of execution of the associated event.
-   * 
+   *
    * @return time
    */
   public double getTime() {
@@ -155,6 +149,7 @@ public class EventInProgress {
 
   /**
    * Returns true if the event is supposed to be executed at some time.
+   *
    * @return executionTime?
    */
   public boolean hasExecutionTime() {
@@ -163,7 +158,7 @@ public class EventInProgress {
 
   /**
    * Return the values used in the next execution of the associated event.
-   * 
+   *
    * @return values
    */
   public Double[] getValues() {
@@ -182,22 +177,20 @@ public class EventInProgress {
   /**
    * Checks if this event has still assignments to perform for the given point
    * in time
-   * 
+   *
    * @param time
    * @return moreArguments?
    */
   public boolean hasMoreAssignments(double time) {
-
     if (execTimes.isEmpty()) {
-
       return false;
     }
-
     return execTimes.peek() <= time;
   }
 
   /**
    * Returns the last time the event has been fired.
+   *
    * @return time
    */
   public double getLastTimeFired() {
@@ -206,6 +199,7 @@ public class EventInProgress {
 
   /**
    * Returns the last time the event has been executed.
+   *
    * @return time
    */
   public double getLastTimeExecuted() {
@@ -214,6 +208,7 @@ public class EventInProgress {
 
   /**
    * Refreshes the status of the event regarding the current time.
+   *
    * @param currentTime
    */
   public void refresh(double currentTime) {
@@ -228,6 +223,7 @@ public class EventInProgress {
 
   /**
    * Adds an event assignment.
+   *
    * @param index
    * @param value
    */
@@ -237,10 +233,10 @@ public class EventInProgress {
 
   /**
    * Returns all event assignments as a map.
+   *
    * @return assignments
    */
-  public Map<Integer,Double> getAssignments() {
+  public Map<Integer, Double> getAssignments() {
     return assignments;
   }
-
 }

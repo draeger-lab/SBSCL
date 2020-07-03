@@ -36,7 +36,7 @@ import org.simulator.sbml.astnode.AssignmentRuleValue;
  * This class represents a compilation of all information calculated during
  * simulation concerning events in <a href="http://sbml.org" target="_blank">SBML</a>.
  * It can also contain the math of the trigger, the priority and the delay.
- * 
+ *
  * @author Alexander D&ouml;rr
  * @version $Rev$
  * @since 0.9
@@ -51,7 +51,7 @@ public class SBMLEventInProgress extends EventInProgress {
   /**
    * The event assignments
    */
-  protected Map<Integer,Double> assignments;
+  protected Map<Integer, Double> assignments;
 
   /**
    * The trigger of the event
@@ -86,7 +86,7 @@ public class SBMLEventInProgress extends EventInProgress {
   /**
    * Creates a new EventInProcess with the given boolean value indicating
    * whether or not it can fire at the initial time point.
-   * 
+   *
    * @param fired
    */
   public SBMLEventInProgress(boolean fired) {
@@ -106,17 +106,16 @@ public class SBMLEventInProgress extends EventInProgress {
 
   /**
    * Change the priority.
-   * 
+   *
    * @param priority
    */
   public void changePriority(double priority) {
     this.priority = priority;
   }
 
-
   /**
    * Return the priority of the associated event.
-   * 
+   *
    * @return priority
    */
   public Double getPriority() {
@@ -125,6 +124,7 @@ public class SBMLEventInProgress extends EventInProgress {
 
   /**
    * Sets the math of the trigger to a specific ASTNodeObject.
+   *
    * @param triggerObject
    */
   public void setTriggerObject(ASTNodeValue triggerObject) {
@@ -132,7 +132,6 @@ public class SBMLEventInProgress extends EventInProgress {
   }
 
   /**
-   * 
    * @return the trigger object of the event as an ASTNodeObject
    */
   public ASTNodeValue getTriggerObject() {
@@ -141,6 +140,7 @@ public class SBMLEventInProgress extends EventInProgress {
 
   /**
    * Sets the math of the priority to a specific ASTNodeObject.
+   *
    * @param priorityObject
    */
   public void setPriorityObject(ASTNodeValue priorityObject) {
@@ -148,7 +148,6 @@ public class SBMLEventInProgress extends EventInProgress {
   }
 
   /**
-   * 
    * @return priorityObject the priority object of the event as an ASTNodeObject
    */
   public ASTNodeValue getPriorityObject() {
@@ -157,6 +156,7 @@ public class SBMLEventInProgress extends EventInProgress {
 
   /**
    * Sets the math of the delay to a specific ASTNodeObject.
+   *
    * @param delayObject
    */
   public void setDelayObject(ASTNodeValue delayObject) {
@@ -164,7 +164,6 @@ public class SBMLEventInProgress extends EventInProgress {
   }
 
   /**
-   * 
    * @return delayObject the delay object of the event as an ASTNodeObject (null if there is no delay)
    */
   public ASTNodeValue getDelayObject() {
@@ -173,6 +172,7 @@ public class SBMLEventInProgress extends EventInProgress {
 
   /**
    * Adds the math of an assignment rule as an AssignmentRuleObject.
+   *
    * @param assignmentRuleObject
    */
   public void addRuleObject(AssignmentRuleValue assignmentRuleObject) {
@@ -183,7 +183,6 @@ public class SBMLEventInProgress extends EventInProgress {
   }
 
   /**
-   * 
    * @return ruleObjects the list of the assignment rules as AssignmentRuleObjects
    */
   public List<AssignmentRuleValue> getRuleObjects() {
@@ -192,6 +191,7 @@ public class SBMLEventInProgress extends EventInProgress {
 
   /**
    * Returns true if the values of the assignments are calculated at the trigger time of the event, otherwise false.
+   *
    * @return useValuesFromTriggerTime
    */
   public boolean getUseValuesFromTriggerTime() {
@@ -200,15 +200,14 @@ public class SBMLEventInProgress extends EventInProgress {
 
   /**
    * Sets the useValuesFromTriggerTime value of the event.
+   *
    * @param useValuesFromTriggerTime
    */
   public void setUseValuesFromTriggerTime(boolean useValuesFromTriggerTime) {
     this.useValuesFromTriggerTime = useValuesFromTriggerTime;
-
   }
 
   /**
-   * 
    * @return numAssignments the number of assignments of the event
    */
   public int getNumEventAssignments() {
@@ -216,7 +215,6 @@ public class SBMLEventInProgress extends EventInProgress {
   }
 
   /**
-   * 
    * @return persistent? the persistent flag of the event.
    */
   public boolean getPersistent() {
@@ -225,6 +223,7 @@ public class SBMLEventInProgress extends EventInProgress {
 
   /**
    * Sets the persistent flag of the event.
+   *
    * @param persistent
    */
   public void setPersistent(boolean persistent) {
@@ -239,5 +238,4 @@ public class SBMLEventInProgress extends EventInProgress {
       ruleObjects.clear();
     }
   }
-
 }

@@ -28,14 +28,15 @@ import org.sbml.jsbml.ASTNode;
 
 /**
  * This class can compute and store the value of times nodes.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  */
-public class TimesValue extends ASTNodeValue{
+public class TimesValue extends ASTNodeValue {
 
   /**
    * Initializes a new instance with the interpreter and ASTNode given
+   *
    * @param interpreter
    * @param node
    */
@@ -50,5 +51,4 @@ public class TimesValue extends ASTNodeValue{
   protected void computeDoubleValue(double delay) {
     doubleValue = interpreter.times(children, numChildren, time, delay);
   }
-
 }

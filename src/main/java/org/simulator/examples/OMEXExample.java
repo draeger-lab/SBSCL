@@ -66,11 +66,11 @@ public class OMEXExample {
 
 		if(archive.containsSBMLModel() && archive.containsSEDMLDescp()) {
 			// Execute SED-ML file and run simulations
-			SEDMLDocument doc = Libsedml.readDocument(archive.getSEDMLDescp());
+			SEDMLDocument doc = Libsedml.readDocument(archive.getSEDMLDescription());
 			SedML sedml = doc.getSedMLModel();
 
 			Output wanted = sedml.getOutputs().get(0);
-			SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, archive.getSEDMLDescp().getParentFile().getAbsolutePath());
+			SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, archive.getSEDMLDescription().getParentFile().getAbsolutePath());
 
 			Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
 			if ((res == null) || res.isEmpty() || !exe.isExecuted()) {
@@ -83,8 +83,6 @@ public class OMEXExample {
 				}
 			}
 		}
-		
-		// close the file object
-		archive.close();
+
 	}
 }

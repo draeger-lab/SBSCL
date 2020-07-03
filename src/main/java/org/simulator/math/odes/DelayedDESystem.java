@@ -27,17 +27,14 @@ package org.simulator.math.odes;
 /**
  * This interface describes a differential equation system containing values
  * with a delay function.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  */
 public interface DelayedDESystem extends DESystem {
 
   /**
-   * 
-   * @param dvh
-   *            the delay value holder to be registered
+   * @param dvh the delay value holder to be registered
    */
   public void registerDelayValueHolder(DelayValueHolder dvh);
-
 }

@@ -31,12 +31,14 @@ import javax.swing.JTable;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.math.ode.DerivativeException;
+import org.apache.log4j.Logger;
 import org.jfree.ui.RefineryUtilities;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.SBMLReader;
+import org.simulator.comp.CompSimulator;
 import org.simulator.math.odes.*;
 import org.simulator.plot.PlotMultiTable;
 import org.simulator.sbml.SBMLinterpreter;
@@ -44,65 +46,81 @@ import org.simulator.plot.PlotMultiTable;
 
 /**
  * A simple program that performs a simulation of a model.
- * 
+ *
  * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 0.9
  */
 public class SimulatorExample {
 
-  /**
-   * Starts a simulation at the command line.
-   * 
-   * @param args
-   *        file name, step size, and end time.
-   * @throws IOException
-   * @throws XMLStreamException
-   * @throws SBMLException
-   * @throws ModelOverdeterminedException
-   * @throws DerivativeException
-   */
-  public static void main(String[] args) throws XMLStreamException,
-  IOException, ModelOverdeterminedException, SBMLException,
-  DerivativeException {
+    private static Logger logger = Logger.getLogger(SimulatorExample.class.getName());
+    private static final double TOLERANCE_FACTOR = 1E-3;
+    private static final int WIDTH = 400;
+    private static final int HEIGHT = 400;
 
-    // Configuration
-    String fileName = args[0];
-    double stepSize = Double.parseDouble(args[1]);
-    double timeEnd = Double.parseDouble(args[2]);
-    double absTol = Double.parseDouble(args[3]);
-    double relTol = Double.parseDouble(args[4]);
+    /**
+     * Starts a simulation at the command line.
+     *
+     * @param args file name, step size, and end time.
+     * @throws IOException
+     * @throws XMLStreamException
+     * @throws SBMLException
+     * @throws ModelOverdeterminedException
+     * @throws DerivativeException
+     */
+    public static void main(String[] args) throws XMLStreamException,
+            IOException, ModelOverdeterminedException, SBMLException,
+            DerivativeException {
 
-    // Read the model and initialize solver
-    SBMLDocument document = (new SBMLReader()).readSBML(fileName);
-    Model model = document.getModel();
-    
-    DESSolver solver = new RosenbrockSolver();
-    solver.setStepSize(stepSize);
-    SBMLinterpreter interpreter = new SBMLinterpreter(model);
-    if (solver instanceof AbstractDESSolver) {
-      ((AbstractDESSolver) solver).setIncludeIntermediates(false);
+        String fileName = null;
+        double stepSize = 0d;
+        double timeEnd = 0d;
+        double absTol = 0d;
+        double relTol = 0d;
+
+        // Configuration
+        try {
+            fileName = args[0];
+            stepSize = Double.parseDouble(args[1]);
+            timeEnd = Double.parseDouble(args[2]);
+            absTol = TOLERANCE_FACTOR * Double.parseDouble(args[3]);
+            relTol = TOLERANCE_FACTOR * Double.parseDouble(args[4]);
+        } catch (NumberFormatException e) {
+            logger.warn("Please enter numerical values wherever needed");
+        } catch (IllegalArgumentException e){
+            logger.error("Provide proper arguments");
+        }
+
+        // Read the model and initialize solver
+        SBMLDocument document = (new SBMLReader()).readSBML(fileName);
+        Model model = document.getModel();
+
+        DESSolver solver = new RosenbrockSolver();
+        solver.setStepSize(stepSize);
+        SBMLinterpreter interpreter = new SBMLinterpreter(model);
+        if (solver instanceof AbstractDESSolver) {
+            ((AbstractDESSolver) solver).setIncludeIntermediates(false);
+        }
+
+        // Compute the numerical solution of the initial value problem
+        if (solver instanceof AdaptiveStepsizeIntegrator) {
+            ((AdaptiveStepsizeIntegrator) solver).setAbsTol(absTol);
+            ((AdaptiveStepsizeIntegrator) solver).setRelTol(relTol);
+        }
+        MultiTable solution = solver.solve(interpreter, interpreter
+                .getInitialValues(), 0d, timeEnd);
+
+        // Display simulation result to the user
+        JScrollPane resultDisplay = new JScrollPane(new JTable(solution));
+        resultDisplay.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        JOptionPane.showMessageDialog(null, resultDisplay, "The solution of model "
+                + model.getId(), JOptionPane.INFORMATION_MESSAGE);
+
+        // plot all the reactions species
+        PlotMultiTable p = new PlotMultiTable(solution, "Output plot");
+        p.pack();
+        RefineryUtilities.centerFrameOnScreen(p);
+        p.setVisible(true);
     }
-
-    // Compute the numerical solution of the initial value problem
-    if (solver instanceof AdaptiveStepsizeIntegrator) {
-      ((AdaptiveStepsizeIntegrator) solver).setAbsTol(absTol);
-      ((AdaptiveStepsizeIntegrator) solver).setRelTol(relTol);
-    }
-    MultiTable solution = solver.solve(interpreter, interpreter
-      .getInitialValues(), 0d, timeEnd);
-
-    // Display simulation result to the user
-    JScrollPane resultDisplay = new JScrollPane(new JTable(solution));
-    resultDisplay.setPreferredSize(new Dimension(400, 400));
-    JOptionPane.showMessageDialog(null, resultDisplay, "The solution of model "
-        + model.getId(), JOptionPane.INFORMATION_MESSAGE);
-    
-    // plot all the reactions species
-    PlotMultiTable p = new PlotMultiTable(solution, "Output plot");
-    p.pack();
-    RefineryUtilities.centerFrameOnScreen(p);
-    p.setVisible( true );
-  }
 
 }

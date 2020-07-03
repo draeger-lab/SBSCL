@@ -27,7 +27,7 @@ package org.simulator.math.odes;
 /**
  * This is an abstract class for solvers with adaptive stepsizes and given
  * relative and absolute tolerances.
- * 
+ *
  * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 1.1
@@ -38,17 +38,19 @@ public abstract class AdaptiveStepsizeIntegrator extends AbstractDESSolver {
    * Generated serial version identifier.
    */
   private static final long serialVersionUID = -5411228466445964211L;
+
   /**
    * Default absolute allowable vectorial tolerance.
    */
   protected double absTol = 1E-12d;
+
   /**
    * Default relative allowable vectorial tolerance.
    */
   protected double relTol = 1E-6d;
 
   /**
-   * 
+   *
    */
   public AdaptiveStepsizeIntegrator() {
     super();
@@ -56,6 +58,7 @@ public abstract class AdaptiveStepsizeIntegrator extends AbstractDESSolver {
 
   /**
    * clone constructor
+   *
    * @param adaptiveStepSizeIntegrator
    */
   public AdaptiveStepsizeIntegrator(AdaptiveStepsizeIntegrator adaptiveStepSizeIntegrator) {
@@ -65,7 +68,6 @@ public abstract class AdaptiveStepsizeIntegrator extends AbstractDESSolver {
   }
 
   /**
-   * 
    * @param stepSize
    */
   public AdaptiveStepsizeIntegrator(double stepSize) {
@@ -73,7 +75,6 @@ public abstract class AdaptiveStepsizeIntegrator extends AbstractDESSolver {
   }
 
   /**
-   * 
    * @param stepSize
    * @param nonnegative the nonnegative flag of the super class
    * @see AbstractDESSolver
@@ -109,5 +110,4 @@ public abstract class AdaptiveStepsizeIntegrator extends AbstractDESSolver {
   public void setRelTol(double relTol) {
     this.relTol = relTol;
   }
-
 }

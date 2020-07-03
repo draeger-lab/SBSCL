@@ -29,7 +29,7 @@ import org.apache.commons.math.ode.nonstiff.DormandPrince853Integrator;
 /**
  * This class is a wrapper for the Dormand-Prince-853 solver in the
  * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  * @since 0.9
@@ -50,15 +50,15 @@ public class DormandPrince853Solver extends FirstOrderSolver {
 
   /**
    * clone constructor
+   *
    * @param solver
    */
   public DormandPrince853Solver(DormandPrince853Solver solver) {
     super(solver);
-    integrator=solver.getIntegrator();
+    integrator = solver.getIntegrator();
   }
 
   /**
-   * 
    * @param stepSize
    */
   public DormandPrince853Solver(double stepSize) {
@@ -66,10 +66,8 @@ public class DormandPrince853Solver extends FirstOrderSolver {
   }
 
   /**
-   * 
    * @param stepSize
-   * @param nonnegative
-   *            the nonnegative flag of the super class
+   * @param nonnegative the nonnegative flag of the super class
    * @see AbstractDESSolver
    */
   public DormandPrince853Solver(double stepSize, boolean nonnegative) {
@@ -89,7 +87,7 @@ public class DormandPrince853Solver extends FirstOrderSolver {
    */
   @Override
   protected void createIntegrator() {
-    integrator=new DormandPrince853Integrator(Math.min(1e-8,Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
+    integrator = new DormandPrince853Integrator(Math.min(1e-8, Math.min(1.0, getStepSize())), Math.min(1.0, getStepSize()), getAbsTol(), getRelTol());
   }
 
   /* (non-Javadoc)
@@ -107,5 +105,4 @@ public class DormandPrince853Solver extends FirstOrderSolver {
   public int getKiSAOterm() {
     return 436;
   }
-
 }

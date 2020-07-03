@@ -25,17 +25,19 @@
 package org.simulator.sbml.astnode;
 
 import java.util.List;
+
 import org.sbml.jsbml.Species;
 import org.simulator.sbml.SBMLValueHolder;
 
 /**
  * This class can compute and store the value of a rate rule together with the
  * variable of the rule.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  */
-public class RateRuleValue extends RuleValue{
+public class RateRuleValue extends RuleValue {
+
   /**
    * Is the variable a compartment?
    */
@@ -48,12 +50,17 @@ public class RateRuleValue extends RuleValue{
   private List<Integer> speciesIndices;
 
   /**
-   * 
+   * The variable for which the rateRule is defined
+   */
+  private String variable;
+
+  /**
    * @param nodeObject
    * @param index
    */
-  public RateRuleValue(ASTNodeValue nodeObject, int index) {
+  public RateRuleValue(ASTNodeValue nodeObject, int index, String variable) {
     super(nodeObject, index);
+    this.variable = variable;
   }
 
   /**
@@ -64,45 +71,53 @@ public class RateRuleValue extends RuleValue{
    * @param compartmentIndex
    * @param hasZeroSpatialDimensions
    * @param valueHolder
+   * @param variable
+   * @param isAmount
    */
-  public RateRuleValue(ASTNodeValue nodeObject, int index,
-    Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder) {
-    super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder);
+  public RateRuleValue(ASTNodeValue nodeObject, int index, Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder, String variable, boolean isAmount) {
+    super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder, isAmount);
+    this.variable = variable;
   }
 
   /**
    * Constructor for a rule with a compartment as variable
+   *
    * @param nodeObject
    * @param index
    * @param speciesIndices
    * @param valueHolder
    */
-  public RateRuleValue(ASTNodeValue nodeObject, int index,
-    List<Integer> speciesIndices, SBMLValueHolder valueHolder) {
+  public RateRuleValue(ASTNodeValue nodeObject, int index, List<Integer> speciesIndices, SBMLValueHolder valueHolder, String variable) {
     super(nodeObject, index);
     isCompartment = true;
+    this.variable = variable;
     this.speciesIndices = speciesIndices;
   }
 
   /**
+   * @return the name of the variable
+   */
+  public String getVariable() {
+    return variable;
+  }
+
+  /**
    * Processes the rule and saves the new value of the corresponding variable in the changeRate vector.
+   *
    * @param changeRate
    * @param Y
    * @param time
    */
   public void processRule(double[] changeRate, double[] Y, double time) {
     changeRate[index] = processAssignmentVariable(time);
-
     // when the size of a compartment changes, the concentrations of the
     // species located in this compartment have to change as well
     if (isCompartment) {
-      if (speciesIndices!=null) {
-        for (int speciesIndex:speciesIndices) {
-          changeRate[speciesIndex] = -changeRate[index]
-              * Y[speciesIndex] / Y[index];
+      if (speciesIndices != null) {
+        for (int speciesIndex : speciesIndices) {
+          changeRate[speciesIndex] = -changeRate[index] * Y[speciesIndex] / Y[index];
         }
       }
     }
   }
-
 }

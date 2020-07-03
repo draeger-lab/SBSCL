@@ -29,7 +29,7 @@ import org.apache.commons.math.ode.nonstiff.GraggBulirschStoerIntegrator;
 /**
  * This class is a wrapper for the Gragg-Bulirsch-Stoer solver in the
  * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  * @since 0.9
@@ -49,7 +49,6 @@ public class GraggBulirschStoerSolver extends FirstOrderSolver {
   }
 
   /**
-   * 
    * @param stepSize
    */
   public GraggBulirschStoerSolver(double stepSize) {
@@ -57,19 +56,17 @@ public class GraggBulirschStoerSolver extends FirstOrderSolver {
   }
 
   /**
-   * 
-   * @param stepSize
-   *            the nonnegative flag of the super class
+   * @param stepSize    the nonnegative flag of the super class
    * @param nonnegative
    * @see AbstractDESSolver
    */
   public GraggBulirschStoerSolver(double stepSize, boolean nonnegative) {
     super(stepSize, nonnegative);
-
   }
 
   /**
    * clone constructor
+   *
    * @param solver
    */
   public GraggBulirschStoerSolver(GraggBulirschStoerSolver solver) {
@@ -90,7 +87,7 @@ public class GraggBulirschStoerSolver extends FirstOrderSolver {
    */
   @Override
   protected void createIntegrator() {
-    integrator = new GraggBulirschStoerIntegrator(Math.min(1e-8, Math.min(1.0,getStepSize())), Math.min(1.0,getStepSize()), getAbsTol(), getRelTol());
+    integrator = new GraggBulirschStoerIntegrator(Math.min(1e-8, Math.min(1.0, getStepSize())), Math.min(1.0, getStepSize()), getAbsTol(), getRelTol());
   }
 
   /* (non-Javadoc)
@@ -108,5 +105,4 @@ public class GraggBulirschStoerSolver extends FirstOrderSolver {
   public int getKiSAOterm() {
     return 379;
   }
-
 }

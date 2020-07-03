@@ -29,7 +29,7 @@ import org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegrator;
 /**
  * This class is a wrapper for the Adams-Bashforth solver in the
  * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  * @since 0.9
@@ -50,6 +50,7 @@ public class AdamsBashforthSolver extends FirstOrderSolver {
 
   /**
    * Clone constructor
+   *
    * @param adamsSolver
    */
   public AdamsBashforthSolver(AdamsBashforthSolver adamsSolver) {
@@ -58,7 +59,6 @@ public class AdamsBashforthSolver extends FirstOrderSolver {
   }
 
   /**
-   * 
    * @param stepSize
    */
   public AdamsBashforthSolver(double stepSize) {
@@ -66,7 +66,6 @@ public class AdamsBashforthSolver extends FirstOrderSolver {
   }
 
   /**
-   * 
    * @param stepSize
    * @param nonnegative the nonnegative flag of the super class
    * @see AbstractDESSolver
@@ -106,5 +105,4 @@ public class AdamsBashforthSolver extends FirstOrderSolver {
   public int getKiSAOterm() {
     return 279;
   }
-
 }

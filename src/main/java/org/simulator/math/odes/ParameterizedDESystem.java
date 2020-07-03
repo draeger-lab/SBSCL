@@ -31,7 +31,7 @@ package org.simulator.math.odes;
  * double values, i.e., each parameter value being associated with a unique
  * identifier. Implementing classes provide methods to manipulate the current
  * parameter configuration of the system.
- * 
+ *
  * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 1.2
@@ -44,9 +44,9 @@ public interface ParameterizedDESystem extends DESystem {
    * returned by the methods {@link #getParameterIdentifiers()} AND
    * {@link #getParameterValues()}. Otherwise, the implementation might show
    * unexpected behavior.
-   * 
+   *
    * @return parameterCount the number of parameters in the system that influence its
-   *         behavior
+   * behavior
    * @see #getParameterIdentifiers()
    * @see #getParameterValues()
    */
@@ -57,7 +57,7 @@ public interface ParameterizedDESystem extends DESystem {
    * a unique identifier, which can be used to address it in numerical
    * calculations. This method returns an array of all parameters in the
    * {@link ParameterizedDESystem}.
-   * 
+   *
    * @return identifiers
    * @see #getParameterCount()
    * @see #getParameterValues()
@@ -70,10 +70,9 @@ public interface ParameterizedDESystem extends DESystem {
    * length of the returned array must be identical with the value returned by
    * {@link #getPositiveValueCount()} and also with the number of identifiers
    * given by {@link #getParameterIdentifiers()}
-   * 
+   *
    * @return values the current values of all parameters in the system in form of a
-   *         double array
-   * 
+   * double array
    * @see #getParameterCount()
    * @see #getParameterIdentifiers()
    */
@@ -87,10 +86,9 @@ public interface ParameterizedDESystem extends DESystem {
    * can obtain the current values of all parameters by calling
    * {@link #getParameterValues()}. Within this array you could change some
    * values of interest and subsequently pass the array to this method.
-   * 
+   *
    * @param values the new values for all parameters.
    * @see #getParameterCount()
    */
   public void setParameters(double values[]);
-
 }

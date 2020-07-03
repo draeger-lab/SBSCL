@@ -22,7 +22,6 @@
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
-
 /**
  * Classes for storing and interpreting an
  * <a href="http://sbml.org" target="_blank">SBML</a>
@@ -57,7 +56,7 @@
  * the {@link org.sbml.jsbml.Constraint} is not a simple text, but an arbitrary
  * XHTML document and therefore not always suitable to be displayed on the
  * console).
- * 
+ *
  * @version $Rev$
  */
 package org.simulator.sbml;

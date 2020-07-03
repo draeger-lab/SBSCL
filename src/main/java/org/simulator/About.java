@@ -24,7 +24,7 @@ package org.simulator;
 
 /**
  * This class displays a short about message for this library.
- * 
+ *
  * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 1.1
@@ -67,5 +67,4 @@ public class About {
       System.out.println(message);
     }
   }
-
 }

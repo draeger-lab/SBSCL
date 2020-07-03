@@ -30,7 +30,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.swing.table.AbstractTableModel;
 
 import org.simulator.math.odes.MultiTable.Block.Column;
@@ -47,24 +46,25 @@ import org.simulator.math.odes.MultiTable.Block.Column;
  * {@link AbstractTableModel}. Note that the access to the elements in this
  * object therefore puts both elements together, i.e., the time column is
  * considered to be the first column in the table.
- * 
+ *
  * @author draeger
  * @version $Rev$
  * @since 0.9
  */
-public class MultiTable extends AbstractTableModel implements Iterable<Iterable<Double>> {
+public class MultiTable extends AbstractTableModel
+    implements Iterable<Iterable<Double>> {
 
   /**
    * A {@link Block} is a data structure with a two-dimensional double array
    * of actual data together with identifiers for each column.
-   * 
+   *
    * @author Andreas Dr&auml;ger
    */
   public class Block extends AbstractTableModel {
 
     /**
      * A column of the {@link MultiTable.Block} matrix.
-     * 
+     *
      * @author Andreas Dr&aumlg;ger
      */
     public class Column implements Iterable<Double> {
@@ -77,13 +77,12 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
       /**
        * Creates a new {@link Column} object for the column with the given
        * index.
-       * 
+       *
        * @param columnIndex
        */
       private Column(int columnIndex) {
         if ((columnIndex < 0) || (getColumnCount() <= columnIndex)) {
-          throw new IndexOutOfBoundsException(Integer
-            .toString(columnIndex));
+          throw new IndexOutOfBoundsException(Integer.toString(columnIndex));
         }
         this.columnIndex = columnIndex;
       }
@@ -91,17 +90,17 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
       /**
        * Returns the human-readable name for this column if there is any, otherwise
        * this will return the same value as {@link #getId()}.
-       * 
+       *
        * @return columnName
        */
       public String getColumnName() {
-        return ((columnNames != null) && (columnNames[columnIndex] != null)) ? columnNames[columnIndex]
-            : getId();
+        return ((columnNames != null) && (columnNames[columnIndex] != null)) ?
+            columnNames[columnIndex] : getId();
       }
 
       /**
        * Delivers the {@link Column} identifier of this particular column.
-       * 
+       *
        * @return The {@link String} that identifies this {@link Column}.
        */
       public String getId() {
@@ -109,7 +108,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
       }
 
       /**
-       * 
        * @return name the name of the column
        */
       public String getName() {
@@ -118,7 +116,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
       /**
        * Gives the number of rows in this {@link Column}.
-       * 
+       *
        * @return rowCount the number of rows
        */
       public int getRowCount() {
@@ -127,7 +125,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
       /**
        * Access to the given row in this column.
-       * 
+       *
        * @param rowIndex
        * @return value the value at the given row
        */
@@ -169,24 +167,19 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
           @Override
           public void remove() {
             // don't remove anything here!
-            throw new UnsupportedOperationException(
-                "cannot remove anything from the underlying object");
+            throw new UnsupportedOperationException("cannot remove anything from the underlying object");
           }
         };
       }
 
       /**
        * Change the entry at the given row in this {@link Column}.
-       * 
-       * @param rowIndex
-       *            The row where to change
-       * @param doubleValue
-       *            The new value.
-       * 
+       *
+       * @param rowIndex    The row where to change
+       * @param doubleValue The new value.
        */
       public void setValue(double doubleValue, int rowIndex) {
-        data[rowIndex][columnIndex] = ((Double) doubleValue)
-            .doubleValue();
+        data[rowIndex][columnIndex] = ((Double) doubleValue).doubleValue();
       }
 
       /* (non-Javadoc)
@@ -205,8 +198,8 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
         sb.append(']');
         return sb.toString();
       }
-
     }
+
 
     /**
      * Generated serial version identifier.
@@ -247,18 +240,15 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
     private MultiTable parent;
 
     /**
-     * 
      * @param data
      * @param identifiers
      * @param parent
      */
-    private Block(double[][] data, String[] identifiers,
-      MultiTable parent) {
+    private Block(double[][] data, String[] identifiers, MultiTable parent) {
       this(data, identifiers, null, parent);
     }
 
-    private Block(double[][] data, String[] identifiers, String[] names,
-      MultiTable parent) {
+    private Block(double[][] data, String[] identifiers, String[] names, MultiTable parent) {
       this(parent);
       setData(data);
       setIdentifiers(identifiers);
@@ -266,7 +256,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
     }
 
     /**
-     * 
+     *
      */
     private Block(MultiTable parent) {
       this.parent = parent;
@@ -276,7 +266,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
     /**
      * Checks whether or not this {@link Block} contains a {@link Column}
      * with the given identifier.
-     * 
+     *
      * @param id
      * @return containsColumn?
      */
@@ -286,11 +276,10 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
     /**
      * Grants access to the specified column.
-     * 
-     * @param columnIndex
-     *            The index of the column (excluding the time column)
+     *
+     * @param columnIndex The index of the column (excluding the time column)
      * @return Returns the {@link Column} with the given index in the data
-     *         matrix, i.e., the time column is excluded.
+     * matrix, i.e., the time column is excluded.
      */
     public Column getColumn(int columnIndex) {
       return new Column(columnIndex);
@@ -299,11 +288,10 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
     /**
      * Provides access to the {@link Column} corresponding to the given
      * identifier.
-     * 
-     * @param identfier
-     *            The identifier of the {@link Column} to be queried.
+     *
+     * @param identfier The identifier of the {@link Column} to be queried.
      * @return A {@link Column} object for convenient access to the data in
-     *         the desired table column.
+     * the desired table column.
      */
     public Column getColumn(String identfier) {
       return new Column(idHash.get(identfier).intValue());
@@ -318,7 +306,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
     }
 
     /**
-     * 
      * @param column
      * @return identifier
      */
@@ -331,8 +318,8 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
      */
     @Override
     public String getColumnName(int column) {
-      return (columnNames == null) || (columnNames[column] == null) ? getColumnIdentifier(column)
-        : columnNames[column];
+      return (columnNames == null) || (columnNames[column] == null) ?
+          getColumnIdentifier(column) : columnNames[column];
     }
 
     /**
@@ -357,7 +344,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
     }
 
     /**
-     * 
      * @return blockName
      */
     public String getName() {
@@ -367,9 +353,8 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
     /**
      * Delivers the given row of the data matrix as an array of doubles
      * only, i.e., no time points.
-     * 
-     * @param rowIndex
-     *            The index of the row to be delivered.
+     *
+     * @param rowIndex The index of the row to be delivered.
      * @return An array of double values from the encapsulated data matrix.
      */
     public double[] getRow(int rowIndex) {
@@ -386,7 +371,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
     /**
      * Access to the time points of the overall table.
-     * 
+     *
      * @return A pointer to the time points in the containing table.
      */
     public double[] getTimePoints() {
@@ -406,7 +391,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
     /**
      * Checks whether or not a data matrix has been defined in this object
-     * 
+     *
      * @return dataSet?
      */
     public boolean isSetData() {
@@ -421,27 +406,21 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
     }
 
     /**
-     * @param data
-     *            the data to set
+     * @param data the data to set
      */
     public void setData(double[][] data) {
       if (isSetTimePoints() && (data.length != getRowCount())) {
-        throw new IllegalArgumentException(String.format(
-          UNEQUAL_DATA_AND_TIME_POINTS, data.length,
-          timePoints.length));
+        throw new IllegalArgumentException(String.format(UNEQUAL_DATA_AND_TIME_POINTS, data.length, timePoints.length));
       }
       this.data = data;
     }
 
     /**
-     * @param identifiers
-     *            the identifiers to set
+     * @param identifiers the identifiers to set
      */
     public void setIdentifiers(String[] identifiers) {
       if (isSetData() && (identifiers.length != data[0].length)) {
-        throw new IllegalArgumentException(String.format(
-          UNEQUAL_COLUMNS_AND_IDENTIFIERS, data[0].length,
-          identifiers.length));
+        throw new IllegalArgumentException(String.format(UNEQUAL_COLUMNS_AND_IDENTIFIERS, data[0].length, identifiers.length));
       }
       this.identifiers = identifiers;
       idHash.clear();
@@ -451,7 +430,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
     }
 
     /**
-     * 
      * @param name
      */
     public void setName(String name) {
@@ -462,17 +440,13 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
      * Sets the given array as the new row in the given position of the data
      * matrix, but requires that the number of values in the array equal the
      * number of columns in the matrix.
-     * 
-     * @param rowIndex
-     *            The index of the row to be replaced by the new array.
-     * @param array
-     *            An array of length {@link #getColumnCount()} - 1.
+     *
+     * @param rowIndex The index of the row to be replaced by the new array.
+     * @param array    An array of length {@link #getColumnCount()} - 1.
      */
     public void setRowData(int rowIndex, double[] array) {
       if (array.length != getColumnCount()) {
-        throw new IllegalArgumentException(String.format(
-          UNEQUAL_COLUMNS_AND_IDENTIFIERS, array.length,
-          identifiers.length));
+        throw new IllegalArgumentException(String.format(UNEQUAL_COLUMNS_AND_IDENTIFIERS, array.length, identifiers.length));
       }
       data[rowIndex] = array;
     }
@@ -488,8 +462,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
       if (columnIndex == 0) {
         timePoints[rowIndex] = ((Double) aValue).doubleValue();
       } else {
-        data[rowIndex][columnIndex - 1] = ((Double) aValue)
-            .doubleValue();
+        data[rowIndex][columnIndex - 1] = ((Double) aValue).doubleValue();
       }
     }
 
@@ -515,6 +488,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
       return sb.toString();
     }
   }
+
 
   /**
    * Error message
@@ -549,14 +523,14 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
   private List<Block> listOfBlocks;
 
   /**
-   * 
+   *
    */
   private String name;
 
   /**
    * The name of the time column. Default is the English word "Time".
    */
-  private String timeName = "Time";
+  private String timeName = "time";
 
   /**
    * The array to gather the time points in this data structure. This array
@@ -573,27 +547,23 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
   /**
    * Constructs a data object for the given values.
-   * 
+   *
    * @param timePoints
    * @param data
-   * @param identifiers
-   *            The first column in identifiers may be the name for the time
-   *            column.
+   * @param identifiers The first column in identifiers may be the name for the time
+   *                    column.
    */
-  public MultiTable(double timePoints[], double data[][],
-    String identifiers[]) {
+  public MultiTable(double timePoints[], double data[][], String identifiers[]) {
     this(timePoints, data, identifiers, null);
   }
 
   /**
-   * 
    * @param timePoints
    * @param data
    * @param columnIdentifiers
    * @param columnNames
    */
-  public MultiTable(double[] timePoints, double[][] data,
-    String[] columnIdentifiers, String[] columnNames) {
+  public MultiTable(double[] timePoints, double[][] data, String[] columnIdentifiers, String[] columnNames) {
     this();
     setTimePoints(timePoints);
     String ids[];
@@ -617,9 +587,8 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
    * Creates a new {@link MultiTable.Block} and adds it to this object.
    * The number of rows will be equal to the number of time points of the
    * overall data structure.
-   * 
-   * @param identifiers
-   *            The column identifiers of the new block.
+   *
+   * @param identifiers The column identifiers of the new block.
    */
   public void addBlock(String[] identifiers) {
     Block block = new Block(this);
@@ -632,45 +601,42 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
   /**
    * Creates a multi block table only containing the values for the given timepoints (if available)
+   *
    * @param timepoints
    * @return table the filtered table
    */
   public MultiTable filter(double[] timepoints) {
     ArrayList<Integer> rowIndices = new ArrayList<Integer>();
     int i = 0;
-    for (double time: timepoints) {
-      while((i<getTimePoints().length) && (getTimePoints()[i]<=time)) {
-        if (getTimePoints()[i]==time) {
+    for (double time : timepoints) {
+      while ((i < getTimePoints().length) && (getTimePoints()[i] <= time)) {
+        if (getTimePoints()[i] == time) {
           rowIndices.add(i);
         }
         i++;
       }
     }
-
-    MultiTable filtered= new MultiTable();
+    MultiTable filtered = new MultiTable();
     double[] filteredTimepoints = new double[rowIndices.size()];
     int number = 0;
-    for (int rowIndex: rowIndices) {
+    for (int rowIndex : rowIndices) {
       filteredTimepoints[number] = getTimePoints()[rowIndex];
       number++;
     }
     filtered.setTimePoints(filteredTimepoints);
-    for (int block=0;block!=getBlockCount();block++) {
+    for (int block = 0; block != getBlockCount(); block++) {
       filtered.addBlock(getBlock(block).getIdentifiers());
       filtered.getBlock(block).setData(new double[rowIndices.size()][getBlock(block).getIdentifiers().length]);
-
-      int rowCounter=0;
-      for (int rowIndex: rowIndices) {
+      int rowCounter = 0;
+      for (int rowIndex : rowIndices) {
         filtered.getBlock(block).setRowData(rowCounter, getBlock(block).getRow(rowIndex));
         rowCounter++;
       }
     }
-
     return filtered;
   }
 
   /**
-   * 
    * @param index
    * @return block the block at the given position
    */
@@ -679,7 +645,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
   }
 
   /**
-   * 
    * @return blockCount
    */
   public int getBlockCount() {
@@ -687,7 +652,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
   }
 
   /**
-   * 
    * @param column
    * @return column the column at the given position
    */
@@ -696,8 +660,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
       throw new IndexOutOfBoundsException(Integer.toString(column));
     }
     if (column == 0) {
-      throw new IllegalArgumentException(
-          "no column 0: use getTimePoints()");
+      throw new IllegalArgumentException("no column 0: use getTimePoints()");
     }
     int index = column - 1;
     int bidx = 0;
@@ -711,11 +674,10 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
   /**
    * Returns the column corresponding to the given identifier.
-   * 
-   * @param identifier
-   *            An identifier.
+   *
+   * @param identifier An identifier.
    * @return A {@link Column} object for this identifier or null if no such
-   *         {@link Column} exists.
+   * {@link Column} exists.
    */
   public Column getColumn(String identifier) {
     int index = getColumnIndex(identifier);
@@ -724,7 +686,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
   /**
    * Returns the index of a column for a given identifier.
-   * 
+   *
    * @param identifier
    * @return index the index of the column
    */
@@ -763,7 +725,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
   }
 
   /**
-   * 
    * @param column
    * @return columnIdentifier the identifier of the column at the given position
    */
@@ -793,7 +754,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
   /**
    * Gives this {@link MultiTable}'s name.
-   * 
+   *
    * @return name the name of the table
    */
   public String getName() {
@@ -801,7 +762,6 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
   }
 
   /**
-   * 
    * @return blockCount
    */
   public int getNumBlocks() {
@@ -818,7 +778,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
   /**
    * The column identifier for the first column, i.e., the time column.
-   * 
+   *
    * @return the timeName
    */
   public String getTimeName() {
@@ -827,9 +787,8 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
   /**
    * Returns the time value at the given index position.
-   * 
-   * @param rowIndex
-   *            The index of the time value of interest.
+   *
+   * @param rowIndex The index of the time value of interest.
    * @return A double number representing the time at the given index.
    */
   public double getTimePoint(int rowIndex) {
@@ -848,8 +807,8 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
    */
   @Override
   public Double getValueAt(int rowIndex, int columnIndex) {
-    return Double.valueOf(columnIndex == 0 ? timePoints[rowIndex]
-        : getColumn(columnIndex).getValue(rowIndex));
+    return Double.valueOf(columnIndex == 0 ? timePoints[rowIndex] :
+        getColumn(columnIndex).getValue(rowIndex));
   }
 
   /* (non-Javadoc)
@@ -863,7 +822,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
   /**
    * Checks whether an array of time points has been set for this object.
-   * 
+   *
    * @return timePointsSet
    */
   public boolean isSetTimePoints() {
@@ -900,18 +859,16 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
        */
       @Override
       public void remove() {
-        throw new UnsupportedOperationException(
-            "this iterator does not remove anything.");
+        throw new UnsupportedOperationException("this iterator does not remove anything.");
       }
     };
   }
 
   /**
    * Removes the {@link Block} with the given index from this data structure.
-   * 
-   * @param index
-   *            The index of the block. Do not confuse with the index of the
-   *            column.
+   *
+   * @param index The index of the block. Do not confuse with the index of the
+   *              column.
    */
   public void removeBlock(int index) {
     listOfBlocks.remove(index);
@@ -919,7 +876,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
   /**
    * Sets the name of this {@link MultiTable}.
-   * 
+   *
    * @param name
    */
   public void setName(String name) {
@@ -928,24 +885,19 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
 
   /**
    * Set the name of the time column
-   * 
-   * @param timeName
-   *            the timeName to set
+   *
+   * @param timeName the timeName to set
    */
   public void setTimeName(String timeName) {
     this.timeName = timeName;
   }
 
   /**
-   * @param timePoints
-   *            the timePoints to set
+   * @param timePoints the timePoints to set
    */
   public void setTimePoints(double[] timePoints) {
-    if ((listOfBlocks.size() > 0)
-        && (listOfBlocks.get(0).getRowCount() != timePoints.length)) {
-      throw new IllegalArgumentException(String.format(
-        UNEQUAL_DATA_AND_TIME_POINTS, listOfBlocks.get(0)
-        .getRowCount(), timePoints.length));
+    if ((listOfBlocks.size() > 0) && (listOfBlocks.get(0).getRowCount() != timePoints.length)) {
+      throw new IllegalArgumentException(String.format(UNEQUAL_DATA_AND_TIME_POINTS, listOfBlocks.get(0).getRowCount(), timePoints.length));
     }
     this.timePoints = timePoints;
   }
@@ -960,8 +912,7 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
     if (columnIndex == 0) {
       timePoints[rowIndex] = aValue.doubleValue();
     } else {
-      getColumn(columnIndex).setValue(aValue.doubleValue(),
-        rowIndex);
+      getColumn(columnIndex).setValue(aValue.doubleValue(), rowIndex);
     }
   }
 
@@ -987,5 +938,4 @@ public class MultiTable extends AbstractTableModel implements Iterable<Iterable<
     }
     return sb.toString();
   }
-
 }

@@ -24,6 +24,8 @@
  */
 package org.simulator.sbml;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,7 +99,7 @@ import org.simulator.sbml.astnode.TimesValue;
  * {@link AbstractDESSolver}. Therefore, this class implements all necessary
  * functions expected by <a href="http://sbml.org" target="_blank">SBML</a>.
  * </p>
- * 
+ *
  * @author Alexander D&ouml;rr
  * @author Andreas Dr&auml;ger
  * @author Roland Keller
@@ -105,8 +107,9 @@ import org.simulator.sbml.astnode.TimesValue;
  * @version $Rev$
  * @since 0.9
  */
-public class SBMLinterpreter implements DelayedDESystem, EventDESystem,
-FastProcessDESystem, RichDESystem, SBMLValueHolder {
+public class SBMLinterpreter
+    implements DelayedDESystem, EventDESystem, FastProcessDESystem,
+    RichDESystem, SBMLValueHolder, PropertyChangeListener {
 
   /**
    * A {@link Logger}.
@@ -177,12 +180,19 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
   private List<ConstraintListener> listOfConstraintListeners;
 
   /**
+   * An array that stores derivatives of each species in the model system at
+   * current time.
+   */
+  public double[] changeRate;
+
+
+  /**
    * Adds the given {@link ConstraintListener} to this interpreter's list of
    * listeners.
-   * 
+   *
    * @param listener the element to be added.
    * @return {@code true} if this operation was successful, {@code false}
-   *         otherwise.
+   * otherwise.
    * @throws NullPointerException
    * @see List#add(Object)
    */
@@ -190,13 +200,13 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     return listOfConstraintListeners.add(listener);
   }
 
+
   /**
    * Removes the given {@link ConstraintListener} from this interpreter.
-   * 
-   * @param listener
-   *            the element to be removed.
+   *
+   * @param listener the element to be removed.
    * @return {@code true} if this operation was successful, {@code false}
-   *         otherwise.
+   * otherwise.
    * @throws NullPointerException
    * @see List#remove(Object)
    */
@@ -204,14 +214,14 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     return listOfConstraintListeners.remove(listener);
   }
 
+
   /**
    * Removes the {@link ConstraintListener} with the given index from this
    * interpreter.
-   * 
-   * @param index
-   *            of the {@link ConstraintListener} to be removed.
+   *
+   * @param index of the {@link ConstraintListener} to be removed.
    * @return {@code true} if this operation was successful, {@code false}
-   *         otherwise.
+   * otherwise.
    * @throws IndexOutOfBoundsException
    * @see List#remove(int)
    */
@@ -219,13 +229,15 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     return listOfConstraintListeners.remove(index);
   }
 
+
   /**
    * @return the number of {@link ConstraintListener}s currently assigned to
-   *         this interpreter.
+   * this interpreter.
    */
   public int getConstraintListenerCount() {
     return listOfConstraintListeners.size();
   }
+
 
   /**
    * The model to be simulated.
@@ -239,6 +251,14 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
    * {@link #Y} vector
    */
   private Map<String, Integer> symbolHash;
+
+  /**
+   * Hashes the id of all {@link Compartment}s, {@link Species}, global
+   * {@link Parameter}s, and, if necessary, {@link SpeciesReference}s in
+   * {@link RateRule}s to an boolean object which contains whether it is
+   * constant or not
+   */
+  private Map<String, Boolean> constantHash;
 
   /**
    * An array of strings that memorizes at each position the identifier of the
@@ -339,7 +359,6 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
    */
   private List<AssignmentRuleValue> assignmentRulesRoots;
 
-
   /**
    * List of the rate rules (as RateRuleObjects)
    */
@@ -380,12 +399,10 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
    */
   private int nAssignmentRules;
 
-
   /**
    * List of the {@link InitialAssignment} (as {@link AssignmentRuleValue} objects)
    */
   private List<AssignmentRuleValue> initialAssignmentRoots;
-
 
   /**
    * Flag which is true if no changes (in rate rules and kinetic laws) are occuring in the model
@@ -401,7 +418,6 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
    * Contains the compartment indexes of the species in the Y vector.
    */
   private int[] compartmentIndexes;
-
 
   /**
    * Are the stoichiometries in the stoichiometry values set?
@@ -448,7 +464,6 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
    */
   private boolean delaysIncluded;
 
-
   /**
    * The number of repetitions for the processing of assignment rules
    */
@@ -466,6 +481,17 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
 
   private boolean containsDelays;
 
+  /**
+   * The value of the last time point processed
+   */
+  private double latestTimePoint;
+
+  /**
+   * An array of the concentration of each species at last processed time point
+   * within the model system.
+   */
+  private double[] latestTimePointResult;
+
 
   /**
    * <p>
@@ -477,18 +503,18 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
    * <p>
    * Note that currently, units are not considered.
    * </p>
-   * 
+   *
    * @param model
    * @throws ModelOverdeterminedException
    * @throws SBMLException
    */
-  public SBMLinterpreter(Model model) throws ModelOverdeterminedException,
-  SBMLException {
+  public SBMLinterpreter(Model model)
+      throws ModelOverdeterminedException, SBMLException {
     this(model, 0d, 1d, 1d);
   }
 
+
   /**
-   * 
    * @param model
    * @param defaultSpeciesValue
    * @param defaultParameterValue
@@ -496,31 +522,30 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
    * @throws SBMLException
    * @throws ModelOverdeterminedException
    */
-  public SBMLinterpreter(Model model,  double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue) throws SBMLException, ModelOverdeterminedException {
+  public SBMLinterpreter(Model model, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue)
+      throws SBMLException, ModelOverdeterminedException {
     this(model, 0d, 1d, 1d, null);
   }
 
+
   /**
    * Creates a new {@link SBMLinterpreter}
-   * 
-   * @param model
-   *            the model to interpret
-   * @param defaultSpeciesValue
-   *            the default value for species, if no value is given
-   * @param defaultParameterValue
-   *            the default value for parameters, if no value is given
-   * @param defaultCompartmentValue
-   *            the default value for compartments, if no value is given
-   * @param amountHash
-   *            a hash that states for the species in the model, whether their
-   *            amount or their concentration should be computed
+   *
+   * @param model                   the model to interpret
+   * @param defaultSpeciesValue     the default value for species, if no value is given
+   * @param defaultParameterValue   the default value for parameters, if no value is given
+   * @param defaultCompartmentValue the default value for compartments, if no value is given
+   * @param amountHash              a hash that states for the species in the model, whether their
+   *                                amount or their concentration should be computed
    * @throws SBMLException
    * @throws ModelOverdeterminedException
    */
-  public SBMLinterpreter(Model model,  double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue, Map<String,Boolean> amountHash) throws SBMLException, ModelOverdeterminedException {
+  public SBMLinterpreter(Model model, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue, Map<String, Boolean> amountHash)
+      throws SBMLException, ModelOverdeterminedException {
     this.model = model;
     v = new double[this.model.getListOfReactions().size()];
     symbolHash = new HashMap<String, Integer>();
+    constantHash = new HashMap<String, Boolean>();
     compartmentHash = new HashMap<String, Integer>();
     stoichiometricCoefHash = new HashMap<String, Double>();
     nodeInterpreter = new ASTNodeInterpreter(this);
@@ -529,7 +554,6 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     highOrderEvents = new LinkedList<Integer>();
     delaysIncluded = true;
     listOfConstraintListeners = new LinkedList<ConstraintListener>();
-
     Map<String, Integer> speciesReferenceToRateRule = new HashMap<String, Integer>();
     int speciesReferencesInRateRules = 0;
     for (int k = 0; k < model.getRuleCount(); k++) {
@@ -543,46 +567,46 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         }
       }
     }
-    Y = new double[model.getCompartmentCount() + model.getSpeciesCount()
-                   + model.getParameterCount() + speciesReferencesInRateRules];
+    Y = new double[model.getCompartmentCount() + model.getSpeciesCount() + model.getParameterCount() + speciesReferencesInRateRules];
     oldY = new double[Y.length];
     oldY2 = new double[Y.length];
-
+    changeRate = new double[Y.length];
     isAmount = new boolean[Y.length];
     compartmentIndexes = new int[Y.length];
     conversionFactors = new double[Y.length];
     inConcentrationValues = new boolean[Y.length];
     Arrays.fill(conversionFactors, 1d);
     symbolIdentifiers = new String[Y.length];
-
     speciesMap = new HashMap<String, Species>();
     inConcentration = new HashSet<String>();
     reactionFast = new boolean[model.getReactionCount()];
     reactionReversible = new boolean[model.getReactionCount()];
     initialValues = new double[Y.length];
     nodes = new LinkedList<ASTNode>();
+    latestTimePoint = 0d;
+    latestTimePointResult = new double[Y.length];
     init(true, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, amountHash);
   }
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.odes.FastProcessDESystem#containsFastProcesses()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public boolean containsFastProcesses() {
     return hasFastReactions;
   }
 
+
   /**
    * Due to missing information about the attributes of {@link Species} set by
    * {@link InitialAssignment}s, a majority vote of all other species is
    * performed to determine the attributes.
-   * 
+   *
    * @return
    */
   private Species determineMajorSpeciesAttributes() {
     Species majority = new Species(2, 4);
     int concentration = 0, amount = 0, substanceUnits = 0;
-
     for (Species species : model.getListOfSpecies()) {
       if (species.isSetInitialAmount()) {
         amount++;
@@ -598,36 +622,34 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     } else {
       majority.setInitialConcentration(0.0d);
     }
-
     if (substanceUnits > (model.getSpeciesCount() - substanceUnits)) {
       majority.setHasOnlySubstanceUnits(true);
     } else {
       majority.setHasOnlySubstanceUnits(false);
     }
     return majority;
-
   }
+
 
   /**
    * Evaluates the algebraic rules of the given model to assignment rules
-   * 
-   * @param ar
-   * @param changeRate
+   *
    * @throws ModelOverdeterminedException
    */
   private void evaluateAlgebraicRules() throws ModelOverdeterminedException {
     OverdeterminationValidator odv = new OverdeterminationValidator(model);
     // model has not to be overdetermined (violation of the SBML
     // specifications)
-    if (odv.isOverdetermined()) { throw new ModelOverdeterminedException(); }
+    if (odv.isOverdetermined()) {
+      throw new ModelOverdeterminedException();
+    }
     // create assignment rules out of the algebraic rules
-    AlgebraicRuleConverter arc = new AlgebraicRuleConverter(odv.getMatching(),
-      model);
+    AlgebraicRuleConverter arc = new AlgebraicRuleConverter(odv.getMatching(), model);
     algebraicRules = arc.getAssignmentRules();
   }
 
-  /* (non-Javadoc)
-   * @see eva2.tools.math.des.RichDESystem#getIntermediateIds()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public String[] getAdditionalValueIds() {
@@ -639,14 +661,13 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     return ids;
   }
 
-  /* (non-Javadoc)
-   * @see eva2.tools.math.des.RichDESystem#getIntermediates(double, double[])
+  /**
+   * {@inheritDoc}
    */
   @Override
   public double[] getAdditionalValues(double t, double[] Y)
       throws DerivativeException {
-    if ((t - currentTime > 1E-15)
-        || ((Y != this.Y) && !Arrays.equals(Y, this.Y)) || (t == 0)) {
+    if ((t - currentTime > 1E-15) || ((Y != this.Y) && !Arrays.equals(Y, this.Y)) || (t == 0)) {
       /*
        * We have to compute the system for the given state. But we are not
        * interested in the rates of change, but only in the reaction velocities.
@@ -661,56 +682,52 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
   /**
    * Checks if the given symbol id refers to a {@link Species} and returns the
    * value of its {@link Compartment} or 1d otherwise
-   * 
+   *
    * @param speciesId
    * @return compartmentValue
    */
   @Override
   public double getCurrentCompartmentValueOf(String speciesId) {
     Integer compartmentIndex = compartmentHash.get(speciesId);
-
     if (compartmentIndex != null) {
       // Is species with compartment
-
       double value = Y[compartmentIndex.intValue()];
-      if (value != 0d) { return value; }
-
+      if (value != 0d) {
+        return value;
+      }
       // Is compartment or parameter or there is no compartment for this
       // species
       // TODO: Replace by user-defined default value?
     }
-
     return 1d;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.simulator.sbml.ValueHolder#getCurrentCompartmentSize(java.lang.String)
+  /**
+   * {@inheritDoc}
    */
   @Override
   public double getCurrentCompartmentSize(String id) {
     return Y[symbolHash.get(id)];
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.simulator.sbml.ValueHolder#getCurrentParameterValue(java.lang.String)
+  /**
+   * {@inheritDoc}
    */
   @Override
   public double getCurrentParameterValue(String id) {
     return Y[symbolHash.get(id)];
   }
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.ValueHolder#getSpeciesValue()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public double getCurrentSpeciesValue(String id) {
     return Y[symbolHash.get(id)];
   }
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.ValueHolder#getCurrentStoichiometry()
+  /**
+   * {@inheritDoc}
    */
   @Override
   @SuppressWarnings("deprecation")
@@ -723,18 +740,14 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     if (value != null) {
       return value;
     }
-
     // TODO: What happens if a species reference does not have an id?
     SpeciesReference sr = model.findSpeciesReference(id);
-
     if ((sr != null) && sr.isSetStoichiometryMath()) {
       try {
         return ((ASTNodeValue) sr.getStoichiometryMath().getMath().getUserObject(TEMP_VALUE)).compileDouble(astNodeTime, 0d);
       } catch (SBMLException exc) {
         // TODO: Localize
-        logger.log(Level.WARNING, MessageFormat.format(
-          "Could not compile stoichiometry math of species reference {0}.", id),
-          exc);
+        logger.log(Level.WARNING, MessageFormat.format("Could not compile stoichiometry math of species reference {0}.", id), exc);
       }
     } else if (sr != null) {
       return sr.getStoichiometry();
@@ -742,40 +755,35 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     return 1d;
   }
 
-  /* (non-Javadoc)
-   * @see org.apache.commons.math.ode.FirstOrderDifferentialEquations#getDimension ()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public int getDimension() {
     return initialValues.length;
   }
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.odes.EventDESystem#getEventAssignments(double, double[])
+  /**
+   * {@inheritDoc}
    */
   @Override
   public EventInProgress getNextEventAssignments(double t, double previousTime, double[] Y)
       throws DerivativeException {
-
     if (!modelHasEvents) {
       return null;
     }
-
     // change Y because of different priorities and reevaluation of
     // trigger/priority after the execution of events
     System.arraycopy(Y, 0, this.Y, 0, Y.length);
     currentTime = t;
-
     Double priority, execTime = 0d;
     astNodeTime += 0.01;
     Double triggerTimeValues[];
     Event ev;
     int i = 0, index;
     Boolean persistent, aborted;
-    boolean hasNewDelayedEvents=false;
-
+    boolean hasNewDelayedEvents = false;
     try {
-
       // recheck trigger of events that have fired for this point in time
       // but have not been executed yet
       priorities.clear();
@@ -788,19 +796,19 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         }
         persistent = events[index].getPersistent();
         if (!persistent) {
-          if (!events[index].getTriggerObject().compileBoolean(astNodeTime)) {
+          if (events[index].getTriggerObject().compileDouble(astNodeTime, 0d) == 0d) {
             runningEvents.remove(i);
             events[index].aborted(currentTime);
             i--;
           } else {
-            ASTNodeValue priorityObject=events[index].getPriorityObject();
+            ASTNodeValue priorityObject = events[index].getPriorityObject();
             if (priorityObject != null) {
               events[index].changePriority(priorityObject.compileDouble(astNodeTime, 0d));
               priorities.add(events[index].getPriority());
             }
           }
         } else {
-          ASTNodeValue priorityObject=events[index].getPriorityObject();
+          ASTNodeValue priorityObject = events[index].getPriorityObject();
           if (priorityObject != null) {
             events[index].changePriority(priorityObject.compileDouble(astNodeTime, 0d));
             priorities.add(events[index].getPriority());
@@ -808,7 +816,6 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         }
         i++;
       }
-
       i = 0;
       // check events that have fired at an earlier point in time but have
       // not been executed yet due to a delay
@@ -816,31 +823,26 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         index = delayedEvents.get(i);
         ev = model.getEvent(index);
         aborted = false;
-
-        if (events[index].getLastTimeFired()>currentTime) {
+        if (events[index].getLastTimeFired() > currentTime) {
           delayedEvents.remove(i);
           events[index].refresh(currentTime);
           i--;
           aborted = true;
-        }
-        else if ((events[index].getLastTimeFired()<=currentTime) && (events[index].getLastTimeExecuted()>previousTime) && (events[index].getLastTimeExecuted()!=currentTime)) {
+        } else if ((events[index].getLastTimeFired() <= currentTime) && (events[index].getLastTimeExecuted() > previousTime) && (events[index].getLastTimeExecuted() != currentTime)) {
           events[index].refresh(previousTime);
         }
-
         persistent = ev.getTrigger().getPersistent();
         if (!persistent && !aborted) {
-          if (!events[index].getTriggerObject().compileBoolean(astNodeTime)) {
+          if (events[index].getTriggerObject().compileDouble(astNodeTime, 0d) == 0d) {
             //delayedEvents.remove(i);
             events[index].aborted(currentTime);
             //i--;
             aborted = true;
           }
         }
-
         if ((events[index].hasExecutionTime()) && (events[index].getTime() <= currentTime) && !aborted) {
           if (ev.getPriority() != null) {
             priority = events[index].getPriorityObject().compileDouble(astNodeTime, 0d);
-
             if (!priorities.contains(priority)) {
               priorities.add(priority);
             }
@@ -849,134 +851,129 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
           runningEvents.add(index);
           //delayedEvents.remove(i);
           //i--;
-
         }
         i++;
       }
-
       // check the trigger of all events in the model
       for (i = 0; i < events.length; i++) {
-        if (events[i].getTriggerObject().compileBoolean(astNodeTime)) {
-          // event has not fired recently -> can fire
-          if (!events[i].getFireStatus(currentTime)) {
-            execTime = currentTime;
-            // event has a delay
-            ASTNodeValue delayObject = events[i].getDelayObject();
-            if (delayObject != null) {
-              execTime += delayObject.compileDouble(astNodeTime, 0d);
-              if (!delayedEvents.contains(i)) {
-                delayedEvents.add(i);
+        if (events[i] != null) {
+          if (events[i].getTriggerObject().compileDouble(astNodeTime, 0d) != 0d) {
+            // event has not fired recently -> can fire
+            if (!events[i].getFireStatus(currentTime)) {
+              execTime = currentTime;
+              // event has a delay
+              ASTNodeValue delayObject = events[i].getDelayObject();
+              if (delayObject != null) {
+                execTime += delayObject.compileDouble(astNodeTime, 0d);
+                if (!delayedEvents.contains(i)) {
+                  delayedEvents.add(i);
+                }
+                hasNewDelayedEvents = true;
+              } else {
+                ASTNodeValue priorityObject = events[i].getPriorityObject();
+                if (priorityObject != null) {
+                  priority = events[i].getPriorityObject().compileDouble(astNodeTime, 0d);
+                  priorities.add(priority);
+                  events[i].changePriority(priority);
+                }
+                runningEvents.add(i);
               }
-              hasNewDelayedEvents=true;
-            } else {
-              ASTNodeValue priorityObject = events[i].getPriorityObject();
-              if (priorityObject != null) {
-                priority = events[i].getPriorityObject().compileDouble(astNodeTime, 0d);
-                priorities.add(priority);
-                events[i].changePriority(priority);
-              }
-              runningEvents.add(i);
-            }
-            triggerTimeValues = null;
-            if (events[i].getUseValuesFromTriggerTime()) {
-              // store values from trigger time for later
-              // execution
-              List<AssignmentRuleValue> ruleObjects = events[i].getRuleObjects();
-              if (ruleObjects!=null) {
-                triggerTimeValues = new Double[ruleObjects.size()];
-                int j = 0;
-                for (AssignmentRuleValue obj:ruleObjects) {
-                  obj.processRule(Y, astNodeTime, false);
-                  triggerTimeValues[j]=obj.getValue();
-                  j++;
+              triggerTimeValues = null;
+              if (events[i].getUseValuesFromTriggerTime()) {
+                // store values from trigger time for later
+                // execution
+                List<AssignmentRuleValue> ruleObjects = events[i].getRuleObjects();
+                if (ruleObjects != null) {
+                  triggerTimeValues = new Double[ruleObjects.size()];
+                  int j = 0;
+                  for (AssignmentRuleValue obj : ruleObjects) {
+                    obj.processRule(Y, astNodeTime, false);
+                    triggerTimeValues[j] = obj.getValue();
+                    j++;
+                  }
                 }
               }
-
+              events[i].addValues(triggerTimeValues, execTime);
+              events[i].fired(currentTime);
             }
-
-            events[i].addValues(triggerTimeValues, execTime);
-
-            events[i].fired(currentTime);
           }
-
-        }
-        // event has fired recently -> can not fire
-        else {
-          if (events[i].getFireStatus(currentTime)) {
-            events[i].recovered(currentTime);
+          // event has fired recently -> can not fire
+          else {
+            if (events[i].getFireStatus(currentTime)) {
+              events[i].recovered(currentTime);
+            }
           }
         }
-
       }
       // there are events to fire
       if (runningEvents.size() > 0) {
-        return processNextEvent(priorities,this.Y);
+        return processNextEvent(priorities, this.Y);
       }
       // return empty event, so the solver knows that a event with delay has been triggered
       else if (hasNewDelayedEvents) {
         events[0].clearAssignments();
         return events[0];
-      }
-      else {
+      } else {
         return null;
       }
-
     } catch (SBMLException exc) {
       throw new DerivativeException(exc);
     }
-
   }
 
-  /* (non-Javadoc)
-   * @see eva2.tools.math.des.DESystem#getIdentifiers()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public String[] getIdentifiers() {
     return symbolIdentifiers;
   }
 
+
   /**
    * Returns the initial values of the model to be simulated.
-   * 
+   *
    * @return Returns the initial values of the model to be simulated.
    */
   public double[] getInitialValues() {
     return initialValues;
   }
 
+
   /**
    * Returns the model that is used by this object.
-   * 
+   *
    * @return Returns the model that is used by this object.
    */
   public Model getModel() {
     return model;
   }
 
-  /* (non-Javadoc)
-   * @see eva2.tools.math.des.RichDESystem#getNumIntermediates()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public int getAdditionalValueCount() {
     return v.length;
   }
 
-  /* (non-Javadoc)
-   * @see eva2.tools.math.des.EventDESystem#getEventCount()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public int getEventCount() {
     return model.getEventCount();
   }
 
+
   /**
    * This method tells you the complete number of parameters within the model.
    * It counts the global model parameters and all local parameters (parameters
    * within a kinetic law).
-   * 
+   *
    * @return The total number of model parameters. Note that this number is
-   *         limited to an {@code int} value, whereas the SBML model may
-   *         contain {@code int} values.
+   * limited to an {@code int} value, whereas the SBML model may
+   * contain {@code int} values.
    */
   public int getParameterCount() {
     int p = model.getParameterCount();
@@ -989,24 +986,26 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     return p;
   }
 
-  /* (non-Javadoc)
-   * @see eva2.tools.math.des.EventDESystem#getRuleCount()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public int getRuleCount() {
     return model.getRuleCount();
   }
 
-  /* (non-Javadoc)
-   * @see eva2.tools.math.des.EventDESystem#getPositionOfParameters()
+
+  /**
+   * {@inheritDoc}
    */
   public int getPositionOfParameters() {
-    return Y.length-model.getParameterCount();
+    return Y.length - model.getParameterCount();
   }
+
 
   /**
    * Returns the timepoint where the simulation is currently situated
-   * 
+   *
    * @return time
    */
   @Override
@@ -1014,15 +1013,15 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     return currentTime;
   }
 
+
   /**
    * Returns the value of the ODE system at the time t given the current values
    * of Y
-   * 
-   * @param t
+   *
+   * @param time
    * @param Y
    * @return
    * @throws DerivativeException
-   * 
    */
   private double[] computeDerivatives(double time, double[] Y)
       throws DerivativeException {
@@ -1033,8 +1032,9 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     return changeRate;
   }
 
-  /* (non-Javadoc)
-   * @see eva2.tools.math.des.DESystem#getValue(double, double[], double[])
+
+  /**
+   * {@inheritDoc}
    */
   @Override
   public void computeDerivatives(double time, double[] Y, double[] changeRate)
@@ -1042,18 +1042,14 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     currentTime = time;
     // make sure not to have invalid older values in the change rate
     //Arrays.fill(changeRate, 0d);
-
     Arrays.fill(changeRate, 0d);
-
     if (noDerivatives) {
       return;
     }
-
     System.arraycopy(Y, 0, this.Y, 0, Y.length);
     if (modelHasEvents) {
       runningEvents.clear();
     }
-
     try {
       //Always call the compile functions with a new time
       astNodeTime += 0.01d;
@@ -1072,7 +1068,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
        * Check the model's constraints
        */
       for (int i = 0; i < model.getConstraintCount(); i++) {
-        if (constraintRoots.get(i).compileBoolean(time)) {
+        if (model.getConstraint(i).isSetMath() && constraintRoots.get(i).compileBoolean(time)) {
           ConstraintEvent evt = new ConstraintEvent(model.getConstraint(i), Double.valueOf(time));
           // Notify all listeners about the violation of the current constraint.
           for (ConstraintListener listener : listOfConstraintListeners) {
@@ -1080,15 +1076,24 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
           }
         }
       }
-
     } catch (SBMLException exc) {
       throw new DerivativeException(exc);
     }
-
+    this.changeRate = changeRate;
   }
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.ValueHolder#getSpeciesValue()
+
+  /**
+   * @return the array of derivatives of each species of the model system at
+   * the current time.
+   */
+  public double[] getNewChangeRate() {
+    return changeRate;
+  }
+
+
+  /**
+   * {@inheritDoc}
    */
   @Override
   public double getCurrentValueOf(String id) {
@@ -1099,6 +1104,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
       return Double.NaN;
     }
   }
+
 
   /**
    * <p>
@@ -1113,8 +1119,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
    * simulation results because initial assignments may depend on current
    * parameter values.
    * </p>
-   * 
-   * 
+   *
    * @throws ModelOverdeterminedException
    * @throws SBMLException
    * @see #init(boolean, double, double, double)
@@ -1123,23 +1128,26 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     init(true, 0d, 1d, 1d);
   }
 
+
   /**
    * This method initializes the differential equation system for simulation.
    * The user can tell whether the tree of {@link ASTNode}s has to be refreshed.
-   * 
+   *
    * @param refreshTree
    * @throws ModelOverdeterminedException
    * @throws SBMLException
    */
-  public void init(boolean refreshTree) throws ModelOverdeterminedException, SBMLException {
+  public void init(boolean refreshTree)
+      throws ModelOverdeterminedException, SBMLException {
     init(refreshTree, 0d, 1d, 1d);
   }
+
 
   /**
    * This method initializes the differential equation system for simulation.
    * The user can tell whether the tree of {@link ASTNode}s has to be
    * refreshed and give some default values.
-   * 
+   *
    * @param renewTree
    * @param defaultSpeciesValue
    * @param defaultParameterValue
@@ -1147,16 +1155,18 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
    * @throws ModelOverdeterminedException
    * @throws SBMLException
    */
-  public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue) throws ModelOverdeterminedException, SBMLException {
+  public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue)
+      throws ModelOverdeterminedException, SBMLException {
     init(renewTree, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, null);
   }
+
 
   /**
    * This method initializes the differential equation system for simulation.
    * The user can tell whether the tree of {@link ASTNode}s has to be
    * refreshed, give some default values and state whether a {@link Species}
    * is seen as an amount or a concentration.
-   * 
+   *
    * @param renewTree
    * @param defaultSpeciesValue
    * @param defaultParameterValue
@@ -1165,16 +1175,18 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
    * @throws ModelOverdeterminedException
    * @throws SBMLException
    */
-  public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue, Map<String, Boolean> amountHash) throws ModelOverdeterminedException, SBMLException {
+  public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue, Map<String, Boolean> amountHash)
+      throws ModelOverdeterminedException, SBMLException {
     int i;
     symbolHash.clear();
+    constantHash.clear();
     compartmentHash.clear();
     Integer compartmentIndex, yIndex = Integer.valueOf(0);
     currentTime = 0d;
     astNodeTime = 0d;
     containsDelays = false;
     noDerivatives = false;
-    if ((model.getReactionCount() == 0) && (model.getConstraintCount() == 0)) {
+    if ((model.getReactionCount() == 0) && (constraintRoots == null)) {
       noDerivatives = true;
       for (int k = 0; k < model.getRuleCount(); k++) {
         Rule rule = model.getRule(k);
@@ -1183,7 +1195,6 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         }
       }
     }
-
     Map<String, Integer> speciesReferenceToRateRule = new HashMap<String, Integer>();
     int speciesReferencesInRateRules = 0;
     for (int k = 0; k < model.getRuleCount(); k++) {
@@ -1197,9 +1208,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         }
       }
     }
-
-    int sizeY = model.getCompartmentCount() + model.getSpeciesCount()
-        + model.getParameterCount() + speciesReferencesInRateRules;
+    int sizeY = model.getCompartmentCount() + model.getSpeciesCount() + model.getParameterCount() + speciesReferencesInRateRules;
     if (sizeY != Y.length) {
       Y = new double[sizeY];
       compartmentIndexes = new int[Y.length];
@@ -1217,20 +1226,17 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
       Compartment c = model.getCompartment(i);
       if (!c.isSetValue()) {
         Y[yIndex] = defaultCompartmentValue;
-      }
-      else {
+      } else {
         Y[yIndex] = c.getSize();
       }
-
       symbolHash.put(c.getId(), yIndex);
+      constantHash.put(c.getId(), c.isConstant());
       symbolIdentifiers[yIndex] = c.getId();
       yIndex++;
     }
-
     // Due to unset initial amount or concentration of species try to set
     // one of them
     Species majority = determineMajorSpeciesAttributes();
-
     speciesMap.clear();
     /*
      * Save starting values of the model's species in Y and link them with their
@@ -1249,7 +1255,6 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         }
       }
       compartmentIndex = symbolHash.get(s.getCompartment());
-
       // Set initial amount or concentration when not already done
       if (!s.isSetInitialAmount() && !s.isSetInitialConcentration()) {
         if (majority.isSetInitialAmount()) {
@@ -1257,51 +1262,41 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         } else {
           s.setInitialConcentration(0d);
         }
-
         s.setHasOnlySubstanceUnits(majority.getHasOnlySubstanceUnits());
       }
-
       //determine whether amount or concentration is set
       if ((amountHash != null)) {
         if (amountHash.containsKey(s.getId())) {
           isAmount[yIndex] = amountHash.get(s.getId());
-        }
-        else {
+        } else {
           isAmount[yIndex] = s.isSetInitialAmount();
         }
-      }
-      else {
+      } else {
         isAmount[yIndex] = s.isSetInitialAmount();
-
       }
-
       if (!s.isSetValue()) {
         Y[yIndex] = defaultSpeciesValue;
-      }
-      else {
+      } else {
         if (s.isSetInitialAmount()) {
           if (isAmount[yIndex]) {
             Y[yIndex] = s.getInitialAmount();
-          }
-          else {
-            Y[yIndex] = s.getInitialAmount()/Y[compartmentIndex];
+          } else {
+            Y[yIndex] = s.getInitialAmount() / Y[compartmentIndex];
           }
         } else {
           if (!isAmount[yIndex]) {
             Y[yIndex] = s.getInitialConcentration();
-          }
-          else {
-            Y[yIndex] = s.getInitialConcentration()*Y[compartmentIndex];
+          } else {
+            Y[yIndex] = s.getInitialConcentration() * Y[compartmentIndex];
           }
         }
       }
-
       symbolHash.put(s.getId(), yIndex);
+      constantHash.put(s.getId(), s.isConstant());
       compartmentHash.put(s.getId(), compartmentIndex);
       compartmentIndexes[yIndex] = compartmentIndex;
       symbolIdentifiers[yIndex] = s.getId();
       yIndex++;
-
     }
 
     /*
@@ -1311,6 +1306,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
       SpeciesReference sr = model.findSpeciesReference(id);
       Y[yIndex] = sr.getStoichiometry();
       symbolHash.put(id, yIndex);
+      constantHash.put(id, sr.isConstant());
       symbolIdentifiers[yIndex] = id;
       yIndex++;
     }
@@ -1322,11 +1318,11 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
       Parameter p = model.getParameter(i);
       if (!p.isSetValue()) {
         Y[yIndex] = defaultParameterValue;
-      }
-      else {
+      } else {
         Y[yIndex] = p.getValue();
       }
       symbolHash.put(p.getId(), yIndex);
+      constantHash.put(p.getId(), p.isConstant());
       symbolIdentifiers[yIndex] = p.getId();
       yIndex++;
     }
@@ -1340,29 +1336,27 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
       reactionFast = new boolean[model.getReactionCount()];
     }
     int reactionIndex = 0;
-    boolean slowReactions = false;
     boolean fastReactions = false;
     for (Reaction r : model.getListOfReactions()) {
-      reactionFast[reactionIndex] = r.isFast();
+      if (r.isSetFast()) {
+        reactionFast[reactionIndex] = r.getFast();
+      } else {
+        reactionFast[reactionIndex] = false;
+      }
       reactionReversible[reactionIndex] = r.isReversible();
-      if (r.isFast()) {
+      if (r.isSetFast() && r.getFast()) {
         fastReactions = true;
       }
-      else {
-        slowReactions = true;
-      }
       if (r.getKineticLaw() != null) {
-        if (r.getKineticLaw().getListOfLocalParameters().size() > 0) {
+        if (r.getKineticLaw().getListOfLocalParameters().size() > 0 && r.getKineticLaw().isSetMath()) {
           r.getKineticLaw().getMath().updateVariables();
         }
       }
-
       Species species;
       String speciesID;
       for (SpeciesReference speciesRef : r.getListOfReactants()) {
         speciesID = speciesRef.getSpecies();
         species = speciesMap.get(speciesID);
-
         if (species != null) {
           //					 if (!isAmount[symbolHash.get(speciesID)]
           //							 && !species.hasOnlySubstanceUnits()) {
@@ -1381,19 +1375,16 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
             inConcentration.add(speciesID);
           }
         }
-
       }
       reactionIndex++;
     }
-    if (fastReactions && slowReactions) {
+    if (fastReactions) {
       hasFastReactions = true;
     }
-
-    for (i = 0; i!= inConcentrationValues.length; i++) {
+    for (i = 0; i != inConcentrationValues.length; i++) {
       if (inConcentration.contains(symbolIdentifiers[i])) {
         inConcentrationValues[i] = true;
-      }
-      else {
+      } else {
         inConcentrationValues[i] = false;
       }
     }
@@ -1403,7 +1394,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
      */
     boolean containsAlgebraicRules = false;
     for (i = 0; i < model.getRuleCount(); i++) {
-      if (model.getRule(i).isAlgebraic()) {
+      if (model.getRule(i).isAlgebraic() && model.getRule(i).isSetMath()) {
         containsAlgebraicRules = true;
         break;
       }
@@ -1424,21 +1415,16 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
       delayedEvents = new ArrayList<Integer>();
       initEvents();
       modelHasEvents = true;
-    }
-    else {
+    } else {
       modelHasEvents = false;
     }
-
-
     if (renewTree) {
       createSimplifiedSyntaxTree();
-    }
-    else {
+    } else {
       refreshSyntaxTree();
     }
-
     // save the initial values of this system, necessary at this point for the delay function
-    if (initialValues.length!=Y.length) {
+    if (initialValues.length != Y.length) {
       initialValues = new double[Y.length];
     }
     System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
@@ -1450,6 +1436,22 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     processInitialAssignments(astNodeTime, Y);
 
     /*
+     * Sometimes conversion factors are assigned values in the
+     * initialAssignments. So, updating the conversion factors
+     * after processing the initialAssignments.
+     */
+    for (int pp = 0; pp < model.getSpeciesCount(); pp++) {
+      Species sp = model.getSpecies(pp);
+      String conversionFactor = sp.getConversionFactor();
+      if (conversionFactor == null) {
+        conversionFactor = model.getConversionFactor();
+      }
+      if (!conversionFactor.equals("")) {
+        conversionFactors[symbolHash.get(sp.getId())] = Y[symbolHash.get(conversionFactor)];
+      }
+    }
+
+    /*
      * Evaluate Constraints
      */
     if (model.getConstraintCount() > 0) {
@@ -1457,9 +1459,8 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
       if (getConstraintListenerCount() == 0) {
         addConstraintListener(new SimpleConstraintListener());
       }
-
       for (i = 0; i < model.getConstraintCount(); i++) {
-        if (constraintRoots.get(i).compileBoolean(astNodeTime)) {
+        if (model.getConstraint(i).isSetMath() && constraintRoots.get(i).compileBoolean(astNodeTime)) {
           ConstraintEvent evt = new ConstraintEvent(model.getConstraint(i), 0d);
           for (ConstraintListener listener : listOfConstraintListeners) {
             listener.processViolation(evt);
@@ -1469,51 +1470,60 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     }
 
     /*
+     * Compute changes due to reactions
+     */
+    processVelocities(changeRate, astNodeTime);
+
+    /*
      * All other rules
      */
     astNodeTime += 0.01d;
     processRules(astNodeTime, null, Y, true);
 
     /*
-     * Process initial assignments a 2nd time because there can be rules
-     * dependent on initial assignments and vice versa, so one of both has to be
-     * evaluated twice at the start
+     * Process initial assignments and rules till the Y array
+     * becomes unchanged on running further initial assignments and rules.
+     *
+     * Reason: Initial assignments and rules can be dependent on each other.
      */
-
-    astNodeTime += 0.01d;
-    processInitialAssignments(astNodeTime,Y);
-
-    astNodeTime += 0.01d;
-    processRules(astNodeTime, null, Y, true);
-
+    double[] check;
+    do {
+      check = Y.clone();
+      astNodeTime += 0.01d;
+      processInitialAssignments(astNodeTime, Y);
+      astNodeTime += 0.01d;
+      processRules(astNodeTime, null, Y, true);
+    } while (!Arrays.equals(check, Y));
     // save the initial values of this system
     System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
   }
+
 
   /**
    * Refreshes the syntax tree (e.g., resets the ASTNode time)
    */
   private void refreshSyntaxTree() {
-    for (ASTNode node: nodes) {
+    for (ASTNode node : nodes) {
       ((ASTNodeValue) node.getUserObject(TEMP_VALUE)).reset();
     }
-    for (int i = 0; i!= stoichiometryValues.length; i++) {
+    for (int i = 0; i != stoichiometryValues.length; i++) {
       stoichiometryValues[i].refresh();
       stoichiometrySet[i] = stoichiometryValues[i].getStoichiometrySet();
     }
   }
+
 
   /**
    * Creates the syntax tree and simplifies it.
    */
   private void createSimplifiedSyntaxTree() {
     nodes.clear();
-
-    initializeRules();
     initializeKineticLaws();
+    initializeRules();
     initializeConstraints();
     initializeEvents();
   }
+
 
   /**
    * Includes the math of the {@link Constraint}s in the syntax tree.
@@ -1521,12 +1531,14 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
   private void initializeConstraints() {
     constraintRoots = new ArrayList<ASTNodeValue>();
     for (Constraint c : model.getListOfConstraints()) {
-      ASTNodeValue currentConstraint = (ASTNodeValue) copyAST(c.getMath(),
-        true, null, null).getUserObject(TEMP_VALUE);
-      constraintRoots.add(currentConstraint);
-      c.getMath().putUserObject(TEMP_VALUE, currentConstraint);
+      if (c.isSetMath()) {
+        ASTNodeValue currentConstraint = (ASTNodeValue) copyAST(c.getMath(), true, null, null).getUserObject(TEMP_VALUE);
+        constraintRoots.add(currentConstraint);
+        c.getMath().putUserObject(TEMP_VALUE, currentConstraint);
+      }
     }
   }
+
 
   /**
    * Includes the math of the events in the syntax tree.
@@ -1534,52 +1546,54 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
   private void initializeEvents() {
     if (events != null) {
       for (int i = 0; i != events.length; i++) {
-        Event e=model.getEvent(i);
-        events[i].setUseValuesFromTriggerTime(e.getUseValuesFromTriggerTime());
-        events[i].setPersistent(e.getTrigger().getPersistent());
-        events[i].setTriggerObject((ASTNodeValue) copyAST(e.getTrigger().getMath(), true, null, null).getUserObject(TEMP_VALUE));
-        if (e.getPriority() != null) {
-          events[i].setPriorityObject((ASTNodeValue)copyAST(e.getPriority().getMath(), true, null, null).getUserObject(TEMP_VALUE));
-        }
-        if (e.getDelay() != null) {
-          events[i].setDelayObject((ASTNodeValue)copyAST(e.getDelay().getMath(), true, null, null).getUserObject(TEMP_VALUE));
-        }
-
-        events[i].clearRuleObjects();
-        for (EventAssignment as: e.getListOfEventAssignments()) {
-          Integer symbolIndex = symbolHash.get(as.getVariable());
-          if (symbolIndex != null) {
-            Species sp = model.getSpecies(as.getVariable());
-            if (sp != null) {
-              Compartment c = sp.getCompartmentInstance();
-              boolean hasZeroSpatialDimensions = true;
-              if ((c!=null) && (c.getSpatialDimensions()>0)) {
-                hasZeroSpatialDimensions=false;
+        Event e = model.getEvent(i);
+        if (e.isSetTrigger() && e.getTrigger().isSetMath()) {
+          events[i].setUseValuesFromTriggerTime(e.getUseValuesFromTriggerTime());
+          events[i].setPersistent(e.getTrigger().getPersistent());
+          events[i].setTriggerObject((ASTNodeValue) copyAST(e.getTrigger().getMath(), true, null, null).getUserObject(TEMP_VALUE));
+          if (e.getPriority() != null && e.getPriority().isSetMath()) {
+            events[i].setPriorityObject((ASTNodeValue) copyAST(e.getPriority().getMath(), true, null, null).getUserObject(TEMP_VALUE));
+          }
+          if (e.getDelay() != null && e.getDelay().isSetMath()) {
+            events[i].setDelayObject((ASTNodeValue) copyAST(e.getDelay().getMath(), true, null, null).getUserObject(TEMP_VALUE));
+          }
+          events[i].clearRuleObjects();
+          for (EventAssignment as : e.getListOfEventAssignments()) {
+            Integer symbolIndex = symbolHash.get(as.getVariable());
+            if (symbolIndex != null) {
+              Species sp = model.getSpecies(as.getVariable());
+              if (sp != null) {
+                Compartment c = sp.getCompartmentInstance();
+                boolean hasZeroSpatialDimensions = true;
+                if ((c != null) && (c.getSpatialDimensions() > 0)) {
+                  hasZeroSpatialDimensions = false;
+                }
+                if (as.isSetMath()) {
+                  events[i].addRuleObject(new AssignmentRuleValue((ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this, isAmount[symbolIndex]));
+                }
+              } else {
+                if (as.isSetMath()) {
+                  events[i].addRuleObject(new AssignmentRuleValue((ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex));
+                }
               }
-              events[i].addRuleObject(new AssignmentRuleValue(
-                (ASTNodeValue) copyAST(as.getMath(), true, null, null)
-                .getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp
-                  .getId()), hasZeroSpatialDimensions, this));
-            } else {
-              events[i].addRuleObject(new AssignmentRuleValue(
-                (ASTNodeValue) copyAST(as.getMath(), true, null, null)
-                .getUserObject(TEMP_VALUE), symbolIndex));
-            }
-          } else if (model.findSpeciesReference(as.getVariable()) != null) {
-            SpeciesReference sr = model.findSpeciesReference(as.getVariable());
-            if (!sr.isConstant()) {
-              events[i].addRuleObject(new AssignmentRuleValue(
-                (ASTNodeValue) copyAST(as.getMath(), true, null, null)
-                .getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
+            } else if (model.findSpeciesReference(as.getVariable()) != null) {
+              SpeciesReference sr = model.findSpeciesReference(as.getVariable());
+              if (!sr.isConstant() && as.isSetMath()) {
+                events[i].addRuleObject(new AssignmentRuleValue((ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
+              }
             }
           }
+          events[i].setUseValuesFromTriggerTime(e.getUseValuesFromTriggerTime());
+          if (events[i].getRuleObjects() == null) {
+            events[i] = null;
+          }
+        } else {
+          events[i] = null;
         }
-        events[i].setUseValuesFromTriggerTime(e.getUseValuesFromTriggerTime());
       }
-
     }
-
   }
+
 
   /**
    * Includes the math of the kinetic laws in the syntax tree.
@@ -1592,20 +1606,16 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     List<Boolean> zeroChangeList = new ArrayList<Boolean>();
     List<Boolean> constantStoichiometryList = new ArrayList<Boolean>();
     List<StoichiometryValue> stoichiometriesList = new ArrayList<StoichiometryValue>();
-
-
     List<ASTNodeValue> kineticLawRootsList = new ArrayList<ASTNodeValue>();
     for (Reaction r : model.getListOfReactions()) {
       KineticLaw kl = r.getKineticLaw();
-      if (kl != null) {
-        ASTNodeValue currentLaw = (ASTNodeValue) copyAST(kl.getMath(), true, null, null)
-            .getUserObject(TEMP_VALUE);
+      if (kl != null && kl.isSetMath()) {
+        ASTNodeValue currentLaw = (ASTNodeValue) copyAST(kl.getMath(), true, null, null).getUserObject(TEMP_VALUE);
         kineticLawRootsList.add(currentLaw);
         kl.getMath().putUserObject(TEMP_VALUE, currentLaw);
         for (SpeciesReference speciesRef : r.getListOfReactants()) {
           String speciesID = speciesRef.getSpecies();
           int speciesIndex = symbolHash.get(speciesID);
-
           int srIndex = -1;
           if (model.getLevel() >= 3) {
             String id = speciesRef.getId();
@@ -1613,28 +1623,21 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
               if (symbolHash.containsKey(id)) {
                 srIndex = symbolHash.get(id);
               }
-
             }
-
           }
           //Value for stoichiometry math
           ASTNodeValue currentMathValue = null;
-          if (speciesRef.isSetStoichiometryMath()) {
-            @SuppressWarnings("deprecation")
-            ASTNode currentMath = speciesRef.getStoichiometryMath().getMath();
-            currentMathValue = (ASTNodeValue) copyAST(currentMath, true, null, null)
-                .getUserObject(TEMP_VALUE);
+          if (speciesRef.isSetStoichiometryMath() && speciesRef.getStoichiometryMath().isSetMath()) {
+            @SuppressWarnings("deprecation") ASTNode currentMath = speciesRef.getStoichiometryMath().getMath();
+            currentMathValue = (ASTNodeValue) copyAST(currentMath, true, null, null).getUserObject(TEMP_VALUE);
             currentMath.putUserObject(TEMP_VALUE, currentMathValue);
           }
-
           boolean constantStoichiometry = false;
           if (speciesRef.isSetConstant()) {
             constantStoichiometry = speciesRef.getConstant();
-          }
-          else if ((!speciesRef.isSetId()) && (!speciesRef.isSetStoichiometryMath())) {
+          } else if ((!speciesRef.isSetId()) && (!speciesRef.isSetStoichiometryMath())) {
             constantStoichiometry = true;
           }
-
           boolean zeroChange = false;
           Species s = speciesRef.getSpeciesInstance();
           if (s != null) {
@@ -1645,21 +1648,16 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
               zeroChange = true;
             }
           }
-
           zeroChangeList.add(zeroChange);
           constantStoichiometryList.add(constantStoichiometry);
           reactionIndexList.add(reaction);
           speciesIndexList.add(speciesIndex);
           isReactantList.add(true);
-          stoichiometriesList.add(new StoichiometryValue(speciesRef,
-            srIndex, stoichiometricCoefHash, Y,
-            currentMathValue));
-
+          stoichiometriesList.add(new StoichiometryValue(speciesRef, srIndex, stoichiometricCoefHash, Y, currentMathValue));
         }
         for (SpeciesReference speciesRef : r.getListOfProducts()) {
           String speciesID = speciesRef.getSpecies();
           int speciesIndex = symbolHash.get(speciesID);
-
           int srIndex = -1;
           if (model.getLevel() >= 3) {
             String id = speciesRef.getId();
@@ -1667,28 +1665,21 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
               if (symbolHash.containsKey(id)) {
                 srIndex = symbolHash.get(id);
               }
-
             }
-
           }
           //Value for stoichiometry math
           ASTNodeValue currentMathValue = null;
-          if (speciesRef.isSetStoichiometryMath()) {
-            @SuppressWarnings("deprecation")
-            ASTNode currentMath = speciesRef.getStoichiometryMath().getMath();
-            currentMathValue = (ASTNodeValue) copyAST(currentMath, true, null, null)
-                .getUserObject(TEMP_VALUE);
+          if (speciesRef.isSetStoichiometryMath() && speciesRef.getStoichiometryMath().isSetMath()) {
+            @SuppressWarnings("deprecation") ASTNode currentMath = speciesRef.getStoichiometryMath().getMath();
+            currentMathValue = (ASTNodeValue) copyAST(currentMath, true, null, null).getUserObject(TEMP_VALUE);
             currentMath.putUserObject(TEMP_VALUE, currentMathValue);
           }
-
           boolean constantStoichiometry = false;
           if (speciesRef.isSetConstant()) {
             constantStoichiometry = speciesRef.getConstant();
-          }
-          else if ((!speciesRef.isSetId()) && (!speciesRef.isSetStoichiometryMath())) {
+          } else if ((!speciesRef.isSetId()) && (!speciesRef.isSetStoichiometryMath())) {
             constantStoichiometry = true;
           }
-
           boolean zeroChange = false;
           Species s = speciesRef.getSpeciesInstance();
           if (s != null) {
@@ -1699,21 +1690,15 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
               zeroChange = true;
             }
           }
-
           zeroChangeList.add(zeroChange);
           constantStoichiometryList.add(constantStoichiometry);
           reactionIndexList.add(reaction);
           speciesIndexList.add(speciesIndex);
           isReactantList.add(false);
-          stoichiometriesList.add(new StoichiometryValue(speciesRef,
-            srIndex, stoichiometricCoefHash, Y,
-            currentMathValue));
+          stoichiometriesList.add(new StoichiometryValue(speciesRef, srIndex, stoichiometricCoefHash, Y, currentMathValue));
         }
-
-
       } else {
-        kineticLawRootsList.add(new ASTNodeValue(nodeInterpreter,
-          new ASTNode(0d)));
+        kineticLawRootsList.add(new ASTNodeValue(nodeInterpreter, new ASTNode(0d)));
       }
       reaction++;
     }
@@ -1727,7 +1712,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     constantStoichiometry = new boolean[stoichiometriesSize];
     stoichiometrySet = new boolean[stoichiometriesSize];
     stoichiometry = new double[stoichiometriesSize];
-    for (int i = 0; i!=stoichiometriesSize; i++) {
+    for (int i = 0; i != stoichiometriesSize; i++) {
       isReactant[i] = isReactantList.get(i);
       speciesIndex[i] = speciesIndexList.get(i);
       reactionIndex[i] = reactionIndexList.get(i);
@@ -1736,8 +1721,8 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
       stoichiometrySet[i] = stoichiometryValues[i].getStoichiometrySet();
       stoichiometry[i] = stoichiometryValues[i].getStoichiometry();
     }
-
   }
+
 
   /**
    * Includes the math of the rules in the syntax tree.
@@ -1747,7 +1732,6 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     initialAssignmentRoots = new ArrayList<AssignmentRuleValue>();
     rateRulesRoots = new ArrayList<RateRuleValue>();
     Integer symbolIndex;
-
     for (int i = 0; i < model.getRuleCount(); i++) {
       Rule rule = model.getRule(i);
       if (rule.isAssignment()) {
@@ -1761,26 +1745,18 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
             if ((c != null) && (c.getSpatialDimensions() > 0)) {
               hasZeroSpatialDimensions = false;
             }
-            assignmentRulesRootsInit.add(new AssignmentRuleValue(
-              (ASTNodeValue) copyAST(as.getMath(), true,
-                null, null).getUserObject(TEMP_VALUE),
-                symbolIndex, sp,
-                compartmentHash.get(sp.getId()),
-                hasZeroSpatialDimensions, this));
+            if (as.isSetMath()) {
+              assignmentRulesRootsInit.add(new AssignmentRuleValue((ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this, isAmount[symbolIndex]));
+            }
           } else {
-            assignmentRulesRootsInit.add(new AssignmentRuleValue(
-              (ASTNodeValue) copyAST(as.getMath(), true,
-                null, null).getUserObject(TEMP_VALUE),
-                symbolIndex));
+            if (as.isSetMath()) {
+              assignmentRulesRootsInit.add(new AssignmentRuleValue((ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex));
+            }
           }
         } else if (model.findSpeciesReference(as.getVariable()) != null) {
-          SpeciesReference sr = model.findSpeciesReference(as
-            .getVariable());
-          if (!sr.isConstant()) {
-            assignmentRulesRootsInit.add(new AssignmentRuleValue(
-              (ASTNodeValue) copyAST(as.getMath(), true,
-                null, null).getUserObject(TEMP_VALUE),
-                sr.getId(), stoichiometricCoefHash));
+          SpeciesReference sr = model.findSpeciesReference(as.getVariable());
+          if (!sr.isConstant() && as.isSetMath()) {
+            assignmentRulesRootsInit.add(new AssignmentRuleValue((ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
           }
         }
       } else if (rule.isRate()) {
@@ -1794,37 +1770,27 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
             if ((c != null) && (c.getSpatialDimensions() > 0)) {
               hasZeroSpatialDimensions = false;
             }
-            rateRulesRoots.add(new RateRuleValue(
-              (ASTNodeValue) copyAST(rr.getMath(), true,
-                null, null).getUserObject(TEMP_VALUE),
-                symbolIndex, sp,
-                compartmentHash.get(sp.getId()),
-                hasZeroSpatialDimensions, this));
+            if (rr.isSetMath()) {
+              rateRulesRoots.add(new RateRuleValue((ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this, rr.getVariable(), isAmount[symbolIndex]));
+            }
           } else if (compartmentHash.containsValue(symbolIndex)) {
             List<Integer> speciesIndices = new LinkedList<Integer>();
-            for (Entry<String, Integer> entry : compartmentHash
-                .entrySet()) {
+            for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
               if (entry.getValue() == symbolIndex) {
                 Species s = model.getSpecies(entry.getKey());
-                int speciesIndex = symbolHash.get(entry
-                  .getKey());
-                if ((!isAmount[speciesIndex])
-                    && (!s.isConstant())) {
+                int speciesIndex = symbolHash.get(entry.getKey());
+                if ((!isAmount[speciesIndex]) && (!s.isConstant())) {
                   speciesIndices.add(speciesIndex);
                 }
               }
             }
-            rateRulesRoots.add(new RateRuleValue(
-              (ASTNodeValue) copyAST(rr.getMath(), true,
-                null, null).getUserObject(TEMP_VALUE),
-                symbolIndex, speciesIndices, this));
-          }
-
-          else {
-            rateRulesRoots.add(new RateRuleValue(
-              (ASTNodeValue) copyAST(rr.getMath(), true,
-                null, null).getUserObject(TEMP_VALUE),
-                symbolIndex));
+            if (rr.isSetMath()) {
+              rateRulesRoots.add(new RateRuleValue((ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, speciesIndices, this, rr.getVariable()));
+            }
+          } else {
+            if (rr.isSetMath()) {
+              rateRulesRoots.add(new RateRuleValue((ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, rr.getVariable()));
+            }
           }
         }
       }
@@ -1840,26 +1806,18 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
             if ((c != null) && (c.getSpatialDimensions() > 0)) {
               hasZeroSpatialDimensions = false;
             }
-            assignmentRulesRootsInit.add(new AssignmentRuleValue(
-              (ASTNodeValue) copyAST(as.getMath(), true,
-                null, null).getUserObject(TEMP_VALUE),
-                symbolIndex, sp,
-                compartmentHash.get(sp.getId()),
-                hasZeroSpatialDimensions, this));
+            if (as.isSetMath()) {
+              assignmentRulesRootsInit.add(new AssignmentRuleValue((ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this, isAmount[symbolIndex]));
+            }
           } else {
-            assignmentRulesRootsInit.add(new AssignmentRuleValue(
-              (ASTNodeValue) copyAST(as.getMath(), true,
-                null, null).getUserObject(TEMP_VALUE),
-                symbolIndex));
+            if (as.isSetMath()) {
+              assignmentRulesRootsInit.add(new AssignmentRuleValue((ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex));
+            }
           }
         } else if (model.findSpeciesReference(as.getVariable()) != null) {
-          SpeciesReference sr = model.findSpeciesReference(as
-            .getVariable());
-          if (!sr.isConstant()) {
-            assignmentRulesRootsInit.add(new AssignmentRuleValue(
-              (ASTNodeValue) copyAST(as.getMath(), true,
-                null, null).getUserObject(TEMP_VALUE),
-                sr.getId(), stoichiometricCoefHash));
+          SpeciesReference sr = model.findSpeciesReference(as.getVariable());
+          if (!sr.isConstant() && as.isSetMath()) {
+            assignmentRulesRootsInit.add(new AssignmentRuleValue((ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
           }
         }
       }
@@ -1870,28 +1828,23 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         assignmentRulesRoots.add(rv);
         numberOfAssignmentRulesLoops = 1;
       }
-
     } else {
       // Determine best order of assignment rule roots
       Map<String, Set<String>> neededRules = new HashMap<String, Set<String>>();
       Map<String, AssignmentRuleValue> sBaseMap = new HashMap<String, AssignmentRuleValue>();
       Set<String> variables = new HashSet<String>();
-
       for (AssignmentRuleValue rv : assignmentRulesRootsInit) {
         assignmentRulesRoots.add(rv);
         if (rv.getIndex() != -1) {
           variables.add(symbolIdentifiers[rv.getIndex()]);
           sBaseMap.put(symbolIdentifiers[rv.getIndex()], rv);
-
         } else if (rv.getSpeciesReferenceID() != null) {
           variables.add(rv.getSpeciesReferenceID());
           sBaseMap.put(rv.getSpeciesReferenceID(), rv);
         }
       }
       for (String variable : variables) {
-        for (String dependentVariable : getSetOfVariables(
-          sBaseMap.get(variable).getMath(), variables,
-          new HashSet<String>())) {
+        for (String dependentVariable : getSetOfVariables(sBaseMap.get(variable).getMath(), variables, new HashSet<String>())) {
           Set<String> currentSet = neededRules.get(dependentVariable);
           if (currentSet == null) {
             currentSet = new HashSet<String>();
@@ -1900,7 +1853,6 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
           currentSet.add(variable);
         }
       }
-
       int currentPosition = assignmentRulesRootsInit.size() - 1;
       Set<String> toRemove = new HashSet<String>();
       Set<String> keysToRemove = new HashSet<String>();
@@ -1912,12 +1864,10 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         for (String variable : variables) {
           if (!neededRules.containsKey(variable)) {
             toRemove.add(variable);
-            assignmentRulesRoots.set(currentPosition,
-              sBaseMap.get(variable));
+            assignmentRulesRoots.set(currentPosition, sBaseMap.get(variable));
             currentPosition--;
           }
         }
-
         for (String key : neededRules.keySet()) {
           Set<String> currentSet = neededRules.get(key);
           currentSet.removeAll(toRemove);
@@ -1925,26 +1875,20 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
             keysToRemove.add(key);
           }
         }
-
         for (String keyToRemove : keysToRemove) {
           neededRules.remove(keyToRemove);
         }
         variables.removeAll(toRemove);
-
         if ((toRemove.size() > 0) || (keysToRemove.size() > 0)) {
           toContinue = true;
         }
-
       }
-
       for (String variable : variables) {
-        assignmentRulesRoots.set(currentPosition,
-          sBaseMap.get(variable));
+        assignmentRulesRoots.set(currentPosition, sBaseMap.get(variable));
         currentPosition--;
       }
       numberOfAssignmentRulesLoops = Math.max(variables.size(), 1);
     }
-
     for (int i = 0; i < model.getInitialAssignmentCount(); i++) {
       InitialAssignment iA = model.getInitialAssignment(i);
       symbolIndex = symbolHash.get(iA.getVariable());
@@ -1956,61 +1900,52 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
           if ((c != null) && (c.getSpatialDimensions() > 0)) {
             hasZeroSpatialDimensions = false;
           }
-          initialAssignmentRoots.add(new AssignmentRuleValue(
-            (ASTNodeValue) copyAST(iA.getMath(), true, null,
-              null).getUserObject(TEMP_VALUE),
-              symbolIndex, sp, compartmentHash.get(sp.getId()),
-              hasZeroSpatialDimensions, this));
+          if (iA.isSetMath()) {
+            initialAssignmentRoots.add(new AssignmentRuleValue((ASTNodeValue) copyAST(iA.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this, isAmount[symbolIndex]));
+          }
         } else {
-          initialAssignmentRoots.add(new AssignmentRuleValue(
-            (ASTNodeValue) copyAST(iA.getMath(), true, null,
-              null).getUserObject(TEMP_VALUE),
-              symbolIndex));
+          if (iA.isSetMath()) {
+            initialAssignmentRoots.add(new AssignmentRuleValue((ASTNodeValue) copyAST(iA.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex));
+          }
         }
       } else if (model.findSpeciesReference(iA.getVariable()) != null) {
         SpeciesReference sr = model.findSpeciesReference(iA.getVariable());
-        initialAssignmentRoots.add(new AssignmentRuleValue(
-          (ASTNodeValue) copyAST(iA.getMath(), true, null, null)
-          .getUserObject(TEMP_VALUE), sr.getId(),
-          stoichiometricCoefHash));
+        if (iA.isSetMath()) {
+          initialAssignmentRoots.add(new AssignmentRuleValue((ASTNodeValue) copyAST(iA.getMath(), true, null, null).getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
+        }
       }
     }
     nRateRules = rateRulesRoots.size();
     nAssignmentRules = assignmentRulesRoots.size();
   }
 
+
   /**
-   * 
    * @param math
    * @param variables
    * @param current
    * @return
    */
   private Set<String> getSetOfVariables(ASTNode math, Set<String> variables, Set<String> current) {
-    if ((math.isVariable()) && (math.getVariable() != null)
-        && (variables.contains(math.getVariable().getId()))) {
+    if ((math.isVariable()) && (math.getVariable() != null) && (variables.contains(math.getVariable().getId()))) {
       current.add(math.getVariable().getId());
     }
-
-    for(ASTNode node: math.getChildren()) {
+    for (ASTNode node : math.getChildren()) {
       getSetOfVariables(node, variables, current);
     }
     return current;
   }
 
+
   /**
    * Creates a copy of an {@link ASTNode} or returns an {@link ASTNode} that
    * is equal to the presented node.
-   * 
-   * @param node
-   *            the node to copy
-   * @param mergingPossible
-   *            flag that is true if it is allowed to return a node that is
-   *            equal to the given node
-   * @param function
-   *            the function that is currently processed (if any) or null
-   * @param inFunctionNodes
-   *            the nodes that already belong to the function
+   *
+   * @param node            the node to copy
+   * @param mergingPossible flag that is true if it is allowed to return a node that is
+   *                        equal to the given node
+   * @param function        the function that is currently processed (if any) or null
+   * @param inFunctionNodes the nodes that already belong to the function
    * @return the found node
    */
   private ASTNode copyAST(ASTNode node, boolean mergingPossible, FunctionValue function, List<ASTNode> inFunctionNodes) {
@@ -2018,19 +1953,16 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     ASTNode copiedAST = null;
     if (mergingPossible && !nodeString.equals("") && !nodeString.contains("")) {
       //Be careful with local parameters!
-      if (!(node.isName()) || (node.getType() == ASTNode.Type.NAME_TIME) || (node.getType() == ASTNode.Type.NAME_AVOGADRO)
-          || !((node.getVariable() != null) && (node.getVariable() instanceof LocalParameter))) {
+      if (!(node.isName()) || (node.getType() == ASTNode.Type.NAME_TIME) || (node.getType() == ASTNode.Type.NAME_AVOGADRO) || !((node.getVariable() != null) && (node.getVariable() instanceof LocalParameter))) {
         List<ASTNode> nodesToLookAt = null;
         if (function != null) {
           nodesToLookAt = inFunctionNodes;
-        }
-        else {
+        } else {
           nodesToLookAt = nodes;
         }
         for (ASTNode current : nodesToLookAt) {
-          if (!(current.isName()) || (current.getType() == ASTNode.Type.NAME_TIME) || (current.getType() == ASTNode.Type.NAME_AVOGADRO)
-              || ((current.isName()) && !(current.getVariable() instanceof LocalParameter))) {
-            if ((current.toString().equals(nodeString)) && (!containUnequalLocalParameters(current,node))) {
+          if (!(current.isName()) || (current.getType() == ASTNode.Type.NAME_TIME) || (current.getType() == ASTNode.Type.NAME_AVOGADRO) || ((current.isName()) && !(current.getVariable() instanceof LocalParameter))) {
+            if ((current.toString().equals(nodeString)) && (!containUnequalLocalParameters(current, node))) {
               copiedAST = current;
               break;
             }
@@ -2038,27 +1970,21 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         }
       }
     }
-
     if (copiedAST == null) {
       copiedAST = new ASTNode(node.getType());
       copiedAST.setParentSBMLObject(node.getParentSBMLObject()); // The variable is not stored any more directly in the ASTNode2
-
       for (ASTNode child : node.getChildren()) {
-        if (function!=null) {
+        if (function != null) {
           copiedAST.addChild(copyAST(child, true, function, inFunctionNodes));
-        }
-        else {
+        } else {
           copiedAST.addChild(copyAST(child, mergingPossible, function, inFunctionNodes));
         }
       }
-
       if (function != null) {
         inFunctionNodes.add(copiedAST);
-      }
-      else {
+      } else {
         nodes.add(copiedAST);
       }
-
       if (node.isSetUnits()) {
         copiedAST.setUnits(node.getUnits());
       }
@@ -2068,74 +1994,59 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         int integerValue = (int) value;
         if (value - integerValue == 0.0d) {
           copiedAST.setValue(integerValue);
-          copiedAST.putUserObject(TEMP_VALUE, new IntegerValue(nodeInterpreter,
-            copiedAST));
-        }
-        else {
+          copiedAST.putUserObject(TEMP_VALUE, new IntegerValue(nodeInterpreter, copiedAST));
+        } else {
           copiedAST.setValue(value);
-          copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
-            copiedAST));
+          copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
         }
-
         break;
       case FUNCTION_POWER:
-        copiedAST.putUserObject(TEMP_VALUE, new PowerValue(nodeInterpreter,
-          copiedAST));
+        copiedAST.putUserObject(TEMP_VALUE, new PowerValue(nodeInterpreter, copiedAST));
         break;
       case POWER:
-        copiedAST.putUserObject(TEMP_VALUE, new PowerValue(nodeInterpreter,
-          copiedAST));
+        copiedAST.putUserObject(TEMP_VALUE, new PowerValue(nodeInterpreter, copiedAST));
         break;
       case PLUS:
-        copiedAST.putUserObject(TEMP_VALUE, new PlusValue(nodeInterpreter,
-          copiedAST));
+        copiedAST.putUserObject(TEMP_VALUE, new PlusValue(nodeInterpreter, copiedAST));
         break;
       case TIMES:
-        copiedAST.putUserObject(TEMP_VALUE, new TimesValue(nodeInterpreter,
-          copiedAST));
+        copiedAST.putUserObject(TEMP_VALUE, new TimesValue(nodeInterpreter, copiedAST));
         break;
       case DIVIDE:
-        copiedAST.putUserObject(TEMP_VALUE, new DivideValue(nodeInterpreter,
-          copiedAST));
+        copiedAST.putUserObject(TEMP_VALUE, new DivideValue(nodeInterpreter, copiedAST));
         break;
       case MINUS:
-        copiedAST.putUserObject(TEMP_VALUE, new MinusValue(nodeInterpreter,
-          copiedAST));
+        copiedAST.putUserObject(TEMP_VALUE, new MinusValue(nodeInterpreter, copiedAST));
         break;
       case INTEGER:
         copiedAST.setValue(node.getInteger());
-        copiedAST.putUserObject(TEMP_VALUE, new IntegerValue(nodeInterpreter,
-          copiedAST));
+        copiedAST.putUserObject(TEMP_VALUE, new IntegerValue(nodeInterpreter, copiedAST));
         break;
-
       case RATIONAL:
         copiedAST.setValue(node.getNumerator(), node.getDenominator());
-        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
-          copiedAST));
+        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
         break;
       case NAME_TIME:
         copiedAST.setName(node.getName());
-        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
-          copiedAST));
+        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
         break;
       case FUNCTION_DELAY:
         copiedAST.setName(node.getName());
-        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
-          copiedAST));
+        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
         break;
-        /*
-         * Names of identifiers: parameters, functions, species etc.
-         */
+      /*
+       * Names of identifiers: parameters, functions, species etc.
+       */
       case NAME:
         copiedAST.setName(node.getName());
         CallableSBase variable = node.getVariable();
-        if ((variable==null) && (function==null)) {
+        if ((variable == null) && (function == null)) {
           variable = model.findQuantity(node.getName());
-          if ((variable==null) && (function==null)) {
+          if ((variable == null) && (function == null)) {
             String id = node.getName();
-            for (Reaction r: model.getListOfReactions()) {
+            for (Reaction r : model.getListOfReactions()) {
               KineticLaw kl = r.getKineticLaw();
-              for (LocalParameter lp: kl.getListOfLocalParameters()) {
+              for (LocalParameter lp : kl.getListOfLocalParameters()) {
                 if (lp.getId().equals(id)) {
                   variable = lp;
                   break;
@@ -2147,59 +2058,43 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         if (variable != null) {
           copiedAST.setVariable(variable);
           if (variable instanceof FunctionDefinition) {
-            List<ASTNode> arguments=new LinkedList<ASTNode>();
-            ASTNode lambda=((FunctionDefinition) variable).getMath();
-            for (int i = 0; i != lambda.getChildren().size()-1; i++) {
+            List<ASTNode> arguments = new LinkedList<ASTNode>();
+            ASTNode lambda = ((FunctionDefinition) variable).getMath();
+            for (int i = 0; i != lambda.getChildren().size() - 1; i++) {
               arguments.add(lambda.getChild(i));
             }
-            FunctionValue functionValue=new FunctionValue(nodeInterpreter,
-              copiedAST,arguments);
+            FunctionValue functionValue = new FunctionValue(nodeInterpreter, copiedAST, arguments);
             copiedAST.putUserObject(TEMP_VALUE, functionValue);
-            ASTNode mathAST = copyAST(lambda,
-              false,functionValue,new LinkedList<ASTNode>());
+            ASTNode mathAST = copyAST(lambda, false, functionValue, new LinkedList<ASTNode>());
             functionValue.setMath(mathAST);
           } else if (variable instanceof Species) {
             boolean hasZeroSpatialDimensions = true;
             Species sp = (Species) variable;
             Compartment c = sp.getCompartmentInstance();
-            if ((c!=null) && c.getSpatialDimensions() > 0) {
+            if ((c != null) && c.getSpatialDimensions() > 0) {
               hasZeroSpatialDimensions = false;
             }
-            copiedAST.putUserObject(TEMP_VALUE, new SpeciesValue(nodeInterpreter,
-              copiedAST, sp, this, symbolHash.get(variable
-                .getId()), compartmentHash.get(variable.getId()), sp.getCompartment(), hasZeroSpatialDimensions, isAmount[symbolHash.get(variable.getId())]));
-          } else if ((variable instanceof Compartment)
-              || (variable instanceof Parameter)) {
-            copiedAST.putUserObject(TEMP_VALUE, new CompartmentOrParameterValue(
-              nodeInterpreter, copiedAST, (Symbol) variable, this, symbolHash
-              .get(variable.getId())));
+            copiedAST.putUserObject(TEMP_VALUE, new SpeciesValue(nodeInterpreter, copiedAST, sp, this, symbolHash.get(variable.getId()), compartmentHash.get(variable.getId()), sp.getCompartment(), hasZeroSpatialDimensions, isAmount[symbolHash.get(variable.getId())]));
+          } else if ((variable instanceof Compartment) || (variable instanceof Parameter)) {
+            copiedAST.putUserObject(TEMP_VALUE, new CompartmentOrParameterValue(nodeInterpreter, copiedAST, (Symbol) variable, this, symbolHash.get(variable.getId())));
           } else if (variable instanceof LocalParameter) {
-            copiedAST.putUserObject(TEMP_VALUE, new LocalParameterValue(
-              nodeInterpreter, copiedAST, (LocalParameter) variable));
+            copiedAST.putUserObject(TEMP_VALUE, new LocalParameterValue(nodeInterpreter, copiedAST, (LocalParameter) variable));
           } else if (variable instanceof SpeciesReference) {
-            copiedAST.putUserObject(TEMP_VALUE, new SpeciesReferenceValue(
-              nodeInterpreter, copiedAST,
-              (SpeciesReference) variable, this));
+            copiedAST.putUserObject(TEMP_VALUE, new SpeciesReferenceValue(nodeInterpreter, copiedAST, (SpeciesReference) variable, this));
           } else if (variable instanceof Reaction) {
-            copiedAST.putUserObject(TEMP_VALUE, new ReactionValue(
-              nodeInterpreter, copiedAST, (Reaction) variable));
+            copiedAST.putUserObject(TEMP_VALUE, new ReactionValue(nodeInterpreter, copiedAST, (Reaction) variable));
           }
         } else {
-          copiedAST.putUserObject(TEMP_VALUE, new NamedValue(
-            nodeInterpreter, copiedAST, function));
+          copiedAST.putUserObject(TEMP_VALUE, new NamedValue(nodeInterpreter, copiedAST, function));
         }
         break;
-
       case NAME_AVOGADRO:
-        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
-          copiedAST));
+        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
         copiedAST.setName(node.getName());
         break;
       case REAL_E:
         copiedAST.setValue(node.getMantissa(), node.getExponent());
-        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
-          copiedAST));
-
+        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
         break;
       case FUNCTION: {
         copiedAST.setName(node.getName());
@@ -2207,129 +2102,114 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         if (variable != null) {
           copiedAST.setVariable(variable);
           if (variable instanceof FunctionDefinition) {
-            List<ASTNode> arguments=new LinkedList<ASTNode>();
-            ASTNode lambda=((FunctionDefinition) variable).getMath();
-            for (int i = 0; i != lambda.getChildren().size()-1; i++) {
+            List<ASTNode> arguments = new LinkedList<ASTNode>();
+            ASTNode lambda = ((FunctionDefinition) variable).getMath();
+            for (int i = 0; i != lambda.getChildren().size() - 1; i++) {
               arguments.add(lambda.getChild(i));
             }
-            FunctionValue functionValue=new FunctionValue(nodeInterpreter,
-              copiedAST,arguments);
+            FunctionValue functionValue = new FunctionValue(nodeInterpreter, copiedAST, arguments);
             copiedAST.putUserObject(TEMP_VALUE, functionValue);
-            ASTNode mathAST = copyAST(lambda,
-              false,functionValue,new LinkedList<ASTNode>());
+            ASTNode mathAST = copyAST(lambda, false, functionValue, new LinkedList<ASTNode>());
             functionValue.setMath(mathAST);
           }
         }
         break;
       }
       case FUNCTION_PIECEWISE:
-        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
-          copiedAST));
+        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
         break;
       case FUNCTION_ROOT:
-        copiedAST.putUserObject(TEMP_VALUE, new RootFunctionValue(nodeInterpreter,copiedAST));
+        copiedAST.putUserObject(TEMP_VALUE, new RootFunctionValue(nodeInterpreter, copiedAST));
         break;
       case LAMBDA:
-        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
-          copiedAST));
+        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
         break;
       default:
-        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter,
-          copiedAST));
+        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(this, nodeInterpreter, copiedAST));
         break;
       }
-
     }
-
     return copiedAST;
   }
+
 
   /**
    * Checks whether the two given nodes are equal to each other (especially
    * regarding local parameters contained).
-   * 
-   * @param node1
-   *            the first node
-   * @param node2
-   *            the second node
+   *
+   * @param node1 the first node
+   * @param node2 the second node
    * @return
    */
   private boolean containUnequalLocalParameters(ASTNode node1, ASTNode node2) {
-    if (node1.getChildCount()!=node2.getChildCount()) {
+    if (node1.getChildCount() != node2.getChildCount()) {
       return true;
     }
-    if ((node1.getType() == ASTNode.Type.NAME) && (node2.getType() == ASTNode.Type.NAME) &&
-        (node1.getVariable() instanceof LocalParameter) && (node2.getVariable() instanceof LocalParameter)) {
+    if ((node1.getType() == ASTNode.Type.NAME) && (node2.getType() == ASTNode.Type.NAME) && (node1.getVariable() instanceof LocalParameter) && (node2.getVariable() instanceof LocalParameter)) {
       LocalParameter lp1 = (LocalParameter) node1.getVariable();
       LocalParameter lp2 = (LocalParameter) node2.getVariable();
       if ((lp1.getId().equals(lp2.getId())) && (!lp1.equals(lp2))) {
         return true;
-      }
-      else {
+      } else {
         return false;
       }
-    }
-    else if ((node1.getType() == ASTNode.Type.NAME) && (node2.getType() == ASTNode.Type.NAME) &&
-        (((node1.getVariable() instanceof LocalParameter) && !(node2.getVariable() instanceof LocalParameter))
-            || (!(node1.getVariable() instanceof LocalParameter) && (node2.getVariable() instanceof LocalParameter)))) {
+    } else if ((node1.getType() == ASTNode.Type.NAME) && (node2.getType() == ASTNode.Type.NAME) && (((node1.getVariable() instanceof LocalParameter) && !(node2.getVariable() instanceof LocalParameter)) || (!(node1.getVariable() instanceof LocalParameter) && (node2.getVariable() instanceof LocalParameter)))) {
       return true;
-    }
-    else {
+    } else {
       boolean result = false;
       for (int i = 0; i != node1.getChildCount(); i++) {
-        result = result || containUnequalLocalParameters(node1.getChild(i),node2.getChild(i));
+        result = result || containUnequalLocalParameters(node1.getChild(i), node2.getChild(i));
       }
       return result;
     }
   }
 
+
   /**
    * Initializes the events of the given model. An Event that triggers at t = 0
    * must not fire. Only when it triggers at t > 0
-   * 
+   *
    * @throws SBMLException
    */
   private void initEvents() throws SBMLException {
     for (int i = 0; i < model.getEventCount(); i++) {
-
-      if (model.getEvent(i).getDelay() == null) {
-        if (events[i]!=null) {
-          events[i].refresh(model.getEvent(i).getTrigger()
-            .getInitialValue());
-        }
-        else {
-          events[i] = new SBMLEventInProgress(model.getEvent(i).getTrigger()
-            .getInitialValue());
+      if (model.getEvent(i).isSetTrigger()) {
+        if (model.getEvent(i).getDelay() == null) {
+          if (events[i] != null) {
+            events[i].refresh(model.getEvent(i).getTrigger().getInitialValue());
+          } else {
+            events[i] = new SBMLEventInProgress(model.getEvent(i).getTrigger().getInitialValue());
+          }
+        } else {
+          if (events[i] != null) {
+            events[i].refresh(model.getEvent(i).getTrigger().getInitialValue());
+          } else {
+            events[i] = new SBMLEventInProgressWithDelay(model.getEvent(i).getTrigger().getInitialValue());
+          }
         }
       } else {
-        if (events[i]!=null) {
-          events[i].refresh(model.getEvent(i).getTrigger()
-            .getInitialValue());
-        }
-        else {
-          events[i] = new SBMLEventInProgressWithDelay(model.getEvent(i).getTrigger()
-            .getInitialValue());
-        }
+        events[i] = null;
       }
     }
   }
 
+
   /**
    * Chooses an event of a list randomly.
+   *
    * @param highOrderEvents
    */
   private void pickRandomEvent(List<Integer> highOrderEvents) {
     int length = highOrderEvents.size();
     int random = RNG.randomInt(0, length - 1);
-
     Integer winner = highOrderEvents.get(random);
     highOrderEvents.clear();
     highOrderEvents.add(winner);
-
   }
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.odes.EventDESystem#processAssignmentRules(double, double[])
+
+  /**
+   * {@inheritDoc}
    */
   @Override
   public boolean processAssignmentRules(double t, double Y[])
@@ -2342,14 +2222,13 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     return changed;
   }
 
+
   /**
    * This method creates assignments from the events currently stored in the
    * associated HashMap with respect to their priority.
-   * 
-   * @param priorities
-   *            the priorities
-   * @param Y
-   *            the Y vector
+   *
+   * @param priorities the priorities
+   * @param Y          the Y vector
    * @return the event with assignments
    */
   private SBMLEventInProgress processNextEvent(HashSet<Double> priorities, double[] Y)
@@ -2359,15 +2238,13 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     int index;
     // check if more than one event has a priority set at this point in time
     highOrderEvents.clear();
-
     if (!priorities.isEmpty()) {
-      boolean first=true;
-      for (double priority:priorities) {
+      boolean first = true;
+      for (double priority : priorities) {
         if (first) {
           first = false;
           highestPriority = priority;
-        }
-        else {
+        } else {
           highestPriority = Math.max(highestPriority, priority);
         }
       }
@@ -2398,43 +2275,36 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
       // execute the events chosen for execution
       index = highOrderEvents.get(0);
       events[index].clearAssignments();
-
       // event does not use values from trigger time
       if (!events[index].getUseValuesFromTriggerTime()) {
-        for (AssignmentRuleValue obj: events[index].getRuleObjects()) {
+        for (AssignmentRuleValue obj : events[index].getRuleObjects()) {
           obj.processRule(Y, astNodeTime, false);
           newVal = obj.getValue();
-          symbolIndex = obj.getIndex();;
-          if ((symbolIndex >= 0)
-              && (compartmentHash.containsValue(symbolIndex))) {
-            updateSpeciesConcentration(symbolIndex, Y, Y[symbolIndex], newVal, false);
-          }
+          symbolIndex = obj.getIndex();
+
           if (symbolIndex >= 0) {
+            if (compartmentHash.containsValue(symbolIndex)) {
+              updateSpeciesConcentrationByCompartmentChange(symbolIndex, Y, Y[symbolIndex], newVal, -1);
+            }
             events[index].addAssignment(symbolIndex, newVal);
           }
-
         }
-
       } else {
         // event uses values from trigger time -> get stored values
         // from the HashMap
         Double[] triggerTimeValues = events[index].getValues();
-
-        int j = 0;
-        if (events[index].getRuleObjects() != null){
-          for (AssignmentRuleValue obj: events[index].getRuleObjects()) {
-            //for (int j = 0; j < triggerTimeValues.length; j++) {
+        if (events[index].getRuleObjects() != null) {
+          int j = 0;
+          for (AssignmentRuleValue obj : events[index].getRuleObjects()) {
             newVal = triggerTimeValues[j];
-
-            symbolIndex=obj.getIndex();
+            symbolIndex = obj.getIndex();
             if (symbolIndex >= 0) {
               if (compartmentHash.containsValue(symbolIndex)) {
-                updateSpeciesConcentrationAtEvents(symbolIndex, Y, Y[symbolIndex], newVal, index);
+                updateSpeciesConcentrationByCompartmentChange(symbolIndex, Y, Y[symbolIndex], newVal, index);
               }
               events[index].addAssignment(symbolIndex, newVal);
-            }
-            else {
-              String id=obj.getSpeciesReferenceID();
+            } else {
+              String id = obj.getSpeciesReferenceID();
               if (id != null) {
                 stoichiometricCoefHash.put(id, newVal);
               }
@@ -2447,20 +2317,19 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     } catch (SBMLException exc) {
       throw new DerivativeException(exc);
     }
-
     return events[index];
   }
 
+
   /**
    * Processes the initial assignments
-   * 
-   * @param time
-   *            the {@link ASTNode} time
-   * @param Y
-   *            the Y vector
+   *
+   * @param time the {@link ASTNode} time
+   * @param Y    the Y vector
    * @throws SBMLException
    */
-  public void processInitialAssignments(double time, double[] Y) throws SBMLException {
+  public void processInitialAssignments(double time, double[] Y)
+      throws SBMLException {
     if (Y != null) {
       for (int i = 0; i != initialAssignmentRoots.size(); i++) {
         initialAssignmentRoots.get(i).processRule(Y, time, true);
@@ -2468,66 +2337,59 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     }
   }
 
+
   /**
    * Processes the rules
-   * 
-   * @param time
-   *            the current time
-   * @param changeRate
-   *            the changeRate vector
-   * @param Y
-   *            the Y vector
+   *
+   * @param time                the current time
+   * @param changeRate          the changeRate vector
+   * @param Y                   the Y vector
    * @param initialCalculations
    * @return flag that is true if there has been some change caused by any
-   *         rule
+   * rule
    * @throws SBMLException
    */
-  public boolean processRules(double time, double[] changeRate, double[] Y, boolean initialCalculations) throws SBMLException {
-    boolean changeByAssignmentRules=false;
-    double intermediateASTNodeTime = - astNodeTime;
+  public boolean processRules(double time, double[] changeRate, double[] Y, boolean initialCalculations)
+      throws SBMLException {
+    boolean changeByAssignmentRules = false;
+    double intermediateASTNodeTime = -astNodeTime;
     double oldTime = currentTime;
     if (Y != null) {
       for (int n = 0; n != numberOfAssignmentRulesLoops; n++) {
         if (!delaysIncluded) {
           System.arraycopy(Y, 0, oldY2, 0, Y.length);
-        }
-        else {
+        } else {
           System.arraycopy(Y, 0, oldY, 0, Y.length);
         }
-        intermediateASTNodeTime = - intermediateASTNodeTime;
+        intermediateASTNodeTime = -intermediateASTNodeTime;
         for (int i = 0; i != nAssignmentRules; i++) {
           AssignmentRuleValue currentRuleObject = assignmentRulesRoots.get(i);
           double oldValue = Double.NaN, newValue = Double.NaN;
           if (!delaysIncluded) {
             System.arraycopy(Y, 0, oldY2, 0, Y.length);
-          }
-          else if (containsDelays) {
+          } else if (containsDelays) {
             System.arraycopy(Y, 0, oldY, 0, Y.length);
           }
           int index = currentRuleObject.getIndex();
           if (index >= 0) {
             oldValue = Y[index];
           }
-          boolean currentChange = currentRuleObject.processRule(Y,
-            intermediateASTNodeTime, true);
+          boolean currentChange = currentRuleObject.processRule(Y, intermediateASTNodeTime, true);
           currentTime = oldTime;
           if (index >= 0) {
             newValue = Y[index];
           }
           if (!delaysIncluded) {
             System.arraycopy(oldY2, 0, Y, 0, Y.length);
-          }
-          else if (containsDelays) {
+          } else if (containsDelays) {
             System.arraycopy(oldY, 0, Y, 0, Y.length);
           }
           if (index != -1) {
             Y[index] = newValue;
           }
-
           if (currentChange && (!initialCalculations) && (index >= 0) && (compartmentHash.containsValue(index))) {
-            updateSpeciesConcentration(index, Y, oldValue, newValue, false);
-          }
-          else if (currentChange && initialCalculations && (index >= 0) && (compartmentHash.containsValue(index))) {
+            updateSpeciesConcentrationByCompartmentChange(index, Y, oldValue, newValue, -1);
+          } else if (currentChange && initialCalculations && (index >= 0) && (compartmentHash.containsValue(index))) {
             refreshSpeciesAmount(index, Y, oldValue, newValue);
           }
           changeByAssignmentRules = changeByAssignmentRules || currentChange;
@@ -2537,15 +2399,14 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     /*
      * Compute changes due to rules
      */
-
-    if (changeRate!=null) {
+    if (changeRate != null) {
       for (int i = 0; i != nRateRules; i++) {
         rateRulesRoots.get(i).processRule(changeRate, this.Y, astNodeTime);
       }
     }
     return changeByAssignmentRules;
-
   }
+
 
   /**
    * This method computes the multiplication of the stoichiometric matrix of the
@@ -2553,32 +2414,26 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
    * method. Note, the stoichiometric matrix is only constructed implicitly by
    * running over all reactions and considering all participating reactants and
    * products with their according stoichiometry or stoichiometric math.
-   * 
+   *
    * @param changeRate An array containing the rates of change for each species in the
-   *         model system of this class.
+   *                   model system of this class.
    * @param time
    * @throws SBMLException
    */
   protected void processVelocities(double[] changeRate, double time)
       throws SBMLException {
-
     // Velocities of each reaction.
     for (int reactionIndex = 0; reactionIndex != v.length; reactionIndex++) {
       if (hasFastReactions) {
         if (isProcessingFastReactions == reactionFast[reactionIndex]) {
-          v[reactionIndex] = kineticLawRoots[reactionIndex].compileDouble(
-            time, 0d);
+          v[reactionIndex] = kineticLawRoots[reactionIndex].compileDouble(time, 0d);
         } else {
           v[reactionIndex] = 0;
         }
       } else {
-        v[reactionIndex] = kineticLawRoots[reactionIndex].compileDouble(
-          time, 0d);
-
+        v[reactionIndex] = kineticLawRoots[reactionIndex].compileDouble(time, 0d);
       }
     }
-
-
     for (int i = 0; i != stoichiometryValues.length; i++) {
       if ((constantStoichiometry[i] == false) || (stoichiometrySet[i] == false)) {
         stoichiometry[i] = stoichiometryValues[i].compileDouble(time);
@@ -2588,44 +2443,43 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
       if (zeroChange[i]) {
         value = 0;
       } else if (isReactant[i]) {
-        value= - 1 * stoichiometry[i] * v[reactionIndex[i]];
+        value = -1 * stoichiometry[i] * v[reactionIndex[i]];
       } else {
         value = stoichiometry[i] * v[reactionIndex[i]];
       }
-
       changeRate[speciesIndex[i]] += value;
     }
-
     for (int i = 0; i != changeRate.length; i++) {
       // When the unit of reacting species is given mol/volume
       // then it has to be considered in the change rate that should
       // always be only in mol/time
       if (inConcentrationValues[i]) {
-        changeRate[i] = changeRate[i]
-            / Y[compartmentIndexes[i]];
+        changeRate[i] = changeRate[i] / Y[compartmentIndexes[i]];
       }
-
       changeRate[i] *= conversionFactors[i];
     }
-
+    for (int i = 0; i < nRateRules; i++) {
+      changeRate[symbolHash.get(rateRulesRoots.get(i).getVariable())] /= conversionFactors[symbolHash.get(rateRulesRoots.get(i).getVariable())];
+    }
   }
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.odes.FastProcessDESystem#setFastProcessComputation(boolean)
+
+  /**
+   * {@inheritDoc}
    */
   @Override
   public void setFastProcessComputation(boolean isProcessing) {
     isProcessingFastReactions = isProcessing;
   }
 
+
   /**
    * This method allows us to set the parameters of the model to the specified
    * values in the given array.
-   * 
-   * @param params
-   *        An array of parameter values to be set for this model. If the number
-   *        of given parameters does not match the number of model parameters,
-   *        an exception will be thrown.
+   *
+   * @param params An array of parameter values to be set for this model. If the number
+   *               of given parameters does not match the number of model parameters,
+   *               an exception will be thrown.
    */
   // TODO changing the model directly not allowed / does this method still
   // make sense?
@@ -2657,9 +2511,7 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         init();
       } catch (Exception exc) {
         // This can never happen
-        logger.log(Level.WARNING,
-          "Could not re-initialize the model with the new parameter values.",
-          exc);
+        logger.log(Level.WARNING, "Could not re-initialize the model with the new parameter values.", exc);
       }
     } else {
       int nCompPlusSpec = model.getCompartmentCount() + model.getSpeciesCount();
@@ -2674,51 +2526,59 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
 
   /**
    * Updates the concentration of species due to a change in the size of their
-   * compartment
-   * 
-   * @param compartmentIndex
-   *            the index of the compartment
-   * @param changeRate
-   *            the changeRate vector
-   * @param oldCompartmentValue
-   *            the old value of the compartment
-   * @param newCompartmentValue
-   *            the new value of the compartment
-   * @param causedByRateRule
-   *            flag that is true if a rate rule has set the change rate of
-   *            the compartment
+   * compartment (also at events)
+   *
+   * @param compartmentIndex    the index of the compartment
+   * @param Y                   the Y vector
+   * @param oldCompartmentValue the old value of the compartment
+   * @param newCompartmentValue the new value of the compartment
+   * @param eventIndex
    */
-  private void updateSpeciesConcentration(int compartmentIndex,
-    double changeRate[], double oldCompartmentValue, double newCompartmentValue, boolean causedByRateRule) {
+  private void updateSpeciesConcentrationByCompartmentChange(int compartmentIndex, double Y[], double oldCompartmentValue, double newCompartmentValue, int eventIndex){
     int speciesIndex;
-    for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
+    for (Entry<String, Integer> entry: compartmentHash.entrySet()) {
       if (entry.getValue() == compartmentIndex) {
         speciesIndex = symbolHash.get(entry.getKey());
         if ((!isAmount[speciesIndex]) && (!speciesMap.get(symbolIdentifiers[speciesIndex]).getConstant())) {
-          if (causedByRateRule) {
-            changeRate[speciesIndex] = -changeRate[compartmentIndex]
-                * Y[speciesIndex] / Y[compartmentIndex];
-          } else {
-            changeRate[speciesIndex] = (changeRate[speciesIndex] * oldCompartmentValue) / newCompartmentValue;
+          Y[speciesIndex] = (Y[speciesIndex] * oldCompartmentValue) / newCompartmentValue;
+          if (eventIndex != -1){
+            events[eventIndex].addAssignment(speciesIndex, Y[speciesIndex]);
           }
-
         }
-
       }
     }
-
   }
+
+  /**
+   * Updates the changeRate of species due to a change in the size of their
+   * compartment (by RateRule)
+   *
+   * @param compartmentIndex
+   * @param changeRate
+   */
+  private void updateSpeciesConcentrationByCompartmentRateRule(int compartmentIndex, double changeRate[]) {
+    int speciesIndex;
+    for (Entry<String, Integer> entry: compartmentHash.entrySet()) {
+      if (entry.getValue() == compartmentIndex) {
+        speciesIndex = symbolHash.get(entry.getKey());
+        if ((!isAmount[speciesIndex]) && (!speciesMap.get(symbolIdentifiers[speciesIndex]).getConstant())) {
+          changeRate[speciesIndex] = -changeRate[compartmentIndex] * Y[speciesIndex] / Y[compartmentIndex];
+        }
+      }
+    }
+  }
+
 
   /**
    * Updates the amount of a species due to a change in the size of their
    * compartment caused by an assignment rule overwriting the initial value
+   *
    * @param compartmentIndex
    * @param Y
    * @param oldCompartmentValue
    * @param newCompartmentValue
    */
-  private void refreshSpeciesAmount(int compartmentIndex,
-    double Y[], double oldCompartmentValue, double newCompartmentValue) {
+  private void refreshSpeciesAmount(int compartmentIndex, double Y[], double oldCompartmentValue, double newCompartmentValue) {
     int speciesIndex;
     for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
       if (entry.getValue() == compartmentIndex) {
@@ -2726,39 +2586,13 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         if ((isAmount[speciesIndex]) && (speciesMap.get(symbolIdentifiers[speciesIndex]).isSetInitialConcentration())) {
           Y[speciesIndex] = (Y[speciesIndex] / oldCompartmentValue) * newCompartmentValue;
         }
-
       }
     }
-
   }
+
 
   /**
-   * Updates the concentration of species due to a change in the size of their
-   * compartment (at events)
-   * @param compartmentIndex
-   * @param Y
-   * @param oldCompartmentValue
-   * @param newCompartmentValue
-   * @param eventIndex
-   */
-  private void updateSpeciesConcentrationAtEvents(int compartmentIndex,
-    double Y[], double oldCompartmentValue, double newCompartmentValue, int eventIndex) {
-    int speciesIndex;
-    for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
-      if (entry.getValue() == compartmentIndex) {
-        speciesIndex = symbolHash.get(entry.getKey());
-        if ((!isAmount[speciesIndex]) && (!speciesMap.get(symbolIdentifiers[speciesIndex]).getConstant())) {
-          Y[speciesIndex] = (Y[speciesIndex] * oldCompartmentValue) / newCompartmentValue;
-          events[eventIndex].addAssignment(speciesIndex, Y[speciesIndex]);
-        }
-
-      }
-    }
-
-  }
-
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.odes.DESystem#containsEventsOrRules()
+   * {@inheritDoc}
    */
   @Override
   public boolean containsEventsOrRules() {
@@ -2769,16 +2603,18 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.ValueHolder#getCurrentValueOf(int)
+
+  /**
+   * {@inheritDoc}
    */
   @Override
   public double getCurrentValueOf(int position) {
     return Y[position];
   }
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.odes.DESystem#getNumPositiveValues()
+
+  /**
+   * {@inheritDoc}
    */
   @Override
   public int getPositiveValueCount() {
@@ -2786,8 +2622,9 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     return 0;
   }
 
-  /* (non-Javadoc)
-   * @see org.simulator.math.odes.DelayedDESSystem#registerDelayValueHolder(org.simulator.math.odes.DelayValueHolder)
+
+  /**
+   * {@inheritDoc}
    */
   @Override
   public void registerDelayValueHolder(DelayValueHolder dvh) {
@@ -2795,9 +2632,8 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
   }
 
 
-  /*
-   * (non-Javadoc)
-   * @see org.simulator.math.odes.DelayValueHolder#computeDelayedValue(double, java.lang.String, org.simulator.math.odes.DESystem, double[], int)
+  /**
+   * {@inheritDoc}
    */
   @Override
   public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues, int yIndex) {
@@ -2805,21 +2641,20 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     if (!delaysIncluded) {
       return Y[symbolHash.get(id)];
     }
-
     if ((time < 0d) || ((time >= 0d) && (delayValueHolder == null))) {
       int index = symbolHash.get(id);
       double oldTime = currentTime;
       currentTime = time;
-      double value=Double.NaN;
-      for (AssignmentRuleValue r: assignmentRulesRoots) {
+      double value = Double.NaN;
+      for (AssignmentRuleValue r : assignmentRulesRoots) {
         if (r.getIndex() == index) {
-          r.processRule(Y, -astNodeTime -0.01d, false);
-          value=r.getValue();
+          r.processRule(Y, -astNodeTime - 0.01d, false);
+          value = r.getValue();
           break;
         }
       }
       if (Double.isNaN(value)) {
-        for (AssignmentRuleValue i: initialAssignmentRoots) {
+        for (AssignmentRuleValue i : initialAssignmentRoots) {
           if (i.getIndex() == index) {
             i.processRule(Y, -astNodeTime - 0.01d, false);
             value = i.getValue();
@@ -2828,33 +2663,30 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
         }
       }
       if (Double.isNaN(value)) {
-        value=this.initialValues[index];
+        value = this.initialValues[index];
       }
-      currentTime=oldTime;
+      currentTime = oldTime;
       return value;
-    }
-    else if (delayValueHolder == null) {
+    } else if (delayValueHolder == null) {
       // TODO: Localize
-      logger.warning(MessageFormat.format(
-        "Cannot access delayed value at time {0,number} for {1}.",
-        time, id));
+      logger.warning(MessageFormat.format("Cannot access delayed value at time {0,number} for {1}.", time, id));
       return Double.NaN;
-
     }
     return delayValueHolder.computeDelayedValue(time, id, this, this.initialValues, symbolHash.get(id));
   }
 
-  /* (non-Javadoc)
-   * @see org.simulator.math.odes.EventDESystem#getNoDerivatives()
+
+  /**
+   * {@inheritDoc}
    */
   @Override
   public boolean getNoDerivatives() {
     return noDerivatives;
   }
 
+
   /**
-   * @param reactionIndex
-   *            index of the reaction
+   * @param reactionIndex index of the reaction
    * @return the current reaction velocity of a specific reaction
    */
   public double compileReaction(int reactionIndex) {
@@ -2862,12 +2694,62 @@ FastProcessDESystem, RichDESystem, SBMLValueHolder {
     return kineticLawRoots[reactionIndex].compileDouble(astNodeTime, 0d);
   }
 
-  /* (non-Javadoc)
-   * @see org.simulator.math.odes.DESystem#setDelaysIncluded(boolean)
+
+  /**
+   * {@inheritDoc}
    */
   @Override
   public void setDelaysIncluded(boolean delaysIncluded) {
     this.delaysIncluded = delaysIncluded;
   }
 
+
+  public List<RateRuleValue> getRateRulesRoots() {
+    return rateRulesRoots;
+  }
+
+
+  public Map<String, Integer> getSymbolHash() {
+    return symbolHash;
+  }
+
+
+  public Map<String, Boolean> getConstantHash() {
+    return constantHash;
+  }
+
+
+  public double[] getY() {
+    return Y;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+
+    if (propertyChangeEvent.getPropertyName().equals("result")){
+      setLatestTimePointResult((double[]) propertyChangeEvent.getNewValue());
+    }else {
+      setLatestTimePoint((Double) propertyChangeEvent.getNewValue());
+    }
+
+  }
+
+  public double getLatestTimePoint() {
+    return latestTimePoint;
+  }
+
+  private void setLatestTimePoint(double latestTimePoint) {
+    this.latestTimePoint = latestTimePoint;
+  }
+
+  public double[] getLatestTimePointResult() {
+    return latestTimePointResult;
+  }
+
+  private void setLatestTimePointResult(double[] latestTimePointResult) {
+    this.latestTimePointResult = latestTimePointResult;
+  }
 }

@@ -28,7 +28,7 @@ import org.sbml.jsbml.ASTNode;
 
 /**
  * This class computes and stores values of variables occurring in a function.
- * 
+ *
  * @author Roland Keller
  * @version $Rev$
  */
@@ -45,7 +45,6 @@ public class NamedValue extends ASTNodeValue {
   private int index;
 
   /**
-   * 
    * @param interpreter
    * @param node
    * @param function
@@ -61,7 +60,6 @@ public class NamedValue extends ASTNodeValue {
    */
   @Override
   protected void computeDoubleValue(double delay) {
-    doubleValue=function.getArgumentValues()[index];
+    doubleValue = function.getArgumentValues()[index];
   }
-
 }

@@ -35,7 +35,7 @@ import org.sbml.jsbml.util.SBMLtools;
  * This class represents a simple listener implementation to process the
  * violation of {@link Constraint}s during simulation by logging the violation
  * event in form of a warning.
- * 
+ *
  * @author Alexander D&ouml;rr
  * @author Andreas Dr&auml;ger
  * @version $Rev$
@@ -59,9 +59,6 @@ public class SimpleConstraintListener implements ConstraintListener {
     constraint = evt.getSource().getMath().toFormula();
     message = SBMLtools.toXML(evt.getSource().getMessage());
     // TODO: Localize
-    logger.log(Level.WARNING, MessageFormat.format(
-      "[VIOLATION]\t{0} at time {1,number}: {2}",
-      constraint, evt.getTime(), message));
+    logger.log(Level.WARNING, MessageFormat.format("[VIOLATION]\t{0} at time {1,number}: {2}", constraint, evt.getTime(), message));
   }
-
 }

@@ -22,7 +22,6 @@
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
  */
-
 /**
  * <p>Classes for reading and executing
  * <a href="http://sed-ml.org/" target="_blank">SED-ML</a> files.
@@ -35,8 +34,9 @@
  * Classes for storing and interpreting an <a href="http://sbml.org">SBML</a>
  * model. The most important class is {@link org.simulator.sbml.SBMLinterpreter}
  * that can return the current vector of derivatives to the solver.
- * 
+ *
  * @author Richard Adams
  * @version $Rev$
  */
+
 package org.simulator.sedml;
