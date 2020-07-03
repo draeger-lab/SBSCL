@@ -24,8 +24,8 @@ import org.slf4j.LoggerFactory;
 public class FluxBalanceAnalysisTest {
 
     private static final Logger logger = LoggerFactory.getLogger(FluxBalanceAnalysisTest.class);
-	  private double EPS = 1E-4;
-	  private double ACTIVE_OBJECTIVE_VALUE = 0.8739215069684307;
+    private double EPS = 1E-4;
+    private double ACTIVE_OBJECTIVE_VALUE = 0.8739215069684307;
 
     @Test
     //@Ignore
