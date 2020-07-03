@@ -28,7 +28,6 @@ public class FluxBalanceAnalysisTest {
     private double ACTIVE_OBJECTIVE_VALUE = 0.8739215069684307;
 
     @Test
-    //@Ignore
     public void solveEColiCore() throws ModelOverdeterminedException, XMLStreamException, IOException {
         String path = TestUtils.getPathForTestResource("/fba/e_coli_core.xml");
         SBMLDocument doc = JSBML.readSBML(path);
@@ -45,7 +44,6 @@ public class FluxBalanceAnalysisTest {
     }
 
     @Test
-    @Ignore
     public void solveEColiCoreGZ() throws ModelOverdeterminedException, XMLStreamException, IOException {
         String path = TestUtils.getPathForTestResource("/fba/e_coli_core.xml.gz");
 
