@@ -2407,6 +2407,28 @@ public class SBMLinterpreter
     return changeByAssignmentRules;
   }
 
+  public void computeDerivativeWithChangingCompartment (Species sp, double[] changeRate) {
+
+    double latestSpeciesValue = latestTimePointResult[symbolHash.get(sp.getId())];
+    double latestCompartmentValue = latestTimePointResult[symbolHash.get(sp.getCompartment())];
+
+    double[] changeRates = new double[Y.length];
+
+    for (RateRuleValue rateRulesRoot : rateRulesRoots) {
+      changeRates[rateRulesRoot.getIndex()] = rateRulesRoot.getNodeObject().compileDouble(astNodeTime, 0d);
+      if (rateRulesRoot.getVariable().equals(sp.getCompartment())) {
+        // 0.1 is the difference between two time points : Will have to get it from somewhere
+        latestCompartmentValue = latestCompartmentValue + 0.1 * changeRates[symbolHash.get(sp.getCompartment())];
+      }
+    }
+
+    double a1 = (latestSpeciesValue / latestCompartmentValue) * (changeRates[symbolHash.get(sp.getCompartment())]);
+    double a2 = (latestCompartmentValue) * changeRates[symbolHash.get(sp.getId())];
+
+    changeRate[symbolHash.get(sp.getId())] = (a1 + a2);
+
+  }
+
 
   /**
    * This method computes the multiplication of the stoichiometric matrix of the
