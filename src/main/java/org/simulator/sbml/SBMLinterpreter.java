@@ -365,6 +365,12 @@ public class SBMLinterpreter
   private List<RateRuleValue> rateRulesRoots;
 
   /**
+   * Map for getting the raterule index (in the rateRulesRoots ArrayList)
+   * of particular id
+   */
+  private Map<String, Integer> rateRuleHash;
+
+  /**
    * Current time for the ASTNode processing (not equal to the simulation time!)
    */
   private double astNodeTime;
@@ -482,12 +488,17 @@ public class SBMLinterpreter
   private boolean containsDelays;
 
   /**
-   * The value of the last time point processed
+   * The value of the latest time point
    */
   private double latestTimePoint;
 
   /**
-   * An array of the concentration of each species at last processed time point
+   * The value of the previous time point
+   */
+  private double previousTimePoint;
+
+  /**
+   * An array of the concentration of each species at latest processed time point
    * within the model system.
    */
   private double[] latestTimePointResult;
@@ -585,6 +596,7 @@ public class SBMLinterpreter
     nodes = new LinkedList<ASTNode>();
     latestTimePoint = 0d;
     latestTimePointResult = new double[Y.length];
+    rateRuleHash = new HashMap<>();
     init(true, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, amountHash);
   }
 
@@ -1772,6 +1784,7 @@ public class SBMLinterpreter
             }
             if (rr.isSetMath()) {
               rateRulesRoots.add(new RateRuleValue((ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this, rr.getVariable(), isAmount[symbolIndex]));
+              rateRuleHash.put(rr.getVariable(), rateRulesRoots.size() - 1);
             }
           } else if (compartmentHash.containsValue(symbolIndex)) {
             List<Integer> speciesIndices = new LinkedList<Integer>();
@@ -1786,10 +1799,12 @@ public class SBMLinterpreter
             }
             if (rr.isSetMath()) {
               rateRulesRoots.add(new RateRuleValue((ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, speciesIndices, this, rr.getVariable()));
+              rateRuleHash.put(rr.getVariable(), rateRulesRoots.size() - 1);
             }
           } else {
             if (rr.isSetMath()) {
               rateRulesRoots.add(new RateRuleValue((ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, rr.getVariable()));
+              rateRuleHash.put(rr.getVariable(), rateRulesRoots.size() - 1);
             }
           }
         }
@@ -2412,20 +2427,18 @@ public class SBMLinterpreter
     double latestSpeciesValue = latestTimePointResult[symbolHash.get(sp.getId())];
     double latestCompartmentValue = latestTimePointResult[symbolHash.get(sp.getCompartment())];
 
-    double[] changeRates = new double[Y.length];
+    String speciesId = sp.getId();
+    String compartmentId = sp.getCompartment();
 
-    for (RateRuleValue rateRulesRoot : rateRulesRoots) {
-      changeRates[rateRulesRoot.getIndex()] = rateRulesRoot.getNodeObject().compileDouble(astNodeTime, 0d);
-      if (rateRulesRoot.getVariable().equals(sp.getCompartment())) {
-        // 0.1 is the difference between two time points : Will have to get it from somewhere
-        latestCompartmentValue = latestCompartmentValue + 0.1 * changeRates[symbolHash.get(sp.getCompartment())];
-      }
-    }
+    changeRate[symbolHash.get(compartmentId)] = rateRulesRoots.get(rateRuleHash.get(compartmentId)).getNodeObject().compileDouble(astNodeTime, 0d);
+    latestCompartmentValue = latestCompartmentValue + (latestTimePoint - previousTimePoint) * changeRate[symbolHash.get(sp.getCompartment())];
 
-    double a1 = (latestSpeciesValue / latestCompartmentValue) * (changeRates[symbolHash.get(sp.getCompartment())]);
-    double a2 = (latestCompartmentValue) * changeRates[symbolHash.get(sp.getId())];
+    changeRate[symbolHash.get(speciesId)] = rateRulesRoots.get(rateRuleHash.get(speciesId)).getNodeObject().compileDouble(astNodeTime, 0d);
 
-    changeRate[symbolHash.get(sp.getId())] = (a1 + a2);
+    double a1 = (latestSpeciesValue / latestCompartmentValue) * changeRate[symbolHash.get(compartmentId)];
+    double a2 = latestCompartmentValue * changeRate[symbolHash.get(speciesId)];
+
+    changeRate[symbolHash.get(speciesId)] = a1 + a2;
 
   }
 
@@ -2754,21 +2767,18 @@ public class SBMLinterpreter
     if (propertyChangeEvent.getPropertyName().equals("result")){
       setLatestTimePointResult((double[]) propertyChangeEvent.getNewValue());
     }else {
+      setPreviousTimePoint((Double) propertyChangeEvent.getOldValue());
       setLatestTimePoint((Double) propertyChangeEvent.getNewValue());
     }
 
   }
 
-  public double getLatestTimePoint() {
-    return latestTimePoint;
+  public void setPreviousTimePoint(double previousTimePoint) {
+    this.previousTimePoint = previousTimePoint;
   }
 
   private void setLatestTimePoint(double latestTimePoint) {
     this.latestTimePoint = latestTimePoint;
-  }
-
-  public double[] getLatestTimePointResult() {
-    return latestTimePointResult;
   }
 
   private void setLatestTimePointResult(double[] latestTimePointResult) {
