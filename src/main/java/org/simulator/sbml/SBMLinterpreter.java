@@ -1789,7 +1789,7 @@ public class SBMLinterpreter
           } else if (compartmentHash.containsValue(symbolIndex)) {
             List<Integer> speciesIndices = new LinkedList<Integer>();
             for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
-              if (entry.getValue() == symbolIndex) {
+              if (entry.getValue().equals(symbolIndex)) {
                 Species s = model.getSpecies(entry.getKey());
                 int speciesIndex = symbolHash.get(entry.getKey());
                 if ((!isAmount[speciesIndex]) && (!s.isConstant())) {
@@ -1805,6 +1805,30 @@ public class SBMLinterpreter
             if (rr.isSetMath()) {
               rateRulesRoots.add(new RateRuleValue((ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, rr.getVariable()));
               rateRuleHash.put(rr.getVariable(), rateRulesRoots.size() - 1);
+            }
+          }
+        }
+      }
+    }
+
+    /*
+     * Traversing through all the rate rules for finding if species
+     * are present in changing compartment. Traversing is done again as the
+     * the compartment rate rules in the SBML models can be declared after the
+     * species rate rule.
+     */
+    for (int i = 0; i < model.getRuleCount(); i++) {
+      Rule rr = model.getRule(i);
+      if (rr.isRate()) {
+        RateRule rateRule = (RateRule) rr;
+        symbolIndex = symbolHash.get(rateRule.getVariable());
+        if (symbolIndex != null) {
+          Species sp = model.getSpecies(rateRule.getVariable());
+          if (sp != null) {
+            Compartment c = sp.getCompartmentInstance();
+
+            if (rateRuleHash.get(c.getId()) != null) {
+              rateRulesRoots.get(rateRuleHash.get(sp.getId())).setCompartmentRateRule(rateRulesRoots.get(rateRuleHash.get(c.getId())));
             }
           }
         }
