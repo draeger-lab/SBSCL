@@ -650,8 +650,7 @@ public class SBMLinterpreter
    */
   private void evaluateAlgebraicRules() throws ModelOverdeterminedException {
     OverdeterminationValidator odv = new OverdeterminationValidator(model);
-    // model has not to be overdetermined (violation of the SBML
-    // specifications)
+    // model must not be overdetermined (violation of the SBML specifications)
     if (odv.isOverdetermined()) {
       throw new ModelOverdeterminedException();
     }
