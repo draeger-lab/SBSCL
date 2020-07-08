@@ -1826,7 +1826,7 @@ public class SBMLinterpreter
           if (sp != null) {
             Compartment c = sp.getCompartmentInstance();
 
-            if (rateRuleHash.get(c.getId()) != null) {
+            if ((c != null) && (rateRuleHash.get(c.getId()) != null)) {
               rateRulesRoots.get(rateRuleHash.get(sp.getId())).setCompartmentRateRule(rateRulesRoots.get(rateRuleHash.get(c.getId())));
             }
           }
