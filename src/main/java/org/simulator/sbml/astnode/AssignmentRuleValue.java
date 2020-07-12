@@ -99,7 +99,7 @@ public class AssignmentRuleValue extends RuleValue {
   public boolean processRule(double[] Y, double time, boolean changeY) {
     if (index >= 0) {
       double oldValue = Y[index];
-      processAssignmentVariable(time);
+      processAssignmentVariable(time, null);
       if (changeY) {
         Y[index] = value;
       }
@@ -107,7 +107,7 @@ public class AssignmentRuleValue extends RuleValue {
         return true;
       }
     } else if (speciesReferenceID != null) {
-      processAssignmentVariable(time);
+      processAssignmentVariable(time, null);
       Double v = stoichiometricCoefHash.get(speciesReferenceID);
       stoichiometricCoefHash.put(speciesReferenceID, value);
       if ((v != null) && (v.doubleValue() != value)) {

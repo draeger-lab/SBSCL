@@ -130,12 +130,15 @@ public class RuleValue {
    * @param time
    * @return value the computed value of the variable
    */
-  protected double processAssignmentVariable(double time) {
+  protected double processAssignmentVariable(double time, RateRuleValue compartmentRateRule) {
     value = nodeObject.compileDouble(time, 0d);
     if (isSpecies && !hasZeroSpatialDimensions) {
       double compartmentValue = valueHolder.getCurrentValueOf(compartmentIndex);
       if (isAmount && !hasOnlySubstanceUnits) {
         value = value * compartmentValue;
+        if (compartmentRateRule != null) {
+          value += (valueHolder.getCurrentValueOf(index) / compartmentValue) * compartmentRateRule.getNodeObject().compileDouble(time, 0d);
+        }
       } else if (!isAmount && hasOnlySubstanceUnits) {
         value = value / compartmentValue;
       }

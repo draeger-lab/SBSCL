@@ -365,6 +365,12 @@ public class SBMLinterpreter
   private List<RateRuleValue> rateRulesRoots;
 
   /**
+   * Map for getting the raterule index (in the rateRulesRoots ArrayList)
+   * of particular id
+   */
+  private Map<String, Integer> rateRuleHash;
+
+  /**
    * Current time for the ASTNode processing (not equal to the simulation time!)
    */
   private double astNodeTime;
@@ -482,12 +488,17 @@ public class SBMLinterpreter
   private boolean containsDelays;
 
   /**
-   * The value of the last time point processed
+   * The value of the latest time point
    */
   private double latestTimePoint;
 
   /**
-   * An array of the concentration of each species at last processed time point
+   * The value of the previous time point
+   */
+  private double previousTimePoint;
+
+  /**
+   * An array of the concentration of each species at latest processed time point
    * within the model system.
    */
   private double[] latestTimePointResult;
@@ -585,6 +596,7 @@ public class SBMLinterpreter
     nodes = new LinkedList<ASTNode>();
     latestTimePoint = 0d;
     latestTimePointResult = new double[Y.length];
+    rateRuleHash = new HashMap<>();
     init(true, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, amountHash);
   }
 
@@ -638,8 +650,7 @@ public class SBMLinterpreter
    */
   private void evaluateAlgebraicRules() throws ModelOverdeterminedException {
     OverdeterminationValidator odv = new OverdeterminationValidator(model);
-    // model has not to be overdetermined (violation of the SBML
-    // specifications)
+    // model must not be overdetermined (violation of the SBML specifications)
     if (odv.isOverdetermined()) {
       throw new ModelOverdeterminedException();
     }
@@ -1772,11 +1783,12 @@ public class SBMLinterpreter
             }
             if (rr.isSetMath()) {
               rateRulesRoots.add(new RateRuleValue((ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this, rr.getVariable(), isAmount[symbolIndex]));
+              rateRuleHash.put(rr.getVariable(), rateRulesRoots.size() - 1);
             }
           } else if (compartmentHash.containsValue(symbolIndex)) {
             List<Integer> speciesIndices = new LinkedList<Integer>();
             for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
-              if (entry.getValue() == symbolIndex) {
+              if (entry.getValue().equals(symbolIndex)) {
                 Species s = model.getSpecies(entry.getKey());
                 int speciesIndex = symbolHash.get(entry.getKey());
                 if ((!isAmount[speciesIndex]) && (!s.isConstant())) {
@@ -1786,10 +1798,36 @@ public class SBMLinterpreter
             }
             if (rr.isSetMath()) {
               rateRulesRoots.add(new RateRuleValue((ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, speciesIndices, this, rr.getVariable()));
+              rateRuleHash.put(rr.getVariable(), rateRulesRoots.size() - 1);
             }
           } else {
             if (rr.isSetMath()) {
               rateRulesRoots.add(new RateRuleValue((ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE), symbolIndex, rr.getVariable()));
+              rateRuleHash.put(rr.getVariable(), rateRulesRoots.size() - 1);
+            }
+          }
+        }
+      }
+    }
+
+    /*
+     * Traversing through all the rate rules for finding if species
+     * are present in changing compartment. Traversing is done again as the
+     * the compartment rate rules in the SBML models can be declared after the
+     * species rate rule.
+     */
+    for (int i = 0; i < model.getRuleCount(); i++) {
+      Rule rr = model.getRule(i);
+      if (rr.isRate()) {
+        RateRule rateRule = (RateRule) rr;
+        symbolIndex = symbolHash.get(rateRule.getVariable());
+        if (symbolIndex != null) {
+          Species sp = model.getSpecies(rateRule.getVariable());
+          if (sp != null) {
+            Compartment c = sp.getCompartmentInstance();
+
+            if ((c != null) && (rateRuleHash.get(c.getId()) != null)) {
+              rateRulesRoots.get(rateRuleHash.get(sp.getId())).setCompartmentRateRule(rateRulesRoots.get(rateRuleHash.get(c.getId())));
             }
           }
         }
@@ -2407,6 +2445,26 @@ public class SBMLinterpreter
     return changeByAssignmentRules;
   }
 
+  public void computeDerivativeWithChangingCompartment (Species sp, double[] changeRate) {
+
+    double latestSpeciesValue = latestTimePointResult[symbolHash.get(sp.getId())];
+    double latestCompartmentValue = latestTimePointResult[symbolHash.get(sp.getCompartment())];
+
+    String speciesId = sp.getId();
+    String compartmentId = sp.getCompartment();
+
+    changeRate[symbolHash.get(compartmentId)] = rateRulesRoots.get(rateRuleHash.get(compartmentId)).getNodeObject().compileDouble(astNodeTime, 0d);
+    latestCompartmentValue = latestCompartmentValue + (latestTimePoint - previousTimePoint) * changeRate[symbolHash.get(sp.getCompartment())];
+
+    changeRate[symbolHash.get(speciesId)] = rateRulesRoots.get(rateRuleHash.get(speciesId)).getNodeObject().compileDouble(astNodeTime, 0d);
+
+    double a1 = (latestSpeciesValue / latestCompartmentValue) * changeRate[symbolHash.get(compartmentId)];
+    double a2 = latestCompartmentValue * changeRate[symbolHash.get(speciesId)];
+
+    changeRate[symbolHash.get(speciesId)] = a1 + a2;
+
+  }
+
 
   /**
    * This method computes the multiplication of the stoichiometric matrix of the
@@ -2732,21 +2790,18 @@ public class SBMLinterpreter
     if (propertyChangeEvent.getPropertyName().equals("result")){
       setLatestTimePointResult((double[]) propertyChangeEvent.getNewValue());
     }else {
+      setPreviousTimePoint((Double) propertyChangeEvent.getOldValue());
       setLatestTimePoint((Double) propertyChangeEvent.getNewValue());
     }
 
   }
 
-  public double getLatestTimePoint() {
-    return latestTimePoint;
+  public void setPreviousTimePoint(double previousTimePoint) {
+    this.previousTimePoint = previousTimePoint;
   }
 
   private void setLatestTimePoint(double latestTimePoint) {
     this.latestTimePoint = latestTimePoint;
-  }
-
-  public double[] getLatestTimePointResult() {
-    return latestTimePointResult;
   }
 
   private void setLatestTimePointResult(double[] latestTimePointResult) {

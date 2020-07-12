@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.binfalse.bflog.LOGGER;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
@@ -396,9 +397,9 @@ public class AlgebraicRuleConverter {
       //				//System.out.println(entry.getKey() + " -> " + entry.getValue());
       //			}
     } else {
-      System.out.println("no matching found");
+      LOGGER.error("no matching found");
     }
-    //determine matchings for algebraic rules
+    // determine matchings for algebraic rules
     // create for every algebraic rule an adequate assignment rule
     for (int i = 0; i < model.getRuleCount(); i++) {
       Rule r = model.getRule(i);
@@ -414,7 +415,6 @@ public class AlgebraicRuleConverter {
         // when assignment rule created add to the list
         if (as != null) {
           assignmentRules.add(as);
-          as = null;
         }
       }
     }
