@@ -39,6 +39,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import fern.network.AmountManager;
 import org.apache.commons.math.ode.DerivativeException;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
@@ -2626,6 +2627,17 @@ public class SBMLinterpreter
     }
   }
 
+  /**
+   * Updates the species concentration as per the updated values in the
+   * AmountManager.
+   *
+   * @param amountManager
+   */
+  public void updateSpeciesConcentration(AmountManager amountManager){
+    for (int i=0;i<model.getSpeciesCount();i++){
+      Y[symbolHash.get(model.getSpecies(i).getId())] = amountManager.getAmount(i);
+    }
+  }
 
   /**
    * Updates the amount of a species due to a change in the size of their

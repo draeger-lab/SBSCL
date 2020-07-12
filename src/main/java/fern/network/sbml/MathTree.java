@@ -72,7 +72,7 @@ public class MathTree {
      */
     public double calculate(AmountManager amount, Simulator sim) {
 
-//        sbmLinterpreter.updateSpeciesConcentration(amount);
+        sbmLinterpreter.updateSpeciesConcentration(amount);
         return ((ASTNodeValue) copiedAST.getUserObject(TEMP_VALUE)).compileDouble(sim.getTime(), 0d);
 
     }
