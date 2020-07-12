@@ -18,7 +18,8 @@ buildNumber.properties
 
 # idea
 /.idea/
-fern.iml
+FERN.iml
+jsbml.log
 
 # Eclipse
 **/.metadata
