@@ -1986,7 +1986,7 @@ public class SBMLinterpreter
    * @param inFunctionNodes the nodes that already belong to the function
    * @return the found node
    */
-  private ASTNode copyAST(ASTNode node, boolean mergingPossible, FunctionValue function, List<ASTNode> inFunctionNodes) {
+  public ASTNode copyAST(ASTNode node, boolean mergingPossible, FunctionValue function, List<ASTNode> inFunctionNodes) {
     String nodeString = node.toString();
     ASTNode copiedAST = null;
     if (mergingPossible && !nodeString.equals("") && !nodeString.contains("")) {

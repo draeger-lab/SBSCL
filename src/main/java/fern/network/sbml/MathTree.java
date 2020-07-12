@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import fern.network.AmountManager;
-import fern.network.sbml.astnode.*;
 import fern.simulation.Simulator;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
+import org.simulator.sbml.SBMLinterpreter;
+import org.simulator.sbml.astnode.ASTNodeValue;
 
 /**
  * Representation of am evaluation tree. Within a sbml file, MathML branches may occur at
@@ -71,7 +72,7 @@ public class MathTree {
      */
     public double calculate(AmountManager amount, Simulator sim) {
 
-        sbmLinterpreter.updateSpeciesConcentration(amount);
+//        sbmLinterpreter.updateSpeciesConcentration(amount);
         return ((ASTNodeValue) copiedAST.getUserObject(TEMP_VALUE)).compileDouble(sim.getTime(), 0d);
 
     }
