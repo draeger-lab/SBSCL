@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<fernml version="1.0">
+  <listOfAnnotations>
+    <annotation name="Description">Michaelis-Menten kinetic</annotation>
+  </listOfAnnotations>
+  <listOfSpecies>
+    <species name="S" initialAmount="100">
+      <listOfAnnotations>
+        <annotation name="Description">substrate</annotation>
+      </listOfAnnotations>
+    </species>
+    <species initialAmount="20" name="E">
+      <listOfAnnotations>
+        <annotation name="Description">free enzyme</annotation>
+      </listOfAnnotations>
+    </species>
+    <species initialAmount="0" name="P">
+      <listOfAnnotations>
+        <annotation name="Description">product</annotation>
+      </listOfAnnotations>
+    </species>
+    <species initialAmount="0" name="ES">
+      <listOfAnnotations>
+        <annotation name="Description">enzyme substrate complex</annotation>
+      </listOfAnnotations>
+    </species>
+  </listOfSpecies>
+  <listOfReactions>
+    <reaction kineticConstant="5.0">
+      <listOfAnnotations>
+        <annotation name="Description">complex aggregation</annotation>
+      </listOfAnnotations>
+      <listOfReactants>
+        <speciesReference name="S" />
+        <speciesReference name="E" />
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference name="ES" />
+      </listOfProducts>
+    </reaction>
+    <reaction kineticConstant="4.0">
+      <listOfAnnotations>
+        <annotation name="Description">complex disaggregation</annotation>
+      </listOfAnnotations>
+      <listOfReactants>
+        <speciesReference name="ES" />
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference name="S" />
+        <speciesReference name="E" />
+      </listOfProducts>
+    </reaction>
+    <reaction kineticConstant="1.0">
+      <listOfAnnotations>
+        <annotation name="Description">product creation</annotation>
+      </listOfAnnotations>
+      <listOfReactants>
+        <speciesReference name="ES" />
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference name="P" />
+        <speciesReference name="E" />
+      </listOfProducts>
+    </reaction>
+  </listOfReactions>
+</fernml>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="fernml" type="FERNML">
+    <xsd:key name="speciesKey">
+      <xsd:selector xpath="./listOfSpecies/species" />
+      <xsd:field xpath="@name" />
+    </xsd:key>
+    <xsd:keyref name="listOfSpecieslistOfReactants" refer="speciesKey">
+      <xsd:selector xpath="listOfReactions/reaction/listOfReactants/speciesReference" />
+      <xsd:field xpath="@name" />
+    </xsd:keyref>
+    <xsd:keyref name="listOfSpecieslistOfProducts" refer="speciesKey">
+      <xsd:selector xpath="listOfReactions/reaction/listOfProducts/speciesReference" />
+      <xsd:field xpath="@name" />
+    </xsd:keyref>
+  </xsd:element>
+  <xsd:complexType name="FERNML">
+    <xsd:complexContent>
+      <xsd:extension base="RNBase">
+        <xsd:sequence>
+          <xsd:element name="listOfSpecies" type="ListOfSpecies" />
+          <xsd:element name="listOfReactions" type="ListOfReactions" />
+        </xsd:sequence>
+        <xsd:attribute name="version" type="xsd:string" use="required" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ListOfSpecies">
+    <xsd:sequence>
+      <xsd:element name="species" type="Species" minOccurs="1" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ListOfReactions">
+    <xsd:sequence>
+      <xsd:element name="reaction" type="Reaction" minOccurs="1" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="Species">
+    <xsd:complexContent>
+      <xsd:extension base="RNBase">
+        <xsd:attribute name="initialAmount" type="xsd:float" use="required" />
+        <xsd:attribute name="name" type="xsd:string" use="required" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Reaction">
+    <xsd:complexContent>
+      <xsd:extension base="RNBase">
+        <xsd:sequence>
+          <xsd:element name="listOfReactants" type="ListOfSpeciesReferences" />
+          <xsd:element name="listOfProducts" type="ListOfSpeciesReferences" />
+        </xsd:sequence>
+        <xsd:attribute name="kineticConstant" type="xsd:float" use="required" />
+        <xsd:attribute name="kineticConstantReversible" type="xsd:float" use="optional" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ListOfSpeciesReferences">
+    <xsd:sequence>
+      <xsd:element name="speciesReference" type="SpeciesReference" minOccurs="1" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="SpeciesReference">
+    <xsd:attribute name="name" type="xsd:string" use="required" />
+  </xsd:complexType>
+  <xsd:complexType name="RNBase">
+    <xsd:sequence>
+      <xsd:element name="listOfAnnotations" type="ListOfAnnotations" minOccurs="0" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ListOfAnnotations">
+    <xsd:sequence>
+      <xsd:element name="annotation" type="Annotation" minOccurs="1" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="Annotation">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="name" type="xsd:string" use="required" />
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+</xsd:schema>
