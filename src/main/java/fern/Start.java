@@ -2,6 +2,7 @@ package fern;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import fern.simulation.observer.AmountIntervalObserver;
 import fern.tools.NetworkTools;
 import fern.tools.NumberTools;
 import fern.tools.gnuplot.GnuPlot;
+import org.simulator.math.odes.MultiTable;
 
 public class Start {
 
@@ -32,7 +34,7 @@ public class Start {
 			Simulator sim = createSimulator(net,orderedArgs);
 			AmountIntervalObserver obs = createObserver(sim,orderedArgs);
 			GnuPlot gp = runSimulation(sim,obs,orderedArgs);
-			output(obs,orderedArgs, gp);
+			output(obs,sim,orderedArgs,gp);
 			
 		}catch(Exception e) {
 			System.out.println(getUsage());
@@ -42,7 +44,7 @@ public class Start {
 	}
 
 	
-	private static void output(AmountIntervalObserver obs,
+	private static void output(AmountIntervalObserver obs, Simulator sim,
 			Map<String, Object> orderedArgs, GnuPlot gp) throws IOException {
 		obs.toGnuplot(gp);
 		gp.setDefaultStyle("with linespoints");
@@ -56,8 +58,36 @@ public class Start {
 			gp.plot();
 			gp.saveImage(new File((String)orderedArgs.get("p")));
 		}
-		
-		System.out.println(gp.getData().get(0));
+
+		double[][] output = obs.getAvgLog();
+		double[] timepoints = output[0];
+		double[] initialValues = new double[output.length-1];
+		String[] identifiers = getIdentifiers(sim, orderedArgs);
+		String[] colNames = new String[identifiers.length + 1];
+
+		colNames[0] = "time";
+		for (int i=1;i<colNames.length;i++){
+			colNames[i] = identifiers[i-1];
+		}
+
+		for (int i = 0; i < initialValues.length;i++){
+			initialValues[i] = output[i+1][0];
+		}
+
+		double[][] result = new double[output[0].length][output.length-1];
+		for (int i = 0; i != result.length; i++) {
+			Arrays.fill(result[i], Double.NaN);
+		}
+
+		for (int i = 0; i < result.length; i++){
+			for (int j = 0; j < result[0].length; j++){
+				result[i][j] = output[j+1][i];
+			}
+		}
+
+		MultiTable multiTable = new MultiTable(timepoints, result, identifiers, null);
+		System.out.println(multiTable);
+
 	}
 
 
@@ -83,16 +113,18 @@ public class Start {
 		return gp;
 	}
 
-
 	private static AmountIntervalObserver createObserver(Simulator sim,
 			Map<String, Object> orderedArgs) {
+		String[] species = getIdentifiers(sim, orderedArgs);
+		return (AmountIntervalObserver) sim.addObserver(new AmountIntervalObserver(sim,(Double)orderedArgs.get("interval"),((Double)orderedArgs.get("time")).intValue(),species));
+	}
+
+	private static String[] getIdentifiers(Simulator sim, Map<String, Object> orderedArgs) {
 		String[] species = (String[]) orderedArgs.get("s");
 		if (species.length==0)
 			species = NetworkTools.getSpeciesNames(sim.getNet(), NumberTools.getNumbersTo(sim.getNet().getNumSpecies()-1));
-		
-		return (AmountIntervalObserver) sim.addObserver(new AmountIntervalObserver(sim,(Double)orderedArgs.get("interval"),species));
+		return species;
 	}
-
 
 	private static Simulator createSimulator(Network net,
 			Map<String, Object> orderedArgs) {

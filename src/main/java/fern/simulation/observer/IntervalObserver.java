@@ -36,6 +36,7 @@ public abstract class IntervalObserver extends Observer  implements GnuPlotObser
 	private double interval;
 	private String[] entityName;
 	private LinkedList<double[]> log;
+	private int duration;
 	
 	
 	
@@ -58,6 +59,23 @@ public abstract class IntervalObserver extends Observer  implements GnuPlotObser
 		log = new LinkedList<double[]>();
 		
 		avgLog = new double[this.entityName.length+1][0];
+		quality = new int[0];
+	}
+
+	public IntervalObserver(Simulator sim, double interval, int duration, String[] entityName) {
+		super(sim);
+		this.interval = interval;
+		this.duration = duration;
+
+		if (entityName.length==0)
+			throw new IllegalArgumentException("At least one entity has to be specified!");
+
+		this.entityName = entityName;
+
+
+		log = new LinkedList<double[]>();
+
+		avgLog = new double[this.entityName.length+1][this.duration + 1];
 		quality = new int[0];
 	}
 	
@@ -106,7 +124,7 @@ public abstract class IntervalObserver extends Observer  implements GnuPlotObser
 			if( actLog[0].length>1)
 				actLog[0][actLog[0].length-1] = actLog[0][actLog[0].length-2]+interval; 
 		}
-		
+
 		double[][] newAvgLog = new double[entityName.length+1][Math.max(avgLog[0].length,actLog[0].length)];
 		for (int i=0; i<newAvgLog.length; i++){
 			for (int j=0; j<newAvgLog[i].length; j++){
@@ -114,8 +132,12 @@ public abstract class IntervalObserver extends Observer  implements GnuPlotObser
 					newAvgLog[i][j] = (actLog[i][j]+avgLog[i][j]*getNumSimulations())/(getNumSimulations()+1);
 				else if (j<actLog[i].length)	
 					newAvgLog[i][j] = actLog[i][j];
-				else 
+				else {
 					newAvgLog[i][j] = avgLog[i][j];
+					if ((i == 0) && (j >= 1)){
+						newAvgLog[i][j] = newAvgLog[i][j-1] + 1;
+					}
+				}
 			}
 		}
 		int[] newQuality = new int[Math.max(avgLog[0].length,actLog[0].length)];
@@ -303,7 +325,7 @@ public abstract class IntervalObserver extends Observer  implements GnuPlotObser
 		return re;
 	}
 
-	
-
-	
+	public double[][] getAvgLog() {
+		return avgLog;
+	}
 }

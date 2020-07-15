@@ -46,6 +46,19 @@ public class AmountIntervalObserver extends IntervalObserver {
 		this.speciesIndices = NetworkTools.getSpeciesIndices(sim.getNet(), speciesName); 
 		
 	}
+
+	/**
+	 * Creates the observer for a given simulator, a given interval and given species names with
+	 * total simulation time.
+	 * @param sim
+	 * @param interval
+	 * @param duration
+	 * @param speciesName
+	 */
+	public AmountIntervalObserver(Simulator sim, double interval, int duration, String...speciesName) {
+		super(sim,interval, duration,speciesName);
+		this.speciesIndices = NetworkTools.getSpeciesIndices(sim.getNet(), speciesName);
+	}
 	
 	/**
 	 * Gets the actual amount of a species.

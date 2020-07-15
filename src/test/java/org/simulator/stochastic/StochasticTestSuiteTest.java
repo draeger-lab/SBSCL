@@ -1,0 +1,222 @@
+package org.simulator.stochastic;
+
+import fern.network.FeatureNotSupportedException;
+import fern.network.Network;
+import fern.simulation.Simulator;
+import fern.simulation.algorithm.AbstractBaseTauLeaping;
+import fern.simulation.algorithm.GillespieEnhanced;
+import fern.simulation.algorithm.HybridMaximalTimeStep;
+import fern.simulation.algorithm.TauLeapingSpeciesPopulationBoundSimulator;
+import fern.simulation.observer.AmountIntervalObserver;
+import fern.tools.NetworkTools;
+import fern.tools.NumberTools;
+import fern.tools.gnuplot.GnuPlot;
+import org.jdom.JDOMException;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.simulator.TestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+/**
+ * Run full stochastic test suite
+ */
+@RunWith(value = Parameterized.class)
+public class StochasticTestSuiteTest {
+
+  private String path;
+  private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
+  private static final String DURATION = "duration";
+  private static final String STEPS = "steps";
+  private static final String STOCHASTIC_TEST_SUITE_PATH = "STOCHASTIC_TEST_SUITE_PATH";
+
+  public StochasticTestSuiteTest(String path) {
+    this.path = path;
+  }
+
+  @Parameters(name = "{index}: {0}")
+  public static Iterable<Object[]> data() {
+
+    // environment variable for semantic test case folder
+    String testsuite_path = TestUtils.getPathForTestResource(File.separator + "sbml-test-suite" + File.separator + "cases" + File.separator + "stochastic" + File.separator);
+    System.out.println(STOCHASTIC_TEST_SUITE_PATH + ": " + testsuite_path);
+
+    if (testsuite_path.length() == 0) {
+      Object[][] resources = new String[0][1];
+      logger.warn(String.format("%s environment variable not set.", STOCHASTIC_TEST_SUITE_PATH));
+      return Arrays.asList(resources);
+    }
+
+    int N = 39;
+    Object[][] resources = new String[N][1];
+    for (int model_number = 1; model_number <= N; model_number++){
+
+      // System.out.println("model " + model_number);
+
+      StringBuilder modelFile = new StringBuilder();
+      modelFile.append(model_number);
+      while (modelFile.length() < 5) {
+        modelFile.insert(0, '0');
+      }
+      String path = modelFile.toString();
+      modelFile.append(File.separator);
+      modelFile.append(path);
+      modelFile.insert(0, testsuite_path);
+      path = modelFile.toString();
+
+      resources[(model_number - 1)][0] = path;
+
+    }
+    return Arrays.asList(resources);
+
+  }
+
+  @Test
+  public void testModel() throws IOException {
+    String sbmlfile, csvfile, configfile;
+    csvfile = path + "-results.csv";
+    configfile = path + "-settings.txt";
+
+    Properties props = new Properties();
+    props.load(new BufferedReader(new FileReader(configfile)));
+
+    double duration = (!props.getProperty(DURATION).isEmpty()) ? Double.parseDouble(props.getProperty(DURATION)) : 0d;
+    double steps = (!props.getProperty(STEPS).isEmpty()) ? Double.parseDouble(props.getProperty(STEPS)) : 0d;
+
+    Map<String, Object> orderedArgs = new HashMap<>();
+
+    sbmlfile = path + "-sbml-l3v1.xml";
+
+    orderedArgs.put("file", sbmlfile);
+    orderedArgs.put("time", duration);
+    orderedArgs.put("interval", (duration * 1d / steps));
+    orderedArgs.put("n", 1);
+    orderedArgs.put("s", new String[0]);
+    orderedArgs.put("method", 0.0);
+    orderedArgs.put("i", false);
+    orderedArgs.put("p", "");
+
+    Network net = null;
+    boolean errorInNet = false;
+    try {
+      net = createNetwork(orderedArgs);
+    } catch (Exception e){
+      errorInNet = true;
+    }
+    Assert.assertNotNull(net);
+    Assert.assertFalse(errorInNet);
+
+    Simulator sim = null;
+    boolean errorInSimulator = false;
+    try {
+      sim = createSimulator(net, orderedArgs);
+    } catch (Exception e){
+      errorInSimulator = true;
+    }
+    Assert.assertNotNull(sim);
+    Assert.assertFalse(errorInSimulator);
+
+    AmountIntervalObserver obs = null;
+    boolean errorInObserver = false;
+    try {
+      obs = createObserver(sim, orderedArgs);
+    } catch (Exception e) {
+      errorInObserver = true;
+    }
+    Assert.assertNotNull(obs);
+    Assert.assertFalse(errorInObserver);
+
+    boolean errorInSimulation = false;
+    try {
+      runSimulation(sim, obs, orderedArgs);
+    } catch (Exception e) {
+      errorInSimulation = true;
+    }
+    Assert.assertFalse(errorInSimulation);
+
+  }
+
+  private static void output(AmountIntervalObserver obs,
+      Map<String, Object> orderedArgs, GnuPlot gp) throws IOException {
+    obs.toGnuplot(gp);
+    gp.setDefaultStyle("with linespoints");
+
+    if ((Boolean)orderedArgs.get("i")) {
+      gp.setVisible(true);
+      gp.plot();
+    }
+
+    if (((String)orderedArgs.get("p")).length()>0) {
+      gp.plot();
+      gp.saveImage(new File((String)orderedArgs.get("p")));
+    }
+
+    System.out.println(gp.getData().get(0));
+  }
+
+
+  private static GnuPlot runSimulation(Simulator sim, AmountIntervalObserver obs,
+      Map<String, Object> orderedArgs) throws IOException {
+
+    GnuPlot gp = new GnuPlot();
+    gp.setDefaultStyle("with linespoints");
+    if ((Boolean)orderedArgs.get("i")) {
+      gp.setVisible(true);
+    }
+
+    for (int i=0; i<(Integer)orderedArgs.get("n"); i++) {
+      sim.start((Double)orderedArgs.get("time"));
+
+      if ((Boolean)orderedArgs.get("i")) {
+        obs.toGnuplot(gp);
+        gp.plot();
+        gp.clearData();
+      }
+    }
+
+    return gp;
+  }
+
+
+  private static AmountIntervalObserver createObserver(Simulator sim,
+      Map<String, Object> orderedArgs) {
+    String[] species = (String[]) orderedArgs.get("s");
+    if (species.length==0)
+      species = NetworkTools.getSpeciesNames(sim.getNet(), NumberTools.getNumbersTo(sim.getNet().getNumSpecies()-1));
+    return (AmountIntervalObserver) sim.addObserver(new AmountIntervalObserver(sim,(Double)orderedArgs.get("interval"),((Double)orderedArgs.get("time")).intValue(),species));
+  }
+
+  private static Network createNetwork(Map<String, Object> orderedArgs) throws IOException,
+      JDOMException, FeatureNotSupportedException, ClassNotFoundException {
+    return NetworkTools.loadNetwork(new File((String) orderedArgs.get("file")));
+  }
+
+  private static Simulator createSimulator(Network net,
+      Map<String, Object> orderedArgs) {
+    double eps = (Double) orderedArgs.get("method");
+    if (eps==0)
+      return new GillespieEnhanced(net);
+    else if (eps==-1)
+      return new HybridMaximalTimeStep(net);
+    else {
+      AbstractBaseTauLeaping re = new TauLeapingSpeciesPopulationBoundSimulator(net);
+      re.setEpsilon(eps);
+      return re;
+    }
+  }
+
+
+
+}
