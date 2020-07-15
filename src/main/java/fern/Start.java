@@ -61,18 +61,7 @@ public class Start {
 
 		double[][] output = obs.getAvgLog();
 		double[] timepoints = output[0];
-		double[] initialValues = new double[output.length-1];
 		String[] identifiers = getIdentifiers(sim, orderedArgs);
-		String[] colNames = new String[identifiers.length + 1];
-
-		colNames[0] = "time";
-		for (int i=1;i<colNames.length;i++){
-			colNames[i] = identifiers[i-1];
-		}
-
-		for (int i = 0; i < initialValues.length;i++){
-			initialValues[i] = output[i+1][0];
-		}
 
 		double[][] result = new double[output[0].length][output.length-1];
 		for (int i = 0; i != result.length; i++) {
