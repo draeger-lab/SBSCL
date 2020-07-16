@@ -36,7 +36,7 @@ import java.util.*;
 public class StochasticTestSuiteTest {
 
   private String path;
-  private static final int TOTAL_SIMULATION_COUNT = 10000;
+  private static final int TOTAL_SIMULATION_COUNT = 100;
   private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
   private static final String DURATION = "duration";
   private static final String MEAN = "mean";
@@ -111,6 +111,7 @@ public class StochasticTestSuiteTest {
     orderedArgs.put("i", false);
     orderedArgs.put("p", "");
 
+    // Creates a network from the SBML model
     Network net = null;
     boolean errorInNet = false;
     try {
@@ -121,6 +122,7 @@ public class StochasticTestSuiteTest {
     Assert.assertNotNull(net);
     Assert.assertFalse(errorInNet);
 
+    // Initializes the simulator for performing the stochastic simulation
     Simulator sim = null;
     boolean errorInSimulator = false;
     try {
@@ -131,6 +133,7 @@ public class StochasticTestSuiteTest {
     Assert.assertNotNull(sim);
     Assert.assertFalse(errorInSimulator);
 
+    // Initializes the observer for the amounts of molecule species
     AmountIntervalObserver obs = null;
     boolean errorInObserver = false;
     try {
@@ -141,6 +144,7 @@ public class StochasticTestSuiteTest {
     Assert.assertNotNull(obs);
     Assert.assertFalse(errorInObserver);
 
+    // Runs the stochastic simulation
     boolean errorInSimulation = false;
     try {
       runSimulation(sim, obs, orderedArgs);
@@ -149,10 +153,16 @@ public class StochasticTestSuiteTest {
     }
     Assert.assertFalse(errorInSimulation);
 
+    // Gets the result from the observer
     double[][] output = obs.getAvgLog();
-    double[] timepoints = output[0];
+
+    // Gets the time points of the simulation
+    double[] timepoints = output.clone()[0];
+
+    // Gets the identifiers of the molecule species
     String[] identifiers = getIdentifiers(sim, orderedArgs);
 
+    // 2D result array storing a simulation solution of particular simulation
     double[][] result = new double[output[0].length][output.length-1];
     for (int i = 0; i != result.length; i++) {
       Arrays.fill(result[i], Double.NaN);
@@ -164,14 +174,32 @@ public class StochasticTestSuiteTest {
       }
     }
 
+    /*
+     * Array of MultiTable storing the results of each stochastic simulation
+     */
     MultiTable[] solution = new MultiTable[TOTAL_SIMULATION_COUNT];
     solution[0] = new MultiTable(timepoints, result, identifiers, null);
 
-    double[][] result1 = new double[output[0].length][2 * output.length - 2];
-    for (int i = 0; i != result1.length; i++) {
-      Arrays.fill(result1[i], Double.NaN);
+    // 2D array storing the square of the results required for the standard
+    // deviation.
+    double[][] square = new double[result.length][result[0].length];
+    for (int i = 0; i < square.length; i++){
+      for (int j = 0; j < square[0].length; j++){
+        square[i][j] = Math.pow(result[i][j], 2);
+      }
     }
-    MultiTable meanSD = new MultiTable(timepoints, result1, list, null);
+
+    // Stores the square_sum of the results of the n stochastic simulations
+    MultiTable square_sum = new MultiTable(timepoints, square, identifiers, null);
+
+    double[][] meanSDArray = new double[output[0].length][2 * output.length - 2];
+    for (int i = 0; i != meanSDArray.length; i++) {
+      Arrays.fill(meanSDArray[i], Double.NaN);
+    }
+
+    // Stores the updated mean and standard deviations of the results till
+    // n stochastic simulations.
+    MultiTable meanSD = new MultiTable(timepoints, meanSDArray, list, null);
     for (int i=1;i<meanSD.getColumnCount();i++){
       if (meanSD.getColumnName(i).contains(MEAN)) {
         String columnName = meanSD.getColumnName(i).split("-")[0];
@@ -187,8 +215,10 @@ public class StochasticTestSuiteTest {
       }
     }
 
+    // Runs the stochastic simulation repeatedly
     for (int p = 1; p < TOTAL_SIMULATION_COUNT; p++) {
 
+      // Initialize the observer again for getting new results
       try {
         obs = createObserver(sim, orderedArgs);
       } catch (Exception e) {
@@ -197,6 +227,7 @@ public class StochasticTestSuiteTest {
       Assert.assertNotNull(obs);
       Assert.assertFalse(errorInObserver);
 
+      // Runs the simulation again
       try {
         runSimulation(sim, obs, orderedArgs);
       } catch (Exception e) {
@@ -204,8 +235,10 @@ public class StochasticTestSuiteTest {
       }
       Assert.assertFalse(errorInSimulation);
 
+      // Gets updated output from observer
       output = obs.getAvgLog();
 
+      // Updates the current simulation result
       result = new double[output[0].length][output.length-1];
 
       for (int i = 0; i < result.length; i++){
@@ -214,27 +247,43 @@ public class StochasticTestSuiteTest {
         }
       }
 
+      // Stores the pth simulation solution
       solution[p] = new MultiTable(timepoints, result, identifiers, null);
 
+      // Updates the square sum using the solution from pth simulation
+      for (int i = 1; i < square_sum.getColumnCount(); i++) {
+        Column column = square_sum.getColumn(i);
+        for (int j = 0; j < column.getRowCount(); j++) {
+          double currValue = column.getValue(j);
+          currValue += Math.pow(result[j][i-1], 2);
+          square_sum.setValueAt(currValue, j, i);
+        }
+      }
+
+      // Updates the mean and standard deviation after running the pth
+      // simulation
       for (int i = 1; i < meanSD.getColumnCount(); i++) {
-        if (meanSD.getColumnName(i).contains("mean")) {
+        if (meanSD.getColumnName(i).contains(MEAN)) {
           String columnName = meanSD.getColumnName(i).split("-")[0];
           Column column = solution[p].getColumn(columnName);
           for (int j = 0; j < column.getRowCount(); j++) {
             double currMean = meanSD.getValueAt(j, i);
-            double updatedMean = currMean * p * 1d + column.getValue(j);
-            updatedMean /= (p + 1);
+            double updatedMean = (currMean * p + column.getValue(j)) / (p + 1);
             meanSD.setValueAt(updatedMean, j, i);
           }
         } else {
           Column column = meanSD.getColumn(i);
+          String meanColumnId = meanSD.getColumnName(i).split("-")[0].concat("-mean");
+          Column meanColumn = meanSD.getColumn(meanColumnId);
+          Column squareSumColumn = square_sum.getColumn(meanSD.getColumnName(i).split("-")[0]);
           for (int j = 0; j < column.getRowCount(); j++) {
-            meanSD.setValueAt(0d, j, i);
+            double meanValue = meanColumn.getValue(j);
+            double sdValue = Math.sqrt((squareSumColumn.getValue(j) / (p + 1)) - Math.pow(meanValue, 2));
+            meanSD.setValueAt(sdValue, j, i);
           }
         }
       }
     }
-    System.out.println("MeanSD: " + meanSD);
 
   }
 

@@ -141,12 +141,14 @@ public abstract class IntervalObserver extends Observer  implements GnuPlotObser
 			}
 		}
 		int[] newQuality = new int[Math.max(avgLog[0].length,actLog[0].length)];
-		System.arraycopy(quality, 0, newQuality, 0, quality.length);
+		System.arraycopy(quality, 0, newQuality, 0, Math.min(newQuality.length, quality.length));
 		for (int i=0; i<actLog[0].length; i++)
 			newQuality[i]++;
 		
 		quality = newQuality;
-		avgLog = newAvgLog;
+		for (int i = 0; i < avgLog.length; i++){
+			System.arraycopy(newAvgLog[i], 0, avgLog[i], 0, avgLog[0].length);
+		}
 		
 	}
 	
