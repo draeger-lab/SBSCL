@@ -18,6 +18,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.simulator.TestUtils;
+import org.simulator.math.odes.MultiTable;
+import org.simulator.math.odes.MultiTable.Block.Column;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +27,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Run full stochastic test suite
@@ -37,8 +36,10 @@ import java.util.Properties;
 public class StochasticTestSuiteTest {
 
   private String path;
+  private static final int TOTAL_SIMULATION_COUNT = 10000;
   private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
   private static final String DURATION = "duration";
+  private static final String MEAN = "mean";
   private static final String STEPS = "steps";
   private static final String STOCHASTIC_TEST_SUITE_PATH = "STOCHASTIC_TEST_SUITE_PATH";
 
@@ -94,6 +95,8 @@ public class StochasticTestSuiteTest {
 
     double duration = (!props.getProperty(DURATION).isEmpty()) ? Double.parseDouble(props.getProperty(DURATION)) : 0d;
     double steps = (!props.getProperty(STEPS).isEmpty()) ? Double.parseDouble(props.getProperty(STEPS)) : 0d;
+    String outputColNames = props.getProperty("output");
+    String[] list = outputColNames.split("\\s*, \\s*");
 
     Map<String, Object> orderedArgs = new HashMap<>();
 
@@ -146,26 +149,94 @@ public class StochasticTestSuiteTest {
     }
     Assert.assertFalse(errorInSimulation);
 
-  }
+    double[][] output = obs.getAvgLog();
+    double[] timepoints = output[0];
+    String[] identifiers = getIdentifiers(sim, orderedArgs);
 
-  private static void output(AmountIntervalObserver obs,
-      Map<String, Object> orderedArgs, GnuPlot gp) throws IOException {
-    obs.toGnuplot(gp);
-    gp.setDefaultStyle("with linespoints");
-
-    if ((Boolean)orderedArgs.get("i")) {
-      gp.setVisible(true);
-      gp.plot();
+    double[][] result = new double[output[0].length][output.length-1];
+    for (int i = 0; i != result.length; i++) {
+      Arrays.fill(result[i], Double.NaN);
     }
 
-    if (((String)orderedArgs.get("p")).length()>0) {
-      gp.plot();
-      gp.saveImage(new File((String)orderedArgs.get("p")));
+    for (int i = 0; i < result.length; i++){
+      for (int j = 0; j < result[0].length; j++){
+        result[i][j] = output[j+1][i];
+      }
     }
 
-    System.out.println(gp.getData().get(0));
-  }
+    MultiTable[] solution = new MultiTable[TOTAL_SIMULATION_COUNT];
+    solution[0] = new MultiTable(timepoints, result, identifiers, null);
 
+    double[][] result1 = new double[output[0].length][2 * output.length - 2];
+    for (int i = 0; i != result1.length; i++) {
+      Arrays.fill(result1[i], Double.NaN);
+    }
+    MultiTable meanSD = new MultiTable(timepoints, result1, list, null);
+    for (int i=1;i<meanSD.getColumnCount();i++){
+      if (meanSD.getColumnName(i).contains(MEAN)) {
+        String columnName = meanSD.getColumnName(i).split("-")[0];
+        Column column = solution[0].getColumn(columnName);
+        for (int j = 0; j < column.getRowCount(); j++) {
+          meanSD.setValueAt(column.getValue(j), j, i);
+        }
+      } else {
+        Column column = meanSD.getColumn(i);
+        for (int j = 0; j < column.getRowCount(); j++) {
+          meanSD.setValueAt(0d, j, i);
+        }
+      }
+    }
+
+    for (int p = 1; p < TOTAL_SIMULATION_COUNT; p++) {
+
+      try {
+        obs = createObserver(sim, orderedArgs);
+      } catch (Exception e) {
+        errorInObserver = true;
+      }
+      Assert.assertNotNull(obs);
+      Assert.assertFalse(errorInObserver);
+
+      try {
+        runSimulation(sim, obs, orderedArgs);
+      } catch (Exception e) {
+        errorInSimulation = true;
+      }
+      Assert.assertFalse(errorInSimulation);
+
+      output = obs.getAvgLog();
+
+      result = new double[output[0].length][output.length-1];
+
+      for (int i = 0; i < result.length; i++){
+        for (int j = 0; j < result[0].length; j++){
+          result[i][j] = output[j+1][i];
+        }
+      }
+
+      solution[p] = new MultiTable(timepoints, result, identifiers, null);
+
+      for (int i = 1; i < meanSD.getColumnCount(); i++) {
+        if (meanSD.getColumnName(i).contains("mean")) {
+          String columnName = meanSD.getColumnName(i).split("-")[0];
+          Column column = solution[p].getColumn(columnName);
+          for (int j = 0; j < column.getRowCount(); j++) {
+            double currMean = meanSD.getValueAt(j, i);
+            double updatedMean = currMean * p * 1d + column.getValue(j);
+            updatedMean /= (p + 1);
+            meanSD.setValueAt(updatedMean, j, i);
+          }
+        } else {
+          Column column = meanSD.getColumn(i);
+          for (int j = 0; j < column.getRowCount(); j++) {
+            meanSD.setValueAt(0d, j, i);
+          }
+        }
+      }
+    }
+    System.out.println("MeanSD: " + meanSD);
+
+  }
 
   private static GnuPlot runSimulation(Simulator sim, AmountIntervalObserver obs,
       Map<String, Object> orderedArgs) throws IOException {
@@ -192,10 +263,15 @@ public class StochasticTestSuiteTest {
 
   private static AmountIntervalObserver createObserver(Simulator sim,
       Map<String, Object> orderedArgs) {
+    String[] species = getIdentifiers(sim, orderedArgs);
+    return (AmountIntervalObserver) sim.addObserver(new AmountIntervalObserver(sim,(Double)orderedArgs.get("interval"),((Double)orderedArgs.get("time")).intValue(),species));
+  }
+
+  private static String[] getIdentifiers(Simulator sim, Map<String, Object> orderedArgs) {
     String[] species = (String[]) orderedArgs.get("s");
     if (species.length==0)
       species = NetworkTools.getSpeciesNames(sim.getNet(), NumberTools.getNumbersTo(sim.getNet().getNumSpecies()-1));
-    return (AmountIntervalObserver) sim.addObserver(new AmountIntervalObserver(sim,(Double)orderedArgs.get("interval"),((Double)orderedArgs.get("time")).intValue(),species));
+    return species;
   }
 
   private static Network createNetwork(Map<String, Object> orderedArgs) throws IOException,
