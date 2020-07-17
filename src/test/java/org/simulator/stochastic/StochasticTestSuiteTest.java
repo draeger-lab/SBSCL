@@ -17,7 +17,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.simulator.TestUtils;
+import org.simulator.io.CSVImporter;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.MultiTable.Block.Column;
 import org.slf4j.Logger;
@@ -36,7 +39,7 @@ import java.util.*;
 public class StochasticTestSuiteTest {
 
   private String path;
-  private static final int TOTAL_SIMULATION_COUNT = 100;
+  private static final int TOTAL_SIMULATION_COUNT = 1000;
   private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
   private static final String DURATION = "duration";
   private static final String MEAN = "mean";
@@ -284,6 +287,50 @@ public class StochasticTestSuiteTest {
         }
       }
     }
+
+    Model model = null;
+    boolean errorInModelReading = false;
+    try {
+      model = (new SBMLReader()).readSBML(sbmlfile).getModel();
+    } catch (Exception e) {
+      errorInModelReading = true;
+      e.printStackTrace();
+    }
+    Assert.assertNotNull(model);
+    Assert.assertFalse(errorInModelReading);
+
+
+    CSVImporter csvImporter = new CSVImporter();
+    MultiTable inputData = csvImporter.convert(model, csvfile);
+
+    MultiTable left = meanSD;
+    MultiTable right = inputData;
+    if (meanSD.isSetTimePoints() && inputData.isSetTimePoints()) {
+      left = meanSD.filter(inputData.getTimePoints());
+      right = inputData.filter(meanSD.getTimePoints());
+    }
+
+    double sqrtN = Math.sqrt(TOTAL_SIMULATION_COUNT);
+    double sqrtN2 = Math.sqrt(TOTAL_SIMULATION_COUNT * 1d / 2);
+    System.out.println(left);
+
+    for (int i = 1; i < left.getColumnCount(); i++) {
+      Column column = left.getColumn(i);
+      if (left.getColumnName(i).contains(MEAN)) {
+        for (int j = 1; j < column.getRowCount(); j++){
+          String speciesName = column.getColumnName().split("-")[0];
+          String sdColumnName = speciesName.concat("-sd");
+          double meanDistance = sqrtN * (left.getValueAt(j, i) - right.getValueAt(j, i)) / right.getColumn(sdColumnName).getValue(j);
+          Assert.assertTrue((meanDistance > -3) && (meanDistance < 3));
+        }
+      } else {
+        for (int j = 1; j < column.getRowCount(); j++){
+          double sdDistance = sqrtN2 * ((Math.pow(left.getValueAt(j, i), 2) / Math.pow(right.getValueAt(j, i), 2)) - 1);
+          Assert.assertTrue((sdDistance > -5) && (sdDistance < 5))  ;
+        }
+      }
+    }
+
 
   }
 
