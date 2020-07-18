@@ -71,19 +71,25 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 		super(file.toString());
 
 		document = new SBMLReader().readSBML(file.toString());
-		
+
 		if (!ignoreExceptions) {
-			if (document.getModel().getNumRules()>0)
+			if (document.getModel().getNumRules() > 0) {
 				throw new FeatureNotSupportedException("Rules are not allowed at the moment!");
-			if (document.getModel().getNumConstraints()>0)
+			}
+			if (document.getModel().getNumConstraints() > 0) {
 				throw new FeatureNotSupportedException("Constraints are not allowed at the moment!");
-			if (document.getModel().getNumFunctionDefinitions()>0)
+			}
+			if (document.getModel().getNumFunctionDefinitions() > 0) {
 				throw new FeatureNotSupportedException("Function definitions are not allowed at the moment!");
-			if (document.getModel().getNumInitialAssignments()>0)
+			}
+			if (document.getModel().getNumInitialAssignments() > 0) {
 				throw new FeatureNotSupportedException("Initial assignments are not allowed at the moment!");
-			for (int s=0; s<document.getModel().getNumSpecies(); s++)
-				if (!document.getModel().getSpecies(s).isSetHasOnlySubstanceUnits())
+			}
+			for (int s = 0; s < document.getModel().getNumSpecies(); s++) {
+				if (!document.getModel().getSpecies(s).isSetHasOnlySubstanceUnits()) {
 					throw new FeatureNotSupportedException("For each species the hasOnlySubstanceUnits flag has to be set!");
+				}
+			}
 		}
 		
 		model = document.getModel();

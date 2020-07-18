@@ -56,7 +56,7 @@ public class MathTree {
             ASTNode node = dfs.pop();
             if ((node.getNumChildren() == 0) && !node.isOperator() && !node.isNumber()){
                 Integer index = bindings.get(node.getName());
-                if (index != null && !re.contains(index)){
+                if ((index != null) && !re.contains(index)){
                     re.add(bindings.get(node.getName()));
                 }
             } else if (node.getNumChildren() != 0) {
