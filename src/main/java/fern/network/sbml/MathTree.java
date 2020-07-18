@@ -3,6 +3,8 @@ package fern.network.sbml;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
+import java.util.stream.Stream;
 
 import fern.network.AmountManager;
 import fern.simulation.Simulator;
@@ -48,8 +50,20 @@ public class MathTree {
      */
     public List<Integer> getSpecies() {
         List<Integer> re = new LinkedList<>();
-        for (int i = copiedAST.getChildCount() - 1; i > 0; i--){
-            re.add(bindings.get(copiedAST.getChild(i).getName()));
+        Stack<ASTNode> dfs = new Stack<>();
+        dfs.add(copiedAST);
+        while (!dfs.empty()) {
+            ASTNode node = dfs.pop();
+            if ((node.getNumChildren() == 0) && !node.isOperator() && !node.isNumber()){
+                Integer index = bindings.get(node.getName());
+                if (index != null && !re.contains(index)){
+                    re.add(bindings.get(node.getName()));
+                }
+            } else if (node.getNumChildren() != 0) {
+                for (int i = 0; i < node.getNumChildren(); i++){
+                    dfs.add(node.getChild(i));
+                }
+            }
         }
         return re;
     }

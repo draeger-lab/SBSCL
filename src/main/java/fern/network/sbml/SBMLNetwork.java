@@ -69,8 +69,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	 */
 	public SBMLNetwork(File file, boolean ignoreExceptions) throws FeatureNotSupportedException, IOException, XMLStreamException, ModelOverdeterminedException {
 		super(file.toString());
-		
-//		System.loadLibrary("sbmlj");
+
 		document = new SBMLReader().readSBML(file.toString());
 		
 		if (!ignoreExceptions) {
@@ -83,7 +82,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 			if (document.getModel().getNumInitialAssignments()>0)
 				throw new FeatureNotSupportedException("Initial assignments are not allowed at the moment!");
 			for (int s=0; s<document.getModel().getNumSpecies(); s++)
-				if (!document.getModel().getSpecies(s).getHasOnlySubstanceUnits())
+				if (!document.getModel().getSpecies(s).isSetHasOnlySubstanceUnits())
 					throw new FeatureNotSupportedException("For each species the hasOnlySubstanceUnits flag has to be set!");
 		}
 		
@@ -101,8 +100,6 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	 */
 	public SBMLNetwork(Network net) throws ModelOverdeterminedException {
 		super(net.getName());
-//		System.loadLibrary("sbmlj");
-		
 		
 		document = createDocument(net);
 		model = document.getModel();

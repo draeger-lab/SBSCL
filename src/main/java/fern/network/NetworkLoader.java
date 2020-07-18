@@ -42,17 +42,18 @@ public class NetworkLoader {
 		Network net = null;
 		String line;
 		while ((line=r.readLine())!=null)
-			if (line.toLowerCase().indexOf("<sbml")>=0) {
-				// use reflection to instanciate the sbml network
+			if (line.toLowerCase().contains("<sbml")) {
+				// use reflection to instantiate the sbml network
 				// this makes sure that the package fern.network.sbml can be deleted
 				try {
-				net = (Network)ClassLoader.getSystemClassLoader().loadClass("fern.network.sbml.SBMLNetwork").getConstructor(File.class).newInstance(file);
+					net = (Network)ClassLoader.getSystemClassLoader().loadClass("fern.network.sbml.SBMLNetwork").getConstructor(File.class).newInstance(file);
 				} catch (Exception e) {
 					r.close();
+					e.printStackTrace();
 					throw new ClassNotFoundException("The SBMLNetwork could not be loaded! Maybe libsml.so/dll or libsbmlj.jar is not accessible. Check your LD_LIBRARY variable and your classpath.\n"+e.getClass().getSimpleName()+" message: "+e.getMessage());
 				}
 				break;
-			} else if (line.toLowerCase().indexOf("<fernml")>=0) {
+			} else if (line.toLowerCase().contains("<fernml")) {
 				net = new FernMLNetwork(file);
 				break;
 			}
