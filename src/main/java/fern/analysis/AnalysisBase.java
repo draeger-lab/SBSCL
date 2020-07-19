@@ -22,25 +22,25 @@ public class AnalysisBase {
 	/**
 	 * Contains the network.
 	 */
-	protected Network network 			= null;
+	protected Network network = null;
 	
 	/**
 	 * Contains the original network if <code>network</code> is a <code>ModifierNetwork</code>.
 	 * Otherwise it contains also net <code>network</code>.
 	 */
-	protected Network originalNetwork 	= null;
+	protected Network originalNetwork = null;
 	
 	/**
 	 * Contains the adjacency list for molecule species towards reactions, where the species
 	 * is a reactant.
 	 */ 
-	protected int[][] adjListAsRea 		= null;
+	protected int[][] adjListAsRea = null;
 	
 	/**
 	 * Contains the adjacency list for molecule species towards reactions, where the species
 	 * is a product.
 	 */ 
-	protected int[][] adjListAsPro 		= null;
+	protected int[][] adjListAsPro = null;
 	
 	/**
 	 * Creates an analysis instance. In order to do that, a {@link Network} is required.

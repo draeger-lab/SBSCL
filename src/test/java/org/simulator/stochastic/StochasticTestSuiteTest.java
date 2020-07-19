@@ -312,7 +312,6 @@ public class StochasticTestSuiteTest {
 
     double sqrtN = Math.sqrt(TOTAL_SIMULATION_COUNT);
     double sqrtN2 = Math.sqrt(TOTAL_SIMULATION_COUNT * 1d / 2);
-    System.out.println(left);
 
     for (int i = 1; i < left.getColumnCount(); i++) {
       Column column = left.getColumn(i);
