@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version3" level="2" version="3">
+  <model id="lacy1000.xml">
+    <listOfCompartments>
+      <compartment id="Cell"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="PLac" compartment="Cell" initialAmount="1" hasOnlySubstanceUnits="true"/>
+      <species id="RNAP" compartment="Cell" initialAmount="55" hasOnlySubstanceUnits="true"/>
+      <species id="PLacRNAP" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true"/>
+      <species id="TrLacZ1" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true"/>
+      <species id="RbsLacZ" compartment="Cell" initialAmount="1" hasOnlySubstanceUnits="true"/>
+      <species id="TrLacZ2" compartment="Cell" initialAmount="18" hasOnlySubstanceUnits="true"/>
+      <species id="TrLacY1" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true"/>
+      <species id="RbsLacY" compartment="Cell" initialAmount="1" hasOnlySubstanceUnits="true"/>
+      <species id="TrLacY2" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true"/>
+      <species id="Ribosome" compartment="Cell" initialAmount="520" hasOnlySubstanceUnits="true"/>
+      <species id="RbsRibosomeLacZ" compartment="Cell" initialAmount="68" hasOnlySubstanceUnits="true"/>
+      <species id="RbsRibosomeLacY" compartment="Cell" initialAmount="68" hasOnlySubstanceUnits="true"/>
+      <species id="TrRbsLacZ" compartment="Cell" initialAmount="1780" hasOnlySubstanceUnits="true"/>
+      <species id="TrRbsLacY" compartment="Cell" initialAmount="696" hasOnlySubstanceUnits="true"/>
+      <species id="LacZ" compartment="Cell" initialAmount="16990" hasOnlySubstanceUnits="true"/>
+      <species id="LacY" compartment="Cell" initialAmount="16478" hasOnlySubstanceUnits="true"/>
+      <species id="dgrLacZ" compartment="Cell" initialAmount="435" hasOnlySubstanceUnits="true"/>
+      <species id="dgrLacY" compartment="Cell" initialAmount="413" hasOnlySubstanceUnits="true"/>
+      <species id="dgrRbsLacZ" compartment="Cell" initialAmount="214" hasOnlySubstanceUnits="true"/>
+      <species id="dgrRbsLacY" compartment="Cell" initialAmount="196" hasOnlySubstanceUnits="true"/>
+      <species id="lactose" compartment="Cell" initialAmount="210374" hasOnlySubstanceUnits="true"/>
+      <species id="LacZlactose" compartment="Cell" initialAmount="555" hasOnlySubstanceUnits="true"/>
+      <species id="product" compartment="Cell" initialAmount="85433124" hasOnlySubstanceUnits="true"/>
+    </listOfSpecies>
+    <listOfReactions>
+      <reaction id="PLac+RNAP-&gt;PLacRNAP" reversible="false">
+        <listOfReactants>
+          <speciesReference species="PLac"/>
+          <speciesReference species="RNAP"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="PLacRNAP"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 0.17 </cn>
+              <ci> PLac </ci>
+              <ci> RNAP </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="PLacRNAP-&gt;PLac+RNAP" reversible="false">
+        <listOfReactants>
+          <speciesReference species="PLacRNAP"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="PLac"/>
+          <speciesReference species="RNAP"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 10 </cn>
+              <ci> PLacRNAP </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="PLacRNAP-&gt;TrLacZ1" reversible="false">
+        <listOfReactants>
+          <speciesReference species="PLacRNAP"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="TrLacZ1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 1 </cn>
+              <ci> PLacRNAP </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="TrLacZ1-&gt;RbsLacZ+PLac+TrLacZ2" reversible="false">
+        <listOfReactants>
+          <speciesReference species="TrLacZ1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="RbsLacZ"/>
+          <speciesReference species="PLac"/>
+          <speciesReference species="TrLacZ2"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 1 </cn>
+              <ci> TrLacZ1 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="TrLacZ2-&gt;TrLacY1" reversible="false">
+        <listOfReactants>
+          <speciesReference species="TrLacZ2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="TrLacY1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 0.015 </cn>
+              <ci> TrLacZ2 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="TrLacY1-&gt;RbsLacY+TrLacY2" reversible="false">
+        <listOfReactants>
+          <speciesReference species="TrLacY1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="RbsLacY"/>
+          <speciesReference species="TrLacY2"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 1 </cn>
+              <ci> TrLacY1 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="TrLacY2-&gt;RNAP" reversible="false">
+        <listOfReactants>
+          <speciesReference species="TrLacY2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="RNAP"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 0.36 </cn>
+              <ci> TrLacY2 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Ribosome+RbsLacZ-&gt;RbsRibosomeLacZ" reversible="false">
+        <listOfReactants>
+          <speciesReference species="Ribosome"/>
+          <speciesReference species="RbsLacZ"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="RbsRibosomeLacZ"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 0.17 </cn>
+              <ci> Ribosome </ci>
+              <ci> RbsLacZ </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Ribosome+RbsLacY-&gt;RbsRibosomeLacY" reversible="false">
+        <listOfReactants>
+          <speciesReference species="Ribosome"/>
+          <speciesReference species="RbsLacY"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="RbsRibosomeLacY"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 0.17 </cn>
+              <ci> Ribosome </ci>
+              <ci> RbsLacY </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="RbsRibosomeLacZ-&gt;Ribosome+RbsLacZ" reversible="false">
+        <listOfReactants>
+          <speciesReference species="RbsRibosomeLacZ"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="Ribosome"/>
+          <speciesReference species="RbsLacZ"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 0.45 </cn>
+              <ci> RbsRibosomeLacZ </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="RbsRibosomeLacY-&gt;Ribosome+RbsLacY" reversible="false">
+        <listOfReactants>
+          <speciesReference species="RbsRibosomeLacY"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="Ribosome"/>
+          <speciesReference species="RbsLacY"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 0.45 </cn>
+              <ci> RbsRibosomeLacY </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="RbsRibosomeLacZ-&gt;TrRbsLacZ+RbsLacZ" reversible="false">
+        <listOfReactants>
+          <speciesReference species="RbsRibosomeLacZ"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="TrRbsLacZ"/>
+          <speciesReference species="RbsLacZ"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 0.4 </cn>
+              <ci> RbsRibosomeLacZ </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="RbsRibosomeLacY-&gt;TrRbsLacY+RbsLacY" reversible="false">
+        <listOfReactants>
+          <speciesReference species="RbsRibosomeLacY"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="TrRbsLacY"/>
+          <speciesReference species="RbsLacY"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 0.4 </cn>
+              <ci> RbsRibosomeLacY </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="TrRbsLacZ-&gt;LacZ" reversible="false">
+        <listOfReactants>
+          <speciesReference species="TrRbsLacZ"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="LacZ"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 0.015 </cn>
+              <ci> TrRbsLacZ </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="TrRbsLacY-&gt;LacY" reversible="false">
+        <listOfReactants>
+          <speciesReference species="TrRbsLacY"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="LacY"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 0.036 </cn>
+              <ci> TrRbsLacY </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="LacZ-&gt;dgrLacZ" reversible="false">
+        <listOfReactants>
+          <speciesReference species="LacZ"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="dgrLacZ"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn type="e-notation"> 6.42 <sep/> -5 </cn>
+              <ci> LacZ </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="LacY-&gt;dgrLacY" reversible="false">
+        <listOfReactants>
+          <speciesReference species="LacY"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="dgrLacY"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn type="e-notation"> 6.42 <sep/> -5 </cn>
+              <ci> LacY </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="RbsLacZ-&gt;dgrRbsLacZ" reversible="false">
+        <listOfReactants>
+          <speciesReference species="RbsLacZ"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="dgrRbsLacZ"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 0.3 </cn>
+              <ci> RbsLacZ </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="RbsLacY-&gt;dgrRbsLacY" reversible="false">
+        <listOfReactants>
+          <speciesReference species="RbsLacY"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="dgrRbsLacY"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 0.3 </cn>
+              <ci> RbsLacY </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="LacZ+lactose-&gt;LacZlactose" reversible="false">
+        <listOfReactants>
+          <speciesReference species="LacZ"/>
+          <speciesReference species="lactose"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="LacZlactose"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn type="e-notation"> 9.52 <sep/> -5 </cn>
+              <ci> LacZ </ci>
+              <ci> lactose </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="LacZlactose-&gt;product+LacZ" reversible="false">
+        <listOfReactants>
+          <speciesReference species="LacZlactose"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="product"/>
+          <speciesReference species="LacZ"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 431 </cn>
+              <ci> LacZlactose </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="LacY-&gt;lactose+LacY" reversible="false">
+        <listOfReactants>
+          <speciesReference species="LacY"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="lactose"/>
+          <speciesReference species="LacY"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <cn> 14 </cn>
+              <ci> LacY </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

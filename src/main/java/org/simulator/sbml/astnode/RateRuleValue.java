@@ -55,6 +55,12 @@ public class RateRuleValue extends RuleValue {
   private String variable;
 
   /**
+   * The rate rule of the compartment (if present) in which the species is
+   * present.
+   */
+  private RateRuleValue compartmentRateRule;
+
+  /**
    * @param nodeObject
    * @param index
    */
@@ -77,6 +83,7 @@ public class RateRuleValue extends RuleValue {
   public RateRuleValue(ASTNodeValue nodeObject, int index, Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder, String variable, boolean isAmount) {
     super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder, isAmount);
     this.variable = variable;
+    this.compartmentRateRule = null;
   }
 
   /**
@@ -109,7 +116,7 @@ public class RateRuleValue extends RuleValue {
    * @param time
    */
   public void processRule(double[] changeRate, double[] Y, double time) {
-    changeRate[index] = processAssignmentVariable(time);
+    changeRate[index] = processAssignmentVariable(time, compartmentRateRule);
     // when the size of a compartment changes, the concentrations of the
     // species located in this compartment have to change as well
     if (isCompartment) {
@@ -119,5 +126,9 @@ public class RateRuleValue extends RuleValue {
         }
       }
     }
+  }
+
+  public void setCompartmentRateRule(RateRuleValue compartmentRateRule) {
+    this.compartmentRateRule = compartmentRateRule;
   }
 }

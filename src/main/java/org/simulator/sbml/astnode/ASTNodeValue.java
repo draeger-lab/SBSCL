@@ -276,6 +276,7 @@ public class ASTNodeValue {
    */
   public double compileDouble(double time, double delay) {
     if (((this.time == time) && (delay == 0d)) || (isConstant && alreadyProcessed)) {
+      computeDoubleValue(delay);
       return doubleValue;
     } else {
       isDouble = true;

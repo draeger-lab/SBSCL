@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level1" level="1" version="2">
+  <model name="lacy.xml">
+    <listOfCompartments>
+      <compartment name="Cell"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species name="PLac" compartment="Cell" initialAmount="1"/>
+      <species name="RNAP" compartment="Cell" initialAmount="3"/>
+      <species name="PLacRNAP" compartment="Cell" initialAmount="0"/>
+      <species name="TrLacZ1" compartment="Cell" initialAmount="0"/>
+      <species name="RbsLacZ" compartment="Cell" initialAmount="0"/>
+      <species name="TrLacZ2" compartment="Cell" initialAmount="0"/>
+      <species name="TrLacY1" compartment="Cell" initialAmount="0"/>
+      <species name="RbsLacY" compartment="Cell" initialAmount="0"/>
+      <species name="TrLacY2" compartment="Cell" initialAmount="0"/>
+      <species name="Ribosome" compartment="Cell" initialAmount="30"/>
+      <species name="RbsRibosomeLacZ" compartment="Cell" initialAmount="0"/>
+      <species name="RbsRibosomeLacY" compartment="Cell" initialAmount="0"/>
+      <species name="TrRbsLacZ" compartment="Cell" initialAmount="0"/>
+      <species name="TrRbsLacY" compartment="Cell" initialAmount="0"/>
+      <species name="LacZ" compartment="Cell" initialAmount="0"/>
+      <species name="LacY" compartment="Cell" initialAmount="0"/>
+      <species name="dgrLacZ" compartment="Cell" initialAmount="0"/>
+      <species name="dgrLacY" compartment="Cell" initialAmount="0"/>
+      <species name="dgrRbsLacZ" compartment="Cell" initialAmount="0"/>
+      <species name="dgrRbsLacY" compartment="Cell" initialAmount="0"/>
+      <species name="lactose" compartment="Cell" initialAmount="0"/>
+      <species name="LacZlactose" compartment="Cell" initialAmount="0"/>
+      <species name="product" compartment="Cell" initialAmount="0"/>
+    </listOfSpecies>
+    <listOfReactions>
+      <reaction name="PLac+RNAP-&gt;PLacRNAP" reversible="false">
+        <listOfReactants>
+          <speciesReference species="PLac"/>
+          <speciesReference species="RNAP"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="PLacRNAP"/>
+        </listOfProducts>
+        <kineticLaw formula="0.17 * PLac * RNAP"/>
+      </reaction>
+      <reaction name="PLacRNAP-&gt;PLac+RNAP" reversible="false">
+        <listOfReactants>
+          <speciesReference species="PLacRNAP"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="PLac"/>
+          <speciesReference species="RNAP"/>
+        </listOfProducts>
+        <kineticLaw formula="10 * PLacRNAP"/>
+      </reaction>
+      <reaction name="PLacRNAP-&gt;TrLacZ1" reversible="false">
+        <listOfReactants>
+          <speciesReference species="PLacRNAP"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="TrLacZ1"/>
+        </listOfProducts>
+        <kineticLaw formula="1 * PLacRNAP"/>
+      </reaction>
+      <reaction name="TrLacZ1-&gt;RbsLacZ+PLac+TrLacZ2" reversible="false">
+        <listOfReactants>
+          <speciesReference species="TrLacZ1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="RbsLacZ"/>
+          <speciesReference species="PLac"/>
+          <speciesReference species="TrLacZ2"/>
+        </listOfProducts>
+        <kineticLaw formula="1 * TrLacZ1"/>
+      </reaction>
+      <reaction name="TrLacZ2-&gt;TrLacY1" reversible="false">
+        <listOfReactants>
+          <speciesReference species="TrLacZ2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="TrLacY1"/>
+        </listOfProducts>
+        <kineticLaw formula="0.015 * TrLacZ2"/>
+      </reaction>
+      <reaction name="TrLacY1-&gt;RbsLacY+TrLacY2" reversible="false">
+        <listOfReactants>
+          <speciesReference species="TrLacY1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="RbsLacY"/>
+          <speciesReference species="TrLacY2"/>
+        </listOfProducts>
+        <kineticLaw formula="1 * TrLacY1"/>
+      </reaction>
+      <reaction name="TrLacY2-&gt;RNAP" reversible="false">
+        <listOfReactants>
+          <speciesReference species="TrLacY2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="RNAP"/>
+        </listOfProducts>
+        <kineticLaw formula="0.36 * TrLacY2"/>
+      </reaction>
+      <reaction name="Ribosome+RbsLacZ-&gt;RbsRibosomeLacZ" reversible="false">
+        <listOfReactants>
+          <speciesReference species="Ribosome"/>
+          <speciesReference species="RbsLacZ"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="RbsRibosomeLacZ"/>
+        </listOfProducts>
+        <kineticLaw formula="0.17 * Ribosome * RbsLacZ"/>
+      </reaction>
+      <reaction name="Ribosome+RbsLacY-&gt;RbsRibosomeLacY" reversible="false">
+        <listOfReactants>
+          <speciesReference species="Ribosome"/>
+          <speciesReference species="RbsLacY"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="RbsRibosomeLacY"/>
+        </listOfProducts>
+        <kineticLaw formula="0.17 * Ribosome * RbsLacY"/>
+      </reaction>
+      <reaction name="RbsRibosomeLacZ-&gt;Ribosome+RbsLacZ" reversible="false">
+        <listOfReactants>
+          <speciesReference species="RbsRibosomeLacZ"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="Ribosome"/>
+          <speciesReference species="RbsLacZ"/>
+        </listOfProducts>
+        <kineticLaw formula="0.45 * RbsRibosomeLacZ"/>
+      </reaction>
+      <reaction name="RbsRibosomeLacY-&gt;Ribosome+RbsLacY" reversible="false">
+        <listOfReactants>
+          <speciesReference species="RbsRibosomeLacY"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="Ribosome"/>
+          <speciesReference species="RbsLacY"/>
+        </listOfProducts>
+        <kineticLaw formula="0.45 * RbsRibosomeLacY"/>
+      </reaction>
+      <reaction name="RbsRibosomeLacZ-&gt;TrRbsLacZ+RbsLacZ" reversible="false">
+        <listOfReactants>
+          <speciesReference species="RbsRibosomeLacZ"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="TrRbsLacZ"/>
+          <speciesReference species="RbsLacZ"/>
+        </listOfProducts>
+        <kineticLaw formula="0.4 * RbsRibosomeLacZ"/>
+      </reaction>
+      <reaction name="RbsRibosomeLacY-&gt;TrRbsLacY+RbsLacY" reversible="false">
+        <listOfReactants>
+          <speciesReference species="RbsRibosomeLacY"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="TrRbsLacY"/>
+          <speciesReference species="RbsLacY"/>
+        </listOfProducts>
+        <kineticLaw formula="0.4 * RbsRibosomeLacY"/>
+      </reaction>
+      <reaction name="TrRbsLacZ-&gt;LacZ" reversible="false">
+        <listOfReactants>
+          <speciesReference species="TrRbsLacZ"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="LacZ"/>
+        </listOfProducts>
+        <kineticLaw formula="0.015 * TrRbsLacZ"/>
+      </reaction>
+      <reaction name="TrRbsLacY-&gt;LacY" reversible="false">
+        <listOfReactants>
+          <speciesReference species="TrRbsLacY"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="LacY"/>
+        </listOfProducts>
+        <kineticLaw formula="0.036 * TrRbsLacY"/>
+      </reaction>
+      <reaction name="LacZ-&gt;dgrLacZ" reversible="false">
+        <listOfReactants>
+          <speciesReference species="LacZ"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="dgrLacZ"/>
+        </listOfProducts>
+        <kineticLaw formula="6.42e-005 * LacZ"/>
+      </reaction>
+      <reaction name="LacY-&gt;dgrLacY" reversible="false">
+        <listOfReactants>
+          <speciesReference species="LacY"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="dgrLacY"/>
+        </listOfProducts>
+        <kineticLaw formula="6.42e-005 * LacY"/>
+      </reaction>
+      <reaction name="RbsLacZ-&gt;dgrRbsLacZ" reversible="false">
+        <listOfReactants>
+          <speciesReference species="RbsLacZ"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="dgrRbsLacZ"/>
+        </listOfProducts>
+        <kineticLaw formula="0.3 * RbsLacZ"/>
+      </reaction>
+      <reaction name="RbsLacY-&gt;dgrRbsLacY" reversible="false">
+        <listOfReactants>
+          <speciesReference species="RbsLacY"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="dgrRbsLacY"/>
+        </listOfProducts>
+        <kineticLaw formula="0.3 * RbsLacY"/>
+      </reaction>
+      <reaction name="LacZ+lactose-&gt;product+LacZ" reversible="false">
+        <listOfReactants>
+          <speciesReference species="LacZ"/>
+          <speciesReference species="lactose"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="product"/>
+          <speciesReference species="LacZ"/>
+        </listOfProducts>
+        <kineticLaw formula="0.0005731 * LacZ * lactose"/>
+      </reaction>
+      <reaction name="LacY-&gt;lactose+LacY" reversible="false">
+        <listOfReactants>
+          <speciesReference species="LacY"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="lactose"/>
+          <speciesReference species="LacY"/>
+        </listOfProducts>
+        <kineticLaw formula="14 * LacY"/>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>
