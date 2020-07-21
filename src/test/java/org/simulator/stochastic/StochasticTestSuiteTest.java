@@ -88,7 +88,6 @@ public class StochasticTestSuiteTest {
 
   }
 
-  @Ignore
   @Test
   public void testModel() throws IOException {
     String sbmlfile, csvfile, configfile;
@@ -302,21 +301,41 @@ public class StochasticTestSuiteTest {
         }
         double sqrtN = Math.sqrt(TOTAL_SIMULATION_COUNT);
         double sqrtN2 = Math.sqrt(TOTAL_SIMULATION_COUNT * 1d / 2);
+
+        List<Double> meanDistances = new ArrayList<>();
+        List<Double> sdDistances = new ArrayList<>();
+
         for (int i = 1; i < left.getColumnCount(); i++) {
           Column column = left.getColumn(i);
           if (left.getColumnName(i).contains(MEAN)) {
             for (int j = 1; j < column.getRowCount(); j++){
               String speciesName = column.getColumnName().split("-")[0];
               String sdColumnName = speciesName.concat("-sd");
-              double meanDistance = sqrtN * (left.getValueAt(j, i) - right.getValueAt(j, i)) / right.getColumn(sdColumnName).getValue(j);
-              Assert.assertTrue((meanDistance > -3) && (meanDistance < 3));
+              double meanDistance = sqrtN * (left.getValueAt(j, i) - right.getColumn(column.getColumnName()).getValue(j)) / right.getColumn(sdColumnName).getValue(j);
+              if (left.getValueAt(j, i).equals(right.getColumn(column.getColumnName()).getValue(j))) {
+                meanDistance = 0d;
+              }
+              meanDistances.add(meanDistance);
             }
           } else {
             for (int j = 1; j < column.getRowCount(); j++){
-              double sdDistance = sqrtN2 * ((Math.pow(left.getValueAt(j, i), 2) / Math.pow(right.getValueAt(j, i), 2)) - 1);
-              Assert.assertTrue((sdDistance > -5) && (sdDistance < 5))  ;
+              double first = Math.pow(left.getValueAt(j,i), 2);
+              double second = Math.pow(right.getColumn(column.getColumnName()).getValue(j), 2);
+              double sdDistance = sqrtN2 * ((first / second) - 1);
+              if (first == second){
+                sdDistance = 0d;
+              }
+              sdDistances.add(sdDistance);
             }
           }
+        }
+
+        for (Double meanDistance : meanDistances) {
+          Assert.assertTrue((meanDistance > -3) && (meanDistance < 3));
+        }
+
+        for (Double sdDistance : sdDistances) {
+          Assert.assertTrue((sdDistance > -5) && (sdDistance < 5));
         }
       }
 
