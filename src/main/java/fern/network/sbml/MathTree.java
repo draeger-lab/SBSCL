@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.stream.Stream;
 
 import fern.network.AmountManager;
 import fern.simulation.Simulator;
@@ -23,7 +22,7 @@ public class MathTree {
 
     private SBMLNetwork net;
     private ASTNode copiedAST;
-    private SBMLinterpreter sbmLinterpreter;
+    private SBMLinterpreter sbmlInterpreter;
     private Map<String, Integer> bindings;
     public static final String TEMP_VALUE = "SBML_SIMULATION_TEMP_VALUE";
 
@@ -39,8 +38,8 @@ public class MathTree {
     public MathTree(SBMLNetwork net, ASTNode ast, Map<String, Double> globals, Map<String, Double> locals, Map<String, Integer> bindings) throws ModelOverdeterminedException {
         this.net = net;
         this.bindings = bindings;
-        sbmLinterpreter = new SBMLinterpreter(net.getSBMLModel());
-        copiedAST = sbmLinterpreter.copyAST(ast, true, null, null);
+        sbmlInterpreter = new SBMLinterpreter(net.getSBMLModel());
+        copiedAST = sbmlInterpreter.copyAST(ast, true, null, null);
     }
 
     /**
@@ -85,10 +84,9 @@ public class MathTree {
      * @return value of the expression
      */
     public double calculate(AmountManager amount, Simulator sim) {
-
-        sbmLinterpreter.updateSpeciesConcentration(amount);
+        sbmlInterpreter.updateSpeciesConcentration(amount);
+        sbmlInterpreter.setCurrentTime(sim.getTime());
         return ((ASTNodeValue) copiedAST.getUserObject(TEMP_VALUE)).compileDouble(sim.getTime(), 0d);
-
     }
 
 }

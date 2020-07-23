@@ -2819,4 +2819,8 @@ public class SBMLinterpreter
   private void setLatestTimePointResult(double[] latestTimePointResult) {
     this.latestTimePointResult = latestTimePointResult;
   }
+
+  public void setCurrentTime(double currentTime) {
+    this.currentTime = currentTime;
+  }
 }

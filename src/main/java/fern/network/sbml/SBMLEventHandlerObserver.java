@@ -76,7 +76,6 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
 			Map<String,Double> globals = ((SBMLPropensityCalculator)net.getPropensityCalculator()).getGlobalParameters();
 			globals.put(par, parameterAssignment.get(par).calculate(net.getAmountManager(),getSimulator()));
 		}
-		getSimulator().reinitialize();
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package org.simulator.stochastic;
 
 import fern.network.FeatureNotSupportedException;
 import fern.network.Network;
+import fern.network.sbml.SBMLNetwork;
 import fern.simulation.Simulator;
 import fern.simulation.algorithm.AbstractBaseTauLeaping;
 import fern.simulation.algorithm.GillespieEnhanced;
@@ -40,7 +41,7 @@ import java.util.*;
 public class StochasticTestSuiteTest {
 
   private String path;
-  private static final int TOTAL_SIMULATION_COUNT = 1000;
+  private static final int TOTAL_SIMULATION_COUNT = 100;
   private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
   private static final String DURATION = "duration";
   private static final String MEAN = "mean";
@@ -141,6 +142,8 @@ public class StochasticTestSuiteTest {
         }
         Assert.assertNotNull(sim);
         Assert.assertFalse(errorInSimulator);
+
+        ((SBMLNetwork) net).registerEvents(sim);
         // Initializes the observer for the amounts of molecule species
         AmountIntervalObserver obs = null;
         boolean errorInObserver = false;
@@ -331,11 +334,11 @@ public class StochasticTestSuiteTest {
         }
 
         for (Double meanDistance : meanDistances) {
-          Assert.assertTrue((meanDistance > -3) && (meanDistance < 3));
+          Assert.assertTrue((meanDistance > -3d) && (meanDistance < 3d));
         }
 
         for (Double sdDistance : sdDistances) {
-          Assert.assertTrue((sdDistance > -5) && (sdDistance < 5));
+          Assert.assertTrue((sdDistance > -5d) && (sdDistance < 5d));
         }
       }
 
