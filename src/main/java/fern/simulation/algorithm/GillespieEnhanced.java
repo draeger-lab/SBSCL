@@ -65,7 +65,10 @@ public class GillespieEnhanced extends Simulator {
 	public void performStep(SimulationController control) {
 
 		if (changed) {
-			initialize();
+			reinitializePropensity();
+			a_sum = 0;
+			for (int i=0; i<a.length; i++)
+				a_sum+=a[i];
 		}
 
 		// obtain mu and tau by the direct method described in chapter 5A page 417ff
@@ -106,8 +109,7 @@ public class GillespieEnhanced extends Simulator {
 	/**
 	 * obtains a random (but following a specific distribution) reaction as described by the
 	 * direct method in chapter 5A page 417ff
-	 * @param reactions
-	 * @param a
+	 *
 	 * @return
 	 */
 	private int directMCReaction() {

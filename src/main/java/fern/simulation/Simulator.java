@@ -244,6 +244,15 @@ public abstract class Simulator {
 		for (int i=0; i<a.length; i++) 
 			a[i] = propensityCalculator.calculatePropensity(i, getAmountManager(),this);
 	}
+
+	/**
+	 * Reinitialize the propensities when an event is executed
+	 */
+	public void reinitializePropensity() {
+		for (int i=0; i<a.length; i++)
+			a[i] = propensityCalculator.calculatePropensity(i, getAmountManager(),this);
+	}
+
 	
 	/**
 	 * Reset propensities when a event has been executed.
