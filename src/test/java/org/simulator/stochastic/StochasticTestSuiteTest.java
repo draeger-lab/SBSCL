@@ -89,7 +89,7 @@ public class StochasticTestSuiteTest {
 
   }
 
-  @Test
+  @Test(timeout = 60000)
   public void testModel() throws IOException {
 
     long[] stochasticSeeds = new long[]{
