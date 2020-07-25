@@ -11,10 +11,8 @@ import fern.simulation.algorithm.TauLeapingSpeciesPopulationBoundSimulator;
 import fern.simulation.observer.AmountIntervalObserver;
 import fern.tools.NetworkTools;
 import fern.tools.NumberTools;
-import fern.tools.gnuplot.GnuPlot;
 import org.jdom.JDOMException;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -89,7 +87,7 @@ public class StochasticTestSuiteTest {
 
   }
 
-  @Test(timeout = 60000)
+  @Test
   public void testModel() throws IOException {
 
     long[] stochasticSeeds = new long[]{
@@ -192,7 +190,7 @@ public class StochasticTestSuiteTest {
         // Runs the stochastic simulation
         boolean errorInSimulation = false;
         try {
-          runSimulation(sim, obs, orderedArgs);
+          sim.start((Double)orderedArgs.get("time"));
         } catch (Exception e) {
           errorInSimulation = true;
         }
@@ -253,8 +251,6 @@ public class StochasticTestSuiteTest {
         // Runs the stochastic simulation repeatedly
         for (int p = 1; p < TOTAL_SIMULATION_COUNT; p++) {
 
-          System.out.println(p);
-
           // Initialize the observer again for getting new results
           try {
             obs = createObserver(sim, orderedArgs);
@@ -266,7 +262,7 @@ public class StochasticTestSuiteTest {
 
           // Runs the simulation again
           try {
-            runSimulation(sim, obs, orderedArgs);
+            sim.start((Double)orderedArgs.get("time"));
           } catch (Exception e) {
             errorInSimulation = true;
           }
@@ -383,30 +379,7 @@ public class StochasticTestSuiteTest {
 
 
   }
-
-  private static GnuPlot runSimulation(Simulator sim, AmountIntervalObserver obs,
-      Map<String, Object> orderedArgs) throws IOException {
-
-    GnuPlot gp = new GnuPlot();
-    gp.setDefaultStyle("with linespoints");
-    if ((Boolean)orderedArgs.get("i")) {
-      gp.setVisible(true);
-    }
-
-    for (int i=0; i<(Integer)orderedArgs.get("n"); i++) {
-      sim.start((Double)orderedArgs.get("time"));
-
-      if ((Boolean)orderedArgs.get("i")) {
-        obs.toGnuplot(gp);
-        gp.plot();
-        gp.clearData();
-      }
-    }
-
-    return gp;
-  }
-
-
+  
   private static AmountIntervalObserver createObserver(Simulator sim,
       Map<String, Object> orderedArgs) {
     String[] species = getIdentifiers(sim, orderedArgs);
