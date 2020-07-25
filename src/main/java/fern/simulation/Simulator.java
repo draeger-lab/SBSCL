@@ -376,7 +376,10 @@ public abstract class Simulator {
 		this.observer = n;
 		return observer;
 	}
-	
+
+	public void setStochasticSeed(long seed) {
+		stochastics.setSeed(seed);
+	}
 	
 	
 	/**
