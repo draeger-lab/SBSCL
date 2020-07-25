@@ -253,6 +253,8 @@ public class StochasticTestSuiteTest {
         // Runs the stochastic simulation repeatedly
         for (int p = 1; p < TOTAL_SIMULATION_COUNT; p++) {
 
+          System.out.println(p);
+
           // Initialize the observer again for getting new results
           try {
             obs = createObserver(sim, orderedArgs);
