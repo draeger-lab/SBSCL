@@ -153,7 +153,7 @@ public class CSVImporter {
     if (line != null) {
       header = line.split(",");
       line = reader.readLine();
-      while (line != null) {
+      while ((line != null) && !line.isEmpty()) {
         lines.add(line);
         line = reader.readLine();
       }
