@@ -566,37 +566,12 @@ public class SBMLinterpreter
     highOrderEvents = new LinkedList<Integer>();
     delaysIncluded = true;
     listOfConstraintListeners = new LinkedList<ConstraintListener>();
-    Map<String, Integer> speciesReferenceToRateRule = new HashMap<String, Integer>();
-    int speciesReferencesInRateRules = 0;
-    for (int k = 0; k < model.getRuleCount(); k++) {
-      Rule rule = model.getRule(k);
-      if (rule.isRate()) {
-        RateRule rr = (RateRule) rule;
-        SpeciesReference sr = model.findSpeciesReference(rr.getVariable());
-        if ((sr != null) && !sr.isConstant()) {
-          speciesReferencesInRateRules++;
-          speciesReferenceToRateRule.put(sr.getId(), k);
-        }
-      }
-    }
-    Y = new double[model.getCompartmentCount() + model.getSpeciesCount() + model.getParameterCount() + speciesReferencesInRateRules];
-    oldY = new double[Y.length];
-    oldY2 = new double[Y.length];
-    changeRate = new double[Y.length];
-    isAmount = new boolean[Y.length];
-    compartmentIndexes = new int[Y.length];
-    conversionFactors = new double[Y.length];
-    inConcentrationValues = new boolean[Y.length];
-    Arrays.fill(conversionFactors, 1d);
-    symbolIdentifiers = new String[Y.length];
     speciesMap = new HashMap<String, Species>();
     inConcentration = new HashSet<String>();
     reactionFast = new boolean[model.getReactionCount()];
     reactionReversible = new boolean[model.getReactionCount()];
-    initialValues = new double[Y.length];
     nodes = new LinkedList<ASTNode>();
     latestTimePoint = 0d;
-    latestTimePointResult = new double[Y.length];
     rateRuleHash = new HashMap<>();
     init(true, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, amountHash);
   }
@@ -1193,7 +1168,7 @@ public class SBMLinterpreter
     symbolHash.clear();
     constantHash.clear();
     compartmentHash.clear();
-    Integer compartmentIndex, yIndex = Integer.valueOf(0);
+    Integer compartmentIndex, yIndex = 0;
     currentTime = 0d;
     astNodeTime = 0d;
     containsDelays = false;
@@ -1220,16 +1195,20 @@ public class SBMLinterpreter
         }
       }
     }
-    int sizeY = model.getCompartmentCount() + model.getSpeciesCount() + model.getParameterCount() + speciesReferencesInRateRules;
-    if (sizeY != Y.length) {
-      Y = new double[sizeY];
-      compartmentIndexes = new int[Y.length];
-      inConcentrationValues = new boolean[Y.length];
-      symbolIdentifiers = new String[Y.length];
-      conversionFactors = new double[Y.length];
-      Arrays.fill(conversionFactors, 1d);
-    }
 
+    int sizeY = model.getCompartmentCount() + model.getSpeciesCount() + model.getParameterCount() + speciesReferencesInRateRules;
+    Y = new double[sizeY];
+    oldY = new double[sizeY];
+    oldY2 = new double[sizeY];
+    changeRate = new double[sizeY];
+    isAmount = new boolean[sizeY];
+    compartmentIndexes = new int[sizeY];
+    conversionFactors = new double[sizeY];
+    inConcentrationValues = new boolean[sizeY];
+    Arrays.fill(conversionFactors, 1d);
+    symbolIdentifiers = new String[sizeY];
+    initialValues = new double[sizeY];
+    latestTimePointResult = new double[sizeY];
 
     /*
      * Save starting values of the model's compartment in Y
@@ -2494,7 +2473,7 @@ public class SBMLinterpreter
       }
     }
     for (int i = 0; i != stoichiometryValues.length; i++) {
-      if ((constantStoichiometry[i] == false) || (stoichiometrySet[i] == false)) {
+      if (!constantStoichiometry[i] || !stoichiometrySet[i]) {
         stoichiometry[i] = stoichiometryValues[i].compileDouble(time);
         stoichiometrySet[i] = stoichiometryValues[i].getStoichiometrySet();
       }
