@@ -24,7 +24,6 @@
  */
 package org.simulator.sbml.astnode;
 
-import java.util.Arrays;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.ASTNode;
@@ -161,11 +160,11 @@ public class ASTNodeValue {
    */
   public static final Logger logger = Logger.getLogger(ASTNodeValue.class.getName());
 
-  public EquationSystem sbmlInterpreter;
+  public EquationSystem eqnSystem;
 
-  public ASTNodeValue(EquationSystem sbmlInterpreter, ASTNodeInterpreter interpreter, ASTNode node) {
+  public ASTNodeValue(EquationSystem eqnSystem, ASTNodeInterpreter interpreter, ASTNode node) {
     this(interpreter, node);
-    this.sbmlInterpreter = sbmlInterpreter;
+    this.eqnSystem = eqnSystem;
   }
 
   /**
@@ -540,7 +539,7 @@ public class ASTNodeValue {
       ASTNode child = node.getChild(0);
       if (child.isVariable()) {
         CallableSBase variable1 = child.getVariable();
-        doubleValue = interpreter.rateOf(sbmlInterpreter, variable1, time, delay);
+        doubleValue = interpreter.rateOf(eqnSystem, variable1, time, delay);
       } else {
         System.out.println("Error");
       }
