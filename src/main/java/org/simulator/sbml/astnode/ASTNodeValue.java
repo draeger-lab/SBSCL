@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.CallableSBase;
 import org.sbml.jsbml.util.Maths;
+import org.simulator.sbml.EquationSystem;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
@@ -160,9 +161,9 @@ public class ASTNodeValue {
    */
   public static final Logger logger = Logger.getLogger(ASTNodeValue.class.getName());
 
-  public SBMLinterpreter sbmlInterpreter;
+  public EquationSystem sbmlInterpreter;
 
-  public ASTNodeValue(SBMLinterpreter sbmlInterpreter, ASTNodeInterpreter interpreter, ASTNode node) {
+  public ASTNodeValue(EquationSystem sbmlInterpreter, ASTNodeInterpreter interpreter, ASTNode node) {
     this(interpreter, node);
     this.sbmlInterpreter = sbmlInterpreter;
   }

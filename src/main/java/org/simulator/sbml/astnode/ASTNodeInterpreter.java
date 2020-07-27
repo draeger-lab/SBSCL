@@ -32,6 +32,7 @@ import org.sbml.jsbml.*;
 import org.sbml.jsbml.util.Maths;
 import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
+import org.simulator.sbml.EquationSystem;
 import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sbml.SBMLValueHolder;
 
@@ -999,7 +1000,7 @@ public class ASTNodeInterpreter {
    * @param time
    * @return doubleValue the interpreted double value of the node
    */
-  public double rateOf(SBMLinterpreter sbmlInterpreter, CallableSBase sBase, double time, double delay) {
+  public double rateOf(EquationSystem sbmlInterpreter, CallableSBase sBase, double time, double delay) {
     if ((time < delay) || (sBase instanceof LocalParameter) || (sbmlInterpreter.getConstantHash().get(sBase.getId()))) {
       return 0d;
     }
