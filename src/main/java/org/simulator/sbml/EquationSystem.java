@@ -421,7 +421,7 @@ public abstract class EquationSystem
      */
     protected double[] latestTimePointResult;
 
-    public EquationSystem(Model model) {
+    public EquationSystem(Model model, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue, Map<String, Boolean> amountHash) throws ModelOverdeterminedException {
         this.model = model;
     }
 
