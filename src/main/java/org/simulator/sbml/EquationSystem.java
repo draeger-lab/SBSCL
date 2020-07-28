@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 
 public abstract class EquationSystem
         implements SBMLValueHolder, DelayedDESystem, EventDESystem,
-            FastProcessDESystem, RichDESystem, PropertyChangeListener {
+        FastProcessDESystem, RichDESystem, PropertyChangeListener {
 
     /**
      * A {@link Logger}.
@@ -200,8 +200,7 @@ public abstract class EquationSystem
     protected Map<String, Double> stoichiometricCoefHash;
 
     /**
-     * An array of the current concentration of each species within the model
-     * system.
+     * An array of the state variables within the model including species and parameters.
      */
     protected double[] Y;
 
@@ -330,7 +329,7 @@ public abstract class EquationSystem
     protected List<AssignmentRuleValue> initialAssignmentRoots;
 
     /**
-     * Flag which is true if no changes (in rate rules and kinetic laws) are occuring in the model
+     * Flag which is true if no changes (in rate rules and kinetic laws) occur in the model
      */
     protected boolean noDerivatives;
 
@@ -422,7 +421,7 @@ public abstract class EquationSystem
      */
     protected double[] latestTimePointResult;
 
-    public EquationSystem(Model model, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue, Map<String, Boolean> amountHash) throws ModelOverdeterminedException {
+    public EquationSystem(Model model) {
         this.model = model;
     }
 
@@ -440,7 +439,8 @@ public abstract class EquationSystem
      * @throws ModelOverdeterminedException
      * @throws SBMLException
      */
-    public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue, Map<String, Boolean> amountHash) throws ModelOverdeterminedException {
+    public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue,
+                     double defaultCompartmentValue, Map<String, Boolean> amountHash) throws ModelOverdeterminedException {
 
         v = new double[this.model.getNumReactions()];
         symbolHash = new HashMap<>();
@@ -1768,9 +1768,9 @@ public abstract class EquationSystem
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 
-        if (propertyChangeEvent.getPropertyName().equals("result")){
+        if (propertyChangeEvent.getPropertyName().equals("result")) {
             setLatestTimePointResult((double[]) propertyChangeEvent.getNewValue());
-        }else {
+        } else {
             setPreviousTimePoint((Double) propertyChangeEvent.getOldValue());
             setLatestTimePoint((Double) propertyChangeEvent.getNewValue());
         }
@@ -1820,6 +1820,11 @@ public abstract class EquationSystem
         return constantHash;
     }
 
+    /**
+     * Get state array.
+     *
+     * @return the state array
+     */
     public double[] getY() {
         return Y;
     }
