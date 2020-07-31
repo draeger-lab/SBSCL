@@ -51,7 +51,7 @@ public class SBMLTestSuiteRunnerWrapper {
     public static final String RELATIVE = "relative";
     public static final String NAN = "NaN";
     private static final double TOLERANCE_FACTOR = 1E-5;
-    private static Logger LOGGER = Logger.getLogger(CompExample.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CompExample.class.getName());
 
     /**
      * The wrapper executes the simulation of a given SBML file and writes result to a specified CSV file.
@@ -81,26 +81,11 @@ public class SBMLTestSuiteRunnerWrapper {
         properties.load(new BufferedReader(new FileReader(settingsPath)));
         double duration;
         double steps = (!properties.getProperty(STEPS).isEmpty()) ? Double.parseDouble(properties.getProperty(STEPS)) : 0d;
-        Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
         String[] amounts = String.valueOf(properties.getProperty(AMOUNT)).split(",");
         String[] concentrations = String.valueOf(
                 properties.getProperty(CONCENTRATION)).split(",");
-        double absolute = (!properties.getProperty(ABSOLUTE).isEmpty()) ? Double.parseDouble(properties.getProperty(ABSOLUTE)) : 0d;
-        double relative = (!properties.getProperty(RELATIVE).isEmpty()) ? Double.parseDouble(properties.getProperty(RELATIVE)) : 0d;
 
-        for (String s : amounts) {
-            s = s.trim();
-            if (!s.isEmpty()) {
-                amountHash.put(s, true);
-            }
-        }
-
-        for (String s : concentrations) {
-            s = s.trim();
-            if (!s.isEmpty()) {
-                amountHash.put(s, false);
-            }
-        }
+        Map<String, Boolean> amountHash = createAmountHash(amounts, concentrations);
 
         // Read the model and initialize solver
         File sbmlfile = new File(filePath);
@@ -112,14 +97,14 @@ public class SBMLTestSuiteRunnerWrapper {
         }
         Model model = document.getModel();
 
-        // get timePoints
-        CSVImporter csvimporter = new CSVImporter();
-        MultiTable inputData = csvimporter.convert(model, resultsPath);
-        double[] timePoints = inputData.getTimePoints();
-        duration = timePoints[timePoints.length - 1]
-                - timePoints[0];
+        // get pre-defined test suite results
+        MultiTable inputData = getPredefinedTestSuiteResults(model, resultsPath);
 
-        MultiTable solution = null;
+        // get timepoints
+        double[] timePoints = inputData.getTimePoints();
+        duration = timePoints[timePoints.length - 1] - timePoints[0];
+
+        MultiTable solution;
 
         // writes results to the output file in CSV format
         File outputFile = new File(outputFilePath);
@@ -133,7 +118,7 @@ public class SBMLTestSuiteRunnerWrapper {
         LOGGER.info(Paths.get(outputFilePath));
         FileWriter csvWriter = new FileWriter(outputFilePath);
 
-        StringBuilder output = new StringBuilder("");
+        StringBuilder output;
 
         if (model.getExtension(FBCConstants.shortLabel) != null) {
 
@@ -148,57 +133,15 @@ public class SBMLTestSuiteRunnerWrapper {
 
             BufferedReader reader = new BufferedReader(new FileReader(resultsPath));
             String[] keys = reader.readLine().trim().split(",");
-            if (isSolved) {
-                Map<String, Double> fbcSolution = solver.getSolution();
-                for (int i = 0; i < keys.length - 1; i++) {
-                    output.append(keys[i]).append(",");
-                }
-                output.append(keys[keys.length - 1]).append("\n");
-                for (String key : keys) {
-                    output.append(fbcSolution.get(key)).append(",");
-                }
-                if (output.length() > 0) {
-                    output.deleteCharAt(output.length() - 1);
-                    output.append("\n");
-                }
-            } else {
-                output.append(keys[0]).append("\n").append(NAN).append("\n");
-            }
+            output = getFBCResultAsCSV(solver, keys, isSolved);
 
         } else {
             if (model.getExtension(CompConstants.shortLabel) == null) {
-                DESSolver solver = new RosenbrockSolver();
-                solver.setStepSize(duration / steps);
-
-                if (solver instanceof AbstractDESSolver) {
-                    solver.setIncludeIntermediates(false);
-                }
-
-                if (solver instanceof AdaptiveStepsizeIntegrator) {
-                    ((AdaptiveStepsizeIntegrator) solver).setAbsTol(TOLERANCE_FACTOR * absolute);
-                    ((AdaptiveStepsizeIntegrator) solver).setRelTol(TOLERANCE_FACTOR * relative);
-                }
-
-                /**
-                 * Initialize the SBMLinterpreter
-                 *
-                 * Parameters passed:
-                 * SBML model, defaultSpeciesValue, defaultParameterValue,
-                 * defaultCompartmentValue, amountHash
-                 */
-                SBMLinterpreter interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);
-
                 // Compute the numerical solution of the problem
-                solution = solver.solve(interpreter, interpreter.getInitialValues(), timePoints);
+                solution = runSBMLSimulation(model, duration, steps, properties, timePoints, amountHash);
             } else {
-                CompSimulator compSimulator = new CompSimulator(sbmlfile);
-                double stepSize = (duration / steps);
-
-                try {
-                    solution = compSimulator.solve(stepSize, duration);
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
+                // Get the comp simulation result
+                solution = runCompSimulation(sbmlfile, duration, steps);
             }
 
             MultiTable left = solution;
@@ -223,44 +166,192 @@ public class SBMLTestSuiteRunnerWrapper {
                 }
             }
 
-            if (variablesToAdd[0]) {
-                output.append(left.getColumnName(0)).append(",");
-            }
-            for (int i = 1; i < left.getColumnCount() - 1; i++) {
-                if (variablesToAdd[i]) {
-                    output.append(left.getColumnName(i)).append(",");
-                }
-            }
-            if (variablesToAdd[left.getColumnCount() - 1]) {
-                output.append(left.getColumnName(left.getColumnCount() - 1)).append("\n");
-            } else {
-                if (output.length() > 0) {
-                    output.deleteCharAt(output.length() - 1);
-                    output.append("\n");
-                }
-            }
-
-            for (int i = 0; i < left.getRowCount(); i++) {
-                for (int j = 0; j < left.getColumnCount() - 1; j++) {
-                    if (variablesToAdd[j]) {
-                        output.append(left.getValueAt(i, j)).append(",");
-                    }
-                }
-                if (variablesToAdd[left.getColumnCount() - 1]) {
-                    output.append(left.getValueAt(i, left.getColumnCount() - 1)).append("\n");
-                } else {
-                    if (output.length() > 0) {
-                        output.deleteCharAt(output.length() - 1);
-                        output.append("\n");
-                    }
-                }
-            }
+            output = getSBMLOrCompResultAsCSV(left, variablesToAdd);
         }
 
         csvWriter.append(output);
         csvWriter.flush();
         csvWriter.close();
 
+    }
+
+    /**
+     * Performs the simulation of the SBML models with comp
+     * extension using {@link CompSimulator}.
+     *
+     * @param sbmlFile
+     * @param duration
+     * @param steps
+     * @return the results of the simulation of comp model
+     * @throws IOException
+     * @throws XMLStreamException
+     */
+    private static MultiTable runCompSimulation(File sbmlFile, double duration, double steps) throws IOException, XMLStreamException {
+        CompSimulator compSimulator = new CompSimulator(sbmlFile);
+        double stepSize = (duration / steps);
+
+        MultiTable solution = null;
+        try {
+            solution = compSimulator.solve(stepSize, duration);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return solution;
+    }
+
+    /**
+     * Performs the simulation of the SBML models using
+     * {@link RosenbrockSolver}.
+     *
+     * @param model
+     * @param duration
+     * @param steps
+     * @param properties
+     * @param timePoints
+     * @param amountHash
+     * @return the results of the simulation
+     * @throws DerivativeException
+     * @throws ModelOverdeterminedException
+     */
+    private static MultiTable runSBMLSimulation(Model model, double duration, double steps,
+                                                Properties properties, double[] timePoints,
+                                                Map<String, Boolean> amountHash) throws DerivativeException, ModelOverdeterminedException {
+
+        double absolute = (!properties.getProperty(ABSOLUTE).isEmpty()) ? Double.parseDouble(properties.getProperty(ABSOLUTE)) : 0d;
+        double relative = (!properties.getProperty(RELATIVE).isEmpty()) ? Double.parseDouble(properties.getProperty(RELATIVE)) : 0d;
+
+        DESSolver solver = new RosenbrockSolver();
+        solver.setStepSize(duration / steps);
+
+        if (solver instanceof AbstractDESSolver) {
+            solver.setIncludeIntermediates(false);
+        }
+
+        if (solver instanceof AdaptiveStepsizeIntegrator) {
+            ((AdaptiveStepsizeIntegrator) solver).setAbsTol(TOLERANCE_FACTOR * absolute);
+            ((AdaptiveStepsizeIntegrator) solver).setRelTol(TOLERANCE_FACTOR * relative);
+        }
+
+        /**
+         * Initialize the SBMLinterpreter
+         *
+         * Parameters passed:
+         * SBML model, defaultSpeciesValue, defaultParameterValue,
+         * defaultCompartmentValue, amountHash
+         */
+        SBMLinterpreter interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);
+
+        // Compute the numerical solution of the problem
+        return solver.solve(interpreter, interpreter.getInitialValues(), timePoints);
+    }
+
+    /**
+     * Creates an amount hash which keeps track whether the variable has
+     * amount units or concentration units.
+     *
+     * @param amounts
+     * @param concentrations
+     * @return the amount hash
+     */
+    private static Map<String, Boolean> createAmountHash(String[] amounts, String[] concentrations) {
+
+        Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
+        for (String s : amounts) {
+            s = s.trim();
+            if (!s.isEmpty()) {
+                amountHash.put(s, true);
+            }
+        }
+
+        for (String s : concentrations) {
+            s = s.trim();
+            if (!s.isEmpty()) {
+                amountHash.put(s, false);
+            }
+        }
+
+        return amountHash;
+    }
+
+    /**
+     * Converts the simulated results of the SBML models with fbc
+     * extension in CSV format.
+     *
+     * @param fbcSolver
+     * @param keys
+     * @param isSolved
+     * @return the StringBuilder in the CSV format
+     */
+    private static StringBuilder getFBCResultAsCSV(FluxBalanceAnalysis fbcSolver, String[] keys, boolean isSolved) {
+        StringBuilder output = new StringBuilder("");
+        if (isSolved) {
+            Map<String, Double> fbcSolution = fbcSolver.getSolution();
+            for (int i = 0; i < keys.length - 1; i++) {
+                output.append(keys[i]).append(",");
+            }
+            output.append(keys[keys.length - 1]).append("\n");
+            for (String key : keys) {
+                output.append(fbcSolution.get(key)).append(",");
+            }
+            if (output.length() > 0) {
+                output.deleteCharAt(output.length() - 1);
+                output.append("\n");
+            }
+        } else {
+            output.append(keys[0]).append("\n").append(NAN).append("\n");
+        }
+        return output;
+    }
+
+    /**
+     * Converts the simulated results of the SBML models as well as
+     * the SBML models with comp extension in CSV format.
+     *
+     * @param result
+     * @param variablesToAdd
+     * @return the StringBuilder in the CSV format
+     */
+    private static StringBuilder getSBMLOrCompResultAsCSV(MultiTable result, boolean[] variablesToAdd) {
+        StringBuilder output = new StringBuilder("");
+        if (variablesToAdd[0]) {
+            output.append(result.getColumnName(0)).append(",");
+        }
+        for (int i = 1; i < result.getColumnCount() - 1; i++) {
+            if (variablesToAdd[i]) {
+                output.append(result.getColumnName(i)).append(",");
+            }
+        }
+        if (variablesToAdd[result.getColumnCount() - 1]) {
+            output.append(result.getColumnName(result.getColumnCount() - 1)).append("\n");
+        } else {
+            if (output.length() > 0) {
+                output.deleteCharAt(output.length() - 1);
+                output.append("\n");
+            }
+        }
+
+        for (int i = 0; i < result.getRowCount(); i++) {
+            for (int j = 0; j < result.getColumnCount() - 1; j++) {
+                if (variablesToAdd[j]) {
+                    output.append(result.getValueAt(i, j)).append(",");
+                }
+            }
+            if (variablesToAdd[result.getColumnCount() - 1]) {
+                output.append(result.getValueAt(i, result.getColumnCount() - 1)).append("\n");
+            } else {
+                if (output.length() > 0) {
+                    output.deleteCharAt(output.length() - 1);
+                    output.append("\n");
+                }
+            }
+        }
+        return output;
+    }
+
+    private static MultiTable getPredefinedTestSuiteResults(Model model, String resultFilePath) throws IOException {
+        CSVImporter csvimporter = new CSVImporter();
+        return csvimporter.convert(model, resultFilePath);
     }
 
 }
