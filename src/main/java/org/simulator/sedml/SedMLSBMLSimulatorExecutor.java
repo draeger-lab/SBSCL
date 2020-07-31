@@ -508,8 +508,8 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
   /**
    * Merge two 2D arrays into one 2D array in X-direction
    *
-   * @param double[][]
-   * @param double[][]
+   * @param a
+   * @param b
    * @return double[][]
    */
   private double[][] mergeDataCols(double[][] a, double[][] b) {
@@ -522,8 +522,8 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
   /**
    * Merge time columns from 2 multiTables
    *
-   * @param MultTableSEDMLWrapper
-   * @param MultTableSEDMLWrapper
+   * @param a
+   * @param b
    * @return double[]
    */
   private double[] mergeTimeCols(MultTableSEDMLWrapper a, MultTableSEDMLWrapper b) {
@@ -542,7 +542,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
   /**
    * A helper function to sort subTasks by order.
    *
-   * @param Map<String, SubTask>
+   * @param unsortMap
    * @return Map<String, SubTask>
    */
   private static Map<String, SubTask> sortTasks(Map<String, SubTask> unsortMap) {

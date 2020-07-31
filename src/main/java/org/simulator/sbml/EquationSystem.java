@@ -107,58 +107,6 @@ public abstract class EquationSystem
     public double[] changeRate;
 
     /**
-     * Adds the given {@link ConstraintListener} to this interpreter's list of
-     * listeners.
-     *
-     * @param listener the element to be added.
-     * @return {@code true} if this operation was successful, {@code false}
-     * otherwise.
-     * @throws NullPointerException
-     * @see List#add(Object)
-     */
-    public boolean addConstraintListener(ConstraintListener listener) {
-        return listOfConstraintListeners.add(listener);
-    }
-
-
-    /**
-     * Removes the given {@link ConstraintListener} from this interpreter.
-     *
-     * @param listener the element to be removed.
-     * @return {@code true} if this operation was successful, {@code false}
-     * otherwise.
-     * @throws NullPointerException
-     * @see List#remove(Object)
-     */
-    public boolean removeConstraintListener(ConstraintListener listener) {
-        return listOfConstraintListeners.remove(listener);
-    }
-
-
-    /**
-     * Removes the {@link ConstraintListener} with the given index from this
-     * interpreter.
-     *
-     * @param index of the {@link ConstraintListener} to be removed.
-     * @return {@code true} if this operation was successful, {@code false}
-     * otherwise.
-     * @throws IndexOutOfBoundsException
-     * @see List#remove(int)
-     */
-    public ConstraintListener removeConstraintListener(int index) {
-        return listOfConstraintListeners.remove(index);
-    }
-
-
-    /**
-     * @return the number of {@link ConstraintListener}s currently assigned to
-     * this interpreter.
-     */
-    public int getConstraintListenerCount() {
-        return listOfConstraintListeners.size();
-    }
-
-    /**
      * The model to be simulated.
      */
     protected Model model;
@@ -1790,6 +1738,59 @@ public abstract class EquationSystem
         highOrderEvents.add(winner);
     }
 
+
+    /**
+     * Adds the given {@link ConstraintListener} to this interpreter's list of
+     * listeners.
+     *
+     * @param listener the element to be added.
+     * @return {@code true} if this operation was successful, {@code false}
+     * otherwise.
+     * @throws NullPointerException
+     * @see List#add(Object)
+     */
+    public boolean addConstraintListener(ConstraintListener listener) {
+        return listOfConstraintListeners.add(listener);
+    }
+
+
+    /**
+     * Removes the given {@link ConstraintListener} from this interpreter.
+     *
+     * @param listener the element to be removed.
+     * @return {@code true} if this operation was successful, {@code false}
+     * otherwise.
+     * @throws NullPointerException
+     * @see List#remove(Object)
+     */
+    public boolean removeConstraintListener(ConstraintListener listener) {
+        return listOfConstraintListeners.remove(listener);
+    }
+
+
+    /**
+     * Removes the {@link ConstraintListener} with the given index from this
+     * interpreter.
+     *
+     * @param index of the {@link ConstraintListener} to be removed.
+     * @return {@code true} if this operation was successful, {@code false}
+     * otherwise.
+     * @throws IndexOutOfBoundsException
+     * @see List#remove(int)
+     */
+    public ConstraintListener removeConstraintListener(int index) {
+        return listOfConstraintListeners.remove(index);
+    }
+
+
+    /**
+     * @return the number of {@link ConstraintListener}s currently assigned to
+     * this interpreter.
+     */
+    public int getConstraintListenerCount() {
+        return listOfConstraintListeners.size();
+    }
+
     public void setPreviousTimePoint(double previousTimePoint) {
         this.previousTimePoint = previousTimePoint;
     }
@@ -1841,7 +1842,7 @@ public abstract class EquationSystem
      * @return the array of derivatives of each species of the model system at
      * the current time.
      */
-    public double[] getNewChangeRate() {
+    public double[] getChangeRate() {
         return changeRate;
     }
 

@@ -7,7 +7,6 @@
 package fern.network.sbml;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -284,15 +283,6 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 				rea.addReactant(new SpeciesReference(net.getSpeciesName(net.getReactants(r)[s])));	
 			for (int s=0; s<net.getProducts(r).length; s++)
 				rea.addProduct(new SpeciesReference(net.getSpeciesName(net.getProducts(r)[s])));
-
-			/**
-			 * [Changes made]
-			 *
-			 * As KineticLaw class is updated in JSBML
-			 * It takes parameters as reaction now. So updated it.
-			 *
-			 * Previous statement: KineticLaw law = new KineticLaw(getASTTree(net,r));
-			 */
 			KineticLaw law = new KineticLaw(rea);
 			rea.setKineticLaw(law);
 			re.addReaction(rea);
