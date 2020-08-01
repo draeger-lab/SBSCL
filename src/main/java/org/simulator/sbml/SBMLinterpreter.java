@@ -125,7 +125,7 @@ public class SBMLinterpreter extends EquationSystem {
    */
   public SBMLinterpreter(Model model, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue, Map<String, Boolean> amountHash)
       throws SBMLException, ModelOverdeterminedException {
-    super(model, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, amountHash);
+    super(model);
     init(true, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, amountHash);
   }
 
