@@ -125,11 +125,12 @@ public interface DESSolver extends Cloneable, Serializable {
    * @param initialValues Return value at the start point.
    * @param timeBegin
    * @param timeEnd
+   * @param propertyChangeListener
    * @return A matrix containing the simulation results
    * @throws DerivativeException if something's wrong...
    */
-  public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd)
-      throws DerivativeException;
+  public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd, PropertyChangeListener propertyChangeListener)
+          throws DerivativeException;
 
   /**
    * Solves the given differential equation system with the step size h and
