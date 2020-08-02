@@ -295,7 +295,7 @@ public class SBMLTestSuiteTest {
                         boolean errorInSolve = false;
                         try {
                             solution = solver.solve(interpreter,
-                                    interpreter.getInitialValues(), timepoints);
+                                    interpreter.getInitialValues(), timepoints, null);
                         } catch (DerivativeException e) {
                             errorInSolve = true;
                             e.printStackTrace();

@@ -816,28 +816,25 @@ public abstract class AbstractDESSolver
     return data;
   }
 
-  /* (non-Javadoc)
-   * @see org.simulator.math.odes.DESSolver#steadystate(org.simulator.math.odes.DESystem, double[], double, double, int)
+  /**
+   * {@inheritDoc}
    */
   @Override
-  public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps)
-      throws DerivativeException {
+  public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps, PropertyChangeListener propertyChangeListener)
+          throws DerivativeException {
     double[] timePoints = new double[steps];
     for (int i = 0; i < steps; i++) {
       timePoints[i] = x + i * h;
     }
-    return solve(DES, initialValues, timePoints);
+    return solve(DES, initialValues, timePoints, propertyChangeListener);
   }
 
   /**
-   * @param DES           differential equation system
-   * @param initialValues
-   * @param timePoints    the time points
-   * @return result as a multi table
+   * {@inheritDoc}
    */
   @Override
-  public MultiTable solve(DESystem DES, double[] initialValues, double[] timePoints)
-      throws DerivativeException {
+  public MultiTable solve(DESystem DES, double[] initialValues, double[] timePoints, PropertyChangeListener propertyChangeListener)
+          throws DerivativeException {
     if (DES instanceof DelayedDESystem) {
       ((DelayedDESystem) DES).registerDelayValueHolder(this);
     }
@@ -895,12 +892,12 @@ public abstract class AbstractDESSolver
     return data;
   }
 
-  /* (non-Javadoc)
-   * @see org.simulator.math.odes.DESSolver#steadystate(org.simulator.math.odes.DESystem, org.simulator.math.odes.MultiTable.Block, double[])
+  /**
+   * {@inheritDoc}
    */
   @Override
-  public MultiTable solve(DESystem DES, MultiTable.Block initConditions, double[] initialValues)
-      throws DerivativeException {
+  public MultiTable solve(DESystem DES, MultiTable.Block initConditions, double[] initialValues, PropertyChangeListener propertyChangeListener)
+          throws DerivativeException {
     if (DES instanceof DelayedDESystem) {
       ((DelayedDESystem) DES).registerDelayValueHolder(this);
     }

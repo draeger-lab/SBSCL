@@ -243,7 +243,7 @@ public class SBMLTestSuiteRunnerWrapper {
         SBMLinterpreter interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);
 
         // Compute the numerical solution of the problem
-        return solver.solve(interpreter, interpreter.getInitialValues(), timePoints);
+        return solver.solve(interpreter, interpreter.getInitialValues(), timePoints, null);
     }
 
     /**

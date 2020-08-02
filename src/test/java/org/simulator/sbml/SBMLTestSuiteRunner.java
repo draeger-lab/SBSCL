@@ -829,7 +829,7 @@ public class SBMLTestSuiteRunner {
 
       // solve
       MultiTable solution = solver.solve(interpreter,
-        interpreter.getInitialValues(), timePoints);
+        interpreter.getInitialValues(), timePoints, null);
       if (solver.isUnstable()) {
         logger.warning("unstable!");
         return null;
@@ -969,7 +969,7 @@ public class SBMLTestSuiteRunner {
             boolean errorInSolve = false;
             try {
               solution = solver.solve(interpreter,
-                interpreter.getInitialValues(), timepoints);
+                interpreter.getInitialValues(), timepoints, null);
             } catch (DerivativeException e) {
               errorInSolve = true;
             }
