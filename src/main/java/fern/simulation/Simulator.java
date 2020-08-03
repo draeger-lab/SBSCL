@@ -241,16 +241,16 @@ public abstract class Simulator {
 		amountManager.resetAmount();
 		thetaQueue = new ThetaQueue();
 		
-		for (int i=0; i<a.length; i++) 
-			a[i] = propensityCalculator.calculatePropensity(i, getAmountManager(),this);
+		initializePropensities();
 	}
 
 	/**
 	 * Reinitialize the propensities when an event is executed
 	 */
-	public void reinitializePropensity() {
-		for (int i=0; i<a.length; i++)
-			a[i] = propensityCalculator.calculatePropensity(i, getAmountManager(),this);
+	public void initializePropensities() {
+		for (int i = 0; i < a.length; i++) {
+			a[i] = propensityCalculator.calculatePropensity(i, getAmountManager(), this);
+		}
 	}
 
 	

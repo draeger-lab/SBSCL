@@ -46,6 +46,115 @@ public class StochasticTestSuiteTest {
   private static final String STEPS = "steps";
   private static final String STOCHASTIC_TEST_SUITE_PATH = "STOCHASTIC_TEST_SUITE_PATH";
 
+  /**
+   * The constant for comparing the mean distances inequality.
+   *
+   * Mean distance function
+   * <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+   *   <msub>
+   *     <mi>Z</mi>
+   *     <mrow class="MJX-TeXAtom-ORD">
+   *       <mi>t</mi>
+   *     </mrow>
+   *   </msub>
+   *   <mo>=</mo>
+   *   <msqrt>
+   *     <mi>n</mi>
+   *   </msqrt>
+   *   <mo>&#x2217;<!-- ∗ --></mo>
+   *   <mfrac>
+   *     <mrow>
+   *       <mo stretchy="false">(</mo>
+   *       <msub>
+   *         <mi>X</mi>
+   *         <mrow class="MJX-TeXAtom-ORD">
+   *           <mi>t</mi>
+   *         </mrow>
+   *       </msub>
+   *       <mo>&#x2212;<!-- − --></mo>
+   *       <mi>m</mi>
+   *       <msub>
+   *         <mi>u</mi>
+   *         <mrow class="MJX-TeXAtom-ORD">
+   *           <mi>t</mi>
+   *         </mrow>
+   *       </msub>
+   *       <mo stretchy="false">)</mo>
+   *     </mrow>
+   *     <mrow>
+   *       <mi>s</mi>
+   *       <mi>i</mi>
+   *       <mi>g</mi>
+   *       <mi>m</mi>
+   *       <msub>
+   *         <mi>a</mi>
+   *         <mrow class="MJX-TeXAtom-ORD">
+   *           <mi>t</mi>
+   *         </mrow>
+   *       </msub>
+   *     </mrow>
+   *   </mfrac>
+   * </math>
+   *
+   * This Mean distance function should always fall in (-MEAN_CUTOFF, MEAN_CUTOFF).
+   *
+   */
+  private static final double MEAN_CUTOFF = 3d;
+
+  /**
+   * The constant for comparing the standard deviation distances inequality.
+   *
+   * SD distance function
+   * <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+   *   <msub>
+   *     <mi>Y</mi>
+   *     <mrow class="MJX-TeXAtom-ORD">
+   *       <mi>t</mi>
+   *     </mrow>
+   *   </msub>
+   *   <mo>=</mo>
+   *   <msqrt>
+   *     <mfrac>
+   *       <mi>n</mi>
+   *       <mn>2</mn>
+   *     </mfrac>
+   *   </msqrt>
+   *   <mo>&#x2217;<!-- ∗ --></mo>
+   *   <mo stretchy="false">(</mo>
+   *   <mfrac>
+   *     <msubsup>
+   *       <mi>S</mi>
+   *       <mrow class="MJX-TeXAtom-ORD">
+   *         <mi>t</mi>
+   *       </mrow>
+   *       <mrow class="MJX-TeXAtom-ORD">
+   *         <mn>2</mn>
+   *       </mrow>
+   *     </msubsup>
+   *     <mrow>
+   *       <mi>s</mi>
+   *       <mi>i</mi>
+   *       <mi>g</mi>
+   *       <mi>m</mi>
+   *       <msubsup>
+   *         <mi>a</mi>
+   *         <mrow class="MJX-TeXAtom-ORD">
+   *           <mi>t</mi>
+   *         </mrow>
+   *         <mn>2</mn>
+   *       </msubsup>
+   *     </mrow>
+   *   </mfrac>
+   *   <mo>&#x2212;<!-- − --></mo>
+   *   <mn>1</mn>
+   *   <mo stretchy="false">)</mo>
+   * </math>
+   *
+   * This SD distance function should always fall in range (-SD_CUTOFF, SD_CUTOFF).
+   *
+   */
+  private static final double SD_CUTOFF = 5d;
+
   public StochasticTestSuiteTest(String path) {
     this.path = path;
   }
@@ -90,19 +199,16 @@ public class StochasticTestSuiteTest {
   @Test
   public void testModel() throws IOException {
 
-    long[] stochasticSeeds = new long[]{
-            1595487468503L, 1595487468503L, 1595487468503L, 1595487468503L, 1595487468503L,
-            1595487468503L, 1595487468503L, 1595487468503L, 1595487468503L,
-            1595487468503L, // Failed test case as -> No substance units
-            1595487468503L, // Failed test case as -> No substance units
-            1595487468503L, 1595487468503L, 1595487468503L, 1595487468503L, 1595487468503L,
-            1595487468503L, 1595487468503L,
-            1595487468503L, // Failed test case as -> Rules present
-            1595487468503L, 1595487468503L, 1595487468503L, 1595487468503L, 1595487468503L,
-            1595487468503L, 1595487468503L, 1595487468503L, 1595617059459L, 1595617059459L,
-            1595487468503L, 1595487468503L, 1595487468503L, 1595487468503L, 1595487468503L,
-            1595487468503L, 1595487468503L, 1595488413069L, 1595487468503L, 1595487468503L
-    };
+    long[] stochasticSeeds = new long[39];
+
+    // Initialize the stochasticSeeds array with a same seed value as
+    // most of the test cases pass with same seed.
+    Arrays.fill(stochasticSeeds, 1595487468503L);
+
+    // Updating the seed values of test cases where it is different.
+    stochasticSeeds[27] = 1595617059459L;
+    stochasticSeeds[28] = 1595617059459L;
+    stochasticSeeds[36] = 1595488413069L;
 
     String[] failedTests = new String[]{
             "00010", "00011",   // Failing as no substance units present
@@ -328,7 +434,7 @@ public class StochasticTestSuiteTest {
         Assert.assertNotNull(model);
         Assert.assertFalse(errorInModelReading);
         CSVImporter csvImporter = new CSVImporter();
-        MultiTable inputData = csvImporter.convert(model, csvfile);
+        MultiTable inputData = csvImporter.readDataFromCSV(model, csvfile);
         MultiTable left = meanSD;
         MultiTable right = inputData;
         if (meanSD.isSetTimePoints() && inputData.isSetTimePoints()) {
@@ -367,11 +473,11 @@ public class StochasticTestSuiteTest {
         }
 
         for (Double meanDistance : meanDistances) {
-          Assert.assertTrue((meanDistance > -3d) && (meanDistance < 3d));
+          Assert.assertTrue((meanDistance > -MEAN_CUTOFF) && (meanDistance < MEAN_CUTOFF));
         }
 
         for (Double sdDistance : sdDistances) {
-          Assert.assertTrue((sdDistance > -5d) && (sdDistance < 5d));
+          Assert.assertTrue((sdDistance > -SD_CUTOFF) && (sdDistance < SD_CUTOFF));
         }
       }
 

@@ -65,7 +65,7 @@ public class GillespieEnhanced extends Simulator {
 	public void performStep(SimulationController control) {
 
 		if (changed) {
-			reinitializePropensity();
+			initializePropensities();
 			a_sum = 0;
 			for (int i=0; i<a.length; i++)
 				a_sum+=a[i];

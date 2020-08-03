@@ -51,7 +51,7 @@ public class SBMLTestSuiteRunnerWrapper {
     public static final String RELATIVE = "relative";
     public static final String NAN = "NaN";
     private static final double TOLERANCE_FACTOR = 1E-5;
-    private static Logger LOGGER = Logger.getLogger(CompExample.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CompExample.class.getName());
 
     /**
      * The wrapper executes the simulation of a given SBML file and writes result to a specified CSV file.
@@ -114,7 +114,7 @@ public class SBMLTestSuiteRunnerWrapper {
 
         // get timePoints
         CSVImporter csvimporter = new CSVImporter();
-        MultiTable inputData = csvimporter.convert(model, resultsPath);
+        MultiTable inputData = csvimporter.readDataFromCSV(model, resultsPath);
         double[] timePoints = inputData.getTimePoints();
         duration = timePoints[timePoints.length - 1]
                 - timePoints[0];

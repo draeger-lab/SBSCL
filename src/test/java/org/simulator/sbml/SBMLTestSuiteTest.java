@@ -181,7 +181,7 @@ public class SBMLTestSuiteTest {
 
                 // get timepoints
                 CSVImporter csvimporter = new CSVImporter();
-                MultiTable inputData = csvimporter.convert(model, csvfile);
+                MultiTable inputData = csvimporter.readDataFromCSV(model, csvfile);
                 double[] timepoints = inputData.getTimePoints();
                 duration = timepoints[timepoints.length - 1]
                         - timepoints[0];

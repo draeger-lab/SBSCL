@@ -1204,8 +1204,8 @@ public class SBMLinterpreter
     isAmount = new boolean[sizeY];
     compartmentIndexes = new int[sizeY];
     conversionFactors = new double[sizeY];
-    inConcentrationValues = new boolean[sizeY];
     Arrays.fill(conversionFactors, 1d);
+    inConcentrationValues = new boolean[sizeY];
     symbolIdentifiers = new String[sizeY];
     initialValues = new double[sizeY];
     latestTimePointResult = new double[sizeY];

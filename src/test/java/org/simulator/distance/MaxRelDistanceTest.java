@@ -72,8 +72,8 @@ public class MaxRelDistanceTest {
 
         // convert the test files to MultiTable
         CSVImporter csvImporter = new CSVImporter();
-        MultiTable a = csvImporter.convert(null, first);
-        MultiTable b = csvImporter.convert(null, second);
+        MultiTable a = csvImporter.readDataFromCSV(null, first);
+        MultiTable b = csvImporter.readDataFromCSV(null, second);
 
         // calculates max relative distance
         QualityMeasure distance = new RelativeMaxDistance();

@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.Model;
@@ -58,114 +59,109 @@ public class CSVImporter {
   private String[] header;
 
   /**
-   * Function for importing a file and adapting the data to the current model
-   *
-   * @param model    the current model
-   * @param pathname the path of the file to import
-   * @return the data as a multi table
-   * @throws IOException
+   * This method converts the Hashmap with key as identifiers and values as the column
+   * of the identifier's amounts into MultiTable.
+   * 
+   * @param model the SBML {@link Model}
+   * @param identifierToColumn the HashMap
+   * @return the result in form of MultiTable from the CSV file
    */
-  public MultiTable convert(Model model, String pathname) throws IOException {
+  private MultiTable adaptDataToModel(Model model, Map<String, double[]> identifierToColumn) {
     MultiTable data = new MultiTable();
     List<String> cols;
-    String expectedHeader[];
+    String[] expectedHeaders;
     if (model != null) {
-      expectedHeader = expectedTableHead(model); // According to the
+      expectedHeaders = expectedTableHead(model);
+      // According to the
       // model: which symbols
-      cols = new ArrayList<String>(expectedHeader.length + 1);
-      for (String head : expectedHeader) {
-        cols.add(head);
-      }
+      cols = new ArrayList<String>(expectedHeaders.length + 1);
+      cols.addAll(Arrays.asList(expectedHeaders));
     } else {
-      expectedHeader = new String[0];
+      expectedHeaders = new String[0];
       cols = new ArrayList<String>(1);
     }
     cols.add(data.getTimeName());
-    int i, j, timeColumn;
-    String stringData[][] = read(pathname);
-    timeColumn = 0;
-    if (timeColumn > -1) {
-      double timePoints[] = new double[stringData.length];
-      for (i = 0; i < stringData.length; i++) {
-        timePoints[i] = Double.parseDouble(stringData[i][timeColumn]);
-      }
-      data.setTimePoints(timePoints);
 
+    data.setTimePoints(identifierToColumn.get(header[0]));
+    try {
       // exclude time column
-      String newHead[] = new String[Math.max(0, header.length - 1)];
-      Map<String, Integer> nameToColumn = new HashMap<String, Integer>();
-      i = 0;
-      for (int p = 1; p < header.length; p++) {
-        if (!header[p].equalsIgnoreCase(data.getTimeName())) {
-          newHead[i++] = header[p].trim();
-          nameToColumn.put(newHead[i - 1], i);
+      String[] newHead = new String[Math.max(0, header.length - 1)];
+      if (header.length - 1 >= 0) {
+        System.arraycopy(header, 1, newHead, 0, header.length - 1);
+      }
+      data.addBlock(newHead);
+
+      for (int i = 1; i < data.getColumnCount(); i++) {
+        double[] colValues = identifierToColumn.get(data.getColumnName(i));
+        for (int j = 0; j < data.getColumn(i).getRowCount(); j++) {
+          data.setValueAt(colValues[j], j, i);
         }
       }
-      data.addBlock(newHead); // alphabetically sorted
-      double dataBlock[][] = data.getBlock(0).getData();
-      for (i = 0; i < dataBlock.length; i++) {
-        j = 0; // timeCorrection(j, timeColumn)
-        for (String head : newHead) {
-          String s = stringData[i][nameToColumn.get(head)];
-          if ((s != null) && (s.length() > 0)) {
-            if (s.equalsIgnoreCase("INF")) {
-              dataBlock[i][j] = Double.POSITIVE_INFINITY;
-            } else if (s.equalsIgnoreCase("-INF")) {
-              dataBlock[i][j] = Double.NEGATIVE_INFINITY;
-            } else if (s.equalsIgnoreCase("NAN")) {
-              dataBlock[i][j] = Double.NaN;
-            } else {
-              dataBlock[i][j] = Double.parseDouble(s);
-            }
-          }
-          j++;
-        }
-      }
+
       if (model != null) {
-        String colNames[] = new String[newHead.length];
+        String[] colNames = new String[newHead.length];
         UniqueNamedSBase sbase;
-        j = 0;
+        int j = 0;
         for (String head : newHead) {
           sbase = model.findUniqueNamedSBase(head);
-          colNames[j++] =
-              (sbase != null) && (sbase.isSetName()) ? sbase.getName() : null;
+          colNames[j++] = (sbase != null) && (sbase.isSetName()) ? sbase.getName() : null;
         }
         data.getBlock(0).setColumnNames(colNames);
       }
       data.setTimeName("time");
+
       return data;
-    } else {
-      logger.fine("The file is not correctly formatted!");
+    } catch (Exception e) {
+      e.printStackTrace();
     }
     return null;
   }
 
   /**
-   * @param pathname
-   * @return
+   * Stores the content from the CSV file in the Hashmap with keys as identifiers
+   * and values as the column of the identifier's amounts.
+   *
+   * @param model the SBML {@link Model}
+   * @param pathname path of the CSV file
+   * @return the results from the CSV file in MultiTable
    * @throws IOException
    */
-  private String[][] read(String pathname) throws IOException {
-    String[][] result = null;
+  public MultiTable readDataFromCSV(Model model, String pathname) throws IOException {
+    Map<String, double[]> identifierToColumn = new HashMap<>();
     BufferedReader reader = new BufferedReader(new FileReader(pathname));
-    List<String> lines = new LinkedList<String>();
     String line = reader.readLine();
+    List<String> lines = new LinkedList<String>();
+    header = line.split(",");
     if (line != null) {
-      header = line.split(",");
       line = reader.readLine();
       while ((line != null) && !line.isEmpty()) {
         lines.add(line);
         line = reader.readLine();
       }
-      result = new String[lines.size()][header.length];
-      int i = 0;
-      for (String l : lines) {
-        result[i] = l.split(",");
-        i++;
+
+      for (String s : header) {
+        identifierToColumn.put(s, new double[lines.size()]);
+      }
+
+      for (int i = 0; i < lines.size(); i++) {
+        String[] column = lines.get(i).split(",");
+        for (int j = 0; j < column.length; j++) {
+          if ((column[j] != null) && (column[j].length() > 0)) {
+            if (column[j].equalsIgnoreCase("INF")) {
+              identifierToColumn.get(header[j])[i] = Double.POSITIVE_INFINITY;
+            } else if (column[j].equalsIgnoreCase("-INF")) {
+              identifierToColumn.get(header[j])[i] = Double.NEGATIVE_INFINITY;
+            } else if (column[j].equalsIgnoreCase("NAN")) {
+              identifierToColumn.get(header[j])[i] = Double.NaN;
+            } else {
+              identifierToColumn.get(header[j])[i] = Double.parseDouble(column[j]);
+            }
+          }
+        }
       }
     }
-    reader.close();
-    return result;
+
+    return adaptDataToModel(model, identifierToColumn);
   }
 
   /**
