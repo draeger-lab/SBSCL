@@ -229,7 +229,7 @@
                   <jd2:listOfProducts>
                      <jd2:speciesReference species = "X2" stoichiometry = "1"/>
                   </jd2:listOfProducts>
-                  <jd2:listOfModifierEdges/>urn:miriam:biomodels.db:BIOMD0000000140
+                  <jd2:listOfModifierEdges/>
                   <jd2:kineticLaw type = "explicit">
                      <jd2:rateEquation value = "J3_k2*S2"/>
                   </jd2:kineticLaw>
@@ -242,7 +242,7 @@
                      </jd2:lineType>
                   </jd2:display>
                </jd2:reaction>
-            </jd2:listOfReactions>urn:miriam:biomodels.db:BIOMD0000000140
+            </jd2:listOfReactions>
          </jd2:JDesignerLayout>
       </annotation>
       <listOfCompartments>
