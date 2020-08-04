@@ -27,13 +27,7 @@ package org.simulator.io;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Arrays;
+import java.util.*;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.Model;
@@ -54,19 +48,63 @@ public class CSVImporter {
   private static final transient Logger logger = Logger.getLogger(CSVImporter.class.getName());
 
   /**
-   * The header of the file
+   * This method reads the data from the CSV file and converts it
+   * into the map with key as the column name and value as the array of amounts
+   * for the particular column.
+   * 
+   * @param pathname The path of the CSV file
+   * @return columnsMap -> LinkedListHashMap
    */
-  private String[] header;
+  private Map<String, double[]> readDataFromCSV(String pathname) throws IOException {
+    Map<String, double[]> columnsMap = new LinkedHashMap<>();
+    BufferedReader reader = new BufferedReader(new FileReader(pathname));
+    String line = reader.readLine();
+    List<String> lines = new LinkedList<String>();
+    String[] identifiers = line.split(",");
+    if (line != null) {
+      line = reader.readLine();
+      while ((line != null) && !line.isEmpty()) {
+        lines.add(line);
+        line = reader.readLine();
+      }
+
+      if (identifiers[0].equalsIgnoreCase("time")){
+        identifiers[0] = identifiers[0].toLowerCase();
+      }
+      for (String s : identifiers) {
+        columnsMap.put(s, new double[lines.size()]);
+      }
+
+      for (int i = 0; i < lines.size(); i++) {
+        String[] column = lines.get(i).split(",");
+        for (int j = 0; j < column.length; j++) {
+          if ((column[j] != null) && (column[j].length() > 0)) {
+            if (column[j].equalsIgnoreCase("INF")) {
+              columnsMap.get(identifiers[j])[i] = Double.POSITIVE_INFINITY;
+            } else if (column[j].equalsIgnoreCase("-INF")) {
+              columnsMap.get(identifiers[j])[i] = Double.NEGATIVE_INFINITY;
+            } else if (column[j].equalsIgnoreCase("NAN")) {
+              columnsMap.get(identifiers[j])[i] = Double.NaN;
+            } else {
+              columnsMap.get(identifiers[j])[i] = Double.parseDouble(column[j]);
+            }
+          }
+        }
+      }
+    }
+
+    return columnsMap;
+  }
 
   /**
-   * This method converts the Hashmap with key as identifiers and values as the column
-   * of the identifier's amounts into MultiTable.
-   * 
+   * Converts the content of the CSV file in the form of the MultiTable.
+   *
    * @param model the SBML {@link Model}
-   * @param identifierToColumn the HashMap
-   * @return the result in form of MultiTable from the CSV file
+   * @param pathname path of the CSV file
+   * @return the results from the CSV file in MultiTable
+   * @throws IOException
    */
-  private MultiTable adaptDataToModel(Model model, Map<String, double[]> identifierToColumn) {
+  public MultiTable readMultiTableFromCSV(Model model, String pathname) throws IOException {
     MultiTable data = new MultiTable();
     List<String> cols;
     String[] expectedHeaders;
@@ -82,28 +120,27 @@ public class CSVImporter {
     }
     cols.add(data.getTimeName());
 
-    data.setTimePoints(identifierToColumn.get(header[0]));
+    Map<String, double[]> columnsMap = readDataFromCSV(pathname);
+
+    data.setTimePoints(columnsMap.entrySet().iterator().next().getValue());
+    columnsMap.remove(columnsMap.entrySet().iterator().next().getKey());
+
     try {
-      // exclude time column
-      String[] newHead = new String[Math.max(0, header.length - 1)];
-      if (header.length - 1 >= 0) {
-        System.arraycopy(header, 1, newHead, 0, header.length - 1);
-      }
-      data.addBlock(newHead);
+      data.addBlock(columnsMap.keySet().toArray(new String[0]));
 
       for (int i = 1; i < data.getColumnCount(); i++) {
-        double[] colValues = identifierToColumn.get(data.getColumnName(i));
+        double[] colValues = columnsMap.get(data.getColumnName(i));
         for (int j = 0; j < data.getColumn(i).getRowCount(); j++) {
           data.setValueAt(colValues[j], j, i);
         }
       }
 
       if (model != null) {
-        String[] colNames = new String[newHead.length];
+        String[] colNames = new String[columnsMap.size()];
         UniqueNamedSBase sbase;
         int j = 0;
-        for (String head : newHead) {
-          sbase = model.findUniqueNamedSBase(head);
+        for (Map.Entry<String, double[]> entry: columnsMap.entrySet()) {
+          sbase = model.findUniqueNamedSBase(entry.getKey());
           colNames[j++] = (sbase != null) && (sbase.isSetName()) ? sbase.getName() : null;
         }
         data.getBlock(0).setColumnNames(colNames);
@@ -115,53 +152,6 @@ public class CSVImporter {
       e.printStackTrace();
     }
     return null;
-  }
-
-  /**
-   * Stores the content from the CSV file in the Hashmap with keys as identifiers
-   * and values as the column of the identifier's amounts.
-   *
-   * @param model the SBML {@link Model}
-   * @param pathname path of the CSV file
-   * @return the results from the CSV file in MultiTable
-   * @throws IOException
-   */
-  public MultiTable readDataFromCSV(Model model, String pathname) throws IOException {
-    Map<String, double[]> identifierToColumn = new HashMap<>();
-    BufferedReader reader = new BufferedReader(new FileReader(pathname));
-    String line = reader.readLine();
-    List<String> lines = new LinkedList<String>();
-    header = line.split(",");
-    if (line != null) {
-      line = reader.readLine();
-      while ((line != null) && !line.isEmpty()) {
-        lines.add(line);
-        line = reader.readLine();
-      }
-
-      for (String s : header) {
-        identifierToColumn.put(s, new double[lines.size()]);
-      }
-
-      for (int i = 0; i < lines.size(); i++) {
-        String[] column = lines.get(i).split(",");
-        for (int j = 0; j < column.length; j++) {
-          if ((column[j] != null) && (column[j].length() > 0)) {
-            if (column[j].equalsIgnoreCase("INF")) {
-              identifierToColumn.get(header[j])[i] = Double.POSITIVE_INFINITY;
-            } else if (column[j].equalsIgnoreCase("-INF")) {
-              identifierToColumn.get(header[j])[i] = Double.NEGATIVE_INFINITY;
-            } else if (column[j].equalsIgnoreCase("NAN")) {
-              identifierToColumn.get(header[j])[i] = Double.NaN;
-            } else {
-              identifierToColumn.get(header[j])[i] = Double.parseDouble(column[j]);
-            }
-          }
-        }
-      }
-    }
-
-    return adaptDataToModel(model, identifierToColumn);
   }
 
   /**

@@ -161,7 +161,7 @@ public class SBMLTestSuiteWrapper {
     }
     if (model != null) {
       CSVImporter csvimporter = new CSVImporter();
-      MultiTable inputData = csvimporter.readDataFromCSV(model, csvfile);
+      MultiTable inputData = csvimporter.readMultiTableFromCSV(model, csvfile);
 
       double[] timepoints = inputData.getTimePoints();
 

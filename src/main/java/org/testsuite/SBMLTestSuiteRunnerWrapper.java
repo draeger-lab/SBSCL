@@ -114,7 +114,7 @@ public class SBMLTestSuiteRunnerWrapper {
 
         // get timePoints
         CSVImporter csvimporter = new CSVImporter();
-        MultiTable inputData = csvimporter.readDataFromCSV(model, resultsPath);
+        MultiTable inputData = csvimporter.readMultiTableFromCSV(model, resultsPath);
         double[] timePoints = inputData.getTimePoints();
         duration = timePoints[timePoints.length - 1]
                 - timePoints[0];

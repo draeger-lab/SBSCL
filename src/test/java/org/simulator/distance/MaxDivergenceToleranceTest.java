@@ -76,8 +76,8 @@ public class MaxDivergenceToleranceTest {
 
         // convert the test files to MultiTable
         CSVImporter csvImporter = new CSVImporter();
-        MultiTable a = csvImporter.readDataFromCSV(null, first);
-        MultiTable b = csvImporter.readDataFromCSV(null, second);
+        MultiTable a = csvImporter.readMultiTableFromCSV(null, first);
+        MultiTable b = csvImporter.readMultiTableFromCSV(null, second);
 
         // calculates max absolute distance
         QualityMeasure maxAbsDistance = new MaxDivergenceTolerance(absTol, relTol);

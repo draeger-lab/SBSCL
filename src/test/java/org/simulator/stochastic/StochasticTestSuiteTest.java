@@ -434,7 +434,7 @@ public class StochasticTestSuiteTest {
         Assert.assertNotNull(model);
         Assert.assertFalse(errorInModelReading);
         CSVImporter csvImporter = new CSVImporter();
-        MultiTable inputData = csvImporter.readDataFromCSV(model, csvfile);
+        MultiTable inputData = csvImporter.readMultiTableFromCSV(model, csvfile);
         MultiTable left = meanSD;
         MultiTable right = inputData;
         if (meanSD.isSetTimePoints() && inputData.isSetTimePoints()) {

@@ -270,7 +270,7 @@ public class SBMLTestSuiteRunner {
 
           File f = new File(csvfile);
           if (f.exists()) {
-            inputData = csvimporter.readDataFromCSV(model, csvfile);
+            inputData = csvimporter.readMultiTableFromCSV(model, csvfile);
           }
           int points=steps+1;
           double[] timepoints = new double[points];
@@ -474,7 +474,7 @@ public class SBMLTestSuiteRunner {
 
           File f = new File(csvfile);
           if (f.exists()) {
-            inputData = csvimporter.readDataFromCSV(model, csvfile);
+            inputData = csvimporter.readMultiTableFromCSV(model, csvfile);
           }
           int points=steps+1;
           double[] timepoints = new double[points];
@@ -718,7 +718,7 @@ public class SBMLTestSuiteRunner {
             //						mt = createMultiTableFromProcessedResults(
             //								wanted, prRes, sedml);
             CSVImporter csvimporter = new CSVImporter();
-            MultiTable inputData = csvimporter.readDataFromCSV(model,
+            MultiTable inputData = csvimporter.readMultiTableFromCSV(model,
               csvfile);
             String[] currentIdentifiers = mt.getBlock(0).getIdentifiers();
             String[] correctedIdentifiers = new String[currentIdentifiers.length];
@@ -954,7 +954,7 @@ public class SBMLTestSuiteRunner {
 
           // get timepoints
           CSVImporter csvimporter = new CSVImporter();
-          MultiTable inputData = csvimporter.readDataFromCSV(model, csvfile);
+          MultiTable inputData = csvimporter.readMultiTableFromCSV(model, csvfile);
           double[] timepoints = inputData.getTimePoints();
           duration = timepoints[timepoints.length - 1]
               - timepoints[0];
