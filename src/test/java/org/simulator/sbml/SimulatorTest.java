@@ -59,7 +59,7 @@ public class SimulatorTest {
 
         // Compute the numerical solution of the initial value problem
         // TODO: Rel-Tolerance, Abs-Tolerance.
-        MultiTable solution = solver.solve(interpreter, interpreter.getInitialValues(), 0d, timeEnd);
+        MultiTable solution = solver.solve(interpreter, interpreter.getInitialValues(), 0d, timeEnd, null);
         
         // Uncomment this for steadyState simulation
         // If SteadyState simulation is desired, simple call solver without end time.

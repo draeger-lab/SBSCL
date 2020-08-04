@@ -232,7 +232,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
       }
       solver.setIncludeIntermediates(false);
       solver.setStepSize((sim.getOutputEndTime() - sim.getOutputStartTime()) / (sim.getNumberOfPoints()));
-      MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(), sim.getOutputStartTime(), sim.getOutputEndTime());
+      MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(), sim.getOutputStartTime(), sim.getOutputEndTime(), null);
       // adapt the MultiTable to jlibsedml interface.
       return new MultTableSEDMLWrapper(mts);
     } catch (Exception e) {
@@ -260,7 +260,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
       // A step-size randomly taken since SED-ML L1V2 says simulator decides this
       // A better way to decide step size is essential
       solver.setStepSize(sim.getStep() / ONE_STEP_SIM_STEPS);
-      MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(), 0.0, sim.getStep());
+      MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(), 0.0, sim.getStep(), null);
       // adapt the MultiTable to jlibsedml interface.
       // return only 1 point for OneStep simulation: start and end
       return new MultTableSEDMLWrapper(mts.filter(new double[] {sim.getStep()}));
@@ -326,14 +326,14 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
         // A step-size randomly taken since SED-ML L1V2 says simulator decides this
         // A better way to decide step size is essential
         solver.setStepSize(finalSim.getStep() / ONE_STEP_SIM_STEPS);
-        MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(), 0.0, finalSim.getStep());
+        MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(), 0.0, finalSim.getStep(), null);
         // adapt the MultiTable to jlibsedml interface.
         // return only 1 point for OneStep simulation: start and end
         return new MultTableSEDMLWrapper(mts.filter(new double[] {finalSim.getStep()}));
       } else if (sim instanceof UniformTimeCourse) {
         UniformTimeCourse finalSim = (UniformTimeCourse) sim;
         solver.setStepSize((finalSim.getOutputEndTime() - finalSim.getOutputStartTime()) / (finalSim.getNumberOfPoints()));
-        MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(), finalSim.getOutputStartTime(), finalSim.getOutputEndTime());
+        MultiTable mts = solver.solve(interpreter, interpreter.getInitialValues(), finalSim.getOutputStartTime(), finalSim.getOutputEndTime(), null);
         // adapt the MultiTable to jlibsedml interface.
         return new MultTableSEDMLWrapper(mts);
       } else if (sim instanceof SteadyState) {
@@ -508,8 +508,8 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
   /**
    * Merge two 2D arrays into one 2D array in X-direction
    *
-   * @param double[][]
-   * @param double[][]
+   * @param a
+   * @param b
    * @return double[][]
    */
   private double[][] mergeDataCols(double[][] a, double[][] b) {
@@ -522,8 +522,8 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
   /**
    * Merge time columns from 2 multiTables
    *
-   * @param MultTableSEDMLWrapper
-   * @param MultTableSEDMLWrapper
+   * @param a
+   * @param b
    * @return double[]
    */
   private double[] mergeTimeCols(MultTableSEDMLWrapper a, MultTableSEDMLWrapper b) {
@@ -542,7 +542,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
   /**
    * A helper function to sort subTasks by order.
    *
-   * @param Map<String, SubTask>
+   * @param unsortMap
    * @return Map<String, SubTask>
    */
   private static Map<String, SubTask> sortTasks(Map<String, SubTask> unsortMap) {

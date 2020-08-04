@@ -377,6 +377,11 @@ public abstract class Simulator {
 		return observer;
 	}
 
+	/**
+	 * Sets the pre-collected seed for a particular model.
+	 *
+	 * @param seed
+	 */
 	public void setStochasticSeed(long seed) {
 		stochastics.setSeed(seed);
 	}

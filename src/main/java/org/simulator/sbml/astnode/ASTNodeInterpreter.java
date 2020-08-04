@@ -27,11 +27,10 @@ package org.simulator.sbml.astnode;
 import java.util.*;
 import java.util.logging.Logger;
 
-import org.apache.commons.math.ode.DerivativeException;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.util.Maths;
 import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
-import org.sbml.jsbml.validator.ModelOverdeterminedException;
+import org.simulator.sbml.EquationSystem;
 import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sbml.SBMLValueHolder;
 
@@ -994,25 +993,25 @@ public class ASTNodeInterpreter {
   }
 
   /**
-   * @param sbmlInterpreter
+   * @param eqnSystem
    * @param sBase
    * @param time
    * @return doubleValue the interpreted double value of the node
    */
-  public double rateOf(SBMLinterpreter sbmlInterpreter, CallableSBase sBase, double time, double delay) {
-    if ((time < delay) || (sBase instanceof LocalParameter) || (sbmlInterpreter.getConstantHash().get(sBase.getId()))) {
+  public double rateOf(EquationSystem eqnSystem, CallableSBase sBase, double time, double delay) {
+    if ((time < delay) || (sBase instanceof LocalParameter) || (eqnSystem.getConstantHash().get(sBase.getId()))) {
       return 0d;
     }
-    List<RateRuleValue> rateRulesRoots = sbmlInterpreter.getRateRulesRoots();
-    for (int i = 0; i < sbmlInterpreter.getRateRulesRoots().size(); i++) {
+    List<RateRuleValue> rateRulesRoots = eqnSystem.getRateRulesRoots();
+    for (int i = 0; i < eqnSystem.getRateRulesRoots().size(); i++) {
       RateRuleValue rrRoot = rateRulesRoots.get(i);
       if (rrRoot.getVariable().equals(sBase.getId())) {
-        return sbmlInterpreter.getRateRulesRoots().get(i).getNodeObject().compileDouble(time, 0d);
+        return eqnSystem.getRateRulesRoots().get(i).getNodeObject().compileDouble(time, 0d);
       }
     }
-    double[] changeRate = sbmlInterpreter.getNewChangeRate();
+    double[] changeRate = eqnSystem.getChangeRate();
     if (changeRate != null) {
-      return changeRate[sbmlInterpreter.getSymbolHash().get(sBase.getId())];
+      return changeRate[eqnSystem.getSymbolHash().get(sBase.getId())];
     } else {
       return 0d;
     }

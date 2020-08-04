@@ -93,7 +93,7 @@ public class BiomodelsExample {
           if ((solver != null) && (interpreter != null)) {
             solver.setStepSize(0.01);
             // solve
-            solver.solve(interpreter, interpreter.getInitialValues(), 0, 10);
+            solver.solve(interpreter, interpreter.getInitialValues(), 0, 10, null);
             if (solver.isUnstable()) {
               logger.warning("unstable!");
               errors++;

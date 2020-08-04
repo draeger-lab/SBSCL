@@ -6,7 +6,7 @@
     </uniformTimeCourse>
   </listOfSimulations>
   <listOfModels>
-    <model id="model1" name="Circadian Oscillations" language="urn:sedml:language:sbml" source="urn:miriam:biomodels.db:BIOMD0000000021" />
+    <model id="model1" name="Circadian Oscillations" language="urn:sedml:language:sbml" source="https://www.ebi.ac.uk/biomodels/model/download/BIOMD0000000021?filename=BIOMD0000000021_urn.xml" />
     <model id="model2" name="Circadian Chaos" language="urn:sedml:language:sbml" source="model1">
       <listOfChanges>
         <changeAttribute target="/sbml:sbml/sbml:model/sbml:listOfParameters/sbml:parameter[@id=&quot;V_mT&quot;]/@value" newValue="0.28" />
