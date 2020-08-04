@@ -45,6 +45,8 @@ public class StochasticTestSuiteTest {
   private static final String MEAN = "mean";
   private static final String STEPS = "steps";
   private static final String STOCHASTIC_TEST_SUITE_PATH = "STOCHASTIC_TEST_SUITE_PATH";
+  private static final String TIME = "time";
+  private static final String INTERVAL = "interval";
 
   /**
    * The constant for comparing the mean distances inequality.
@@ -296,7 +298,7 @@ public class StochasticTestSuiteTest {
         // Runs the stochastic simulation
         boolean errorInSimulation = false;
         try {
-          sim.start((Double)orderedArgs.get("time"));
+          sim.start((Double)orderedArgs.get(TIME));
         } catch (Exception e) {
           errorInSimulation = true;
         }
@@ -368,7 +370,7 @@ public class StochasticTestSuiteTest {
 
           // Runs the simulation again
           try {
-            sim.start((Double)orderedArgs.get("time"));
+            sim.start((Double)orderedArgs.get(TIME));
           } catch (Exception e) {
             errorInSimulation = true;
           }
@@ -489,7 +491,7 @@ public class StochasticTestSuiteTest {
   private static AmountIntervalObserver createObserver(Simulator sim,
       Map<String, Object> orderedArgs) {
     String[] species = getIdentifiers(sim, orderedArgs);
-    return (AmountIntervalObserver) sim.addObserver(new AmountIntervalObserver(sim,(Double)orderedArgs.get("interval"),((Double)orderedArgs.get("time")).intValue(),species));
+    return (AmountIntervalObserver) sim.addObserver(new AmountIntervalObserver(sim,(Double)orderedArgs.get(INTERVAL),((Double)orderedArgs.get(TIME)).intValue(),species));
   }
 
   private static String[] getIdentifiers(Simulator sim, Map<String, Object> orderedArgs) {

@@ -27,8 +27,11 @@ package org.simulator.io;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
-import java.util.logging.Logger;
+import java.util.AbstractList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.UniqueNamedSBase;
@@ -42,10 +45,7 @@ import org.simulator.math.odes.MultiTable;
  */
 public class CSVImporter {
 
-  /**
-   * A {@link java.util.logging.Logger} for this class.
-   */
-  private static final transient Logger logger = Logger.getLogger(CSVImporter.class.getName());
+  private static final String TIME = "time";
 
   /**
    * This method reads the data from the CSV file and converts it
@@ -60,7 +60,7 @@ public class CSVImporter {
     BufferedReader reader = new BufferedReader(new FileReader(pathname));
     String line = reader.readLine();
     List<String> lines = new LinkedList<String>();
-    String[] identifiers = line.split(",");
+    String[] identifiers = splitString(line, ",");
     if (line != null) {
       line = reader.readLine();
       while ((line != null) && !line.isEmpty()) {
@@ -68,7 +68,7 @@ public class CSVImporter {
         line = reader.readLine();
       }
 
-      if (identifiers[0].equalsIgnoreCase("time")){
+      if (identifiers[0].equalsIgnoreCase(TIME)){
         identifiers[0] = identifiers[0].toLowerCase();
       }
       for (String s : identifiers) {
@@ -83,8 +83,6 @@ public class CSVImporter {
               columnsMap.get(identifiers[j])[i] = Double.POSITIVE_INFINITY;
             } else if (column[j].equalsIgnoreCase("-INF")) {
               columnsMap.get(identifiers[j])[i] = Double.NEGATIVE_INFINITY;
-            } else if (column[j].equalsIgnoreCase("NAN")) {
-              columnsMap.get(identifiers[j])[i] = Double.NaN;
             } else {
               columnsMap.get(identifiers[j])[i] = Double.parseDouble(column[j]);
             }
@@ -131,13 +129,17 @@ public class CSVImporter {
         }
         data.getBlock(0).setColumnNames(colNames);
       }
-      data.setTimeName("time");
+      data.setTimeName(TIME);
 
       return data;
     } catch (Exception e) {
       e.printStackTrace();
     }
     return null;
+  }
+
+  private String[] splitString(String s, String separator) {
+    return s.split(separator);
   }
 
   /**

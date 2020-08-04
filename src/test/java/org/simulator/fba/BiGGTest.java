@@ -36,17 +36,7 @@ public class BiGGTest {
      * Returns location of BiGG test model directory from environment variable.
      */
     public static String getBiGGModelPath() {
-        Map<String, String> env = System.getenv();
-        String key = "BIGG_MODELS_PATH";
-        String value = null;
-        if (env.containsKey(key)) {
-            value = env.get(key);
-            logger.info(String.format("BiGG models folder found: %s", value));
-        }
-        else {
-            logger.info(String.format("%s environment variable not set.", key));
-        }
-        return value;
+        return TestUtils.getPathForTestResource("/bigg/v1.5");
     }
 
 	public BiGGTest(String resource) {
@@ -66,7 +56,6 @@ public class BiGGTest {
 	}
 
 	@Test
-    @Ignore
 	public void testFBA() throws Exception {
         logger.info("--------------------------------------------------------");
         logger.info(String.format("%s", resource));
