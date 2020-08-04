@@ -106,20 +106,6 @@ public class CSVImporter {
    */
   public MultiTable readMultiTableFromCSV(Model model, String pathname) throws IOException {
     MultiTable data = new MultiTable();
-    List<String> cols;
-    String[] expectedHeaders;
-    if (model != null) {
-      expectedHeaders = expectedTableHead(model);
-      // According to the
-      // model: which symbols
-      cols = new ArrayList<String>(expectedHeaders.length + 1);
-      cols.addAll(Arrays.asList(expectedHeaders));
-    } else {
-      expectedHeaders = new String[0];
-      cols = new ArrayList<String>(1);
-    }
-    cols.add(data.getTimeName());
-
     Map<String, double[]> columnsMap = readDataFromCSV(pathname);
 
     data.setTimePoints(columnsMap.entrySet().iterator().next().getValue());
