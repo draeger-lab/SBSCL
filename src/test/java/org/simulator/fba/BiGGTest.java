@@ -79,7 +79,6 @@ public class BiGGTest {
         GZIPInputStream gzis = new GZIPInputStream(is);
 
         SBMLDocument doc = SBMLReader.read(gzis);
-        logger.info(doc.toString());
         assertNotNull(doc);
 
         FluxBalanceAnalysis solver = new FluxBalanceAnalysis(doc);

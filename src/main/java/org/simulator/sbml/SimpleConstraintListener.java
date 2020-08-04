@@ -59,6 +59,5 @@ public class SimpleConstraintListener implements ConstraintListener {
     constraint = evt.getSource().getMath().toFormula();
     message = SBMLtools.toXML(evt.getSource().getMessage());
     // TODO: Localize
-    logger.log(Level.WARNING, MessageFormat.format("[VIOLATION]\t{0} at time {1,number}: {2}", constraint, evt.getTime(), message));
   }
 }

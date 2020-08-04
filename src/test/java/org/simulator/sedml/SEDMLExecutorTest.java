@@ -181,14 +181,12 @@ public class SEDMLExecutorTest {
     }
 
     @Test
-    @Ignore
     public final void testRepeatedSteadyScanOscli() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/repeated-steady-scan-oscli/repeated-steady-scan-oscli.xml";
         testSpecificationExample(resource);
     }
 
     @Test
-    @Ignore
     public final void testRepeatedStochasticRuns() throws XMLException, OWLOntologyCreationException, IOException {
         String resource = "/sedml/L1V2/repeated-stochastic-runs/repeated-stochastic-runs.xml";
         testSpecificationExample(resource);
