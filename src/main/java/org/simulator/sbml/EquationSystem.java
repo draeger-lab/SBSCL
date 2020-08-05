@@ -1875,11 +1875,24 @@ public abstract class EquationSystem
      */
     protected void checkConstraints(double time) {
         for (int i = 0; i < model.getConstraintCount(); i++) {
-            if (model.getConstraint(i).isSetMath() && constraintRoots.get(i).compileBoolean(time)) {
-                ConstraintEvent evt = new ConstraintEvent(model.getConstraint(i), time);
-                // Notify all listeners about the violation of the current constraint.
-                for (ConstraintListener listener : listOfConstraintListeners) {
-                    listener.processViolation(evt);
+            Constraint constraint = model.getConstraint(i);
+            if (constraint.isSetMath()) {
+                boolean violation = constraintRoots.get(i).compileBoolean(time);
+
+                if (constraint.getUserObject(SimpleConstraintListener.CONSTRAINT_VIOLATION_LOG) == null) {
+                    constraint.putUserObject(SimpleConstraintListener.CONSTRAINT_VIOLATION_LOG, Boolean.FALSE);
+                }
+
+                if (violation && (constraint.getUserObject(SimpleConstraintListener.CONSTRAINT_VIOLATION_LOG) == Boolean.FALSE)) {
+                    ConstraintEvent evt = new ConstraintEvent(constraint, time);
+                    for (ConstraintListener listener: listOfConstraintListeners) {
+                        listener.processViolation(evt);
+                    }
+                } else if (!violation && (constraint.getUserObject(SimpleConstraintListener.CONSTRAINT_VIOLATION_LOG) == Boolean.TRUE)) {
+                    ConstraintEvent evt = new ConstraintEvent(constraint, time);
+                    for (ConstraintListener listener: listOfConstraintListeners) {
+                        listener.processSatisfiedAgain(evt);
+                    }
                 }
             }
         }

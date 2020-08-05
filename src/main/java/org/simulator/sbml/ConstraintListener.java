@@ -45,4 +45,11 @@ public interface ConstraintListener extends EventListener {
    * @param evt
    */
   public abstract void processViolation(ConstraintEvent evt);
+
+  /**
+   * Notify that the constraints are satisfied again after violation.
+   *
+   * @param evt
+   */
+  public abstract void processSatisfiedAgain(ConstraintEvent evt);
 }

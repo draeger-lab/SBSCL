@@ -55,32 +55,26 @@ public class SimpleConstraintListener implements ConstraintListener {
 
   public static final String TEMP_VALUE = "SBML_SIMULATION_TEMP_VALUE";
 
-  /* (non-Javadoc)
-   * @see org.simulator.sbml.ContraintListener#processViolation(org.simulator.sbml.ConstraintEvent)
+  /**
+   * {@inheritDoc}
    */
   @Override
   public void processViolation(ConstraintEvent evt) {
     assert evt != null;
-    String constraint = "null", message = "null";
-    // Math must be set, otherwise this event would not have been triggered.
-    constraint = evt.getSource().getMath().toFormula();
-    message = SBMLtools.toXML(evt.getSource().getMessage());
+    String constraint = evt.getSource().getMath().toFormula();
+    String message = SBMLtools.toXML(evt.getSource().getMessage());
 
-    if (evt.getSource().getUserObject(CONSTRAINT_VIOLATION_LOG) == null) {
+    logger.warn(MessageFormat.format("[VIOLATION]\t{0} at time {1,number}: {2}", constraint, evt.getTime(), message));
+    evt.getSource().putUserObject(CONSTRAINT_VIOLATION_LOG, Boolean.TRUE);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void processSatisfiedAgain(ConstraintEvent evt) {
+      String constraint = evt.getSource().getMath().toFormula();
+      logger.debug(MessageFormat.format("Constraint {0} satisfied again", constraint));
       evt.getSource().putUserObject(CONSTRAINT_VIOLATION_LOG, Boolean.FALSE);
-    }
-
-    boolean constraintCondition = ((ASTNodeValue) evt.getSource().getMath().getUserObject(TEMP_VALUE)).compileBoolean(evt.getTime());
-    if ((evt.getSource().getUserObject(CONSTRAINT_VIOLATION_LOG) == Boolean.FALSE) && constraintCondition) {
-      // TODO: Localize
-      logger.warn(MessageFormat.format("[VIOLATION]\t{0} at time {1,number}: {2}", constraint, evt.getTime(), message));
-      evt.getSource().putUserObject(CONSTRAINT_VIOLATION_LOG, Boolean.TRUE);
-    }
-
-    if ((evt.getSource().getUserObject(CONSTRAINT_VIOLATION_LOG) == Boolean.TRUE) && !constraintCondition) {
-      logger.debug(MessageFormat.format("Constraint {0} satisfies again", constraint));
-      evt.getSource().putUserObject(CONSTRAINT_VIOLATION_LOG, Boolean.FALSE);
-    }
-
   }
 }
