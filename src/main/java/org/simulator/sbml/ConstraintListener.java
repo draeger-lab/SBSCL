@@ -40,6 +40,11 @@ import org.sbml.jsbml.Constraint;
 public interface ConstraintListener extends EventListener {
 
   /**
+   * Key to memorize user objects for logging the constraint violation
+   */
+  public static final String CONSTRAINT_VIOLATION_LOG = "CONSTRAINT_VIOLATION_LOG";
+
+  /**
    * Processes the given {@link ConstraintEvent}.
    *
    * @param evt

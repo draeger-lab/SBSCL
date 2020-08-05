@@ -29,7 +29,6 @@ import org.apache.log4j.Logger;
 
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.util.SBMLtools;
-import org.simulator.sbml.astnode.ASTNodeValue;
 
 /**
  * This class represents a simple listener implementation to process the
@@ -49,13 +48,6 @@ public class SimpleConstraintListener implements ConstraintListener {
   private static final transient Logger logger = Logger.getLogger(SimpleConstraintListener.class.getName());
 
   /**
-   * Key to memorize user objects for logging the constraint violation
-   */
-  public static final String CONSTRAINT_VIOLATION_LOG = "CONSTRAINT_VIOLATION_LOG";
-
-  public static final String TEMP_VALUE = "SBML_SIMULATION_TEMP_VALUE";
-
-  /**
    * {@inheritDoc}
    */
   @Override
@@ -63,9 +55,7 @@ public class SimpleConstraintListener implements ConstraintListener {
     assert evt != null;
     String constraint = evt.getSource().getMath().toFormula();
     String message = SBMLtools.toXML(evt.getSource().getMessage());
-
     logger.warn(MessageFormat.format("[VIOLATION]\t{0} at time {1,number}: {2}", constraint, evt.getTime(), message));
-    evt.getSource().putUserObject(CONSTRAINT_VIOLATION_LOG, Boolean.TRUE);
   }
 
   /**
@@ -75,6 +65,5 @@ public class SimpleConstraintListener implements ConstraintListener {
   public void processSatisfiedAgain(ConstraintEvent evt) {
       String constraint = evt.getSource().getMath().toFormula();
       logger.debug(MessageFormat.format("Constraint {0} satisfied again", constraint));
-      evt.getSource().putUserObject(CONSTRAINT_VIOLATION_LOG, Boolean.FALSE);
   }
 }

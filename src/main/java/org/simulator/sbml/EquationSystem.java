@@ -1879,20 +1879,22 @@ public abstract class EquationSystem
             if (constraint.isSetMath()) {
                 boolean violation = constraintRoots.get(i).compileBoolean(time);
 
-                if (constraint.getUserObject(SimpleConstraintListener.CONSTRAINT_VIOLATION_LOG) == null) {
-                    constraint.putUserObject(SimpleConstraintListener.CONSTRAINT_VIOLATION_LOG, Boolean.FALSE);
+                if (constraint.getUserObject(ConstraintListener.CONSTRAINT_VIOLATION_LOG) == null) {
+                    constraint.putUserObject(ConstraintListener.CONSTRAINT_VIOLATION_LOG, Boolean.FALSE);
                 }
 
-                if (violation && (constraint.getUserObject(SimpleConstraintListener.CONSTRAINT_VIOLATION_LOG) == Boolean.FALSE)) {
+                if (violation && (constraint.getUserObject(ConstraintListener.CONSTRAINT_VIOLATION_LOG) == Boolean.FALSE)) {
                     ConstraintEvent evt = new ConstraintEvent(constraint, time);
                     for (ConstraintListener listener: listOfConstraintListeners) {
                         listener.processViolation(evt);
                     }
-                } else if (!violation && (constraint.getUserObject(SimpleConstraintListener.CONSTRAINT_VIOLATION_LOG) == Boolean.TRUE)) {
+                    constraint.putUserObject(ConstraintListener.CONSTRAINT_VIOLATION_LOG, Boolean.TRUE);
+                } else if (!violation && (constraint.getUserObject(ConstraintListener.CONSTRAINT_VIOLATION_LOG) == Boolean.TRUE)) {
                     ConstraintEvent evt = new ConstraintEvent(constraint, time);
                     for (ConstraintListener listener: listOfConstraintListeners) {
                         listener.processSatisfiedAgain(evt);
                     }
+                    constraint.putUserObject(ConstraintListener.CONSTRAINT_VIOLATION_LOG, Boolean.FALSE);
                 }
             }
         }
