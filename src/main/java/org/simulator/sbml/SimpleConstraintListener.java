@@ -26,7 +26,7 @@ package org.simulator.sbml;
 
 import java.text.MessageFormat;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.util.SBMLtools;
@@ -48,8 +48,6 @@ public class SimpleConstraintListener implements ConstraintListener {
    */
   private static final transient Logger logger = Logger.getLogger(SimpleConstraintListener.class.getName());
 
-  boolean printViolationLog = true;
-
   /* (non-Javadoc)
    * @see org.simulator.sbml.ContraintListener#processViolation(org.simulator.sbml.ConstraintEvent)
    */
@@ -61,9 +59,6 @@ public class SimpleConstraintListener implements ConstraintListener {
     constraint = evt.getSource().getMath().toFormula();
     message = SBMLtools.toXML(evt.getSource().getMessage());
     // TODO: Localize
-    if (printViolationLog) {
-      logger.log(Level.WARNING, MessageFormat.format("[VIOLATION]\t{0} at time {1,number}: {2}", constraint, evt.getTime(), message));
-      printViolationLog = false;
-    }
+    logger.warn(MessageFormat.format("[VIOLATION]\t{0} at time {1,number}: {2}", constraint, evt.getTime(), message));
   }
 }

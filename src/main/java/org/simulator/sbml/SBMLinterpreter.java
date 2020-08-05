@@ -362,9 +362,14 @@ public class SBMLinterpreter extends EquationSystem {
         if (model.getConstraint(i).isSetMath() && constraintRoots.get(i).compileBoolean(time)) {
           ConstraintEvent evt = new ConstraintEvent(model.getConstraint(i), Double.valueOf(time));
           // Notify all listeners about the violation of the current constraint.
-          for (ConstraintListener listener : listOfConstraintListeners) {
-            listener.processViolation(evt);
+          if (model.getConstraint(i).getUserObject(CONSTRAINT_VIOLATION_LOG) == Boolean.FALSE) {
+            for (ConstraintListener listener: listOfConstraintListeners) {
+              listener.processViolation(evt);
+            }
+            model.getConstraint(i).putUserObject(CONSTRAINT_VIOLATION_LOG, Boolean.TRUE);
           }
+        } else {
+          model.getConstraint(i).putUserObject(CONSTRAINT_VIOLATION_LOG, Boolean.FALSE);
         }
       }
     } catch (SBMLException exc) {
