@@ -673,14 +673,10 @@ public abstract class EquationSystem
                 addConstraintListener(new SimpleConstraintListener());
             }
             for (i = 0; i < model.getConstraintCount(); i++) {
-                boolean printViolationLog = true;
                 if (model.getConstraint(i).isSetMath() && constraintRoots.get(i).compileBoolean(astNodeTime)) {
                     ConstraintEvent evt = new ConstraintEvent(model.getConstraint(i), 0d);
                     for (ConstraintListener listener : listOfConstraintListeners) {
-                        if (printViolationLog) {
-                            listener.processViolation(evt);
-                            printViolationLog = false;
-                        }
+                        listener.processViolation(evt);
                     }
                 }
             }
