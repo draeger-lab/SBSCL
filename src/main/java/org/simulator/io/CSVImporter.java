@@ -55,12 +55,12 @@ public class CSVImporter {
    * @param pathname The path of the CSV file
    * @return columnsMap -> LinkedListHashMap
    */
-  private Map<String, double[]> readDataFromCSV(String pathname) throws IOException {
+  private Map<String, double[]> readDataFromCSV(String pathname, String separator) throws IOException {
     Map<String, double[]> columnsMap = new LinkedHashMap<>();
     BufferedReader reader = new BufferedReader(new FileReader(pathname));
     String line = reader.readLine();
     List<String> lines = new LinkedList<String>();
-    String[] identifiers = splitString(line, ",");
+    String[] identifiers = splitString(line, separator);
     if (line != null) {
       line = reader.readLine();
       while ((line != null) && !line.isEmpty()) {
@@ -76,7 +76,7 @@ public class CSVImporter {
       }
 
       for (int i = 0; i < lines.size(); i++) {
-        String[] column = lines.get(i).split(",");
+        String[] column = lines.get(i).split(separator);
         for (int j = 0; j < column.length; j++) {
           if ((column[j] != null) && (column[j].length() > 0)) {
             if (column[j].equalsIgnoreCase("INF")) {
@@ -104,7 +104,7 @@ public class CSVImporter {
    */
   public MultiTable readMultiTableFromCSV(Model model, String pathname) throws IOException {
     MultiTable data = new MultiTable();
-    Map<String, double[]> columnsMap = readDataFromCSV(pathname);
+    Map<String, double[]> columnsMap = readDataFromCSV(pathname, ",");
 
     data.setTimePoints(columnsMap.entrySet().iterator().next().getValue());
     columnsMap.remove(columnsMap.entrySet().iterator().next().getKey());
@@ -158,10 +158,8 @@ public class CSVImporter {
   private List<String> gatherSymbolIds(final Model model) {
     return new AbstractList<String>() {
 
-      /*
-       * (non-Javadoc)
-       *
-       * @see java.util.AbstractList#get(int)
+      /**
+       * {@inheritDoc}
        */
       @Override
       public String get(int index) {
@@ -176,10 +174,8 @@ public class CSVImporter {
         return model.getParameter(index).getId();
       }
 
-      /*
-       * (non-Javadoc)
-       *
-       * @see java.util.AbstractCollection#size()
+      /**
+       * {@inheritDoc}
        */
       @Override
       public int size() {

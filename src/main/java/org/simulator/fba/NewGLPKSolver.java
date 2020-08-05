@@ -148,7 +148,6 @@ public class NewGLPKSolver implements LinearProgramSolver {
         result = new double[c.length];
         for (int i = 0; i < result.length; i++) {
           result[i] = solver.getColPrim(i+1);
-          System.out.println("x" +(i+1) +": " + result[i]);
         }
       }
     } else {
