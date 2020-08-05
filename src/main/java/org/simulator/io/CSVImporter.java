@@ -60,7 +60,7 @@ public class CSVImporter {
     BufferedReader reader = new BufferedReader(new FileReader(pathname));
     String line = reader.readLine();
     List<String> lines = new LinkedList<String>();
-    String[] identifiers = splitString(line, separator);
+    String[] identifiers = line.split(separator);
     if (line != null) {
       line = reader.readLine();
       while ((line != null) && !line.isEmpty()) {
@@ -136,10 +136,6 @@ public class CSVImporter {
       e.printStackTrace();
     }
     return null;
-  }
-
-  private String[] splitString(String s, String separator) {
-    return s.split(separator);
   }
 
   /**
