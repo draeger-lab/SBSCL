@@ -48,11 +48,6 @@ public abstract class EquationSystem
     public static final String TEMP_VALUE = "SBML_SIMULATION_TEMP_VALUE";
 
     /**
-     * Key to memorize user objects for logging the constraint violation
-     */
-    public static final String CONSTRAINT_VIOLATION_LOG = "CONSTRAINT_VIOLATION_LOG";
-
-    /**
      * Contains a list of all algebraic rules transformed to assignment rules for
      * further processing
      */
@@ -677,19 +672,7 @@ public abstract class EquationSystem
             if (getConstraintListenerCount() == 0) {
                 addConstraintListener(new SimpleConstraintListener());
             }
-            for (i = 0; i < model.getConstraintCount(); i++) {
-                if (model.getConstraint(i).isSetMath() && constraintRoots.get(i).compileBoolean(astNodeTime)) {
-                    ConstraintEvent evt = new ConstraintEvent(model.getConstraint(i), 0d);
-                    if (model.getConstraint(i).getUserObject(CONSTRAINT_VIOLATION_LOG) == Boolean.FALSE) {
-                        for (ConstraintListener listener: listOfConstraintListeners) {
-                            listener.processViolation(evt);
-                        }
-                        model.getConstraint(i).putUserObject(CONSTRAINT_VIOLATION_LOG, Boolean.TRUE);
-                    }
-                } else {
-                    model.getConstraint(i).putUserObject(CONSTRAINT_VIOLATION_LOG, Boolean.FALSE);
-                }
-            }
+            checkConstraints(0d);
         }
 
     }
@@ -1079,7 +1062,6 @@ public abstract class EquationSystem
                 constraintRoots.add(currentConstraint);
                 c.getMath().putUserObject(TEMP_VALUE, currentConstraint);
             }
-            c.putUserObject(CONSTRAINT_VIOLATION_LOG, Boolean.FALSE);
         }
     }
 
@@ -1883,5 +1865,23 @@ public abstract class EquationSystem
             }
         }
         return p;
+    }
+
+    /**
+     * Checks the model's constraint and logs a warning if any constraint
+     * is violated.
+     *
+     * @param time
+     */
+    protected void checkConstraints(double time) {
+        for (int i = 0; i < model.getConstraintCount(); i++) {
+            if (model.getConstraint(i).isSetMath() && constraintRoots.get(i).compileBoolean(time)) {
+                ConstraintEvent evt = new ConstraintEvent(model.getConstraint(i), time);
+                // Notify all listeners about the violation of the current constraint.
+                for (ConstraintListener listener : listOfConstraintListeners) {
+                    listener.processViolation(evt);
+                }
+            }
+        }
     }
 }

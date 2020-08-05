@@ -25,11 +25,11 @@
 package org.simulator.sbml;
 
 import java.text.MessageFormat;
-import java.util.logging.Level;
 import org.apache.log4j.Logger;
 
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.util.SBMLtools;
+import org.simulator.sbml.astnode.ASTNodeValue;
 
 /**
  * This class represents a simple listener implementation to process the
@@ -48,6 +48,13 @@ public class SimpleConstraintListener implements ConstraintListener {
    */
   private static final transient Logger logger = Logger.getLogger(SimpleConstraintListener.class.getName());
 
+  /**
+   * Key to memorize user objects for logging the constraint violation
+   */
+  public static final String CONSTRAINT_VIOLATION_LOG = "CONSTRAINT_VIOLATION_LOG";
+
+  public static final String TEMP_VALUE = "SBML_SIMULATION_TEMP_VALUE";
+
   /* (non-Javadoc)
    * @see org.simulator.sbml.ContraintListener#processViolation(org.simulator.sbml.ConstraintEvent)
    */
@@ -58,7 +65,22 @@ public class SimpleConstraintListener implements ConstraintListener {
     // Math must be set, otherwise this event would not have been triggered.
     constraint = evt.getSource().getMath().toFormula();
     message = SBMLtools.toXML(evt.getSource().getMessage());
-    // TODO: Localize
-    logger.warn(MessageFormat.format("[VIOLATION]\t{0} at time {1,number}: {2}", constraint, evt.getTime(), message));
+
+    if (evt.getSource().getUserObject(CONSTRAINT_VIOLATION_LOG) == null) {
+      evt.getSource().putUserObject(CONSTRAINT_VIOLATION_LOG, Boolean.FALSE);
+    }
+
+    boolean constraintCondition = ((ASTNodeValue) evt.getSource().getMath().getUserObject(TEMP_VALUE)).compileBoolean(evt.getTime());
+    if ((evt.getSource().getUserObject(CONSTRAINT_VIOLATION_LOG) == Boolean.FALSE) && constraintCondition) {
+      // TODO: Localize
+      logger.warn(MessageFormat.format("[VIOLATION]\t{0} at time {1,number}: {2}", constraint, evt.getTime(), message));
+      evt.getSource().putUserObject(CONSTRAINT_VIOLATION_LOG, Boolean.TRUE);
+    }
+
+    if ((evt.getSource().getUserObject(CONSTRAINT_VIOLATION_LOG) == Boolean.TRUE) && !constraintCondition) {
+      logger.debug(MessageFormat.format("Constraint {0} satisfies again", constraint));
+      evt.getSource().putUserObject(CONSTRAINT_VIOLATION_LOG, Boolean.FALSE);
+    }
+
   }
 }
