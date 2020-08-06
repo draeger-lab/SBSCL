@@ -59,11 +59,13 @@ public class CSVImporter {
     Map<String, double[]> columnsMap = new LinkedHashMap<>();
     BufferedReader reader = new BufferedReader(new FileReader(pathname));
     String line = reader.readLine();
+    line = line.replaceAll("\\s", "");
     List<String> lines = new LinkedList<String>();
     String[] identifiers = line.split(separator);
     if (line != null) {
       line = reader.readLine();
       while ((line != null) && !line.isEmpty()) {
+        line = line.replaceAll("\\s", "");
         lines.add(line);
         line = reader.readLine();
       }

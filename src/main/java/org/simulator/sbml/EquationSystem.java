@@ -369,6 +369,11 @@ public abstract class EquationSystem
      */
     protected double[] latestTimePointResult;
 
+    /**
+     * Property name for getting the latest result processed.
+     */
+    private static final String RESULT = "result";
+
     public EquationSystem(Model model){
         this.model = model;
     }
@@ -1709,7 +1714,7 @@ public abstract class EquationSystem
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 
-        if (propertyChangeEvent.getPropertyName().equals("result")) {
+        if (propertyChangeEvent.getPropertyName().equals(RESULT)) {
             setLatestTimePointResult((double[]) propertyChangeEvent.getNewValue());
         } else {
             setPreviousTimePoint((Double) propertyChangeEvent.getOldValue());
