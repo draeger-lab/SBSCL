@@ -52,7 +52,7 @@ public class BiGGTest {
 		// find all BiGG models (compressed .xml.gz files)
         String biggPath = getBiGGModelPath();
         System.out.println("BiGG models path: " + biggPath);
-		return TestUtils.findResources(biggPath, ".xml.gz", filter, skip, mvnResource);
+		return TestUtils.findResources(biggPath, ".xml", filter, skip, mvnResource);
 	}
 
 	@Test
@@ -61,8 +61,8 @@ public class BiGGTest {
         logger.info(String.format("%s", resource));
         System.out.println("BiGG Resource:" + resource);
 
-        if ((resource.endsWith("iAF987.xml.gz") ||
-                (resource.endsWith("iAF692.xml.gz")))) {
+        if ((resource.endsWith("iAF987.xml") ||
+                (resource.endsWith("iAF692.xml")))) {
             /*
             BiGG Resource://home/mkoenig/git/sbscl-shalin/src/test/resources/bigg/v1.5/iAF987.xml.gz
             glp_free: memory allocation error
@@ -73,12 +73,7 @@ public class BiGGTest {
             return;
         }
 
-
-        // read SBML
-        InputStream is = new FileInputStream(resource);
-        GZIPInputStream gzis = new GZIPInputStream(is);
-
-        SBMLDocument doc = SBMLReader.read(gzis);
+        SBMLDocument doc = SBMLReader.read(new File(resource));
         assertNotNull(doc);
 
         FluxBalanceAnalysis solver = new FluxBalanceAnalysis(doc);
@@ -91,7 +86,6 @@ public class BiGGTest {
         assertNotNull(fluxes);
 
         //TODO: check against reference solution
-        is.close();
 	}
 
 }

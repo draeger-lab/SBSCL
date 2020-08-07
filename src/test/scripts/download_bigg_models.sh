@@ -20,6 +20,8 @@ cd $TEST_DIR/../resources/bigg
 wget $BIGG_MODELS_BASE_URL/$FILE_NAME
 tar xzf $FILE_NAME
 rm $FILE_NAME
+cd $TEST_DIR/../resources/bigg/v1.5/
+gunzip *.gz
 
 # set environment variable
 export BIGG_MODELS_PATH=${TEST_DIR}/../resources/bigg/v1.5
