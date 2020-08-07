@@ -1,6 +1,6 @@
 package org.simulator.fba;
 
-import org.junit.Ignore;
+import org.junit.Assert;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
 import org.simulator.TestUtils;
@@ -13,9 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -27,10 +28,24 @@ import static org.junit.Assert.assertTrue;
 public class BiGGTest {
 	private String resource;
     private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
+    private static final double RESULT_DEVIATION = 1E-6d;
 
+    /**
+     * HashMap for storing the reference results with key as the model names.
+     */
+    private Map<String, Double> referenceResults;
 
 	@Before
-	public void setUp(){ }
+	public void setUp() throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(TestUtils.getPathForTestResource("/bigg/bigg_reference_solutions.csv")));
+        referenceResults = new HashMap<>();
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+            String[] solution = line.split(",");
+            referenceResults.put(solution[0], Double.parseDouble(solution[1]));
+        }
+	}
 
     /**
      * Returns location of BiGG test model directory from environment variable.
@@ -51,7 +66,7 @@ public class BiGGTest {
 
 		// find all BiGG models (compressed .xml.gz files)
         String biggPath = getBiGGModelPath();
-        System.out.println("BiGG models path: " + biggPath);
+        logger.info("BiGG models path: " + biggPath);
 		return TestUtils.findResources(biggPath, ".xml", filter, skip, mvnResource);
 	}
 
@@ -59,19 +74,6 @@ public class BiGGTest {
 	public void testFBA() throws Exception {
         logger.info("--------------------------------------------------------");
         logger.info(String.format("%s", resource));
-        System.out.println("BiGG Resource:" + resource);
-
-        if ((resource.endsWith("iAF987.xml") ||
-                (resource.endsWith("iAF692.xml")))) {
-            /*
-            BiGG Resource://home/mkoenig/git/sbscl-shalin/src/test/resources/bigg/v1.5/iAF987.xml.gz
-            glp_free: memory allocation error
-            Error detected in file env/alloc.c at line 72
-
-            Process finished with exit code 134 (interrupted by signal 6: SIGABRT)
-            */
-            return;
-        }
 
         SBMLDocument doc = SBMLReader.read(new File(resource));
         assertNotNull(doc);
@@ -85,7 +87,8 @@ public class BiGGTest {
         double[] fluxes = solver.getValues();
         assertNotNull(fluxes);
 
-        //TODO: check against reference solution
+        Assert.assertEquals(objectiveValue, referenceResults.get(Paths.get(resource).getFileName().toString()), RESULT_DEVIATION);
+
 	}
 
 }

@@ -15,8 +15,6 @@ TEST_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # download and extract the bigg models for testing
 cd $TEST_DIR/../resources/bigg
-mkdir -p $TEST_DIR/../resources/bigg
-cd $TEST_DIR/../resources/bigg
 wget $BIGG_MODELS_BASE_URL/$FILE_NAME
 tar xzf $FILE_NAME
 rm $FILE_NAME
