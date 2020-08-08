@@ -9,6 +9,7 @@ import fern.simulation.Simulator;
 import fern.simulation.Simulator.FireType;
 import fern.simulation.observer.TriggerObserver;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
+import org.simulator.sbml.SBMLinterpreter;
 
 /**
  * Observer which handles an event of a sbml model.
@@ -33,21 +34,23 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
 	 * @param net	the sbml network
 	 * @param event the event object of the sbml model
 	 */
-	public SBMLEventHandlerObserver(Simulator sim, SBMLNetwork net, Event event) throws ModelOverdeterminedException {
+	public SBMLEventHandlerObserver(Simulator sim, SBMLNetwork net, SBMLinterpreter interpreter, Event event) throws ModelOverdeterminedException {
 		super(sim);
 		
 		this.net = net;
-		parse(event);
+		parse(event, interpreter);
 	}
-	
-	private void parse(Event event) throws ModelOverdeterminedException {
+
+	private void parse(Event event, SBMLinterpreter interpreter) throws ModelOverdeterminedException {
 		this.name = event.getId();
 		this.trigger = new MathTree(net,
+				interpreter,
 				event.getTrigger().getMath(),
 				((SBMLPropensityCalculator)net.getPropensityCalculator()).getGlobalParameters(),
 				new HashMap<String, Double>(),
 				net.getSpeciesMapping());
 		this.delay = event.getDelay()==null ? null : new MathTree(net,
+				interpreter,
 				event.getDelay().getMath(),
 				((SBMLPropensityCalculator)net.getPropensityCalculator()).getGlobalParameters(),
 				new HashMap<String, Double>(),
@@ -58,6 +61,7 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
 		for (int i=0; i<event.getNumEventAssignments(); i++) {
 			String var = event.getEventAssignment(i).getVariable();
 			MathTree tree = new MathTree(net,
+					interpreter,
 					event.getEventAssignment(i).getMath(),
 					((SBMLPropensityCalculator)net.getPropensityCalculator()).getGlobalParameters(),
 					new HashMap<String, Double>(),

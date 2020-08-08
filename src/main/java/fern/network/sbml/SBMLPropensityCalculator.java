@@ -16,6 +16,7 @@ import fern.simulation.Simulator;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
+import org.simulator.sbml.SBMLinterpreter;
 
 /**
  * Propensity calculator which is used for {@link SBMLNetwork}s. The propensities are 
@@ -36,7 +37,7 @@ public class SBMLPropensityCalculator implements ComplexDependenciesPropensityCa
 	 * 
 	 * @param net	sbml netowrk
 	 */
-	public SBMLPropensityCalculator(SBMLNetwork net) throws ModelOverdeterminedException {
+	public SBMLPropensityCalculator(SBMLNetwork net, SBMLinterpreter interpreter) throws ModelOverdeterminedException {
 		if (net==null) return;
 		
 		Model model = net.getSBMLModel();
@@ -58,7 +59,7 @@ public class SBMLPropensityCalculator implements ComplexDependenciesPropensityCa
 			for (int j=0; j<reaction.getKineticLaw().getLocalParameterCount(); j++) {
 	    		localParameter.put(reaction.getKineticLaw().getLocalParameter(j).getId(), reaction.getKineticLaw().getLocalParameter(j).getValue());
 	    	}
-			propensities[i] = new MathTree(net,reaction.getKineticLaw().getMath(),globalParameter,localParameter,net.getSpeciesMapping());
+			propensities[i] = new MathTree(net,interpreter,reaction.getKineticLaw().getMath(),globalParameter,localParameter,net.getSpeciesMapping());
 		}
 		
 	}

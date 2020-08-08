@@ -20,8 +20,10 @@ import org.simulator.math.odes.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.stream.XMLStreamException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -211,8 +213,6 @@ public class SBMLTestSuiteTest {
                     }
                     Assert.assertNotNull(solution);
                     Assert.assertFalse(errorInSolve);
-
-                    //TODO: Add quality measure to check whether solution meets the correct results
 
                 } else if (model.getExtension(FBCConstants.shortLabel) != null) {
 

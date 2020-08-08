@@ -30,16 +30,17 @@ public class MathTree {
      * Creates a MathTree {@link ASTNode}.
      *
      * @param net      sbml network
+     * @param interpreter sbmlInterpreter instance for calculating the nodes
      * @param ast      ASTNode
      * @param globals  pointer to the global variable mapping
      * @param locals   pointer to the local variable mapping of this entity
      * @param bindings mapping of the variable names to their indices
      */
-    public MathTree(SBMLNetwork net, ASTNode ast, Map<String, Double> globals, Map<String, Double> locals, Map<String, Integer> bindings) throws ModelOverdeterminedException {
+    public MathTree(SBMLNetwork net, SBMLinterpreter interpreter, ASTNode ast, Map<String, Double> globals, Map<String, Double> locals, Map<String, Integer> bindings) throws ModelOverdeterminedException {
         this.net = net;
         this.bindings = bindings;
-        sbmlInterpreter = new SBMLinterpreter(net.getSBMLModel());
-        copiedAST = sbmlInterpreter.copyAST(ast, true, null, null);
+        sbmlInterpreter = interpreter;
+        copiedAST = interpreter.copyAST(ast, true, null, null);
     }
 
     /**
