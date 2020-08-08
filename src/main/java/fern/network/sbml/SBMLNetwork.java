@@ -8,6 +8,7 @@ package fern.network.sbml;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -44,7 +45,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	protected Model model;
 	private SBMLDocument document;
 	private SBMLinterpreter sbmlInterpreter;
-		
+
 	private long[] initialAmount = null;
 	private Collection<SBMLEventHandlerObserver> events = null;
 	
@@ -105,10 +106,11 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 		createPropensityCalulator();
 		createAmountManager();
 		createEventHandlers();
-		
+
 		initialAmount = new long[getNumSpecies()];
-		for (int i=0; i<initialAmount.length; i++)
+		for (int i=0; i<initialAmount.length; i++) {
 			initialAmount[i] = (long) getSBMLModel().getSpecies(i).getInitialAmount();
+		}
 	}
 	
 	protected void createEventHandlers() throws ModelOverdeterminedException {
@@ -173,7 +175,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	}
 	@Override
 	protected void createSpeciesMapping() {
-		speciesIdToIndex = new HashMap<String,Integer>((int) model.getNumSpecies());
+		speciesIdToIndex = new HashMap<String,Integer>(model.getNumSpecies());
 		indexToSpeciesId = new String[(int) model.getNumSpecies()];
 		for (int i=0; i<model.getNumSpecies(); i++) {
 			speciesIdToIndex.put(model.getSpecies(i).getId(),i);
@@ -189,10 +191,12 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	public Model getSBMLModel() {
 		return model;
 	}
+
 	@Override
 	protected void createAmountManager() {
 		amountManager = new DefaultAmountManager(this);
 	}
+
 	@Override
 	protected void createPropensityCalulator() throws ModelOverdeterminedException {
 		propensitiyCalculator = new SBMLPropensityCalculator(this, sbmlInterpreter);
@@ -205,19 +209,9 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	 * @throws IOException	if the file cannot be written
 	 */
 	public void saveToFile(File file) throws IOException, XMLStreamException {
-//		FileWriter fw = new FileWriter(file);
-//		fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-//		fw.write(document.toSBML());
-//		fw.flush();
-//		fw.close();
-		/**
-		 * [Changes made]
-		 * As currently JSBML is lacking in toSBML() method so I am using SBML Writer here
-		 */
 		SBMLWriter sbmlWriter = new SBMLWriter();
 		sbmlWriter.writeSBMLToFile(document, file.toString());
 	}
-	
 	
 	/**
 	 * Saves the current <code>SBMLNetwork</code> to a sbml file with given
@@ -232,15 +226,6 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 		int oldlevel = document.getLevel();
 		int oldversion = document.getVersion();
 		document.setLevelAndVersion(Math.toIntExact(level), Math.toIntExact(version));
-//		FileWriter fw = new FileWriter(file);
-//		fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-//		fw.write(document.toSBML());
-//		fw.flush();
-//		fw.close();
-		/**
-		 * [Changes made]
-		 * As currently JSBML is lacking in toSBML() method so I am using SBML Writer here
-		 */
 		SBMLWriter sbmlWriter = new SBMLWriter();
 		sbmlWriter.writeSBMLToFile(document, file.toString());
 		document.setLevelAndVersion(Math.toIntExact(oldlevel), Math.toIntExact(oldversion));

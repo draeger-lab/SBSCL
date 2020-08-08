@@ -52,14 +52,10 @@ public class SBMLPropensityCalculator implements ComplexDependenciesPropensityCa
 		for (int i=0; i<model.getNumReactions(); i++) {
 			Map<String,Double> localParameter = new HashMap<String, Double>();
 			Reaction reaction = model.getReaction(i);
-			/**
-			 * [Changes made]
-			 * Removed deprecated method call
-			 */
 			for (int j=0; j<reaction.getKineticLaw().getLocalParameterCount(); j++) {
 	    		localParameter.put(reaction.getKineticLaw().getLocalParameter(j).getId(), reaction.getKineticLaw().getLocalParameter(j).getValue());
 	    	}
-			propensities[i] = new MathTree(net,interpreter,reaction.getKineticLaw().getMath(),globalParameter,localParameter,net.getSpeciesMapping());
+			propensities[i] = new MathTree(interpreter,reaction.getKineticLaw().getMath(),globalParameter,localParameter,net.getSpeciesMapping());
 		}
 		
 	}

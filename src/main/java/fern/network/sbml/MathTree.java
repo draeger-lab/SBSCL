@@ -20,7 +20,6 @@ import org.simulator.sbml.astnode.ASTNodeValue;
  */
 public class MathTree {
 
-    private SBMLNetwork net;
     private ASTNode copiedAST;
     private SBMLinterpreter sbmlInterpreter;
     private Map<String, Integer> bindings;
@@ -29,15 +28,13 @@ public class MathTree {
     /**
      * Creates a MathTree {@link ASTNode}.
      *
-     * @param net      sbml network
      * @param interpreter sbmlInterpreter instance for calculating the nodes
      * @param ast      ASTNode
      * @param globals  pointer to the global variable mapping
      * @param locals   pointer to the local variable mapping of this entity
      * @param bindings mapping of the variable names to their indices
      */
-    public MathTree(SBMLNetwork net, SBMLinterpreter interpreter, ASTNode ast, Map<String, Double> globals, Map<String, Double> locals, Map<String, Integer> bindings) throws ModelOverdeterminedException {
-        this.net = net;
+    public MathTree(SBMLinterpreter interpreter, ASTNode ast, Map<String, Double> globals, Map<String, Double> locals, Map<String, Integer> bindings) throws ModelOverdeterminedException {
         this.bindings = bindings;
         sbmlInterpreter = interpreter;
         copiedAST = interpreter.copyAST(ast, true, null, null);

@@ -32,6 +32,7 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
 	 * 
 	 * @param sim 	the simulator
 	 * @param net	the sbml network
+	 * @param interpreter the sbmlInterpreter instance to calculate the node values
 	 * @param event the event object of the sbml model
 	 */
 	public SBMLEventHandlerObserver(Simulator sim, SBMLNetwork net, SBMLinterpreter interpreter, Event event) throws ModelOverdeterminedException {
@@ -43,13 +44,12 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
 
 	private void parse(Event event, SBMLinterpreter interpreter) throws ModelOverdeterminedException {
 		this.name = event.getId();
-		this.trigger = new MathTree(net,
-				interpreter,
+		this.trigger = new MathTree(interpreter,
 				event.getTrigger().getMath(),
 				((SBMLPropensityCalculator)net.getPropensityCalculator()).getGlobalParameters(),
 				new HashMap<String, Double>(),
 				net.getSpeciesMapping());
-		this.delay = event.getDelay()==null ? null : new MathTree(net,
+		this.delay = event.getDelay()==null ? null : new MathTree(
 				interpreter,
 				event.getDelay().getMath(),
 				((SBMLPropensityCalculator)net.getPropensityCalculator()).getGlobalParameters(),
@@ -60,7 +60,7 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
 		
 		for (int i=0; i<event.getNumEventAssignments(); i++) {
 			String var = event.getEventAssignment(i).getVariable();
-			MathTree tree = new MathTree(net,
+			MathTree tree = new MathTree(
 					interpreter,
 					event.getEventAssignment(i).getMath(),
 					((SBMLPropensityCalculator)net.getPropensityCalculator()).getGlobalParameters(),
