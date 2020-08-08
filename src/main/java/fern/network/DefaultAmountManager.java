@@ -24,11 +24,12 @@ public class DefaultAmountManager implements AmountManager {
 			amount = new long[net.getNumSpecies()];
 			save = new long[amount.length];
 			boundaryConditionSpecies = new boolean[amount.length];
-			for (int i=0; i<net.getNumSpecies(); i++)
+			for (int i=0; i<net.getNumSpecies(); i++) {
 				boundaryConditionSpecies[i] = net.getAnnotationManager().containsSpeciesAnnotation(i, "BoundaryCondition");
+			}
 		}
 	}
-	
+
 	/**
 	 * Reflects a (multiple) firing of a reaction by adjusting the populations of the
 	 * reactants and the products. If a population becomes negative, a <code>
@@ -37,16 +38,18 @@ public class DefaultAmountManager implements AmountManager {
 	 * @param times		the number of firings
 	 */
 	public void performReaction(int reaction, int times) {
-		
+
 		int[] p = net.getProducts(reaction);
-		for (int i=0; i<p.length; i++)
-			amount[p[i]]+=boundaryConditionSpecies[p[i]] ? 0 : times;
-		
+		for (int i = 0; i < p.length; i++) {
+			amount[p[i]] += boundaryConditionSpecies[p[i]] ? 0 : times;
+		}
+
 		int[] r = net.getReactants(reaction);
-		for (int i=0; i<r.length; i++){
-			amount[r[i]]-=boundaryConditionSpecies[r[i]] ? 0 : times;
-			if (amount[r[i]]<0)
+		for (int i = 0; i < r.length; i++) {
+			amount[r[i]] -= boundaryConditionSpecies[r[i]] ? 0 : times;
+			if (amount[r[i]] < 0) {
 				throw new RuntimeException("Negative amount!");
+			}
 		}
 	}
 
@@ -67,15 +70,14 @@ public class DefaultAmountManager implements AmountManager {
 		this.amount[species] = amount;
 	}
 	
-	
-	
 	/**
 	 * Resets the amount of each species to the initial amount retrieved by the networks
 	 * {@link AnnotationManager}. This is called whenever a {@link Simulator} is started.
 	 */
 	public void resetAmount() {
-		for (int i=0; i<amount.length; i++)
+		for (int i=0; i<amount.length; i++) {
 			setAmount(i,net.getInitialAmount(i));
+		}
 	}
 	
 	/**

@@ -8,7 +8,6 @@ package fern.network.sbml;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -17,7 +16,6 @@ import fern.network.AbstractNetworkImpl;
 import fern.network.AnnotationManagerImpl;
 import fern.network.DefaultAmountManager;
 import fern.network.FeatureNotSupportedException;
-import fern.network.Network;
 import fern.simulation.Simulator;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
@@ -40,7 +38,7 @@ import javax.xml.stream.XMLStreamException;
 public class SBMLNetwork extends AbstractNetworkImpl {
 
 	/**
-	 * The sbml model created by libsbml.
+	 * The sbml model
 	 */
 	protected Model model;
 	private SBMLDocument document;
@@ -103,7 +101,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 		createAnnotationManager();
 		createSpeciesMapping();
 		createAdjacencyLists();
-		createPropensityCalulator();
+		createPropensityCalculator();
 		createAmountManager();
 		createEventHandlers();
 
@@ -184,7 +182,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	}
 	
 	/**
-	 * Gets the libsbml model.
+	 * Gets the SBML model.
 	 * 
 	 * @return sbml model
 	 */
@@ -198,7 +196,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	}
 
 	@Override
-	protected void createPropensityCalulator() throws ModelOverdeterminedException {
+	protected void createPropensityCalculator() throws ModelOverdeterminedException {
 		propensitiyCalculator = new SBMLPropensityCalculator(this, sbmlInterpreter);
 	}
 	

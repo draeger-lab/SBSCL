@@ -46,14 +46,10 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
 		this.name = event.getId();
 		this.trigger = new MathTree(interpreter,
 				event.getTrigger().getMath(),
-				((SBMLPropensityCalculator)net.getPropensityCalculator()).getGlobalParameters(),
-				new HashMap<String, Double>(),
 				net.getSpeciesMapping());
-		this.delay = event.getDelay()==null ? null : new MathTree(
+		this.delay = event.getDelay() == null ? null : new MathTree(
 				interpreter,
 				event.getDelay().getMath(),
-				((SBMLPropensityCalculator)net.getPropensityCalculator()).getGlobalParameters(),
-				new HashMap<String, Double>(),
 				net.getSpeciesMapping());
 		variableAssignment = new HashMap<String, MathTree>();
 		parameterAssignment = new HashMap<String, MathTree>();
@@ -63,8 +59,6 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
 			MathTree tree = new MathTree(
 					interpreter,
 					event.getEventAssignment(i).getMath(),
-					((SBMLPropensityCalculator)net.getPropensityCalculator()).getGlobalParameters(),
-					new HashMap<String, Double>(),
 					net.getSpeciesMapping());
 			if (net.getSpeciesMapping().containsKey(var))
 				variableAssignment.put(var, tree);

@@ -3,7 +3,6 @@ package fern.network.fernml;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -98,7 +97,7 @@ public class FernMLNetwork extends AbstractNetworkImpl {
 		createSpeciesMapping();
 		createAmountManager();
 		createAdjacencyLists();
-		createPropensityCalulator();
+		createPropensityCalculator();
 	}
 	
 
@@ -179,7 +178,7 @@ public class FernMLNetwork extends AbstractNetworkImpl {
 	 * because the reactions constants are already parsed there.
 	 */
 	@Override
-	protected void createPropensityCalulator() {
+	protected void createPropensityCalculator() {
 		// done in createAdjacencyLists
 	}
 

@@ -56,7 +56,7 @@ public abstract class Simulator {
 	private DefaultController timeController = null;
 	private ThetaQueue thetaQueue = null;
 	private boolean interpolateTheta = false;
-	private DelayedThetaInvokationParameters interpolationParameters = null;
+	private DelayedThetaInvocationParameters interpolationParameters = null;
 	
 	
 	
@@ -64,10 +64,12 @@ public abstract class Simulator {
 	 * Contains the actual time of the simulation.
 	 */
 	protected double t = 0;
+
 	/**
 	 * Contains the propensities of the reactions.
 	 */
-	protected double[] a = null;
+	protected double[] a;
+
 	/**
 	 * Contains a shortcut to the {@link Stochastics} framework.
 	 */
@@ -217,7 +219,7 @@ public abstract class Simulator {
 		if (interpolateTheta) {
 			long[] beforeThetaAmounts = new long[net.getNumSpecies()];
 			for (int i=0; i<net.getNumSpecies(); i++) beforeThetaAmounts[i] = amountManager.getAmount(i);
-			interpolationParameters = new DelayedThetaInvokationParameters(
+			interpolationParameters = new DelayedThetaInvocationParameters(
 					getTime(),
 					beforeThetaAmounts,
 					theta,
@@ -443,14 +445,14 @@ public abstract class Simulator {
 	}
 
 	
-	private static class DelayedThetaInvokationParameters 
+	private static class DelayedThetaInvocationParameters
 	{
 		public double beforeTheta = -1;
 		public long[] beforeThetaAmounts = null;
 		public double interpolationTheta = 0; 
 		public LinkedList<Observer> observers;
 		
-		public DelayedThetaInvokationParameters(double beforeTheta, long[] beforeThetaAmounts, double interpolationTheta,LinkedList<Observer> observers) {
+		public DelayedThetaInvocationParameters(double beforeTheta, long[] beforeThetaAmounts, double interpolationTheta, LinkedList<Observer> observers) {
 			this.beforeTheta = beforeTheta;
 			this.beforeThetaAmounts = beforeThetaAmounts;
 			this.interpolationTheta = interpolationTheta;

@@ -8,7 +8,6 @@ import java.util.Stack;
 import fern.network.AmountManager;
 import fern.simulation.Simulator;
 import org.sbml.jsbml.*;
-import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sbml.astnode.ASTNodeValue;
 
@@ -30,11 +29,9 @@ public class MathTree {
      *
      * @param interpreter sbmlInterpreter instance for calculating the nodes
      * @param ast      ASTNode
-     * @param globals  pointer to the global variable mapping
-     * @param locals   pointer to the local variable mapping of this entity
      * @param bindings mapping of the variable names to their indices
      */
-    public MathTree(SBMLinterpreter interpreter, ASTNode ast, Map<String, Double> globals, Map<String, Double> locals, Map<String, Integer> bindings) throws ModelOverdeterminedException {
+    public MathTree(SBMLinterpreter interpreter, ASTNode ast, Map<String, Integer> bindings) {
         this.bindings = bindings;
         sbmlInterpreter = interpreter;
         copiedAST = interpreter.copyAST(ast, true, null, null);

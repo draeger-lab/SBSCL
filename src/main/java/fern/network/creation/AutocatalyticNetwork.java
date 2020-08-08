@@ -105,7 +105,7 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
 		createSpeciesMapping();
 		createAdjacencyLists();
 		createAmountManager();
-		createPropensityCalulator();
+		createPropensityCalculator();
 	}
 
 	/**
@@ -293,7 +293,7 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
 	 * Creates the {@link PropensityCalculator} for this network.
 	 */
 	@Override
-	protected void createPropensityCalulator() {
+	protected void createPropensityCalculator() {
 		propensitiyCalculator = new AbstractKineticConstantPropensityCalculator(adjListRea) {
 			public double getConstant(int i) {
 				return (getCatalystsPopulation(i, CATALYSTS_FIELD)) * catalyzedKineticConstant + uncatalyzedKineticConstant;

@@ -35,19 +35,19 @@ public class SBMLPropensityCalculator implements ComplexDependenciesPropensityCa
 	/**
 	 * Creates the {@link MathTree}s and parses the parameters.
 	 * 
-	 * @param net	sbml netowrk
+	 * @param net	sbml network
 	 */
 	public SBMLPropensityCalculator(SBMLNetwork net, SBMLinterpreter interpreter) throws ModelOverdeterminedException {
 		if (net==null) return;
 		
-		Model model = net.getSBMLModel();
+		Model model = interpreter.getModel();
 		globalParameter = new HashMap<String, Double>();
 		for (int i=0; i<model.getNumParameters(); i++) 
 			globalParameter.put(model.getParameter(i).getId(), model.getParameter(i).getValue());
 		for (int i=0; i<model.getNumCompartments(); i++)
 			globalParameter.put(model.getCompartment(i).getId(), model.getCompartment(i).getSize());
-		
-		propensities = new MathTree[net.getNumReactions()];
+
+		propensities = new MathTree[model.getNumReactions()];
 		
 		for (int i=0; i<model.getNumReactions(); i++) {
 			Map<String,Double> localParameter = new HashMap<String, Double>();
@@ -55,7 +55,7 @@ public class SBMLPropensityCalculator implements ComplexDependenciesPropensityCa
 			for (int j=0; j<reaction.getKineticLaw().getLocalParameterCount(); j++) {
 	    		localParameter.put(reaction.getKineticLaw().getLocalParameter(j).getId(), reaction.getKineticLaw().getLocalParameter(j).getValue());
 	    	}
-			propensities[i] = new MathTree(interpreter,reaction.getKineticLaw().getMath(),globalParameter,localParameter,net.getSpeciesMapping());
+			propensities[i] = new MathTree(interpreter,reaction.getKineticLaw().getMath(), net.getSpeciesMapping());
 		}
 		
 	}

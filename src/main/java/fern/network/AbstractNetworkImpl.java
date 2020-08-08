@@ -48,8 +48,8 @@ public abstract class AbstractNetworkImpl implements Network {
 	 */
 	protected String 				name				= null;
 	
-	
-	
+
+
 	/**
 	 * Reminds extending class to fill {@link AbstractNetworkImpl#annotationManager}.
 	 */
@@ -69,7 +69,7 @@ public abstract class AbstractNetworkImpl implements Network {
 	/**
 	 * Reminds extending class to fill {@link AbstractNetworkImpl#propensitiyCalculator}.
 	 */
-	protected abstract void createPropensityCalulator() throws ModelOverdeterminedException;
+	protected abstract void createPropensityCalculator() throws ModelOverdeterminedException;
 	
 	
 	/**
@@ -99,18 +99,17 @@ public abstract class AbstractNetworkImpl implements Network {
 	public int getNumSpecies() {
 		return speciesIdToIndex.size();
 	}
+
 	public int[] getProducts(int reaction) {
 		return adjListPro[reaction];
 	}
+
 	public int[] getReactants(int reaction) {
 		return adjListRea[reaction];
 	}
 	
 	public int getSpeciesByName(String name) {
-		if (speciesIdToIndex.containsKey(name))
-			return speciesIdToIndex.get(name);
-		else 
-			return -1;
+		return speciesIdToIndex.getOrDefault(name, -1);
 	}
 	
 
@@ -139,14 +138,6 @@ public abstract class AbstractNetworkImpl implements Network {
 		if (getProducts(index).length>0) sb.deleteCharAt(sb.length()-1);
 		return sb.toString();
 	}
-
-//	public int[][] getAdjacencyListReactants() {
-//		return adjListRea;
-//	}
-//	
-//	public int[][] getAdjacencyListProducts() {
-//		return adjListPro;
-//	}
 	
 	public String getName() {
 		return name;
