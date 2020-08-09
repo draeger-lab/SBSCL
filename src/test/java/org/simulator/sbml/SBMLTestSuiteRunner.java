@@ -827,7 +827,7 @@ public class SBMLTestSuiteRunner {
 
       // solve
       MultiTable solution = solver.solve(interpreter,
-        interpreter.getInitialValues(), timePoints, null);
+        interpreter.getInitialValues(), timePoints);
       if (solver.isUnstable()) {
         logger.warn("unstable!");
         return null;
@@ -966,7 +966,7 @@ public class SBMLTestSuiteRunner {
             MultiTable solution = null;
             try {
               solution = solver.solve(interpreter,
-                interpreter.getInitialValues(), timepoints, null);
+                interpreter.getInitialValues(), timepoints);
             } catch (DerivativeException e) {
               e.printStackTrace();
               logger.error("DerivativeException occurred!");

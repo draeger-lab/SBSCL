@@ -752,12 +752,15 @@ public abstract class AbstractDESSolver
   }
 
   /**
-   * @param DES           the differential equation system
-   * @param initialValues
-   * @param timeBegin
-   * @param timeEnd
-   * @param propertyChangeListener
-   * @return result as {@link MultiTable}
+   * {@inheritDoc}
+   */
+  @Override
+  public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd) throws DerivativeException {
+    return solve(DES, initialValues, timeBegin, timeEnd, null);
+  }
+
+  /**
+   * {@inheritDoc}
    */
   @Override
   public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd, PropertyChangeListener propertyChangeListener)
@@ -820,6 +823,14 @@ public abstract class AbstractDESSolver
    * {@inheritDoc}
    */
   @Override
+  public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps) throws DerivativeException {
+    return solve(DES, initialValues, x, h, steps, null);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps, PropertyChangeListener propertyChangeListener)
           throws DerivativeException {
     double[] timePoints = new double[steps];
@@ -827,6 +838,14 @@ public abstract class AbstractDESSolver
       timePoints[i] = x + i * h;
     }
     return solve(DES, initialValues, timePoints, propertyChangeListener);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public MultiTable solve(DESystem DES, double[] initialValues, double[] timepoints) throws DerivativeException {
+    return solve(DES, initialValues, timepoints, null);
   }
 
   /**
@@ -890,6 +909,14 @@ public abstract class AbstractDESSolver
       t = timePoints[i];
     }
     return data;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public MultiTable solve(DESystem DES, MultiTable.Block timeSeriesInitConditions, double[] initialValues) throws DerivativeException {
+    return solve(DES, timeSeriesInitConditions, initialValues, null);
   }
 
   /**
@@ -985,7 +1012,7 @@ public abstract class AbstractDESSolver
     // Run oneStep simulation until steadyState is reached to find endTime
     while (true) {
       setStepSize(stepSize);
-      MultiTable intmdOutput = solve(DES, curState, curTime, stepSize, null);
+      MultiTable intmdOutput = solve(DES, curState, curTime, stepSize);
       totalTime += stepSize;
 
       // Extract the endPoint and compare it with initial point

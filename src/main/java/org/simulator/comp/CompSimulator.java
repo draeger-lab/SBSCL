@@ -111,7 +111,7 @@ public class CompSimulator {
     }
 
     // TODO: Rel-Tolerance, Abs-Tolerance.
-    MultiTable solution = solver.solve(interpreter, interpreter.getInitialValues(), 0d, timeEnd, null);
+    MultiTable solution = solver.solve(interpreter, interpreter.getInitialValues(), 0d, timeEnd);
 
     // If columns other than time exists map ids back to original
     if (solution.getColumnCount() > 1) {

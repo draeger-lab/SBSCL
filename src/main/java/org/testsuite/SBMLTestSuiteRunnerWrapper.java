@@ -260,7 +260,7 @@ public class SBMLTestSuiteRunnerWrapper {
         }
 
         // Compute the numerical solution of the problem
-        return solver.solve(interpreter, interpreter.getInitialValues(), timePoints, null);
+        return solver.solve(interpreter, interpreter.getInitialValues(), timePoints);
     }
 
     /**
