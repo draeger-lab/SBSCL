@@ -13,6 +13,7 @@ import fern.tools.NetworkTools;
 import fern.tools.NumberTools;
 import org.jdom.JDOMException;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -49,6 +50,7 @@ public class StochasticTestSuiteTest {
   private static final String INTERVAL = "interval";
   private static final int STOCHASTIC_TEST_COUNT = 39;
   private static final long COMMON_SEED = 1595487468503L;
+  private long[] stochasticSeeds;
 
   /**
    * The constant for comparing the mean distances inequality.
@@ -163,6 +165,20 @@ public class StochasticTestSuiteTest {
     this.path = path;
   }
 
+  @Before
+  public void setup() {
+    stochasticSeeds = new long[STOCHASTIC_TEST_COUNT];
+
+    // Initialize the stochasticSeeds array with a same seed value as
+    // most of the test cases pass with same seed.
+    Arrays.fill(stochasticSeeds, COMMON_SEED);
+
+    // Updating the seed values of test cases where it is different.
+    stochasticSeeds[27] = 1595617059459L;
+    stochasticSeeds[28] = 1595617059459L;
+    stochasticSeeds[36] = 1595488413069L;
+  }
+
   @Parameters(name = "{index}: {0}")
   public static Iterable<Object[]> data() {
 
@@ -202,17 +218,6 @@ public class StochasticTestSuiteTest {
 
   @Test
   public void testModel() throws IOException {
-
-    long[] stochasticSeeds = new long[STOCHASTIC_TEST_COUNT];
-
-    // Initialize the stochasticSeeds array with a same seed value as
-    // most of the test cases pass with same seed.
-    Arrays.fill(stochasticSeeds, COMMON_SEED);
-
-    // Updating the seed values of test cases where it is different.
-    stochasticSeeds[27] = 1595617059459L;
-    stochasticSeeds[28] = 1595617059459L;
-    stochasticSeeds[36] = 1595488413069L;
 
     String[] failedTests = new String[]{
             "00010", "00011",   // Failing as no substance units present
@@ -488,8 +493,6 @@ public class StochasticTestSuiteTest {
       }
 
     }
-
-
   }
   
   private static AmountIntervalObserver createObserver(Simulator sim,
