@@ -44,22 +44,14 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
 
 	private void parse(Event event, SBMLinterpreter interpreter) throws ModelOverdeterminedException {
 		this.name = event.getId();
-		this.trigger = new MathTree(interpreter,
-				event.getTrigger().getMath(),
-				net.getSpeciesMapping());
-		this.delay = event.getDelay() == null ? null : new MathTree(
-				interpreter,
-				event.getDelay().getMath(),
-				net.getSpeciesMapping());
+		this.trigger = new MathTree(interpreter, event.getTrigger().getMath());
+		this.delay = event.getDelay() == null ? null : new MathTree(interpreter, event.getDelay().getMath());
 		variableAssignment = new HashMap<String, MathTree>();
 		parameterAssignment = new HashMap<String, MathTree>();
 		
 		for (int i=0; i<event.getNumEventAssignments(); i++) {
 			String var = event.getEventAssignment(i).getVariable();
-			MathTree tree = new MathTree(
-					interpreter,
-					event.getEventAssignment(i).getMath(),
-					net.getSpeciesMapping());
+			MathTree tree = new MathTree(interpreter, event.getEventAssignment(i).getMath());
 			if (net.getSpeciesMapping().containsKey(var))
 				variableAssignment.put(var, tree);
 			else

@@ -197,7 +197,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 
 	@Override
 	protected void createPropensityCalculator() throws ModelOverdeterminedException {
-		propensitiyCalculator = new SBMLPropensityCalculator(this, sbmlInterpreter);
+		propensitiyCalculator = new SBMLPropensityCalculator(sbmlInterpreter);
 	}
 	
 	/**

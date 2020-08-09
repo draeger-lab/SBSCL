@@ -29,10 +29,8 @@ public class MathTree {
      *
      * @param interpreter sbmlInterpreter instance for calculating the nodes
      * @param ast      ASTNode
-     * @param bindings mapping of the variable names to their indices
      */
-    public MathTree(SBMLinterpreter interpreter, ASTNode ast, Map<String, Integer> bindings) {
-        this.bindings = bindings;
+    public MathTree(SBMLinterpreter interpreter, ASTNode ast) {
         sbmlInterpreter = interpreter;
         copiedAST = interpreter.copyAST(ast, true, null, null);
     }
@@ -49,9 +47,14 @@ public class MathTree {
         while (!dfs.empty()) {
             ASTNode node = dfs.pop();
             if ((node.getNumChildren() == 0) && !node.isOperator() && !node.isNumber()){
-                Integer index = bindings.get(node.getName());
+                Integer index = null;
+                if (sbmlInterpreter.getModel().getSpecies(node.getName()) != null) {
+                    // Subtracting from the total compartment count as species indices start after compartments
+                    // in the Y array in the interpreter.
+                    index = sbmlInterpreter.getSymbolHash().get(node.getName()) - sbmlInterpreter.getModel().getCompartmentCount();
+                }
                 if ((index != null) && !re.contains(index)){
-                    re.add(bindings.get(node.getName()));
+                    re.add(index);
                 }
             } else if (node.getNumChildren() != 0) {
                 for (int i = 0; i < node.getNumChildren(); i++){

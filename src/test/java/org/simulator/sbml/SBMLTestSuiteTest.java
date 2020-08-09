@@ -285,8 +285,7 @@ public class SBMLTestSuiteTest {
         // solve
         MultiTable solution = null;
         try {
-            solution = solver.solve(interpreter,
-                    interpreter.getInitialValues(), timepoints);
+            solution = solver.solve(interpreter, interpreter.getInitialValues(), timepoints);
         } catch (DerivativeException e) {
             e.printStackTrace();
             logger.error("DerivativeException while solving the model!");

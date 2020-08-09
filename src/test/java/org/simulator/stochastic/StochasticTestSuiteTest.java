@@ -295,7 +295,7 @@ public class StochasticTestSuiteTest {
         sim.setStochasticSeed(stochasticSeeds[Integer.parseInt(testcase) - 1]);
 
         ((SBMLNetwork) net).registerEvents(sim);
-        // Initializes the observer for the amounts of molecule species
+
         AmountIntervalObserver obs = null;
         boolean errorInObserver = false;
         try {
