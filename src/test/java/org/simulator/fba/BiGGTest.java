@@ -29,15 +29,12 @@ public class BiGGTest {
 	private String resource;
     private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
     private static final double RESULT_DEVIATION = 1E-6d;
-
-    /**
-     * HashMap for storing the reference results with key as the model names.
-     */
+    private static final String BIGG_MODELS_RESOURCE_PATH = "/bigg/v1.5";
+    private BufferedReader reader = new BufferedReader(new FileReader(TestUtils.getPathForTestResource("/bigg/bigg_reference_solutions.csv")));
     private Map<String, Double> referenceResults;
 
 	@Before
 	public void setUp() throws IOException {
-		BufferedReader reader = new BufferedReader(new FileReader(TestUtils.getPathForTestResource("/bigg/bigg_reference_solutions.csv")));
         referenceResults = new HashMap<>();
         String line;
 
@@ -51,10 +48,10 @@ public class BiGGTest {
      * Returns location of BiGG test model directory from environment variable.
      */
     public static String getBiGGModelPath() {
-        return TestUtils.getPathForTestResource("/bigg/v1.5");
+        return TestUtils.getPathForTestResource(BIGG_MODELS_RESOURCE_PATH);
     }
 
-	public BiGGTest(String resource) {
+	public BiGGTest(String resource) throws FileNotFoundException {
 		this.resource = resource;
 	}
 	

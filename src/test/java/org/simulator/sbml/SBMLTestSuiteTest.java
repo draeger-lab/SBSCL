@@ -292,16 +292,14 @@ public class SBMLTestSuiteTest {
 
                         // solve
                         MultiTable solution = null;
-                        boolean errorInSolve = false;
                         try {
                             solution = solver.solve(interpreter,
                                     interpreter.getInitialValues(), timepoints, null);
                         } catch (DerivativeException e) {
-                            errorInSolve = true;
                             e.printStackTrace();
+                            logger.error("DerivativeException while solving the model!");
                         }
                         Assert.assertNotNull(solution);
-                        Assert.assertFalse(errorInSolve);
                         Assert.assertFalse(solver.isUnstable());
 
                         MultiTable left = solution;

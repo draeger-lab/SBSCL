@@ -50,8 +50,9 @@ public class GillespieEnhanced extends Simulator {
 			dep = new DependencyGraph(getNet());
 
 		a_sum = 0;
-		for (int i=0; i<a.length; i++)
-			a_sum+=a[i];
+		for (int i = 0; i < a.length; i++) {
+			a_sum += a[i];
+		}
 
 
 	}
@@ -67,8 +68,9 @@ public class GillespieEnhanced extends Simulator {
 		if (changed) {
 			initializePropensities();
 			a_sum = 0;
-			for (int i=0; i<a.length; i++)
-				a_sum+=a[i];
+			for (int i = 0; i < a.length; i++) {
+				a_sum += a[i];
+			}
 		}
 
 		// obtain mu and tau by the direct method described in chapter 5A page 417ff

@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
 
+import org.apache.log4j.Logger;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.UniqueNamedSBase;
 import org.simulator.math.odes.MultiTable;
@@ -47,28 +48,24 @@ public class CSVImporter {
 
   private static final String TIME = "time";
 
+  private static final Logger logger = Logger.getLogger(CSVImporter.class.getName());
+
   /**
    * This method reads the data from the CSV file and converts it
    * into the map with key as the column name and value as the array of amounts
    * for the particular column.
    * 
    * @param pathname The path of the CSV file
-   * @return columnsMap -> LinkedListHashMap
+   * @return columnsMap
    */
   private Map<String, double[]> readDataFromCSV(String pathname, String separator) throws IOException {
     Map<String, double[]> columnsMap = new LinkedHashMap<>();
     BufferedReader reader = new BufferedReader(new FileReader(pathname));
     String line = reader.readLine();
     line = line.replaceAll("\\s", "");
-    List<String> lines = new LinkedList<String>();
     String[] identifiers = line.split(separator);
     if (line != null) {
-      line = reader.readLine();
-      while ((line != null) && !line.isEmpty()) {
-        line = line.replaceAll("\\s", "");
-        lines.add(line);
-        line = reader.readLine();
-      }
+      List<String> lines = getLinesFromCSV(reader);
 
       if (identifiers[0].equalsIgnoreCase(TIME)){
         identifiers[0] = identifiers[0].toLowerCase();
@@ -101,15 +98,16 @@ public class CSVImporter {
    *
    * @param model the SBML {@link Model}
    * @param pathname path of the CSV file
-   * @return the results from the CSV file in MultiTable
+   * @return the results from the CSV file in MultiTable (null can be returned on exception)
    * @throws IOException
    */
   public MultiTable readMultiTableFromCSV(Model model, String pathname) throws IOException {
     MultiTable data = new MultiTable();
     Map<String, double[]> columnsMap = readDataFromCSV(pathname, ",");
 
-    data.setTimePoints(columnsMap.entrySet().iterator().next().getValue());
-    columnsMap.remove(columnsMap.entrySet().iterator().next().getKey());
+    Map.Entry<String, double[]> timePoints = columnsMap.entrySet().iterator().next();
+    data.setTimePoints(timePoints.getValue());
+    columnsMap.remove(timePoints.getKey());
 
     try {
       data.addBlock(columnsMap.keySet().toArray(new String[0]));
@@ -136,8 +134,28 @@ public class CSVImporter {
       return data;
     } catch (Exception e) {
       e.printStackTrace();
+      logger.error("Exception in converting the CSV file data to MultiTable.");
     }
     return null;
+  }
+
+  /**
+   * Read all the values from the CSV file and stores them in
+   * an List of String.
+   *
+   * @param reader
+   * @return
+   * @throws IOException
+   */
+  private List<String> getLinesFromCSV(BufferedReader reader) throws IOException {
+    List<String> lines = new LinkedList<String>();
+    String line = reader.readLine();
+    while ((line != null) && !line.isEmpty()) {
+      line = line.replaceAll("\\s", "");
+      lines.add(line);
+      line = reader.readLine();
+    }
+    return lines;
   }
 
   /**

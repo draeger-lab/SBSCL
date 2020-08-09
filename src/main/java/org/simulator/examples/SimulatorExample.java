@@ -60,7 +60,7 @@ public class SimulatorExample implements PropertyChangeListener {
     private static final int WIDTH = 400;
     private static final int HEIGHT = 400;
     private static final String RESULT = "result";
-    static SimulatorExample simulatorExample;
+    private static SimulatorExample simulatorExample;
 
     /**
      * Starts a simulation at the command line.

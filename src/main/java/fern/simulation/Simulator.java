@@ -247,11 +247,12 @@ public abstract class Simulator {
 	}
 
 	/**
-	 * Reinitialize the propensities when an event is executed
+	 * Initializes the propensities. Also, reinitialize them whenever
+	 * any event is executed.
 	 */
 	public void initializePropensities() {
 		for (int i = 0; i < a.length; i++) {
-			a[i] = propensityCalculator.calculatePropensity(i, getAmountManager(), this);
+			a[i] = propensityCalculator.calculatePropensity(i, amountManager, this);
 		}
 	}
 
@@ -380,7 +381,7 @@ public abstract class Simulator {
 	}
 
 	/**
-	 * Sets the pre-collected seed for a particular model.
+	 * Sets the seed for a particular model.
 	 *
 	 * @param seed
 	 */
