@@ -229,4 +229,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 		document.setLevelAndVersion(Math.toIntExact(oldlevel), Math.toIntExact(oldversion));
 	}
 
+	public SBMLinterpreter getSbmlInterpreter() {
+		return sbmlInterpreter;
+	}
 }

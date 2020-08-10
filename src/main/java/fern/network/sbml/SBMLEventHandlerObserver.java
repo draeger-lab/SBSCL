@@ -42,7 +42,7 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
 		parse(event, interpreter);
 	}
 
-	private void parse(Event event, SBMLinterpreter interpreter) throws ModelOverdeterminedException {
+	private void parse(Event event, SBMLinterpreter interpreter) {
 		this.name = event.getId();
 		this.trigger = new MathTree(interpreter, event.getTrigger().getMath());
 		this.delay = event.getDelay() == null ? null : new MathTree(interpreter, event.getDelay().getMath());
@@ -52,10 +52,11 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
 		for (int i=0; i<event.getNumEventAssignments(); i++) {
 			String var = event.getEventAssignment(i).getVariable();
 			MathTree tree = new MathTree(interpreter, event.getEventAssignment(i).getMath());
-			if (net.getSpeciesMapping().containsKey(var))
+			if (interpreter.getModel().containsSpecies(var)) {
 				variableAssignment.put(var, tree);
-			else
+			} else {
 				parameterAssignment.put(var, tree);
+			}
 		}
 	}
 	
@@ -91,10 +92,11 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
 		if (!lastStepTriggered && triggered) {
 			lastStepTriggered = triggered;
 			double delaytime = delay==null ? 0 : delay.calculate(net.getAmountManager(),getSimulator());
-			if (delaytime<=0) 
+			if (delaytime<=0) {
 				executeEvent();
-			else
+			} else {
 				setTheta(delaytime);
+			}
 			return true;
 		}
 		lastStepTriggered = triggered;

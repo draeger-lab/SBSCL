@@ -28,7 +28,6 @@ import org.simulator.sbml.SBMLinterpreter;
  */
 public class SBMLPropensityCalculator implements ComplexDependenciesPropensityCalculator {
 
-	
 	private MathTree[] propensities;
 	private Map<String,Double> globalParameter;
 	
@@ -56,7 +55,6 @@ public class SBMLPropensityCalculator implements ComplexDependenciesPropensityCa
 			}
 			propensities[i] = new MathTree(interpreter,reaction.getKineticLaw().getMath());
 		}
-
 	}
 	
 	/**

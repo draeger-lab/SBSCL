@@ -21,7 +21,6 @@ public class MathTree {
 
     private ASTNode copiedAST;
     private SBMLinterpreter sbmlInterpreter;
-    private Map<String, Integer> bindings;
     public static final String TEMP_VALUE = "SBML_SIMULATION_TEMP_VALUE";
 
     /**
