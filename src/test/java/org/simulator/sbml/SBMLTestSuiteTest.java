@@ -166,8 +166,8 @@ public class SBMLTestSuiteTest {
                 Assert.assertFalse(errorInModelReading);
 
                 // get timepoints
-                CSVImporter csvimporter = new CSVImporter();
-                MultiTable inputData = csvimporter.readMultiTableFromCSV(model, csvfile);
+                CSVImporter csvImporter = new CSVImporter();
+                MultiTable inputData = csvImporter.readMultiTableFromCSV(model, csvfile);
                 double[] timepoints = inputData.getTimePoints();
                 duration = timepoints[timepoints.length - 1]
                         - timepoints[0];

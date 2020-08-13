@@ -61,7 +61,6 @@ public class BiGGTest {
 		String filter = null;
 		Boolean mvnResource = false;
 
-		// find all BiGG models (compressed .xml.gz files)
         String biggPath = getBiGGModelPath();
         logger.info("BiGG models path: " + biggPath);
 		return TestUtils.findResources(biggPath, ".xml", filter, skip, mvnResource);
