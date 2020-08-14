@@ -17,54 +17,54 @@ import fern.cellDesigner.ui.MainFrame;
 
 public class FernCellDesignerPlugin extends CellDesignerPlugin {
 
-	public FernCellDesignerPlugin(){
-		PluginMenu menu = new PluginMenu("FERN");
-		PluginAction action = new FernPluginAction();
-		PluginMenuItem item = new PluginMenuItem("Simulation", action);
-		menu.add(item);
-		addCellDesignerPluginMenu(menu);
-	}
-	
-	
-	private class FernPluginAction extends PluginAction {
-
-		public void myActionPerformed(ActionEvent arg0) {
-			new MainFrame(FernCellDesignerPlugin.this).setVisible(true);
-		}
-	}
+  public FernCellDesignerPlugin() {
+    PluginMenu menu = new PluginMenu("FERN");
+    PluginAction action = new FernPluginAction();
+    PluginMenuItem item = new PluginMenuItem("Simulation", action);
+    menu.add(item);
+    addCellDesignerPluginMenu(menu);
+  }
 
 
-	public void SBaseAdded(PluginSBase arg0) {
-		
-	}
+  private class FernPluginAction extends PluginAction {
+
+    public void myActionPerformed(ActionEvent arg0) {
+      new MainFrame(FernCellDesignerPlugin.this).setVisible(true);
+    }
+  }
 
 
-	public void SBaseChanged(PluginSBase arg0) {
-		
-	}
+  public void SBaseAdded(PluginSBase arg0) {
+
+  }
 
 
-	public void SBaseDeleted(PluginSBase arg0) {
-		
-	}
+  public void SBaseChanged(PluginSBase arg0) {
+
+  }
 
 
-	public void addPluginMenu() {
-		
-	}
+  public void SBaseDeleted(PluginSBase arg0) {
+
+  }
 
 
-	public void modelClosed(PluginSBase arg0) {
-		
-	}
+  public void addPluginMenu() {
+
+  }
 
 
-	public void modelOpened(PluginSBase arg0) {
-	}
+  public void modelClosed(PluginSBase arg0) {
+
+  }
 
 
-	public void modelSelectChanged(PluginSBase model) {
-		
-	}
-	
+  public void modelOpened(PluginSBase arg0) {
+  }
+
+
+  public void modelSelectChanged(PluginSBase model) {
+
+  }
+
 }

@@ -9,16 +9,13 @@ import fern.network.AnnotationManager;
 
 public class CytoscapeAnnotationManager implements AnnotationManager {
 
-	
-	
-	
-	CytoscapeNetworkWrapper network;
-	public CytoscapeAnnotationManager(CytoscapeNetworkWrapper network) {
-		this.network = network;
-	}
-	
-	
-	
+
+  CytoscapeNetworkWrapper network;
+
+  public CytoscapeAnnotationManager(CytoscapeNetworkWrapper network) {
+    this.network = network;
+  }
+
 //	public double[] getReactionCoefficients() {
 //		CyAttributes na = network.getNodeAttributeObject();
 //
@@ -34,85 +31,82 @@ public class CytoscapeAnnotationManager implements AnnotationManager {
 //
 //		return reactionCoeffient;
 //	}
-	
-	private String getAttribute(CyAttributes attr, String id, String typ) {
-		String val = null;
-		switch (attr.getType(typ))  {
-		case CyAttributes.TYPE_BOOLEAN:
-			val = String.valueOf(attr.getBooleanAttribute(id, typ));
-			break;
-		case CyAttributes.TYPE_FLOATING:
-			val = String.valueOf(attr.getDoubleAttribute(id, typ));
-			break;
-		case CyAttributes.TYPE_INTEGER:
-			val = String.valueOf(attr.getIntegerAttribute(id, typ));
-			break;
-		case CyAttributes.TYPE_STRING:
-			val = String.valueOf(attr.getStringAttribute(id, typ));
-			break;
-		case CyAttributes.TYPE_SIMPLE_LIST:
-			val = Arrays.deepToString(attr.getListAttribute(id, typ).toArray());
-			break;
-		}
-		return val;
-	}
-	
-	
-	public boolean containsNetworkAnnotation(String typ) {
-		return getNetworkAnnotation(typ)!=null;
-	}
 
-	public boolean containsReactionAnnotation(int reaction, String typ) {
-		return getReactionAnnotation(reaction, typ)!=null;
-	}
+  private String getAttribute(CyAttributes attr, String id, String typ) {
+    String val = null;
+    switch (attr.getType(typ)) {
+      case CyAttributes.TYPE_BOOLEAN:
+        val = String.valueOf(attr.getBooleanAttribute(id, typ));
+        break;
+      case CyAttributes.TYPE_FLOATING:
+        val = String.valueOf(attr.getDoubleAttribute(id, typ));
+        break;
+      case CyAttributes.TYPE_INTEGER:
+        val = String.valueOf(attr.getIntegerAttribute(id, typ));
+        break;
+      case CyAttributes.TYPE_STRING:
+        val = String.valueOf(attr.getStringAttribute(id, typ));
+        break;
+      case CyAttributes.TYPE_SIMPLE_LIST:
+        val = Arrays.deepToString(attr.getListAttribute(id, typ).toArray());
+        break;
+    }
+    return val;
+  }
 
-	public boolean containsSpeciesAnnotation(int species, String typ) {
-		return getSpeciesAnnotation(species, typ)!=null;
-	}
 
-	public String getNetworkAnnotation(String typ) {
-		return getAttribute(Cytoscape.getNetworkAttributes(), network.net.getIdentifier(), typ);
-	}
+  public boolean containsNetworkAnnotation(String typ) {
+    return getNetworkAnnotation(typ) != null;
+  }
 
-	public Collection<String> getNetworkAnnotationTypes() {
-		return Arrays.asList(Cytoscape.getNetworkAttributes().getAttributeNames());
-	}
+  public boolean containsReactionAnnotation(int reaction, String typ) {
+    return getReactionAnnotation(reaction, typ) != null;
+  }
 
-	public String getReactionAnnotation(int reaction, String typ) {
-		return getAttribute(Cytoscape.getNodeAttributes(),network.reactions[reaction].getNode().getIdentifier(),typ);
-	}
+  public boolean containsSpeciesAnnotation(int species, String typ) {
+    return getSpeciesAnnotation(species, typ) != null;
+  }
 
-	public Collection<String> getReactionAnnotationTypes(int reaction) {
-		return Arrays.asList(Cytoscape.getNodeAttributes().getAttributeNames());
-	}
+  public String getNetworkAnnotation(String typ) {
+    return getAttribute(Cytoscape.getNetworkAttributes(), network.net.getIdentifier(), typ);
+  }
 
-	public String getSpeciesAnnotation(int species, String typ) {
-		return getAttribute(Cytoscape.getNodeAttributes(),network.species[species].getNode().getIdentifier(),typ);
-	}
+  public Collection<String> getNetworkAnnotationTypes() {
+    return Arrays.asList(Cytoscape.getNetworkAttributes().getAttributeNames());
+  }
 
-	public Collection<String> getSpeciesAnnotationTypes(int species) {
-		return Arrays.asList(Cytoscape.getNodeAttributes().getAttributeNames());
-	}
+  public String getReactionAnnotation(int reaction, String typ) {
+    return getAttribute(Cytoscape.getNodeAttributes(),
+        network.reactions[reaction].getNode().getIdentifier(), typ);
+  }
 
-	public void setNetworkAnnotation(String typ, String annotation) {
-		Cytoscape.getNetworkAttributes().setAttribute(network.net.getIdentifier(), typ, annotation);
-	}
+  public Collection<String> getReactionAnnotationTypes(int reaction) {
+    return Arrays.asList(Cytoscape.getNodeAttributes().getAttributeNames());
+  }
 
-	public void setReactionAnnotation(int reaction, String typ,
-			String annotation) {
-		Cytoscape.getNodeAttributes().setAttribute(network.reactions[reaction].getNode().getIdentifier(), typ, annotation);
-	}
+  public String getSpeciesAnnotation(int species, String typ) {
+    return getAttribute(Cytoscape.getNodeAttributes(),
+        network.species[species].getNode().getIdentifier(), typ);
+  }
 
-	public void setSpeciesAnnotation(int species, String typ, String annotation) {
-		Cytoscape.getNodeAttributes().setAttribute(network.species[species].getNode().getIdentifier(), typ, annotation);	}
+  public Collection<String> getSpeciesAnnotationTypes(int species) {
+    return Arrays.asList(Cytoscape.getNodeAttributes().getAttributeNames());
+  }
 
-	
-	
-	
-	
-	
+  public void setNetworkAnnotation(String typ, String annotation) {
+    Cytoscape.getNetworkAttributes().setAttribute(network.net.getIdentifier(), typ, annotation);
+  }
 
-	
+  public void setReactionAnnotation(int reaction, String typ,
+      String annotation) {
+    Cytoscape.getNodeAttributes()
+        .setAttribute(network.reactions[reaction].getNode().getIdentifier(), typ, annotation);
+  }
 
-		
+  public void setSpeciesAnnotation(int species, String typ, String annotation) {
+    Cytoscape.getNodeAttributes()
+        .setAttribute(network.species[species].getNode().getIdentifier(), typ, annotation);
+  }
+
+
 }
