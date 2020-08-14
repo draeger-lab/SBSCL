@@ -239,7 +239,7 @@ public class FluxBalanceAnalysis {
           weights[reaction2Index.get(pair.getKey())] = pair.getValue();
         }
         if (species.isSetBoundaryCondition() && !species.getBoundaryCondition()) {
-          problem.addConstraint(new LinearEqualsConstraint(weights, 0.0, "cnstrt_" + species.getId()));
+          problem.addConstraint(new LinearEqualsConstraint(weights, 0d, "cnstrt_" + species.getId()));
         }
       }
     }

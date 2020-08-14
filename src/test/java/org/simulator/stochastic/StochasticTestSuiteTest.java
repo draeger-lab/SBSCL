@@ -205,14 +205,14 @@ public class StochasticTestSuiteTest {
 
     String filter = null;
     Boolean mvnResource = false;
-    String ppp = TestUtils.getPathForTestResource("/sbml-test-suite/cases/stochastic");
-    return TestUtils.findResources(ppp, ".xml", filter, skip, mvnResource);
+    String stochasticPath = TestUtils.getPathForTestResource("/sbml-test-suite/cases/stochastic");
+    return TestUtils.findResources(stochasticPath, ".xml", filter, skip, mvnResource);
 
   }
 
   @Test
   public void testModel() throws IOException {
-    
+
     System.out.println("Testing test case: " + path);
 
     String sbmlfile, csvfile, configfile;
