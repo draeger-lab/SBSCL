@@ -752,15 +752,19 @@ public abstract class AbstractDESSolver
   }
 
   /**
-   * @param DES           the differential equation system
-   * @param initialValues
-   * @param timeBegin
-   * @param timeEnd
-   * @return result as {@link MultiTable}
+   * {@inheritDoc}
    */
   @Override
-  public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd)
-      throws DerivativeException {
+  public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd) throws DerivativeException {
+    return solve(DES, initialValues, timeBegin, timeEnd, null);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd, PropertyChangeListener propertyChangeListener)
+          throws DerivativeException {
     if (DES instanceof DelayedDESystem) {
       ((DelayedDESystem) DES).registerDelayValueHolder(this);
     }
@@ -779,11 +783,16 @@ public abstract class AbstractDESSolver
     if (fastFlag) {
       result[0] = computeSteadyState(((FastProcessDESystem) DES), result[0], timeBegin);
     }
+
     addPropertyChangeListener((SBMLinterpreter) DES);
 
     // execute events that trigger at 0.0 and process rules on changes due to the events
     processEventsAndRules(true, (EventDESystem) DES, 0d, 0d, result[0]);
     System.arraycopy(result[0], 0, yTemp, 0, yTemp.length);
+    if (propertyChangeListener != null) {
+      propertyChangeListener.propertyChange(new PropertyChangeEvent(this, PROGRESS, -stepSize, 0d));
+      propertyChangeListener.propertyChange(new PropertyChangeEvent(this, RESULT, result[0], result[0]));
+    }
     firePropertyChange(-stepSize, 0d, result[0]);
     for (int i = 1; (i < result.length) && (!Thread.currentThread().isInterrupted()); i++) {
       double oldT = t;
@@ -797,37 +806,54 @@ public abstract class AbstractDESSolver
         yTemp = computeSteadyState(((FastProcessDESystem) DES), result[i], timeBegin);
         System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
       }
+      if (propertyChangeListener != null) {
+        propertyChangeListener.propertyChange(new PropertyChangeEvent(this, PROGRESS, oldT, t));
+        propertyChangeListener.propertyChange(new PropertyChangeEvent(this, RESULT, yTemp, yTemp));
+      }
       v = additionalResults(DES, t, result[i], data, i);
       //			if (logger.getLevel().intValue() < Level.INFO.intValue()) {
       //				logger.fine("additional results: " + Arrays.toString(v));
       //			}
-      firePropertyChange(oldT * intervalFactor, t * intervalFactor, yTemp);
+      firePropertyChange(oldT, t, yTemp);
     }
     return data;
   }
 
-  /* (non-Javadoc)
-   * @see org.simulator.math.odes.DESSolver#steadystate(org.simulator.math.odes.DESystem, double[], double, double, int)
+  /**
+   * {@inheritDoc}
    */
   @Override
-  public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps)
-      throws DerivativeException {
+  public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps) throws DerivativeException {
+    return solve(DES, initialValues, x, h, steps, null);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps, PropertyChangeListener propertyChangeListener)
+          throws DerivativeException {
     double[] timePoints = new double[steps];
     for (int i = 0; i < steps; i++) {
       timePoints[i] = x + i * h;
     }
-    return solve(DES, initialValues, timePoints);
+    return solve(DES, initialValues, timePoints, propertyChangeListener);
   }
 
   /**
-   * @param DES           differential equation system
-   * @param initialValues
-   * @param timePoints    the time points
-   * @return result as a multi table
+   * {@inheritDoc}
    */
   @Override
-  public MultiTable solve(DESystem DES, double[] initialValues, double[] timePoints)
-      throws DerivativeException {
+  public MultiTable solve(DESystem DES, double[] initialValues, double[] timepoints) throws DerivativeException {
+    return solve(DES, initialValues, timepoints, null);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public MultiTable solve(DESystem DES, double[] initialValues, double[] timePoints, PropertyChangeListener propertyChangeListener)
+          throws DerivativeException {
     if (DES instanceof DelayedDESystem) {
       ((DelayedDESystem) DES).registerDelayValueHolder(this);
     }
@@ -885,12 +911,20 @@ public abstract class AbstractDESSolver
     return data;
   }
 
-  /* (non-Javadoc)
-   * @see org.simulator.math.odes.DESSolver#steadystate(org.simulator.math.odes.DESystem, org.simulator.math.odes.MultiTable.Block, double[])
+  /**
+   * {@inheritDoc}
    */
   @Override
-  public MultiTable solve(DESystem DES, MultiTable.Block initConditions, double[] initialValues)
-      throws DerivativeException {
+  public MultiTable solve(DESystem DES, MultiTable.Block timeSeriesInitConditions, double[] initialValues) throws DerivativeException {
+    return solve(DES, timeSeriesInitConditions, initialValues, null);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public MultiTable solve(DESystem DES, MultiTable.Block initConditions, double[] initialValues, PropertyChangeListener propertyChangeListener)
+          throws DerivativeException {
     if (DES instanceof DelayedDESystem) {
       ((DelayedDESystem) DES).registerDelayValueHolder(this);
     }

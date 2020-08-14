@@ -28,13 +28,12 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+import java.util.LinkedHashMap;
 
+import org.apache.log4j.Logger;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.UniqueNamedSBase;
 import org.simulator.math.odes.MultiTable;
@@ -47,125 +46,116 @@ import org.simulator.math.odes.MultiTable;
  */
 public class CSVImporter {
 
-  /**
-   * A {@link java.util.logging.Logger} for this class.
-   */
-  private static final transient Logger logger = Logger.getLogger(CSVImporter.class.getName());
+  private static final String TIME = "time";
+
+  private static final Logger logger = Logger.getLogger(CSVImporter.class.getName());
 
   /**
-   * The header of the file
+   * This method reads the data from the CSV file and converts it
+   * into the map with key as the column name and value as the array of amounts
+   * for the particular column.
+   * 
+   * @param pathname The path of the CSV file
+   * @return columnsMap
    */
-  private String[] header;
+  private Map<String, double[]> readDataFromCSV(String pathname, String separator) throws IOException {
+    Map<String, double[]> columnsMap = new LinkedHashMap<>();
+    BufferedReader reader = new BufferedReader(new FileReader(pathname));
+    String line = reader.readLine();
+    line = line.replaceAll("\\s", "");
+    String[] identifiers = line.split(separator);
+    if (line != null) {
+      List<String> lines = getLinesFromCSV(reader);
 
-  /**
-   * Function for importing a file and adapting the data to the current model
-   *
-   * @param model    the current model
-   * @param pathname the path of the file to import
-   * @return the data as a multi table
-   * @throws IOException
-   */
-  public MultiTable convert(Model model, String pathname) throws IOException {
-    MultiTable data = new MultiTable();
-    List<String> cols;
-    String expectedHeader[];
-    if (model != null) {
-      expectedHeader = expectedTableHead(model); // According to the
-      // model: which symbols
-      cols = new ArrayList<String>(expectedHeader.length + 1);
-      for (String head : expectedHeader) {
-        cols.add(head);
+      if (identifiers[0].equalsIgnoreCase(TIME)){
+        identifiers[0] = identifiers[0].toLowerCase();
       }
-    } else {
-      expectedHeader = new String[0];
-      cols = new ArrayList<String>(1);
-    }
-    cols.add(data.getTimeName());
-    int i, j, timeColumn;
-    String stringData[][] = read(pathname);
-    timeColumn = 0;
-    if (timeColumn > -1) {
-      double timePoints[] = new double[stringData.length];
-      for (i = 0; i < stringData.length; i++) {
-        timePoints[i] = Double.parseDouble(stringData[i][timeColumn]);
+      for (String s : identifiers) {
+        columnsMap.put(s, new double[lines.size()]);
       }
-      data.setTimePoints(timePoints);
 
-      // exclude time column
-      String newHead[] = new String[Math.max(0, header.length - 1)];
-      Map<String, Integer> nameToColumn = new HashMap<String, Integer>();
-      i = 0;
-      for (int p = 1; p < header.length; p++) {
-        if (!header[p].equalsIgnoreCase(data.getTimeName())) {
-          newHead[i++] = header[p].trim();
-          nameToColumn.put(newHead[i - 1], i);
-        }
-      }
-      data.addBlock(newHead); // alphabetically sorted
-      double dataBlock[][] = data.getBlock(0).getData();
-      for (i = 0; i < dataBlock.length; i++) {
-        j = 0; // timeCorrection(j, timeColumn)
-        for (String head : newHead) {
-          String s = stringData[i][nameToColumn.get(head)];
-          if ((s != null) && (s.length() > 0)) {
-            if (s.equalsIgnoreCase("INF")) {
-              dataBlock[i][j] = Double.POSITIVE_INFINITY;
-            } else if (s.equalsIgnoreCase("-INF")) {
-              dataBlock[i][j] = Double.NEGATIVE_INFINITY;
-            } else if (s.equalsIgnoreCase("NAN")) {
-              dataBlock[i][j] = Double.NaN;
+      for (int i = 0; i < lines.size(); i++) {
+        String[] column = lines.get(i).split(separator);
+        for (int j = 0; j < column.length; j++) {
+          if ((column[j] != null) && (column[j].length() > 0)) {
+            if (column[j].equalsIgnoreCase("INF")) {
+              columnsMap.get(identifiers[j])[i] = Double.POSITIVE_INFINITY;
+            } else if (column[j].equalsIgnoreCase("-INF")) {
+              columnsMap.get(identifiers[j])[i] = Double.NEGATIVE_INFINITY;
             } else {
-              dataBlock[i][j] = Double.parseDouble(s);
+              columnsMap.get(identifiers[j])[i] = Double.parseDouble(column[j]);
             }
           }
-          j++;
         }
       }
+    }
+
+    return columnsMap;
+  }
+
+  /**
+   * Converts the content of the CSV file in the form of the MultiTable.
+   *
+   * @param model the SBML {@link Model}
+   * @param pathname path of the CSV file
+   * @return the results from the CSV file in MultiTable (null can be returned on exception)
+   * @throws IOException
+   */
+  public MultiTable readMultiTableFromCSV(Model model, String pathname) throws IOException {
+    MultiTable data = new MultiTable();
+    Map<String, double[]> columnsMap = readDataFromCSV(pathname, ",");
+
+    Map.Entry<String, double[]> timePoints = columnsMap.entrySet().iterator().next();
+    data.setTimePoints(timePoints.getValue());
+    columnsMap.remove(timePoints.getKey());
+
+    try {
+      data.addBlock(columnsMap.keySet().toArray(new String[0]));
+
+      for (int i = 1; i < data.getColumnCount(); i++) {
+        double[] colValues = columnsMap.get(data.getColumnName(i));
+        for (int j = 0; j < data.getColumn(i).getRowCount(); j++) {
+          data.setValueAt(colValues[j], j, i);
+        }
+      }
+
       if (model != null) {
-        String colNames[] = new String[newHead.length];
+        String[] colNames = new String[columnsMap.size()];
         UniqueNamedSBase sbase;
-        j = 0;
-        for (String head : newHead) {
-          sbase = model.findUniqueNamedSBase(head);
-          colNames[j++] =
-              (sbase != null) && (sbase.isSetName()) ? sbase.getName() : null;
+        int j = 0;
+        for (Map.Entry<String, double[]> entry: columnsMap.entrySet()) {
+          sbase = model.findUniqueNamedSBase(entry.getKey());
+          colNames[j++] = (sbase != null) && (sbase.isSetName()) ? sbase.getName() : null;
         }
         data.getBlock(0).setColumnNames(colNames);
       }
-      data.setTimeName("time");
+      data.setTimeName(TIME);
+
       return data;
-    } else {
-      logger.fine("The file is not correctly formatted!");
+    } catch (Exception e) {
+      e.printStackTrace();
+      logger.error("Exception in converting the CSV file data to MultiTable.");
     }
     return null;
   }
 
   /**
-   * @param pathname
+   * Read all the values from the CSV file and stores them in
+   * an List of String.
+   *
+   * @param reader
    * @return
    * @throws IOException
    */
-  private String[][] read(String pathname) throws IOException {
-    String[][] result = null;
-    BufferedReader reader = new BufferedReader(new FileReader(pathname));
+  private List<String> getLinesFromCSV(BufferedReader reader) throws IOException {
     List<String> lines = new LinkedList<String>();
     String line = reader.readLine();
-    if (line != null) {
-      header = line.split(",");
+    while ((line != null) && !line.isEmpty()) {
+      line = line.replaceAll("\\s", "");
+      lines.add(line);
       line = reader.readLine();
-      while (line != null) {
-        lines.add(line);
-        line = reader.readLine();
-      }
-      result = new String[lines.size()][header.length];
-      int i = 0;
-      for (String l : lines) {
-        result[i] = l.split(",");
-        i++;
-      }
     }
-    reader.close();
-    return result;
+    return lines;
   }
 
   /**
@@ -184,10 +174,8 @@ public class CSVImporter {
   private List<String> gatherSymbolIds(final Model model) {
     return new AbstractList<String>() {
 
-      /*
-       * (non-Javadoc)
-       *
-       * @see java.util.AbstractList#get(int)
+      /**
+       * {@inheritDoc}
        */
       @Override
       public String get(int index) {
@@ -202,10 +190,8 @@ public class CSVImporter {
         return model.getParameter(index).getId();
       }
 
-      /*
-       * (non-Javadoc)
-       *
-       * @see java.util.AbstractCollection#size()
+      /**
+       * {@inheritDoc}
        */
       @Override
       public int size() {

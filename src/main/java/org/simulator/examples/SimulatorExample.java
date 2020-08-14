@@ -23,7 +23,10 @@
 package org.simulator.examples;
 
 import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -38,11 +41,10 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.SBMLReader;
-import org.simulator.comp.CompSimulator;
 import org.simulator.math.odes.*;
 import org.simulator.plot.PlotMultiTable;
+import org.simulator.sbml.EquationSystem;
 import org.simulator.sbml.SBMLinterpreter;
-import org.simulator.plot.PlotMultiTable;
 
 /**
  * A simple program that performs a simulation of a model.
@@ -51,12 +53,14 @@ import org.simulator.plot.PlotMultiTable;
  * @version $Rev$
  * @since 0.9
  */
-public class SimulatorExample {
+public class SimulatorExample implements PropertyChangeListener {
 
     private static Logger logger = Logger.getLogger(SimulatorExample.class.getName());
     private static final double TOLERANCE_FACTOR = 1E-3;
     private static final int WIDTH = 400;
     private static final int HEIGHT = 400;
+    private static final String RESULT = "result";
+    private static SimulatorExample simulatorExample;
 
     /**
      * Starts a simulation at the command line.
@@ -97,7 +101,7 @@ public class SimulatorExample {
 
         DESSolver solver = new RosenbrockSolver();
         solver.setStepSize(stepSize);
-        SBMLinterpreter interpreter = new SBMLinterpreter(model);
+        EquationSystem interpreter = new SBMLinterpreter(model);
         if (solver instanceof AbstractDESSolver) {
             ((AbstractDESSolver) solver).setIncludeIntermediates(false);
         }
@@ -107,8 +111,10 @@ public class SimulatorExample {
             ((AdaptiveStepsizeIntegrator) solver).setAbsTol(absTol);
             ((AdaptiveStepsizeIntegrator) solver).setRelTol(relTol);
         }
+
+        simulatorExample = new SimulatorExample();
         MultiTable solution = solver.solve(interpreter, interpreter
-                .getInitialValues(), 0d, timeEnd);
+                .getInitialValues(), 0d, timeEnd, simulatorExample);
 
         // Display simulation result to the user
         JScrollPane resultDisplay = new JScrollPane(new JTable(solution));
@@ -121,6 +127,15 @@ public class SimulatorExample {
         p.pack();
         RefineryUtilities.centerFrameOnScreen(p);
         p.setVisible(true);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getPropertyName().equals(RESULT)) {
+            logger.info(Arrays.toString((double[]) propertyChangeEvent.getNewValue()));
+        } else {
+            logger.info(propertyChangeEvent.getNewValue());
+        }
     }
 
 }

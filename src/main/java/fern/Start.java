@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import fern.network.sbml.SBMLNetwork;
 import org.jdom.JDOMException;
 
 import fern.network.FeatureNotSupportedException;
@@ -32,6 +33,7 @@ public class Start {
 			
 			Network net = createNetwork(orderedArgs);
 			Simulator sim = createSimulator(net,orderedArgs);
+			((SBMLNetwork) net).registerEvents(sim);
 			AmountIntervalObserver obs = createObserver(sim,orderedArgs);
 			GnuPlot gp = runSimulation(sim,obs,orderedArgs);
 			output(obs,sim,orderedArgs,gp);

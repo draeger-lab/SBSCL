@@ -4,12 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.stream.Stream;
 
 import fern.network.AmountManager;
 import fern.simulation.Simulator;
 import org.sbml.jsbml.*;
-import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sbml.astnode.ASTNodeValue;
 
@@ -21,26 +19,19 @@ import org.simulator.sbml.astnode.ASTNodeValue;
  */
 public class MathTree {
 
-    private SBMLNetwork net;
     private ASTNode copiedAST;
-    private SBMLinterpreter sbmLinterpreter;
-    private Map<String, Integer> bindings;
+    private SBMLinterpreter sbmlInterpreter;
     public static final String TEMP_VALUE = "SBML_SIMULATION_TEMP_VALUE";
 
     /**
      * Creates a MathTree {@link ASTNode}.
      *
-     * @param net      sbml network
+     * @param interpreter sbmlInterpreter instance for calculating the nodes
      * @param ast      ASTNode
-     * @param globals  pointer to the global variable mapping
-     * @param locals   pointer to the local variable mapping of this entity
-     * @param bindings mapping of the variable names to their indices
      */
-    public MathTree(SBMLNetwork net, ASTNode ast, Map<String, Double> globals, Map<String, Double> locals, Map<String, Integer> bindings) throws ModelOverdeterminedException {
-        this.net = net;
-        this.bindings = bindings;
-        sbmLinterpreter = new SBMLinterpreter(net.getSBMLModel());
-        copiedAST = sbmLinterpreter.copyAST(ast, true, null, null);
+    public MathTree(SBMLinterpreter interpreter, ASTNode ast) {
+        sbmlInterpreter = interpreter;
+        copiedAST = interpreter.copyAST(ast, true, null, null);
     }
 
     /**
@@ -55,9 +46,14 @@ public class MathTree {
         while (!dfs.empty()) {
             ASTNode node = dfs.pop();
             if ((node.getNumChildren() == 0) && !node.isOperator() && !node.isNumber()){
-                Integer index = bindings.get(node.getName());
+                Integer index = null;
+                if (sbmlInterpreter.getModel().getSpecies(node.getName()) != null) {
+                    // Subtracting from the total compartment count as species indices start after compartments
+                    // in the Y array in the interpreter.
+                    index = sbmlInterpreter.getSymbolHash().get(node.getName()) - sbmlInterpreter.getModel().getCompartmentCount();
+                }
                 if ((index != null) && !re.contains(index)){
-                    re.add(bindings.get(node.getName()));
+                    re.add(index);
                 }
             } else if (node.getNumChildren() != 0) {
                 for (int i = 0; i < node.getNumChildren(); i++){
@@ -85,10 +81,9 @@ public class MathTree {
      * @return value of the expression
      */
     public double calculate(AmountManager amount, Simulator sim) {
-
-        sbmLinterpreter.updateSpeciesConcentration(amount);
+        sbmlInterpreter.updateSpeciesConcentration(amount);
+        sbmlInterpreter.setCurrentTime(sim.getTime());
         return ((ASTNodeValue) copiedAST.getUserObject(TEMP_VALUE)).compileDouble(sim.getTime(), 0d);
-
     }
 
 }

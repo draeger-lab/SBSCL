@@ -78,7 +78,6 @@ public class ConstraintExample {
     }
 
     // Compute the numerical solution of the initial value problem
-    //MultiTable solution =
     solver.solve(interpreter, interpreter.getInitialValues(), 0d, timeEnd);
   }
 

@@ -50,7 +50,11 @@ import org.sbml.jsbml.util.SBMLtools;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sbml.astnode.ASTNodeValue;
+import scpsolver.constraints.LinearBiggerThanEqualsConstraint;
+import scpsolver.constraints.LinearConstraint;
 import scpsolver.constraints.LinearEqualsConstraint;
+import scpsolver.constraints.LinearSmallerThanEqualsConstraint;
+import scpsolver.lpsolver.LinearProgramSolver;
 import scpsolver.lpsolver.SolverFactory;
 import scpsolver.problems.LinearProgram;
 
@@ -78,7 +82,7 @@ public class FluxBalanceAnalysis {
   /**
    * The linear programming solver.
    */
-  private NewGLPKSolver glpkSolver;
+  private LinearProgramSolver glpkSolver;
 
   private LinearProgram problem;
 
@@ -234,9 +238,9 @@ public class FluxBalanceAnalysis {
         for (Pair<String, Double> pair : species2Reaction.get(species.getId())) {
           weights[reaction2Index.get(pair.getKey())] = pair.getValue();
         }
-      }
-      if (species2Reaction.get(species.getId()).size() > 1) {
-        problem.addConstraint(new LinearEqualsConstraint(weights, 0.0, "cnstrt_" + species.getId()));
+        if (species.isSetBoundaryCondition() && !species.getBoundaryCondition()) {
+          problem.addConstraint(new LinearEqualsConstraint(weights, 0d, "cnstrt_" + species.getId()));
+        }
       }
     }
   }

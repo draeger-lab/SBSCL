@@ -110,7 +110,6 @@ public class CompSimulator {
       ((AbstractDESSolver) solver).setIncludeIntermediates(false);
     }
 
-    // Compute the numerical solution of the initial value problem
     // TODO: Rel-Tolerance, Abs-Tolerance.
     MultiTable solution = solver.solve(interpreter, interpreter.getInitialValues(), 0d, timeEnd);
 

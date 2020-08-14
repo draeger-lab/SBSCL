@@ -20,7 +20,6 @@ import org.simulator.math.odes.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.util.*;
 
@@ -135,26 +134,13 @@ public class SBMLTestSuiteTest {
         // int start = Integer.valueOf(props.getProperty("start"));
         double duration;
         double steps = (!props.getProperty(STEPS).isEmpty()) ? Double.parseDouble(props.getProperty(STEPS)) : 0d;
-        Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
         String[] amounts = String.valueOf(props.getProperty(AMOUNT)).split(",");
         String[] concentrations = String.valueOf(
                 props.getProperty(CONCENTRATION)).split(",");
         double absolute = (!props.getProperty(ABSOLUTE).isEmpty()) ? Double.parseDouble(props.getProperty(ABSOLUTE)) : 0d;
         double relative = (!props.getProperty(RELATIVE).isEmpty()) ? Double.parseDouble(props.getProperty(RELATIVE)) : 0d;
 
-        for (String s : amounts) {
-            s = s.trim();
-            if (!s.isEmpty()) {
-                amountHash.put(s, true);
-            }
-        }
-
-        for (String s : concentrations) {
-            s = s.trim();
-            if (!s.isEmpty()) {
-                amountHash.put(s, false);
-            }
-        }
+        Map<String, Boolean> amountHash = createAmountHash(amounts, concentrations);
 
         // Test all the SBML versions of test file
         String[] sbmlFileTypes = {"-sbml-l1v2.xml", "-sbml-l2v1.xml",
@@ -180,8 +166,8 @@ public class SBMLTestSuiteTest {
                 Assert.assertFalse(errorInModelReading);
 
                 // get timepoints
-                CSVImporter csvimporter = new CSVImporter();
-                MultiTable inputData = csvimporter.convert(model, csvfile);
+                CSVImporter csvImporter = new CSVImporter();
+                MultiTable inputData = csvImporter.readMultiTableFromCSV(model, csvfile);
                 double[] timepoints = inputData.getTimePoints();
                 duration = timepoints[timepoints.length - 1]
                         - timepoints[0];
@@ -200,19 +186,7 @@ public class SBMLTestSuiteTest {
                     Assert.assertNotNull(compSimulator);
                     Assert.assertFalse(errorInCompSimulator);
 
-                    MultiTable solution = null;
-                    boolean errorInSolve = false;
-                    try {
-                        double stepSize = (duration / steps);
-                        solution = compSimulator.solve(stepSize, duration);
-                    } catch (Exception e) {
-                        errorInSolve = true;
-                        e.printStackTrace();
-                    }
-                    Assert.assertNotNull(solution);
-                    Assert.assertFalse(errorInSolve);
-
-                    //TODO: Add quality measure to check whether solution meets the correct results
+                    solveCompModel(compSimulator, duration, steps);
 
                 } else if (model.getExtension(FBCConstants.shortLabel) != null) {
 
@@ -227,39 +201,7 @@ public class SBMLTestSuiteTest {
                     Assert.assertNotNull(solver);
                     Assert.assertFalse(errorInFBASimulator);
 
-                    boolean errorInSolve = false;
-                    boolean isSolved = false;
-                    try {
-                        isSolved = solver.solve();
-                    } catch (Exception e) {
-                        errorInSolve = true;
-                        e.printStackTrace();
-                    }
-                    Assert.assertFalse(errorInSolve);
-
-                    BufferedReader reader = new BufferedReader(new FileReader(csvfile));
-                    String[] keys = reader.readLine().trim().split(",");
-                    String[] values = reader.readLine().trim().split(",");
-
-                    if (isSolved) {
-                        Map<String, Double> solution = solver.getSolution();
-                        Map<String, Double> inputSolution = new HashMap<>();
-                        for (int i = 0; i < keys.length; i++) {
-                            inputSolution.put(keys[i], Double.valueOf(values[i]));
-                        }
-
-                        for (Map.Entry<String, Double> mapElement : inputSolution.entrySet()) {
-                            if (solution.containsKey(mapElement.getKey())) {
-                                Assert.assertEquals(mapElement.getValue(), solution.get(mapElement.getKey()), DELTA);
-                            }
-                        }
-                    } else {
-                        if ((keys[0].equals(solver.getActiveObjective())) && (values[0].equals(NAN))) {
-                            Assert.assertTrue(true);
-                        } else {
-                            Assert.fail();
-                        }
-                    }
+                    solveFBCModel(solver, csvfile);
 
                 } else {
 
@@ -279,49 +221,172 @@ public class SBMLTestSuiteTest {
 
                     if ((solver != null) && (interpreter != null)) {
 
-                        solver.setStepSize(duration / steps);
-
-                        if (solver instanceof AbstractDESSolver) {
-                            ((AbstractDESSolver) solver).setIncludeIntermediates(false);
-                        }
-
-                        if (solver instanceof AdaptiveStepsizeIntegrator) {
-                            ((AdaptiveStepsizeIntegrator) solver).setAbsTol(TOLERANCE_FACTOR * absolute);
-                            ((AdaptiveStepsizeIntegrator) solver).setRelTol(TOLERANCE_FACTOR * relative);
-                        }
-
-                        // solve
-                        MultiTable solution = null;
-                        boolean errorInSolve = false;
-                        try {
-                            solution = solver.solve(interpreter,
-                                    interpreter.getInitialValues(), timepoints);
-                        } catch (DerivativeException e) {
-                            errorInSolve = true;
-                            e.printStackTrace();
-                        }
-                        Assert.assertNotNull(solution);
-                        Assert.assertFalse(errorInSolve);
-                        Assert.assertFalse(solver.isUnstable());
-
-                        MultiTable left = solution;
-                        MultiTable right = inputData;
-                        if (solution.isSetTimePoints() && inputData.isSetTimePoints()) {
-                            left = solution.filter(inputData.getTimePoints());
-                            right = inputData.filter(solution.getTimePoints());
-                        }
-
-                        // compute the maximum divergence from the pre-defined results
-                        QualityMeasure distance = new MaxDivergenceTolerance(absolute, relative);
-                        List<Double> maxDivTolerances = distance.getColumnDistances(left, right);
-                        for (Double maxDivTolerance : maxDivTolerances) {
-                            Assert.assertTrue(maxDivTolerance <= 1d);
-                        }
+                        MultiTable solution = solveSBMLModel(solver, interpreter, duration, steps, timepoints, absolute, relative);
+                        compareSBMLResults(solution, inputData, absolute, relative);
 
                     }
 
                 }
             }
         }
+    }
+
+    /**
+     * Compares the simulation results with the reference results given in the
+     * SBML Test Suite.
+     *
+     * @param solution simulation results by SBSCL
+     * @param inputData reference results from the SBML Test Suite
+     * @param absolute absolute tolerance
+     * @param relative relative tolerance
+     */
+    private void compareSBMLResults(MultiTable solution, MultiTable inputData, double absolute, double relative) {
+        MultiTable left = solution;
+        MultiTable right = inputData;
+        if (solution.isSetTimePoints() && inputData.isSetTimePoints()) {
+            left = solution.filter(inputData.getTimePoints());
+            right = inputData.filter(solution.getTimePoints());
+        }
+
+        // compute the maximum divergence from the pre-defined results
+        QualityMeasure distance = new MaxDivergenceTolerance(absolute, relative);
+        List<Double> maxDivTolerances = distance.getColumnDistances(left, right);
+        for (Double maxDivTolerance : maxDivTolerances) {
+            Assert.assertTrue(maxDivTolerance <= 1d);
+        }
+    }
+
+    /**
+     * Simulates the SBML {@link Model} and stores the results in the {@link MultiTable}
+     *
+     * @param solver the DESolver for simulating the model
+     * @param interpreter interpretes the SBML Model
+     * @param duration total duration of the simulation
+     * @param steps total steps in the simulation
+     * @param timepoints array with the time points of the simulation
+     * @param absolute absolute tolerance
+     * @param relative relative tolerance
+     * @return
+     */
+    private MultiTable solveSBMLModel(DESSolver solver, SBMLinterpreter interpreter,
+                                      double duration, double steps, double[] timepoints,
+                                      double absolute, double relative) {
+        solver.setStepSize(duration / steps);
+
+        if (solver instanceof AbstractDESSolver) {
+            ((AbstractDESSolver) solver).setIncludeIntermediates(false);
+        }
+
+        if (solver instanceof AdaptiveStepsizeIntegrator) {
+            ((AdaptiveStepsizeIntegrator) solver).setAbsTol(TOLERANCE_FACTOR * absolute);
+            ((AdaptiveStepsizeIntegrator) solver).setRelTol(TOLERANCE_FACTOR * relative);
+        }
+
+        // solve
+        MultiTable solution = null;
+        try {
+            solution = solver.solve(interpreter, interpreter.getInitialValues(), timepoints);
+        } catch (DerivativeException e) {
+            e.printStackTrace();
+            logger.error("DerivativeException while solving the model!");
+        }
+        Assert.assertNotNull(solution);
+        Assert.assertFalse(solver.isUnstable());
+
+        return solution;
+    }
+
+    /**
+     * Simulates the SBML models with comp extension using the CompSimulator
+     *
+     * @param compSimulator simulator for comp models
+     * @param duration total duration of the simulation
+     * @param steps total steps in the simulation
+     */
+    private void solveCompModel(CompSimulator compSimulator, double duration, double steps) {
+
+        MultiTable solution = null;
+        boolean errorInSolve = false;
+        try {
+            double stepSize = (duration / steps);
+            solution = compSimulator.solve(stepSize, duration);
+        } catch (Exception e) {
+            errorInSolve = true;
+            e.printStackTrace();
+        }
+        Assert.assertNotNull(solution);
+        Assert.assertFalse(errorInSolve);
+    }
+
+    /**
+     * Simulates the SBML models with FBC extension and compares the results with reference
+     * results from SBML Test Suite.
+     *
+     * @param solver FluxBalanceAnalysis Solver instance
+     * @param csvfile Path of the reference results file
+     * @throws IOException
+     */
+    private void solveFBCModel(FluxBalanceAnalysis solver, String csvfile) throws IOException {
+        boolean errorInSolve = false;
+        boolean isSolved = false;
+        try {
+            isSolved = solver.solve();
+        } catch (Exception e) {
+            errorInSolve = true;
+            e.printStackTrace();
+        }
+        Assert.assertFalse(errorInSolve);
+
+        BufferedReader reader = new BufferedReader(new FileReader(csvfile));
+        String[] keys = reader.readLine().trim().split(",");
+        String[] values = reader.readLine().trim().split(",");
+
+        if (isSolved) {
+            Map<String, Double> solution = solver.getSolution();
+            Map<String, Double> inputSolution = new HashMap<>();
+            for (int i = 0; i < keys.length; i++) {
+                inputSolution.put(keys[i], Double.valueOf(values[i]));
+            }
+
+            for (Map.Entry<String, Double> mapElement : inputSolution.entrySet()) {
+                if (solution.containsKey(mapElement.getKey())) {
+                    Assert.assertEquals(mapElement.getValue(), solution.get(mapElement.getKey()), DELTA);
+                }
+            }
+        } else {
+            if ((keys[0].equals(solver.getActiveObjective())) && (values[0].equals(NAN))) {
+                Assert.assertTrue(true);
+            } else {
+                Assert.fail();
+            }
+        }
+    }
+
+    /**
+     * Creates an amount hash which keeps track whether the variable has
+     * amount units or concentration units.
+     *
+     * @param amounts the ids of the variables which are in amount units
+     * @param concentrations the ids of the variables which are in concentration units
+     * @return the amount hash
+     */
+    private static Map<String, Boolean> createAmountHash(String[] amounts, String[] concentrations) {
+
+        Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
+        for (String s : amounts) {
+            s = s.trim();
+            if (!s.isEmpty()) {
+                amountHash.put(s, true);
+            }
+        }
+
+        for (String s : concentrations) {
+            s = s.trim();
+            if (!s.isEmpty()) {
+                amountHash.put(s, false);
+            }
+        }
+
+        return amountHash;
     }
 }

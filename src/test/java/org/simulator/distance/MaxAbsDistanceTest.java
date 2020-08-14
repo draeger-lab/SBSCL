@@ -73,12 +73,12 @@ public class MaxAbsDistanceTest {
 
         // convert the test files to MultiTable
         CSVImporter csvImporter = new CSVImporter();
-        MultiTable a = csvImporter.convert(null, first);
-        MultiTable b = csvImporter.convert(null, second);
+        MultiTable table1 = csvImporter.readMultiTableFromCSV(null, first);
+        MultiTable table2 = csvImporter.readMultiTableFromCSV(null, second);
 
         // calculates max absolute distance
         MaxAbsDistance maxAbsDistance = new MaxAbsDistance();
-        Map<String, Double> distances = maxAbsDistance.getMaxAbsDistances(a, b);
+        Map<String, Double> distances = maxAbsDistance.getMaxAbsDistances(table1, table2);
 
         // get pre-defined results from the test case
         Map<String, Double> inputData = new HashMap<>();

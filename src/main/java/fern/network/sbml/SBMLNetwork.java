@@ -7,7 +7,6 @@
 package fern.network.sbml;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,11 +16,10 @@ import fern.network.AbstractNetworkImpl;
 import fern.network.AnnotationManagerImpl;
 import fern.network.DefaultAmountManager;
 import fern.network.FeatureNotSupportedException;
-import fern.network.Network;
 import fern.simulation.Simulator;
-import fern.tools.NetworkTools;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
+import org.simulator.sbml.SBMLinterpreter;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -40,11 +38,12 @@ import javax.xml.stream.XMLStreamException;
 public class SBMLNetwork extends AbstractNetworkImpl {
 
 	/**
-	 * The sbml model created by libsbml.
+	 * The sbml model
 	 */
 	protected Model model;
 	private SBMLDocument document;
-		
+	private SBMLinterpreter sbmlInterpreter;
+
 	private long[] initialAmount = null;
 	private Collection<SBMLEventHandlerObserver> events = null;
 	
@@ -93,43 +92,29 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 		}
 		
 		model = document.getModel();
+		sbmlInterpreter = new SBMLinterpreter(model);
 		
 		init();
 	}
-	
-	/**
-	 * Create a <code>SBMLNetwork</code> from an existing {@link Network}. The constant for 
-	 * the rate reaction is obtained by the propensity calculator by setting
-	 * each reactant species' amount to 1. 
-	 * 
-	 * @param net 	the network to create a <code>SBMLNetwork</code> from
-	 */
-	public SBMLNetwork(Network net) throws ModelOverdeterminedException {
-		super(net.getName());
-		
-		document = createDocument(net);
-		model = document.getModel();
-		
-		init();
-	}
-	
+
 	private void init() throws ModelOverdeterminedException {
 		createAnnotationManager();
 		createSpeciesMapping();
 		createAdjacencyLists();
-		createPropensityCalulator();
+		createPropensityCalculator();
 		createAmountManager();
 		createEventHandlers();
-		
+
 		initialAmount = new long[getNumSpecies()];
-		for (int i=0; i<initialAmount.length; i++)
+		for (int i=0; i<initialAmount.length; i++) {
 			initialAmount[i] = (long) getSBMLModel().getSpecies(i).getInitialAmount();
+		}
 	}
 	
 	protected void createEventHandlers() throws ModelOverdeterminedException {
 		events = new LinkedList<SBMLEventHandlerObserver>();
 		for (int i=0; i<model.getNumEvents(); i++)
-			events.add(new SBMLEventHandlerObserver(null, this, model.getEvent(i)));
+			events.add(new SBMLEventHandlerObserver(null, this, sbmlInterpreter, model.getEvent(i)));
 	}
 	
 	/**
@@ -188,7 +173,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	}
 	@Override
 	protected void createSpeciesMapping() {
-		speciesIdToIndex = new HashMap<String,Integer>((int) model.getNumSpecies());
+		speciesIdToIndex = new HashMap<String,Integer>(model.getNumSpecies());
 		indexToSpeciesId = new String[(int) model.getNumSpecies()];
 		for (int i=0; i<model.getNumSpecies(); i++) {
 			speciesIdToIndex.put(model.getSpecies(i).getId(),i);
@@ -197,20 +182,22 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	}
 	
 	/**
-	 * Gets the libsbml model.
+	 * Gets the SBML model.
 	 * 
 	 * @return sbml model
 	 */
 	public Model getSBMLModel() {
 		return model;
 	}
+
 	@Override
 	protected void createAmountManager() {
 		amountManager = new DefaultAmountManager(this);
 	}
+
 	@Override
-	protected void createPropensityCalulator() throws ModelOverdeterminedException {
-		propensitiyCalculator = new SBMLPropensityCalculator(this);		
+	protected void createPropensityCalculator() throws ModelOverdeterminedException {
+		propensitiyCalculator = new SBMLPropensityCalculator(sbmlInterpreter);
 	}
 	
 	/**
@@ -220,19 +207,9 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 	 * @throws IOException	if the file cannot be written
 	 */
 	public void saveToFile(File file) throws IOException, XMLStreamException {
-//		FileWriter fw = new FileWriter(file);
-//		fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-//		fw.write(document.toSBML());
-//		fw.flush();
-//		fw.close();
-		/**
-		 * [Changes made]
-		 * As currently JSBML is lacking in toSBML() method so I am using SBML Writer here
-		 */
 		SBMLWriter sbmlWriter = new SBMLWriter();
 		sbmlWriter.writeSBMLToFile(document, file.toString());
 	}
-	
 	
 	/**
 	 * Saves the current <code>SBMLNetwork</code> to a sbml file with given
@@ -247,100 +224,12 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 		int oldlevel = document.getLevel();
 		int oldversion = document.getVersion();
 		document.setLevelAndVersion(Math.toIntExact(level), Math.toIntExact(version));
-//		FileWriter fw = new FileWriter(file);
-//		fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-//		fw.write(document.toSBML());
-//		fw.flush();
-//		fw.close();
-		/**
-		 * [Changes made]
-		 * As currently JSBML is lacking in toSBML() method so I am using SBML Writer here
-		 */
 		SBMLWriter sbmlWriter = new SBMLWriter();
 		sbmlWriter.writeSBMLToFile(document, file.toString());
 		document.setLevelAndVersion(Math.toIntExact(oldlevel), Math.toIntExact(oldversion));
 	}
-	
-	private SBMLDocument createDocument(Network net) {
-		SBMLDocument doc = new SBMLDocument();
-		Model re = doc.createModel(net.getName());
-		
-		
-		Compartment comp = new Compartment("Cell");
-		re.addCompartment(comp);
-		
-		for (int s=0; s<net.getNumSpecies(); s++) {
-			Species species = new Species(net.getSpeciesName(s));
-			species.setCompartment("Cell");
-			species.setHasOnlySubstanceUnits(true);
-			species.setInitialAmount(net.getInitialAmount(s));
-			re.addSpecies(species);
-		}
-		
-		for (int r=0; r<net.getNumReactions(); r++) {
-			Reaction rea = new Reaction(net.getReactionName(r));
-			rea.setReversible(false);
-			for (int s=0; s<net.getReactants(r).length; s++)
-				rea.addReactant(new SpeciesReference(net.getSpeciesName(net.getReactants(r)[s])));	
-			for (int s=0; s<net.getProducts(r).length; s++)
-				rea.addProduct(new SpeciesReference(net.getSpeciesName(net.getProducts(r)[s])));
 
-			/**
-			 * [Changes made]
-			 *
-			 * As KineticLaw class is updated in JSBML
-			 * It takes parameters as reaction now. So updated it.
-			 *
-			 * Previous statement: KineticLaw law = new KineticLaw(getASTTree(net,r));
-			 */
-			KineticLaw law = new KineticLaw(rea);
-			rea.setKineticLaw(law);
-			re.addReaction(rea);
-		}
-		
-		return doc;
+	public SBMLinterpreter getSbmlInterpreter() {
+		return sbmlInterpreter;
 	}
-
-	private ASTNode getASTTree(Network net, int r) {
-		int[] reactants = net.getReactants(r);
-		
-		ASTNode node = new ASTNode(ASTNode.Type.REAL);
-		node.setValue(NetworkTools.getConstantBySettingReactantsToStoich(net, r));
-		
-		int[] stoich = new int[net.getNumSpecies()];
-		
-		for (int reac=0; reac<reactants.length; reac++) {
-			ASTNode times = new ASTNode(ASTNode.Type.TIMES);
-			ASTNode reacNode = new ASTNode(ASTNode.Type.NAME);
-			reacNode.setName(net.getSpeciesName(reactants[reac]));
-			times.addChild(node);
-			if(stoich[reactants[reac]]==0)
-				times.addChild(reacNode);
-			else {
-				ASTNode minus = new ASTNode(ASTNode.Type.MINUS);
-				ASTNode stoichNode = new ASTNode(ASTNode.Type.REAL);
-				stoichNode.setValue(stoich[reactants[reac]]);
-				minus.addChild(reacNode);
-				minus.addChild(stoichNode);
-				times.addChild(minus);
-			}
-			node = times;
-			stoich[reactants[reac]]++;
-		}
-		
-		for (int i=0; i<stoich.length; i++) {
-			if (stoich[i]>1) {
-				ASTNode times = new ASTNode(ASTNode.Type.TIMES);
-				ASTNode reacNode = new ASTNode(ASTNode.Type.REAL);
-				reacNode.setValue(1.0/stoich[i]);
-				times.addChild(node);
-				times.addChild(reacNode);
-				node = times;
-			}
-		}
-		
-		return node;
-	}
-	
-	
 }

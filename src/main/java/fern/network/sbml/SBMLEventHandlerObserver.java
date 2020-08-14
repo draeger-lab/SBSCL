@@ -9,6 +9,7 @@ import fern.simulation.Simulator;
 import fern.simulation.Simulator.FireType;
 import fern.simulation.observer.TriggerObserver;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
+import org.simulator.sbml.SBMLinterpreter;
 
 /**
  * Observer which handles an event of a sbml model.
@@ -31,41 +32,31 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
 	 * 
 	 * @param sim 	the simulator
 	 * @param net	the sbml network
+	 * @param interpreter the sbmlInterpreter instance to calculate the node values
 	 * @param event the event object of the sbml model
 	 */
-	public SBMLEventHandlerObserver(Simulator sim, SBMLNetwork net, Event event) throws ModelOverdeterminedException {
+	public SBMLEventHandlerObserver(Simulator sim, SBMLNetwork net, SBMLinterpreter interpreter, Event event) throws ModelOverdeterminedException {
 		super(sim);
 		
 		this.net = net;
-		parse(event);
+		parse(event, interpreter);
 	}
-	
-	private void parse(Event event) throws ModelOverdeterminedException {
+
+	private void parse(Event event, SBMLinterpreter interpreter) {
 		this.name = event.getId();
-		this.trigger = new MathTree(net,
-				event.getTrigger().getMath(),
-				((SBMLPropensityCalculator)net.getPropensityCalculator()).getGlobalParameters(),
-				new HashMap<String, Double>(),
-				net.getSpeciesMapping());
-		this.delay = event.getDelay()==null ? null : new MathTree(net,
-				event.getDelay().getMath(),
-				((SBMLPropensityCalculator)net.getPropensityCalculator()).getGlobalParameters(),
-				new HashMap<String, Double>(),
-				net.getSpeciesMapping());
+		this.trigger = new MathTree(interpreter, event.getTrigger().getMath());
+		this.delay = event.getDelay() == null ? null : new MathTree(interpreter, event.getDelay().getMath());
 		variableAssignment = new HashMap<String, MathTree>();
 		parameterAssignment = new HashMap<String, MathTree>();
 		
 		for (int i=0; i<event.getNumEventAssignments(); i++) {
 			String var = event.getEventAssignment(i).getVariable();
-			MathTree tree = new MathTree(net,
-					event.getEventAssignment(i).getMath(),
-					((SBMLPropensityCalculator)net.getPropensityCalculator()).getGlobalParameters(),
-					new HashMap<String, Double>(),
-					net.getSpeciesMapping());
-			if (net.getSpeciesMapping().containsKey(var))
+			MathTree tree = new MathTree(interpreter, event.getEventAssignment(i).getMath());
+			if (interpreter.getModel().containsSpecies(var)) {
 				variableAssignment.put(var, tree);
-			else
+			} else {
 				parameterAssignment.put(var, tree);
+			}
 		}
 	}
 	
@@ -101,10 +92,11 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
 		if (!lastStepTriggered && triggered) {
 			lastStepTriggered = triggered;
 			double delaytime = delay==null ? 0 : delay.calculate(net.getAmountManager(),getSimulator());
-			if (delaytime<=0) 
+			if (delaytime<=0) {
 				executeEvent();
-			else
+			} else {
 				setTheta(delaytime);
+			}
 			return true;
 		}
 		lastStepTriggered = triggered;

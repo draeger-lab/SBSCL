@@ -508,8 +508,8 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
   /**
    * Merge two 2D arrays into one 2D array in X-direction
    *
-   * @param double[][]
-   * @param double[][]
+   * @param a
+   * @param b
    * @return double[][]
    */
   private double[][] mergeDataCols(double[][] a, double[][] b) {
@@ -522,16 +522,16 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
   /**
    * Merge time columns from 2 multiTables
    *
-   * @param MultTableSEDMLWrapper
-   * @param MultTableSEDMLWrapper
+   * @param table1
+   * @param table2
    * @return double[]
    */
-  private double[] mergeTimeCols(MultTableSEDMLWrapper a, MultTableSEDMLWrapper b) {
+  private double[] mergeTimeCols(MultTableSEDMLWrapper table1, MultTableSEDMLWrapper table2) {
     // Get end time point for taskA
-    double[] timeA = a.getMultiTable().getTimePoints();
+    double[] timeA = table1.getMultiTable().getTimePoints();
     double timeBegin = timeA[timeA.length - 1];
     // Add end time point to taskB
-    double[] timeB = Arrays.stream(b.getMultiTable().getTimePoints()).map(row -> row + timeBegin).toArray();
+    double[] timeB = Arrays.stream(table2.getMultiTable().getTimePoints()).map(row -> row + timeBegin).toArray();
     // merged all point to one longer double[]
     double[] merged = new double[timeA.length + timeB.length];
     System.arraycopy(timeA, 0, merged, 0, timeA.length);
@@ -542,7 +542,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
   /**
    * A helper function to sort subTasks by order.
    *
-   * @param Map<String, SubTask>
+   * @param unsortMap
    * @return Map<String, SubTask>
    */
   private static Map<String, SubTask> sortTasks(Map<String, SubTask> unsortMap) {

@@ -20,7 +20,7 @@ liblpsolve55j_x64.so
 jsbml.log
 
 # BiGG models
-src/test/resources/bigg/
+src/test/resources/bigg/v1.5/
 
 # sbml-test-suite
 src/test/resources/sbml-test-suite/

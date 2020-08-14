@@ -8,7 +8,7 @@
     </uniformTimeCourse>
   </listOfSimulations>
   <listOfModels>
-    <model id="model1" language="urn:sedml:language:sbml" source="urn:miriam:biomodels.db:BIOMD0000000140"/>
+    <model id="model1" language="urn:sedml:language:sbml" source="https://www.ebi.ac.uk/biomodels/model/download/BIOMD0000000140?filename=BIOMD0000000140_urn.xml"/>
   </listOfModels>
   <listOfTasks>
     <task id="task1" modelReference="model1"

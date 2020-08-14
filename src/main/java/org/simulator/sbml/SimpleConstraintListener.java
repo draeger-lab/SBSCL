@@ -25,8 +25,7 @@
 package org.simulator.sbml;
 
 import java.text.MessageFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.util.SBMLtools;
@@ -48,17 +47,23 @@ public class SimpleConstraintListener implements ConstraintListener {
    */
   private static final transient Logger logger = Logger.getLogger(SimpleConstraintListener.class.getName());
 
-  /* (non-Javadoc)
-   * @see org.simulator.sbml.ContraintListener#processViolation(org.simulator.sbml.ConstraintEvent)
+  /**
+   * {@inheritDoc}
    */
   @Override
   public void processViolation(ConstraintEvent evt) {
     assert evt != null;
-    String constraint = "null", message = "null";
-    // Math must be set, otherwise this event would not have been triggered.
-    constraint = evt.getSource().getMath().toFormula();
-    message = SBMLtools.toXML(evt.getSource().getMessage());
-    // TODO: Localize
-    logger.log(Level.WARNING, MessageFormat.format("[VIOLATION]\t{0} at time {1,number}: {2}", constraint, evt.getTime(), message));
+    String constraint = evt.getSource().getMath().toFormula();
+    String message = SBMLtools.toXML(evt.getSource().getMessage());
+    logger.warn(MessageFormat.format("[VIOLATION]\t{0} at time {1,number}: {2}", constraint, evt.getTime(), message));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void processSatisfiedAgain(ConstraintEvent evt) {
+      String constraint = evt.getSource().getMath().toFormula();
+      logger.debug(MessageFormat.format("Constraint {0} satisfied again", constraint));
   }
 }

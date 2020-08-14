@@ -92,7 +92,6 @@ public class BiomodelsExample {
           SBMLinterpreter interpreter = new SBMLinterpreter(model);
           if ((solver != null) && (interpreter != null)) {
             solver.setStepSize(0.01);
-            // solve
             solver.solve(interpreter, interpreter.getInitialValues(), 0, 10);
             if (solver.isUnstable()) {
               logger.warning("unstable!");

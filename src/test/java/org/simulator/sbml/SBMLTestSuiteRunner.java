@@ -36,10 +36,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.math.ode.DerivativeException;
+import org.apache.log4j.Logger;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.Libsedml;
@@ -103,7 +102,7 @@ public class SBMLTestSuiteRunner {
         AVAILABLE_SOLVERS[i] = (Class<AbstractDESSolver>) Class
             .forName(classes[i]);
       } catch (ClassNotFoundException exc) {
-        logger.severe(exc.getLocalizedMessage() != null ? exc.getLocalizedMessage() : exc.getMessage());
+        logger.error(exc.getLocalizedMessage() != null ? exc.getLocalizedMessage() : exc.getMessage());
       }
     }
   }
@@ -270,7 +269,7 @@ public class SBMLTestSuiteRunner {
 
           File f = new File(csvfile);
           if (f.exists()) {
-            inputData = csvimporter.convert(model, csvfile);
+            inputData = csvimporter.readMultiTableFromCSV(model, csvfile);
           }
           int points=steps+1;
           double[] timepoints = new double[points];
@@ -307,23 +306,22 @@ public class SBMLTestSuiteRunner {
                 dist = computeDistance(inputData, solution);
               }
               if (dist > 0.1) {
-                logger.log(
-                  Level.INFO,
+                logger.info(
                   sbmlFileType
                   + ": "
                   + "relative distance for model-"
                   + modelnr + " with solver "
                   + solver.getName());
-                logger.log(Level.INFO, String.valueOf(dist));
+                logger.info(String.valueOf(dist));
                 highDistance[i] = true;
               } else if (Double.isNaN(dist)) {
                 errorInSimulation[i] = true;
               }
             } catch (DerivativeException e) {
-              logger.warning("Exception in model " + modelnr);
+              logger.warn("Exception in model " + modelnr);
               errorInSimulation[i] = true;
             } catch (ModelOverdeterminedException e) {
-              logger.warning("OverdeterminationException in model "
+              logger.warn("OverdeterminationException in model "
                   + modelnr);
               errorInSimulation[i] = true;
             }
@@ -474,7 +472,7 @@ public class SBMLTestSuiteRunner {
 
           File f = new File(csvfile);
           if (f.exists()) {
-            inputData = csvimporter.convert(model, csvfile);
+            inputData = csvimporter.readMultiTableFromCSV(model, csvfile);
           }
           int points=steps+1;
           double[] timepoints = new double[points];
@@ -532,19 +530,19 @@ public class SBMLTestSuiteRunner {
             }
 
             if (dist > 0.1) {
-              logger.log(Level.INFO, sbmlFileType + ": "
+              logger.info(sbmlFileType + ": "
                   + "relative distance for model-" + modelnr
                   + " with solver " + solver.getName());
-              logger.log(Level.INFO, String.valueOf(dist));
+              logger.info(String.valueOf(dist));
               highDistance = true;
             } else if (Double.isNaN(dist) && (inputData != null)) {
               errorInSimulation = true;
             }
           } catch (DerivativeException e) {
-            logger.warning("Exception in model " + modelnr);
+            logger.warn("Exception in model " + modelnr);
             errorInSimulation = true;
           } catch (ModelOverdeterminedException e) {
-            logger.warning("OverdeterminationException in model "
+            logger.warn("OverdeterminationException in model "
                 + modelnr);
             errorInSimulation = true;
           }
@@ -676,7 +674,7 @@ public class SBMLTestSuiteRunner {
             sedml = doc.getSedMLModel();
 
           } catch (XMLException e1) {
-            logger.warning("SED-ML file not found for model " + modelnr);
+            logger.warn("SED-ML file not found for model " + modelnr);
             missingFile = true;
           }
           if (sedml != null) {
@@ -690,7 +688,7 @@ public class SBMLTestSuiteRunner {
             double time2 = System.nanoTime();
 
             if (res == null || res.isEmpty() || !exe.isExecuted()) {
-              logger.warning("Exception in model " + modelnr
+              logger.warn("Exception in model " + modelnr
                 + ":" + exe.getFailureMessages().get(0));
               errorInSimulation = true;
             }
@@ -718,7 +716,7 @@ public class SBMLTestSuiteRunner {
             //						mt = createMultiTableFromProcessedResults(
             //								wanted, prRes, sedml);
             CSVImporter csvimporter = new CSVImporter();
-            MultiTable inputData = csvimporter.convert(model,
+            MultiTable inputData = csvimporter.readMultiTableFromCSV(model,
               csvfile);
             String[] currentIdentifiers = mt.getBlock(0).getIdentifiers();
             String[] correctedIdentifiers = new String[currentIdentifiers.length];
@@ -749,10 +747,10 @@ public class SBMLTestSuiteRunner {
             }
 
             if (dist > 0.1) {
-              logger.log(Level.INFO, sbmlFileType + ": "
+              logger.info(sbmlFileType + ": "
                   + "relative distance for model-" + modelnr
                   + " with solver " + solver.getName());
-              logger.log(Level.INFO, String.valueOf(dist));
+              logger.info(String.valueOf(dist));
               highDistance = true;
             } else if (Double.isNaN(dist)) {
               errorInSimulation = true;
@@ -828,10 +826,9 @@ public class SBMLTestSuiteRunner {
       solver.setStepSize(stepSize);
 
       // solve
-      MultiTable solution = solver.solve(interpreter,
-        interpreter.getInitialValues(), timePoints);
+      MultiTable solution = solver.solve(interpreter, interpreter.getInitialValues(), timePoints);
       if (solver.isUnstable()) {
-        logger.warning("unstable!");
+        logger.warn("unstable!");
         return null;
       }
       return solution;
@@ -954,7 +951,7 @@ public class SBMLTestSuiteRunner {
 
           // get timepoints
           CSVImporter csvimporter = new CSVImporter();
-          MultiTable inputData = csvimporter.convert(model, csvfile);
+          MultiTable inputData = csvimporter.readMultiTableFromCSV(model, csvfile);
           double[] timepoints = inputData.getTimePoints();
           duration = timepoints[timepoints.length - 1]
               - timepoints[0];
@@ -966,15 +963,13 @@ public class SBMLTestSuiteRunner {
 
             // solve
             MultiTable solution = null;
-            boolean errorInSolve = false;
             try {
-              solution = solver.solve(interpreter,
-                interpreter.getInitialValues(), timepoints);
+              solution = solver.solve(interpreter, interpreter.getInitialValues(), timepoints);
             } catch (DerivativeException e) {
-              errorInSolve = true;
+              e.printStackTrace();
+              logger.error("DerivativeException occurred!");
             }
             Assert.assertNotNull(solution);
-            Assert.assertFalse(errorInSolve);
             Assert.assertFalse(solver.isUnstable());
 
             // compute distance

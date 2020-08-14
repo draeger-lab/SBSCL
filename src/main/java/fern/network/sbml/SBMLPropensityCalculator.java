@@ -16,6 +16,7 @@ import fern.simulation.Simulator;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
+import org.simulator.sbml.SBMLinterpreter;
 
 /**
  * Propensity calculator which is used for {@link SBMLNetwork}s. The propensities are 
@@ -27,40 +28,33 @@ import org.sbml.jsbml.validator.ModelOverdeterminedException;
  */
 public class SBMLPropensityCalculator implements ComplexDependenciesPropensityCalculator {
 
-	
 	private MathTree[] propensities;
 	private Map<String,Double> globalParameter;
 	
 	/**
 	 * Creates the {@link MathTree}s and parses the parameters.
 	 * 
-	 * @param net	sbml netowrk
+	 * @param interpreter instance of the SBMLinterpreter
 	 */
-	public SBMLPropensityCalculator(SBMLNetwork net) throws ModelOverdeterminedException {
-		if (net==null) return;
-		
-		Model model = net.getSBMLModel();
+	public SBMLPropensityCalculator(SBMLinterpreter interpreter) throws ModelOverdeterminedException {
+
+		Model model = interpreter.getModel();
 		globalParameter = new HashMap<String, Double>();
-		for (int i=0; i<model.getNumParameters(); i++) 
+		for (int i=0; i<model.getNumParameters(); i++)
 			globalParameter.put(model.getParameter(i).getId(), model.getParameter(i).getValue());
 		for (int i=0; i<model.getNumCompartments(); i++)
 			globalParameter.put(model.getCompartment(i).getId(), model.getCompartment(i).getSize());
-		
-		propensities = new MathTree[net.getNumReactions()];
-		
+
+		propensities = new MathTree[model.getNumReactions()];
+
 		for (int i=0; i<model.getNumReactions(); i++) {
 			Map<String,Double> localParameter = new HashMap<String, Double>();
 			Reaction reaction = model.getReaction(i);
-			/**
-			 * [Changes made]
-			 * Removed deprecated method call
-			 */
 			for (int j=0; j<reaction.getKineticLaw().getLocalParameterCount(); j++) {
-	    		localParameter.put(reaction.getKineticLaw().getLocalParameter(j).getId(), reaction.getKineticLaw().getLocalParameter(j).getValue());
-	    	}
-			propensities[i] = new MathTree(net,reaction.getKineticLaw().getMath(),globalParameter,localParameter,net.getSpeciesMapping());
+				localParameter.put(reaction.getKineticLaw().getLocalParameter(j).getId(), reaction.getKineticLaw().getLocalParameter(j).getValue());
+			}
+			propensities[i] = new MathTree(interpreter,reaction.getKineticLaw().getMath());
 		}
-		
 	}
 	
 	/**
