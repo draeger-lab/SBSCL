@@ -9,7 +9,7 @@
 
 ## For Eclipse (Also NetBeans developers can refer this)
 - First you should find a file present in the same folder named as `eclipse-java-google-style.xml` which contains the Java code style for Eclipse.
-- Navigate to the Preferences present under `Window` menu.
+- Navigate to the `Preferences` present under `Window` menu.
 - Go to `Java => Code Style => Formatter`.
 - Click on `Import` and browse the config file from the dev folder and just click `Apply and Close`.
 - Now, format the code of any file by simply pressing `Ctrl+Shift+F`.
