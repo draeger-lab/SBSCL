@@ -31,8 +31,7 @@ import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.odes.MultiTable.Block;
 
 /**
- * A {@link DESSolver} provides algorithm for the numerical simulation of given
- * {@link DESystem}s.
+ * A {@link DESSolver} provides algorithm for the numerical simulation of given {@link DESystem}s.
  *
  * @author Andreas Dr&auml;ger
  * @version $Rev$
@@ -53,15 +52,16 @@ public interface DESSolver extends Cloneable, Serializable {
   public DESSolver clone();
 
   /**
-   * Tell each listener that property value changed. CurrTime is the
-   * current time point of simulation, respectively. CurrResult
-   * is the row of the result at the current time point of simulation.
+   * Tell each listener that property value changed. CurrTime is the current time point of
+   * simulation, respectively. CurrResult is the row of the result at the current time point of
+   * simulation.
    *
    * @param previousTimePoint
    * @param currTimePoint
    * @param currResult
    */
-  public void firePropertyChange(double previousTimePoint, double currTimePoint, double[] currResult);
+  public void firePropertyChange(double previousTimePoint, double currTimePoint,
+      double[] currResult);
 
   /**
    * For details about the Kinetic Simulation Algorithm Ontology (KiSAO) see
@@ -79,17 +79,17 @@ public interface DESSolver extends Cloneable, Serializable {
   public double getStepSize();
 
   /**
-   * If this method returns {@code true}, intermediate results that may
-   * originate from a {@link RichDESystem} are included into the
-   * {@link MultiTable} that contains the result of a numerical integration.
+   * If this method returns {@code true}, intermediate results that may originate from a {@link
+   * RichDESystem} are included into the {@link MultiTable} that contains the result of a numerical
+   * integration.
    *
    * @return the flag
    */
   public boolean isIncludeIntermediates();
 
   /**
-   * Method to check whether the solution of the numerical integration
-   * procedure contains {@link Double#NaN} values.
+   * Method to check whether the solution of the numerical integration procedure contains {@link
+   * Double#NaN} values.
    *
    * @return the unstable flag
    */
@@ -103,8 +103,8 @@ public interface DESSolver extends Cloneable, Serializable {
   public void removePropertyChangeListener(PropertyChangeListener listener);
 
   /**
-   * Allows switching whether or not intermediate results should be included
-   * into the {@link MultiTable} of the result.
+   * Allows switching whether or not intermediate results should be included into the {@link
+   * MultiTable} of the result.
    *
    * @param includeIntermediates if {@code true}, intermediate results are included into the
    *                             result.
@@ -121,17 +121,17 @@ public interface DESSolver extends Cloneable, Serializable {
   /**
    * Solves the given differential equation system
    *
-   * @param DES           The differential equation system to be solved.
-   * @param initialValues Return value at the start point.
+   * @param DES                    The differential equation system to be solved.
+   * @param initialValues          Return value at the start point.
    * @param timeBegin
    * @param timeEnd
-   * @param propertyChangeListener Instance of class which is to be signalled on
-   *                               changed property.
+   * @param propertyChangeListener Instance of class which is to be signalled on changed property.
    * @return A matrix containing the simulation results
    * @throws DerivativeException if something's wrong...
    */
-  public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd, PropertyChangeListener propertyChangeListener)
-          throws DerivativeException;
+  public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd,
+      PropertyChangeListener propertyChangeListener)
+      throws DerivativeException;
 
   /**
    * Solves the given differential equation system
@@ -144,62 +144,60 @@ public interface DESSolver extends Cloneable, Serializable {
    * @throws DerivativeException if something's wrong...
    */
   public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd)
-          throws DerivativeException;
+      throws DerivativeException;
 
   /**
-   * Solves the given differential equation system with the step size h and
-   * the number of steps as given starting at the value x.
+   * Solves the given differential equation system with the step size h and the number of steps as
+   * given starting at the value x.
    *
-   * @param DES           The differential equation system to be solved.
-   * @param initialValues Return value at the start point.
-   * @param x             Start argument.
-   * @param h             Step size.
-   * @param steps         Number of steps.
-   * @param propertyChangeListener Instance of class which is to be signalled on
-   *                               changed property.
-   * @return A matrix containing the values of x, x + h, x + h + steps/h... in
-   * the rows and the columns contain the return values for the
-   * arguments.
+   * @param DES                    The differential equation system to be solved.
+   * @param initialValues          Return value at the start point.
+   * @param x                      Start argument.
+   * @param h                      Step size.
+   * @param steps                  Number of steps.
+   * @param propertyChangeListener Instance of class which is to be signalled on changed property.
+   * @return A matrix containing the values of x, x + h, x + h + steps/h... in the rows and the
+   * columns contain the return values for the arguments.
    * @throws DerivativeException if something's wrong...
    */
-  public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps, PropertyChangeListener propertyChangeListener)
-          throws DerivativeException;
+  public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps,
+      PropertyChangeListener propertyChangeListener)
+      throws DerivativeException;
 
   /**
-   * Solves the given differential equation system with the step size h and
-   * the number of steps as given starting at the value x.
+   * Solves the given differential equation system with the step size h and the number of steps as
+   * given starting at the value x.
    *
    * @param DES           The differential equation system to be solved.
    * @param initialValues Return value at the start point.
    * @param x             Start argument.
    * @param h             Step size.
    * @param steps         Number of steps.
-   * @return A matrix containing the values of x, x + h, x + h + steps/h... in
-   * the rows and the columns contain the return values for the
-   * arguments.
+   * @return A matrix containing the values of x, x + h, x + h + steps/h... in the rows and the
+   * columns contain the return values for the arguments.
    * @throws DerivativeException if something's wrong...
    */
   public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps)
-          throws DerivativeException;
+      throws DerivativeException;
 
   /**
-   * Solves the given differential equation system with the step size h and
-   * the number of steps as given starting at the value x.
+   * Solves the given differential equation system with the step size h and the number of steps as
+   * given starting at the value x.
    *
-   * @param DES           The differential equation system to be solved.
-   * @param initialValues Return value at the start point.
-   * @param timepoints    The timepoints for which the result should be returned
-   * @param propertyChangeListener Instance of class which is to be signalled on
-   *                               changed property.
+   * @param DES                    The differential equation system to be solved.
+   * @param initialValues          Return value at the start point.
+   * @param timepoints             The timepoints for which the result should be returned
+   * @param propertyChangeListener Instance of class which is to be signalled on changed property.
    * @return A matrix containing the simulation results.
    * @throws DerivativeException if something's wrong...
    */
-  public MultiTable solve(DESystem DES, double[] initialValues, double[] timepoints, PropertyChangeListener propertyChangeListener)
-          throws DerivativeException;
+  public MultiTable solve(DESystem DES, double[] initialValues, double[] timepoints,
+      PropertyChangeListener propertyChangeListener)
+      throws DerivativeException;
 
   /**
-   * Solves the given differential equation system with the step size h and
-   * the number of steps as given starting at the value x.
+   * Solves the given differential equation system with the step size h and the number of steps as
+   * given starting at the value x.
    *
    * @param DES           The differential equation system to be solved.
    * @param initialValues Return value at the start point.
@@ -208,13 +206,12 @@ public interface DESSolver extends Cloneable, Serializable {
    * @throws DerivativeException if something's wrong...
    */
   public MultiTable solve(DESystem DES, double[] initialValues, double[] timepoints)
-          throws DerivativeException;
+      throws DerivativeException;
 
   /**
-   * Solves the given {@link DESystem} using new initial conditions in each
-   * time step. The given {@link MultiTable} contains the expected
-   * solution of the solver at certain time points. The solver has the task to
-   * re-initialize the integration procedure in each given time point using
+   * Solves the given {@link DESystem} using new initial conditions in each time step. The given
+   * {@link MultiTable} contains the expected solution of the solver at certain time points. The
+   * solver has the task to re-initialize the integration procedure in each given time point using
    * the initial values from this state.
    *
    * @param DES                      The {@link DESystem} to be simulated.
@@ -222,26 +219,25 @@ public interface DESSolver extends Cloneable, Serializable {
    *                                 some cases the dimension of the given {@link DESystem} may
    *                                 exceed the number of columns in this given time-series. Thus,
    *                                 for the initialization of the simulation a full vector of
-   *                                 initial values is required and must be passed to this method
-   *                                 as a separate double array.
+   *                                 initial values is required and must be passed to this method as
+   *                                 a separate double array.
    * @param initialValues            An array of all initial values. This array may exceed the
    *                                 number of columns in the given {@link Block} but its length
    *                                 must equal the dimension of the given {@link DESystem}.
-   * @param propertyChangeListener Instance of class which is to be signalled on
-   *                               changed property.
-   * @return A new {@link MultiTable} containing a time series of the
-   * same dimension as given by the {@link DESystem} and simulated
-   * values at each time point.
+   * @param propertyChangeListener   Instance of class which is to be signalled on changed
+   *                                 property.
+   * @return A new {@link MultiTable} containing a time series of the same dimension as given by the
+   * {@link DESystem} and simulated values at each time point.
    * @throws DerivativeException
    */
-  public MultiTable solve(DESystem DES, MultiTable.Block timeSeriesInitConditions, double[] initialValues, PropertyChangeListener propertyChangeListener)
-          throws DerivativeException;
+  public MultiTable solve(DESystem DES, MultiTable.Block timeSeriesInitConditions,
+      double[] initialValues, PropertyChangeListener propertyChangeListener)
+      throws DerivativeException;
 
   /**
-   * Solves the given {@link DESystem} using new initial conditions in each
-   * time step. The given {@link MultiTable} contains the expected
-   * solution of the solver at certain time points. The solver has the task to
-   * re-initialize the integration procedure in each given time point using
+   * Solves the given {@link DESystem} using new initial conditions in each time step. The given
+   * {@link MultiTable} contains the expected solution of the solver at certain time points. The
+   * solver has the task to re-initialize the integration procedure in each given time point using
    * the initial values from this state.
    *
    * @param DES                      The {@link DESystem} to be simulated.
@@ -249,16 +245,16 @@ public interface DESSolver extends Cloneable, Serializable {
    *                                 some cases the dimension of the given {@link DESystem} may
    *                                 exceed the number of columns in this given time-series. Thus,
    *                                 for the initialization of the simulation a full vector of
-   *                                 initial values is required and must be passed to this method
-   *                                 as a separate double array.
+   *                                 initial values is required and must be passed to this method as
+   *                                 a separate double array.
    * @param initialValues            An array of all initial values. This array may exceed the
    *                                 number of columns in the given {@link Block} but its length
    *                                 must equal the dimension of the given {@link DESystem}.
-   * @return A new {@link MultiTable} containing a time series of the
-   * same dimension as given by the {@link DESystem} and simulated
-   * values at each time point.
+   * @return A new {@link MultiTable} containing a time series of the same dimension as given by the
+   * {@link DESystem} and simulated values at each time point.
    * @throws DerivativeException
    */
-  public MultiTable solve(DESystem DES, MultiTable.Block timeSeriesInitConditions, double[] initialValues)
-          throws DerivativeException;
+  public MultiTable solve(DESystem DES, MultiTable.Block timeSeriesInitConditions,
+      double[] initialValues)
+      throws DerivativeException;
 }

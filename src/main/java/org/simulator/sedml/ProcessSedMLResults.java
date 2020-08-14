@@ -29,11 +29,10 @@ import org.simulator.math.odes.MultiTable;
 import de.binfalse.bflog.LOGGER;
 
 /**
- * Processes raw simulation results according to instructions specified in the
- * {@link DataGenerator} elements specified in the output. <br>
- * This class is used to process results using information in dataGenerator
- * elements. It is similar to jlibsedml's ProcessSedMLResults2 with the added
- * support for working with repeatedTasks.
+ * Processes raw simulation results according to instructions specified in the {@link DataGenerator}
+ * elements specified in the output. <br> This class is used to process results using information in
+ * dataGenerator elements. It is similar to jlibsedml's ProcessSedMLResults2 with the added support
+ * for working with repeatedTasks.
  *
  * @author Shalin Shah
  * @since 1.5
@@ -59,13 +58,14 @@ public class ProcessSedMLResults {
       }
     }
     if (!found) {
-      throw new IllegalArgumentException("Output [" + wanted.getId() + "] does not belong the SED-ML object. ");
+      throw new IllegalArgumentException(
+          "Output [" + wanted.getId() + "] does not belong the SED-ML object. ");
     }
   }
 
   /**
-   * This method modifies jlibsedml's process method to support dataGenerators for
-   * repeatedTasks. Processed results can be extracted using getProcessedResult().
+   * This method modifies jlibsedml's process method to support dataGenerators for repeatedTasks.
+   * Processed results can be extracted using getProcessedResult().
    */
   public void process(Map<AbstractTask, List<IRawSedmlSimulationResults>> res) {
     // Check for nulls
@@ -216,7 +216,9 @@ public class ProcessSedMLResults {
   // Helper method for processing simulation results as per dataGenerator
   // instructions
   // Borrowed from jlibsedml library to deal with repeatedTasks
-  private boolean identifiersMapToData(Set<ASTCi> identifiers, Map<String, String> Var2Model, Map<String, Double> Param2Value, Map<String, IRawSedmlSimulationResults> var2Result, String timeID) {
+  private boolean identifiersMapToData(Set<ASTCi> identifiers, Map<String, String> Var2Model,
+      Map<String, Double> Param2Value, Map<String, IRawSedmlSimulationResults> var2Result,
+      String timeID) {
     for (ASTCi var : identifiers) {
       boolean seen = false;
       if (Param2Value.get(var.getName()) != null) {
@@ -226,7 +228,9 @@ public class ProcessSedMLResults {
           seen = true;
         } else {
           IModel2DataMappings coll = var2Result.get(var.getName()).getMappings();
-          if (coll.hasMappingFor(Var2Model.get(var.getName())) && coll.getColumnTitleFor(Var2Model.get(var.getName())) != null || var.getName().equals(timeID)) {
+          if (coll.hasMappingFor(Var2Model.get(var.getName()))
+              && coll.getColumnTitleFor(Var2Model.get(var.getName())) != null || var.getName()
+              .equals(timeID)) {
             seen = true;
           }
         }
@@ -249,14 +253,16 @@ public class ProcessSedMLResults {
     }
     int max_size = 0;
     for (double[] curList : processed) {
-      if (max_size < curList.length)
+      if (max_size < curList.length) {
         max_size = curList.length;
+      }
     }
     double[][] data = new double[max_size][hdrs.length];
     for (int j = 0; j < processed.get(0).length; j++) {
       for (int i = 0; i < hdrs.length; i++) {
-        if (j < processed.get(i).length)
+        if (j < processed.get(i).length) {
           data[j][i] = processed.get(i)[j];
+        }
       }
     }
     return new IProcessedSedMLSimulationResultsWrapper(data, hdrs);
@@ -267,17 +273,19 @@ public class ProcessSedMLResults {
   }
 
   // Copy 2D data from the IRawSimulationResults after flattening
-  private void makeDefensiveCopyOfData(Map<AbstractTask, List<IRawSedmlSimulationResults>> results, Map<AbstractTask, double[][]> rawTask2Results) {
+  private void makeDefensiveCopyOfData(Map<AbstractTask, List<IRawSedmlSimulationResults>> results,
+      Map<AbstractTask, double[][]> rawTask2Results) {
     // makes a defensive copy of all input data
     for (AbstractTask t : results.keySet()) {
       // Before copying 2D data array flatten task results
       // for a RepeatedTask concat results like tellurium
       List<IRawSedmlSimulationResults> result = results.get(t);
       IRawSedmlSimulationResults flat;
-      if (result.size() > 1)
+      if (result.size() > 1) {
         flat = flattenResultsList(result);
-      else
+      } else {
         flat = result.get(0);
+      }
       double[][] toCopy = flat.getData(); // for look-up of
       double[][] original = new double[toCopy.length][];
       int in = 0;
@@ -298,7 +306,9 @@ public class ProcessSedMLResults {
    * @return IRawSedmlSimulationResults
    */
   private IRawSedmlSimulationResults flattenResultsList(List<IRawSedmlSimulationResults> results) {
-    IRawSedmlSimulationResults flat = results.stream().reduce((a, b) -> new MultTableSEDMLWrapper(new MultiTable(mergeTimeCols(a, b), mergeDataCols(a.getData(), b.getData()), results.get(0).getColumnHeaders()))).get();
+    IRawSedmlSimulationResults flat = results.stream().reduce((a, b) -> new MultTableSEDMLWrapper(
+        new MultiTable(mergeTimeCols(a, b), mergeDataCols(a.getData(), b.getData()),
+            results.get(0).getColumnHeaders()))).get();
     return flat;
   }
 
@@ -342,7 +352,8 @@ public class ProcessSedMLResults {
     // so start time from 0
     double timeBegin = 0d;
     // Add end time point to taskB
-    double[] timeB = Arrays.stream(((MultTableSEDMLWrapper) b).getMultiTable().getTimePoints()).map(row -> row + timeBegin).toArray();
+    double[] timeB = Arrays.stream(((MultTableSEDMLWrapper) b).getMultiTable().getTimePoints())
+        .map(row -> row + timeBegin).toArray();
     // merged all point to one longer double[]
     double[] merged = new double[timeA.length + timeB.length];
     System.arraycopy(timeA, 0, merged, 0, timeA.length);

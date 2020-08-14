@@ -62,7 +62,8 @@ public class About {
         icon = new javax.swing.ImageIcon(u);
         javax.swing.UIManager.put(iconName, icon);
       }
-      javax.swing.JOptionPane.showMessageDialog(null, message, "About Simulation Core Library", javax.swing.JOptionPane.INFORMATION_MESSAGE, icon);
+      javax.swing.JOptionPane.showMessageDialog(null, message, "About Simulation Core Library",
+          javax.swing.JOptionPane.INFORMATION_MESSAGE, icon);
     } catch (java.awt.HeadlessException exc) {
       System.out.println(message);
     }

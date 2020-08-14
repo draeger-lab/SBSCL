@@ -28,7 +28,8 @@ import org.apache.commons.math.ode.nonstiff.DormandPrince853Integrator;
 
 /**
  * This class is a wrapper for the Dormand-Prince-853 solver in the
- * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
+ * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math
+ * Library</a>.
  *
  * @author Roland Keller
  * @version $Rev$
@@ -87,7 +88,8 @@ public class DormandPrince853Solver extends FirstOrderSolver {
    */
   @Override
   protected void createIntegrator() {
-    integrator = new DormandPrince853Integrator(Math.min(1e-8, Math.min(1.0, getStepSize())), Math.min(1.0, getStepSize()), getAbsTol(), getRelTol());
+    integrator = new DormandPrince853Integrator(Math.min(1e-8, Math.min(1.0, getStepSize())),
+        Math.min(1.0, getStepSize()), getAbsTol(), getRelTol());
   }
 
   /* (non-Javadoc)

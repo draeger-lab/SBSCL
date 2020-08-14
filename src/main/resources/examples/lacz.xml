@@ -17,99 +17,99 @@
   <listOfReactions>
     <reaction kineticConstant="0.17">
       <listOfReactants>
-        <speciesReference name="PLac" />
-        <speciesReference name="RNAP" />
+        <speciesReference name="PLac"/>
+        <speciesReference name="RNAP"/>
       </listOfReactants>
       <listOfProducts>
-        <speciesReference name="PLacRNAP" />
+        <speciesReference name="PLacRNAP"/>
       </listOfProducts>
     </reaction>
     <reaction kineticConstant="10">
       <listOfReactants>
-        <speciesReference name="PLacRNAP" />
+        <speciesReference name="PLacRNAP"/>
       </listOfReactants>
       <listOfProducts>
-        <speciesReference name="PLac" />
-        <speciesReference name="RNAP" />
+        <speciesReference name="PLac"/>
+        <speciesReference name="RNAP"/>
       </listOfProducts>
     </reaction>
     <reaction kineticConstant="1">
       <listOfReactants>
-        <speciesReference name="PLacRNAP" />
+        <speciesReference name="PLacRNAP"/>
       </listOfReactants>
       <listOfProducts>
-        <speciesReference name="TrLacZ1" />
+        <speciesReference name="TrLacZ1"/>
       </listOfProducts>
     </reaction>
     <reaction kineticConstant="1">
       <listOfReactants>
-        <speciesReference name="TrLacZ1" />
+        <speciesReference name="TrLacZ1"/>
       </listOfReactants>
       <listOfProducts>
-        <speciesReference name="RbsLacZ" />
-        <speciesReference name="PLac" />
-        <speciesReference name="TrLacZ2" />
-      </listOfProducts>
-    </reaction>
-   <reaction kineticConstant="0.015">
-      <listOfReactants>
-        <speciesReference name="TrLacZ2" />
-      </listOfReactants>
-      <listOfProducts>
-        <speciesReference name="RNAP" />
-      </listOfProducts>
-    </reaction>
-    <reaction kineticConstant="0.17">
-      <listOfReactants>
-        <speciesReference name="Ribosome" />
-        <speciesReference name="RbsLacZ" />
-      </listOfReactants>
-      <listOfProducts>
-        <speciesReference name="RbsRibosome" />
-      </listOfProducts>
-    </reaction>
-    <reaction kineticConstant="0.45">
-      <listOfReactants>
-        <speciesReference name="RbsRibosome" />
-      </listOfReactants>
-      <listOfProducts>
-        <speciesReference name="Ribosome" />
-        <speciesReference name="RbsLacZ" />
-      </listOfProducts>
-    </reaction>
-    <reaction kineticConstant="0.4">
-      <listOfReactants>
-        <speciesReference name="RbsRibosome" />
-      </listOfReactants>
-      <listOfProducts>
-        <speciesReference name="TrRbsLacZ" />
-        <speciesReference name="RbsLacZ" />
+        <speciesReference name="RbsLacZ"/>
+        <speciesReference name="PLac"/>
+        <speciesReference name="TrLacZ2"/>
       </listOfProducts>
     </reaction>
     <reaction kineticConstant="0.015">
       <listOfReactants>
-        <speciesReference name="TrRbsLacZ" />
+        <speciesReference name="TrLacZ2"/>
       </listOfReactants>
       <listOfProducts>
-        <speciesReference name="LacZ" />
+        <speciesReference name="RNAP"/>
+      </listOfProducts>
+    </reaction>
+    <reaction kineticConstant="0.17">
+      <listOfReactants>
+        <speciesReference name="Ribosome"/>
+        <speciesReference name="RbsLacZ"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference name="RbsRibosome"/>
+      </listOfProducts>
+    </reaction>
+    <reaction kineticConstant="0.45">
+      <listOfReactants>
+        <speciesReference name="RbsRibosome"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference name="Ribosome"/>
+        <speciesReference name="RbsLacZ"/>
+      </listOfProducts>
+    </reaction>
+    <reaction kineticConstant="0.4">
+      <listOfReactants>
+        <speciesReference name="RbsRibosome"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference name="TrRbsLacZ"/>
+        <speciesReference name="RbsLacZ"/>
+      </listOfProducts>
+    </reaction>
+    <reaction kineticConstant="0.015">
+      <listOfReactants>
+        <speciesReference name="TrRbsLacZ"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference name="LacZ"/>
       </listOfProducts>
     </reaction>
     <reaction kineticConstant="6.42E-5">
       <listOfReactants>
-        <speciesReference name="LacZ" />
+        <speciesReference name="LacZ"/>
       </listOfReactants>
       <listOfProducts>
-        <speciesReference name="dgrLacZ" />
+        <speciesReference name="dgrLacZ"/>
       </listOfProducts>
     </reaction>
     <reaction kineticConstant="0.3">
       <listOfReactants>
-        <speciesReference name="RbsLacZ" />
+        <speciesReference name="RbsLacZ"/>
       </listOfReactants>
       <listOfProducts>
-        <speciesReference name="dgrRbsLacZ" />
+        <speciesReference name="dgrRbsLacZ"/>
       </listOfProducts>
     </reaction>
   </listOfReactions>
-  
+
 </fernml>

@@ -24,8 +24,7 @@
  */
 
 /**
- * Classes for efficient numerical treatment of equations in form of
- * abstract syntax trees.
+ * Classes for efficient numerical treatment of equations in form of abstract syntax trees.
  *
  * @version $Rev$
  */

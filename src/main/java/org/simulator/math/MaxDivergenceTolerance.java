@@ -76,8 +76,8 @@ public class MaxDivergenceTolerance extends QualityMeasure {
   protected double relTol;
 
   /**
-   * Default constructor. Initializes the metric {@link MaxAbsDistance}
-   * and sets the absolute and relative tolerances.
+   * Default constructor. Initializes the metric {@link MaxAbsDistance} and sets the absolute and
+   * relative tolerances.
    *
    * @param absTol
    * @param relTol

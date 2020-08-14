@@ -25,10 +25,9 @@
 package org.simulator.math;
 
 /**
- * An implementation of the relative squared error with a default value to avoid
- * division by zero. Actually, the exponent in this error function is 2 (squared
- * error). Irrespectively, it is possible to set the exponent to different
- * values.
+ * An implementation of the relative squared error with a default value to avoid division by zero.
+ * Actually, the exponent in this error function is 2 (squared error). Irrespectively, it is
+ * possible to set the exponent to different values.
  *
  * @author Andreas Dr&auml;ger
  * @version $Rev$
@@ -42,8 +41,8 @@ public class RelativeSquaredError extends N_Metric {
   private static final long serialVersionUID = 1643317436479699973L;
 
   /**
-   * Constructs a new {@link RelativeSquaredError}. Here the root is the
-   * default value to be returned by the distance function.
+   * Constructs a new {@link RelativeSquaredError}. Here the root is the default value to be
+   * returned by the distance function.
    */
   public RelativeSquaredError() {
     super(2d);

@@ -53,36 +53,38 @@ import de.unirostock.sems.cbarchive.CombineArchiveException;
  * @since 1.5
  */
 public class OMEXExample {
-	
-	public static void main(String[] args) throws IOException, ParseException, CombineArchiveException,
-			JDOMException, XMLException, OWLOntologyCreationException {
-		String file = args[0];
-		if (file.isEmpty()) {
-			LOGGER.warn("Please enter a valid omex file as argument.");
-			return;
-		}
-		
-		OMEXArchive archive = new OMEXArchive(new File(file));
 
-		if(archive.containsSBMLModel() && archive.containsSEDMLDescp()) {
-			// Execute SED-ML file and run simulations
-			SEDMLDocument doc = Libsedml.readDocument(archive.getSEDMLDescription());
-			SedML sedml = doc.getSedMLModel();
+  public static void main(String[] args)
+      throws IOException, ParseException, CombineArchiveException,
+      JDOMException, XMLException, OWLOntologyCreationException {
+    String file = args[0];
+    if (file.isEmpty()) {
+      LOGGER.warn("Please enter a valid omex file as argument.");
+      return;
+    }
 
-			Output wanted = sedml.getOutputs().get(0);
-			SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, archive.getSEDMLDescription().getParentFile().getAbsolutePath());
+    OMEXArchive archive = new OMEXArchive(new File(file));
 
-			Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
-			if ((res == null) || res.isEmpty() || !exe.isExecuted()) {
-				fail ("Simulation failed: " + exe.getFailureMessages().get(0).getMessage());
-			}
-			
-			for (List<IRawSedmlSimulationResults> re_list: res.values()) {
-				for (IRawSedmlSimulationResults re: re_list){
-					assertTrue(re instanceof MultTableSEDMLWrapper);
-				}
-			}
-		}
+    if (archive.containsSBMLModel() && archive.containsSEDMLDescp()) {
+      // Execute SED-ML file and run simulations
+      SEDMLDocument doc = Libsedml.readDocument(archive.getSEDMLDescription());
+      SedML sedml = doc.getSedMLModel();
 
-	}
+      Output wanted = sedml.getOutputs().get(0);
+      SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted,
+          archive.getSEDMLDescription().getParentFile().getAbsolutePath());
+
+      Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
+      if ((res == null) || res.isEmpty() || !exe.isExecuted()) {
+        fail("Simulation failed: " + exe.getFailureMessages().get(0).getMessage());
+      }
+
+      for (List<IRawSedmlSimulationResults> re_list : res.values()) {
+        for (IRawSedmlSimulationResults re : re_list) {
+          assertTrue(re instanceof MultTableSEDMLWrapper);
+        }
+      }
+    }
+
+  }
 }

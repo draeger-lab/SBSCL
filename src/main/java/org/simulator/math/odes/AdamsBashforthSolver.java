@@ -28,7 +28,8 @@ import org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegrator;
 
 /**
  * This class is a wrapper for the Adams-Bashforth solver in the
- * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
+ * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math
+ * Library</a>.
  *
  * @author Roland Keller
  * @version $Rev$
@@ -87,7 +88,8 @@ public class AdamsBashforthSolver extends FirstOrderSolver {
    */
   @Override
   public void createIntegrator() {
-    integrator = new AdamsBashforthIntegrator(5, Math.min(1e-8d, Math.min(1d, getStepSize())), Math.min(1d, getStepSize()), getAbsTol(), getRelTol());
+    integrator = new AdamsBashforthIntegrator(5, Math.min(1e-8d, Math.min(1d, getStepSize())),
+        Math.min(1d, getStepSize()), getAbsTol(), getRelTol());
   }
 
   /* (non-Javadoc)

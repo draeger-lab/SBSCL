@@ -28,7 +28,8 @@ import org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegrator;
 
 /**
  * This class is a wrapper for the Adams-Moulton solver in the
- * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
+ * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math
+ * Library</a>.
  *
  * @author Roland Keller
  * @version $Rev$
@@ -87,7 +88,8 @@ public class AdamsMoultonSolver extends FirstOrderSolver {
    */
   @Override
   protected void createIntegrator() {
-    integrator = new AdamsMoultonIntegrator(5, Math.min(1e-8, Math.min(1.0, getStepSize())), Math.min(1.0, getStepSize()), getAbsTol(), getRelTol());
+    integrator = new AdamsMoultonIntegrator(5, Math.min(1e-8, Math.min(1.0, getStepSize())),
+        Math.min(1.0, getStepSize()), getAbsTol(), getRelTol());
   }
 
   /* (non-Javadoc)

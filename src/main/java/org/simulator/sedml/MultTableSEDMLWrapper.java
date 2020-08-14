@@ -32,12 +32,12 @@ import org.simulator.math.odes.MultiTable.Block.Column;
 /**
  * This class adapts the native results to an interface that the
  * <a href="http://sed-ml.org" target="_blank">SED-ML</a> processor can use
- * to post-process results.
- * This class can be used to access the raw results via the {@link #getMultiTable()} method.
+ * to post-process results. This class can be used to access the raw results via the {@link
+ * #getMultiTable()} method.
  * <p>
- * All methods accessing data access the underlying {@link MultiTable} object.<br>
- * Changes to a {@link MultiTable} object will therefore be visible to this class,
- * i.e., it does not make a separate copy of the data.
+ * All methods accessing data access the underlying {@link MultiTable} object.<br> Changes to a
+ * {@link MultiTable} object will therefore be visible to this class, i.e., it does not make a
+ * separate copy of the data.
  *
  * @author Richard Adams
  * @version $Rev$

@@ -3,9 +3,8 @@ package org.simulator.math;
 import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
- * An implementation of maxAbsDistance. A maxAbsDistance is basically the maximum
- * absolute distance of the distances of every single element in the two vectors
- * (arrays).
+ * An implementation of maxAbsDistance. A maxAbsDistance is basically the maximum absolute distance
+ * of the distances of every single element in the two vectors (arrays).
  */
 public class MaxAbsDistance extends QualityMeasure {
 

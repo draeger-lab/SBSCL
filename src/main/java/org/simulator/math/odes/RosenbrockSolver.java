@@ -32,15 +32,13 @@ import org.simulator.math.MatrixOperations;
 import org.simulator.math.MatrixOperations.MatrixException;
 
 /**
- * An implementation of Rosenbrock's method to approximate ODE
- * solutions.
+ * An implementation of Rosenbrock's method to approximate ODE solutions.
  * <p>
- * References: William H. Press, Saul A. Teukolsky, William T. Vetterling, and
- * Brian P. Flannery. Numerical recipes in C. Cambridge Univ. Press Cambridge,
- * 1992, pp. 738-747.
+ * References: William H. Press, Saul A. Teukolsky, William T. Vetterling, and Brian P. Flannery.
+ * Numerical recipes in C. Cambridge Univ. Press Cambridge, 1992, pp. 738-747.
  * <p>
- * This solver has been adapted from ODE Toolkit: a free application for solving
- * systems of ordinary differential equations.
+ * This solver has been adapted from ODE Toolkit: a free application for solving systems of ordinary
+ * differential equations.
  *
  * @author Chris Moore
  * @author Roland Keller
@@ -55,8 +53,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
   private static final long serialVersionUID = -3446213991016212781L;
 
   /**
-   * Constants used to adapt the stepsize according to the error in the last
-   * step (see rodas.f)
+   * Constants used to adapt the stepsize according to the error in the last step (see rodas.f)
    */
   public static final double SAFETY = 0.9, fac1 = 1.0 / 6.0, fac2 = 5, PWR = 0.25;
   // The constants cX, dX, aXY, and cXY, are coefficients used in method
@@ -87,8 +84,8 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
   public static final double d1 = 0.25, d2 = 0.1043, d3 = 0.1035, d4 = -0.0362;
 
   /**
-   * the minimum acceptable value of relTol - attempts to obtain higher
-   * accuracy than this are usually very expensive
+   * the minimum acceptable value of relTol - attempts to obtain higher accuracy than this are
+   * usually very expensive
    */
   public static final double RELMIN = 1.0E-12;
 
@@ -118,8 +115,8 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
   double sk;
 
   /**
-   * factor used for adjusting the step size, divide current step size by
-   * hAdap to get new step size
+   * factor used for adjusting the step size, divide current step size by hAdap to get new step
+   * size
    */
   double hAdap;
 
@@ -144,8 +141,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
   private double[] f1, f2, f3, f4, f5, f6, k1, k2, k3, k4, k5;
 
   /**
-   * array that is y with approximated errors added on, used for comparing y
-   * to y+yerr
+   * array that is y with approximated errors added on, used for comparing y to y+yerr
    */
   double[] yNew;
 
@@ -370,7 +366,8 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
     }
     DES.computeDerivatives(t + h, yTemp, f6);
     for (int i = 0; i < numEqn; i++) {
-      yerr[i] = f6[i] + k1[i] * c61 / h + k2[i] * c62 / h + k3[i] * c63 / h + k4[i] * c64 / h + k5[i] * c65 / h;
+      yerr[i] = f6[i] + k1[i] * c61 / h + k2[i] * c62 / h + k3[i] * c63 / h + k4[i] * c64 / h
+          + k5[i] * c65 / h;
     }
     MatrixOperations.lubksb(FAC, indx, yerr);
     for (int i = 0; i < numEqn; i++) {
@@ -390,8 +387,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
   }
 
   /**
-   * Returns an approximation to the error involved with the current
-   * arithmetic implementation
+   * Returns an approximation to the error involved with the current arithmetic implementation
    *
    * @return the approximation as described above
    */
@@ -430,7 +426,8 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
    * @see org.simulator.math.odes.AbstractDESSolver#computeChange(org.simulator.math.odes.DESystem, double[], double, double, double[], boolean)
    */
   @Override
-  public double[] computeChange(DESystem DES, double[] y2, double time, double currentStepSize, double[] change, boolean steadyState)
+  public double[] computeChange(DESystem DES, double[] y2, double time, double currentStepSize,
+      double[] change, boolean steadyState)
       throws DerivativeException {
     if ((y == null) || (y.length == 0) || (y.length != y2.length)) {
       init(DES.getDimension(), getStepSize(), 2);
@@ -443,7 +440,8 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
         hasDerivatives = false;
       }
     }
-    double timeEnd = BigDecimal.valueOf(time).add(BigDecimal.valueOf(currentStepSize)).doubleValue();
+    double timeEnd = BigDecimal.valueOf(time).add(BigDecimal.valueOf(currentStepSize))
+        .doubleValue();
     try {
       double localError = 0;
       int solutionIndex = 0;
@@ -605,7 +603,8 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
           // failed to achieve the desired accuracy, it's useless to
           // continue, so we stop
           if (Math.abs(h) <= Math.abs(hMin)) {
-            throw new DerivativeException("Requested tolerance could not be achieved, even at the minumum stepsize.  Please increase the tolerance or decrease the minimum stepsize.");
+            throw new DerivativeException(
+                "Requested tolerance could not be achieved, even at the minumum stepsize.  Please increase the tolerance or decrease the minimum stepsize.");
           }
           // change stepsize (see Rodas.f) require 0.2<=hnew/h<=6
           if ((Double.isNaN(localError)) || (localError == -1) || (stop == true)) {
@@ -633,7 +632,8 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
       }
       //solveDone();
     } catch (OutOfMemoryError e) {
-      throw new DerivativeException("Out of memory : try reducing solve span or increasing step size.");
+      throw new DerivativeException(
+          "Out of memory : try reducing solve span or increasing step size.");
     }
     return change;
   }

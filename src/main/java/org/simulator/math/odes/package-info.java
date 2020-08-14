@@ -24,8 +24,7 @@
  */
 
 /**
- * The various solver classes that are all derived from
- * {@link org.simulator.math.odes.AbstractDESSolver}.
+ * The various solver classes that are all derived from {@link org.simulator.math.odes.AbstractDESSolver}.
  *
  * @version $Rev$
  */

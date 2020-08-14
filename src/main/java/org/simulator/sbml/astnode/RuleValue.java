@@ -28,8 +28,7 @@ import org.sbml.jsbml.Species;
 import org.simulator.sbml.SBMLValueHolder;
 
 /**
- * This class can compute and store the value of a rule together with the
- * variable of the rule.
+ * This class can compute and store the value of a rule together with the variable of the rule.
  *
  * @author Roland Keller
  * @version $Rev$
@@ -111,7 +110,8 @@ public class RuleValue {
    * @param hasZeroSpatialDimensions
    * @param valueHolder
    */
-  public RuleValue(ASTNodeValue nodeObject, int index, Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder, boolean isAmount) {
+  public RuleValue(ASTNodeValue nodeObject, int index, Species sp, int compartmentIndex,
+      boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder, boolean isAmount) {
     this.nodeObject = nodeObject;
     this.index = index;
     isSpecies = true;
@@ -137,7 +137,8 @@ public class RuleValue {
       if (isAmount && !hasOnlySubstanceUnits) {
         value = value * compartmentValue;
         if (compartmentRateRule != null) {
-          value += (valueHolder.getCurrentValueOf(index) / compartmentValue) * compartmentRateRule.getNodeObject().compileDouble(time, 0d);
+          value += (valueHolder.getCurrentValueOf(index) / compartmentValue) * compartmentRateRule
+              .getNodeObject().compileDouble(time, 0d);
         }
       } else if (!isAmount && hasOnlySubstanceUnits) {
         value = value / compartmentValue;

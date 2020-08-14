@@ -30,9 +30,9 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBase;
 
 /**
- * This class contains static methods to add meta information to a model inside SBMLDocument.
- * This class is helpful to find add meta information to original model before it is flattened
- * for information extraction later.
+ * This class contains static methods to add meta information to a model inside SBMLDocument. This
+ * class is helpful to find add meta information to original model before it is flattened for
+ * information extraction later.
  *
  * @author Shalin Shah
  * @version $Rev$
@@ -51,8 +51,8 @@ public class AddMetaInfo {
   public static final String MODEL_ID = "MODEL_ID";
 
   /**
-   * A static method which add id information of each element to userObjects map
-   * which is an element of AbstractTreeNode SBML class to store extra information
+   * A static method which add id information of each element to userObjects map which is an element
+   * of AbstractTreeNode SBML class to store extra information
    *
    * @param doc
    */

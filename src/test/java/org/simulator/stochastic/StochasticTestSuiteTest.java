@@ -185,20 +185,22 @@ public class StochasticTestSuiteTest {
   public static Iterable<Object[]> data() {
 
     // environment variable for semantic test case folder
-    String testsuite_path = TestUtils.getPathForTestResource(File.separator + "sbml-test-suite" + File.separator + "cases" + File.separator + "stochastic" + File.separator);
+    String testsuite_path = TestUtils.getPathForTestResource(
+        File.separator + "sbml-test-suite" + File.separator + "cases" + File.separator
+            + "stochastic" + File.separator);
     System.out.println(STOCHASTIC_TEST_SUITE_PATH + ": " + testsuite_path);
 
     HashSet<String> skip = new HashSet<>();
     String[] failedTests = new String[]{
-            "00010", "00011",   // Failing as no substance units present
-            "00019"             // Failing as rules not supported
+        "00010", "00011",   // Failing as no substance units present
+        "00019"             // Failing as rules not supported
     };
     String[] sbmlFileTypes = {"-sbml-l1v2.xml", "-sbml-l2v1.xml",
-            "-sbml-l2v2.xml", "-sbml-l2v3.xml", "-sbml-l2v4.xml",
-            "-sbml-l2v5.xml", "-sbml-l3v1.xml", "-sbml-l3v2.xml"};
+        "-sbml-l2v2.xml", "-sbml-l2v3.xml", "-sbml-l2v4.xml",
+        "-sbml-l2v5.xml", "-sbml-l3v1.xml", "-sbml-l3v2.xml"};
 
-    for (String failedTest: failedTests) {
-      for (String sbmlFileType: sbmlFileTypes) {
+    for (String failedTest : failedTests) {
+      for (String sbmlFileType : sbmlFileTypes) {
         skip.add(failedTest + sbmlFileType);
       }
     }
@@ -222,8 +224,11 @@ public class StochasticTestSuiteTest {
     Properties props = new Properties();
     props.load(new BufferedReader(new FileReader(configfile)));
 
-    double duration = (!props.getProperty(DURATION).isEmpty()) ? Double.parseDouble(props.getProperty(DURATION)) : 0d;
-    double steps = (!props.getProperty(STEPS).isEmpty()) ? Double.parseDouble(props.getProperty(STEPS)) : 0d;
+    double duration =
+        (!props.getProperty(DURATION).isEmpty()) ? Double.parseDouble(props.getProperty(DURATION))
+            : 0d;
+    double steps =
+        (!props.getProperty(STEPS).isEmpty()) ? Double.parseDouble(props.getProperty(STEPS)) : 0d;
     String outputColNames = props.getProperty("output");
     String[] list = outputColNames.split("\\s*, \\s*");
 
@@ -241,7 +246,7 @@ public class StochasticTestSuiteTest {
       boolean errorInNet = false;
       try {
         net = createNetwork(orderedArgs);
-      } catch (Exception e){
+      } catch (Exception e) {
         errorInNet = true;
       }
       Assert.assertNotNull(net);
@@ -252,7 +257,7 @@ public class StochasticTestSuiteTest {
       boolean errorInSimulator = false;
       try {
         sim = createSimulator(net, orderedArgs);
-      } catch (Exception e){
+      } catch (Exception e) {
         errorInSimulator = true;
       }
       Assert.assertNotNull(sim);
@@ -279,7 +284,7 @@ public class StochasticTestSuiteTest {
 
       // Runs the stochastic simulation
       try {
-        sim.start((Double)orderedArgs.get(TIME));
+        sim.start((Double) orderedArgs.get(TIME));
       } catch (Exception e) {
         e.printStackTrace();
         logger.error("Exception occurred while simulation!");
@@ -292,13 +297,13 @@ public class StochasticTestSuiteTest {
       String[] identifiers = getIdentifiers(sim, orderedArgs);
 
       // 2D result array storing a simulation solution of particular simulation
-      double[][] result = new double[output[0].length][output.length-1];
+      double[][] result = new double[output[0].length][output.length - 1];
       for (int i = 0; i != result.length; i++) {
         Arrays.fill(result[i], Double.NaN);
       }
-      for (int i = 0; i < result.length; i++){
-        for (int j = 0; j < result[0].length; j++){
-          result[i][j] = output[j+1][i];
+      for (int i = 0; i < result.length; i++) {
+        for (int j = 0; j < result[0].length; j++) {
+          result[i][j] = output[j + 1][i];
         }
       }
 
@@ -309,8 +314,8 @@ public class StochasticTestSuiteTest {
       // 2D array storing the square of the results required for the standard
       // deviation.
       double[][] square = new double[result.length][result[0].length];
-      for (int i = 0; i < square.length; i++){
-        for (int j = 0; j < square[0].length; j++){
+      for (int i = 0; i < square.length; i++) {
+        for (int j = 0; j < square[0].length; j++) {
           square[i][j] = Math.pow(result[i][j], 2);
         }
       }
@@ -325,7 +330,7 @@ public class StochasticTestSuiteTest {
       // Stores the updated mean and standard deviations of the results till
       // n stochastic simulations.
       MultiTable meanSD = new MultiTable(timepoints, meanSDArray, list, null);
-      for (int i=1;i<meanSD.getColumnCount();i++){
+      for (int i = 1; i < meanSD.getColumnCount(); i++) {
         if (meanSD.getColumnName(i).contains(MEAN)) {
           String columnName = meanSD.getColumnName(i).split("-")[0];
           Column column = solution[0].getColumn(columnName);
@@ -354,7 +359,7 @@ public class StochasticTestSuiteTest {
 
         // Runs the simulation again
         try {
-          sim.start((Double)orderedArgs.get(TIME));
+          sim.start((Double) orderedArgs.get(TIME));
         } catch (Exception e) {
           e.printStackTrace();
           logger.error("Exception occurred while simulation!");
@@ -364,11 +369,11 @@ public class StochasticTestSuiteTest {
         output = obs.getAvgLog();
 
         // Updates the current simulation result
-        result = new double[output[0].length][output.length-1];
+        result = new double[output[0].length][output.length - 1];
 
-        for (int i = 0; i < result.length; i++){
-          for (int j = 0; j < result[0].length; j++){
-            result[i][j] = output[j+1][i];
+        for (int i = 0; i < result.length; i++) {
+          for (int j = 0; j < result[0].length; j++) {
+            result[i][j] = output[j + 1][i];
           }
         }
 
@@ -388,11 +393,12 @@ public class StochasticTestSuiteTest {
    * Initializes the properties and settings of the simulation.
    *
    * @param sbmlFilePath the path of the SBML file
-   * @param duration the duration of the simulation
-   * @param steps total steps in the simulation
+   * @param duration     the duration of the simulation
+   * @param steps        total steps in the simulation
    * @return the HashMap with the key-value pair of different settings
    */
-  private Map<String, Object> initializeArguments(String sbmlFilePath, double duration, double steps) {
+  private Map<String, Object> initializeArguments(String sbmlFilePath, double duration,
+      double steps) {
     Map<String, Object> orderedArgs = new HashMap<>();
     orderedArgs.put("file", sbmlFilePath);
     orderedArgs.put("time", duration);
@@ -408,7 +414,7 @@ public class StochasticTestSuiteTest {
   /**
    * Updates the square sum using the solution from pth simulation.
    *
-   * @param result stores the result of current simulation
+   * @param result     stores the result of current simulation
    * @param square_sum stores the square_sum of the results of the n stochastic simulations
    */
   private void updateSquareSum(double[][] result, MultiTable square_sum) {
@@ -416,7 +422,7 @@ public class StochasticTestSuiteTest {
       Column column = square_sum.getColumn(i);
       for (int j = 0; j < column.getRowCount(); j++) {
         double currValue = column.getValue(j);
-        currValue += Math.pow(result[j][i-1], 2);
+        currValue += Math.pow(result[j][i - 1], 2);
         square_sum.setValueAt(currValue, j, i);
       }
     }
@@ -425,12 +431,13 @@ public class StochasticTestSuiteTest {
   /**
    * Updates the mean and standard deviation after each stochastic simulation.
    *
-   * @param meanSD the MultiTable with mean and SD values
-   * @param solution stores result of each simulation
+   * @param meanSD     the MultiTable with mean and SD values
+   * @param solution   stores result of each simulation
    * @param square_sum stores the square_sum of the results of the n stochastic simulations
-   * @param p index of the current stochastic simulation
+   * @param p          index of the current stochastic simulation
    */
-  private void updateMeanSD(MultiTable meanSD, MultiTable[] solution, MultiTable square_sum, int p) {
+  private void updateMeanSD(MultiTable meanSD, MultiTable[] solution, MultiTable square_sum,
+      int p) {
     // Updates the mean and standard deviation after running the pth
     // simulation
     for (int i = 1; i < meanSD.getColumnCount(); i++) {
@@ -449,7 +456,8 @@ public class StochasticTestSuiteTest {
         Column squareSumColumn = square_sum.getColumn(meanSD.getColumnName(i).split("-")[0]);
         for (int j = 0; j < column.getRowCount(); j++) {
           double meanValue = meanColumn.getValue(j);
-          double sdValue = Math.sqrt((squareSumColumn.getValue(j) / (p + 1)) - Math.pow(meanValue, 2));
+          double sdValue = Math
+              .sqrt((squareSumColumn.getValue(j) / (p + 1)) - Math.pow(meanValue, 2));
           meanSD.setValueAt(sdValue, j, i);
         }
       }
@@ -458,10 +466,10 @@ public class StochasticTestSuiteTest {
 
 
   /**
-   * Compares the stochastic simulation results with the reference results
-   * from the Stochastic Test Suite.
+   * Compares the stochastic simulation results with the reference results from the Stochastic Test
+   * Suite.
    *
-   * @param meanSD the MultiTable with mean and SD of the simulation results
+   * @param meanSD    the MultiTable with mean and SD of the simulation results
    * @param inputData the reference result
    */
   private void compareResults(MultiTable meanSD, MultiTable inputData) {
@@ -482,21 +490,23 @@ public class StochasticTestSuiteTest {
     for (int i = 1; i < left.getColumnCount(); i++) {
       Column column = left.getColumn(i);
       if (left.getColumnName(i).contains(MEAN)) {
-        for (int j = 1; j < column.getRowCount(); j++){
+        for (int j = 1; j < column.getRowCount(); j++) {
           String speciesName = column.getColumnName().split("-")[0];
           String sdColumnName = speciesName.concat("-sd");
-          double meanDistance = sqrtN * (left.getValueAt(j, i) - right.getColumn(column.getColumnName()).getValue(j)) / right.getColumn(sdColumnName).getValue(j);
+          double meanDistance =
+              sqrtN * (left.getValueAt(j, i) - right.getColumn(column.getColumnName()).getValue(j))
+                  / right.getColumn(sdColumnName).getValue(j);
           if (left.getValueAt(j, i).equals(right.getColumn(column.getColumnName()).getValue(j))) {
             meanDistance = 0d;
           }
           meanDistances.add(meanDistance);
         }
       } else {
-        for (int j = 1; j < column.getRowCount(); j++){
-          double first = Math.pow(left.getValueAt(j,i), 2);
+        for (int j = 1; j < column.getRowCount(); j++) {
+          double first = Math.pow(left.getValueAt(j, i), 2);
           double second = Math.pow(right.getColumn(column.getColumnName()).getValue(j), 2);
           double sdDistance = sqrtN2 * ((first / second) - 1);
-          if (first == second){
+          if (first == second) {
             sdDistance = 0d;
           }
           sdDistances.add(sdDistance);
@@ -516,27 +526,31 @@ public class StochasticTestSuiteTest {
   /**
    * Creates the observer for keeping track of the results of the simulation.
    *
-   * @param sim the {@link Simulator} instance
+   * @param sim         the {@link Simulator} instance
    * @param orderedArgs the HashMap with properties of the simulation
    * @return
    */
   private static AmountIntervalObserver createObserver(Simulator sim,
-                                                       Map<String, Object> orderedArgs) {
+      Map<String, Object> orderedArgs) {
     String[] species = getIdentifiers(sim, orderedArgs);
-    return (AmountIntervalObserver) sim.addObserver(new AmountIntervalObserver(sim,(Double)orderedArgs.get(INTERVAL),((Double)orderedArgs.get(TIME)).intValue(),species));
+    return (AmountIntervalObserver) sim.addObserver(
+        new AmountIntervalObserver(sim, (Double) orderedArgs.get(INTERVAL),
+            ((Double) orderedArgs.get(TIME)).intValue(), species));
   }
 
   /**
    * Gets the identifiers of the simulation.
    *
-   * @param sim the {@link Simulator} instance
+   * @param sim         the {@link Simulator} instance
    * @param orderedArgs the HashMap with properties of the simulation
    * @return the string array with the identifiers
    */
   private static String[] getIdentifiers(Simulator sim, Map<String, Object> orderedArgs) {
     String[] species = (String[]) orderedArgs.get("s");
-    if (species.length==0)
-      species = NetworkTools.getSpeciesNames(sim.getNet(), NumberTools.getNumbersTo(sim.getNet().getNumSpecies()-1));
+    if (species.length == 0) {
+      species = NetworkTools.getSpeciesNames(sim.getNet(),
+          NumberTools.getNumbersTo(sim.getNet().getNumSpecies() - 1));
+    }
     return species;
   }
 
@@ -569,18 +583,18 @@ public class StochasticTestSuiteTest {
   /**
    * Initializes the simulator for the simulation.
    *
-   * @param net the {@link SBMLNetwork}
+   * @param net         the {@link SBMLNetwork}
    * @param orderedArgs the HashMap with properties of the simulation
    * @return the {@link Simulator} instance
    */
   private static Simulator createSimulator(Network net,
-                                           Map<String, Object> orderedArgs) {
+      Map<String, Object> orderedArgs) {
     double eps = (Double) orderedArgs.get("method");
-    if (eps==0)
+    if (eps == 0) {
       return new GillespieEnhanced(net);
-    else if (eps==-1)
+    } else if (eps == -1) {
       return new HybridMaximalTimeStep(net);
-    else {
+    } else {
       AbstractBaseTauLeaping re = new TauLeapingSpeciesPopulationBoundSimulator(net);
       re.setEpsilon(eps);
       return re;
@@ -591,7 +605,7 @@ public class StochasticTestSuiteTest {
    * Gets the reference results from the CSV file into MultiTable.
    *
    * @param sbmlfile the path of the SBML file
-   * @param csvfile the path of the reference results file
+   * @param csvfile  the path of the reference results file
    * @return the reference results in MultiTable
    */
   private MultiTable getReferenceResult(String sbmlfile, String csvfile) {
@@ -632,15 +646,15 @@ public class StochasticTestSuiteTest {
     String level = number, version = number;
     String sbmlDef = "<sbml%s%s((level[\\s]*=[\\s]*[\"']%s[\"']%s%sversion[\\s]*=[\\s]*[\"']%s[\"'])|(version[\\s]*=[\\s]*[\"']%s[\"']%s%slevel[\\s]*=[\\s]*[\"']%s[\"']))%s>";
 
-    Pattern sbmlPattern =  Pattern.compile(String.format(sbmlDef, whiteSpace,
-            anyChar, level, whiteSpace, anyChar, version, version, whiteSpace,
-            anyChar, level, anyChar), Pattern.MULTILINE
-            & Pattern.DOTALL);
+    Pattern sbmlPattern = Pattern.compile(String.format(sbmlDef, whiteSpace,
+        anyChar, level, whiteSpace, anyChar, version, version, whiteSpace,
+        anyChar, level, anyChar), Pattern.MULTILINE
+        & Pattern.DOTALL);
 
     boolean isValidSBML = false;
     while ((line = bufferedReader.readLine()) != null) {
       Matcher mm = sbmlPattern.matcher(line);
-      if (mm.matches()){
+      if (mm.matches()) {
         isValidSBML = true;
         break;
       }

@@ -41,9 +41,8 @@ public class PearsonCorrelation extends QualityMeasure {
   private static final long serialVersionUID = -493779339080103217L;
 
   /**
-   * Default constructor. This sets the standard value for the parameter as
-   * given by the getStandardParameter() method. The default value is set to
-   * NaN.
+   * Default constructor. This sets the standard value for the parameter as given by the
+   * getStandardParameter() method. The default value is set to NaN.
    */
   public PearsonCorrelation() {
     super();

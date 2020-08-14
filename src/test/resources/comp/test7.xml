@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" level="3" version="1" comp:required="true">
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core"
+  xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" level="3" version="1"
+  comp:required="true">
   <model>
     <listOfParameters>
       <parameter id="param1" value="10.42" constant="false">
@@ -23,8 +25,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <plus/>
-              <ci> subparam2 </ci>
-              <cn type="integer"> 6 </cn>
+              <ci>subparam2</ci>
+              <cn type="integer">6</cn>
             </apply>
           </math>
         </initialAssignment>
@@ -36,10 +38,10 @@
               <plus/>
               <apply>
                 <times/>
-                <cn type="integer"> 8 </cn>
-                <ci> subparam2 </ci>
+                <cn type="integer">8</cn>
+                <ci>subparam2</ci>
               </apply>
-              <ci> subparam1 </ci>
+              <ci>subparam1</ci>
             </apply>
           </math>
         </rateRule>

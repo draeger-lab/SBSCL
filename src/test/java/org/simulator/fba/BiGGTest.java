@@ -26,65 +26,68 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(value = Parameterized.class)
 public class BiGGTest {
-	private String resource;
-    private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
-    private static final double RESULT_DEVIATION = 1E-6d;
-    private static final String BIGG_MODELS_RESOURCE_PATH = "/bigg/v1.5";
-    private BufferedReader reader = new BufferedReader(new FileReader(TestUtils.getPathForTestResource("/bigg/bigg_reference_solutions.csv")));
-    private Map<String, Double> referenceResults;
 
-	@Before
-	public void setUp() throws IOException {
-        referenceResults = new HashMap<>();
-        String line;
+  private String resource;
+  private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
+  private static final double RESULT_DEVIATION = 1E-6d;
+  private static final String BIGG_MODELS_RESOURCE_PATH = "/bigg/v1.5";
+  private BufferedReader reader = new BufferedReader(
+      new FileReader(TestUtils.getPathForTestResource("/bigg/bigg_reference_solutions.csv")));
+  private Map<String, Double> referenceResults;
 
-        while ((line = reader.readLine()) != null) {
-            String[] solution = line.split(",");
-            referenceResults.put(solution[0], Double.parseDouble(solution[1]));
-        }
-	}
+  @Before
+  public void setUp() throws IOException {
+    referenceResults = new HashMap<>();
+    String line;
 
-    /**
-     * Returns location of BiGG test model directory from environment variable.
-     */
-    public static String getBiGGModelPath() {
-        return TestUtils.getPathForTestResource(BIGG_MODELS_RESOURCE_PATH);
+    while ((line = reader.readLine()) != null) {
+      String[] solution = line.split(",");
+      referenceResults.put(solution[0], Double.parseDouble(solution[1]));
     }
+  }
 
-	public BiGGTest(String resource) throws FileNotFoundException {
-		this.resource = resource;
-	}
-	
-	@Parameters(name= "{index}: {0}")
-	public static Iterable<Object[]> data(){
-		HashSet<String> skip = null;
-		String filter = null;
-		Boolean mvnResource = false;
+  /**
+   * Returns location of BiGG test model directory from environment variable.
+   */
+  public static String getBiGGModelPath() {
+    return TestUtils.getPathForTestResource(BIGG_MODELS_RESOURCE_PATH);
+  }
 
-        String biggPath = getBiGGModelPath();
-        logger.info("BiGG models path: " + biggPath);
-		return TestUtils.findResources(biggPath, ".xml", filter, skip, mvnResource);
-	}
+  public BiGGTest(String resource) throws FileNotFoundException {
+    this.resource = resource;
+  }
 
-	@Test
-	public void testFBA() throws Exception {
-        logger.info("--------------------------------------------------------");
-        logger.info(String.format("%s", resource));
+  @Parameters(name = "{index}: {0}")
+  public static Iterable<Object[]> data() {
+    HashSet<String> skip = null;
+    String filter = null;
+    Boolean mvnResource = false;
 
-        SBMLDocument doc = SBMLReader.read(new File(resource));
-        assertNotNull(doc);
+    String biggPath = getBiGGModelPath();
+    logger.info("BiGG models path: " + biggPath);
+    return TestUtils.findResources(biggPath, ".xml", filter, skip, mvnResource);
+  }
 
-        FluxBalanceAnalysis solver = new FluxBalanceAnalysis(doc);
-        boolean success = solver.solve();
-        assertNotNull(success);
+  @Test
+  public void testFBA() throws Exception {
+    logger.info("--------------------------------------------------------");
+    logger.info(String.format("%s", resource));
 
-        double objectiveValue = solver.getObjectiveValue();
-        assertTrue(objectiveValue>=0.0);
-        double[] fluxes = solver.getValues();
-        assertNotNull(fluxes);
+    SBMLDocument doc = SBMLReader.read(new File(resource));
+    assertNotNull(doc);
 
-        Assert.assertEquals(objectiveValue, referenceResults.get(Paths.get(resource).getFileName().toString()), RESULT_DEVIATION);
+    FluxBalanceAnalysis solver = new FluxBalanceAnalysis(doc);
+    boolean success = solver.solve();
+    assertNotNull(success);
 
-	}
+    double objectiveValue = solver.getObjectiveValue();
+    assertTrue(objectiveValue >= 0.0);
+    double[] fluxes = solver.getValues();
+    assertNotNull(fluxes);
+
+    Assert.assertEquals(objectiveValue,
+        referenceResults.get(Paths.get(resource).getFileName().toString()), RESULT_DEVIATION);
+
+  }
 
 }

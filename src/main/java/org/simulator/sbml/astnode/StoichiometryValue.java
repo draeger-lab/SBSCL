@@ -30,8 +30,8 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 
 /**
- * Computes for a {@link SpeciesReference} with a stoichiometry occuring in some
- * {@link Reaction} the stoichiometry.
+ * Computes for a {@link SpeciesReference} with a stoichiometry occuring in some {@link Reaction}
+ * the stoichiometry.
  *
  * @author Roland Keller
  * @version $Rev: 205 $
@@ -49,8 +49,8 @@ public class StoichiometryValue {
   private double time;
 
   /**
-   * The index of the corresponding species reference in the Y vector of the
-   * value holder (if any), -1 if not existing
+   * The index of the corresponding species reference in the Y vector of the value holder (if any),
+   * -1 if not existing
    */
   private int speciesRefIndex;
 
@@ -85,7 +85,8 @@ public class StoichiometryValue {
   private ASTNodeValue stoichiometryMathValue;
 
   /**
-   * Has the stoichiometry already been calculated? (important in the case of constant stoichiometry)
+   * Has the stoichiometry already been calculated? (important in the case of constant
+   * stoichiometry)
    */
   private boolean stoichiometrySet;
 
@@ -96,7 +97,8 @@ public class StoichiometryValue {
    * @param Y
    * @param stoichiometryMathValue
    */
-  public StoichiometryValue(SpeciesReference sr, int speciesRefIndex, Map<String, Double> stoichiometricCoefHash, double[] Y, ASTNodeValue stoichiometryMathValue) {
+  public StoichiometryValue(SpeciesReference sr, int speciesRefIndex,
+      Map<String, Double> stoichiometricCoefHash, double[] Y, ASTNodeValue stoichiometryMathValue) {
     isSetStoichiometryMath = sr.isSetStoichiometryMath();
     this.sr = sr;
     id = sr.getId();
@@ -109,8 +111,8 @@ public class StoichiometryValue {
   }
 
   /**
-   * Computes the value of the stoichiometry at the current time if it has not
-   * been computed yet or is not constant.
+   * Computes the value of the stoichiometry at the current time if it has not been computed yet or
+   * is not constant.
    *
    * @param time
    * @return doubleValue the value of the stoichiometry

@@ -29,8 +29,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.simulator.sbml.SBMLValueHolder;
 
 /**
- * This class computes and stores values of {@link ASTNode}s that refer to a
- * {@link SpeciesReference}.
+ * This class computes and stores values of {@link ASTNode}s that refer to a {@link
+ * SpeciesReference}.
  *
  * @author Roland Keller
  * @version $Rev$
@@ -49,8 +49,7 @@ public class SpeciesReferenceValue extends ASTNodeValue {
   private String id;
 
   /**
-   * The boolean variable that says whether species reference is constant or
-   * not
+   * The boolean variable that says whether species reference is constant or not
    */
   private boolean isConstant;
 
@@ -60,7 +59,8 @@ public class SpeciesReferenceValue extends ASTNodeValue {
    * @param sr
    * @param valueHolder
    */
-  public SpeciesReferenceValue(ASTNodeInterpreter interpreter, ASTNode node, SpeciesReference sr, SBMLValueHolder valueHolder) {
+  public SpeciesReferenceValue(ASTNodeInterpreter interpreter, ASTNode node, SpeciesReference sr,
+      SBMLValueHolder valueHolder) {
     super(interpreter, node);
     id = sr.getId();
     isConstant = sr.isConstant();
@@ -73,7 +73,7 @@ public class SpeciesReferenceValue extends ASTNodeValue {
   @Override
   protected void computeDoubleValue(double delay) {
 
-    if ((delay == 0d) || (isConstant)){
+    if ((delay == 0d) || (isConstant)) {
       doubleValue = valueHolder.getCurrentStoichiometry(id);
     } else {
       double valueTime = interpreter.symbolTime() - delay;

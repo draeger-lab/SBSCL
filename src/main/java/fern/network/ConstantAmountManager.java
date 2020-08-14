@@ -2,30 +2,30 @@ package fern.network;
 
 public class ConstantAmountManager implements AmountManager {
 
-	private long constantAmount;
-	
-	public ConstantAmountManager(long constantAmount) {
-		this.constantAmount = constantAmount;
-	}
+  private long constantAmount;
 
-	public long getAmount(int species) {
-		return constantAmount;
-	}
+  public ConstantAmountManager(long constantAmount) {
+    this.constantAmount = constantAmount;
+  }
 
-	public void performReaction(int reaction, int times) {
-	}
+  public long getAmount(int species) {
+    return constantAmount;
+  }
 
-	public void resetAmount() {
-	}
+  public void performReaction(int reaction, int times) {
+  }
 
-	public void rollback() {
-	}
+  public void resetAmount() {
+  }
 
-	public void save() {
-	}
+  public void rollback() {
+  }
 
-	public void setAmount(int species, long amount) {
-	}
-	
+  public void save() {
+  }
+
+  public void setAmount(int species, long amount) {
+  }
+
 
 }

@@ -63,25 +63,30 @@ public class PlotProcessedSedmlResults extends ApplicationFrame {
   /**
    * Initializes the JFreeChart and dataSet for the chart using IProcessedSedMLSimulationResults
    *
-   * @param data The input data type to the plot API is 2D data wrapped with jsedmllib data structure
-   *                                         which gets converted internally to XY line plot
+   * @param data The input data type to the plot API is 2D data wrapped with jsedmllib data
+   *             structure which gets converted internally to XY line plot
    */
   public PlotProcessedSedmlResults(IProcessedSedMLSimulationResults data, String title) {
     super(title);
     this.title = title;
     this.species = data;
-    this.lineChart = ChartFactory.createXYLineChart(this.title, ".", ".", createDataset(), PlotOrientation.VERTICAL, true, true, false);
+    this.lineChart = ChartFactory
+        .createXYLineChart(this.title, ".", ".", createDataset(), PlotOrientation.VERTICAL, true,
+            true, false);
     ChartPanel chartPanel = new ChartPanel(this.lineChart);
     chartPanel.setPreferredSize(new java.awt.Dimension(CHART_WIDTH, CHART_HEIGHT));
     setContentPane(chartPanel);
   }
 
-  public PlotProcessedSedmlResults(IProcessedSedMLSimulationResults data, List<Curve> curves, String title) {
+  public PlotProcessedSedmlResults(IProcessedSedMLSimulationResults data, List<Curve> curves,
+      String title) {
     super(title);
     this.title = title;
     this.species = data;
     this.curves = curves;
-    this.lineChart = ChartFactory.createXYLineChart(this.title, ".", ".", createDataset(), PlotOrientation.VERTICAL, true, true, false);
+    this.lineChart = ChartFactory
+        .createXYLineChart(this.title, ".", ".", createDataset(), PlotOrientation.VERTICAL, true,
+            true, false);
     ChartPanel chartPanel = new ChartPanel(this.lineChart);
     chartPanel.setPreferredSize(new java.awt.Dimension(CHART_WIDTH, CHART_HEIGHT));
     setContentPane(chartPanel);

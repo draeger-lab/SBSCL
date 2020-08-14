@@ -7,38 +7,38 @@
     <species initialAmount="0" name="O"/>
   </listOfSpecies>
   <listOfReactions>
-  <reaction kineticConstant="1.0">
+    <reaction kineticConstant="1.0">
       <listOfReactants>
-        <speciesReference name="S1" />
+        <speciesReference name="S1"/>
       </listOfReactants>
       <listOfProducts>
-        <speciesReference name="O" />
+        <speciesReference name="O"/>
       </listOfProducts>
     </reaction>
     <reaction kineticConstant="0.002">
       <listOfReactants>
-        <speciesReference name="S1" />
-        <speciesReference name="S1" />
+        <speciesReference name="S1"/>
+        <speciesReference name="S1"/>
       </listOfReactants>
       <listOfProducts>
-        <speciesReference name="S2" />
+        <speciesReference name="S2"/>
       </listOfProducts>
     </reaction>
     <reaction kineticConstant="0.5">
       <listOfReactants>
-        <speciesReference name="S2" />
+        <speciesReference name="S2"/>
       </listOfReactants>
       <listOfProducts>
-        <speciesReference name="S1" />
-        <speciesReference name="S1" />
+        <speciesReference name="S1"/>
+        <speciesReference name="S1"/>
       </listOfProducts>
     </reaction>
     <reaction kineticConstant="0.04">
       <listOfReactants>
-        <speciesReference name="S2" />
+        <speciesReference name="S2"/>
       </listOfReactants>
       <listOfProducts>
-        <speciesReference name="S3" />
+        <speciesReference name="S3"/>
       </listOfProducts>
     </reaction>
   </listOfReactions>

@@ -25,8 +25,8 @@
  */
 
 /**
- * This package simply contains a default main program to display very
- * basic licensing terms and other information.
+ * This package simply contains a default main program to display very basic licensing terms and
+ * other information.
  *
  * @version $Rev$
  */

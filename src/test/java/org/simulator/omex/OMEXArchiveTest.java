@@ -1,4 +1,5 @@
 package org.simulator.omex;
+
 import de.unirostock.sems.cbarchive.CombineArchiveException;
 import org.jdom2.JDOMException;
 import org.junit.After;
@@ -15,27 +16,20 @@ import static org.junit.Assert.*;
 
 public class OMEXArchiveTest {
 
-    @Before
-    public void setUp() {
-    }
+  @Test
+  public void testOMEXArchive1()
+      throws CombineArchiveException, JDOMException, ParseException, IOException {
 
-    @After
-    public void tearDown() {
-    }
+    String omexPath = TestUtils.getPathForTestResource("/omex/12859_2014_369_MOESM1_ESM.zip");
+    OMEXArchive archive = new OMEXArchive(new File(omexPath));
 
-    @Test
-    public void testOMEXArchive1() throws CombineArchiveException, JDOMException, ParseException, IOException {
+    // archive exists
+    assertNotNull(archive);
 
-        String omexPath = TestUtils.getPathForTestResource("/omex/12859_2014_369_MOESM1_ESM.zip");
-        OMEXArchive archive = new OMEXArchive(new File(omexPath));
+    // archive contains SBML model
+    assertTrue(archive.containsSBMLModel());
 
-        // archive exists
-        assertNotNull(archive);
-
-        // archive contains SBML model
-        assertTrue(archive.containsSBMLModel());
-
-        // archive contains SED-ML model
-        assertTrue(archive.containsSEDMLDescp());
-    }
+    // archive contains SED-ML model
+    assertTrue(archive.containsSEDMLDescp());
+  }
 }

@@ -33,9 +33,9 @@ import org.simulator.sbml.astnode.ASTNodeValue;
 import org.simulator.sbml.astnode.AssignmentRuleValue;
 
 /**
- * This class represents a compilation of all information calculated during
- * simulation concerning events in <a href="http://sbml.org" target="_blank">SBML</a>.
- * It can also contain the math of the trigger, the priority and the delay.
+ * This class represents a compilation of all information calculated during simulation concerning
+ * events in <a href="http://sbml.org" target="_blank">SBML</a>. It can also contain the math of the
+ * trigger, the priority and the delay.
  *
  * @author Alexander D&ouml;rr
  * @version $Rev$
@@ -84,8 +84,8 @@ public class SBMLEventInProgress extends EventInProgress {
   protected boolean persistent;
 
   /**
-   * Creates a new EventInProcess with the given boolean value indicating
-   * whether or not it can fire at the initial time point.
+   * Creates a new EventInProcess with the given boolean value indicating whether or not it can fire
+   * at the initial time point.
    *
    * @param fired
    */
@@ -164,7 +164,8 @@ public class SBMLEventInProgress extends EventInProgress {
   }
 
   /**
-   * @return delayObject the delay object of the event as an ASTNodeObject (null if there is no delay)
+   * @return delayObject the delay object of the event as an ASTNodeObject (null if there is no
+   * delay)
    */
   public ASTNodeValue getDelayObject() {
     return delayObject;
@@ -190,7 +191,8 @@ public class SBMLEventInProgress extends EventInProgress {
   }
 
   /**
-   * Returns true if the values of the assignments are calculated at the trigger time of the event, otherwise false.
+   * Returns true if the values of the assignments are calculated at the trigger time of the event,
+   * otherwise false.
    *
    * @return useValuesFromTriggerTime
    */

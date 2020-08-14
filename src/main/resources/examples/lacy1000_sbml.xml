@@ -15,8 +15,10 @@
       <species id="RbsLacY" compartment="Cell" initialAmount="1" hasOnlySubstanceUnits="true"/>
       <species id="TrLacY2" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true"/>
       <species id="Ribosome" compartment="Cell" initialAmount="520" hasOnlySubstanceUnits="true"/>
-      <species id="RbsRibosomeLacZ" compartment="Cell" initialAmount="68" hasOnlySubstanceUnits="true"/>
-      <species id="RbsRibosomeLacY" compartment="Cell" initialAmount="68" hasOnlySubstanceUnits="true"/>
+      <species id="RbsRibosomeLacZ" compartment="Cell" initialAmount="68"
+        hasOnlySubstanceUnits="true"/>
+      <species id="RbsRibosomeLacY" compartment="Cell" initialAmount="68"
+        hasOnlySubstanceUnits="true"/>
       <species id="TrRbsLacZ" compartment="Cell" initialAmount="1780" hasOnlySubstanceUnits="true"/>
       <species id="TrRbsLacY" compartment="Cell" initialAmount="696" hasOnlySubstanceUnits="true"/>
       <species id="LacZ" compartment="Cell" initialAmount="16990" hasOnlySubstanceUnits="true"/>
@@ -26,8 +28,10 @@
       <species id="dgrRbsLacZ" compartment="Cell" initialAmount="214" hasOnlySubstanceUnits="true"/>
       <species id="dgrRbsLacY" compartment="Cell" initialAmount="196" hasOnlySubstanceUnits="true"/>
       <species id="lactose" compartment="Cell" initialAmount="210374" hasOnlySubstanceUnits="true"/>
-      <species id="LacZlactose" compartment="Cell" initialAmount="555" hasOnlySubstanceUnits="true"/>
-      <species id="product" compartment="Cell" initialAmount="85433124" hasOnlySubstanceUnits="true"/>
+      <species id="LacZlactose" compartment="Cell" initialAmount="555"
+        hasOnlySubstanceUnits="true"/>
+      <species id="product" compartment="Cell" initialAmount="85433124"
+        hasOnlySubstanceUnits="true"/>
     </listOfSpecies>
     <listOfReactions>
       <reaction id="PLac+RNAP-&gt;PLacRNAP" reversible="false">
@@ -42,9 +46,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.17 </cn>
-              <ci> PLac </ci>
-              <ci> RNAP </ci>
+              <cn>0.17</cn>
+              <ci>PLac</ci>
+              <ci>RNAP</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -61,8 +65,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 10 </cn>
-              <ci> PLacRNAP </ci>
+              <cn>10</cn>
+              <ci>PLacRNAP</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -78,8 +82,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 1 </cn>
-              <ci> PLacRNAP </ci>
+              <cn>1</cn>
+              <ci>PLacRNAP</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -97,8 +101,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 1 </cn>
-              <ci> TrLacZ1 </ci>
+              <cn>1</cn>
+              <ci>TrLacZ1</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -114,8 +118,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.015 </cn>
-              <ci> TrLacZ2 </ci>
+              <cn>0.015</cn>
+              <ci>TrLacZ2</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -132,8 +136,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 1 </cn>
-              <ci> TrLacY1 </ci>
+              <cn>1</cn>
+              <ci>TrLacY1</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -149,8 +153,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.36 </cn>
-              <ci> TrLacY2 </ci>
+              <cn>0.36</cn>
+              <ci>TrLacY2</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -167,9 +171,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.17 </cn>
-              <ci> Ribosome </ci>
-              <ci> RbsLacZ </ci>
+              <cn>0.17</cn>
+              <ci>Ribosome</ci>
+              <ci>RbsLacZ</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -186,9 +190,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.17 </cn>
-              <ci> Ribosome </ci>
-              <ci> RbsLacY </ci>
+              <cn>0.17</cn>
+              <ci>Ribosome</ci>
+              <ci>RbsLacY</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -205,8 +209,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.45 </cn>
-              <ci> RbsRibosomeLacZ </ci>
+              <cn>0.45</cn>
+              <ci>RbsRibosomeLacZ</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -223,8 +227,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.45 </cn>
-              <ci> RbsRibosomeLacY </ci>
+              <cn>0.45</cn>
+              <ci>RbsRibosomeLacY</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -241,8 +245,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.4 </cn>
-              <ci> RbsRibosomeLacZ </ci>
+              <cn>0.4</cn>
+              <ci>RbsRibosomeLacZ</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -259,8 +263,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.4 </cn>
-              <ci> RbsRibosomeLacY </ci>
+              <cn>0.4</cn>
+              <ci>RbsRibosomeLacY</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -276,8 +280,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.015 </cn>
-              <ci> TrRbsLacZ </ci>
+              <cn>0.015</cn>
+              <ci>TrRbsLacZ</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -293,8 +297,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.036 </cn>
-              <ci> TrRbsLacY </ci>
+              <cn>0.036</cn>
+              <ci>TrRbsLacY</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -310,8 +314,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn type="e-notation"> 6.42 <sep/> -5 </cn>
-              <ci> LacZ </ci>
+              <cn type="e-notation">6.42
+                <sep/>
+                -5
+              </cn>
+              <ci>LacZ</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -327,8 +334,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn type="e-notation"> 6.42 <sep/> -5 </cn>
-              <ci> LacY </ci>
+              <cn type="e-notation">6.42
+                <sep/>
+                -5
+              </cn>
+              <ci>LacY</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -344,8 +354,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.3 </cn>
-              <ci> RbsLacZ </ci>
+              <cn>0.3</cn>
+              <ci>RbsLacZ</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -361,8 +371,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.3 </cn>
-              <ci> RbsLacY </ci>
+              <cn>0.3</cn>
+              <ci>RbsLacY</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -379,9 +389,12 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn type="e-notation"> 9.52 <sep/> -5 </cn>
-              <ci> LacZ </ci>
-              <ci> lactose </ci>
+              <cn type="e-notation">9.52
+                <sep/>
+                -5
+              </cn>
+              <ci>LacZ</ci>
+              <ci>lactose</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -398,8 +411,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 431 </cn>
-              <ci> LacZlactose </ci>
+              <cn>431</cn>
+              <ci>LacZlactose</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -416,8 +429,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 14 </cn>
-              <ci> LacY </ci>
+              <cn>14</cn>
+              <ci>LacY</ci>
             </apply>
           </math>
         </kineticLaw>

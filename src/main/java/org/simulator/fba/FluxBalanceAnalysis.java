@@ -60,10 +60,9 @@ import scpsolver.problems.LinearProgram;
 
 /**
  * Support for Flux Balance Analysis (FBA).
- *
- * This class provides implementation of fba using the information from the
- * SBML fbc packages. This solver implementation supports SBML models with
- * FBC package versions 1 or 2.
+ * <p>
+ * This class provides implementation of fba using the information from the SBML fbc packages. This
+ * solver implementation supports SBML models with FBC package versions 1 or 2.
  *
  * @author Andreas Dr&auml;ger
  * @author Ali Ebrahim
@@ -77,7 +76,8 @@ public class FluxBalanceAnalysis {
   /**
    * A Logger for this class.
    */
-  private static final transient Logger logger = Logger.getLogger(FluxBalanceAnalysis.class.getName());
+  private static final transient Logger logger = Logger
+      .getLogger(FluxBalanceAnalysis.class.getName());
 
   /**
    * The linear programming solver.
@@ -93,9 +93,8 @@ public class FluxBalanceAnalysis {
   private double eps = 1E-10;
 
   /**
-   * This interpreter is only used if the model contains
-   * {@link InitialAssignment}s or {@link org.sbml.jsbml.StoichiometryMath}.
-   * In all other situations, it will be {@code null}.
+   * This interpreter is only used if the model contains {@link InitialAssignment}s or {@link
+   * org.sbml.jsbml.StoichiometryMath}. In all other situations, it will be {@code null}.
    */
   private SBMLinterpreter interpreter;
 
@@ -104,8 +103,8 @@ public class FluxBalanceAnalysis {
    */
 
   /**
-   * A dictionary to lookup the position of a {@link Reaction} in the list of
-   * reactions of the {@link Model} based on the reaction's identifier.
+   * A dictionary to lookup the position of a {@link Reaction} in the list of reactions of the
+   * {@link Model} based on the reaction's identifier.
    */
   private Map<String, Integer> reaction2Index;
 
@@ -115,25 +114,24 @@ public class FluxBalanceAnalysis {
   private String activeObjective;
 
   /**
-   * Initializes the linear program and all data structures based on the
-   * definitions in the given {@link SBMLDocument}.
-   * This implementation should work for diverse levels and versions of SBML
-   * {@link Model}s given that the model contains an fbc package in version 1 or
-   * 2.
+   * Initializes the linear program and all data structures based on the definitions in the given
+   * {@link SBMLDocument}. This implementation should work for diverse levels and versions of SBML
+   * {@link Model}s given that the model contains an fbc package in version 1 or 2.
    *
-   * @param doc the SBML container from which the {@link Model} is taken. This
-   *            implementation only understands SBML core (diverse levels and
-   *            versions) in combination with fbc versions 1 and 2.
-   * @throws ModelOverdeterminedException if the {@link Model} is over determined through
-   *                                      {@link AlgebraicRule}s.
-   * @throws SBMLException                if the {@link Model} is invalid or inappropriate for flux balance
-   *                                      analysis.
+   * @param doc the SBML container from which the {@link Model} is taken. This implementation only
+   *            understands SBML core (diverse levels and versions) in combination with fbc versions
+   *            1 and 2.
+   * @throws ModelOverdeterminedException if the {@link Model} is over determined through {@link
+   *                                      AlgebraicRule}s.
+   * @throws SBMLException                if the {@link Model} is invalid or inappropriate for flux
+   *                                      balance analysis.
    */
   public FluxBalanceAnalysis(SBMLDocument doc)
       throws SBMLException, ModelOverdeterminedException {
     super();
     if (!doc.isSetModel()) {
-      throw new IllegalArgumentException("Could not find a model definition in the given SBML document.");
+      throw new IllegalArgumentException(
+          "Could not find a model definition in the given SBML document.");
     }
     Model model = doc.getModel();
     interpreter = new SBMLinterpreter(model);
@@ -175,7 +173,8 @@ public class FluxBalanceAnalysis {
       if (mPlug.isSetListOfFluxBounds()) {
         for (FluxBound fb : mPlug.getListOfFluxBounds()) {
           if (!fb.isSetReaction()) {
-            logger.warning(format("Encountered fluxBound ''{0}'' without reaction identifier.", fb.getId()));
+            logger.warning(
+                format("Encountered fluxBound ''{0}'' without reaction identifier.", fb.getId()));
           } else {
             int index = reaction2Index.get(fb.getReaction());
             if (fb.isSetOperation()) {
@@ -186,17 +185,21 @@ public class FluxBalanceAnalysis {
               } else if (fb.getOperation() == FluxBound.Operation.EQUAL) {
                 lb[index] = ub[index] = fb.getValue();
               } else {
-                logger.severe(format("Encountered fluxBound ''{0}'' with invalid operation.", fb.getId()));
+                logger.severe(
+                    format("Encountered fluxBound ''{0}'' with invalid operation.", fb.getId()));
               }
               adjustBoundNumerics(lb, ub, index);
             } else {
-              logger.severe(format("Encountered fluxBound ''{0}'' without defined operation.", fb.getId()));
+              logger.severe(
+                  format("Encountered fluxBound ''{0}'' without defined operation.", fb.getId()));
             }
           }
         }
       }
     } else {
-      throw new IllegalArgumentException(format("Cannot conduct flux balance analysis without defined objective function in model ''{0}''.", model.getId()));
+      throw new IllegalArgumentException(format(
+          "Cannot conduct flux balance analysis without defined objective function in model ''{0}''.",
+          model.getId()));
     }
 
     // define objective function
@@ -219,35 +222,36 @@ public class FluxBalanceAnalysis {
     problem.setLowerbound(lb);
     problem.setUpperbound(ub);
     switch (type) {
-    case MAXIMIZE:
-      problem.setMinProblem(false);
-      break;
-    case MINIMIZE:
-      problem.setMinProblem(true);
-      break;
-    default:
-      throw new SBMLException(format("Unspecified operation {0}", type));
+      case MAXIMIZE:
+        problem.setMinProblem(false);
+        break;
+      case MINIMIZE:
+        problem.setMinProblem(true);
+        break;
+      default:
+        throw new SBMLException(format("Unspecified operation {0}", type));
     }
 
     // Add weighted constraints equations for each reaction.
     for (Species species : model.getListOfSpecies()) {
       double[] weights = new double[reaction2Index.size()];
       if (!species2Reaction.containsKey(species.getId())) {
-        logger.warning(format("Species ''{0}'' does not participate in any reaction.", species.getId()));
+        logger.warning(
+            format("Species ''{0}'' does not participate in any reaction.", species.getId()));
       } else {
         for (Pair<String, Double> pair : species2Reaction.get(species.getId())) {
           weights[reaction2Index.get(pair.getKey())] = pair.getValue();
         }
         if (species.isSetBoundaryCondition() && !species.getBoundaryCondition()) {
-          problem.addConstraint(new LinearEqualsConstraint(weights, 0d, "cnstrt_" + species.getId()));
+          problem
+              .addConstraint(new LinearEqualsConstraint(weights, 0d, "cnstrt_" + species.getId()));
         }
       }
     }
   }
 
   /**
-   * This method updates the lower bounds and upper bounds
-   * as per the standards of the SCPSolver.
+   * This method updates the lower bounds and upper bounds as per the standards of the SCPSolver.
    *
    * @param lowerBound the array of lower flux bounds
    * @param upperBound the array of the upper flux bounds
@@ -255,7 +259,7 @@ public class FluxBalanceAnalysis {
    */
   void adjustBoundNumerics(double[] lowerBound, double[] upperBound, int index) {
 
-  	// SCPSolver doesn't allow same values for upper bound and lower bound
+    // SCPSolver doesn't allow same values for upper bound and lower bound
     // therefore adding a small EPSILON
     if (lowerBound[index] == upperBound[index]) {
       upperBound[index] += eps;
@@ -266,37 +270,36 @@ public class FluxBalanceAnalysis {
     // for both lower as well as upper bounds
     if (lowerBound[index] == Double.POSITIVE_INFINITY) {
       lowerBound[index] = Double.MAX_VALUE;
-    }
-    else if (lowerBound[index] == -Double.POSITIVE_INFINITY) {
+    } else if (lowerBound[index] == -Double.POSITIVE_INFINITY) {
       lowerBound[index] = -Double.MAX_VALUE;
     }
 
     if (upperBound[index] == Double.POSITIVE_INFINITY) {
       upperBound[index] = Double.MAX_VALUE;
-    }
-    else if (upperBound[index] == -Double.POSITIVE_INFINITY) {
+    } else if (upperBound[index] == -Double.POSITIVE_INFINITY) {
       upperBound[index] = -Double.MAX_VALUE;
     }
   }
 
   /**
-   * Helper function that fills a dictionary data structure that points from
-   * {@link Species} identifiers to a {@link Set} of {@link Pair}s that again
-   * consist of a {@link Reaction} identifier and the stoichiometric coefficient
-   * that the {@link Species} has in this reaction.
-   * In other words, this look-up table will provide for each {@link Species}
-   * all {@link Reaction} ids and stoichiometric coefficients in that particular
-   * reaction. If a species acts as reactant in a reaction, its stoichiometric
-   * coefficient will be negative, otherwise it will be a positive value.
+   * Helper function that fills a dictionary data structure that points from {@link Species}
+   * identifiers to a {@link Set} of {@link Pair}s that again consist of a {@link Reaction}
+   * identifier and the stoichiometric coefficient that the {@link Species} has in this reaction. In
+   * other words, this look-up table will provide for each {@link Species} all {@link Reaction} ids
+   * and stoichiometric coefficients in that particular reaction. If a species acts as reactant in a
+   * reaction, its stoichiometric coefficient will be negative, otherwise it will be a positive
+   * value.
    *
    * @param species2Reaction   the dictionary data structure to be filled.
    * @param listOfParticipants the list of reaction participants that have the stoichiometry values
    *                           and links to {@link Species}
-   * @throws ModelOverdeterminedException if the overall SBML {@link Model} is over determined through
-   *                                      {@link AlgebraicRule}s
-   * @throws SBMLException                if the {@link Model} is invalid or inappropriate for being solved.
+   * @throws ModelOverdeterminedException if the overall SBML {@link Model} is over determined
+   *                                      through {@link AlgebraicRule}s
+   * @throws SBMLException                if the {@link Model} is invalid or inappropriate for being
+   *                                      solved.
    */
-  private void buildSpeciesReactionMap(Map<String, Set<Pair<String, Double>>> species2Reaction, ListOf<SpeciesReference> listOfParticipants)
+  private void buildSpeciesReactionMap(Map<String, Set<Pair<String, Double>>> species2Reaction,
+      ListOf<SpeciesReference> listOfParticipants)
       throws SBMLException, ModelOverdeterminedException {
     String rId = ((Reaction) listOfParticipants.getParent()).getId();
     if ((rId == null) || (rId.length() == 0)) {
@@ -312,7 +315,9 @@ public class FluxBalanceAnalysis {
             -1d : 1d;
     for (SpeciesReference specRef : listOfParticipants) {
       if (!specRef.isSetSpecies()) {
-        throw new SBMLException(format("Incomplete model: no species defined for a species reference in the {0} of reaction ''{1}''", listOfParticipants.getSBaseListType(), rId));
+        throw new SBMLException(format(
+            "Incomplete model: no species defined for a species reference in the {0} of reaction ''{1}''",
+            listOfParticipants.getSBaseListType(), rId));
       }
       if (!species2Reaction.containsKey(specRef.getSpecies())) {
         species2Reaction.put(specRef.getSpecies(), new HashSet<Pair<String, Double>>());
@@ -334,20 +339,20 @@ public class FluxBalanceAnalysis {
   //	}
 
   /**
-   * Solves the linear program that is defined in the {@link SBMLDocument} with
-   * which this solver was initialized.
+   * Solves the linear program that is defined in the {@link SBMLDocument} with which this solver
+   * was initialized.
    *
-   * @return A Boolean value reporting whether a feasible solution has been
-   * found. This solution is not necessarily optimal. If false is
-   * returned, a feasible solution may still be present, but IloCplex
-   * has not been able to prove its feasibility.
-   * @throws NullPointerException If the method fails, an exception of type NullPointerException, or one of
-   *                              its derived classes, is thrown.
+   * @return A Boolean value reporting whether a feasible solution has been found. This solution is
+   * not necessarily optimal. If false is returned, a feasible solution may still be present, but
+   * IloCplex has not been able to prove its feasibility.
+   * @throws NullPointerException If the method fails, an exception of type NullPointerException, or
+   *                              one of its derived classes, is thrown.
    */
   public boolean solve() throws NullPointerException {
     solution = glpkSolver.solve(problem);
-    if (solution != null)
+    if (solution != null) {
       return true;
+    }
     return false;
   }
 
@@ -363,14 +368,15 @@ public class FluxBalanceAnalysis {
   }
 
   /**
-   * Returns the solution value for the {@link Reaction} variable with the given
-   * identifier.
+   * Returns the solution value for the {@link Reaction} variable with the given identifier.
    *
    * @param reactionId the identifier of the {@link Reaction} of interest.
    * @return The value the {@link Reaction} takes for the current solution.
-   * @throws NullPointerException           If the {@link Reaction} identifier is not in the active model.
-   * @throws ArrayIndexOutOfBoundsException If the method fails, an exception of type ArrayIndexOutOfBoundsException, or one of
-   *                                        its derived classes, is thrown.
+   * @throws NullPointerException           If the {@link Reaction} identifier is not in the active
+   *                                        model.
+   * @throws ArrayIndexOutOfBoundsException If the method fails, an exception of type
+   *                                        ArrayIndexOutOfBoundsException, or one of its derived
+   *                                        classes, is thrown.
    */
   public double getValue(String reactionId)
       throws NullPointerException, ArrayIndexOutOfBoundsException {
@@ -381,8 +387,8 @@ public class FluxBalanceAnalysis {
    * Returns solution values for an array of {@link Reaction} variables.
    *
    * @return The solution values for the variables in the list of reactions.
-   * @throws NullPointerException If the method fails, an exception of type NullPointerException, or one of
-   *                              its derived classes, is thrown.
+   * @throws NullPointerException If the method fails, an exception of type NullPointerException, or
+   *                              one of its derived classes, is thrown.
    */
   public double[] getValues() throws NullPointerException {
     return solution;
@@ -403,21 +409,18 @@ public class FluxBalanceAnalysis {
   }
 
   /**
-   * Determines the stoichiometry value of a given {@link SpeciesReference}.
-   * This might involve the evaluation of a
-   * {@link org.sbml.jsbml.StoichiometryMath} or needs to lookup the current
+   * Determines the stoichiometry value of a given {@link SpeciesReference}. This might involve the
+   * evaluation of a {@link org.sbml.jsbml.StoichiometryMath} or needs to lookup the current
    * stoichiometry value if it has been changed by an initial assignment.
    *
-   * @param specRef the {@link SpeciesReference} whose stoichiometry value needs to be
-   *                determined
-   * @return a double value indicating the stoichiometry value of the given
-   * {@link SpeciesReference}. This value can be directly specified by
-   * the element, or needs to be calculated from its
-   * {@link org.sbml.jsbml.StoichiometryMath} or through an
-   * {@link InitialAssignment}.
-   * @throws ModelOverdeterminedException if the model cannot be solved because too many equations over
-   *                                      determine its solution space (this can happen if algebraic rules
-   *                                      are used in the model).
+   * @param specRef the {@link SpeciesReference} whose stoichiometry value needs to be determined
+   * @return a double value indicating the stoichiometry value of the given {@link
+   * SpeciesReference}. This value can be directly specified by the element, or needs to be
+   * calculated from its {@link org.sbml.jsbml.StoichiometryMath} or through an {@link
+   * InitialAssignment}.
+   * @throws ModelOverdeterminedException if the model cannot be solved because too many equations
+   *                                      over determine its solution space (this can happen if
+   *                                      algebraic rules are used in the model).
    * @throws SBMLException                if the model has an invalid structure.
    */
   private double stoichiometry(SpeciesReference specRef)
@@ -432,12 +435,15 @@ public class FluxBalanceAnalysis {
         interpreter = new SBMLinterpreter(specRef.getModel());
       }
       if (specRef.isSetStoichiometryMath()) {
-        return ((ASTNodeValue) specRef.getStoichiometryMath().getMath().getUserObject(SBMLinterpreter.TEMP_VALUE)).compileDouble(interpreter.getCurrentTime(), 0d);
+        return ((ASTNodeValue) specRef.getStoichiometryMath().getMath()
+            .getUserObject(SBMLinterpreter.TEMP_VALUE))
+            .compileDouble(interpreter.getCurrentTime(), 0d);
       } else if (specRef.isSetId()) {
         // Is there an initial assignment?
         interpreter.getCurrentStoichiometry(specRef.getId());
       } else {
-        throw new SBMLException("Could not calculate the stoichiometry for a species reference because it was lacking an identifier.");
+        throw new SBMLException(
+            "Could not calculate the stoichiometry for a species reference because it was lacking an identifier.");
       }
     }
     return Double.NaN;

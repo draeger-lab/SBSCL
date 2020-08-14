@@ -42,16 +42,16 @@ public class IntegerValue extends ASTNodeValue {
     super(interpreter, node);
   }
 
-  /* (non-Javadoc)
-   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+  /**
+   * {@inheritDoc}
    */
   @Override
   protected void computeDoubleValue(double delay) {
     doubleValue = interpreter.compile(real, units);
   }
 
-  /* (non-Javadoc)
-   * @see org.simulator.sbml.astnode.ASTNodeValue#getConstant()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public boolean getConstant() {

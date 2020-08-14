@@ -35,12 +35,10 @@ import org.sbml.jsbml.SpeciesReference;
 import org.simulator.math.odes.DelayValueHolder;
 
 /**
- * A {@link SBMLValueHolder} is necessary to provide the current values for
- * {@link Compartment}s, {@link Species}, {@link Parameter}s, and
- * {@link SpeciesReference}s at simulation time. It also grants access
- * to the current simulation time. In this way, it is possible to separate
- * the interpretation and simulation of a {@link Model} from the pure evaluation
- * of {@link ASTNode}s.
+ * A {@link SBMLValueHolder} is necessary to provide the current values for {@link Compartment}s,
+ * {@link Species}, {@link Parameter}s, and {@link SpeciesReference}s at simulation time. It also
+ * grants access to the current simulation time. In this way, it is possible to separate the
+ * interpretation and simulation of a {@link Model} from the pure evaluation of {@link ASTNode}s.
  *
  * @author Andreas Dr&auml;ger
  * @author Roland Keller

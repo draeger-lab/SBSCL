@@ -24,13 +24,12 @@
  */
 
 /**
- * This package contains images and icons for the Systems Biology Simulation
- * Core Library.
- * These pictures can be used in graphical user interfaces.
- * 
+ * This package contains images and icons for the Systems Biology Simulation Core Library. These
+ * pictures can be used in graphical user interfaces.
+ *
  * @author Andreas Dr&auml;ger
- * @since 1.2
  * @version $Rev$
+ * @since 1.2
  */
 package org.simulator.gui.img;
 

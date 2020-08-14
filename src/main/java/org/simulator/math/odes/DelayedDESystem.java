@@ -25,8 +25,7 @@
 package org.simulator.math.odes;
 
 /**
- * This interface describes a differential equation system containing values
- * with a delay function.
+ * This interface describes a differential equation system containing values with a delay function.
  *
  * @author Roland Keller
  * @version $Rev$

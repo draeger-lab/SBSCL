@@ -2,6 +2,7 @@ package org.simulator.comp;
 
 import org.apache.commons.math.ode.DerivativeException;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import org.junit.runner.RunWith;
@@ -19,43 +20,45 @@ import java.util.HashSet;
 
 @RunWith(value = Parameterized.class)
 public class CompSimulatorTest {
-    private static final Logger logger = LoggerFactory.getLogger(CompSimulatorTest.class);
-    private String resource;
 
-    public CompSimulatorTest(String resource) {
-        this.resource = resource;
-    }
+  private static final Logger logger = LoggerFactory.getLogger(CompSimulatorTest.class);
+  private String resource;
 
-    @Parameterized.Parameters(name= "{index}: {0}")
-    public static Iterable<Object[]> data(){
-        HashSet<String> skip = new HashSet<>();
-        skip.add("test6.xml");
-        skip.add("test7.xml");
-        skip.add("test8.xml");
-        skip.add("test9.xml");
-        skip.add("test10.xml");
-        String filter = null;
+  public CompSimulatorTest(String resource) {
+    this.resource = resource;
+  }
 
-        // find all comp models
-        String compPath = TestUtils.getPathForTestResource("/comp/");
-        System.out.println("Comp models path: " + compPath);
-        return TestUtils.findResources(compPath, ".xml", filter, skip, false);
-    }
+  @Parameterized.Parameters(name = "{index}: {0}")
+  public static Iterable<Object[]> data() {
+    HashSet<String> skip = new HashSet<>();
+    skip.add("test6.xml");
+    skip.add("test7.xml");
+    skip.add("test8.xml");
+    skip.add("test9.xml");
+    skip.add("test10.xml");
+    String filter = null;
 
-    @Test
-    public void testComp() throws IOException, XMLStreamException, DerivativeException, ModelOverdeterminedException {
-        // String compPath = TestUtils.getPathForTestResource("/comp/test1.xml");
-        String compPath = resource;
-        CompSimulator compSimulator = new CompSimulator(new File(compPath));
+    // find all comp models
+    String compPath = TestUtils.getPathForTestResource("/comp/");
+    System.out.println("Comp models path: " + compPath);
+    return TestUtils.findResources(compPath, ".xml", filter, skip, false);
+  }
 
-        assertNotNull(compSimulator);
-        assertNotNull(compSimulator.getDoc());
-        assertNotNull(compSimulator.getFlattenedDoc());
+  @Test
+  public void testComp()
+      throws IOException, XMLStreamException, DerivativeException, ModelOverdeterminedException {
+    // String compPath = TestUtils.getPathForTestResource("/comp/test1.xml");
+    String compPath = resource;
+    CompSimulator compSimulator = new CompSimulator(new File(compPath));
 
-        double stepSize = 1.0;
-        double timeEnd = 100.0;
-        MultiTable sol = compSimulator.solve(stepSize, timeEnd);
+    assertNotNull(compSimulator);
+    assertNotNull(compSimulator.getDoc());
+    assertNotNull(compSimulator.getFlattenedDoc());
 
-        assertNotNull(sol);
-    }
+    double stepSize = 1.0;
+    double timeEnd = 100.0;
+    MultiTable sol = compSimulator.solve(stepSize, timeEnd);
+
+    assertNotNull(sol);
+  }
 }

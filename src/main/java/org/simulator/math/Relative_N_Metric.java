@@ -27,8 +27,7 @@ package org.simulator.math;
 import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
- * Computes the relative distance of two vectors based on the {@link N_Metric}
- * distance.
+ * Computes the relative distance of two vectors based on the {@link N_Metric} distance.
  *
  * @author Roland Keller
  * @version $Rev$

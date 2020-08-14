@@ -28,8 +28,8 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
 
 /**
- * This class computes and stores values of {@link ASTNode}s that refer to a
- * {@link LocalParameter}.
+ * This class computes and stores values of {@link ASTNode}s that refer to a {@link
+ * LocalParameter}.
  *
  * @author Roland Keller
  * @version $Rev: 205 $

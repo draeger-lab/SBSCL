@@ -35,17 +35,15 @@ import javax.swing.table.AbstractTableModel;
 import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
- * This data structure contains the an array of sorted time points and a matrix
- * organized in one column per quantity for which data (measurement or
- * simulation) are gathered. Each row in the matrix corresponds to one time
- * point. Hence, the array of time points must be equal to the number of rows in
- * the matrix. To be able to identify the content of each column, this data
- * structure also contains an array of identifiers for each column.
+ * This data structure contains the an array of sorted time points and a matrix organized in one
+ * column per quantity for which data (measurement or simulation) are gathered. Each row in the
+ * matrix corresponds to one time point. Hence, the array of time points must be equal to the number
+ * of rows in the matrix. To be able to identify the content of each column, this data structure
+ * also contains an array of identifiers for each column.
  * <p>
- * To be displayed in a graphical user interface, this object extends
- * {@link AbstractTableModel}. Note that the access to the elements in this
- * object therefore puts both elements together, i.e., the time column is
- * considered to be the first column in the table.
+ * To be displayed in a graphical user interface, this object extends {@link AbstractTableModel}.
+ * Note that the access to the elements in this object therefore puts both elements together, i.e.,
+ * the time column is considered to be the first column in the table.
  *
  * @author draeger
  * @version $Rev$
@@ -55,8 +53,8 @@ public class MultiTable extends AbstractTableModel
     implements Iterable<Iterable<Double>> {
 
   /**
-   * A {@link Block} is a data structure with a two-dimensional double array
-   * of actual data together with identifiers for each column.
+   * A {@link Block} is a data structure with a two-dimensional double array of actual data together
+   * with identifiers for each column.
    *
    * @author Andreas Dr&auml;ger
    */
@@ -75,8 +73,7 @@ public class MultiTable extends AbstractTableModel
       private int columnIndex;
 
       /**
-       * Creates a new {@link Column} object for the column with the given
-       * index.
+       * Creates a new {@link Column} object for the column with the given index.
        *
        * @param columnIndex
        */
@@ -88,8 +85,8 @@ public class MultiTable extends AbstractTableModel
       }
 
       /**
-       * Returns the human-readable name for this column if there is any, otherwise
-       * this will return the same value as {@link #getId()}.
+       * Returns the human-readable name for this column if there is any, otherwise this will return
+       * the same value as {@link #getId()}.
        *
        * @return columnName
        */
@@ -167,7 +164,8 @@ public class MultiTable extends AbstractTableModel
           @Override
           public void remove() {
             // don't remove anything here!
-            throw new UnsupportedOperationException("cannot remove anything from the underlying object");
+            throw new UnsupportedOperationException(
+                "cannot remove anything from the underlying object");
           }
         };
       }
@@ -217,20 +215,18 @@ public class MultiTable extends AbstractTableModel
     private String columnNames[];
 
     /**
-     * The matrix of actual data. Must have an equal number of rows as the
-     * time points array.
+     * The matrix of actual data. Must have an equal number of rows as the time points array.
      */
     private double data[][];
 
     /**
-     * These are the column names for all columns in the data matrix. This
-     * array does not include the name for the time column.
+     * These are the column names for all columns in the data matrix. This array does not include
+     * the name for the time column.
      */
     private String identifiers[];
 
     /**
-     * This {@link Hashtable} memorizes the column indices of all
-     * identifiers.
+     * This {@link Hashtable} memorizes the column indices of all identifiers.
      */
     private Hashtable<String, Integer> idHash;
 
@@ -264,8 +260,8 @@ public class MultiTable extends AbstractTableModel
     }
 
     /**
-     * Checks whether or not this {@link Block} contains a {@link Column}
-     * with the given identifier.
+     * Checks whether or not this {@link Block} contains a {@link Column} with the given
+     * identifier.
      *
      * @param id
      * @return containsColumn?
@@ -278,20 +274,19 @@ public class MultiTable extends AbstractTableModel
      * Grants access to the specified column.
      *
      * @param columnIndex The index of the column (excluding the time column)
-     * @return Returns the {@link Column} with the given index in the data
-     * matrix, i.e., the time column is excluded.
+     * @return Returns the {@link Column} with the given index in the data matrix, i.e., the time
+     * column is excluded.
      */
     public Column getColumn(int columnIndex) {
       return new Column(columnIndex);
     }
 
     /**
-     * Provides access to the {@link Column} corresponding to the given
-     * identifier.
+     * Provides access to the {@link Column} corresponding to the given identifier.
      *
      * @param identfier The identifier of the {@link Column} to be queried.
-     * @return A {@link Column} object for convenient access to the data in
-     * the desired table column.
+     * @return A {@link Column} object for convenient access to the data in the desired table
+     * column.
      */
     public Column getColumn(String identfier) {
       return new Column(idHash.get(identfier).intValue());
@@ -351,8 +346,7 @@ public class MultiTable extends AbstractTableModel
     }
 
     /**
-     * Delivers the given row of the data matrix as an array of doubles
-     * only, i.e., no time points.
+     * Delivers the given row of the data matrix as an array of doubles only, i.e., no time points.
      *
      * @param rowIndex The index of the row to be delivered.
      * @return An array of double values from the encapsulated data matrix.
@@ -410,7 +404,8 @@ public class MultiTable extends AbstractTableModel
      */
     public void setData(double[][] data) {
       if (isSetTimePoints() && (data.length != getRowCount())) {
-        throw new IllegalArgumentException(String.format(UNEQUAL_DATA_AND_TIME_POINTS, data.length, timePoints.length));
+        throw new IllegalArgumentException(
+            String.format(UNEQUAL_DATA_AND_TIME_POINTS, data.length, timePoints.length));
       }
       this.data = data;
     }
@@ -420,7 +415,8 @@ public class MultiTable extends AbstractTableModel
      */
     public void setIdentifiers(String[] identifiers) {
       if (isSetData() && (identifiers.length != data[0].length)) {
-        throw new IllegalArgumentException(String.format(UNEQUAL_COLUMNS_AND_IDENTIFIERS, data[0].length, identifiers.length));
+        throw new IllegalArgumentException(
+            String.format(UNEQUAL_COLUMNS_AND_IDENTIFIERS, data[0].length, identifiers.length));
       }
       this.identifiers = identifiers;
       idHash.clear();
@@ -437,16 +433,16 @@ public class MultiTable extends AbstractTableModel
     }
 
     /**
-     * Sets the given array as the new row in the given position of the data
-     * matrix, but requires that the number of values in the array equal the
-     * number of columns in the matrix.
+     * Sets the given array as the new row in the given position of the data matrix, but requires
+     * that the number of values in the array equal the number of columns in the matrix.
      *
      * @param rowIndex The index of the row to be replaced by the new array.
      * @param array    An array of length {@link #getColumnCount()} - 1.
      */
     public void setRowData(int rowIndex, double[] array) {
       if (array.length != getColumnCount()) {
-        throw new IllegalArgumentException(String.format(UNEQUAL_COLUMNS_AND_IDENTIFIERS, array.length, identifiers.length));
+        throw new IllegalArgumentException(
+            String.format(UNEQUAL_COLUMNS_AND_IDENTIFIERS, array.length, identifiers.length));
       }
       data[rowIndex] = array;
     }
@@ -533,8 +529,7 @@ public class MultiTable extends AbstractTableModel
   private String timeName = "time";
 
   /**
-   * The array to gather the time points in this data structure. This array
-   * must be sorted.
+   * The array to gather the time points in this data structure. This array must be sorted.
    */
   private double timePoints[];
 
@@ -550,8 +545,7 @@ public class MultiTable extends AbstractTableModel
    *
    * @param timePoints
    * @param data
-   * @param identifiers The first column in identifiers may be the name for the time
-   *                    column.
+   * @param identifiers The first column in identifiers may be the name for the time column.
    */
   public MultiTable(double timePoints[], double data[][], String identifiers[]) {
     this(timePoints, data, identifiers, null);
@@ -563,7 +557,8 @@ public class MultiTable extends AbstractTableModel
    * @param columnIdentifiers
    * @param columnNames
    */
-  public MultiTable(double[] timePoints, double[][] data, String[] columnIdentifiers, String[] columnNames) {
+  public MultiTable(double[] timePoints, double[][] data, String[] columnIdentifiers,
+      String[] columnNames) {
     this();
     setTimePoints(timePoints);
     String ids[];
@@ -584,9 +579,8 @@ public class MultiTable extends AbstractTableModel
   }
 
   /**
-   * Creates a new {@link MultiTable.Block} and adds it to this object.
-   * The number of rows will be equal to the number of time points of the
-   * overall data structure.
+   * Creates a new {@link MultiTable.Block} and adds it to this object. The number of rows will be
+   * equal to the number of time points of the overall data structure.
    *
    * @param identifiers The column identifiers of the new block.
    */
@@ -626,7 +620,8 @@ public class MultiTable extends AbstractTableModel
     filtered.setTimePoints(filteredTimepoints);
     for (int block = 0; block != getBlockCount(); block++) {
       filtered.addBlock(getBlock(block).getIdentifiers());
-      filtered.getBlock(block).setData(new double[rowIndices.size()][getBlock(block).getIdentifiers().length]);
+      filtered.getBlock(block)
+          .setData(new double[rowIndices.size()][getBlock(block).getIdentifiers().length]);
       int rowCounter = 0;
       for (int rowIndex : rowIndices) {
         filtered.getBlock(block).setRowData(rowCounter, getBlock(block).getRow(rowIndex));
@@ -676,8 +671,7 @@ public class MultiTable extends AbstractTableModel
    * Returns the column corresponding to the given identifier.
    *
    * @param identifier An identifier.
-   * @return A {@link Column} object for this identifier or null if no such
-   * {@link Column} exists.
+   * @return A {@link Column} object for this identifier or null if no such {@link Column} exists.
    */
   public Column getColumn(String identifier) {
     int index = getColumnIndex(identifier);
@@ -867,8 +861,7 @@ public class MultiTable extends AbstractTableModel
   /**
    * Removes the {@link Block} with the given index from this data structure.
    *
-   * @param index The index of the block. Do not confuse with the index of the
-   *              column.
+   * @param index The index of the block. Do not confuse with the index of the column.
    */
   public void removeBlock(int index) {
     listOfBlocks.remove(index);
@@ -897,7 +890,9 @@ public class MultiTable extends AbstractTableModel
    */
   public void setTimePoints(double[] timePoints) {
     if ((listOfBlocks.size() > 0) && (listOfBlocks.get(0).getRowCount() != timePoints.length)) {
-      throw new IllegalArgumentException(String.format(UNEQUAL_DATA_AND_TIME_POINTS, listOfBlocks.get(0).getRowCount(), timePoints.length));
+      throw new IllegalArgumentException(String
+          .format(UNEQUAL_DATA_AND_TIME_POINTS, listOfBlocks.get(0).getRowCount(),
+              timePoints.length));
     }
     this.timePoints = timePoints;
   }

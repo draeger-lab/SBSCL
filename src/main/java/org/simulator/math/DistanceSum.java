@@ -37,8 +37,8 @@ public class DistanceSum extends MeanFunction {
    */
   private static final long serialVersionUID = 7739137402966833880L;
 
-  /* (non-Javadoc)
-   * @see org.sbml.simulator.math.MeanFunction#computeMean(double[])
+  /**
+   * {@inheritDoc}
    */
   @Override
   public double computeMean(double... values) {

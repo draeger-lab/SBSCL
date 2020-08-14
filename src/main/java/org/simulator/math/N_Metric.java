@@ -27,9 +27,9 @@ package org.simulator.math;
 import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
- * An implementation of an n-metric. An n-metric is basically the n<sup>th</sup>
- * root of the sum of the distances of every single element in two vectors
- * (arrays), where this distance will always be exponentiated by the value of n.
+ * An implementation of an n-metric. An n-metric is basically the n<sup>th</sup> root of the sum of
+ * the distances of every single element in two vectors (arrays), where this distance will always be
+ * exponentiated by the value of n.
  *
  * @author Andreas Dr&auml;ger
  * @author Roland Keller
@@ -49,10 +49,9 @@ public class N_Metric extends QualityMeasure {
   protected double root;
 
   /**
-   * Constructs a new NMetric with a default root of two. This will result in
-   * the Euclidean distance. Other metrics can be used by either setting the
-   * root to another value or explicitly using the distance function where the
-   * root must be given as an argument.
+   * Constructs a new NMetric with a default root of two. This will result in the Euclidean
+   * distance. Other metrics can be used by either setting the root to another value or explicitly
+   * using the distance function where the root must be given as an argument.
    */
   public N_Metric() {
     super();
@@ -60,8 +59,8 @@ public class N_Metric extends QualityMeasure {
   }
 
   /**
-   * Constructs a new NMetric with a customized root. Depending on the values
-   * of root this results in different metrics. Some are especially important:
+   * Constructs a new NMetric with a customized root. Depending on the values of root this results
+   * in different metrics. Some are especially important:
    * <ul>
    * <li>one is the Manhattan norm or the city block metric.</li>
    * <li>two is the Euclidean metric.</li>

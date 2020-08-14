@@ -23,9 +23,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 5 </cn>
-              <ci> S </ci>
-              <ci> E </ci>
+              <cn>5</cn>
+              <ci>S</ci>
+              <ci>E</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -42,8 +42,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 4 </cn>
-              <ci> ES </ci>
+              <cn>4</cn>
+              <ci>ES</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -60,8 +60,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 1 </cn>
-              <ci> ES </ci>
+              <cn>1</cn>
+              <ci>ES</ci>
             </apply>
           </math>
         </kineticLaw>

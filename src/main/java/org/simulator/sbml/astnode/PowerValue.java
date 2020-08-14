@@ -42,8 +42,8 @@ public class PowerValue extends ASTNodeValue {
     super(interpreter, node);
   }
 
-  /* (non-Javadoc)
-   * @see org.simulator.sbml.astnode.ASTNodeValue#computeDoubleValue()
+  /**
+   * {@inheritDoc}
    */
   @Override
   protected void computeDoubleValue(double delay) {

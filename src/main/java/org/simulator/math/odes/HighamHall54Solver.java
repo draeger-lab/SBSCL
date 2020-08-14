@@ -28,7 +28,8 @@ import org.apache.commons.math.ode.nonstiff.HighamHall54Integrator;
 
 /**
  * This class is a wrapper for the Higham-Hall-54 solver in the
- * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
+ * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math
+ * Library</a>.
  *
  * @author Roland Keller
  * @version $Rev$
@@ -93,7 +94,8 @@ public class HighamHall54Solver extends FirstOrderSolver {
    */
   @Override
   protected void createIntegrator() {
-    integrator = new HighamHall54Integrator(Math.min(1e-8, Math.min(1.0, getStepSize())), Math.min(1.0, getStepSize()), getAbsTol(), getRelTol());
+    integrator = new HighamHall54Integrator(Math.min(1e-8, Math.min(1.0, getStepSize())),
+        Math.min(1.0, getStepSize()), getAbsTol(), getRelTol());
   }
 
   /* (non-Javadoc)
