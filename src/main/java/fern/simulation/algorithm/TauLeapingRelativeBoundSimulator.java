@@ -21,10 +21,10 @@ public class TauLeapingRelativeBoundSimulator extends
 
   public TauLeapingRelativeBoundSimulator(Network net) {
     super(net);
-		if (!(getNet().getPropensityCalculator() instanceof KineticConstantPropensityCalculator)) {
-			throw new RuntimeException(
-					"Cannot use this tau leap method for not constant propensity calculators!");
-		}
+    if (!(getNet().getPropensityCalculator() instanceof KineticConstantPropensityCalculator)) {
+      throw new RuntimeException(
+          "Cannot use this tau leap method for not constant propensity calculators!");
+    }
 
     propCalc = (KineticConstantPropensityCalculator) getNet().getPropensityCalculator();
 

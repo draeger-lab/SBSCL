@@ -51,16 +51,16 @@ public class GroupContainer {
     min = Double.POSITIVE_INFINITY;
     max = Double.NEGATIVE_INFINITY;
     for (int i = 0; i < net.getNumReactions(); i++) {
-			for (int r : net.getReactants(i)) {
-				amount.setAmount(r, 0);
-			}
-			for (int r : net.getReactants(i)) {
-				amount.setAmount(r, amount.getAmount(r) + 1);
-			}
+      for (int r : net.getReactants(i)) {
+        amount.setAmount(r, 0);
+      }
+      for (int r : net.getReactants(i)) {
+        amount.setAmount(r, amount.getAmount(r) + 1);
+      }
       min = Math.min(min, prop.calculatePropensity(i, amount, sim));
-			for (int r : net.getReactants(i)) {
-				amount.setAmount(r, amount.getAmount(r) * 10);
-			}
+      for (int r : net.getReactants(i)) {
+        amount.setAmount(r, amount.getAmount(r) * 10);
+      }
       max = Math.max(max, prop.calculatePropensity(i, amount, sim));
     }
   }
@@ -117,9 +117,9 @@ public class GroupContainer {
     int group;
     for (group = topGroup; group >= 0; group--) {
       sum += groupPropensitySums[group];
-			if (sum >= t) {
-				break;
-			}
+      if (sum >= t) {
+        break;
+      }
     }
 
     int[] currentGroup = groups[group];
@@ -128,14 +128,14 @@ public class GroupContainer {
     int reaction;
     double p;
 
-		if (currentGroupSize == 1) {
-			reaction = 0;
-		} else {
-			do {
-				reaction = s.getUnif(0, currentGroupSize);
-				p = s.getUnif() * min * (1 << group);
-			} while (p > a[currentGroup[reaction]]);
-		}
+    if (currentGroupSize == 1) {
+      reaction = 0;
+    } else {
+      do {
+        reaction = s.getUnif(0, currentGroupSize);
+        p = s.getUnif() * min * (1 << group);
+      } while (p > a[currentGroup[reaction]]);
+    }
 
     return currentGroup[reaction];
   }
@@ -176,13 +176,13 @@ public class GroupContainer {
       groupPropensitySums[ng] += a_new;
       a_sum += a_new;
     }
-		if (ng > g && ng > topGroup) {
-			topGroup = ng;
-		} else if (ng < g) {
-			for (; topGroup > 0 && groupSizes[topGroup] == 0; topGroup--) {
-				;
-			}
-		}
+    if (ng > g && ng > topGroup) {
+      topGroup = ng;
+    } else if (ng < g) {
+      for (; topGroup > 0 && groupSizes[topGroup] == 0; topGroup--) {
+        ;
+      }
+    }
   }
 
 

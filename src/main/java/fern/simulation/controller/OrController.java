@@ -18,11 +18,11 @@ public class OrController implements SimulationController {
   }
 
   public boolean goOn(Simulator sim) {
-		for (int i = 0; i < controllers.length; i++) {
-			if (controllers[i].goOn(sim)) {
-				return true;
-			}
-		}
+    for (int i = 0; i < controllers.length; i++) {
+      if (controllers[i].goOn(sim)) {
+        return true;
+      }
+    }
     return false;
   }
 

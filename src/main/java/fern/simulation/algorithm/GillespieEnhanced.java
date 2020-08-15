@@ -45,9 +45,9 @@ public class GillespieEnhanced extends Simulator {
   public void initialize() {
     super.initialize();
 
-		if (dep == null) {
-			dep = new DependencyGraph(getNet());
-		}
+    if (dep == null) {
+      dep = new DependencyGraph(getNet());
+    }
 
     a_sum = 0;
     for (int i = 0; i < a.length; i++) {
@@ -78,9 +78,9 @@ public class GillespieEnhanced extends Simulator {
 
     if (!Double.isInfinite(tau)) {
       changed = false;
-			while (t <= getNextThetaEvent() && t + tau > getNextThetaEvent() && !changed) {
-				thetaEvent();
-			}
+      while (t <= getNextThetaEvent() && t + tau > getNextThetaEvent() && !changed) {
+        thetaEvent();
+      }
 
       if (changed) {
         performStep(control);
@@ -92,27 +92,27 @@ public class GillespieEnhanced extends Simulator {
       fireReaction(mu, t + tau, FireType.GillespieEnhanced);
 
       for (int alpha : dep.getDependent(mu)) {
-				if (efficientlyAdaptSum) {
-					a_sum -= a[alpha];
-				}
+        if (efficientlyAdaptSum) {
+          a_sum -= a[alpha];
+        }
         a[alpha] = getPropensityCalculator().calculatePropensity(alpha, getAmountManager(), this);
-				if (efficientlyAdaptSum) {
-					a_sum += a[alpha];
-				}
+        if (efficientlyAdaptSum) {
+          a_sum += a[alpha];
+        }
       }
     }
     if (!efficientlyAdaptSum) {
       a_sum = 0;
-			for (int i = 0; i < a.length; i++) {
-				a_sum += a[i];
-			}
+      for (int i = 0; i < a.length; i++) {
+        a_sum += a[i];
+      }
     }
     // advance in time
     t += tau;
 
-		if (Double.isInfinite(tau)) {
-			thetaEvent();
-		}
+    if (Double.isInfinite(tau)) {
+      thetaEvent();
+    }
   }
 
   /**
@@ -128,9 +128,9 @@ public class GillespieEnhanced extends Simulator {
     double sum = 0;
     for (int i = 0; i < a.length; i++) {
       sum += a[i];
-			if (sum >= test) {
-				return i;
-			}
+      if (sum >= test) {
+        return i;
+      }
     }
 
     throw new RuntimeException("No reaction could be selected!");

@@ -66,9 +66,9 @@ public class LeapObserver extends Observer implements GnuPlotObserver {
   public void step() {
     double[] l = new double[speciesNames.length + 1];
     l[0] = getSimulator().getTime();
-		for (int i = 0; i < speciesNames.length; i++) {
-			l[i + 1] = getSimulator().getNet().getAmountManager().getAmount(species[i]);
-		}
+    for (int i = 0; i < speciesNames.length; i++) {
+      l[i + 1] = getSimulator().getNet().getAmountManager().getAmount(species[i]);
+    }
     leap.add(l);
   }
 
@@ -84,9 +84,9 @@ public class LeapObserver extends Observer implements GnuPlotObserver {
   }
 
   public GnuPlot toGnuplot(GnuPlot gnuplot) throws IOException {
-		if (gnuplot == null) {
-			return null;
-		}
+    if (gnuplot == null) {
+      return null;
+    }
     String[] names = applyLabelFormat(speciesNames);
     gnuplot.addData(new LinkedList<double[]>(leap), names, getStyles());
     return gnuplot;

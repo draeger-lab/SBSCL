@@ -64,37 +64,37 @@ public class CollectionAxes extends Axes {
   public CollectionAxes(Iterable iterable, String[] labels, String[] styles) {
     super();
     this.collection = new LinkedList();
-		for (Object o : iterable) {
-			collection.add(o);
-		}
+    for (Object o : iterable) {
+      collection.add(o);
+    }
     checkCollection();
     loadLabelsAndLineStyles(labels, styles);
   }
 
   private void checkCollection() {
-		if (collection.size() == 0) {
-			return;
-		}
+    if (collection.size() == 0) {
+      return;
+    }
     Object o = collection.iterator().next();
-		if (o instanceof Number) {
-			return;
-		}
+    if (o instanceof Number) {
+      return;
+    }
     try {
-			if (!(Array.get(o, 0) instanceof Number)) {
-				throw new Exception();
-			}
+      if (!(Array.get(o, 0) instanceof Number)) {
+        throw new Exception();
+      }
     } catch (Exception e) {
       throw new IllegalArgumentException(
           o.toString() + " is not a number nor an array of numbers!");
     }
     // check if arrays in collection have same size
     int cols = getNumColumns();
-		for (Object o2 : collection) {
-			if (Array.getLength(o2) != cols) {
-				throw new IllegalArgumentException(
-						"The arrays in the collection do not have the same length!");
-			}
-		}
+    for (Object o2 : collection) {
+      if (Array.getLength(o2) != cols) {
+        throw new IllegalArgumentException(
+            "The arrays in the collection do not have the same length!");
+      }
+    }
   }
 
   /**
@@ -115,18 +115,18 @@ public class CollectionAxes extends Axes {
         Object o = it.next();
         String s = itAdd.hasNext() ? itAdd.next() : "";
 
-				if (o instanceof Number) {
-					return ((Number) o).toString() + s;
-				} else {
-					StringBuilder sb = new StringBuilder();
-					for (int i = 0; i < Array.getLength(o); i++) {
-						sb.append(Array.get(o, i).toString() + "\t");
-					}
-					if (sb.length() > 0) {
-						sb.deleteCharAt(sb.length() - 1);
-					}
-					return sb.toString() + s;
-				}
+        if (o instanceof Number) {
+          return ((Number) o).toString() + s;
+        } else {
+          StringBuilder sb = new StringBuilder();
+          for (int i = 0; i < Array.getLength(o); i++) {
+            sb.append(Array.get(o, i).toString() + "\t");
+          }
+          if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+          }
+          return sb.toString() + s;
+        }
       }
 
       public void remove() {
@@ -138,15 +138,15 @@ public class CollectionAxes extends Axes {
 
   @Override
   public int getNumColumns() {
-		if (collection.size() == 0) {
-			return 0;
-		}
+    if (collection.size() == 0) {
+      return 0;
+    }
     Object o = collection.iterator().next();
-		if (o instanceof Number) {
-			return 1 + getNumAdditionalColumns();
-		} else {
-			return Array.getLength(o) + getNumAdditionalColumns();
-		}
+    if (o instanceof Number) {
+      return 1 + getNumAdditionalColumns();
+    } else {
+      return Array.getLength(o) + getNumAdditionalColumns();
+    }
   }
 
 
@@ -157,14 +157,14 @@ public class CollectionAxes extends Axes {
 
   @Override
   protected Number getNumber_internal(int row, int col) {
-		if (row >= getNumRows()) {
-			throw new IllegalArgumentException("Axes does not contain enough rows.");
-		}
+    if (row >= getNumRows()) {
+      throw new IllegalArgumentException("Axes does not contain enough rows.");
+    }
     Object o = null;
     Iterator<Object> it = collection.iterator();
-		for (int r = 0; r < row; r++) {
-			o = it.next();
-		}
+    for (int r = 0; r < row; r++) {
+      o = it.next();
+    }
     return (Number) Array.get(o, col);
   }
 

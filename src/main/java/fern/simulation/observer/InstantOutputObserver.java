@@ -61,9 +61,9 @@ public class InstantOutputObserver extends Observer {
   @Override
   public void step() {
     pw.append("step\n");
-		for (int i = 0; i < getSimulator().getNet().getNumReactions(); i++) {
-			pw.append(String.format("a[%d]=%e\n", i, getSimulator().getPropensity(i)));
-		}
+    for (int i = 0; i < getSimulator().getNet().getNumReactions(); i++) {
+      pw.append(String.format("a[%d]=%e\n", i, getSimulator().getPropensity(i)));
+    }
     pw.flush();
   }
 

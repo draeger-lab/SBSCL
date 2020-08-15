@@ -76,11 +76,11 @@ public class SimulatorCorrectness extends SimulatorPerformance {
   public void present() {
     gnuplot.setVisible(true);
     try {
-        for (int j = 0; j < obs.length; j++) {
-            if (simulators[j] != null) {
-                obs[j].toGnuplot(gnuplot);
-            }
+      for (int j = 0; j < obs.length; j++) {
+        if (simulators[j] != null) {
+          obs[j].toGnuplot(gnuplot);
         }
+      }
       gnuplot.plot();
     } catch (IOException e) {
     }
@@ -100,14 +100,14 @@ public class SimulatorCorrectness extends SimulatorPerformance {
 
   private double[][][] calcHistoDistances() {
     double[][][] re = new double[simulators.length][simulators.length][speciesNames.length];
-      for (int i = 0; i < re.length; i++) {
-          for (int j = 0; j < re[i].length; j++) {
-              for (int s = 0; s < speciesNames.length; s++) {
-                  re[i][j][s] = NumberTools
-                      .calculateHistogramDistance(obs[i].getHistogram(s), obs[j].getHistogram(s));
-              }
-          }
+    for (int i = 0; i < re.length; i++) {
+      for (int j = 0; j < re[i].length; j++) {
+        for (int s = 0; s < speciesNames.length; s++) {
+          re[i][j][s] = NumberTools
+              .calculateHistogramDistance(obs[i].getHistogram(s), obs[j].getHistogram(s));
+        }
       }
+    }
     return re;
   }
 
@@ -117,8 +117,9 @@ public class SimulatorCorrectness extends SimulatorPerformance {
     SimulatorPerformance sp = new SimulatorCorrectness(new FernMLNetwork(
         new File(cfg.getAsString("file"))), cfg.getAsDouble("moment"),
         cfg.getAsStringArr("species"));
-    while (true)
+    while (true) {
       sp.benchmark();
+    }
   }
 
 

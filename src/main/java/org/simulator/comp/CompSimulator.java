@@ -25,8 +25,8 @@ import java.io.IOException;
  * simulated by applying model flattening, i.e., reducing the hierarchical models to standard (flat)
  * SBML models.
  * <p>
- * This class currently is limited to SBML core models (ODE).
- * TODO: support additional simulations (FBA, stochastic)
+ * This class currently is limited to SBML core models (ODE). TODO: support additional simulations
+ * (FBA, stochastic)
  *
  * @author Shalin Shah, Matthias König
  * @version $Rev$

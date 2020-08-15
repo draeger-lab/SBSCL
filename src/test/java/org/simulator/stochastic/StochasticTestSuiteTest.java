@@ -56,110 +56,108 @@ public class StochasticTestSuiteTest {
 
   /**
    * The constant for comparing the mean distances inequality.
-   *
+   * <p>
    * Mean distance function
    * <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-   *   <msub>
-   *     <mi>Z</mi>
-   *     <mrow class="MJX-TeXAtom-ORD">
-   *       <mi>t</mi>
-   *     </mrow>
-   *   </msub>
-   *   <mo>=</mo>
-   *   <msqrt>
-   *     <mi>n</mi>
-   *   </msqrt>
-   *   <mo>&#x2217;<!-- ∗ --></mo>
-   *   <mfrac>
-   *     <mrow>
-   *       <mo stretchy="false">(</mo>
-   *       <msub>
-   *         <mi>X</mi>
-   *         <mrow class="MJX-TeXAtom-ORD">
-   *           <mi>t</mi>
-   *         </mrow>
-   *       </msub>
-   *       <mo>&#x2212;<!-- − --></mo>
-   *       <mi>m</mi>
-   *       <msub>
-   *         <mi>u</mi>
-   *         <mrow class="MJX-TeXAtom-ORD">
-   *           <mi>t</mi>
-   *         </mrow>
-   *       </msub>
-   *       <mo stretchy="false">)</mo>
-   *     </mrow>
-   *     <mrow>
-   *       <mi>s</mi>
-   *       <mi>i</mi>
-   *       <mi>g</mi>
-   *       <mi>m</mi>
-   *       <msub>
-   *         <mi>a</mi>
-   *         <mrow class="MJX-TeXAtom-ORD">
-   *           <mi>t</mi>
-   *         </mrow>
-   *       </msub>
-   *     </mrow>
-   *   </mfrac>
+   * <msub>
+   * <mi>Z</mi>
+   * <mrow class="MJX-TeXAtom-ORD">
+   * <mi>t</mi>
+   * </mrow>
+   * </msub>
+   * <mo>=</mo>
+   * <msqrt>
+   * <mi>n</mi>
+   * </msqrt>
+   * <mo>&#x2217;<!-- ∗ --></mo>
+   * <mfrac>
+   * <mrow>
+   * <mo stretchy="false">(</mo>
+   * <msub>
+   * <mi>X</mi>
+   * <mrow class="MJX-TeXAtom-ORD">
+   * <mi>t</mi>
+   * </mrow>
+   * </msub>
+   * <mo>&#x2212;<!-- − --></mo>
+   * <mi>m</mi>
+   * <msub>
+   * <mi>u</mi>
+   * <mrow class="MJX-TeXAtom-ORD">
+   * <mi>t</mi>
+   * </mrow>
+   * </msub>
+   * <mo stretchy="false">)</mo>
+   * </mrow>
+   * <mrow>
+   * <mi>s</mi>
+   * <mi>i</mi>
+   * <mi>g</mi>
+   * <mi>m</mi>
+   * <msub>
+   * <mi>a</mi>
+   * <mrow class="MJX-TeXAtom-ORD">
+   * <mi>t</mi>
+   * </mrow>
+   * </msub>
+   * </mrow>
+   * </mfrac>
    * </math>
-   *
+   * <p>
    * This Mean distance function should always fall in (-MEAN_CUTOFF, MEAN_CUTOFF).
-   *
    */
   private static final double MEAN_CUTOFF = 3d;
 
   /**
    * The constant for comparing the standard deviation distances inequality.
-   *
+   * <p>
    * SD distance function
    * <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-   *   <msub>
-   *     <mi>Y</mi>
-   *     <mrow class="MJX-TeXAtom-ORD">
-   *       <mi>t</mi>
-   *     </mrow>
-   *   </msub>
-   *   <mo>=</mo>
-   *   <msqrt>
-   *     <mfrac>
-   *       <mi>n</mi>
-   *       <mn>2</mn>
-   *     </mfrac>
-   *   </msqrt>
-   *   <mo>&#x2217;<!-- ∗ --></mo>
-   *   <mo stretchy="false">(</mo>
-   *   <mfrac>
-   *     <msubsup>
-   *       <mi>S</mi>
-   *       <mrow class="MJX-TeXAtom-ORD">
-   *         <mi>t</mi>
-   *       </mrow>
-   *       <mrow class="MJX-TeXAtom-ORD">
-   *         <mn>2</mn>
-   *       </mrow>
-   *     </msubsup>
-   *     <mrow>
-   *       <mi>s</mi>
-   *       <mi>i</mi>
-   *       <mi>g</mi>
-   *       <mi>m</mi>
-   *       <msubsup>
-   *         <mi>a</mi>
-   *         <mrow class="MJX-TeXAtom-ORD">
-   *           <mi>t</mi>
-   *         </mrow>
-   *         <mn>2</mn>
-   *       </msubsup>
-   *     </mrow>
-   *   </mfrac>
-   *   <mo>&#x2212;<!-- − --></mo>
-   *   <mn>1</mn>
-   *   <mo stretchy="false">)</mo>
+   * <msub>
+   * <mi>Y</mi>
+   * <mrow class="MJX-TeXAtom-ORD">
+   * <mi>t</mi>
+   * </mrow>
+   * </msub>
+   * <mo>=</mo>
+   * <msqrt>
+   * <mfrac>
+   * <mi>n</mi>
+   * <mn>2</mn>
+   * </mfrac>
+   * </msqrt>
+   * <mo>&#x2217;<!-- ∗ --></mo>
+   * <mo stretchy="false">(</mo>
+   * <mfrac>
+   * <msubsup>
+   * <mi>S</mi>
+   * <mrow class="MJX-TeXAtom-ORD">
+   * <mi>t</mi>
+   * </mrow>
+   * <mrow class="MJX-TeXAtom-ORD">
+   * <mn>2</mn>
+   * </mrow>
+   * </msubsup>
+   * <mrow>
+   * <mi>s</mi>
+   * <mi>i</mi>
+   * <mi>g</mi>
+   * <mi>m</mi>
+   * <msubsup>
+   * <mi>a</mi>
+   * <mrow class="MJX-TeXAtom-ORD">
+   * <mi>t</mi>
+   * </mrow>
+   * <mn>2</mn>
+   * </msubsup>
+   * </mrow>
+   * </mfrac>
+   * <mo>&#x2212;<!-- − --></mo>
+   * <mn>1</mn>
+   * <mo stretchy="false">)</mo>
    * </math>
-   *
+   * <p>
    * This SD distance function should always fall in range (-SD_CUTOFF, SD_CUTOFF).
-   *
    */
   private static final double SD_CUTOFF = 5d;
 

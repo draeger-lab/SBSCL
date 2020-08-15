@@ -20,11 +20,11 @@ public class ArrayKineticConstantPropensityCalculator extends
   public ArrayKineticConstantPropensityCalculator(int[][] reactants, double[] constants) {
     super(reactants);
 
-		for (int i = 0; i < constants.length; i++) {
-			if (constants[i] <= 0) {
-				throw new IllegalArgumentException("There is a non positive constant!");
-			}
-		}
+    for (int i = 0; i < constants.length; i++) {
+      if (constants[i] <= 0) {
+        throw new IllegalArgumentException("There is a non positive constant!");
+      }
+    }
     this.constants = constants;
   }
 

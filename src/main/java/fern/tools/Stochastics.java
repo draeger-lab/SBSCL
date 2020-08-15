@@ -35,9 +35,9 @@ public class Stochastics {
    * @return the singleton object
    */
   public static Stochastics getInstance() {
-		if (inst == null) {
-			inst = new Stochastics();
-		}
+    if (inst == null) {
+      inst = new Stochastics();
+    }
     return inst;
   }
 
@@ -153,9 +153,9 @@ public class Stochastics {
    * @see Uniform#nextDouble()
    */
   public double getUnif() {
-		if (countGenerations) {
-			unifCount++;
-		}
+    if (countGenerations) {
+      unifCount++;
+    }
     return unif.nextDouble();
   }
 
@@ -167,12 +167,12 @@ public class Stochastics {
    * @see Exponential#nextDouble()
    */
   public double getExponential(double d) {
-		if (Double.isInfinite(d)) {
-			return d;
-		}
-		if (countGenerations) {
-			exponentialCount++;
-		}
+    if (Double.isInfinite(d)) {
+      return d;
+    }
+    if (countGenerations) {
+      exponentialCount++;
+    }
 
     return exponential.nextDouble(d);
   }
@@ -186,16 +186,16 @@ public class Stochastics {
    * @see Binomial#nextInt(int, double)
    */
   public int getBinom(int i, double prob) {
-		if (countGenerations) {
-			binomCount++;
-		}
-		if (prob == 0 || i == 0) {
-			return 0;
-		} else if (prob == 1) {
-			return i;
-		} else {
-			return binom.nextInt(i, prob);
-		}
+    if (countGenerations) {
+      binomCount++;
+    }
+    if (prob == 0 || i == 0) {
+      return 0;
+    } else if (prob == 1) {
+      return i;
+    } else {
+      return binom.nextInt(i, prob);
+    }
   }
 
   /**
@@ -208,9 +208,9 @@ public class Stochastics {
    * @see Uniform#nextIntFromTo(int, int)
    */
   public int getUnif(int min, int max) {
-		if (countGenerations) {
-			unifCount++;
-		}
+    if (countGenerations) {
+      unifCount++;
+    }
     return unif.nextIntFromTo(min, max - 1);
   }
 
@@ -222,12 +222,12 @@ public class Stochastics {
    * @see Poisson#nextInt(double)
    */
   public int getPoisson(double mean) {
-		if (mean == 0) {
-			return 0;
-		}
-		if (countGenerations) {
-			poissonCount++;
-		}
+    if (mean == 0) {
+      return 0;
+    }
+    if (countGenerations) {
+      poissonCount++;
+    }
     return poisson.nextInt(mean);
   }
 
@@ -238,9 +238,9 @@ public class Stochastics {
    * @see Normal#nextDouble()
    */
   public double getNormal() {
-		if (countGenerations) {
-			normalCount++;
-		}
+    if (countGenerations) {
+      normalCount++;
+    }
     return normal.nextDouble();
   }
 
@@ -253,9 +253,9 @@ public class Stochastics {
    * @see Normal#nextDouble(double, double)
    */
   public double getNormal(double mean, double stddev) {
-		if (countGenerations) {
-			normalCount++;
-		}
+    if (countGenerations) {
+      normalCount++;
+    }
     return normal.nextDouble(mean, stddev);
   }
 

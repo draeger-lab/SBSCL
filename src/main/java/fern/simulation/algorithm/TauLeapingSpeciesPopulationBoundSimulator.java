@@ -51,18 +51,18 @@ public class TauLeapingSpeciesPopulationBoundSimulator extends
 
     for (int i = 0; i < getNet().getNumSpecies(); i++) {
 
-			if (g[i] == 0) {
-				continue;
-			}
+      if (g[i] == 0) {
+        continue;
+      }
       double gi = g[i];
-			if (gi == -2) {
-				gi = 2.0 + 1.0 / (getAmountManager().getAmount(i) - 1.0);
-			} else if (gi == -3) {
-				gi = 3.0 + 1.0 / (getAmountManager().getAmount(i) - 1.0) + 2.0 / (
-						getAmountManager().getAmount(i) - 2.0);
-			} else if (gi == -4) {
-				gi = 1.5 * (2.0 + 1.0 / (getAmountManager().getAmount(i) - 1.0));
-			}
+      if (gi == -2) {
+        gi = 2.0 + 1.0 / (getAmountManager().getAmount(i) - 1.0);
+      } else if (gi == -3) {
+        gi = 3.0 + 1.0 / (getAmountManager().getAmount(i) - 1.0) + 2.0 / (
+            getAmountManager().getAmount(i) - 2.0);
+      } else if (gi == -4) {
+        gi = 1.5 * (2.0 + 1.0 / (getAmountManager().getAmount(i) - 1.0));
+      }
 
       double max = Math.max(getEpsilon() * getAmountManager().getAmount(i) / gi, 1);
       tau = Math.min(tau, max / Math.abs(mu[i]));
@@ -81,13 +81,13 @@ public class TauLeapingSpeciesPopulationBoundSimulator extends
     for (int i = 0; i < getNet().getNumSpecies(); i++) {
       mu[i] = 0;
       sigma[i] = 0;
-			if (g[i] == 0) {
-				continue;
-			}
+      if (g[i] == 0) {
+        continue;
+      }
       for (int j = 0; j < getNet().getNumReactions(); j++) {
-				if (criticals.get(j) || getV(i, j) == 0) {
-					continue;
-				}
+        if (criticals.get(j) || getV(i, j) == 0) {
+          continue;
+        }
         mu[i] += getV(i, j) * a[j];
         sigma[i] += getV(i, j) * getV(i, j) * a[j];
       }
@@ -104,28 +104,28 @@ public class TauLeapingSpeciesPopulationBoundSimulator extends
     int[] HOR = new int[net.getNumSpecies()];
     for (int r = 0; r < net.getNumReactions(); r++) {
       int[] reactants = net.getReactants(r);
-			for (int i : reactants) {
-				HOR[i] = Math.max(HOR[i], reactants.length);
-			}
+      for (int i : reactants) {
+        HOR[i] = Math.max(HOR[i], reactants.length);
+      }
     }
 
-		for (int i = 0; i < g.length; i++) {
-			g[i] = HOR[i];
-		}
+    for (int i = 0; i < g.length; i++) {
+      g[i] = HOR[i];
+    }
 
     for (int r = 0; r < net.getNumReactions(); r++) {
-			for (int reactantSpecies : reactantHistos[r].keySet()) {
-				if (HOR[reactantSpecies] == 2 && reactantHistos[r].size() == 1
-						&& reactantHistos[r].get(reactantSpecies) == 2) {
-					g[reactantSpecies] = -2;
-				} else if (HOR[reactantSpecies] == 3 && reactantHistos[r].size() == 2
-						&& reactantHistos[r].get(reactantSpecies) == 2) {
-					g[reactantSpecies] = -4;
-				} else if (HOR[reactantSpecies] == 3 && reactantHistos[r].size() == 1
-						&& reactantHistos[r].get(reactantSpecies) == 3) {
-					g[reactantSpecies] = -3;
-				}
-			}
+      for (int reactantSpecies : reactantHistos[r].keySet()) {
+        if (HOR[reactantSpecies] == 2 && reactantHistos[r].size() == 1
+            && reactantHistos[r].get(reactantSpecies) == 2) {
+          g[reactantSpecies] = -2;
+        } else if (HOR[reactantSpecies] == 3 && reactantHistos[r].size() == 2
+            && reactantHistos[r].get(reactantSpecies) == 2) {
+          g[reactantSpecies] = -4;
+        } else if (HOR[reactantSpecies] == 3 && reactantHistos[r].size() == 1
+            && reactantHistos[r].get(reactantSpecies) == 3) {
+          g[reactantSpecies] = -3;
+        }
+      }
     }
   }
 

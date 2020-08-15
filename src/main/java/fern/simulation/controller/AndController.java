@@ -18,11 +18,11 @@ public class AndController implements SimulationController {
   }
 
   public boolean goOn(Simulator sim) {
-		for (int i = 0; i < controllers.length; i++) {
-			if (!controllers[i].goOn(sim)) {
-				return false;
-			}
-		}
+    for (int i = 0; i < controllers.length; i++) {
+      if (!controllers[i].goOn(sim)) {
+        return false;
+      }
+    }
     return true;
   }
 

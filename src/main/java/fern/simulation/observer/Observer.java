@@ -166,9 +166,9 @@ public abstract class Observer {
    */
   protected String[] applyLabelFormat(String[] name) {
     String[] re = new String[name.length];
-		for (int i = 0; i < re.length; i++) {
-			re[i] = getLabel(name[i]);
-		}
+    for (int i = 0; i < re.length; i++) {
+      re[i] = getLabel(name[i]);
+    }
     return re;
   }
 
@@ -186,9 +186,9 @@ public abstract class Observer {
       sb.append("\"" + titles[i]);
       sb.append("\" ");
       sb.append(i + "");
-			if (i < titles.length - 1) {
-				sb.append(", ");
-			}
+      if (i < titles.length - 1) {
+        sb.append(", ");
+      }
     }
     sb.append(")");
     return sb.toString();

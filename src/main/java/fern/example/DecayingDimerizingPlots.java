@@ -122,12 +122,12 @@ public class DecayingDimerizingPlots {
 
     for (int i = 1; i <= runs; i++) {
       sim.start(obs);
-        if (i % (runs / 1000.0) == 0) {
-            System.out.print(".");
-        }
-        if (i % (runs / 10.0) == 0) {
-            System.out.println();
-        }
+      if (i % (runs / 1000.0) == 0) {
+        System.out.print(".");
+      }
+      if (i % (runs / 10.0) == 0) {
+        System.out.println();
+      }
     }
     return obs.getHistogram(0);
   }

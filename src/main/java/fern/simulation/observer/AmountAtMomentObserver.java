@@ -45,9 +45,9 @@ public class AmountAtMomentObserver extends Observer implements SimulationContro
     this.speciesNames = speciesName;
     this.moment = moment;
     histogram = new HashMap[species.length];
-		for (int i = 0; i < histogram.length; i++) {
-			histogram[i] = new HashMap<Integer, Integer>();
-		}
+    for (int i = 0; i < histogram.length; i++) {
+      histogram[i] = new HashMap<Integer, Integer>();
+    }
   }
 
   /**
@@ -83,9 +83,9 @@ public class AmountAtMomentObserver extends Observer implements SimulationContro
   public void theta(double theta) {
     for (int i = 0; i < species.length; i++) {
       int amount = (int) getSimulator().getAmount(species[i]);
-			if (!histogram[i].containsKey(amount)) {
-				histogram[i].put(amount, 0);
-			}
+      if (!histogram[i].containsKey(amount)) {
+        histogram[i].put(amount, 0);
+      }
       histogram[i].put(amount, histogram[i].get(amount) + 1);
     }
     thetaReached = true;
@@ -121,9 +121,9 @@ public class AmountAtMomentObserver extends Observer implements SimulationContro
   }
 
   public GnuPlot toGnuplot(GnuPlot gnuplot) throws IOException {
-		if (gnuplot == null) {
-			return null;
-		}
+    if (gnuplot == null) {
+      return null;
+    }
     int index = 0;
 
     for (Map<Integer, Integer> histo : histogram) {

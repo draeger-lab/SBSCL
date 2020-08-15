@@ -61,11 +61,11 @@ public class CellGrowthObserver extends Observer {
 
     if ((int) (getSimulator().getTime() / generationTime) > (int) (recentTime / generationTime)) {
       for (int i = 0; i < getSimulator().getNet().getNumSpecies(); i++) {
-				if (getSimulator().getNet().getSpeciesByName("PLac") != i) {
-					getSimulator().setAmount(i, (long) getSimulator().getAmount(i) / 2);
-				} else {
-					getSimulator().setAmount(i, 1);
-				}
+        if (getSimulator().getNet().getSpeciesByName("PLac") != i) {
+          getSimulator().setAmount(i, (long) getSimulator().getAmount(i) / 2);
+        } else {
+          getSimulator().setAmount(i, 1);
+        }
       }
       timeOffset -= generationTime;
     }

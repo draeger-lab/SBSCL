@@ -49,9 +49,9 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
     super(sim);
     this.interval = interval;
 
-		if (entityName.length == 0) {
-			throw new IllegalArgumentException("At least one entity has to be specified!");
-		}
+    if (entityName.length == 0) {
+      throw new IllegalArgumentException("At least one entity has to be specified!");
+    }
 
     this.entityName = entityName;
 
@@ -66,9 +66,9 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
     this.interval = interval;
     this.duration = duration;
 
-		if (entityName.length == 0) {
-			throw new IllegalArgumentException("At least one entity has to be specified!");
-		}
+    if (entityName.length == 0) {
+      throw new IllegalArgumentException("At least one entity has to be specified!");
+    }
 
     this.entityName = entityName;
 
@@ -92,9 +92,9 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
   @Override
   public void started() {
     log.clear();
-		if (thetaMethod) {
-			setTheta(0);
-		}
+    if (thetaMethod) {
+      setTheta(0);
+    }
     recentStep = Double.NEGATIVE_INFINITY;
   }
 
@@ -113,45 +113,45 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
   @Override
   public void finished() {
     step();
-		if (log.size() == 0) {
-			return;
-		}
+    if (log.size() == 0) {
+      return;
+    }
 
     double[][] actLog = getAsArray(log);
 
     if (!thetaMethod) {
-			for (int i = actLog.length - 1; i >= 0; i--) {
-				actLog[i] = NumberTools.interpolateLinear(interval, actLog[0], actLog[i]);
-			}
+      for (int i = actLog.length - 1; i >= 0; i--) {
+        actLog[i] = NumberTools.interpolateLinear(interval, actLog[0], actLog[i]);
+      }
 
       // workaround: correct last timeindex
-			if (actLog[0].length > 1) {
-				actLog[0][actLog[0].length - 1] = actLog[0][actLog[0].length - 2] + interval;
-			}
+      if (actLog[0].length > 1) {
+        actLog[0][actLog[0].length - 1] = actLog[0][actLog[0].length - 2] + interval;
+      }
     }
 
     double[][] newAvgLog = new double[entityName.length + 1][Math
         .max(avgLog[0].length, actLog[0].length)];
     for (int i = 0; i < newAvgLog.length; i++) {
       for (int j = 0; j < newAvgLog[i].length; j++) {
-				if (j < actLog[i].length && j < avgLog[i].length) {
-					newAvgLog[i][j] =
-							(actLog[i][j] + avgLog[i][j] * getNumSimulations()) / (getNumSimulations() + 1);
-				} else if (j < actLog[i].length) {
-					newAvgLog[i][j] = actLog[i][j];
-				} else {
-					newAvgLog[i][j] = avgLog[i][j];
-					if ((i == 0) && (j >= 1)) {
-						newAvgLog[i][j] = newAvgLog[i][j - 1] + 1;
-					}
-				}
+        if (j < actLog[i].length && j < avgLog[i].length) {
+          newAvgLog[i][j] =
+              (actLog[i][j] + avgLog[i][j] * getNumSimulations()) / (getNumSimulations() + 1);
+        } else if (j < actLog[i].length) {
+          newAvgLog[i][j] = actLog[i][j];
+        } else {
+          newAvgLog[i][j] = avgLog[i][j];
+          if ((i == 0) && (j >= 1)) {
+            newAvgLog[i][j] = newAvgLog[i][j - 1] + 1;
+          }
+        }
       }
     }
     int[] newQuality = new int[Math.max(avgLog[0].length, actLog[0].length)];
     System.arraycopy(quality, 0, newQuality, 0, Math.min(newQuality.length, quality.length));
-		for (int i = 0; i < actLog[0].length; i++) {
-			newQuality[i]++;
-		}
+    for (int i = 0; i < actLog[0].length; i++) {
+      newQuality[i]++;
+    }
 
     quality = newQuality;
     for (int i = 0; i < avgLog.length; i++) {
@@ -169,9 +169,9 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
         / interval)) {
       double[] l = new double[entityName.length + 1];
       l[0] = getSimulator().getTime();
-			for (int i = 0; i < entityName.length; i++) {
-				l[i + 1] = getEntityValue(i);
-			}
+      for (int i = 0; i < entityName.length; i++) {
+        l[i + 1] = getEntityValue(i);
+      }
       log.add(l);
     }
     recentStep = getSimulator().getTime();
@@ -185,9 +185,9 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
     if (thetaMethod) {
       double[] l = new double[entityName.length + 1];
       l[0] = theta;
-			for (int i = 0; i < entityName.length; i++) {
-				l[i + 1] = getEntityValue(i);
-			}
+      for (int i = 0; i < entityName.length; i++) {
+        l[i + 1] = getEntityValue(i);
+      }
       log.add(l);
       setTheta(theta + interval);
     }
@@ -240,9 +240,9 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
   public double[][] getRecentData() {
     double[][] re = new double[log.size()][];
     int index = 0;
-		for (double[] rec : log) {
-			re[index++] = rec;
-		}
+    for (double[] rec : log) {
+      re[index++] = rec;
+    }
     return re;
   }
 
@@ -250,8 +250,8 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
    * Creates a new {@link GnuPlot} object and passes the recent observer data to it. Recent means
    * that not the average data is used but only the recently produced.
    *
-   * @throws IOException if gnuplot could not be accessed
    * @return the created <code>GnuPlot</code> object
+   * @throws IOException if gnuplot could not be accessed
    */
   public GnuPlot toGnuplotRecent() throws IOException {
     return toGnuplotRecent(new GnuPlot());
@@ -262,8 +262,8 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
    * data is used but only the recently produced.
    *
    * @param gnuplot the <code>GnuPlot</code> object to pass the data to
-   * @throws IOException if gnuplot could not be accessed
    * @return the <code>GnuPlot</code> object
+   * @throws IOException if gnuplot could not be accessed
    */
   public GnuPlot toGnuplotRecent(GnuPlot gnuplot) throws IOException {
     return toGnuplot(gnuplot, new LinkedList<double[]>(log));
@@ -305,16 +305,16 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
   public String toString() {
     String[] names = applyLabelFormat(entityName);
     StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < names.length; i++) {
-			sb.append(names[i] + ": " + getFinalValue(i) + "\n");
-		}
+    for (int i = 0; i < names.length; i++) {
+      sb.append(names[i] + ": " + getFinalValue(i) + "\n");
+    }
     return sb.toString();
   }
 
   private GnuPlot toGnuplot(GnuPlot gnuplot, double[][] values) throws IOException {
-		if (gnuplot == null) {
-			return null;
-		}
+    if (gnuplot == null) {
+      return null;
+    }
 
     String[] names = applyLabelFormat(entityName);
     gnuplot.addData(values, true, names, getStyles());
@@ -323,9 +323,9 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
 
 
   private GnuPlot toGnuplot(GnuPlot gnuplot, Collection<double[]> values) throws IOException {
-		if (gnuplot == null) {
-			return null;
-		}
+    if (gnuplot == null) {
+      return null;
+    }
     String[] names = applyLabelFormat(entityName);
     gnuplot.addData(values, names, getStyles());
     return gnuplot;
@@ -336,9 +336,9 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
     double[][] re = new double[l.get(0).length][l.size()];
     int i = 0;
     for (double[] t : l) {
-			for (int j = 0; j < t.length; j++) {
-				re[j][i] = t[j];
-			}
+      for (int j = 0; j < t.length; j++) {
+        re[j][i] = t[j];
+      }
       i++;
     }
     return re;

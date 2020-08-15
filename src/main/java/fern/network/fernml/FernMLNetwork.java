@@ -154,10 +154,10 @@ public class FernMLNetwork extends AbstractNetworkImpl {
       boolean reversible = reaction.getAttribute("kineticConstantReversible") != null;
 
       constants[index] = Double.parseDouble(reaction.getAttributeValue("kineticConstant"));
-			if (reversible) {
-				constants[index + 1] = Double
-						.parseDouble(reaction.getAttributeValue("kineticConstantReversible"));
-			}
+      if (reversible) {
+        constants[index + 1] = Double
+            .parseDouble(reaction.getAttributeValue("kineticConstantReversible"));
+      }
 
       List<Element> reactants = reaction.getChild("listOfReactants").getChildren();
       List<Element> products = reaction.getChild("listOfProducts").getChildren();
@@ -190,9 +190,9 @@ public class FernMLNetwork extends AbstractNetworkImpl {
   private int[] createSpeciesReferences(List<Element> speciesReference) {
     int[] re = new int[speciesReference.size()];
     int index = 0;
-		for (Element e : speciesReference) {
-			re[index++] = getSpeciesByName(e.getAttributeValue("name"));
-		}
+    for (Element e : speciesReference) {
+      re[index++] = getSpeciesByName(e.getAttributeValue("name"));
+    }
     return re;
   }
 
@@ -255,9 +255,9 @@ public class FernMLNetwork extends AbstractNetworkImpl {
     AnnotationManager prop = net.getAnnotationManager();
 
     AbstractKineticConstantPropensityCalculator kin = null;
-		if (net.getPropensityCalculator() instanceof AbstractKineticConstantPropensityCalculator) {
-			kin = (AbstractKineticConstantPropensityCalculator) net.getPropensityCalculator();
-		}
+    if (net.getPropensityCalculator() instanceof AbstractKineticConstantPropensityCalculator) {
+      kin = (AbstractKineticConstantPropensityCalculator) net.getPropensityCalculator();
+    }
 
     // create root
     Document doc = new Document();
@@ -270,9 +270,9 @@ public class FernMLNetwork extends AbstractNetworkImpl {
     Collection<String> annotations = prop.getNetworkAnnotationTypes();
     if (annotations != null && annotations.size() > 0) {
       Element annotationsRoot = new Element("listOfAnnotations");
-			for (String key : annotations) {
-				annotationsRoot.getChildren().add(createAnnotation(key, prop.getNetworkAnnotation(key)));
-			}
+      for (String key : annotations) {
+        annotationsRoot.getChildren().add(createAnnotation(key, prop.getNetworkAnnotation(key)));
+      }
       root.getChildren().add(annotationsRoot);
     }
 
@@ -289,10 +289,10 @@ public class FernMLNetwork extends AbstractNetworkImpl {
       s.setAttribute("initialAmount", String.valueOf(initialAmount));
       if (speciesAnnotations != null && speciesAnnotations.size() > 0) {
         Element annotationsRoot = new Element("listOfAnnotations");
-				for (String key : speciesAnnotations) {
-					annotationsRoot.getChildren()
-							.add(createAnnotation(key, prop.getSpeciesAnnotation(i, key)));
-				}
+        for (String key : speciesAnnotations) {
+          annotationsRoot.getChildren()
+              .add(createAnnotation(key, prop.getSpeciesAnnotation(i, key)));
+        }
         s.getChildren().add(annotationsRoot);
       }
       listOfSpecies.getChildren().add(s);
@@ -305,22 +305,22 @@ public class FernMLNetwork extends AbstractNetworkImpl {
       Collection<String> reactionAnnotations = prop.getReactionAnnotationTypes(i);
       double constant;
 
-			if (kineticConstants != null && i < kineticConstants.length) {
-				constant = kineticConstants[i];
-			} else if (kin != null) {
-				constant = kin.getConstant(i);
-			} else {
-				constant = NetworkTools.getConstantBySettingReactantsToStoich(net, i);
-			}
+      if (kineticConstants != null && i < kineticConstants.length) {
+        constant = kineticConstants[i];
+      } else if (kin != null) {
+        constant = kin.getConstant(i);
+      } else {
+        constant = NetworkTools.getConstantBySettingReactantsToStoich(net, i);
+      }
 
       Element r = new Element("reaction");
       r.setAttribute("kineticConstant", String.valueOf(constant));
       if (reactionAnnotations != null && reactionAnnotations.size() > 0) {
         Element annotationsRoot = new Element("listOfAnnotations");
-				for (String key : reactionAnnotations) {
-					annotationsRoot.getChildren()
-							.add(createAnnotation(key, prop.getReactionAnnotation(i, key)));
-				}
+        for (String key : reactionAnnotations) {
+          annotationsRoot.getChildren()
+              .add(createAnnotation(key, prop.getReactionAnnotation(i, key)));
+        }
         r.getChildren().add(annotationsRoot);
       }
 

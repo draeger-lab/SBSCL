@@ -38,19 +38,19 @@ public class HistogramDistanceTestSet {
       System.out.println("Load histogram from file " + getFile());
       histogram = NumberTools.loadHistogram(getFile());
     } else {
-			if (simulator instanceof AbstractBaseTauLeaping) {
-				((AbstractBaseTauLeaping) simulator).setEpsilon(epsilon);
-			}
+      if (simulator instanceof AbstractBaseTauLeaping) {
+        ((AbstractBaseTauLeaping) simulator).setEpsilon(epsilon);
+      }
 
       System.out.println("Calculate histogram");
       for (int i = 1; i <= runs; i++) {
         simulator.start(observer);
-				if (i % (runs / 1000.0) == 0) {
-					System.out.print(".");
-				}
-				if (i % (runs / 10.0) == 0) {
-					System.out.println();
-				}
+        if (i % (runs / 1000.0) == 0) {
+          System.out.print(".");
+        }
+        if (i % (runs / 10.0) == 0) {
+          System.out.println();
+        }
       }
       histogram = observer.getHistogram(0);
       System.out.println("Done and saved to " + getFile());
@@ -74,11 +74,11 @@ public class HistogramDistanceTestSet {
     String fn = simulator.getNet().getName() + "_" +
         simulator.getName() + "_eps" + epsilon + "_runs" + runs + "_species" + species + ".hist";
 
-		if (ExamplePath.exists(fn)) {
-			return ExamplePath.find(fn);
-		} else {
-			return new File(fn);
-		}
+    if (ExamplePath.exists(fn)) {
+      return ExamplePath.find(fn);
+    } else {
+      return new File(fn);
+    }
   }
 
   public Map<Integer, Integer> getHistogram() {

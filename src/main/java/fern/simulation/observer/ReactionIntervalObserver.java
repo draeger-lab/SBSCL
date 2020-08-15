@@ -53,9 +53,9 @@ public class ReactionIntervalObserver extends IntervalObserver {
    */
   @Override
   public void activateReaction(int mu, double t, FireType fireType, int times) {
-		if (recordStart < t && reactionIndexToObserverIndex.containsKey(mu)) {
-			observeReactions[reactionIndexToObserverIndex.get(mu)] += times;
-		}
+    if (recordStart < t && reactionIndexToObserverIndex.containsKey(mu)) {
+      observeReactions[reactionIndexToObserverIndex.get(mu)] += times;
+    }
   }
 
   @Override

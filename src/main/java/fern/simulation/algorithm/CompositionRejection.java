@@ -67,9 +67,9 @@ public class CompositionRejection extends GillespieEnhanced {
 
     if (!Double.isInfinite(tau)) {
       changed = false;
-			while (t <= getNextThetaEvent() && t + tau > getNextThetaEvent() && !changed) {
-				thetaEvent();
-			}
+      while (t <= getNextThetaEvent() && t + tau > getNextThetaEvent() && !changed) {
+        thetaEvent();
+      }
 
       if (changed) {
         performStep(control);
@@ -89,9 +89,9 @@ public class CompositionRejection extends GillespieEnhanced {
 
     t += tau;
 
-		if (Double.isInfinite(tau)) {
-			thetaEvent();
-		}
+    if (Double.isInfinite(tau)) {
+      thetaEvent();
+    }
   }
 
 

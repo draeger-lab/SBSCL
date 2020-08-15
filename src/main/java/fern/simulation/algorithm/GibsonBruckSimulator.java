@@ -77,9 +77,9 @@ public class GibsonBruckSimulator extends Simulator {
     if (!Double.isInfinite(tau)) {
 
       changed = false;
-			while (t <= getNextThetaEvent() && tau > getNextThetaEvent() && !changed) {
-				thetaEvent();
-			}
+      while (t <= getNextThetaEvent() && tau > getNextThetaEvent() && !changed) {
+        thetaEvent();
+      }
 
       if (changed) {
         performStep(control);
@@ -105,20 +105,20 @@ public class GibsonBruckSimulator extends Simulator {
         } else {
           if (a_alphaold == 0 && a[alpha] > 0) {
             // alpha != mu
-						if (aBeforeAlphaBecomesNull[alpha] == 0) {
-							tau_alpha = stochastics.getExponential(a[alpha]) + tau;
-						} else {
-							tau_alpha =
-									(aBeforeAlphaBecomesNull[alpha] / a[alpha]) * (tBeforeAlphaBecomesNull[alpha])
-											+ tau;
-						}
+            if (aBeforeAlphaBecomesNull[alpha] == 0) {
+              tau_alpha = stochastics.getExponential(a[alpha]) + tau;
+            } else {
+              tau_alpha =
+                  (aBeforeAlphaBecomesNull[alpha] / a[alpha]) * (tBeforeAlphaBecomesNull[alpha])
+                      + tau;
+            }
 
           } else {
-						if (alpha != mu) {
-							tau_alpha = (a_alphaold / a[alpha]) * (queue.getKey(alpha) - tau) + tau;
-						} else {
-							tau_alpha = stochastics.getExponential(a[alpha]) + tau;
-						}
+            if (alpha != mu) {
+              tau_alpha = (a_alphaold / a[alpha]) * (queue.getKey(alpha) - tau) + tau;
+            } else {
+              tau_alpha = stochastics.getExponential(a[alpha]) + tau;
+            }
           }
         }
 
@@ -130,24 +130,24 @@ public class GibsonBruckSimulator extends Simulator {
 
     t = tau;
 
-		if (Double.isInfinite(tau)) {
-			thetaEvent();
-		}
+    if (Double.isInfinite(tau)) {
+      thetaEvent();
+    }
   }
 
   @Override
   public void initialize() {
     super.initialize();
 
-		if (dep == null) {
-			dep = new DependencyGraph(getNet());
-		}
+    if (dep == null) {
+      dep = new DependencyGraph(getNet());
+    }
 
     // create initial values for tau
     double[] t = new double[getNet().getNumReactions()];
-		for (int i = 0; i < t.length; i++) {
-			t[i] = stochastics.getExponential(a[i]) + getTime();
-		}
+    for (int i = 0; i < t.length; i++) {
+      t[i] = stochastics.getExponential(a[i]) + getTime();
+    }
 
     // and store them in the indexedpriorityqueue
     queue = new IndexedPriorityQueue(t);

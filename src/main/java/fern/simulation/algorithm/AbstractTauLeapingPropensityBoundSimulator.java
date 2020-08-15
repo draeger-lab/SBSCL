@@ -60,11 +60,11 @@ public abstract class AbstractTauLeapingPropensityBoundSimulator extends Abstrac
                 + "\tsigma term=" + top * top / sigma[j]);
         System.out.println(Arrays.toString(f[j]));
         System.out.println();
-				if (tau == top / Math.abs(mu[j]) || tau == top * top / sigma[j]) {
-					min = getName() + " " + NetworkTools.getReactionNameWithAmounts(getNet(), j) + "\tmu "
-							+ mu[j] + "\tsigma " + sigma[j] + "\tmu term=" + (top / Math.abs(mu[j])
-							+ "\tsigma term=" + top * top / sigma[j]);
-				}
+        if (tau == top / Math.abs(mu[j]) || tau == top * top / sigma[j]) {
+          min = getName() + " " + NetworkTools.getReactionNameWithAmounts(getNet(), j) + "\tmu "
+              + mu[j] + "\tsigma " + sigma[j] + "\tmu term=" + (top / Math.abs(mu[j])
+              + "\tsigma term=" + top * top / sigma[j]);
+        }
       }
 
     }
@@ -83,26 +83,26 @@ public abstract class AbstractTauLeapingPropensityBoundSimulator extends Abstrac
 
   private void preprocessNonCriticals(BitVector criticals) {
 
-		if (!(getNet().getPropensityCalculator() instanceof PartialDerivativePropensityCalculator)) {
-			throw new RuntimeException(
-					"Cannot use this tau leap method for not constant propensity calculators!");
-		}
+    if (!(getNet().getPropensityCalculator() instanceof PartialDerivativePropensityCalculator)) {
+      throw new RuntimeException(
+          "Cannot use this tau leap method for not constant propensity calculators!");
+    }
 
     PartialDerivativePropensityCalculator propCalc = (PartialDerivativePropensityCalculator) getNet()
         .getPropensityCalculator();
 
     for (int j = 0; j < getNet().getNumReactions(); j++) {
       for (int js = 0; js < getNet().getNumReactions(); js++) {
-				if (criticals.get(js)) {
-					continue;
-				}
+        if (criticals.get(js)) {
+          continue;
+        }
         f[j][js] = 0;
         for (int species : reactantHistos[j].keySet()) {
           double v = getV(species, js);
-					if (v != 0) {
-						f[j][js] += v * propCalc
-								.calculatePartialDerivative(j, getAmountManager(), species, getVolume());
-					}
+          if (v != 0) {
+            f[j][js] += v * propCalc
+                .calculatePartialDerivative(j, getAmountManager(), species, getVolume());
+          }
         }
 //				for (int species : productHistos[js].keySet()) {
 //					if (reactantHistos[js].containsKey(species)) continue;
@@ -117,9 +117,9 @@ public abstract class AbstractTauLeapingPropensityBoundSimulator extends Abstrac
       mu[j] = 0;
       sigma[j] = 0;
       for (int js = 0; js < getNet().getNumReactions(); js++) {
-				if (criticals.get(js)) {
-					continue;
-				}
+        if (criticals.get(js)) {
+          continue;
+        }
         mu[j] += f[j][js] * a[js];
         sigma[j] += f[j][js] * f[j][js] * a[js];
       }

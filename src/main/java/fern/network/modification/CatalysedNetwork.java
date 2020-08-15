@@ -51,9 +51,9 @@ public class CatalysedNetwork extends ModifierNetwork {
   public CatalysedNetwork(Network originalNet) {
     super(originalNet);
 
-		if (!(getOriginalNetwork() instanceof AutocatalyticNetwork)) {
-			throw new IllegalArgumentException("Original network must be an AutocatalyticNetwork!");
-		}
+    if (!(getOriginalNetwork() instanceof AutocatalyticNetwork)) {
+      throw new IllegalArgumentException("Original network must be an AutocatalyticNetwork!");
+    }
 
     AnnotationManager anno = originalNet.getAnnotationManager();
     LinkedList<Integer> rTOCreate = new LinkedList<Integer>();
@@ -75,28 +75,28 @@ public class CatalysedNetwork extends ModifierNetwork {
 
     adjListRea = new int[getNumReactions()][];
     for (int i = 0; i < adjListRea.length; i++) {
-			if (catalyst[i] == -1) {
-				adjListRea[i] = super.getReactants(reactionToOriginal[i]);
-			} else {
-				int[] ori = super.getReactants(reactionToOriginal[i]);
-				int[] re = new int[ori.length + 1];
-				System.arraycopy(ori, 0, re, 0, ori.length);
-				re[re.length - 1] = catalyst[i];
-				adjListRea[i] = re;
-			}
+      if (catalyst[i] == -1) {
+        adjListRea[i] = super.getReactants(reactionToOriginal[i]);
+      } else {
+        int[] ori = super.getReactants(reactionToOriginal[i]);
+        int[] re = new int[ori.length + 1];
+        System.arraycopy(ori, 0, re, 0, ori.length);
+        re[re.length - 1] = catalyst[i];
+        adjListRea[i] = re;
+      }
     }
 
     adjListPro = new int[getNumReactions()][];
     for (int i = 0; i < adjListPro.length; i++) {
-			if (catalyst[i] == -1) {
-				adjListPro[i] = super.getProducts(reactionToOriginal[i]);
-			} else {
-				int[] ori = super.getProducts(reactionToOriginal[i]);
-				int[] re = new int[ori.length + 1];
-				System.arraycopy(ori, 0, re, 0, ori.length);
-				re[re.length - 1] = catalyst[i];
-				adjListPro[i] = re;
-			}
+      if (catalyst[i] == -1) {
+        adjListPro[i] = super.getProducts(reactionToOriginal[i]);
+      } else {
+        int[] ori = super.getProducts(reactionToOriginal[i]);
+        int[] re = new int[ori.length + 1];
+        System.arraycopy(ori, 0, re, 0, ori.length);
+        re[re.length - 1] = catalyst[i];
+        adjListPro[i] = re;
+      }
     }
 
     propensityCalculator = new AbstractKineticConstantPropensityCalculator(adjListRea) {
@@ -111,9 +111,9 @@ public class CatalysedNetwork extends ModifierNetwork {
       @Override
       public void performReaction(int reaction, int times) {
         super.performReaction(reaction, times);
-				for (int i = 0; i < ((AutocatalyticNetwork) getOriginalNetwork()).getNumMonomers(); i++) {
-					setAmount(i, ((AutocatalyticNetwork) getOriginalNetwork()).getMonomerAmount());
-				}
+        for (int i = 0; i < ((AutocatalyticNetwork) getOriginalNetwork()).getNumMonomers(); i++) {
+          setAmount(i, ((AutocatalyticNetwork) getOriginalNetwork()).getMonomerAmount());
+        }
       }
     };
   }
@@ -166,11 +166,11 @@ public class CatalysedNetwork extends ModifierNetwork {
 
       public boolean containsReactionAnnotation(int reaction, String typ) {
         boolean re = ori.containsReactionAnnotation(getOriginalReaction(reaction), typ);
-				if (typ.equals(AutocatalyticNetwork.CATALYSTS_FIELD) || typ.equals("Autocatalytic")) {
-					return catalyst[reaction] != -1 && re;
-				} else {
-					return re;
-				}
+        if (typ.equals(AutocatalyticNetwork.CATALYSTS_FIELD) || typ.equals("Autocatalytic")) {
+          return catalyst[reaction] != -1 && re;
+        } else {
+          return re;
+        }
       }
 
       public boolean containsSpeciesAnnotation(int species, String typ) {
@@ -187,21 +187,21 @@ public class CatalysedNetwork extends ModifierNetwork {
 
       public String getReactionAnnotation(int reaction, String typ) {
         String re = ori.getReactionAnnotation(getOriginalReaction(reaction), typ);
-				if (!containsReactionAnnotation(reaction, typ)) {
-					return null;
-				} else {
-					return re;
-				}
+        if (!containsReactionAnnotation(reaction, typ)) {
+          return null;
+        } else {
+          return re;
+        }
       }
 
       public Collection<String> getReactionAnnotationTypes(int reaction) {
         Collection<String> re = ori.getReactionAnnotationTypes(getOriginalReaction(reaction));
         Iterator<String> it = re.iterator();
-				while (it.hasNext()) {
-					if (!containsReactionAnnotation(reaction, it.next())) {
-						it.remove();
-					}
-				}
+        while (it.hasNext()) {
+          if (!containsReactionAnnotation(reaction, it.next())) {
+            it.remove();
+          }
+        }
         return re;
       }
 
@@ -234,14 +234,14 @@ public class CatalysedNetwork extends ModifierNetwork {
   @Override
   public String getReactionName(int index) {
     StringBuilder sb = new StringBuilder();
-		for (int i : getReactants(index)) {
-			sb.append(getSpeciesName(i) + "+");
-		}
+    for (int i : getReactants(index)) {
+      sb.append(getSpeciesName(i) + "+");
+    }
     sb.deleteCharAt(sb.length() - 1);
     sb.append("->");
-		for (int i : getProducts(index)) {
-			sb.append(getSpeciesName(i) + "+");
-		}
+    for (int i : getProducts(index)) {
+      sb.append(getSpeciesName(i) + "+");
+    }
     sb.deleteCharAt(sb.length() - 1);
     return sb.toString();
   }

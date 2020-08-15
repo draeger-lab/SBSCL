@@ -40,11 +40,11 @@ public class AutocatalyticNetworkDetection extends AnalysisBase {
   public AutocatalyticNetworkDetection(Network network) {
     super(network);
 
-		if (!(originalNetwork instanceof CatalystIterator)) {
-			throw new IllegalArgumentException("Cannot find a CatalystIterator");
-		} else {
-			cataIt = (CatalystIterator) originalNetwork;
-		}
+    if (!(originalNetwork instanceof CatalystIterator)) {
+      throw new IllegalArgumentException("Cannot find a CatalystIterator");
+    } else {
+      cataIt = (CatalystIterator) originalNetwork;
+    }
   }
 
   /**
@@ -100,9 +100,9 @@ public class AutocatalyticNetworkDetection extends AnalysisBase {
    * @return autocatalytic reactions
    */
   public BitVector getAutocatalyticReactions() {
-		if (removedReactions == null) {
-			throw new RuntimeException("Detection hasn't been called!");
-		}
+    if (removedReactions == null) {
+      throw new RuntimeException("Detection hasn't been called!");
+    }
     BitVector re = removedReactions.copy();
     re.not();
     return re;
@@ -115,9 +115,9 @@ public class AutocatalyticNetworkDetection extends AnalysisBase {
    * @return autocatalytic species
    */
   public BitVector getAutocatalyticSpecies() {
-		if (removedSpecies == null) {
-			throw new RuntimeException("Detection hasn't been called!");
-		}
+    if (removedSpecies == null) {
+      throw new RuntimeException("Detection hasn't been called!");
+    }
     BitVector re = removedSpecies.copy();
     re.not();
     return re;
@@ -131,9 +131,9 @@ public class AutocatalyticNetworkDetection extends AnalysisBase {
    * @return if the reaction is autocatalytic
    */
   public boolean isAutocatalyticReaction(int reaction) {
-		if (removedReactions == null) {
-			throw new RuntimeException("Detection hasn't been called!");
-		}
+    if (removedReactions == null) {
+      throw new RuntimeException("Detection hasn't been called!");
+    }
     return !removedReactions.get(reaction);
   }
 
@@ -145,9 +145,9 @@ public class AutocatalyticNetworkDetection extends AnalysisBase {
    * @return if the species is autocatalytic
    */
   public boolean isAutocatalyticSpecies(int species) {
-		if (removedSpecies == null) {
-			throw new RuntimeException("Detection hasn't been called!");
-		}
+    if (removedSpecies == null) {
+      throw new RuntimeException("Detection hasn't been called!");
+    }
     return !removedSpecies.get(species);
   }
 
@@ -158,16 +158,16 @@ public class AutocatalyticNetworkDetection extends AnalysisBase {
    * @param value value of the annotation
    */
   public void annotate(String field, String value) {
-		for (int i = 0; i < network.getNumReactions(); i++) {
-			if (isAutocatalyticReaction(i)) {
-				network.getAnnotationManager().setReactionAnnotation(i, field, value);
-			}
-		}
-		for (int i = 0; i < network.getNumSpecies(); i++) {
-			if (isAutocatalyticSpecies(i)) {
-				network.getAnnotationManager().setSpeciesAnnotation(i, field, value);
-			}
-		}
+    for (int i = 0; i < network.getNumReactions(); i++) {
+      if (isAutocatalyticReaction(i)) {
+        network.getAnnotationManager().setReactionAnnotation(i, field, value);
+      }
+    }
+    for (int i = 0; i < network.getNumSpecies(); i++) {
+      if (isAutocatalyticSpecies(i)) {
+        network.getAnnotationManager().setSpeciesAnnotation(i, field, value);
+      }
+    }
   }
 
   /**
@@ -177,11 +177,11 @@ public class AutocatalyticNetworkDetection extends AnalysisBase {
    */
   protected int[] getFoodSpecies() {
     LinkedList<Integer> re = new LinkedList<Integer>();
-		for (int i = 0; i < network.getNumSpecies(); i++) {
-			if (network.getSpeciesName(i).length() == 1) {
-				re.add(i);
-			}
-		}
+    for (int i = 0; i < network.getNumSpecies(); i++) {
+      if (network.getSpeciesName(i).length() == 1) {
+        re.add(i);
+      }
+    }
     return NumberTools.toIntArray(re);
   }
 
@@ -193,59 +193,59 @@ public class AutocatalyticNetworkDetection extends AnalysisBase {
    */
   private int[] getUncatalyzedReactions() {
     LinkedList<Integer> re = new LinkedList<Integer>();
-		for (int i = 0; i < numCatalysts.length; i++) {
-			if (numCatalysts[i] == 0 && !removedReactions.get(i)) {
-				re.add(i);
-			}
-		}
+    for (int i = 0; i < numCatalysts.length; i++) {
+      if (numCatalysts[i] == 0 && !removedReactions.get(i)) {
+        re.add(i);
+      }
+    }
     return NumberTools.toIntArray(re);
   }
 
   @SuppressWarnings("unchecked")
   private void createAdjacencListsAsCata() {
     adjListAsCata = new LinkedList[network.getNumSpecies()];
-		for (int i = 0; i < adjListAsCata.length; i++) {
-			adjListAsCata[i] = new LinkedList<Integer>();
-		}
-		for (int i = 0; i < network.getNumReactions(); i++) {
-			for (int c : cataIt.getCatalysts(i)) {
-				adjListAsCata[c].add(i);
-			}
-		}
+    for (int i = 0; i < adjListAsCata.length; i++) {
+      adjListAsCata[i] = new LinkedList<Integer>();
+    }
+    for (int i = 0; i < network.getNumReactions(); i++) {
+      for (int c : cataIt.getCatalysts(i)) {
+        adjListAsCata[c].add(i);
+      }
+    }
 
   }
 
   private void preprocessingCounts() {
     numCatalysts = new int[network.getNumReactions()];
-		for (int i = 0; i < network.getNumReactions(); i++) {
-			if (!removedReactions.get(i)) {
-				for (int c : cataIt.getCatalysts(i)) {
-					if (!removedSpecies.get(c)) {
-						numCatalysts[i]++;
-					}
-				}
-			}
-		}
+    for (int i = 0; i < network.getNumReactions(); i++) {
+      if (!removedReactions.get(i)) {
+        for (int c : cataIt.getCatalysts(i)) {
+          if (!removedSpecies.get(c)) {
+            numCatalysts[i]++;
+          }
+        }
+      }
+    }
     numReactants = new int[network.getNumReactions()];
-		for (int i = 0; i < network.getNumReactions(); i++) {
-			if (!removedReactions.get(i)) {
-				for (int c : network.getReactants(i)) {
-					if (!removedSpecies.get(c)) {
-						numReactants[i]++;
-					}
-				}
-			}
-		}
+    for (int i = 0; i < network.getNumReactions(); i++) {
+      if (!removedReactions.get(i)) {
+        for (int c : network.getReactants(i)) {
+          if (!removedSpecies.get(c)) {
+            numReactants[i]++;
+          }
+        }
+      }
+    }
     numCreated = new int[network.getNumSpecies()];
-		for (int i = 0; i < network.getNumReactions(); i++) {
-			if (!removedReactions.get(i)) {
-				for (int c : network.getProducts(i)) {
-					if (!removedSpecies.get(c)) {
-						numCreated[c]++;
-					}
-				}
-			}
-		}
+    for (int i = 0; i < network.getNumReactions(); i++) {
+      if (!removedReactions.get(i)) {
+        for (int c : network.getProducts(i)) {
+          if (!removedSpecies.get(c)) {
+            numCreated[c]++;
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -291,25 +291,25 @@ public class AutocatalyticNetworkDetection extends AnalysisBase {
 
     public void reactionDiscovered(int reaction) {
       removedReactions.putQuick(reaction, true);
-			for (int p : network.getProducts(reaction)) {
-				if (!removedSpecies.get(p)) {
-					numCreated[p]--;
-				}
-			}
+      for (int p : network.getProducts(reaction)) {
+        if (!removedSpecies.get(p)) {
+          numCreated[p]--;
+        }
+      }
     }
 
     public void speciesDiscovered(int species) {
       removedSpecies.putQuick(species, true);
-			for (int r : adjListAsCata[species]) {
-				if (!removedReactions.get(r)) {
-					numCatalysts[r]--;
-				}
-			}
-			for (int r : adjListAsRea[species]) {
-				if (!removedReactions.get(r)) {
-					numReactants[r]--;
-				}
-			}
+      for (int r : adjListAsCata[species]) {
+        if (!removedReactions.get(r)) {
+          numCatalysts[r]--;
+        }
+      }
+      for (int r : adjListAsRea[species]) {
+        if (!removedReactions.get(r)) {
+          numReactants[r]--;
+        }
+      }
     }
 
 
@@ -346,26 +346,26 @@ public class AutocatalyticNetworkDetection extends AnalysisBase {
 
       for (int i = 0; i < discoveredReactions.size(); i++) {
         if (!removedReactions.get(i) && !discoveredReactions.get(i)) {
-					for (int p : network.getProducts(i)) {
-						if (!removedSpecies.get(p)) {
-							numCreated[p]--;
-						}
-					}
+          for (int p : network.getProducts(i)) {
+            if (!removedSpecies.get(p)) {
+              numCreated[p]--;
+            }
+          }
         }
       }
 
       for (int i = 0; i < discoveredSpecies.size(); i++) {
         if (!removedSpecies.get(i) && !discoveredSpecies.get(i)) {
-					for (int r : adjListAsCata[i]) {
-						if (!removedReactions.get(r)) {
-							numCatalysts[r]--;
-						}
-					}
-					for (int r : adjListAsRea[i]) {
-						if (!removedReactions.get(r)) {
-							numReactants[r]--;
-						}
-					}
+          for (int r : adjListAsCata[i]) {
+            if (!removedReactions.get(r)) {
+              numCatalysts[r]--;
+            }
+          }
+          for (int r : adjListAsRea[i]) {
+            if (!removedReactions.get(r)) {
+              numReactants[r]--;
+            }
+          }
         }
       }
 
@@ -399,11 +399,11 @@ public class AutocatalyticNetworkDetection extends AnalysisBase {
 
     public void speciesDiscovered(int species) {
       discoveredSpecies.putQuick(species, true);
-			for (int r : adjListAsRea[species]) {
-				if (!removedReactions.get(r)) {
-					discoveredReactants[r]++;
-				}
-			}
+      for (int r : adjListAsRea[species]) {
+        if (!removedReactions.get(r)) {
+          discoveredReactants[r]++;
+        }
+      }
     }
 
     public void speciesFinished(int species) {

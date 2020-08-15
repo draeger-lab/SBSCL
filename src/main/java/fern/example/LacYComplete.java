@@ -36,9 +36,9 @@ public class LacYComplete {
      */
     FernMLNetwork net = new FernMLNetwork(ExamplePath.find("lacy.xml"));
 
-		if (args.length == 0) {
-			NetworkTools.dumpNetwork(net);
-		}
+    if (args.length == 0) {
+      NetworkTools.dumpNetwork(net);
+    }
 
     Simulator ssa = args.length < 2 || args[1].equals("hybrid") ?
         new HybridMaximalTimeStep(net) : new GillespieEnhanced(net);

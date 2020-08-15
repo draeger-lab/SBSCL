@@ -28,16 +28,16 @@ public class ColorSpectrum {
    * @return color for the value
    */
   public static Color getSpectrum(float val, Color... colors) {
-		if (val > 1) {
-			return colors[colors.length - 1];
-		}
+    if (val > 1) {
+      return colors[colors.length - 1];
+    }
 
     int leftIndex = (int) Math.floor((colors.length - 1) * val);
     int rightIndex = (int) Math.ceil((colors.length - 1) * val);
 
-		if (leftIndex == rightIndex) {
-			return colors[leftIndex];
-		}
+    if (leftIndex == rightIndex) {
+      return colors[leftIndex];
+    }
 
     val = (val - (float) leftIndex / (float) (colors.length - 1)) * (colors.length - 1);
 

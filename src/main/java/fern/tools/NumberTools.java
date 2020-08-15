@@ -37,9 +37,9 @@ public class NumberTools {
    */
   public static int max(Iterable<Integer> l) {
     int max = Integer.MIN_VALUE;
-		for (int i : l) {
-			max = Math.max(max, i);
-		}
+    for (int i : l) {
+      max = Math.max(max, i);
+    }
     return max;
   }
 
@@ -51,9 +51,9 @@ public class NumberTools {
    */
   public static int min(Iterable<Integer> l) {
     int min = Integer.MAX_VALUE;
-		for (int i : l) {
-			min = Math.min(min, i);
-		}
+    for (int i : l) {
+      min = Math.min(min, i);
+    }
     return min;
   }
 
@@ -84,9 +84,9 @@ public class NumberTools {
    */
   public static int sum(int[] l) {
     int sum = 0;
-		for (int i = 0; i < l.length; i++) {
-			sum += l[i];
-		}
+    for (int i = 0; i < l.length; i++) {
+      sum += l[i];
+    }
     return sum;
   }
 
@@ -96,9 +96,9 @@ public class NumberTools {
    * @param l the array
    */
   public static void cumSum(int[] l) {
-		for (int i = 1; i < l.length; i++) {
-			l[i] += l[i - 1];
-		}
+    for (int i = 1; i < l.length; i++) {
+      l[i] += l[i - 1];
+    }
   }
 
   /**
@@ -110,9 +110,9 @@ public class NumberTools {
   public static int[] toIntArray(Collection<Integer> list) {
     int[] re = new int[list.size()];
     int index = 0;
-		for (Integer i : list) {
-			re[index++] = i.intValue();
-		}
+    for (Integer i : list) {
+      re[index++] = i.intValue();
+    }
     return re;
   }
 
@@ -126,9 +126,9 @@ public class NumberTools {
   public static double[] toDoubleArray(Collection<Double> list) {
     double[] re = new double[list.size()];
     int index = 0;
-		for (Double i : list) {
-			re[index++] = i.doubleValue();
-		}
+    for (Double i : list) {
+      re[index++] = i.doubleValue();
+    }
     return re;
   }
 
@@ -146,22 +146,22 @@ public class NumberTools {
    */
   public static int[] createInverse(int[] a) {
     int max = 0;
-		for (int i = 0; i < a.length; i++) {
-			if (a[i] < 0) {
-				throw new IllegalArgumentException("Each element in a has to be notnegative!");
-			} else {
-				max = Math.max(max, a[i]);
-			}
-		}
+    for (int i = 0; i < a.length; i++) {
+      if (a[i] < 0) {
+        throw new IllegalArgumentException("Each element in a has to be notnegative!");
+      } else {
+        max = Math.max(max, a[i]);
+      }
+    }
     int[] re = new int[max + 1];
     Arrays.fill(re, -1);
-		for (int i = 0; i < a.length; i++) {
-			if (re[a[i]] != -1) {
-				throw new IllegalArgumentException("The values in a have to be unique!");
-			} else {
-				re[a[i]] = i;
-			}
-		}
+    for (int i = 0; i < a.length; i++) {
+      if (re[a[i]] != -1) {
+        throw new IllegalArgumentException("The values in a have to be unique!");
+      } else {
+        re[a[i]] = i;
+      }
+    }
     return re;
   }
 
@@ -176,13 +176,13 @@ public class NumberTools {
    */
   public static Map<Integer, Integer> createInverseAsMap(int[] a) {
     Map<Integer, Integer> re = new HashMap<Integer, Integer>();
-		for (int i = 0; i < a.length; i++) {
-			if (!re.containsKey(a[i])) {
-				re.put(a[i], i);
-			} else {
-				throw new IllegalArgumentException("The values in a have to be unique!");
-			}
-		}
+    for (int i = 0; i < a.length; i++) {
+      if (!re.containsKey(a[i])) {
+        re.put(a[i], i);
+      } else {
+        throw new IllegalArgumentException("The values in a have to be unique!");
+      }
+    }
     return re;
   }
 
@@ -200,37 +200,37 @@ public class NumberTools {
     double min = Double.POSITIVE_INFINITY;
     double max = Double.NEGATIVE_INFINITY;
     for (double[] d : data) {
-			if (indices.length > 0) {
-				for (int index : indices) {
-					min = Math.min(min, d[index]);
-					max = Math.max(max, d[index]);
-				}
-			} else {
-				for (int index = 0; index < d.length; index++) {
-					min = Math.min(min, d[index]);
-					max = Math.max(max, d[index]);
-				}
-			}
+      if (indices.length > 0) {
+        for (int index : indices) {
+          min = Math.min(min, d[index]);
+          max = Math.max(max, d[index]);
+        }
+      } else {
+        for (int index = 0; index < d.length; index++) {
+          min = Math.min(min, d[index]);
+          max = Math.max(max, d[index]);
+        }
+      }
     }
 
     double binSize = (max - min) / (double) numBins;
     double[][] re = new double[numBins][indices.length > 0 ? indices.length + 1
         : data.iterator().next().length + 1];
-		for (int i = 0; i < re.length; i++) {
-			re[i][0] = min + (i + 1) * binSize;
-		}
+    for (int i = 0; i < re.length; i++) {
+      re[i][0] = min + (i + 1) * binSize;
+    }
 
-		for (double[] d : data) {
-			if (indices.length > 0) {
-				for (int i = 0; i < indices.length; i++) {
-					re[Math.min((int) ((d[indices[i]] - min) / binSize), re.length - 1)][i + 1]++;
-				}
-			} else {
-				for (int i = 0; i < d.length; i++) {
-					re[Math.min((int) ((d[i] - min) / binSize), re.length - 1)][i + 1]++;
-				}
-			}
-		}
+    for (double[] d : data) {
+      if (indices.length > 0) {
+        for (int i = 0; i < indices.length; i++) {
+          re[Math.min((int) ((d[indices[i]] - min) / binSize), re.length - 1)][i + 1]++;
+        }
+      } else {
+        for (int i = 0; i < d.length; i++) {
+          re[Math.min((int) ((d[i] - min) / binSize), re.length - 1)][i + 1]++;
+        }
+      }
+    }
     return re;
   }
 
@@ -242,23 +242,23 @@ public class NumberTools {
    * @return histogram for the array
    */
   public static int[] createHistogram(int[] a) {
-		if (a == null || a.length == 0) {
-			return a;
-		}
+    if (a == null || a.length == 0) {
+      return a;
+    }
 
     int max = a[0];
-		for (int i = 1; i < a.length; i++) {
-			if (a[i] < 0) {
-				throw new IllegalArgumentException("Negative numbers are not allowed!");
-			} else {
-				max = Math.max(max, a[i]);
-			}
-		}
+    for (int i = 1; i < a.length; i++) {
+      if (a[i] < 0) {
+        throw new IllegalArgumentException("Negative numbers are not allowed!");
+      } else {
+        max = Math.max(max, a[i]);
+      }
+    }
 
     int[] re = new int[max + 1];
-		for (int i = 0; i < a.length; i++) {
-			re[a[i]]++;
-		}
+    for (int i = 0; i < a.length; i++) {
+      re[a[i]]++;
+    }
     return re;
   }
 
@@ -270,14 +270,14 @@ public class NumberTools {
    */
   public static Map<Integer, Integer> createHistogramAsMap(int[] a) {
     Map<Integer, Integer> re = new HashMap<Integer, Integer>();
-		if (a == null || a.length == 0) {
-			return re;
-		}
+    if (a == null || a.length == 0) {
+      return re;
+    }
 
     for (int i = 0; i < a.length; i++) {
-			if (!re.containsKey(a[i])) {
-				re.put(a[i], 0);
-			}
+      if (!re.containsKey(a[i])) {
+        re.put(a[i], 0);
+      }
       re.put(a[i], re.get(a[i]) + 1);
     }
     return re;
@@ -300,8 +300,8 @@ public class NumberTools {
    * Reads a previously saved histogram from a file.
    *
    * @param file the file
-   * @throws IOException
    * @return the histogram
+   * @throws IOException
    */
   public static Map<Integer, Integer> loadHistogram(File file) throws IOException {
     BufferedReader bf = new BufferedReader(new FileReader(file));
@@ -309,9 +309,9 @@ public class NumberTools {
     String line;
     while ((line = bf.readLine()) != null) {
       String[] vals = line.split("\t");
-			if (vals.length != 2) {
-				throw new IOException("Illegal file format");
-			}
+      if (vals.length != 2) {
+        throw new IOException("Illegal file format");
+      }
       re.put(Integer.parseInt(vals[0]), Integer.parseInt(vals[1]));
     }
     return re;
@@ -345,17 +345,17 @@ public class NumberTools {
    * 1 for each element which is contained at least once in the array
    *
    * @param a array
-   * @return  <code>BitVector> for the array
+   * @return <code>BitVector> for the array
    */
   public static BitVector getContentAsBitVector(int[] a) {
     int max = a[0];
-		for (int i = 1; i < a.length; i++) {
-			max = Math.max(max, a[i]);
-		}
+    for (int i = 1; i < a.length; i++) {
+      max = Math.max(max, a[i]);
+    }
     BitVector re = new BitVector(max + 1);
-		for (int i = 0; i < a.length; i++) {
-			re.set(a[i]);
-		}
+    for (int i = 0; i < a.length; i++) {
+      re.set(a[i]);
+    }
     return re;
   }
 
@@ -400,9 +400,9 @@ public class NumberTools {
    */
   public static double[] convertIntToDouble(int[] a) {
     double[] re = new double[a.length];
-		for (int i = 0; i < a.length; i++) {
-			re[i] = a[i];
-		}
+    for (int i = 0; i < a.length; i++) {
+      re[i] = a[i];
+    }
     return re;
   }
 
@@ -414,9 +414,9 @@ public class NumberTools {
    */
   public static int[] getNumbersTo(int n) {
     int[] re = new int[n + 1];
-		for (int i = 0; i < re.length; i++) {
-			re[i] = i;
-		}
+    for (int i = 0; i < re.length; i++) {
+      re[i] = i;
+    }
     return re;
   }
 
@@ -465,9 +465,9 @@ public class NumberTools {
    */
   public static double avg(double[] a) {
     double s = 0;
-		for (double d : a) {
-			s += d;
-		}
+    for (double d : a) {
+      s += d;
+    }
     return s / a.length;
   }
 
@@ -480,9 +480,9 @@ public class NumberTools {
   public static double stddev(double[] a) {
     double avg = avg(a);
     double s = 0;
-		for (double d : a) {
-			s += (d - avg) * (d - avg);
-		}
+    for (double d : a) {
+      s += (d - avg) * (d - avg);
+    }
     return Math.sqrt(s / (a.length - 1));
   }
 
@@ -513,9 +513,9 @@ public class NumberTools {
     StringBuffer sb = new StringBuffer();
     for (int i = 0; i < a.length; i++) {
       sb.append(a[i]);
-			if (i < a.length - 1) {
-				sb.append(glue);
-			}
+      if (i < a.length - 1) {
+        sb.append(glue);
+      }
     }
     return sb.toString();
   }
@@ -542,29 +542,29 @@ public class NumberTools {
     int j = 0;
     for (int i = 0; i < re.length; i++) {
       double desiredTime = (i + firstIndex) * interval;
-			while (j + 1 < time.length && Math.abs(desiredTime - time[j]) > Math
-					.abs(desiredTime - time[j + 1])) {
-				j++;
-			}
+      while (j + 1 < time.length && Math.abs(desiredTime - time[j]) > Math
+          .abs(desiredTime - time[j + 1])) {
+        j++;
+      }
 
       int a, b;
       if (time[j] < desiredTime) {
         a = b = j;
-				while (time[a] <= time[b] && a < time.length - 1) {
-					a++;
-				}
+        while (time[a] <= time[b] && a < time.length - 1) {
+          a++;
+        }
       } else {
         a = b = j;
-				while (time[a] <= time[b] && b > 0) {
-					b--;
-				}
+        while (time[a] <= time[b] && b > 0) {
+          b--;
+        }
       }
 
-			if (a == b || time[a] < desiredTime) {
-				re[i] = value[a];
-			} else {
-				re[i] = NumberTools.interpolateLinear(desiredTime, time[b], time[a], value[b], value[a]);
-			}
+      if (a == b || time[a] < desiredTime) {
+        re[i] = value[a];
+      } else {
+        re[i] = NumberTools.interpolateLinear(desiredTime, time[b], time[a], value[b], value[a]);
+      }
     }
 
     return re;
@@ -583,10 +583,10 @@ public class NumberTools {
    */
   public static double interpolateLinear(double desiredTime, double beforeTime, double afterTime,
       double beforeValue, double afterValue) {
-		if (desiredTime < beforeTime || desiredTime > afterTime) {
-			throw new IllegalArgumentException(
-					"Cannot interpolate " + desiredTime + " in [" + beforeTime + ":" + afterTime + "]");
-		}
+    if (desiredTime < beforeTime || desiredTime > afterTime) {
+      throw new IllegalArgumentException(
+          "Cannot interpolate " + desiredTime + " in [" + beforeTime + ":" + afterTime + "]");
+    }
 
     double b = desiredTime - beforeTime;
     double a = afterTime - desiredTime;

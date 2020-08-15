@@ -64,9 +64,9 @@ public class AnnotationManagerImpl implements AnnotationManager {
     ArrayList<String> re = new ArrayList<String>();
     for (String key : bigHash.keySet()) {
       int index = key.indexOf('#');
-			if (index == -1) {
-				re.add(key);
-			}
+      if (index == -1) {
+        re.add(key);
+      }
     }
     return re;
   }
@@ -79,10 +79,10 @@ public class AnnotationManagerImpl implements AnnotationManager {
     ArrayList<String> re = new ArrayList<String>();
     for (String key : bigHash.keySet()) {
       int index = key.indexOf('#');
-			if (index > 0 && key.charAt(index - 1) == 'R'
-					&& Integer.parseInt(key.substring(0, index - 1)) == reaction) {
-				re.add(key.substring(index + 1));
-			}
+      if (index > 0 && key.charAt(index - 1) == 'R'
+          && Integer.parseInt(key.substring(0, index - 1)) == reaction) {
+        re.add(key.substring(index + 1));
+      }
     }
     return re;
   }
@@ -95,10 +95,10 @@ public class AnnotationManagerImpl implements AnnotationManager {
     ArrayList<String> re = new ArrayList<String>();
     for (String key : bigHash.keySet()) {
       int index = key.indexOf('#');
-			if (index > 0 && key.charAt(index - 1) == 'S'
-					&& Integer.parseInt(key.substring(0, index - 1)) == species) {
-				re.add(key.substring(index + 1));
-			}
+      if (index > 0 && key.charAt(index - 1) == 'S'
+          && Integer.parseInt(key.substring(0, index - 1)) == species) {
+        re.add(key.substring(index + 1));
+      }
     }
     return re;
   }

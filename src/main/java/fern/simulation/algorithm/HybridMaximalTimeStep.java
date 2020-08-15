@@ -46,9 +46,9 @@ public class HybridMaximalTimeStep extends Simulator {
     super.initialize();
 
     a_sum = 0;
-		for (int i = 0; i < a.length; i++) {
-			a_sum += a[i];
-		}
+    for (int i = 0; i < a.length; i++) {
+      a_sum += a[i];
+    }
 
     partition();
   }
@@ -61,26 +61,26 @@ public class HybridMaximalTimeStep extends Simulator {
   @Override
   public void performStep(SimulationController control) {
 
-		if (changed) {
-			initialize();
-		}
+    if (changed) {
+      initialize();
+    }
 
     a_sum = 0;
-		for (int i = 0; i < a.length; i++) {
-			if (!fast.getQuick(i)) {
-				a_sum += a[i];
-			}
-		}
+    for (int i = 0; i < a.length; i++) {
+      if (!fast.getQuick(i)) {
+        a_sum += a[i];
+      }
+    }
 
     // obtain mu and tau by the direct method described in chapter 5A page 417ff
     double tau = directMCTau(a_sum);
     double delta = fast.cardinality() == 0 ? tau : Math.min(kappa, tau);
 
     changed = false;
-		while (delta < Double.POSITIVE_INFINITY && t <= getNextThetaEvent()
-				&& t + delta > getNextThetaEvent() && !changed) {
-			thetaEvent();
-		}
+    while (delta < Double.POSITIVE_INFINITY && t <= getNextThetaEvent()
+        && t + delta > getNextThetaEvent() && !changed) {
+      thetaEvent();
+    }
 
     if (changed) {
       performStep(control);
@@ -95,9 +95,9 @@ public class HybridMaximalTimeStep extends Simulator {
 
         fireReaction(i, t, t + tau, k, FireType.TauLeapNonCritical);
 
-				for (int alpha : dep.getDependent(i)) {
-					dependent.set(alpha);
-				}
+        for (int alpha : dep.getDependent(i)) {
+          dependent.set(alpha);
+        }
       }
     }
 
@@ -106,28 +106,28 @@ public class HybridMaximalTimeStep extends Simulator {
 
       fireReaction(mu, t + tau, FireType.GillespieEnhanced);
 
-			for (int alpha : dep.getDependent(mu)) {
-				dependent.set(alpha);
-			}
+      for (int alpha : dep.getDependent(mu)) {
+        dependent.set(alpha);
+      }
 
     }
 
-		for (int alpha = 0; alpha < dependent.size(); alpha++) {
-			if (dependent.getQuick(alpha)) {
-				a[alpha] = getPropensityCalculator().calculatePropensity(alpha, getAmountManager(), this);
-			}
-		}
+    for (int alpha = 0; alpha < dependent.size(); alpha++) {
+      if (dependent.getQuick(alpha)) {
+        a[alpha] = getPropensityCalculator().calculatePropensity(alpha, getAmountManager(), this);
+      }
+    }
 
     for (int i = 0; i < fast.size(); i++) {
       if (dependent.getQuick(i)) {
         if (fast.getQuick(i)) {
-					if (!isFast(i)) {
-						fast.clear(i);
-					}
+          if (!isFast(i)) {
+            fast.clear(i);
+          }
         } else {
-					if (isFast(i)) {
-						fast.set(i);
-					}
+          if (isFast(i)) {
+            fast.set(i);
+          }
 
         }
       }
@@ -136,9 +136,9 @@ public class HybridMaximalTimeStep extends Simulator {
     // advance in time
     t += delta;
 
-		if (Double.isInfinite(delta)) {
-			thetaEvent();
-		}
+    if (Double.isInfinite(delta)) {
+      thetaEvent();
+    }
   }
 
   /**
@@ -157,9 +157,9 @@ public class HybridMaximalTimeStep extends Simulator {
     for (int i = 0; i < a.length; i++) {
       if (!fast.getQuick(i)) {
         sum += a[i];
-				if (sum >= test) {
-					return i;
-				}
+        if (sum >= test) {
+          return i;
+        }
       }
     }
 
@@ -172,11 +172,11 @@ public class HybridMaximalTimeStep extends Simulator {
 
   private boolean condition1(int mu) {
     int[] r = getNet().getReactants(mu);
-		for (int i = 0; i < r.length; i++) {
-			if (getAmount(r[i]) < n) {
-				return false;
-			}
-		}
+    for (int i = 0; i < r.length; i++) {
+      if (getAmount(r[i]) < n) {
+        return false;
+      }
+    }
     return true;
   }
 
@@ -186,11 +186,11 @@ public class HybridMaximalTimeStep extends Simulator {
 
   private void partition() {
     fast.clear();
-		for (int i = 0; i < fast.size(); i++) {
-			if (isFast(i)) {
-				fast.set(i);
-			}
-		}
+    for (int i = 0; i < fast.size(); i++) {
+      if (isFast(i)) {
+        fast.set(i);
+      }
+    }
   }
 
   /**

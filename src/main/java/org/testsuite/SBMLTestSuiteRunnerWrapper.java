@@ -38,8 +38,7 @@ import java.util.Properties;
  * directory in SBML Test Runner. The SBML Test Runner then performs the comparison of the
  * simulation results against the reference output and creates the distance plots comparing this
  * results with the pre-defined results from SBML Test Suite. The comparison is performed using the
- * criteria specified in
- * <a href="http://sbml.org/Software/SBML_Test_Suite/Case_Descriptions#The_.22settings.22_file"
+ * criteria specified in <a href="http://sbml.org/Software/SBML_Test_Suite/Case_Descriptions#The_.22settings.22_file"
  * target="_blank">link</a>
  * </p>
  */

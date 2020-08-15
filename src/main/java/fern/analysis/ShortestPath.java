@@ -50,9 +50,9 @@ public class ShortestPath extends AnalysisBase {
     ShortestPathAction action = new ShortestPathAction(checker);
     bfs(speciesIndex, new int[0], action);
     Path[] re = new Path[network.getNumSpecies()];
-		for (int i = 0; i < re.length; i++) {
-			re[i] = action.getPath(i);
-		}
+    for (int i = 0; i < re.length; i++) {
+      re[i] = action.getPath(i);
+    }
     return re;
   }
 
@@ -83,17 +83,17 @@ public class ShortestPath extends AnalysisBase {
     ShortestPathAction action = new ShortestPathAction(checker);
     bfs(speciesIndex, new int[0], action);
     int toSpeciesIndex = network.getSpeciesByName(toSpecies);
-		if (toSpeciesIndex < 0) {
-			throw new IllegalArgumentException(toSpecies + " doesn't belong to the network!");
-		}
+    if (toSpeciesIndex < 0) {
+      throw new IllegalArgumentException(toSpecies + " doesn't belong to the network!");
+    }
     return action.getPath(toSpeciesIndex);
   }
 
   private int[] getSpeciesIndices(String[] species) {
     int[] speciesIndex = new int[species.length];
-		for (int i = 0; i < species.length; i++) {
-			speciesIndex[i] = network.getSpeciesByName(species[i]);
-		}
+    for (int i = 0; i < species.length; i++) {
+      speciesIndex[i] = network.getSpeciesByName(species[i]);
+    }
     return speciesIndex;
   }
 
@@ -133,9 +133,9 @@ public class ShortestPath extends AnalysisBase {
      */
     public int[] getSpecies() {
       int[] re = new int[(path.length + 1) / 2];
-			for (int i = path.length % 2 == 0 ? 1 : 0; i < path.length; i += 2) {
-				re[i / 2] = path[i];
-			}
+      for (int i = path.length % 2 == 0 ? 1 : 0; i < path.length; i += 2) {
+        re[i / 2] = path[i];
+      }
       return re;
     }
 
@@ -146,9 +146,9 @@ public class ShortestPath extends AnalysisBase {
      */
     public int[] getReactions() {
       int[] re = new int[path.length / 2];
-			for (int i = path.length % 2 == 0 ? 0 : 1; i < path.length; i += 2) {
-				re[i / 2] = path[i];
-			}
+      for (int i = path.length % 2 == 0 ? 0 : 1; i < path.length; i += 2) {
+        re[i / 2] = path[i];
+      }
       return re;
     }
 
@@ -159,9 +159,9 @@ public class ShortestPath extends AnalysisBase {
         sb.append(i % 2 == 0 ? network.getSpeciesName(path[i]) : network.getReactionName(path[i]));
         sb.append(", ");
       }
-			if (sb.length() > 0) {
-				sb.delete(sb.length() - 2, sb.length());
-			}
+      if (sb.length() > 0) {
+        sb.delete(sb.length() - 2, sb.length());
+      }
       return sb.toString();
     }
 
@@ -207,9 +207,9 @@ public class ShortestPath extends AnalysisBase {
       while (species >= 0) {
         path.add(0, species);
         reaction = speciesParent[species];
-				if (reaction < 0) {
-					break;
-				}
+        if (reaction < 0) {
+          break;
+        }
         path.add(0, reaction);
         species = reactionParent[reaction];
       }
@@ -254,20 +254,20 @@ public class ShortestPath extends AnalysisBase {
 
 
     public boolean checkReaction(int reaction, NeighborType neighborType) {
-			if (neighborType != NeighborType.Reactant) {
-				return false;
-			} else {
-				return checker == null ? true : checker.checkReactionNode(network, reaction);
-			}
+      if (neighborType != NeighborType.Reactant) {
+        return false;
+      } else {
+        return checker == null ? true : checker.checkReactionNode(network, reaction);
+      }
     }
 
 
     public boolean checkSpecies(int species, NeighborType neighborType) {
-			if (neighborType != NeighborType.Product) {
-				return false;
-			} else {
-				return checker == null ? true : checker.checkSpeciesNode(network, species);
-			}
+      if (neighborType != NeighborType.Product) {
+        return false;
+      } else {
+        return checker == null ? true : checker.checkSpeciesNode(network, species);
+      }
     }
 
 

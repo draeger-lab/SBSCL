@@ -145,7 +145,8 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
 
   /**
    * Enables models to be retrieved from a SED-ML archive format.<br> This method must be called
-   * <b>before</b> {@link #runSimulations()} is called, if a SED-ML archive is to be used as a model
+   * <b>before</b> {@link #runSimulations()} is called, if a SED-ML archive is to be used as a
+   * model
    * source.
    *
    * @param ac A non-{@code null} {@link ArchiveComponents} object.

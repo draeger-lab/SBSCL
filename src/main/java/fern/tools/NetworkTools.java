@@ -38,16 +38,16 @@ public class NetworkTools {
   public static double getConstantBySettingReactantsToStoich(Network net, int r) {
     int[] reactants = net.getReactants(r);
     int[] stoich = new int[net.getNumSpecies()];
-		for (int i = 0; i < reactants.length; i++) {
-			stoich[reactants[i]]++;
-		}
+    for (int i = 0; i < reactants.length; i++) {
+      stoich[reactants[i]]++;
+    }
 
     net.getAmountManager().save();
 
     // set amount to the stoich coeff
-		for (int s = 0; s < reactants.length; s++) {
-			net.getAmountManager().setAmount(reactants[s], stoich[reactants[s]]);
-		}
+    for (int s = 0; s < reactants.length; s++) {
+      net.getAmountManager().setAmount(reactants[s], stoich[reactants[s]]);
+    }
 
     double re = net.getPropensityCalculator()
         .calculatePropensity(r, net.getAmountManager(), new GillespieSimple(net));
@@ -66,19 +66,19 @@ public class NetworkTools {
    */
   public static boolean areEqual(Network a, Network b) {
     // species
-		for (int i = 0; i < a.getNumSpecies(); i++) {
-			if (b.getSpeciesByName(a.getSpeciesName(i)) < 0) {
-				return false;
-			}
-		}
-		if (a.getNumSpecies() != b.getNumSpecies()) {
-			return false;
-		}
+    for (int i = 0; i < a.getNumSpecies(); i++) {
+      if (b.getSpeciesByName(a.getSpeciesName(i)) < 0) {
+        return false;
+      }
+    }
+    if (a.getNumSpecies() != b.getNumSpecies()) {
+      return false;
+    }
 
     // reactions
-		if (a.getNumReactions() != b.getNumReactions()) {
-			return false;
-		}
+    if (a.getNumReactions() != b.getNumReactions()) {
+      return false;
+    }
 
     int[] checkAmounts = {1, 5, 10, 100};
     BitVector testedB = new BitVector(b.getNumReactions());
@@ -98,9 +98,9 @@ public class NetworkTools {
           break;
         }
       }
-			if (!found) {
-				break;
-			}
+      if (!found) {
+        break;
+      }
     }
 
     a.getAmountManager().rollback();
@@ -111,49 +111,49 @@ public class NetworkTools {
   private static boolean yieldSameProp(Network a, int ra, Network b, int rb, int[] checkAmounts,
       Simulator dummyA, Simulator dummyB) {
     for (int amount : checkAmounts) {
-			for (int i = 0; i < a.getReactants(ra).length; i++) {
-				a.getAmountManager().setAmount(a.getReactants(ra)[i], amount);
-			}
-			for (int i = 0; i < b.getReactants(rb).length; i++) {
-				b.getAmountManager().setAmount(b.getReactants(rb)[i], amount);
-			}
+      for (int i = 0; i < a.getReactants(ra).length; i++) {
+        a.getAmountManager().setAmount(a.getReactants(ra)[i], amount);
+      }
+      for (int i = 0; i < b.getReactants(rb).length; i++) {
+        b.getAmountManager().setAmount(b.getReactants(rb)[i], amount);
+      }
 
-			if (a.getPropensityCalculator().calculatePropensity(ra, a.getAmountManager(), dummyA) != b
-					.getPropensityCalculator().calculatePropensity(rb, b.getAmountManager(), dummyB)) {
-				return false;
-			}
+      if (a.getPropensityCalculator().calculatePropensity(ra, a.getAmountManager(), dummyA) != b
+          .getPropensityCalculator().calculatePropensity(rb, b.getAmountManager(), dummyB)) {
+        return false;
+      }
     }
     return true;
   }
 
   private static boolean haveSameStoich(Network a, int ra, Network b, int rb) {
-		if (a.getReactants(ra).length != b.getReactants(rb).length) {
-			return false;
-		}
-		if (a.getProducts(ra).length != b.getProducts(rb).length) {
-			return false;
-		}
+    if (a.getReactants(ra).length != b.getReactants(rb).length) {
+      return false;
+    }
+    if (a.getProducts(ra).length != b.getProducts(rb).length) {
+      return false;
+    }
 
     int[] aReactants = new int[a.getNumSpecies()];
     int[] aProducts = new int[a.getNumSpecies()];
 
-		for (int k = 0; k < a.getReactants(ra).length; k++) {
-			aReactants[a.getReactants(ra)[k]]++;
-		}
-		for (int k = 0; k < a.getProducts(ra).length; k++) {
-			aProducts[a.getProducts(ra)[k]]++;
-		}
+    for (int k = 0; k < a.getReactants(ra).length; k++) {
+      aReactants[a.getReactants(ra)[k]]++;
+    }
+    for (int k = 0; k < a.getProducts(ra).length; k++) {
+      aProducts[a.getProducts(ra)[k]]++;
+    }
 
-		for (int k = 0; k < b.getReactants(rb).length; k++) {
-			if (--aReactants[b.getReactants(rb)[k]] < 0) {
-				return false;
-			}
-		}
-		for (int k = 0; k < b.getProducts(rb).length; k++) {
-			if (--aProducts[b.getProducts(rb)[k]] < 0) {
-				return false;
-			}
-		}
+    for (int k = 0; k < b.getReactants(rb).length; k++) {
+      if (--aReactants[b.getReactants(rb)[k]] < 0) {
+        return false;
+      }
+    }
+    for (int k = 0; k < b.getProducts(rb).length; k++) {
+      if (--aProducts[b.getProducts(rb)[k]] < 0) {
+        return false;
+      }
+    }
 
     return true;
   }
@@ -163,11 +163,11 @@ public class NetworkTools {
    * Loads a network from file identifying the type (FernML/SBML).
    *
    * @param file network file
+   * @return network object
    * @throws JDOMException
    * @throws IOException
    * @throws FeatureNotSupportedException
    * @throws ClassNotFoundException
-   * @return network object
    */
   public static Network loadNetwork(File file)
       throws IOException, JDOMException, FeatureNotSupportedException, ClassNotFoundException {
@@ -183,12 +183,12 @@ public class NetworkTools {
    */
   public static String getSpeciesNameWithAmount(Network net, int... species) {
     StringBuilder sb = new StringBuilder();
-		for (int s : species) {
-			sb.append(net.getSpeciesName(s) + "(" + net.getAmountManager().getAmount(s) + ")\n");
-		}
-		if (sb.length() > 0) {
-			sb.deleteCharAt(sb.length() - 1);
-		}
+    for (int s : species) {
+      sb.append(net.getSpeciesName(s) + "(" + net.getAmountManager().getAmount(s) + ")\n");
+    }
+    if (sb.length() > 0) {
+      sb.deleteCharAt(sb.length() - 1);
+    }
     return sb.toString();
   }
 
@@ -203,20 +203,20 @@ public class NetworkTools {
   public static String getReactionNameWithAmounts(Network net, int... reactions) {
     StringBuilder sb = new StringBuilder();
     for (int reaction : reactions) {
-			for (int i : net.getReactants(reaction)) {
-				sb.append(getSpeciesNameWithAmount(net, i) + "+");
-			}
+      for (int i : net.getReactants(reaction)) {
+        sb.append(getSpeciesNameWithAmount(net, i) + "+");
+      }
       sb.deleteCharAt(sb.length() - 1);
       sb.append("->");
-			for (int i : net.getProducts(reaction)) {
-				sb.append(getSpeciesNameWithAmount(net, i) + "+");
-			}
+      for (int i : net.getProducts(reaction)) {
+        sb.append(getSpeciesNameWithAmount(net, i) + "+");
+      }
       sb.deleteCharAt(sb.length() - 1);
       sb.append("\n");
     }
-		if (sb.length() > 0) {
-			sb.deleteCharAt(sb.length() - 1);
-		}
+    if (sb.length() > 0) {
+      sb.deleteCharAt(sb.length() - 1);
+    }
     return sb.toString();
   }
 
@@ -230,9 +230,9 @@ public class NetworkTools {
    */
   public static String[] getReactionNames(Network net, int[] reaction) {
     String[] re = new String[reaction.length];
-		for (int i = 0; i < re.length; i++) {
-			re[i] = net.getReactionName(reaction[i]);
-		}
+    for (int i = 0; i < re.length; i++) {
+      re[i] = net.getReactionName(reaction[i]);
+    }
     return re;
   }
 
@@ -245,9 +245,9 @@ public class NetworkTools {
    */
   public static String[] getSpeciesNames(Network net, int[] species) {
     String[] re = new String[species.length];
-		for (int i = 0; i < re.length; i++) {
-			re[i] = net.getSpeciesName(species[i]);
-		}
+    for (int i = 0; i < re.length; i++) {
+      re[i] = net.getSpeciesName(species[i]);
+    }
     return re;
   }
 
@@ -262,9 +262,9 @@ public class NetworkTools {
     int[] re = new int[speciesName.length];
     for (int i = 0; i < speciesName.length; i++) {
       re[i] = net.getSpeciesByName(speciesName[i]);
-			if (re[i] == -1) {
-				throw new IllegalArgumentException("Species " + speciesName[i] + " unknown!");
-			}
+      if (re[i] == -1) {
+        throw new IllegalArgumentException("Species " + speciesName[i] + " unknown!");
+      }
     }
     return re;
   }
@@ -280,16 +280,16 @@ public class NetworkTools {
     BitVector re = new BitVector(net.getNumReactions());
     BitVector species = NumberTools.getContentAsBitVector(getSpeciesIndices(net, speciesName));
     for (int r = 0; r < net.getNumReactions(); r++) {
-			for (int reactant : net.getReactants(r)) {
-				if (reactant < species.size() && species.get(reactant)) {
-					re.set(r);
-				}
-			}
-			for (int product : net.getProducts(r)) {
-				if (product < species.size() && species.get(product)) {
-					re.set(r);
-				}
-			}
+      for (int reactant : net.getReactants(r)) {
+        if (reactant < species.size() && species.get(reactant)) {
+          re.set(r);
+        }
+      }
+      for (int product : net.getProducts(r)) {
+        if (product < species.size() && species.get(product)) {
+          re.set(r);
+        }
+      }
     }
     return NumberTools.getContentAsArray(re);
   }
@@ -315,14 +315,14 @@ public class NetworkTools {
   public static void dumpNetwork(Network net, Writer writer) throws IOException {
     AnnotationManager prop = net.getAnnotationManager();
     KineticConstantPropensityCalculator konst = null;
-		if (net.getPropensityCalculator() instanceof KineticConstantPropensityCalculator) {
-			konst = (KineticConstantPropensityCalculator) net.getPropensityCalculator();
-		}
+    if (net.getPropensityCalculator() instanceof KineticConstantPropensityCalculator) {
+      konst = (KineticConstantPropensityCalculator) net.getPropensityCalculator();
+    }
 
     writer.append(" {");
-		for (String typ : prop.getNetworkAnnotationTypes()) {
-			writer.append(typ + "=" + prop.getNetworkAnnotation(typ) + ",");
-		}
+    for (String typ : prop.getNetworkAnnotationTypes()) {
+      writer.append(typ + "=" + prop.getNetworkAnnotation(typ) + ",");
+    }
     writer.append("}\n");
 
     writer.append("\n");
@@ -330,22 +330,22 @@ public class NetworkTools {
     for (int i = 0; i < net.getNumSpecies(); i++) {
       writer.append(i + " " + net.getSpeciesName(i));
       writer.append(" {");
-			for (String typ : prop.getSpeciesAnnotationTypes(i)) {
-				writer.append(typ + "=" + prop.getSpeciesAnnotation(i, typ) + ",");
-			}
+      for (String typ : prop.getSpeciesAnnotationTypes(i)) {
+        writer.append(typ + "=" + prop.getSpeciesAnnotation(i, typ) + ",");
+      }
       writer.append("}\n");
     }
     writer.append("\n");
     writer.append("Reactions:\n");
     for (int i = 0; i < net.getNumReactions(); i++) {
       writer.append(i + " " + net.getReactionName(i));
-			if (konst != null) {
-				writer.append(" k=" + konst.getConstant(i));
-			}
+      if (konst != null) {
+        writer.append(" k=" + konst.getConstant(i));
+      }
       writer.append(" {");
-			for (String typ : prop.getReactionAnnotationTypes(i)) {
-				writer.append(typ + "=" + prop.getReactionAnnotation(i, typ) + ",");
-			}
+      for (String typ : prop.getReactionAnnotationTypes(i)) {
+        writer.append(typ + "=" + prop.getReactionAnnotation(i, typ) + ",");
+      }
       writer.append("}\n");
       writer.flush();
     }
@@ -384,9 +384,9 @@ public class NetworkTools {
     writer.write(astNode.toString());
     writer.write("\n");
     indend.append(" ");
-		for (ASTNode child : astNode.getChildren()) {
-			dumpMathTreeNode(child, writer, indend);
-		}
+    for (ASTNode child : astNode.getChildren()) {
+      dumpMathTreeNode(child, writer, indend);
+    }
     indend.deleteCharAt(0);
   }
 
@@ -396,9 +396,9 @@ public class NetworkTools {
    * @param net network.
    */
   public static void useActualAmountAsInitialAmount(Network net) {
-		for (int i = 0; i < net.getNumSpecies(); i++) {
-			net.setInitialAmount(i, net.getAmountManager().getAmount(i));
-		}
+    for (int i = 0; i < net.getNumSpecies(); i++) {
+      net.setInitialAmount(i, net.getAmountManager().getAmount(i));
+    }
   }
 
 

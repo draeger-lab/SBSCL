@@ -57,11 +57,11 @@ public class ArrayMatrixAxes extends Axes {
    */
   protected void checkMatrix() {
     int cols = Array.getLength(Array.get(array, 0));
-		for (int i = 0; i < Array.getLength(array); i++) {
-			if (Array.getLength(Array.get(array, i)) != cols) {
-				throw new IllegalArgumentException("Obejct is not an array matrix");
-			}
-		}
+    for (int i = 0; i < Array.getLength(array); i++) {
+      if (Array.getLength(Array.get(array, i)) != cols) {
+        throw new IllegalArgumentException("Obejct is not an array matrix");
+      }
+    }
   }
 
   @Override
@@ -98,12 +98,12 @@ public class ArrayMatrixAxes extends Axes {
         String s = itAdd.hasNext() ? itAdd.next() : "";
 
         StringBuilder sb = new StringBuilder();
-				for (int i = 0; i < Array.getLength(Array.get(array, 0)); i++) {
-					sb.append(Array.get(o, i).toString() + "\t");
-				}
-				if (sb.length() > 0) {
-					sb.deleteCharAt(sb.length() - 1);
-				}
+        for (int i = 0; i < Array.getLength(Array.get(array, 0)); i++) {
+          sb.append(Array.get(o, i).toString() + "\t");
+        }
+        if (sb.length() > 0) {
+          sb.deleteCharAt(sb.length() - 1);
+        }
         return sb.toString() + s;
 
       }

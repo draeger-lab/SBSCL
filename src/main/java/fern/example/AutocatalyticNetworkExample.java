@@ -69,9 +69,9 @@ public class AutocatalyticNetworkExample {
     System.out.println("Autocatalytic Subnet");
     NetworkTools.dumpNetwork(autoNet);
     ShortestPath sp = new ShortestPath(autoNet);
-		for (Path p : sp.computePaths("A", "B")) {
-			System.out.println(p);
-		}
+    for (Path p : sp.computePaths("A", "B")) {
+      System.out.println(p);
+    }
 
     /*
      * Create a network that can be simulated and print it out.
@@ -128,23 +128,23 @@ public class AutocatalyticNetworkExample {
 
     public String[] getStyles() {
       String[] styles = new String[getSimulator().getNet().getNumReactions()];
-			for (int i = 0; i < styles.length; i++) {
-				styles[i] = "with lines lt " + getReactionColorSpec(i);
-			}
+      for (int i = 0; i < styles.length; i++) {
+        styles[i] = "with lines lt " + getReactionColorSpec(i);
+      }
       return styles;
 
     }
 
     private int getReactionColorSpec(int r) {
-			if (getSimulator().getNet().getAnnotationManager()
-					.containsReactionAnnotation(r, "Autocatalytic")) {
-				return 1;
-			} else if (getSimulator().getNet().getAnnotationManager()
-					.containsReactionAnnotation(r, "Catalysts")) {
-				return 2;
-			} else {
-				return 3;
-			}
+      if (getSimulator().getNet().getAnnotationManager()
+          .containsReactionAnnotation(r, "Autocatalytic")) {
+        return 1;
+      } else if (getSimulator().getNet().getAnnotationManager()
+          .containsReactionAnnotation(r, "Catalysts")) {
+        return 2;
+      } else {
+        return 3;
+      }
     }
 
 

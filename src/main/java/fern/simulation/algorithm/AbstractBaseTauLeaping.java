@@ -50,23 +50,23 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
   public AbstractBaseTauLeaping(Network net) {
     super(net);
     reactantHistos = new Map[net.getNumReactions()];
-		for (int i = 0; i < reactantHistos.length; i++) {
-			reactantHistos[i] = NumberTools.createHistogramAsMap(net.getReactants(i));
-		}
+    for (int i = 0; i < reactantHistos.length; i++) {
+      reactantHistos[i] = NumberTools.createHistogramAsMap(net.getReactants(i));
+    }
     productHistos = new Map[net.getNumReactions()];
-		for (int i = 0; i < productHistos.length; i++) {
-			productHistos[i] = NumberTools.createHistogramAsMap(net.getProducts(i));
-		}
+    for (int i = 0; i < productHistos.length; i++) {
+      productHistos[i] = NumberTools.createHistogramAsMap(net.getProducts(i));
+    }
 
     v = new int[net.getNumSpecies()][net.getNumReactions()];
     for (int species = 0; species < v.length; species++) {
       for (int reaction = 0; reaction < v[species].length; reaction++) {
-				if (reactantHistos[reaction].containsKey(species)) {
-					v[species][reaction] -= reactantHistos[reaction].get(species);
-				}
-				if (productHistos[reaction].containsKey(species)) {
-					v[species][reaction] = productHistos[reaction].get(species);
-				}
+        if (reactantHistos[reaction].containsKey(species)) {
+          v[species][reaction] -= reactantHistos[reaction].get(species);
+        }
+        if (productHistos[reaction].containsKey(species)) {
+          v[species][reaction] = productHistos[reaction].get(species);
+        }
       }
     }
   }
@@ -87,11 +87,11 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
    */
   protected double chooseTauCriticals(BitVector criticals) {
     double a_sum_c = 0;
-		for (int i = 0; i < getNet().getNumReactions(); i++) {
-			if (criticals.get(i)) {
-				a_sum_c += a[i];
-			}
-		}
+    for (int i = 0; i < getNet().getNumReactions(); i++) {
+      if (criticals.get(i)) {
+        a_sum_c += a[i];
+      }
+    }
 
     return stochastics.getExponential(a_sum_c);
   }
@@ -112,15 +112,15 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
     double tau1, tau2, tau3;
 
     recalculatePropensities();
-		if (Double.isInfinite(getTime())) {
-			return;
-		}
+    if (Double.isInfinite(getTime())) {
+      return;
+    }
 
     tau3 = getNextThetaEvent() - getTime();
 
-		while (control.goOn(this) && getNextThetaEvent() <= getTime()) {
-			thetaEvent();
-		}
+    while (control.goOn(this) && getNextThetaEvent() <= getTime()) {
+      thetaEvent();
+    }
 
     if (verbose) {
       System.out.println("Step started at (" + getTime() + ")\n-----------------\n");
@@ -129,61 +129,61 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
 
     identifyCriticals();
 
-		if (verbose) {
-			System.out.println("critical reactions: \n" + NetworkTools
-					.getReactionNameWithAmounts(getNet(), NumberTools.getContentAsArray(criticals)) + "\n");
-		}
+    if (verbose) {
+      System.out.println("critical reactions: \n" + NetworkTools
+          .getReactionNameWithAmounts(getNet(), NumberTools.getContentAsArray(criticals)) + "\n");
+    }
 
     tau1 = chooseTauNonCriticals(criticals);
 
     boolean success = false;
     while (!success) {
 
-			if (verbose) {
-				System.out.println("Chose tau': " + tau1);
-			}
+      if (verbose) {
+        System.out.println("Chose tau': " + tau1);
+      }
 
       if (tau1 < useSimpleFactor / a_sum) {
-				if (verbose) {
-					System.out.println("Perform " + numSimpleCalls + " SSA steps");
-				}
+        if (verbose) {
+          System.out.println("Perform " + numSimpleCalls + " SSA steps");
+        }
 
-				for (int i = 0; i < numSimpleCalls && control.goOn(this); i++) {
-					super.performStep(control);
-				}
+        for (int i = 0; i < numSimpleCalls && control.goOn(this); i++) {
+          super.performStep(control);
+        }
         success = true;
       } else {
         tau2 = chooseTauCriticals(criticals);
 
-				if (verbose) {
-					System.out.println("Chose tau'': " + tau2);
-				}
+        if (verbose) {
+          System.out.println("Chose tau'': " + tau2);
+        }
 
         getNet().getAmountManager().save();
         if (tau3 < tau1 && tau3 < tau2) {
           success = leapBy(tau3, criticals, FireType.TauLeapNonCritical);
-					if (verbose) {
-						System.out.println("Leaped to theta");
-					}
+          if (verbose) {
+            System.out.println("Leaped to theta");
+          }
         } else if (tau1 < tau2) {
           success = leapBy(tau1, criticals, FireType.TauLeapNonCritical);
-					if (verbose) {
-						System.out.println("Leaped tau'");
-					}
+          if (verbose) {
+            System.out.println("Leaped tau'");
+          }
 
         } else {
           int crit = identifyTheOnlyCriticalReaction(criticals);
           fireReaction(crit, t + tau2, FireType.TauLeapCritical);
           success = leapBy(tau2, criticals, FireType.TauLeapCritical);
-					if (verbose) {
-						System.out.println("Leaped tau''");
-					}
+          if (verbose) {
+            System.out.println("Leaped tau''");
+          }
         }
 
         if (!success) {
-					if (verbose) {
-						System.out.println("Not successful, decrease tau'!");
-					}
+          if (verbose) {
+            System.out.println("Not successful, decrease tau'!");
+          }
 
           tau1 /= 2.0;
           getNet().getAmountManager().rollback();
@@ -191,9 +191,9 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
       }
     }
 
-		if (verbose) {
-			System.out.println("\n-----------------\nStep done at (" + getTime() + ")!\n");
-		}
+    if (verbose) {
+      System.out.println("\n-----------------\nStep done at (" + getTime() + ")!\n");
+    }
   }
 
 
@@ -205,9 +205,9 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
       a_sum += a[i];
     }
 
-		if (a_sum == 0) {
-			t = Double.POSITIVE_INFINITY;
-		}
+    if (a_sum == 0) {
+      t = Double.POSITIVE_INFINITY;
+    }
   }
 
   /**
@@ -219,24 +219,24 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
    */
   private int identifyTheOnlyCriticalReaction(BitVector criticals) {
     double a_critical_sum = 0;
-		for (int j = 0; j < criticals.size(); j++) {
-			if (criticals.get(j)) {
-				a_critical_sum += a[j];
-			}
-		}
+    for (int j = 0; j < criticals.size(); j++) {
+      if (criticals.get(j)) {
+        a_critical_sum += a[j];
+      }
+    }
 
     double r2 = stochastics.getUnif();
     double test = r2 * a_critical_sum;
 
     double sum = 0;
     for (int i = 0; i < criticals.size(); i++) {
-			if (!criticals.get(i)) {
-				continue;
-			}
+      if (!criticals.get(i)) {
+        continue;
+      }
       sum += a[i];
-			if (sum >= test) {
-				return i;
-			}
+      if (sum >= test) {
+        return i;
+      }
     }
 
     throw new RuntimeException("Drawing variable aborted!");
@@ -249,17 +249,17 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
    * @return Bitvector identifying the critical reactions
    */
   private void identifyCriticals() {
-		if (criticals == null) {
-			criticals = new BitVector(getNet().getNumReactions());
-		} else {
-			criticals.clear();
-		}
+    if (criticals == null) {
+      criticals = new BitVector(getNet().getNumReactions());
+    } else {
+      criticals.clear();
+    }
 
-		for (int j = 0; j < criticals.size(); j++) {
-			if (a[j] > 0 && computeL(j) < nCritical) {
-				criticals.set(j);
-			}
-		}
+    for (int j = 0; j < criticals.size(); j++) {
+      if (a[j] > 0 && computeL(j) < nCritical) {
+        criticals.set(j);
+      }
+    }
   }
 
   /**
@@ -273,10 +273,10 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
     int firings = Integer.MAX_VALUE;
 
     Map<Integer, Integer> reactantHisto = this.reactantHistos[reaction];
-		for (Integer reactant : reactantHisto.keySet()) {
-			firings = Math.min(firings,
-					(int) Math.floor(getAmountManager().getAmount(reactant) / reactantHisto.get(reactant)));
-		}
+    for (Integer reactant : reactantHisto.keySet()) {
+      firings = Math.min(firings,
+          (int) Math.floor(getAmountManager().getAmount(reactant) / reactantHisto.get(reactant)));
+    }
 
     return firings;
   }
@@ -299,24 +299,24 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
       int times;
       double at;
       for (int i = 0; i < getNet().getNumReactions(); i++) {
-				if (criticals.get(i)) {
-					continue;
-				}
+        if (criticals.get(i)) {
+          continue;
+        }
         at = a[i] * tau;
-				if (at > langevinThreshold) {
-					times = Math.max(0, (int) Math.round(at + Math.sqrt(at) * stochastics.getNormal()));
-				} else {
-					times = stochastics.getPoisson(at);
-				}
-				if (times > 0) {
-					fireReaction(i, t, t + tau, times, fireType);
-				}
+        if (at > langevinThreshold) {
+          times = Math.max(0, (int) Math.round(at + Math.sqrt(at) * stochastics.getNormal()));
+        } else {
+          times = stochastics.getPoisson(at);
+        }
+        if (times > 0) {
+          fireReaction(i, t, t + tau, times, fireType);
+        }
         max = Math.max(max, times);
         sum += times;
       }
-			if (verbose) {
-				System.out.println("Sum=" + sum + " Max=" + max);
-			}
+      if (verbose) {
+        System.out.println("Sum=" + sum + " Max=" + max);
+      }
       t += tau;
       return true;
     } catch (RuntimeException e) {

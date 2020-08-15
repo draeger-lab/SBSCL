@@ -22,8 +22,8 @@ public interface GnuPlotObserver {
   /**
    * Creates a new {@link GnuPlot} object and passes the actual observer data to it.
    *
-   * @throws IOException if gnuplot could not be accessed
    * @return the created <code>GnuPlot</code> object
+   * @throws IOException if gnuplot could not be accessed
    */
   public GnuPlot toGnuplot() throws IOException;
 
@@ -31,8 +31,8 @@ public interface GnuPlotObserver {
    * Passes the actual observer data to a {@link GnuPlot} object.
    *
    * @param gnuplot the <code>GnuPlot</code> object to pass the data to
-   * @throws IOException if gnuplot could not be accessed
    * @return the <code>GnuPlot</code> object
+   * @throws IOException if gnuplot could not be accessed
    */
   public GnuPlot toGnuplot(GnuPlot gnuplot) throws IOException;
 

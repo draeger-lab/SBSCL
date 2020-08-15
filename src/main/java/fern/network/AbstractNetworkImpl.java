@@ -131,19 +131,19 @@ public abstract class AbstractNetworkImpl implements Network {
 
   public String getReactionName(int index) {
     StringBuilder sb = new StringBuilder();
-		for (int i : getReactants(index)) {
-			sb.append(getSpeciesName(i) + "+");
-		}
-		if (sb.length() > 0) {
-			sb.deleteCharAt(sb.length() - 1);
-		}
+    for (int i : getReactants(index)) {
+      sb.append(getSpeciesName(i) + "+");
+    }
+    if (sb.length() > 0) {
+      sb.deleteCharAt(sb.length() - 1);
+    }
     sb.append("->");
-		for (int i : getProducts(index)) {
-			sb.append(getSpeciesName(i) + "+");
-		}
-		if (getProducts(index).length > 0) {
-			sb.deleteCharAt(sb.length() - 1);
-		}
+    for (int i : getProducts(index)) {
+      sb.append(getSpeciesName(i) + "+");
+    }
+    if (getProducts(index).length > 0) {
+      sb.deleteCharAt(sb.length() - 1);
+    }
     return sb.toString();
   }
 

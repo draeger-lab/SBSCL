@@ -11,9 +11,9 @@ import fern.network.AnnotationManager;
 
 /**
  * <code>AnnotationManager</code> for {@link FernMLNetwork}s. The data is not copied but maintained
- * within the tree (which should not be an efficiency
- * issue except you want to use the annotations to store user data of reactions / species and do
- * this very excessive - so don't do that). This avoids problems when saving the
+ * within the tree (which should not be an efficiency issue except you want to use the annotations
+ * to store user data of reactions / species and do this very excessive - so don't do that). This
+ * avoids problems when saving the
  * <code>FernMLNetwork</code> again.
  *
  * @author Florian Erhard
@@ -62,38 +62,38 @@ public class FernMLAnnotationManager implements AnnotationManager {
 
 
   private boolean containsAnnotation(List<Element> annotations, String typ) {
-		for (Element e : annotations) {
-			if (e.getAttributeValue(NAME).equals(typ)) {
-				return true;
-			}
-		}
+    for (Element e : annotations) {
+      if (e.getAttributeValue(NAME).equals(typ)) {
+        return true;
+      }
+    }
     return false;
   }
 
   private String getAnnotation(List<Element> annotations, String typ) {
-		for (Element e : annotations) {
-			if (e.getAttributeValue(NAME).equals(typ)) {
-				return e.getText();
-			}
-		}
+    for (Element e : annotations) {
+      if (e.getAttributeValue(NAME).equals(typ)) {
+        return e.getText();
+      }
+    }
     return null;
   }
 
   private Collection<String> getAnnotationTypes(List<Element> annotations) {
     ArrayList<String> re = new ArrayList<String>(annotations.size());
-		for (Element e : annotations) {
-			re.add(e.getAttributeValue(NAME));
-		}
+    for (Element e : annotations) {
+      re.add(e.getAttributeValue(NAME));
+    }
     return re;
   }
 
   private void setAnnotation(List<Element> annotations, String typ, String annotation) {
-		for (Element e : annotations) {
-			if (e.getAttributeValue(NAME).equals(typ)) {
-				e.setText(annotation);
-				return;
-			}
-		}
+    for (Element e : annotations) {
+      if (e.getAttributeValue(NAME).equals(typ)) {
+        e.setText(annotation);
+        return;
+      }
+    }
     Element e = new Element("annotation");
     e.setAttribute(NAME, typ);
     e.setText(annotation);
@@ -102,33 +102,33 @@ public class FernMLAnnotationManager implements AnnotationManager {
 
   @SuppressWarnings("unchecked")
   public boolean containsNetworkAnnotation(String typ) {
-		if (root.getChild(LIST_OF_ANNOTATIONS) == null) {
-			return false;
-		}
+    if (root.getChild(LIST_OF_ANNOTATIONS) == null) {
+      return false;
+    }
     return containsAnnotation(root.getChild(LIST_OF_ANNOTATIONS).getChildren(), typ);
   }
 
   @SuppressWarnings("unchecked")
   public String getNetworkAnnotation(String typ) {
-		if (root.getChild(LIST_OF_ANNOTATIONS) == null) {
-			return null;
-		}
+    if (root.getChild(LIST_OF_ANNOTATIONS) == null) {
+      return null;
+    }
     return getAnnotation(root.getChild(LIST_OF_ANNOTATIONS).getChildren(), typ);
   }
 
   @SuppressWarnings("unchecked")
   public Collection<String> getNetworkAnnotationTypes() {
-		if (root.getChild(LIST_OF_ANNOTATIONS) == null) {
-			return new LinkedList<String>();
-		}
+    if (root.getChild(LIST_OF_ANNOTATIONS) == null) {
+      return new LinkedList<String>();
+    }
     return getAnnotationTypes(root.getChild(LIST_OF_ANNOTATIONS).getChildren());
   }
 
   @SuppressWarnings("unchecked")
   public void setNetworkAnnotation(String typ, String annotation) {
-		if (root.getChild(LIST_OF_ANNOTATIONS) == null) {
-			root.getChildren().add(0, new Element(LIST_OF_ANNOTATIONS));
-		}
+    if (root.getChild(LIST_OF_ANNOTATIONS) == null) {
+      root.getChildren().add(0, new Element(LIST_OF_ANNOTATIONS));
+    }
     setAnnotation(root.getChild(LIST_OF_ANNOTATIONS).getChildren(), typ, annotation);
   }
 
@@ -136,27 +136,27 @@ public class FernMLAnnotationManager implements AnnotationManager {
   @SuppressWarnings("unchecked")
   public boolean containsReactionAnnotation(int reaction, String typ) {
     Element el = findReaction(reaction);
-		if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
-			return false;
-		}
+    if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
+      return false;
+    }
     return containsAnnotation(el.getChild(LIST_OF_ANNOTATIONS).getChildren(), typ);
   }
 
   @SuppressWarnings("unchecked")
   public String getReactionAnnotation(int reaction, String typ) {
     Element el = findReaction(reaction);
-		if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
-			return null;
-		}
+    if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
+      return null;
+    }
     return getAnnotation(el.getChild(LIST_OF_ANNOTATIONS).getChildren(), typ);
   }
 
   @SuppressWarnings("unchecked")
   public Collection<String> getReactionAnnotationTypes(int reaction) {
     Element el = findReaction(reaction);
-		if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
-			return new LinkedList<String>();
-		}
+    if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
+      return new LinkedList<String>();
+    }
     return getAnnotationTypes(el.getChild(LIST_OF_ANNOTATIONS).getChildren());
   }
 
@@ -164,9 +164,9 @@ public class FernMLAnnotationManager implements AnnotationManager {
   public void setReactionAnnotation(int reaction, String typ,
       String annotation) {
     Element el = findReaction(reaction);
-		if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
-			el.getChildren().add(0, new Element(LIST_OF_ANNOTATIONS));
-		}
+    if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
+      el.getChildren().add(0, new Element(LIST_OF_ANNOTATIONS));
+    }
     setAnnotation(el.getChild(LIST_OF_ANNOTATIONS).getChildren(), typ, annotation);
   }
 
@@ -174,36 +174,36 @@ public class FernMLAnnotationManager implements AnnotationManager {
   @SuppressWarnings("unchecked")
   public boolean containsSpeciesAnnotation(int species, String typ) {
     Element el = (Element) root.getChild(LIST_OF_SPECIES).getChildren().get(species);
-		if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
-			return false;
-		}
+    if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
+      return false;
+    }
     return containsAnnotation(el.getChild(LIST_OF_ANNOTATIONS).getChildren(), typ);
   }
 
   @SuppressWarnings("unchecked")
   public String getSpeciesAnnotation(int species, String typ) {
     Element el = (Element) root.getChild(LIST_OF_SPECIES).getChildren().get(species);
-		if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
-			return null;
-		}
+    if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
+      return null;
+    }
     return getAnnotation(el.getChild(LIST_OF_ANNOTATIONS).getChildren(), typ);
   }
 
   @SuppressWarnings("unchecked")
   public Collection<String> getSpeciesAnnotationTypes(int species) {
     Element el = (Element) root.getChild(LIST_OF_SPECIES).getChildren().get(species);
-		if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
-			return new LinkedList<String>();
-		}
+    if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
+      return new LinkedList<String>();
+    }
     return getAnnotationTypes(el.getChild(LIST_OF_ANNOTATIONS).getChildren());
   }
 
   @SuppressWarnings("unchecked")
   public void setSpeciesAnnotation(int species, String typ, String annotation) {
     Element el = (Element) root.getChild(LIST_OF_SPECIES).getChildren().get(species);
-		if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
-			el.getChildren().add(0, new Element(LIST_OF_ANNOTATIONS));
-		}
+    if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
+      el.getChildren().add(0, new Element(LIST_OF_ANNOTATIONS));
+    }
     setAnnotation(el.getChild(LIST_OF_ANNOTATIONS).getChildren(), typ, annotation);
   }
 

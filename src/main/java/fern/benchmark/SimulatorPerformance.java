@@ -67,14 +67,14 @@ public abstract class SimulatorPerformance extends Benchmark {
     };
 
     simulatorNames = new String[simulators.length];
-		for (int i = 0; i < simulatorNames.length; i++) {
-			simulatorNames[i] = simulators[i].getName();
-		}
+    for (int i = 0; i < simulatorNames.length; i++) {
+      simulatorNames[i] = simulators[i].getName();
+    }
 
     indices = new int[simulators.length];
-		for (int i = 0; i < indices.length; i++) {
-			indices[i] = i;
-		}
+    for (int i = 0; i < indices.length; i++) {
+      indices[i] = i;
+    }
   }
 
   /**
@@ -93,18 +93,18 @@ public abstract class SimulatorPerformance extends Benchmark {
     double[] d = new double[simulators.length];
     for (int i = 0; i < indices.length; i++) {
       start();
-			if (simulators[indices[i]] != null) {
-				simulators[indices[i]].start(getController(indices[i]));
-			}
+      if (simulators[indices[i]] != null) {
+        simulators[indices[i]].start(getController(indices[i]));
+      }
       d[indices[i]] = end() * Math.pow(10, -9);
     }
     addData(d);
 
     count++;
 
-		if (count % showSteps == 0) {
-			present();
-		}
+    if (count % showSteps == 0) {
+      present();
+    }
   }
 
 

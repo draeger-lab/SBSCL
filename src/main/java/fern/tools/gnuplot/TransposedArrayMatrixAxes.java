@@ -78,12 +78,12 @@ public class TransposedArrayMatrixAxes extends ArrayMatrixAxes {
         String s = itAdd.hasNext() ? itAdd.next() : "";
 
         StringBuilder sb = new StringBuilder();
-				for (int i = 0; i < Array.getLength(array); i++) {
-					sb.append(Array.get(Array.get(array, i), index).toString() + "\t");
-				}
-				if (sb.length() > 0) {
-					sb.deleteCharAt(sb.length() - 1);
-				}
+        for (int i = 0; i < Array.getLength(array); i++) {
+          sb.append(Array.get(Array.get(array, i), index).toString() + "\t");
+        }
+        if (sb.length() > 0) {
+          sb.deleteCharAt(sb.length() - 1);
+        }
         index++;
         return sb.toString() + s;
 

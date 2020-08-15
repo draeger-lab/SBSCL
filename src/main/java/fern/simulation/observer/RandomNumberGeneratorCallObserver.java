@@ -48,16 +48,16 @@ public class RandomNumberGeneratorCallObserver extends Observer implements GnuPl
    */
   @Override
   public void finished() {
-		if (numCalls == null) {
-			numCalls = NumberTools.convertIntToDouble(Stochastics.getInstance().getCounts());
-		} else {
-			int[] act = Stochastics.getInstance().getCounts();
-			for (int i = 0; i < numCalls.length; i++) {
-				numCalls[i] =
-						(numCalls[i] * (double) getNumSimulations() + act[i]) / ((double) getNumSimulations()
-								+ 1.0);
-			}
-		}
+    if (numCalls == null) {
+      numCalls = NumberTools.convertIntToDouble(Stochastics.getInstance().getCounts());
+    } else {
+      int[] act = Stochastics.getInstance().getCounts();
+      for (int i = 0; i < numCalls.length; i++) {
+        numCalls[i] =
+            (numCalls[i] * (double) getNumSimulations() + act[i]) / ((double) getNumSimulations()
+                + 1.0);
+      }
+    }
 
   }
 
@@ -96,9 +96,9 @@ public class RandomNumberGeneratorCallObserver extends Observer implements GnuPl
   }
 
   public GnuPlot toGnuplot(GnuPlot gnuplot) {
-		if (gnuplot == null) {
-			return null;
-		}
+    if (gnuplot == null) {
+      return null;
+    }
     if (!addedTitles.contains(gnuplot)) {
       gnuplot.addCommand(getTitlesCommand(Stochastics.getInstance().getNames()));
       addedTitles.add(gnuplot);

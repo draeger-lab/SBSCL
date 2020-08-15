@@ -67,9 +67,9 @@ public abstract class AbstractKineticConstantPropensityCalculator implements
   public double calculatePropensity(int reaction, AmountManager amount, Simulator sim) {
     double re = getConstant(reaction);
     double volume = sim.getVolume();
-		if (volume > 0) {
-			re = getConstantFromDeterministicRateConstant(re, reaction, volume);
-		}
+    if (volume > 0) {
+      re = getConstantFromDeterministicRateConstant(re, reaction, volume);
+    }
     for (int i = 0; i < reactantHistosKeys[reaction].length;
         i++) { //int r : reactantHistos[reaction].keySet()) {
       int freq = reactantHistosVals[reaction][i];
@@ -79,9 +79,9 @@ public abstract class AbstractKineticConstantPropensityCalculator implements
       }
       re /= NumberTools.faculty(freq);
     }
-		if (re < 0) {
-			throw new RuntimeException("Propensity < 0");
-		}
+    if (re < 0) {
+      throw new RuntimeException("Propensity < 0");
+    }
     return Math.abs(re);
   }
 
@@ -107,22 +107,22 @@ public abstract class AbstractKineticConstantPropensityCalculator implements
     int histoIndex = -1;
 
     double re = getConstant(reaction);
-		if (volume > 0) {
-			re = getConstantFromDeterministicRateConstant(re, reaction, volume);
-		}
+    if (volume > 0) {
+      re = getConstantFromDeterministicRateConstant(re, reaction, volume);
+    }
 
     for (int i = 0; i < reactantHistosKeys[reaction].length;
         i++) { //int r : reactantHistos[reaction].keySet()) {
       int freq = reactantHistosVals[reaction][i];
       int r = reactantHistosKeys[reaction][i];
-			if (speciesIndex == r) {
-				histoIndex = i;
-			} else {
-				for (int f = 0; f < freq; f++) {
-					re *= (amount.getAmount(r) - f);
-				}
-				re /= NumberTools.faculty(freq);
-			}
+      if (speciesIndex == r) {
+        histoIndex = i;
+      } else {
+        for (int f = 0; f < freq; f++) {
+          re *= (amount.getAmount(r) - f);
+        }
+        re /= NumberTools.faculty(freq);
+      }
     }
 
     double x = amount.getAmount(speciesIndex);

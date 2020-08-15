@@ -49,9 +49,9 @@ public class GillespieSimple extends Simulator {
 
     if (!Double.isInfinite(tau)) {
       changed = false;
-			while (t <= getNextThetaEvent() && t + tau > getNextThetaEvent() && !changed) {
-				thetaEvent();
-			}
+      while (t <= getNextThetaEvent() && t + tau > getNextThetaEvent() && !changed) {
+        thetaEvent();
+      }
 
       if (changed) {
         performStep(control);
@@ -66,9 +66,9 @@ public class GillespieSimple extends Simulator {
     // advance the time
     t += tau;
 
-		if (Double.isInfinite(tau)) {
-			thetaEvent();
-		}
+    if (Double.isInfinite(tau)) {
+      thetaEvent();
+    }
   }
 
   /**
@@ -86,9 +86,9 @@ public class GillespieSimple extends Simulator {
     double sum = 0;
     for (int i = 0; i < a.length; i++) {
       sum += a[i];
-			if (sum >= test) {
-				return i;
-			}
+      if (sum >= test) {
+        return i;
+      }
     }
 
     throw new RuntimeException("No reaction could be selected!");

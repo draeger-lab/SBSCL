@@ -74,9 +74,9 @@ public abstract class Benchmark {
    * @see GnuPlot
    */
   public GnuPlot toGnuplot(GnuPlot gnuplot, String[] dataLabels, String[] styles) {
-		if (gnuplot == null) {
-			return null;
-		}
+    if (gnuplot == null) {
+      return null;
+    }
     gnuplot.addData(data, dataLabels, styles);
     return gnuplot;
   }
@@ -102,9 +102,9 @@ public abstract class Benchmark {
    * @see GnuPlot
    */
   public GnuPlot toGnuPlotAsHistogram(GnuPlot gnuplot, String[] dataLabels, String[] styles) {
-		if (gnuplot == null) {
-			return null;
-		}
+    if (gnuplot == null) {
+      return null;
+    }
     gnuplot.addData(NumberTools.createHistogram(data, numBins), dataLabels, styles);
     return gnuplot;
   }
@@ -135,9 +135,9 @@ public abstract class Benchmark {
    */
   public double[] createRandomDoubleArray(int size, AbstractDistribution dist) {
     double[] re = new double[size];
-		for (int i = 0; i < size; i++) {
-			re[i] = dist.nextDouble();
-		}
+    for (int i = 0; i < size; i++) {
+      re[i] = dist.nextDouble();
+    }
     return re;
   }
 }

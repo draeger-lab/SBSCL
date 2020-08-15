@@ -37,9 +37,9 @@ public class MapkBenchmark {
     bench.getSimulators()[3] = null;
     bench.getSimulators()[4] = null;
 
-		while (true) {
-			bench.benchmark();
-		}
+    while (true) {
+      bench.benchmark();
+    }
 
 
   }

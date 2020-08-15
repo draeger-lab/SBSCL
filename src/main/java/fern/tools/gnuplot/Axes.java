@@ -55,26 +55,26 @@ public abstract class Axes implements Iterable<String> {
     int numLabels = labels == null ? 0 : labels.length;
     int dif = getNumColumns() - numLabels;
 
-		if (labels != null) {
-			if (dif >= 0 && dif <= 2) {
-				this.labels = labels;
-			} else {
-				throw new IllegalArgumentException(
-						"Length of labels is not equal to the number of columns");
-			}
-		} else {
-			this.labels = new String[getNumColumns()];
-		}
+    if (labels != null) {
+      if (dif >= 0 && dif <= 2) {
+        this.labels = labels;
+      } else {
+        throw new IllegalArgumentException(
+            "Length of labels is not equal to the number of columns");
+      }
+    } else {
+      this.labels = new String[getNumColumns()];
+    }
 
-		if (styles != null) {
-			if (styles.length == this.labels.length) {
-				this.styles = styles;
-			} else {
-				throw new IllegalArgumentException("Length of styles is not equal to the number of labels");
-			}
-		} else {
-			this.styles = new String[this.labels.length];
-		}
+    if (styles != null) {
+      if (styles.length == this.labels.length) {
+        this.styles = styles;
+      } else {
+        throw new IllegalArgumentException("Length of styles is not equal to the number of labels");
+      }
+    } else {
+      this.styles = new String[this.labels.length];
+    }
 
     hasXAxis = dif >= 1;
     hasYAxis = dif == 2;
@@ -91,13 +91,13 @@ public abstract class Axes implements Iterable<String> {
    * @see Axes#Additional
    */
   public int getDimensionType() {
-		if (hasXAxis && hasYAxis) {
-			return ThreeD;
-		} else if (hasXAxis) {
-			return TwoD;
-		} else {
-			return Additional;
-		}
+    if (hasXAxis && hasYAxis) {
+      return ThreeD;
+    } else if (hasXAxis) {
+      return TwoD;
+    } else {
+      return Additional;
+    }
   }
 
   /**
@@ -110,13 +110,13 @@ public abstract class Axes implements Iterable<String> {
    * @param axes the <code>Axes</code> object to attach
    */
   public void addAxes(Axes axes) {
-		if (axes.hasXAxis || axes.hasYAxis) {
-			throw new IllegalArgumentException(
-					"You cannot add an axes object with a x axis to another axes object!");
-		}
-		if (getNumRows() != axes.getNumRows()) {
-			throw new IllegalArgumentException("Number of rows is not equal!");
-		}
+    if (axes.hasXAxis || axes.hasYAxis) {
+      throw new IllegalArgumentException(
+          "You cannot add an axes object with a x axis to another axes object!");
+    }
+    if (getNumRows() != axes.getNumRows()) {
+      throw new IllegalArgumentException("Number of rows is not equal!");
+    }
     additionalAxes.add(axes);
 
   }
@@ -146,11 +146,11 @@ public abstract class Axes implements Iterable<String> {
   protected abstract Number getNumber_internal(int row, int col);
 
   public Number getX(int row) {
-		if (hasXAxis) {
-			return getNumber(row, -getNumLabelAxes());
-		} else {
-			throw new RuntimeException("This axes object does not have an x axis!");
-		}
+    if (hasXAxis) {
+      return getNumber(row, -getNumLabelAxes());
+    } else {
+      throw new RuntimeException("This axes object does not have an x axis!");
+    }
   }
 
 
@@ -173,12 +173,12 @@ public abstract class Axes implements Iterable<String> {
    */
   protected int getNumLabelAxes() {
     int re = 0;
-		if (hasXAxis) {
-			re++;
-		}
-		if (hasYAxis) {
-			re++;
-		}
+    if (hasXAxis) {
+      re++;
+    }
+    if (hasYAxis) {
+      re++;
+    }
     return re;
   }
 
@@ -192,21 +192,21 @@ public abstract class Axes implements Iterable<String> {
   public void setLabel(int col, String label) {
     col -= getNumLabelAxes();
     int column = col;
-		if (col >= labels.length) {
-			col -= labels.length;
-			for (Axes a : additionalAxes) {
-				if (col < a.getNumColumns()) {
-					a.setLabel(col, label);
-					return;
-				}
-				col -= a.getNumColumns();
-			}
-			throw new IllegalArgumentException(
-					"There are only " + getNumColumns() + " columns, you can't set the " + column
-							+ "th column label!");
-		} else {
-			labels[col] = label;
-		}
+    if (col >= labels.length) {
+      col -= labels.length;
+      for (Axes a : additionalAxes) {
+        if (col < a.getNumColumns()) {
+          a.setLabel(col, label);
+          return;
+        }
+        col -= a.getNumColumns();
+      }
+      throw new IllegalArgumentException(
+          "There are only " + getNumColumns() + " columns, you can't set the " + column
+              + "th column label!");
+    } else {
+      labels[col] = label;
+    }
   }
 
   /**
@@ -217,27 +217,27 @@ public abstract class Axes implements Iterable<String> {
    * @return label for the column
    */
   public String getLabel(int col) {
-		if (hasXAxis) {
-			col--;
-		}
-		if (hasYAxis) {
-			col--;
-		}
+    if (hasXAxis) {
+      col--;
+    }
+    if (hasYAxis) {
+      col--;
+    }
     int column = col;
-		if (col >= labels.length) {
-			col -= labels.length;
-			for (Axes a : additionalAxes) {
-				if (col < a.getNumColumns()) {
-					return a.getLabel(col);
-				}
-				col -= a.getNumColumns();
-			}
-			throw new IllegalArgumentException(
-					"There are only " + getNumColumns() + " columns, you can't get the " + column
-							+ "th column label!");
-		} else {
-			return labels == null || labels[col] == null ? "" : labels[col];
-		}
+    if (col >= labels.length) {
+      col -= labels.length;
+      for (Axes a : additionalAxes) {
+        if (col < a.getNumColumns()) {
+          return a.getLabel(col);
+        }
+        col -= a.getNumColumns();
+      }
+      throw new IllegalArgumentException(
+          "There are only " + getNumColumns() + " columns, you can't get the " + column
+              + "th column label!");
+    } else {
+      return labels == null || labels[col] == null ? "" : labels[col];
+    }
   }
 
   /**
@@ -248,28 +248,28 @@ public abstract class Axes implements Iterable<String> {
    * @param style style for the column
    */
   public void setStyle(int col, String style) {
-		if (hasXAxis) {
-			col--;
-		}
-		if (hasYAxis) {
-			col--;
-		}
+    if (hasXAxis) {
+      col--;
+    }
+    if (hasYAxis) {
+      col--;
+    }
     int column = col;
-		if (col >= styles.length) {
-			col -= styles.length;
-			for (Axes a : additionalAxes) {
-				if (col < a.getNumColumns()) {
-					a.setStyle(col, style);
-					return;
-				}
-				col -= a.getNumColumns();
-			}
-			throw new IllegalArgumentException(
-					"There are only " + getNumColumns() + " columns, you can't set the " + column
-							+ "th column linestyle!");
-		} else {
-			styles[col] = style;
-		}
+    if (col >= styles.length) {
+      col -= styles.length;
+      for (Axes a : additionalAxes) {
+        if (col < a.getNumColumns()) {
+          a.setStyle(col, style);
+          return;
+        }
+        col -= a.getNumColumns();
+      }
+      throw new IllegalArgumentException(
+          "There are only " + getNumColumns() + " columns, you can't set the " + column
+              + "th column linestyle!");
+    } else {
+      styles[col] = style;
+    }
   }
 
   /**
@@ -279,27 +279,27 @@ public abstract class Axes implements Iterable<String> {
    * @param col zero based index of the column style			style for the column
    */
   public String getStyle(int col) {
-		if (hasXAxis) {
-			col--;
-		}
-		if (hasYAxis) {
-			col--;
-		}
+    if (hasXAxis) {
+      col--;
+    }
+    if (hasYAxis) {
+      col--;
+    }
     int column = col;
-		if (col >= styles.length) {
-			col -= styles.length;
-			for (Axes a : additionalAxes) {
-				if (col < a.getNumColumns()) {
-					return a.getStyle(col);
-				}
-				col -= a.getNumColumns();
-			}
-			throw new IllegalArgumentException(
-					"There are only " + getNumColumns() + " columns, you can't get the " + column
-							+ "th column linestyle!");
-		} else {
-			return styles == null || styles[col] == null ? "" : styles[col];
-		}
+    if (col >= styles.length) {
+      col -= styles.length;
+      for (Axes a : additionalAxes) {
+        if (col < a.getNumColumns()) {
+          return a.getStyle(col);
+        }
+        col -= a.getNumColumns();
+      }
+      throw new IllegalArgumentException(
+          "There are only " + getNumColumns() + " columns, you can't get the " + column
+              + "th column linestyle!");
+    } else {
+      return styles == null || styles[col] == null ? "" : styles[col];
+    }
   }
 
   /**
@@ -309,11 +309,11 @@ public abstract class Axes implements Iterable<String> {
    * @param defaultStyle the default style to set
    */
   public void applyDefaultStyle(String defaultStyle) {
-		for (int i = 0; i < styles.length; i++) {
-			if (styles[i] == null || styles[i].length() == 0) {
-				styles[i] = defaultStyle;
-			}
-		}
+    for (int i = 0; i < styles.length; i++) {
+      if (styles[i] == null || styles[i].length() == 0) {
+        styles[i] = defaultStyle;
+      }
+    }
   }
 
   /**
@@ -323,9 +323,9 @@ public abstract class Axes implements Iterable<String> {
    */
   protected int getNumAdditionalColumns() {
     int re = 0;
-		for (Axes a : additionalAxes) {
-			re += a.getNumColumns();
-		}
+    for (Axes a : additionalAxes) {
+      re += a.getNumColumns();
+    }
     return re;
   }
 
@@ -338,27 +338,27 @@ public abstract class Axes implements Iterable<String> {
   protected Iterator<String> getAdditionalAxesIterator() {
     final Iterator<String>[] it = new Iterator[additionalAxes.size()];
     int index = 0;
-		for (Axes a : additionalAxes) {
-			it[index++] = a.iterator();
-		}
+    for (Axes a : additionalAxes) {
+      it[index++] = a.iterator();
+    }
     return new Iterator<String>() {
 
       public boolean hasNext() {
-				for (int i = 0; i < it.length; i++) {
-					if (it[i].hasNext()) {
-						return true;
-					}
-				}
+        for (int i = 0; i < it.length; i++) {
+          if (it[i].hasNext()) {
+            return true;
+          }
+        }
         return false;
       }
 
       public String next() {
         StringBuilder sb = new StringBuilder();
-				for (int i = 0; i < it.length; i++) {
-					if (it[i].hasNext()) {
-						sb.append("\t" + it[i].next());
-					}
-				}
+        for (int i = 0; i < it.length; i++) {
+          if (it[i].hasNext()) {
+            sb.append("\t" + it[i].next());
+          }
+        }
         return sb.toString();
       }
 

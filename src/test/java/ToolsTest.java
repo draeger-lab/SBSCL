@@ -28,13 +28,13 @@ public class ToolsTest {
     System.out.println(Arrays.toString(c));
 
     IntSearchStructure q = new IntStack();
-		for (int i = 0; i < 100; i++) {
-			q.add(i);
-		}
+    for (int i = 0; i < 100; i++) {
+      q.add(i);
+    }
 
-		while (!q.isEmpty()) {
-			System.out.println(q.get());
-		}
+    while (!q.isEmpty()) {
+      System.out.println(q.get());
+    }
 
     BitVector bv = new BitVector(10);
     bv.set(3);
@@ -52,17 +52,17 @@ public class ToolsTest {
     Axes axes2 = new CollectionAxes(list);
     Axes axes3 = new ArrayMatrixAxes(array);
 
-		for (String row : axes) {
-			System.out.println(row);
-		}
+    for (String row : axes) {
+      System.out.println(row);
+    }
 
-		for (int i = 0; i < 10; i++) {
-			System.out.println(Stochastics.getInstance().getExponential(1));
-		}
+    for (int i = 0; i < 10; i++) {
+      System.out.println(Stochastics.getInstance().getExponential(1));
+    }
     System.out.println();
-		for (int i = 0; i < 10; i++) {
-			System.out.println(Stochastics.getInstance().getExponential(100));
-		}
+    for (int i = 0; i < 10; i++) {
+      System.out.println(Stochastics.getInstance().getExponential(100));
+    }
 
 
   }

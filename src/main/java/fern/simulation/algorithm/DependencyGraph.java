@@ -43,21 +43,21 @@ public class DependencyGraph {
     dependsOn = new LinkedList[net.getNumReactions()];
 
     Map<Integer, Integer>[] reactants = new Map[net.getNumReactions()];
-		for (int i = 0; i < reactants.length; i++) {
-			reactants[i] = NumberTools.createHistogramAsMap(net.getReactants(i));
-		}
+    for (int i = 0; i < reactants.length; i++) {
+      reactants[i] = NumberTools.createHistogramAsMap(net.getReactants(i));
+    }
 
     Map<Integer, Integer>[] products = new Map[net.getNumReactions()];
-		for (int i = 0; i < products.length; i++) {
-			products[i] = NumberTools.createHistogramAsMap(net.getProducts(i));
-		}
+    for (int i = 0; i < products.length; i++) {
+      products[i] = NumberTools.createHistogramAsMap(net.getProducts(i));
+    }
 
     for (int i = 0; i < dependsOn.length; i++) {
       dependsOn[i] = new LinkedList();
       for (int j = 0; j < net.getNumReactions(); j++) {
-				if (haveToCreateEdgeFromTo(i, j, net, reactants, products)) {
-					dependsOn[i].add(j);
-				}
+        if (haveToCreateEdgeFromTo(i, j, net, reactants, products)) {
+          dependsOn[i].add(j);
+        }
       }
     }
   }
@@ -82,28 +82,28 @@ public class DependencyGraph {
     // one molecule that
     //  1. is dependent on j
     //  2. changes quantitiy
-		if (i == j) {
-			return true;
-		}
+    if (i == j) {
+      return true;
+    }
 
     for (int j_reactant : net.getReactants(j)) {
       int i_reactant = reactants[i].containsKey(j_reactant) ? reactants[i].get(j_reactant) : 0;
       int i_product = products[i].containsKey(j_reactant) ? products[i].get(j_reactant) : 0;
-			if (i_reactant != i_product) {
-				return true;
-			}
+      if (i_reactant != i_product) {
+        return true;
+      }
     }
 
-		if (net.getPropensityCalculator() instanceof ComplexDependenciesPropensityCalculator) {
-			for (int j_reactant : ((ComplexDependenciesPropensityCalculator) net
-					.getPropensityCalculator()).getKineticLawSpecies(j)) {
-				int i_reactant = reactants[i].containsKey(j_reactant) ? reactants[i].get(j_reactant) : 0;
-				int i_product = products[i].containsKey(j_reactant) ? products[i].get(j_reactant) : 0;
-				if (i_reactant != i_product) {
-					return true;
-				}
-			}
-		}
+    if (net.getPropensityCalculator() instanceof ComplexDependenciesPropensityCalculator) {
+      for (int j_reactant : ((ComplexDependenciesPropensityCalculator) net
+          .getPropensityCalculator()).getKineticLawSpecies(j)) {
+        int i_reactant = reactants[i].containsKey(j_reactant) ? reactants[i].get(j_reactant) : 0;
+        int i_product = products[i].containsKey(j_reactant) ? products[i].get(j_reactant) : 0;
+        if (i_reactant != i_product) {
+          return true;
+        }
+      }
+    }
 
     return false;
   }

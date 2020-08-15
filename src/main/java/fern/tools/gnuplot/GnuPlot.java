@@ -79,15 +79,15 @@ public class GnuPlot extends JFrame {
     addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_F3) {
-					showSaveAsDialog();
-				} else if (e.getKeyCode() == KeyEvent.VK_S
-						&& (e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
-					showSaveAsDialog();
-				}
-				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-					dispose();
-				}
+        if (e.getKeyCode() == KeyEvent.VK_F3) {
+          showSaveAsDialog();
+        } else if (e.getKeyCode() == KeyEvent.VK_S
+            && (e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
+          showSaveAsDialog();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+          dispose();
+        }
       }
 
     });
@@ -120,11 +120,11 @@ public class GnuPlot extends JFrame {
           saveData(dia.getSelectedFile());
         } else {
           String cmd;
-					if (end.equals("png")) {
-						cmd = "set term png";
-					} else {
-						cmd = "set term postscript color";
-					}
+          if (end.equals("png")) {
+            cmd = "set term png";
+          } else {
+            cmd = "set term postscript color";
+          }
 
           String tmp = this.hashCode() + ".gnuplot";
           //			String tmpPic = this.hashCode()+"."+end;
@@ -140,10 +140,10 @@ public class GnuPlot extends JFrame {
 
           BufferedWriter c = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
           for (String line : plotCommand.split("\n")) {
-						if (line.startsWith("set term")) {
-							line = cmd + "\n" + "set output \"" + dia.getSelectedFile().toString()
-									.replace("\\", "\\\\") + "\"";
-						}
+            if (line.startsWith("set term")) {
+              line = cmd + "\n" + "set output \"" + dia.getSelectedFile().toString()
+                  .replace("\\", "\\\\") + "\"";
+            }
             c.append(line + "\n");
             c.flush();
             checkGnuplotError(p);
@@ -167,11 +167,11 @@ public class GnuPlot extends JFrame {
     } catch (Exception e) {
       JOptionPane.showMessageDialog(this, "Error:\n" + e.getMessage());
     } finally {
-			if (files != null) {
-				for (File f : files) {
-					f.delete();
-				}
-			}
+      if (files != null) {
+        for (File f : files) {
+          f.delete();
+        }
+      }
     }
   }
 
@@ -182,9 +182,9 @@ public class GnuPlot extends JFrame {
    * @param command the gnuplot command (e.g. set xrange [0:100])
    */
   public void addCommand(String... command) {
-		for (String c : command) {
-			commands.add(c);
-		}
+    for (String c : command) {
+      commands.add(c);
+    }
   }
 
   /**
@@ -227,9 +227,9 @@ public class GnuPlot extends JFrame {
    * @return axes object containing the data
    */
   public Axes addData(Axes axes) {
-		if (this.axes.size() > 0 && this.axes.get(0).getDimensionType() != axes.getDimensionType()) {
-			throw new IllegalArgumentException("No mixture of 2 and 3 dimensional axes allowed!");
-		}
+    if (this.axes.size() > 0 && this.axes.get(0).getDimensionType() != axes.getDimensionType()) {
+      throw new IllegalArgumentException("No mixture of 2 and 3 dimensional axes allowed!");
+    }
     this.axes.add(axes);
     return axes;
   }
@@ -275,12 +275,12 @@ public class GnuPlot extends JFrame {
    * @param gnuplot the gnuplot object to merge with
    */
   public void merge(GnuPlot gnuplot) {
-		for (Axes a : gnuplot.axes) {
-			addData(a);
-		}
-		for (Axes a : gnuplot.axes) {
-			a.applyDefaultStyle(gnuplot.getDefaultStyle());
-		}
+    for (Axes a : gnuplot.axes) {
+      addData(a);
+    }
+    for (Axes a : gnuplot.axes) {
+      a.applyDefaultStyle(gnuplot.getDefaultStyle());
+    }
   }
 
   /**
@@ -314,9 +314,9 @@ public class GnuPlot extends JFrame {
     }
 
     StringBuilder sb = new StringBuilder();
-		for (String cmd : commands) {
-			sb.append(cmd + "\n");
-		}
+    for (String cmd : commands) {
+      sb.append(cmd + "\n");
+    }
 
     sb.append("set term png\n");
     sb.append(plotCommand);
@@ -324,30 +324,30 @@ public class GnuPlot extends JFrame {
     Iterator<File> fIt = files.iterator();
     Iterator<Axes> aIt = axes.iterator();
     while (fIt.hasNext() || aIt.hasNext()) {
-			if (!fIt.hasNext() || !aIt.hasNext()) {
-				throw new RuntimeException("Fileslist and Axeslist don't have the same size!");
-			}
+      if (!fIt.hasNext() || !aIt.hasNext()) {
+        throw new RuntimeException("Fileslist and Axeslist don't have the same size!");
+      }
       File f = fIt.next();
       Axes a = aIt.next();
       for (int i = labelColumns; i < a.getNumColumns(); i++) {
         sb.append(" \"" + f.toString() + "\" u " + usingPrefix + ":" + (i + 1));
-				if (a.getLabel(i).length() > 0) {
-					sb.append(" title \"" + a.getLabel(i) + "\"");
-				} else {
-					sb.append(" notitle");
-				}
-				if (a.getStyle(i).length() > 0) {
-					sb.append(" " + a.getStyle(i));
-				} else if (defaultStyle.length() > 0) {
-					sb.append(" " + defaultStyle);
-				}
-				if (i + 1 < a.getNumColumns()) {
-					sb.append(", ");
-				}
+        if (a.getLabel(i).length() > 0) {
+          sb.append(" title \"" + a.getLabel(i) + "\"");
+        } else {
+          sb.append(" notitle");
+        }
+        if (a.getStyle(i).length() > 0) {
+          sb.append(" " + a.getStyle(i));
+        } else if (defaultStyle.length() > 0) {
+          sb.append(" " + defaultStyle);
+        }
+        if (i + 1 < a.getNumColumns()) {
+          sb.append(", ");
+        }
       }
-			if (fIt.hasNext() || aIt.hasNext()) {
-				sb.append(", ");
-			}
+      if (fIt.hasNext() || aIt.hasNext()) {
+        sb.append(", ");
+      }
     }
 
     sb.append("\n");
@@ -415,11 +415,11 @@ public class GnuPlot extends JFrame {
       int index = 1;
       for (String content : getData()) {
         String fn = file.toString();
-				if (fn.lastIndexOf(".") > fn.lastIndexOf(File.pathSeparator)) {
-					fn = fn.substring(0, fn.lastIndexOf(".")) + (index++) + fn.substring(fn.lastIndexOf("."));
-				} else {
-					fn = fn + (index++);
-				}
+        if (fn.lastIndexOf(".") > fn.lastIndexOf(File.pathSeparator)) {
+          fn = fn.substring(0, fn.lastIndexOf(".")) + (index++) + fn.substring(fn.lastIndexOf("."));
+        } else {
+          fn = fn + (index++);
+        }
 
         File file2 = new File(fn);
         FileWriter fw = new FileWriter(file2);
@@ -442,9 +442,9 @@ public class GnuPlot extends JFrame {
     try {
       p = new ProcessBuilder("gnuplot", "--version").start();
       String re = new BufferedReader(new InputStreamReader(p.getInputStream())).readLine();
-			if (re == null || re.length() == 0) {
-				return false;
-			}
+      if (re == null || re.length() == 0) {
+        return false;
+      }
       return true;
     } catch (Exception e) {
       return false;
@@ -465,9 +465,9 @@ public class GnuPlot extends JFrame {
    * @throws IOException
    */
   public void plot() throws IOException {
-		if (!isAccessible()) {
-			throw new IOException("gnuplot is not accessible! Add it to your path variable!");
-		}
+    if (!isAccessible()) {
+      throw new IOException("gnuplot is not accessible! Add it to your path variable!");
+    }
 
     String tmp = this.hashCode() + ".gnuplot";
     List<File> files = saveData(new File(tmp));
@@ -490,15 +490,15 @@ public class GnuPlot extends JFrame {
     c.close();
 
     img = ImageIO.read(new BufferedInputStream(p.getInputStream()));
-		if (img == null) {
-			checkGnuplotError(p);
-		}
+    if (img == null) {
+      checkGnuplotError(p);
+    }
 
     p.destroy();
 
-		for (File f : files) {
-			f.delete();
-		}
+    for (File f : files) {
+      f.delete();
+    }
 
     if (this.isVisible()) {
       setSize(img.getWidth(null), img.getHeight(null) + getInsets().top);

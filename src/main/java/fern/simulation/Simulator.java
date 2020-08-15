@@ -90,9 +90,9 @@ public abstract class Simulator {
    * @param time simulation time
    */
   public void start(double time) {
-		if (timeController == null) {
-			timeController = new DefaultController(time);
-		}
+    if (timeController == null) {
+      timeController = new DefaultController(time);
+    }
     timeController.setTime(time);
     start(timeController);
   }
@@ -115,9 +115,9 @@ public abstract class Simulator {
   public void preRun() {
     initialize();
 
-		for (int o = 0; o < observer.length; o++) {
-			observer[o].started();
-		}
+    for (int o = 0; o < observer.length; o++) {
+      observer[o].started();
+    }
   }
 
   /**
@@ -130,21 +130,21 @@ public abstract class Simulator {
     while (control.goOn(this)) {
 
       for (Observer o : observer) {
-				if (o instanceof TriggerObserver) {
-					((TriggerObserver) o).trigger();
-				}
+        if (o instanceof TriggerObserver) {
+          ((TriggerObserver) o).trigger();
+        }
       }
 
-			for (int o = 0; o < observer.length; o++) {
-				observer[o].step();
-			}
+      for (int o = 0; o < observer.length; o++) {
+        observer[o].step();
+      }
 
       performStep(control);
 
       if (interpolationParameters != null) {
-				for (Observer o : interpolationParameters.observers) {
-					o.theta(interpolationParameters.interpolationTheta);
-				}
+        for (Observer o : interpolationParameters.observers) {
+          o.theta(interpolationParameters.interpolationTheta);
+        }
         interpolationParameters = null;
       }
 
@@ -169,13 +169,13 @@ public abstract class Simulator {
    * @param fireType type of the firing
    */
   protected void fireReaction(int mu, double t, FireType fireType) {
-		for (int o = 0; o < observer.length; o++) {
-			observer[o].activateReaction(mu, t, fireType, 1);
-		}
+    for (int o = 0; o < observer.length; o++) {
+      observer[o].activateReaction(mu, t, fireType, 1);
+    }
     // change the amount of the reactants
-		if (!Double.isInfinite(t)) {
-			amountManager.performReaction(mu, 1);
-		}
+    if (!Double.isInfinite(t)) {
+      amountManager.performReaction(mu, 1);
+    }
   }
 
   /**
@@ -188,13 +188,13 @@ public abstract class Simulator {
    * @param fireType type of the firings
    */
   protected void fireReaction(int mu, double t_start, double t_end, int times, FireType fireType) {
-		for (int o = 0; o < observer.length; o++) {
-			observer[o].activateReaction(mu, t, fireType, times);
-		}
+    for (int o = 0; o < observer.length; o++) {
+      observer[o].activateReaction(mu, t, fireType, times);
+    }
     // change the amount of the reactants
-		if (!Double.isInfinite(t)) {
-			amountManager.performReaction(mu, times);
-		}
+    if (!Double.isInfinite(t)) {
+      amountManager.performReaction(mu, times);
+    }
   }
 
   /**
@@ -218,19 +218,19 @@ public abstract class Simulator {
     t = theta;
     boolean fired = false;
     for (Observer o : observer) {
-			if (o instanceof TriggerObserver) {
-				fired |= ((TriggerObserver) o).trigger();
-			}
+      if (o instanceof TriggerObserver) {
+        fired |= ((TriggerObserver) o).trigger();
+      }
     }
-		if (!fired) {
-			t = t_save;
-		}
+    if (!fired) {
+      t = t_save;
+    }
 
     if (interpolateTheta) {
       long[] beforeThetaAmounts = new long[net.getNumSpecies()];
-			for (int i = 0; i < net.getNumSpecies(); i++) {
-				beforeThetaAmounts[i] = amountManager.getAmount(i);
-			}
+      for (int i = 0; i < net.getNumSpecies(); i++) {
+        beforeThetaAmounts[i] = amountManager.getAmount(i);
+      }
       interpolationParameters = new DelayedThetaInvocationParameters(
           getTime(),
           beforeThetaAmounts,
@@ -239,9 +239,9 @@ public abstract class Simulator {
       );
 
     } else {
-			for (Observer o : obs) {
-				o.theta(theta);
-			}
+      for (Observer o : obs) {
+        o.theta(theta);
+      }
 
     }
   }
@@ -343,14 +343,14 @@ public abstract class Simulator {
    * @see AmountManager#getAmount(int)
    */
   public double getAmount(int species) {
-		if (interpolateTheta && interpolationParameters != null) {
-			return NumberTools.interpolateLinear(interpolationParameters.interpolationTheta,
-					interpolationParameters.beforeTheta, getTime(),
-					(int) interpolationParameters.beforeThetaAmounts[species],
-					(int) amountManager.getAmount(species));
-		} else {
-			return amountManager.getAmount(species);
-		}
+    if (interpolateTheta && interpolationParameters != null) {
+      return NumberTools.interpolateLinear(interpolationParameters.interpolationTheta,
+          interpolationParameters.beforeTheta, getTime(),
+          (int) interpolationParameters.beforeThetaAmounts[species],
+          (int) amountManager.getAmount(species));
+    } else {
+      return amountManager.getAmount(species);
+    }
   }
 
   /**
@@ -389,9 +389,9 @@ public abstract class Simulator {
    * @return the added observer
    */
   public Observer addObserver(Observer observer) {
-		if (observer.getSimulator() != this) {
-			throw new IllegalArgumentException("Observer doesn't belong to this simulator!");
-		}
+    if (observer.getSimulator() != this) {
+      throw new IllegalArgumentException("Observer doesn't belong to this simulator!");
+    }
     Observer[] n = new Observer[this.observer.length + 1];
     System.arraycopy(this.observer, 0, n, 0, this.observer.length);
     n[n.length - 1] = observer;
@@ -495,9 +495,9 @@ public abstract class Simulator {
     }
 
     public void pushTheta(double theta, Observer obs) {
-			if (!thetas.containsKey(theta)) {
-				thetas.put(theta, new LinkedList<Observer>());
-			}
+      if (!thetas.containsKey(theta)) {
+        thetas.put(theta, new LinkedList<Observer>());
+      }
       thetas.get(theta).add(obs);
       nextTheta = Math.min(nextTheta, theta);
     }
@@ -509,9 +509,9 @@ public abstract class Simulator {
     public LinkedList<Observer> getNextObserversAndRemove() {
       LinkedList<Observer> re = thetas.remove(nextTheta);
       nextTheta = Double.POSITIVE_INFINITY;
-			for (Double t : thetas.keySet()) {
-				nextTheta = Math.min(nextTheta, t);
-			}
+      for (Double t : thetas.keySet()) {
+        nextTheta = Math.min(nextTheta, t);
+      }
       return re;
     }
   }

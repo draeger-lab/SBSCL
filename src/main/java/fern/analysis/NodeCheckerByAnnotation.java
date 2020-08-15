@@ -29,24 +29,24 @@ public class NodeCheckerByAnnotation implements NodeChecker {
 
   public boolean checkReactionNode(Network network, int reaction) {
     String rval = network.getAnnotationManager().getReactionAnnotation(reaction, field);
-		if (rval == null) {
-			return false;
-		} else if (value == null) {
-			return true;
-		} else {
-			return rval.equals(value);
-		}
+    if (rval == null) {
+      return false;
+    } else if (value == null) {
+      return true;
+    } else {
+      return rval.equals(value);
+    }
   }
 
   public boolean checkSpeciesNode(Network network, int species) {
     String rval = network.getAnnotationManager().getSpeciesAnnotation(species, field);
-		if (rval == null) {
-			return false;
-		} else if (value == null) {
-			return true;
-		} else {
-			return rval.equals(value);
-		}
+    if (rval == null) {
+      return false;
+    } else if (value == null) {
+      return true;
+    } else {
+      return rval.equals(value);
+    }
   }
 
 }

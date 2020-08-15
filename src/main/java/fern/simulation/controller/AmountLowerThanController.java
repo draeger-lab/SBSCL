@@ -20,9 +20,9 @@ public class AmountLowerThanController implements SimulationController {
 
 
   public boolean goOn(Simulator sim) {
-		if (speciesIndex == -1) {
-			speciesIndex = sim.getNet().getSpeciesByName(speciesName);
-		}
+    if (speciesIndex == -1) {
+      speciesIndex = sim.getNet().getSpeciesByName(speciesName);
+    }
 
     return sim.getAmount(speciesIndex) < amount;
   }

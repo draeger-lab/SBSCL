@@ -30,17 +30,17 @@ public class RandomNumber extends Benchmark {
 
     // langevin
     start();
-		for (int i = 0; i < at.length; i++) {
-			r = (int) (at[i] + Math.sqrt(at[i]) * stoch.getNormal());
-		}
+    for (int i = 0; i < at.length; i++) {
+      r = (int) (at[i] + Math.sqrt(at[i]) * stoch.getNormal());
+    }
 
     System.out.println(end() + " nanoseconds for langevin");
 
     // tauleap
     start();
-		for (int i = 0; i < at.length; i++) {
-			r = stoch.getPoisson(at[i]);
-		}
+    for (int i = 0; i < at.length; i++) {
+      r = stoch.getPoisson(at[i]);
+    }
     System.out.println(end() + " nanoseconds for tau leap");
   }
 

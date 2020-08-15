@@ -55,9 +55,9 @@ public class MultiAmountIntervalObserver extends IntervalObserver {
    */
   protected double getEntityValue(int e) {
     double sum = 0;
-		for (int i = 0; i < speciesIndices.length; i++) {
-			sum += getSimulator().getAmount(speciesIndices[i]);
-		}
+    for (int i = 0; i < speciesIndices.length; i++) {
+      sum += getSimulator().getAmount(speciesIndices[i]);
+    }
     return sum;
   }
 

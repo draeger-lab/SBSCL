@@ -29,7 +29,8 @@ import fern.tools.functions.Probability;
  * <code>ReversibleNetwork</code> does not copy the reactions but redirects the indices.
  * <p>
  * This network can of course be used for stochastic simulations. If it is just converted into a
- * <code>ReversibleNetwork</code>, there are just different kinetic constants used for catalyzed and
+ * <code>ReversibleNetwork</code>, there are just different kinetic constants used for catalyzed
+ * and
  * not catalyzed reactions ({@link AutocatalyticNetwork#getCatalyzedKineticConstant} and {@link
  * AutocatalyticNetwork#getUncatalyzedKineticConstant}).
  *
@@ -136,28 +137,28 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
       //cutpos
       for (int c = 1; c < shell; c++) {
         //obtain number random molecules created by substrates of length c and shell-c
-				if (useFastMethod) {
-					createRandomProductsFromShellsFast(shellCutPosSize[shell][c], c, shell - c, offset);
-				} else {
-					createRandomProductsFromShells(shellCutPosSize[shell][c], c, shell - c, offset);
-				}
+        if (useFastMethod) {
+          createRandomProductsFromShellsFast(shellCutPosSize[shell][c], c, shell - c, offset);
+        } else {
+          createRandomProductsFromShells(shellCutPosSize[shell][c], c, shell - c, offset);
+        }
       }
     }
 
     // catalyze
     for (int i = 0; i < getNumReactions(); i++) {
       int count = Stochastics.getInstance().getBinom(getNumSpecies(), catProb.getProb(0, 0));
-			if (useFastMethod) {
-				catalyzeRandomFast(count, i, CATALYSTS_FIELD_REVERSIBLE);
-			} else {
-				catalyzeRandom(count, i, CATALYSTS_FIELD_REVERSIBLE);
-			}
+      if (useFastMethod) {
+        catalyzeRandomFast(count, i, CATALYSTS_FIELD_REVERSIBLE);
+      } else {
+        catalyzeRandom(count, i, CATALYSTS_FIELD_REVERSIBLE);
+      }
       count = Stochastics.getInstance().getBinom(getNumSpecies(), catProb.getProb(0, 0));
-			if (useFastMethod) {
-				catalyzeRandomFast(count, i, CATALYSTS_FIELD);
-			} else {
-				catalyzeRandom(count, i, CATALYSTS_FIELD);
-			}
+      if (useFastMethod) {
+        catalyzeRandomFast(count, i, CATALYSTS_FIELD);
+      } else {
+        catalyzeRandom(count, i, CATALYSTS_FIELD);
+      }
     }
 
   }
@@ -224,9 +225,9 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
     for (int i = 0; i < count; i++) {
       int cat = -1;
 
-			while (cat == -1 || used.get(cat)) {
-				cat = Stochastics.getInstance().getUnif(0, getNumSpecies());
-			}
+      while (cat == -1 || used.get(cat)) {
+        cat = Stochastics.getInstance().getUnif(0, getNumSpecies());
+      }
 
       used.set(cat);
       sb.append(getSpeciesName(cat));
@@ -326,14 +327,14 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
   }
 
   private double getCatalystsPopulation(int reaction, String field) {
-		if (!annotationManager.containsReactionAnnotation(reaction, field)) {
-			return 0;
-		}
+    if (!annotationManager.containsReactionAnnotation(reaction, field)) {
+      return 0;
+    }
     String[] catas = annotationManager.getReactionAnnotation(reaction, field).split(" ");
     double re = 0;
-		for (String cata : catas) {
-			re += getAmountManager().getAmount(getSpeciesByName(cata));
-		}
+    for (String cata : catas) {
+      re += getAmountManager().getAmount(getSpeciesByName(cata));
+    }
     return re;
   }
 
@@ -355,15 +356,15 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
         reaction < getNumReactions() ? CATALYSTS_FIELD : CATALYSTS_FIELD_REVERSIBLE);
 //		String c = getAnnotationManager().getReactionAnnotation(reaction,CATALYSTS_FIELD);
     LinkedList<Integer> re = new LinkedList<Integer>();
-		if (c == null) {
-			return re;
-		}
+    if (c == null) {
+      return re;
+    }
     String[] catas = c.split(" ");
     for (int i = 0; i < catas.length; i++) {
       int s = getSpeciesByName(catas[i]);
-			if (s >= 0) {
-				re.add(s);
-			}
+      if (s >= 0) {
+        re.add(s);
+      }
     }
     return re;
   }
@@ -386,11 +387,11 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
   }
 
   public void setInitialAmount(int species, long value) {
-		if (species < monomers.length) {
-			monomerAmount = value;
-		} else {
-			otherAmount = (int) value;
-		}
+    if (species < monomers.length) {
+      monomerAmount = value;
+    } else {
+      otherAmount = (int) value;
+    }
   }
 
   /**

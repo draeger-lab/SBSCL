@@ -37,13 +37,13 @@ public class ConfigReader {
     String line;
     while ((line = bf.readLine()) != null) {
       line = line.trim();
-			if (line.startsWith("//") || line.startsWith("#")) {
-				line = "";
-			}
+      if (line.startsWith("//") || line.startsWith("#")) {
+        line = "";
+      }
 
-			if (line.length() > 0) {
-				parseLine(line);
-			}
+      if (line.length() > 0) {
+        parseLine(line);
+      }
 
     }
   }

@@ -49,10 +49,10 @@ public class FireTypeObserver extends Observer implements GnuPlotObserver {
    */
   @Override
   public void finished() {
-		for (int i = 0; i < numTypes.length; i++) {
-			numTypesAvg[i] =
-					(numTypesAvg[i] * getNumSimulations() + numTypes[i]) / (double) (getNumSimulations() + 1);
-		}
+    for (int i = 0; i < numTypes.length; i++) {
+      numTypesAvg[i] =
+          (numTypesAvg[i] * getNumSimulations() + numTypes[i]) / (double) (getNumSimulations() + 1);
+    }
   }
 
   /**
@@ -73,18 +73,18 @@ public class FireTypeObserver extends Observer implements GnuPlotObserver {
   @Override
   public String toString() {
     double sum = 0;
-		for (int i = 0; i < numTypesAvg.length; i++) {
-			sum += numTypesAvg[i];
-		}
+    for (int i = 0; i < numTypesAvg.length; i++) {
+      sum += numTypesAvg[i];
+    }
 
     StringBuilder sb = new StringBuilder();
     sb.append(getSimulator().getName());
     sb.append(":\n");
-		for (int i = 0; i < numTypesAvg.length; i++) {
-			sb.append(String
-					.format("%s %d (%.4f) ", FireType.values()[i].toString(), (long) numTypesAvg[i],
-							numTypesAvg[i] / sum));
-		}
+    for (int i = 0; i < numTypesAvg.length; i++) {
+      sb.append(String
+          .format("%s %d (%.4f) ", FireType.values()[i].toString(), (long) numTypesAvg[i],
+              numTypesAvg[i] / sum));
+    }
     return sb.toString();
   }
 
@@ -101,9 +101,9 @@ public class FireTypeObserver extends Observer implements GnuPlotObserver {
   }
 
   public GnuPlot toGnuplot(GnuPlot gnuplot) {
-		if (gnuplot == null) {
-			return null;
-		}
+    if (gnuplot == null) {
+      return null;
+    }
     if (!addedTitles.contains(gnuplot)) {
       gnuplot.addCommand(getTitlesCommand(getTitles()));
       addedTitles.add(gnuplot);
@@ -118,9 +118,9 @@ public class FireTypeObserver extends Observer implements GnuPlotObserver {
   private String[] getTitles() {
     FireType[] val = FireType.values();
     String[] re = new String[val.length];
-		for (int i = 0; i < re.length; i++) {
-			re[i] = val[i].toString();
-		}
+    for (int i = 0; i < re.length; i++) {
+      re[i] = val[i].toString();
+    }
     return re;
   }
 
