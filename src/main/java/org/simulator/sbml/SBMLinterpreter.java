@@ -162,7 +162,7 @@ public class SBMLinterpreter extends EquationSystem {
     currentTime = t;
     Double priority, execTime = 0d;
     astNodeTime += 0.01;
-    Double triggerTimeValues[];
+    Double[] triggerTimeValues;
     Event ev;
     int i = 0, index;
     Boolean persistent, aborted;
@@ -321,7 +321,7 @@ public class SBMLinterpreter extends EquationSystem {
       throws DerivativeException {
     // create a new array with the same size of Y where the rate of change
     // is stored for every symbol in the simulation
-    double changeRate[] = new double[Y.length];
+    double[] changeRate = new double[Y.length];
     computeDerivatives(time, Y, changeRate);
     return changeRate;
   }
@@ -497,7 +497,7 @@ public class SBMLinterpreter extends EquationSystem {
    * {@inheritDoc}
    */
   @Override
-  public boolean processAssignmentRules(double t, double Y[])
+  public boolean processAssignmentRules(double t, double[] Y)
       throws DerivativeException {
     currentTime = t;
     astNodeTime += 0.01d;
@@ -847,7 +847,7 @@ public class SBMLinterpreter extends EquationSystem {
    * @param newCompartmentValue the new value of the compartment
    * @param eventIndex
    */
-  private void updateSpeciesConcentrationByCompartmentChange(int compartmentIndex, double Y[],
+  private void updateSpeciesConcentrationByCompartmentChange(int compartmentIndex, double[] Y,
       double oldCompartmentValue, double newCompartmentValue, int eventIndex) {
     int speciesIndex;
     for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
@@ -872,7 +872,7 @@ public class SBMLinterpreter extends EquationSystem {
    * @param changeRate
    */
   private void updateSpeciesConcentrationByCompartmentRateRule(int compartmentIndex,
-      double changeRate[]) {
+      double[] changeRate) {
     int speciesIndex;
     for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
       if (entry.getValue() == compartmentIndex) {
@@ -906,7 +906,7 @@ public class SBMLinterpreter extends EquationSystem {
    * @param oldCompartmentValue
    * @param newCompartmentValue
    */
-  private void refreshSpeciesAmount(int compartmentIndex, double Y[], double oldCompartmentValue,
+  private void refreshSpeciesAmount(int compartmentIndex, double[] Y, double oldCompartmentValue,
       double newCompartmentValue) {
     int speciesIndex;
     for (Entry<String, Integer> entry : compartmentHash.entrySet()) {

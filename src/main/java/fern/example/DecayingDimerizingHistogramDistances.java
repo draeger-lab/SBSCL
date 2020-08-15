@@ -27,7 +27,7 @@ import fern.tools.NumberTools;
  */
 public class DecayingDimerizingHistogramDistances {
 
-  public static void main(String args[]) throws IOException, JDOMException {
+  public static void main(String[] args) throws IOException, JDOMException {
     String species = "S1";
     int runs = 100000;
     double time = 10;

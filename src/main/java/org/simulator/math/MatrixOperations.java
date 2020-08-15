@@ -131,7 +131,7 @@ public class MatrixOperations {
    * @param indx the array to put the return index into
    * @return +1 or -1 signifying whether the number of row interchanges is odd or even
    */
-  public static double ludcmp(double a[][], int indx[]) throws MatrixException {
+  public static double ludcmp(double[][] a, int[] indx) throws MatrixException {
     int n = a.length;
     int i = 0, imax = 0, j = 0, k = 0;
     double big, dum, sum, temp;
@@ -218,7 +218,7 @@ public class MatrixOperations {
    * @param indx the array returned by ludcmp
    * @param b    the vector to be solbed as described
    */
-  public static void lubksb(double a[][], int indx[], double[] b) {
+  public static void lubksb(double[][] a, int[] indx, double[] b) {
     int ii = 0, ip = 0;
     double sum = 0.0;
     int n = a.length;
@@ -251,7 +251,7 @@ public class MatrixOperations {
    *
    * @param a the matrix to be balanced
    */
-  public static void balance(double a[][]) {
+  public static void balance(double[][] a) {
     // The JVM is a binary machine, ie radix base 2
     final int RADIX = 2;
     int last = 0;
@@ -302,7 +302,7 @@ public class MatrixOperations {
    *
    * @param a the matrix to be reduced
    */
-  public static void elmhes(double a[][]) {
+  public static void elmhes(double[][] a) {
     int m, j, i;
     int n = a.length;
     double y, x;
@@ -370,7 +370,7 @@ public class MatrixOperations {
    * @param wi the array specified in the function description
    * @return 0 iff success
    */
-  public static int hqr(double a[][], double wr[], double wi[])
+  public static int hqr(double[][] a, double[] wr, double[] wi)
       throws MatrixException {
     // Initialize variables
     int nn = 0, m = 0, l = 0, k = 0, j = 0, its = 0, i = 0, mmin = 0;

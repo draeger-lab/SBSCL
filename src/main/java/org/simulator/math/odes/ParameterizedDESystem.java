@@ -83,5 +83,5 @@ public interface ParameterizedDESystem extends DESystem {
    * @param values the new values for all parameters.
    * @see #getParameterCount()
    */
-  public void setParameters(double values[]);
+  public void setParameters(double[] values);
 }

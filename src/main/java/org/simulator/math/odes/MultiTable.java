@@ -212,18 +212,18 @@ public class MultiTable extends AbstractTableModel
     /**
      * Human-readable names that are used to display the name of a column.
      */
-    private String columnNames[];
+    private String[] columnNames;
 
     /**
      * The matrix of actual data. Must have an equal number of rows as the time points array.
      */
-    private double data[][];
+    private double[][] data;
 
     /**
      * These are the column names for all columns in the data matrix. This array does not include
      * the name for the time column.
      */
-    private String identifiers[];
+    private String[] identifiers;
 
     /**
      * This {@link Hashtable} memorizes the column indices of all identifiers.
@@ -531,7 +531,7 @@ public class MultiTable extends AbstractTableModel
   /**
    * The array to gather the time points in this data structure. This array must be sorted.
    */
-  private double timePoints[];
+  private double[] timePoints;
 
   /**
    * Constructs an empty {@link MultiTable} object.
@@ -547,7 +547,7 @@ public class MultiTable extends AbstractTableModel
    * @param data
    * @param identifiers The first column in identifiers may be the name for the time column.
    */
-  public MultiTable(double timePoints[], double data[][], String identifiers[]) {
+  public MultiTable(double[] timePoints, double[][] data, String[] identifiers) {
     this(timePoints, data, identifiers, null);
   }
 
@@ -561,7 +561,7 @@ public class MultiTable extends AbstractTableModel
       String[] columnNames) {
     this();
     setTimePoints(timePoints);
-    String ids[];
+    String[] ids;
     if (columnIdentifiers.length == data[0].length + 1) {
       setTimeName(columnIdentifiers[0]);
       ids = new String[columnIdentifiers.length - 1];
@@ -569,7 +569,7 @@ public class MultiTable extends AbstractTableModel
     } else {
       ids = columnIdentifiers;
     }
-    String names[] = columnNames;
+    String[] names = columnNames;
     if ((columnNames != null) && (columnNames.length == data[0].length + 1)) {
       setTimeName(columnNames[0]);
       names = new String[columnNames.length - 1];

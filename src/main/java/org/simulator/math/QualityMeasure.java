@@ -162,7 +162,7 @@ public abstract class QualityMeasure implements Serializable {
   public List<Double> getColumnDistances(MultiTable x, MultiTable expected) {
     List<Double> distances = new ArrayList<Double>();
     for (int block = 0; block < x.getBlockCount(); block++) {
-      String identifiers[] = x.getBlock(block).getIdentifiers();
+      String[] identifiers = x.getBlock(block).getIdentifiers();
       for (int i = 0; i < identifiers.length; i++) {
         if ((identifiers[i] != null) && (expected.getColumn(identifiers[i]) != null)) {
           distances
@@ -181,7 +181,7 @@ public abstract class QualityMeasure implements Serializable {
   public Map<String, Double> getMaxAbsDistances(MultiTable x, MultiTable expected) {
     Map<String, Double> distances = new HashMap<>();
     for (int block = 0; block < x.getBlockCount(); block++) {
-      String identifiers[] = x.getBlock(block).getIdentifiers();
+      String[] identifiers = x.getBlock(block).getIdentifiers();
       for (int i = 0; i < identifiers.length; i++) {
         if ((identifiers[i] != null) && (expected.getColumn(identifiers[i]) != null)) {
           MultiTable.Block.Column a = x.getBlock(block).getColumn(i);

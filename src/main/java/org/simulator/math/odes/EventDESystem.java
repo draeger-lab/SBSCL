@@ -61,7 +61,7 @@ public interface EventDESystem extends DESystem {
    * rules.
    * @throws DerivativeException
    */
-  public boolean processAssignmentRules(double t, double Y[])
+  public boolean processAssignmentRules(double t, double[] Y)
       throws DerivativeException;
 
   /**
@@ -73,7 +73,7 @@ public interface EventDESystem extends DESystem {
    * @return Returns a list with event assignments for the events triggered
    * @throws DerivativeException
    */
-  public EventInProgress getNextEventAssignments(double t, double previousTime, double Y[])
+  public EventInProgress getNextEventAssignments(double t, double previousTime, double[] Y)
       throws DerivativeException;
 
   /**

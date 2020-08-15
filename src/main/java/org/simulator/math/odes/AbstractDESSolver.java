@@ -200,7 +200,7 @@ public abstract class AbstractDESSolver
       throws DerivativeException {
     if (includeIntermediates && (DES instanceof RichDESystem)) {
       MultiTable.Block block = data.getBlock(1);
-      double v[] = ((RichDESystem) DES).getAdditionalValues(t, yTemp).clone();
+      double[] v = ((RichDESystem) DES).getAdditionalValues(t, yTemp).clone();
       block.setRowData(rowIndex, v);
       return v;
     }
@@ -506,7 +506,7 @@ public abstract class AbstractDESSolver
    * @param timeEnd
    * @return table the initialized {@link MultiTable}
    */
-  protected MultiTable initResultMatrix(DESystem DES, double initialValues[], double timeBegin,
+  protected MultiTable initResultMatrix(DESystem DES, double[] initialValues, double timeBegin,
       double timeEnd) {
     return initResultMatrix(DES, initialValues, timeBegin, numSteps(timeBegin, timeEnd));
   }
@@ -526,7 +526,7 @@ public abstract class AbstractDESSolver
       throw new IllegalArgumentException(
           "The number of initial values must equal the dimension of the DE system.");
     }
-    double timePoints[] = new double[numSteps];
+    double[] timePoints = new double[numSteps];
     for (int i = 0; i < timePoints.length; i++) {
       timePoints[i] = BigDecimal.valueOf(timeBegin)
           .add(BigDecimal.valueOf(i).multiply(BigDecimal.valueOf(stepSize))).doubleValue();
@@ -541,7 +541,7 @@ public abstract class AbstractDESSolver
    * @return table the initialized {@link MultiTable}
    */
   protected MultiTable initResultMatrix(DESystem DES, double[] initialValues, double[] timePoints) {
-    double result[][] = new double[timePoints.length][initialValues.length];
+    double[][] result = new double[timePoints.length][initialValues.length];
     for (int i = 0; i != result.length; i++) {
       Arrays.fill(result[i], Double.NaN);
     }
@@ -587,7 +587,7 @@ public abstract class AbstractDESSolver
    * @param step
    * @return
    */
-  private boolean noChange(double newValues[], double oldValues[], int step) {
+  private boolean noChange(double[] newValues, double[] oldValues, int step) {
     // FIXME: this must use the absolute and relative tolerance settings of the solver for checking
     for (int i = 0; i < newValues.length; i++) {
       // absolute distance
@@ -674,7 +674,7 @@ public abstract class AbstractDESSolver
    * @throws DerivativeException
    */
   public boolean processEventsAndRules(boolean forceProcessing, DESystem DES, double t,
-      double previousTime, double yTemp[])
+      double previousTime, double[] yTemp)
       throws DerivativeException {
     boolean change = false;
     if (DES instanceof EventDESystem) {
@@ -779,12 +779,12 @@ public abstract class AbstractDESSolver
     }
     intervalFactor = 100d / (timeEnd - timeBegin);
     MultiTable data = initResultMatrix(DES, initialValues, timeBegin, timeEnd);
-    double result[][] = data.getBlock(0).getData();
-    double change[] = new double[initialValues.length];
-    double yTemp[] = new double[initialValues.length];
-    double yPrev[] = new double[initialValues.length];
+    double[][] result = data.getBlock(0).getData();
+    double[] change = new double[initialValues.length];
+    double[] yTemp = new double[initialValues.length];
+    double[] yPrev = new double[initialValues.length];
     double t = timeBegin;
-    double v[] = additionalResults(DES, t, result[0], data, 0);
+    double[] v = additionalResults(DES, t, result[0], data, 0);
     boolean fastFlag = false;
     if (DES instanceof FastProcessDESystem) {
       fastFlag = ((FastProcessDESystem) DES).containsFastProcesses();
@@ -872,15 +872,15 @@ public abstract class AbstractDESSolver
       ((DelayedDESystem) DES).registerDelayValueHolder(this);
     }
     MultiTable data = initResultMatrix(DES, initialValues, timePoints);
-    double result[][] = data.getBlock(0).getData();
-    double change[] = new double[initialValues.length];
-    double yPrev[] = new double[initialValues.length];
-    double yTemp[] = new double[initialValues.length];
-    double steady[] = new double[initialValues.length];
+    double[][] result = data.getBlock(0).getData();
+    double[] change = new double[initialValues.length];
+    double[] yPrev = new double[initialValues.length];
+    double[] yTemp = new double[initialValues.length];
+    double[] steady = new double[initialValues.length];
     double t = timePoints[0];
     double h = stepSize;
     boolean fastFlag = false;
-    double v[] = additionalResults(DES, t, result[0], data, 0);
+    double[] v = additionalResults(DES, t, result[0], data, 0);
     if (DES instanceof FastProcessDESystem) {
       fastFlag = ((FastProcessDESystem) DES).containsFastProcesses();
     }
@@ -951,7 +951,7 @@ public abstract class AbstractDESSolver
     HashMap<String, Integer> idIndex = new HashMap<String, Integer>();
     HashSet<String> missingIds = new HashSet<String>();
     int i, j, k;
-    String ids[] = DES.getIdentifiers();
+    String[] ids = DES.getIdentifiers();
     for (i = 0; i < ids.length; i++) {
       if (!initConditions.containsColumn(ids[i])) {
         missingIds.add(ids[i]);
@@ -972,7 +972,7 @@ public abstract class AbstractDESSolver
     double[] yTemp = new double[DES.getDimension()];
     double[] change = new double[DES.getDimension()];
     double t = timePoints[0];
-    double v[] = additionalResults(DES, t, result[0], data, 0);
+    double[] v = additionalResults(DES, t, result[0], data, 0);
     firePropertyChange(-stepSize, 0d, result[0]);
     for (i = 1; (i < timePoints.length) && (!Thread.currentThread().isInterrupted()); i++) {
       double h = stepSize;

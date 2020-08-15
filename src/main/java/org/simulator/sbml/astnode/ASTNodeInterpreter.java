@@ -200,7 +200,7 @@ public class ASTNodeInterpreter {
    * @return doubleValue the interpreted double value of the node
    */
   public double lambdaDouble(ASTNodeValue[] children, double time) {
-    double d[] = new double[Math.max(0, children.length - 1)];
+    double[] d = new double[Math.max(0, children.length - 1)];
     for (int i = 0; i < children.length - 1; i++) {
       d[i++] = children[i].compileDouble(time, 0d);
     }
@@ -214,7 +214,7 @@ public class ASTNodeInterpreter {
    * @return booleanValue the interpreted boolean value of the node
    */
   public boolean lambdaBoolean(ASTNodeValue[] children, double time) {
-    double d[] = new double[Math.max(0, children.length - 1)];
+    double[] d = new double[Math.max(0, children.length - 1)];
     for (int i = 0; i < children.length - 1; i++) {
       d[i++] = children[i].compileDouble(time, 0d);
     }

@@ -65,7 +65,7 @@ public class GroupContainer {
     }
   }
 
-  public void initialize(double a[]) {
+  public void initialize(double[] a) {
     for (int g = 0; g < groupPropensitySums.length; g++) {
       groupPropensitySums[g] = 0;
       groupSizes[g] = 0;

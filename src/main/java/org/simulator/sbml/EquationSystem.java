@@ -74,7 +74,7 @@ public abstract class EquationSystem
    * This array stores for every event an object of {@link SBMLEventInProgress} that is used to
    * handle event processing during simulation
    */
-  protected SBMLEventInProgress events[];
+  protected SBMLEventInProgress[] events;
 
   /**
    * This set stores the priorities of the currently processed events.
@@ -1763,7 +1763,7 @@ public abstract class EquationSystem
    */
   @Override
   public String[] getAdditionalValueIds() {
-    String ids[] = new String[v.length];
+    String[] ids = new String[v.length];
     int i = 0;
     for (Reaction r : model.getListOfReactions()) {
       ids[i++] = r.getId();
