@@ -1,4 +1,4 @@
-# Guidelines for formatting the SBSCL code
+# Guidelines for using code formatting configuration files
 
 ## For IntelliJ
 - First you should find a file present in the same folder named as `intellij-java-codestyle.xml` which contains the Java code style for IntelliJ.
@@ -13,3 +13,5 @@
 - Go to `Java => Code Style => Formatter`.
 - Click on `Import` and browse the config file from the dev folder and just click `Apply and Close`.
 - Now, format the code of any file by simply pressing `Ctrl+Shift+F`.
+
+The code styles are from the [Google Style Guides](https://google.github.io/styleguide/) that contains formatting config files for different languages. For more information, visit the [google/styleguide](https://github.com/google/styleguide) repository.
