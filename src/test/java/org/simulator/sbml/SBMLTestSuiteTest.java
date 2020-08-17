@@ -93,6 +93,7 @@ public class SBMLTestSuiteTest {
   public void testModel() throws IOException {
 
     String[] failedTests = new String[]{
+        // failed due to comp flattening (see issue #36)
         "01126", "01127", "01129", "01130", "01131", "01132", "01133", "01134", "01140", "01142",
         "01143", "01144", "01145", "01148", "01149", "01151", "01154", "01155", "01156", "01157",
         "01158", "01159", "01160", "01161", "01162", "01164", "01166", "01169", "01170", "01174",
@@ -101,22 +102,23 @@ public class SBMLTestSuiteTest {
         "01360", "01364", "01365", "01367", "01368", "01369", "01371", "01372", "01373", "01374",
         "01375", "01376", "01377", "01378", "01379", "01380", "01381", "01382", "01383", "01384",
         "01385", "01386", "01387", "01388", "01389", "01468", "01469", "01470", "01474",
-        // failed due to comp flattening (see issue #36)
-        "01153",
         // (comp model) failing with IllegalArgumentException: Cannot set duplicate meta identifier
-        "01165", "01167", "01168", "01471", "01472", "01473", "01475", "01476", "01477", "01778",
+        "01153",
         // (comp model) failing with FileNotFoundException: enzyme_model.xml (No such file or directory)
-        "01507", "01508", "01511", // sbml model with changing compartment size (see issue #50)
-        "01287", "01592", // failing due to long run time (see issue #39)
-        "01400", "01401", "01403", "01406", "01409",
+        "01165", "01167", "01168", "01471", "01472", "01473", "01475", "01476", "01477", "01778",
+        // sbml model with changing compartment size (see issue #50)
+        "01507", "01508", "01511",
+        // failing due to long run time (see issue #39)
+        "01287", "01592",
         // failing due to delay in rateOf (see issue #46)
-        "01444", "01445", "01446", "01447", "01448",
+        "01400", "01401", "01403", "01406", "01409",
         // failing due to event triggers before mentioned condition (see issue #44)
+        "01444", "01445", "01446", "01447", "01448",
         "01456",
         "01480",
         "01481", // model below sbml l3v1
-        "01492", "01493",
         // failing due to misinterpretation of function variables with parameters (see issue #45)
+        "01492", "01493",
         "01520",
         "01539",
         "01560", "01568", "01570", "01787", // models below sbml l3v2
