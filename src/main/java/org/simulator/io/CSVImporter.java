@@ -51,14 +51,14 @@ public class CSVImporter {
   private static final Logger logger = Logger.getLogger(CSVImporter.class.getName());
 
   /**
-   * This method reads the data from the CSV file and converts it
-   * into the map with key as the column name and value as the array of amounts
-   * for the particular column.
-   * 
+   * This method reads the data from the CSV file and converts it into the map with key as the
+   * column name and value as the array of amounts for the particular column.
+   *
    * @param pathname The path of the CSV file
    * @return columnsMap
    */
-  private Map<String, double[]> readDataFromCSV(String pathname, String separator) throws IOException {
+  private Map<String, double[]> readDataFromCSV(String pathname, String separator)
+      throws IOException {
     Map<String, double[]> columnsMap = new LinkedHashMap<>();
     BufferedReader reader = new BufferedReader(new FileReader(pathname));
     String line = reader.readLine();
@@ -67,7 +67,7 @@ public class CSVImporter {
     if (line != null) {
       List<String> lines = getLinesFromCSV(reader);
 
-      if (identifiers[0].equalsIgnoreCase(TIME)){
+      if (identifiers[0].equalsIgnoreCase(TIME)) {
         identifiers[0] = identifiers[0].toLowerCase();
       }
       for (String s : identifiers) {
@@ -96,7 +96,7 @@ public class CSVImporter {
   /**
    * Converts the content of the CSV file in the form of the MultiTable.
    *
-   * @param model the SBML {@link Model}
+   * @param model    the SBML {@link Model}
    * @param pathname path of the CSV file
    * @return the results from the CSV file in MultiTable (null can be returned on exception)
    * @throws IOException
@@ -123,7 +123,7 @@ public class CSVImporter {
         String[] colNames = new String[columnsMap.size()];
         UniqueNamedSBase sbase;
         int j = 0;
-        for (Map.Entry<String, double[]> entry: columnsMap.entrySet()) {
+        for (Map.Entry<String, double[]> entry : columnsMap.entrySet()) {
           sbase = model.findUniqueNamedSBase(entry.getKey());
           colNames[j++] = (sbase != null) && (sbase.isSetName()) ? sbase.getName() : null;
         }
@@ -140,8 +140,7 @@ public class CSVImporter {
   }
 
   /**
-   * Read all the values from the CSV file and stores them in
-   * an List of String.
+   * Read all the values from the CSV file and stores them in an List of String.
    *
    * @param reader
    * @return

@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * In this class functions for the computation of an overall distance based on
- * the distance values determined for each column of a table are defined.
+ * In this class functions for the computation of an overall distance based on the distance values
+ * determined for each column of a table are defined.
  *
  * @author Roland Keller
  * @version $Rev$

@@ -33,7 +33,8 @@ import org.simulator.math.Mathematics;
 
 /**
  * This class is the superclass of the wrapper classes for the solvers of the
- * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math Library</a>.
+ * <a href="http://commons.apache.org/proper/commons-math/" target="_blank">Apache Math
+ * Library</a>.
  *
  * @author Roland Keller
  * @version $Rev$
@@ -127,14 +128,16 @@ public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
    * @see org.sbml.simulator.math.odes.AbstractDESSolver#computeChange(org.sbml.simulator.math.odes.DESystem, double[], double, double, double[])
    */
   @Override
-  public double[] computeChange(DESystem DES, double[] y, double t, double stepSize, double[] change, boolean steadyState)
+  public double[] computeChange(DESystem DES, double[] y, double t, double stepSize,
+      double[] change, boolean steadyState)
       throws DerivativeException {
     if ((integrationResult == null) || (integrationResult.length != y.length)) {
       integrationResult = new double[y.length];
     }
     double tstart = t;
     double tend = t + stepSize;
-    if (FastMath.abs(tstart - tend) <= (1.0e-12 * FastMath.max(FastMath.abs(tstart), FastMath.abs(tend)))) {
+    if (FastMath.abs(tstart - tend) <= (1.0e-12 * FastMath
+        .max(FastMath.abs(tstart), FastMath.abs(tend)))) {
       for (int i = 0; i != change.length; i++) {
         change[i] = 0;
       }

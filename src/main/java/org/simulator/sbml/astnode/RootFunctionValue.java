@@ -27,8 +27,7 @@ package org.simulator.sbml.astnode;
 import org.sbml.jsbml.ASTNode;
 
 /**
- * This class computes and stores values of {@link ASTNode}s that refer to a
- * root function.
+ * This class computes and stores values of {@link ASTNode}s that refer to a root function.
  *
  * @author Roland Keller
  * @version $Rev$

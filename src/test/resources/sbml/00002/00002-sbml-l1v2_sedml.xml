@@ -2,48 +2,53 @@
 <!-- Written by libSedML v1.1.4092.19132 see http://libsedml.sf.net -->
 <sedML id="sedml_00002" xmlns="http://www.biomodels.net/sed-ml">
   <listOfSimulations>
-    <uniformTimeCourse id="simulation1" initialTime="0" outputStartTime="0" outputEndTime="5" numberOfPoints="51">
-      <algorithm kisaoID="KISAO:0000019" />
+    <uniformTimeCourse id="simulation1" initialTime="0" outputStartTime="0" outputEndTime="5"
+      numberOfPoints="51">
+      <algorithm kisaoID="KISAO:0000019"/>
     </uniformTimeCourse>
   </listOfSimulations>
   <listOfModels>
-    <model id="model1" language="urn:sedml:language:sbml" source="00002-sbml-l1v2.xml" />
+    <model id="model1" language="urn:sedml:language:sbml" source="00002-sbml-l1v2.xml"/>
   </listOfModels>
   <listOfTasks>
-    <task id="task1" modelReference="model1" simulationReference="simulation1" />
+    <task id="task1" modelReference="model1" simulationReference="simulation1"/>
   </listOfTasks>
   <listOfDataGenerators>
     <dataGenerator id="time1" name="time">
       <listOfVariables>
-        <variable id="time" taskReference="task1" symbol="urn:sedml:symbol:time" />
+        <variable id="time" taskReference="task1" symbol="urn:sedml:symbol:time"/>
       </listOfVariables>
       <math xmlns="http://www.w3.org/1998/Math/MathML">
-        <ci> time </ci>
+        <ci>time</ci>
       </math>
     </dataGenerator>
     <dataGenerator id="S11" name="S1">
       <listOfVariables>
-        <variable id="S11_s" taskReference="task1" target="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@id='S1']" />
-        <variable id="S11_c" taskReference="task1" target="/sbml:sbml/sbml:model/sbml:listOfCompartments/sbml:compartment[@id='compartment']" />
+        <variable id="S11_s" taskReference="task1"
+          target="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@id='S1']"/>
+        <variable id="S11_c" taskReference="task1"
+          target="/sbml:sbml/sbml:model/sbml:listOfCompartments/sbml:compartment[@id='compartment']"/>
       </listOfVariables>
       <math xmlns="http://www.w3.org/1998/Math/MathML">
         <apply>
-          <divide />
-          <ci> S11_s </ci>
-          <ci> S11_c </ci>
+          <divide/>
+          <ci>S11_s</ci>
+          <ci>S11_c</ci>
         </apply>
       </math>
     </dataGenerator>
     <dataGenerator id="S21" name="S2">
       <listOfVariables>
-        <variable id="S21_s" taskReference="task1" target="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@id='S2']" />
-        <variable id="S21_c" taskReference="task1" target="/sbml:sbml/sbml:model/sbml:listOfCompartments/sbml:compartment[@id='compartment']" />
+        <variable id="S21_s" taskReference="task1"
+          target="/sbml:sbml/sbml:model/sbml:listOfSpecies/sbml:species[@id='S2']"/>
+        <variable id="S21_c" taskReference="task1"
+          target="/sbml:sbml/sbml:model/sbml:listOfCompartments/sbml:compartment[@id='compartment']"/>
       </listOfVariables>
       <math xmlns="http://www.w3.org/1998/Math/MathML">
         <apply>
-          <divide />
-          <ci> S21_s </ci>
-          <ci> S21_c </ci>
+          <divide/>
+          <ci>S21_s</ci>
+          <ci>S21_c</ci>
         </apply>
       </math>
     </dataGenerator>
@@ -51,15 +56,15 @@
   <listOfOutputs>
     <report id="report1" name="Report for test 00002">
       <listOfDataSets>
-        <dataSet dataReference="time1" />
-        <dataSet dataReference="S11" />
-        <dataSet dataReference="S21" />
+        <dataSet dataReference="time1"/>
+        <dataSet dataReference="S11"/>
+        <dataSet dataReference="S21"/>
       </listOfDataSets>
     </report>
     <plot2D id="plot1" name="Timecourse for test 00002">
       <listOfCurves>
-        <curve logX="false" logY="false" xDataReference="time1" yDataReference="S11" />
-        <curve logX="false" logY="false" xDataReference="time1" yDataReference="S21" />
+        <curve logX="false" logY="false" xDataReference="time1" yDataReference="S11"/>
+        <curve logX="false" logY="false" xDataReference="time1" yDataReference="S21"/>
       </listOfCurves>
     </plot2D>
   </listOfOutputs>

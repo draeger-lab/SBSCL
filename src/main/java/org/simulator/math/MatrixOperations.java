@@ -26,14 +26,13 @@ package org.simulator.math;
 
 /**
  * <p>
- * Class used to perform matrix operations, focusing on finding vector solutions
- * to the vector equation F(x) = 0.
+ * Class used to perform matrix operations, focusing on finding vector solutions to the vector
+ * equation F(x) = 0.
  * <p>
- * TODO: Add calculation of eigenvectors. This isn't hard to implement as we've
- * already calculated the eigenvalues and this means all we need to do is solve
- * for x in the matrix equation (A-lambda*I)*x = 0. However, if we have complex
- * eigenvalues then we have a problem. Java doesn't have complex number support
- * natively.
+ * TODO: Add calculation of eigenvectors. This isn't hard to implement as we've already calculated
+ * the eigenvalues and this means all we need to do is solve for x in the matrix equation
+ * (A-lambda*I)*x = 0. However, if we have complex eigenvalues then we have a problem. Java doesn't
+ * have complex number support natively.
  * <h1>
  * Class method summary:
  * </h1>
@@ -121,20 +120,18 @@ public class MatrixOperations {
   private static double[] vv;
 
   /**
-   * Given a matrix a[1..n][1..n], this routine replaces it by the LU
-   * decomposition of a rowwise permutation of itself. a and n are input. a is
-   * output,l arrand as in equation (2.3.14) above; indx[1..n] is an output
-   * vector that records the row permutation effected by the partial pivoting;
-   * d (return value) is output +/- 1 depending on whether the number of row
-   * interchanges was even or odd respectively. This routine is used in
-   * combination with lubksb to solve linear equations or invert a matrix.
+   * Given a matrix a[1..n][1..n], this routine replaces it by the LU decomposition of a rowwise
+   * permutation of itself. a and n are input. a is output,l arrand as in equation (2.3.14) above;
+   * indx[1..n] is an output vector that records the row permutation effected by the partial
+   * pivoting; d (return value) is output +/- 1 depending on whether the number of row interchanges
+   * was even or odd respectively. This routine is used in combination with lubksb to solve linear
+   * equations or invert a matrix.
    *
    * @param a    the matrix to be decomposed
    * @param indx the array to put the return index into
-   * @return +1 or -1 signifying whether the number of row interchanges is odd
-   * or even
+   * @return +1 or -1 signifying whether the number of row interchanges is odd or even
    */
-  public static double ludcmp(double a[][], int indx[]) throws MatrixException {
+  public static double ludcmp(double[][] a, int[] indx) throws MatrixException {
     int n = a.length;
     int i = 0, imax = 0, j = 0, k = 0;
     double big, dum, sum, temp;
@@ -209,21 +206,19 @@ public class MatrixOperations {
   }
 
   /**
-   * Solves the set of n linear equations AX = B. Here a[1..n][1..n] is input,
-   * not as the matrix A but rather as its LU decomposition, determined by the
-   * routine ludcmp. indx[1..n] is input as the permutation vector returned by
-   * ludcmp. b[1..n] is input as the right hand side vector B, and returns
-   * with the solution vector X. a, and indx are not modified by this routine
-   * and can be left in place for successive calls with different right-hand
-   * sides b. This routine takes into account the possibility that b will
-   * begin with many zero elements, so it is efficient for use in matrix
-   * inversion.
+   * Solves the set of n linear equations AX = B. Here a[1..n][1..n] is input, not as the matrix A
+   * but rather as its LU decomposition, determined by the routine ludcmp. indx[1..n] is input as
+   * the permutation vector returned by ludcmp. b[1..n] is input as the right hand side vector B,
+   * and returns with the solution vector X. a, and indx are not modified by this routine and can be
+   * left in place for successive calls with different right-hand sides b. This routine takes into
+   * account the possibility that b will begin with many zero elements, so it is efficient for use
+   * in matrix inversion.
    *
    * @param a    the matrix to be solved as described
    * @param indx the array returned by ludcmp
    * @param b    the vector to be solbed as described
    */
-  public static void lubksb(double a[][], int indx[], double[] b) {
+  public static void lubksb(double[][] a, int[] indx, double[] b) {
     int ii = 0, ip = 0;
     double sum = 0.0;
     int n = a.length;
@@ -250,14 +245,13 @@ public class MatrixOperations {
   }
 
   /**
-   * Given a matrix a[1..n][1..n], this routine replaces it by a balanced
-   * matrix with identical eigenvalues. A symmetric matrix is already balanced
-   * and is unaffected by this procedure. The parameter RADIX should be the
-   * machine's floating-point radix.
+   * Given a matrix a[1..n][1..n], this routine replaces it by a balanced matrix with identical
+   * eigenvalues. A symmetric matrix is already balanced and is unaffected by this procedure. The
+   * parameter RADIX should be the machine's floating-point radix.
    *
    * @param a the matrix to be balanced
    */
-  public static void balance(double a[][]) {
+  public static void balance(double[][] a) {
     // The JVM is a binary machine, ie radix base 2
     final int RADIX = 2;
     int last = 0;
@@ -308,7 +302,7 @@ public class MatrixOperations {
    *
    * @param a the matrix to be reduced
    */
-  public static void elmhes(double a[][]) {
+  public static void elmhes(double[][] a) {
     int m, j, i;
     int n = a.length;
     double y, x;
@@ -367,17 +361,16 @@ public class MatrixOperations {
   }
 
   /**
-   * Finds all eigenvalues of an upper Hessenberg matrix a[1..n][1..n]. On
-   * input a can be exactly as output from elmhes (� 11.5); on output it is
-   * destroyed. The real and imaginary parts of the eigenvalues are returned
-   * in wr[1..n] and wi[1..n], respectively.
+   * Finds all eigenvalues of an upper Hessenberg matrix a[1..n][1..n]. On input a can be exactly as
+   * output from elmhes (� 11.5); on output it is destroyed. The real and imaginary parts of the
+   * eigenvalues are returned in wr[1..n] and wi[1..n], respectively.
    *
    * @param a  the input matrix
    * @param wr the array specified in the function description
    * @param wi the array specified in the function description
    * @return 0 iff success
    */
-  public static int hqr(double a[][], double wr[], double wi[])
+  public static int hqr(double[][] a, double[] wr, double[] wi)
       throws MatrixException {
     // Initialize variables
     int nn = 0, m = 0, l = 0, k = 0, j = 0, its = 0, i = 0, mmin = 0;
@@ -432,7 +425,9 @@ public class MatrixOperations {
           } else {
             if (its == 30) {
               // Too many iterations in hqr
-              throw new MatrixException("Error: Could not find acceptable equilibrium point in " + its + " iterations. Please try another initial guess.");
+              throw new MatrixException(
+                  "Error: Could not find acceptable equilibrium point in " + its
+                      + " iterations. Please try another initial guess.");
             }
             if (its == 10 || its == 20) {
               t += x;
@@ -531,10 +526,10 @@ public class MatrixOperations {
   }
 
   /**
-   * This exception is thrown when errors in the computation of matrix-related
-   * solutions, their eigenvalues or eigenvectors. The message stored in the
-   * exception indicates where the computation went wrong and should be
-   * instructive to the user hoping to re-complete the calculation
+   * This exception is thrown when errors in the computation of matrix-related solutions, their
+   * eigenvalues or eigenvectors. The message stored in the exception indicates where the
+   * computation went wrong and should be instructive to the user hoping to re-complete the
+   * calculation
    */
   @SuppressWarnings("serial")
   public static class MatrixException extends Exception {

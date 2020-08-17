@@ -54,32 +54,35 @@ public class PlotMultiTable extends ApplicationFrame {
   /**
    * Initializes the JFreeChart and dataSet for the chart using MultiTable
    *
-   * @param table The input data type to the plot API is MultiTable which gets converted
-   *              internally to DefaultCategoryDataset
+   * @param table The input data type to the plot API is MultiTable which gets converted internally
+   *              to DefaultCategoryDataset
    * @param title
    */
   public PlotMultiTable(MultiTable table, String title) {
     super(title);
     this.title = title;
     species = table;
-    JFreeChart lineChart = ChartFactory.createLineChart(title, "time", "conentration (nM)", createDataset(), PlotOrientation.VERTICAL, true, true, false);
+    JFreeChart lineChart = ChartFactory
+        .createLineChart(title, "time", "conentration (nM)", createDataset(),
+            PlotOrientation.VERTICAL, true, true, false);
     ChartPanel chartPanel = new ChartPanel(lineChart);
     chartPanel.setPreferredSize(new java.awt.Dimension(WIDTH, HEIGHT));
     setContentPane(chartPanel);
   }
 
   /**
-   * Initializes the JFreeChart and dataSet for the chart using MultiTable
-   * with a default title
+   * Initializes the JFreeChart and dataSet for the chart using MultiTable with a default title
    *
-   * @param table The input data type to the plot API is MultiTable which gets converted
-   *              internally to DefaultCategoryDataset
+   * @param table The input data type to the plot API is MultiTable which gets converted internally
+   *              to DefaultCategoryDataset
    */
   public PlotMultiTable(MultiTable table) {
     super(DEFAULT_TITLE);
     this.title = DEFAULT_TITLE;
     species = table;
-    JFreeChart lineChart = ChartFactory.createLineChart(title, "time", "conentration (nM)", createDataset(), PlotOrientation.VERTICAL, true, true, false);
+    JFreeChart lineChart = ChartFactory
+        .createLineChart(title, "time", "conentration (nM)", createDataset(),
+            PlotOrientation.VERTICAL, true, true, false);
     ChartPanel chartPanel = new ChartPanel(lineChart);
     chartPanel.setPreferredSize(new java.awt.Dimension(WIDTH, HEIGHT));
     setContentPane(chartPanel);
@@ -94,7 +97,8 @@ public class PlotMultiTable extends ApplicationFrame {
       Column col = species.getColumn(i);
       int time_step = 0;
       for (Iterator<Double> iter = col.iterator(); iter.hasNext(); time_step++) {
-        data.addValue(iter.next().doubleValue(), col.getColumnName(), String.valueOf(species.getTimePoint(time_step)));
+        data.addValue(iter.next().doubleValue(), col.getColumnName(),
+            String.valueOf(species.getTimePoint(time_step)));
       }
     }
     return data;

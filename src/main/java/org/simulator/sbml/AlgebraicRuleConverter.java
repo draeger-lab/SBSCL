@@ -45,8 +45,8 @@ import org.sbml.jsbml.Variable;
 import org.sbml.jsbml.ASTNode.Type;
 
 /**
- * This class converts the algebraic rules of a model to assignment rules based
- * on the given matching.
+ * This class converts the algebraic rules of a model to assignment rules based on the given
+ * matching.
  *
  * @author Alexander D&ouml;rr
  * @version $Rev$
@@ -102,8 +102,8 @@ public class AlgebraicRuleConverter {
 
 
   /**
-   * {@link Map} representing the current matching with value of the left node
-   * -> value of the right node
+   * {@link Map} representing the current matching with value of the left node -> value of the right
+   * node
    */
   private Map<SBase, SBase> matching;
 
@@ -113,20 +113,17 @@ public class AlgebraicRuleConverter {
   private Model model;
 
   /**
-   * ASTNodes for the node of the variable an algebraic refers to and its
-   * parent
+   * ASTNodes for the node of the variable an algebraic refers to and its parent
    */
   private ASTNode variableNodeParent, variableNode;
 
   /**
-   * A boolean that states if the variable of an algebraic rule is linked
-   * additive
+   * A boolean that states if the variable of an algebraic rule is linked additive
    */
   private boolean additive = true;
 
   /**
-   * A boolean that states if the variable of an algebraic rule can remain on
-   * its side
+   * A boolean that states if the variable of an algebraic rule can remain on its side
    */
   private boolean remainOnSide = true;
 
@@ -156,8 +153,8 @@ public class AlgebraicRuleConverter {
   }
 
   /**
-   * Creates an equation for the current algebraic rule on the basis of the
-   * evaluation and the sorted EquationObjects
+   * Creates an equation for the current algebraic rule on the basis of the evaluation and the
+   * sorted EquationObjects
    *
    * @return
    */
@@ -279,8 +276,7 @@ public class AlgebraicRuleConverter {
   }
 
   /**
-   * Creates an assignment rule out of the given ASTNode and the Id of its
-   * algebraic rule
+   * Creates an assignment rule out of the given ASTNode and the Id of its algebraic rule
    *
    * @param node
    * @param rule
@@ -324,15 +320,18 @@ public class AlgebraicRuleConverter {
   }
 
   /**
-   * Before sorting the equation of the algebraic rule, the variable of the
-   * rule has to be deleted.
+   * Before sorting the equation of the algebraic rule, the variable of the rule has to be deleted.
    */
   private void deleteVariable() {
     int index;
     // Node with variable has 2 children
     if ((variableNodeParent.getChildCount() == 2) && (variableNodeParent.getType() == Type.TIMES)) {
       // Variable has a negativ sign / other child is -1
-      if (variableNodeParent.getLeftChild().isMinusOne() || (variableNodeParent.getLeftChild().isUMinus() && variableNodeParent.getLeftChild().getLeftChild().isOne()) || variableNodeParent.getRightChild().isMinusOne() || (variableNodeParent.getRightChild().isUMinus() && variableNodeParent.getRightChild().getLeftChild().isOne())) {
+      if (variableNodeParent.getLeftChild().isMinusOne() || (
+          variableNodeParent.getLeftChild().isUMinus() && variableNodeParent.getLeftChild()
+              .getLeftChild().isOne()) || variableNodeParent.getRightChild().isMinusOne() || (
+          variableNodeParent.getRightChild().isUMinus() && variableNodeParent.getRightChild()
+              .getLeftChild().isOne())) {
         index = variableNodeParent.getParent().getIndex(variableNodeParent);
         ((ASTNode) variableNodeParent.getParent()).removeChild(index);
       }
@@ -350,9 +349,9 @@ public class AlgebraicRuleConverter {
   }
 
   /**
-   * Checks if the variable of the algebraic equation has to be moved to the
-   * other side of the equation or not and if its connection to the rest of
-   * the equation is additive or multiplicative.
+   * Checks if the variable of the algebraic equation has to be moved to the other side of the
+   * equation or not and if its connection to the rest of the equation is additive or
+   * multiplicative.
    *
    * @param node
    * @return
@@ -361,7 +360,9 @@ public class AlgebraicRuleConverter {
     if (node != null) {
       if (node.getType() == Type.TIMES) {
         if (node.getChildCount() == 2) {
-          if (node.getLeftChild().isMinusOne() || (node.getLeftChild().isUMinus() && node.getLeftChild().getLeftChild().isOne()) || node.getRightChild().isMinusOne() || (node.getRightChild().isUMinus() && node.getRightChild().getLeftChild().isOne())) {
+          if (node.getLeftChild().isMinusOne() || (node.getLeftChild().isUMinus() && node
+              .getLeftChild().getLeftChild().isOne()) || node.getRightChild().isMinusOne() || (
+              node.getRightChild().isUMinus() && node.getRightChild().getLeftChild().isOne())) {
             remainOnSide = false;
           } else {
             additive = false;
@@ -383,8 +384,7 @@ public class AlgebraicRuleConverter {
   }
 
   /**
-   * Creates a list an assignment rule for every algebraic rule in the given
-   * model
+   * Creates a list an assignment rule for every algebraic rule in the given model
    *
    * @return rules
    */
@@ -422,13 +422,14 @@ public class AlgebraicRuleConverter {
   }
 
   /**
-   * Replaces the names of given ASTNode's childern with the value stored in
-   * the given HashMaps if there is an entry in any of the HashMaps
+   * Replaces the names of given ASTNode's childern with the value stored in the given HashMaps if
+   * there is an entry in any of the HashMaps
    *
    * @param node
    * @param varibales
    */
-  private void replaceNames(ASTNode node, Map<String, String> varibales, Map<String, Double> numberHash, Map<String, ASTNode> nodeHash) {
+  private void replaceNames(ASTNode node, Map<String, String> varibales,
+      Map<String, Double> numberHash, Map<String, ASTNode> nodeHash) {
     if (node.isString()) {
       if (varibales.get(node.getName()) != null) {
         node.setName(varibales.get(node.getName()));
@@ -446,8 +447,8 @@ public class AlgebraicRuleConverter {
   }
 
   /**
-   * Searches in the given ASTNode for a node with the same name as the given
-   * String. Afterwards the variables variableNode and variable are set.
+   * Searches in the given ASTNode for a node with the same name as the given String. Afterwards the
+   * variables variableNode and variable are set.
    *
    * @param node
    * @param variable
@@ -469,15 +470,15 @@ public class AlgebraicRuleConverter {
   }
 
   /**
-   * Creates EquationObjects for subterm of the rules equation and sorts them
-   * into ArrayLists
+   * Creates EquationObjects for subterm of the rules equation and sorts them into ArrayLists
    *
    * @param node
    * @param plus
    * @param times
    * @param divide
    */
-  private void sortEquationObjects(ASTNode node, boolean plus, boolean times, boolean divide, int depth) {
+  private void sortEquationObjects(ASTNode node, boolean plus, boolean times, boolean divide,
+      int depth) {
     // Reached an operator
     if ((depth >= 0) && (node.isOperator())) {
       if (node.getType() == Type.PLUS) {
@@ -490,9 +491,16 @@ public class AlgebraicRuleConverter {
         }
       } else if (node.getType() == Type.TIMES) {
         if (node.getChildCount() == 2) {
-          if (((node.getLeftChild().isMinusOne()) || ((node.getLeftChild().isUMinus()) && (node.getLeftChild().getLeftChild().isOne()))) && (!(node.getRightChild().isMinusOne() || ((node.getRightChild().isUMinus()) && (node.getRightChild().getLeftChild().isOne()))))) {
+          if (((node.getLeftChild().isMinusOne()) || ((node.getLeftChild().isUMinus()) && (node
+              .getLeftChild().getLeftChild().isOne()))) && (!(node.getRightChild().isMinusOne() || (
+              (node.getRightChild().isUMinus()) && (node.getRightChild().getLeftChild()
+                  .isOne()))))) {
             sortEquationObjects(node.getRightChild(), true, true, false, depth - 1);
-          } else if (!((node.getLeftChild().isMinusOne()) || ((node.getLeftChild().isUMinus()) && (node.getLeftChild().getLeftChild().isOne()))) && ((node.getRightChild().isMinusOne()) || ((node.getRightChild().isUMinus()) && (node.getRightChild().getLeftChild().isOne())))) {
+          } else if (
+              !((node.getLeftChild().isMinusOne()) || ((node.getLeftChild().isUMinus()) && (node
+                  .getLeftChild().getLeftChild().isOne()))) && ((node.getRightChild().isMinusOne())
+                  || ((node.getRightChild().isUMinus()) && (node.getRightChild().getLeftChild()
+                  .isOne())))) {
             sortEquationObjects(node.getLeftChild(), true, true, false, depth - 1);
           } else {
             equationObjects.get(1).add(new EquationObject(node.clone(), false));
@@ -513,8 +521,7 @@ public class AlgebraicRuleConverter {
   }
 
   /**
-   * Replaces all functions in the given ASTNode with the function definition
-   * and its arguments
+   * Replaces all functions in the given ASTNode with the function definition and its arguments
    *
    * @param node
    * @param indexParent
@@ -548,7 +555,8 @@ public class AlgebraicRuleConverter {
             nameHash.put(function.getChild(i).getName(), node.getChild(i).getName());
           } else if (node.getChild(i).isNumber()) {
             if (node.getChild(i).isInteger()) {
-              numberHash.put(function.getChild(i).getName(), (double) node.getChild(i).getInteger());
+              numberHash
+                  .put(function.getChild(i).getName(), (double) node.getChild(i).getInteger());
             } else {
               numberHash.put(function.getChild(i).getName(), node.getChild(i).getReal());
             }

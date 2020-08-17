@@ -3,34 +3,33 @@ package org.simulator.sedml;
 import org.jlibsedml.execution.IProcessedSedMLSimulationResults;
 
 /**
- * Non-API Implementation of {@link IProcessedSedMLSimulationResults}
- * Because this class is non-API we don't have exhaustive arg checking etc.,
- * Borrowed from jlibsedml
+ * Non-API Implementation of {@link IProcessedSedMLSimulationResults} Because this class is non-API
+ * we don't have exhaustive arg checking etc., Borrowed from jlibsedml
  *
  * @author Shalin Shah
  */
 class IProcessedSedMLSimulationResultsWrapper
     implements IProcessedSedMLSimulationResults {
 
-  private double[][] _data;
-  private String[] _headers;
+  private double[][] data;
+  private String[] headers;
 
   IProcessedSedMLSimulationResultsWrapper(double[][] data, String[] headers) {
-    _headers = new String[headers.length];
-    System.arraycopy(headers, 0, _headers, 0, headers.length);
-    _data = new double[data.length][];
-    copyDataFromTo(data, _data);
+    this.headers = new String[headers.length];
+    System.arraycopy(headers, 0, this.headers, 0, headers.length);
+    this.data = new double[data.length][];
+    copyDataFromTo(data, this.data);
   }
 
   public String[] getColumnHeaders() {
-    String[] rc = new String[_headers.length];
-    System.arraycopy(_headers, 0, rc, 0, _headers.length);
+    String[] rc = new String[headers.length];
+    System.arraycopy(headers, 0, rc, 0, headers.length);
     return rc;
   }
 
   public double[][] getData() {
-    double[][] copy = new double[_data.length][];
-    copyDataFromTo(_data, copy);
+    double[][] copy = new double[data.length][];
+    copyDataFromTo(data, copy);
     return copy;
   }
 
@@ -44,11 +43,11 @@ class IProcessedSedMLSimulationResultsWrapper
   }
 
   public int getNumColumns() {
-    return _headers.length;
+    return headers.length;
   }
 
   public int getNumDataRows() {
-    return _data.length;
+    return data.length;
   }
 
   public Double[] getDataByColumnId(String colID) {
@@ -56,17 +55,17 @@ class IProcessedSedMLSimulationResultsWrapper
     if (colInd == -1) {
       return null;
     }
-    Double[] rc = new Double[_data.length];
-    for (int i = 0; i < _data.length; i++) {
-      rc[i] = _data[i][colInd];
+    Double[] rc = new Double[data.length];
+    for (int i = 0; i < data.length; i++) {
+      rc[i] = data[i][colInd];
     }
     return rc;
   }
 
   public int getIndexByColumnID(String colID) {
     int colInd = -1;
-    for (int i = 0; i < _headers.length; i++) {
-      if (_headers[i].equals(colID)) {
+    for (int i = 0; i < headers.length; i++) {
+      if (headers[i].equals(colID)) {
         colInd = i;
       }
     }
@@ -74,9 +73,9 @@ class IProcessedSedMLSimulationResultsWrapper
   }
 
   public Double[] getDataByColumnIndex(int index) {
-    Double[] rc = new Double[_data.length];
-    for (int i = 0; i < _data.length; i++) {
-      rc[i] = _data[i][index];
+    Double[] rc = new Double[data.length];
+    for (int i = 0; i < data.length; i++) {
+      rc[i] = data[i][index];
     }
     return rc;
   }

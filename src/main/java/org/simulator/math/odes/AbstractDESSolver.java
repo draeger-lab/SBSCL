@@ -59,7 +59,8 @@ public abstract class AbstractDESSolver
   /**
    * A {@link Logger} for this class.
    */
-  private static final transient Logger logger = Logger.getLogger(AbstractDESSolver.class.getName());
+  private static final transient Logger logger = Logger
+      .getLogger(AbstractDESSolver.class.getName());
 
   /**
    * Generated serial version identifier.
@@ -74,16 +75,15 @@ public abstract class AbstractDESSolver
   }
 
   /**
-   * Switches the inclusion of intermediate results on or off. This feature is
-   * important if the given {@link DESystem} is an instance of
-   * {@link RichDESystem}. Setting this switch to false speeds up the
-   * computation and lowers the memory consumption.
+   * Switches the inclusion of intermediate results on or off. This feature is important if the
+   * given {@link DESystem} is an instance of {@link RichDESystem}. Setting this switch to false
+   * speeds up the computation and lowers the memory consumption.
    */
   private boolean includeIntermediates;
 
   /**
-   * factor describing an interval for the progress of a certain simulation
-   * intervalFactor = 100 / (endTime - startTime)
+   * factor describing an interval for the progress of a certain simulation intervalFactor = 100 /
+   * (endTime - startTime)
    */
   private double intervalFactor;
 
@@ -93,8 +93,7 @@ public abstract class AbstractDESSolver
   List<PropertyChangeListener> listenerList;
 
   /**
-   * Flag to indicate whether or not negative values within the solution
-   * should be set to zero.
+   * Flag to indicate whether or not negative values within the solution should be set to zero.
    */
   private boolean nonnegative;
 
@@ -104,8 +103,8 @@ public abstract class AbstractDESSolver
   private double stepSize;
 
   /**
-   * Flag to indicate whether at some time point during the simulation NaN
-   * values occur within the solution.
+   * Flag to indicate whether at some time point during the simulation NaN values occur within the
+   * solution.
    */
   private boolean unstableFlag;
 
@@ -125,14 +124,12 @@ public abstract class AbstractDESSolver
   public static final String PROGRESS = "progress";
 
   /**
-   * Key used when informing listeners about change in the result by this
-   * solver.
+   * Key used when informing listeners about change in the result by this solver.
    */
   public static final String RESULT = "result";
 
   /**
-   * Initialize with default integration step size and non-negative attribute
-   * {@code true}.
+   * Initialize with default integration step size and non-negative attribute {@code true}.
    */
   public AbstractDESSolver() {
     stepSize = 0.01d;
@@ -144,8 +141,7 @@ public abstract class AbstractDESSolver
   }
 
   /**
-   * Initialize with default integration step size and non-negative attribute
-   * {@code true}.
+   * Initialize with default integration step size and non-negative attribute {@code true}.
    */
   public void reset() {
     stepSize = 0.01d;
@@ -199,11 +195,12 @@ public abstract class AbstractDESSolver
    * @return an array of additional (intermediate) results.
    * @throws DerivativeException
    */
-  protected double[] additionalResults(DESystem DES, double t, double[] yTemp, MultiTable data, int rowIndex)
+  protected double[] additionalResults(DESystem DES, double t, double[] yTemp, MultiTable data,
+      int rowIndex)
       throws DerivativeException {
     if (includeIntermediates && (DES instanceof RichDESystem)) {
       MultiTable.Block block = data.getBlock(1);
-      double v[] = ((RichDESystem) DES).getAdditionalValues(t, yTemp).clone();
+      double[] v = ((RichDESystem) DES).getAdditionalValues(t, yTemp).clone();
       block.setRowData(rowIndex, v);
       return v;
     }
@@ -221,8 +218,8 @@ public abstract class AbstractDESSolver
   }
 
   /**
-   * If option nonnegative is set all elements of the given vector smaller
-   * than zero are set to zero.
+   * If option nonnegative is set all elements of the given vector smaller than zero are set to
+   * zero.
    *
    * @param yTemp the vector yTemp
    */
@@ -237,9 +234,9 @@ public abstract class AbstractDESSolver
   }
 
   /**
-   * Checks whether or not the given current state contains {@link Double#NaN} values.
-   * In this case the solution of the current state is considered unstable and
-   * the corresponding flag of the solver will be set accordingly.
+   * Checks whether or not the given current state contains {@link Double#NaN} values. In this case
+   * the solution of the current state is considered unstable and the corresponding flag of the
+   * solver will be set accordingly.
    *
    * @param currentState The current state of the system during a simulation.
    * @return flag that is true if {@link Double#NaN} values are contained
@@ -255,16 +252,14 @@ public abstract class AbstractDESSolver
   }
 
   /**
-   * Checks whether or not the given current state contains {@link Double#NaN}
-   * values. In this case the solution of the current state is considered
-   * unstable and the corresponding flag of the solver will be set
-   * accordingly.
+   * Checks whether or not the given current state contains {@link Double#NaN} values. In this case
+   * the solution of the current state is considered unstable and the corresponding flag of the
+   * solver will be set accordingly.
    *
    * @param currentChange the current change of the system during a simulation.
    * @param yPrev         the previous state of the system
-   * @return flag that is true if {@link Double#NaN} values are contained in
-   * the change vector that have not been contained at the
-   * corresponding position in the previous state
+   * @return flag that is true if {@link Double#NaN} values are contained in the change vector that
+   * have not been contained at the corresponding position in the previous state
    */
   boolean checkSolution(double[] currentChange, double[] yPrev) {
     for (int k = 0; k < currentChange.length; k++) {
@@ -286,8 +281,8 @@ public abstract class AbstractDESSolver
   public abstract AbstractDESSolver clone();
 
   /**
-   * Computes the change for a given system at the current time with the
-   * current setting for the integration step size.
+   * Computes the change for a given system at the current time with the current setting for the
+   * integration step size.
    *
    * @param DES         The system to be simulated.
    * @param y           The current state of the system.
@@ -298,14 +293,16 @@ public abstract class AbstractDESSolver
    * @return The change.
    * @throws DerivativeException
    */
-  public abstract double[] computeChange(DESystem DES, double[] y, double t, double stepSize, double[] change, boolean steadyState)
+  public abstract double[] computeChange(DESystem DES, double[] y, double t, double stepSize,
+      double[] change, boolean steadyState)
       throws DerivativeException;
 
   /* (non-Javadoc)
    * @see org.simulator.math.odes.DelayValueHolder#computeValue(double, java.lang.String)
    */
   @Override
-  public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues, int yIndex) {
+  public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues,
+      int yIndex) {
     //get interval
     //		if (logger.getLevel().intValue() <= Level.FINE.intValue()) {
     //			logger.fine("computeDelayedValue: time = " + time + " id = " + id);
@@ -368,7 +365,8 @@ public abstract class AbstractDESSolver
     } else if (rightIndex == leftIndex) {
       return leftValue;
     } else {
-      return leftValue + (rightValue - leftValue) * ((time - timepoints[leftIndex]) / (timepoints[rightIndex] - timepoints[leftIndex]));
+      return leftValue + (rightValue - leftValue) * ((time - timepoints[leftIndex]) / (
+          timepoints[rightIndex] - timepoints[leftIndex]));
     }
   }
 
@@ -379,13 +377,13 @@ public abstract class AbstractDESSolver
    * @param yPrev       the previous y vector
    * @param change      the change vector
    * @param yTemp       the current y vector to be filled
-   * @param increase    whether or not to increase the given time by the given step
-   *                    size.
+   * @param increase    whether or not to increase the given time by the given step size.
    * @param steadyState
    * @return the time increased by the step size
    * @throws DerivativeException
    */
-  double computeNextState(DESystem DES, double t, double stepSize, double[] yPrev, double[] change, double[] yTemp, boolean increase, boolean steadyState)
+  double computeNextState(DESystem DES, double t, double stepSize, double[] yPrev, double[] change,
+      double[] yTemp, boolean increase, boolean steadyState)
       throws DerivativeException {
     double previousTime = t;
     computeChange(DES, yPrev, t, stepSize, change, steadyState);
@@ -442,9 +440,11 @@ public abstract class AbstractDESSolver
    * {@inheritDoc}
    */
   @Override
-  public void firePropertyChange(double previousTimePoint, double currTimePoint, double[] currResult) {
+  public void firePropertyChange(double previousTimePoint, double currTimePoint,
+      double[] currResult) {
     if (!listenerList.isEmpty()) {
-      PropertyChangeEvent evt1 = new PropertyChangeEvent(this, PROGRESS, previousTimePoint, currTimePoint);
+      PropertyChangeEvent evt1 = new PropertyChangeEvent(this, PROGRESS, previousTimePoint,
+          currTimePoint);
       PropertyChangeEvent evt2 = new PropertyChangeEvent(this, RESULT, currResult, currResult);
       // logger.info(String.format("Progress: %s %%", StringTools.toString(newValue)));
       for (PropertyChangeListener listener : listenerList) {
@@ -467,8 +467,8 @@ public abstract class AbstractDESSolver
   }
 
   /**
-   * This gives a human-readable name of this solver that can be displayed in
-   * a graphical user interface.
+   * This gives a human-readable name of this solver that can be displayed in a graphical user
+   * interface.
    *
    * @return A name that describes the underlying algorithm.
    */
@@ -506,7 +506,8 @@ public abstract class AbstractDESSolver
    * @param timeEnd
    * @return table the initialized {@link MultiTable}
    */
-  protected MultiTable initResultMatrix(DESystem DES, double initialValues[], double timeBegin, double timeEnd) {
+  protected MultiTable initResultMatrix(DESystem DES, double[] initialValues, double timeBegin,
+      double timeEnd) {
     return initResultMatrix(DES, initialValues, timeBegin, numSteps(timeBegin, timeEnd));
   }
 
@@ -517,15 +518,18 @@ public abstract class AbstractDESSolver
    * @param numSteps
    * @return table the initialized {@link MultiTable}
    */
-  protected MultiTable initResultMatrix(DESystem DES, double[] initialValues, double timeBegin, int numSteps) {
+  protected MultiTable initResultMatrix(DESystem DES, double[] initialValues, double timeBegin,
+      int numSteps) {
     int dim = DES.getDimension();
     if (dim != initialValues.length) {
       // TODO: Localize
-      throw new IllegalArgumentException("The number of initial values must equal the dimension of the DE system.");
+      throw new IllegalArgumentException(
+          "The number of initial values must equal the dimension of the DE system.");
     }
-    double timePoints[] = new double[numSteps];
+    double[] timePoints = new double[numSteps];
     for (int i = 0; i < timePoints.length; i++) {
-      timePoints[i] = BigDecimal.valueOf(timeBegin).add(BigDecimal.valueOf(i).multiply(BigDecimal.valueOf(stepSize))).doubleValue();
+      timePoints[i] = BigDecimal.valueOf(timeBegin)
+          .add(BigDecimal.valueOf(i).multiply(BigDecimal.valueOf(stepSize))).doubleValue();
     }
     return initResultMatrix(DES, initialValues, timePoints);
   }
@@ -537,7 +541,7 @@ public abstract class AbstractDESSolver
    * @return table the initialized {@link MultiTable}
    */
   protected MultiTable initResultMatrix(DESystem DES, double[] initialValues, double[] timePoints) {
-    double result[][] = new double[timePoints.length][initialValues.length];
+    double[][] result = new double[timePoints.length][initialValues.length];
     for (int i = 0; i != result.length; i++) {
       Arrays.fill(result[i], Double.NaN);
     }
@@ -583,7 +587,7 @@ public abstract class AbstractDESSolver
    * @param step
    * @return
    */
-  private boolean noChange(double newValues[], double oldValues[], int step) {
+  private boolean noChange(double[] newValues, double[] oldValues, int step) {
     // FIXME: this must use the absolute and relative tolerance settings of the solver for checking
     for (int i = 0; i < newValues.length; i++) {
       // absolute distance
@@ -601,8 +605,8 @@ public abstract class AbstractDESSolver
   }
 
   /**
-   * Calculates and returns the number of steps for given start and end time
-   * using the currently set interval size of integration steps.
+   * Calculates and returns the number of steps for given start and end time using the currently set
+   * interval size of integration steps.
    *
    * @param timeBegin
    * @param timeEnd
@@ -634,7 +638,8 @@ public abstract class AbstractDESSolver
     if (event != null) {
       hasNewEvents = true;
     }
-    while ((event != null) && ((event.getLastTimeExecuted() == time) || (event.getFireStatus(time)))) {
+    while ((event != null) && ((event.getLastTimeExecuted() == time) || (event
+        .getFireStatus(time)))) {
       if ((EDES instanceof FastProcessDESystem)) {
         FastProcessDESystem FDES = (FastProcessDESystem) EDES;
         if (FDES.containsFastProcesses()) {
@@ -658,17 +663,18 @@ public abstract class AbstractDESSolver
   /**
    * Function for processing the events and rules at a certain time step.
    *
-   * @param forceProcessing flag that is true if the events should be processed even if
-   *                        the solver has its own event processing
+   * @param forceProcessing flag that is true if the events should be processed even if the solver
+   *                        has its own event processing
    * @param DES             the differential equation system with events
    * @param t               the current time
    * @param previousTime    the time this function has been called previously
    * @param yTemp           the vector Ytemp
-   * @return a flag that is true if there has been a change caused by a rule
-   * or an event has been fired
+   * @return a flag that is true if there has been a change caused by a rule or an event has been
+   * fired
    * @throws DerivativeException
    */
-  public boolean processEventsAndRules(boolean forceProcessing, DESystem DES, double t, double previousTime, double yTemp[])
+  public boolean processEventsAndRules(boolean forceProcessing, DESystem DES, double t,
+      double previousTime, double[] yTemp)
       throws DerivativeException {
     boolean change = false;
     if (DES instanceof EventDESystem) {
@@ -739,7 +745,8 @@ public abstract class AbstractDESSolver
   public void setStepSize(double stepSize) {
     if (stepSize < Double.MIN_VALUE) {
       // TODO: Localize
-      throw new IllegalArgumentException("The integration step size must be a positive, non-zero value.");
+      throw new IllegalArgumentException(
+          "The integration step size must be a positive, non-zero value.");
     }
     this.stepSize = stepSize;
   }
@@ -755,7 +762,8 @@ public abstract class AbstractDESSolver
    * {@inheritDoc}
    */
   @Override
-  public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd) throws DerivativeException {
+  public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd)
+      throws DerivativeException {
     return solve(DES, initialValues, timeBegin, timeEnd, null);
   }
 
@@ -763,19 +771,20 @@ public abstract class AbstractDESSolver
    * {@inheritDoc}
    */
   @Override
-  public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd, PropertyChangeListener propertyChangeListener)
-          throws DerivativeException {
+  public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd,
+      PropertyChangeListener propertyChangeListener)
+      throws DerivativeException {
     if (DES instanceof DelayedDESystem) {
       ((DelayedDESystem) DES).registerDelayValueHolder(this);
     }
     intervalFactor = 100d / (timeEnd - timeBegin);
     MultiTable data = initResultMatrix(DES, initialValues, timeBegin, timeEnd);
-    double result[][] = data.getBlock(0).getData();
-    double change[] = new double[initialValues.length];
-    double yTemp[] = new double[initialValues.length];
-    double yPrev[] = new double[initialValues.length];
+    double[][] result = data.getBlock(0).getData();
+    double[] change = new double[initialValues.length];
+    double[] yTemp = new double[initialValues.length];
+    double[] yPrev = new double[initialValues.length];
     double t = timeBegin;
-    double v[] = additionalResults(DES, t, result[0], data, 0);
+    double[] v = additionalResults(DES, t, result[0], data, 0);
     boolean fastFlag = false;
     if (DES instanceof FastProcessDESystem) {
       fastFlag = ((FastProcessDESystem) DES).containsFastProcesses();
@@ -791,7 +800,8 @@ public abstract class AbstractDESSolver
     System.arraycopy(result[0], 0, yTemp, 0, yTemp.length);
     if (propertyChangeListener != null) {
       propertyChangeListener.propertyChange(new PropertyChangeEvent(this, PROGRESS, -stepSize, 0d));
-      propertyChangeListener.propertyChange(new PropertyChangeEvent(this, RESULT, result[0], result[0]));
+      propertyChangeListener
+          .propertyChange(new PropertyChangeEvent(this, RESULT, result[0], result[0]));
     }
     firePropertyChange(-stepSize, 0d, result[0]);
     for (int i = 1; (i < result.length) && (!Thread.currentThread().isInterrupted()); i++) {
@@ -823,7 +833,8 @@ public abstract class AbstractDESSolver
    * {@inheritDoc}
    */
   @Override
-  public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps) throws DerivativeException {
+  public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps)
+      throws DerivativeException {
     return solve(DES, initialValues, x, h, steps, null);
   }
 
@@ -831,8 +842,9 @@ public abstract class AbstractDESSolver
    * {@inheritDoc}
    */
   @Override
-  public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps, PropertyChangeListener propertyChangeListener)
-          throws DerivativeException {
+  public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps,
+      PropertyChangeListener propertyChangeListener)
+      throws DerivativeException {
     double[] timePoints = new double[steps];
     for (int i = 0; i < steps; i++) {
       timePoints[i] = x + i * h;
@@ -844,7 +856,8 @@ public abstract class AbstractDESSolver
    * {@inheritDoc}
    */
   @Override
-  public MultiTable solve(DESystem DES, double[] initialValues, double[] timepoints) throws DerivativeException {
+  public MultiTable solve(DESystem DES, double[] initialValues, double[] timepoints)
+      throws DerivativeException {
     return solve(DES, initialValues, timepoints, null);
   }
 
@@ -852,21 +865,22 @@ public abstract class AbstractDESSolver
    * {@inheritDoc}
    */
   @Override
-  public MultiTable solve(DESystem DES, double[] initialValues, double[] timePoints, PropertyChangeListener propertyChangeListener)
-          throws DerivativeException {
+  public MultiTable solve(DESystem DES, double[] initialValues, double[] timePoints,
+      PropertyChangeListener propertyChangeListener)
+      throws DerivativeException {
     if (DES instanceof DelayedDESystem) {
       ((DelayedDESystem) DES).registerDelayValueHolder(this);
     }
     MultiTable data = initResultMatrix(DES, initialValues, timePoints);
-    double result[][] = data.getBlock(0).getData();
-    double change[] = new double[initialValues.length];
-    double yPrev[] = new double[initialValues.length];
-    double yTemp[] = new double[initialValues.length];
-    double steady[] = new double[initialValues.length];
+    double[][] result = data.getBlock(0).getData();
+    double[] change = new double[initialValues.length];
+    double[] yPrev = new double[initialValues.length];
+    double[] yTemp = new double[initialValues.length];
+    double[] steady = new double[initialValues.length];
     double t = timePoints[0];
     double h = stepSize;
     boolean fastFlag = false;
-    double v[] = additionalResults(DES, t, result[0], data, 0);
+    double[] v = additionalResults(DES, t, result[0], data, 0);
     if (DES instanceof FastProcessDESystem) {
       fastFlag = ((FastProcessDESystem) DES).containsFastProcesses();
     }
@@ -905,7 +919,7 @@ public abstract class AbstractDESSolver
       //			if (logger.getLevel().intValue() < Level.INFO.intValue()) {
       //				logger.fine("additional results: " + Arrays.toString(v));
       //			}
-      firePropertyChange(timePoints[i-1], timePoints[i], yTemp);
+      firePropertyChange(timePoints[i - 1], timePoints[i], yTemp);
       t = timePoints[i];
     }
     return data;
@@ -915,7 +929,8 @@ public abstract class AbstractDESSolver
    * {@inheritDoc}
    */
   @Override
-  public MultiTable solve(DESystem DES, MultiTable.Block timeSeriesInitConditions, double[] initialValues) throws DerivativeException {
+  public MultiTable solve(DESystem DES, MultiTable.Block timeSeriesInitConditions,
+      double[] initialValues) throws DerivativeException {
     return solve(DES, timeSeriesInitConditions, initialValues, null);
   }
 
@@ -923,8 +938,9 @@ public abstract class AbstractDESSolver
    * {@inheritDoc}
    */
   @Override
-  public MultiTable solve(DESystem DES, MultiTable.Block initConditions, double[] initialValues, PropertyChangeListener propertyChangeListener)
-          throws DerivativeException {
+  public MultiTable solve(DESystem DES, MultiTable.Block initConditions, double[] initialValues,
+      PropertyChangeListener propertyChangeListener)
+      throws DerivativeException {
     if (DES instanceof DelayedDESystem) {
       ((DelayedDESystem) DES).registerDelayValueHolder(this);
     }
@@ -935,7 +951,7 @@ public abstract class AbstractDESSolver
     HashMap<String, Integer> idIndex = new HashMap<String, Integer>();
     HashSet<String> missingIds = new HashSet<String>();
     int i, j, k;
-    String ids[] = DES.getIdentifiers();
+    String[] ids = DES.getIdentifiers();
     for (i = 0; i < ids.length; i++) {
       if (!initConditions.containsColumn(ids[i])) {
         missingIds.add(ids[i]);
@@ -956,13 +972,14 @@ public abstract class AbstractDESSolver
     double[] yTemp = new double[DES.getDimension()];
     double[] change = new double[DES.getDimension()];
     double t = timePoints[0];
-    double v[] = additionalResults(DES, t, result[0], data, 0);
+    double[] v = additionalResults(DES, t, result[0], data, 0);
     firePropertyChange(-stepSize, 0d, result[0]);
     for (i = 1; (i < timePoints.length) && (!Thread.currentThread().isInterrupted()); i++) {
       double h = stepSize;
       if (!missingIds.isEmpty()) {
         for (k = 0; k < initConditions.getColumnCount(); k++) {
-          yTemp[idIndex.get(initConditions.getColumnIdentifier(k)).intValue()] = initConditions.getValueAt(i - 1, k + 1);
+          yTemp[idIndex.get(initConditions.getColumnIdentifier(k)).intValue()] = initConditions
+              .getValueAt(i - 1, k + 1);
         }
         for (String key : missingIds) {
           k = idIndex.get(key).intValue();
@@ -989,7 +1006,7 @@ public abstract class AbstractDESSolver
       //			if ((logger != null) && (logger.getLevel().intValue() < Level.INFO.intValue())) {
       //				logger.fine("additional results: " + Arrays.toString(v));
       //			}
-      firePropertyChange(timePoints[i-1] * intervalFactor, timePoints[i] * intervalFactor, yTemp);
+      firePropertyChange(timePoints[i - 1] * intervalFactor, timePoints[i] * intervalFactor, yTemp);
       t = timePoints[i];
     }
     return data;
@@ -1016,7 +1033,7 @@ public abstract class AbstractDESSolver
       totalTime += stepSize;
 
       // Extract the endPoint and compare it with initial point
-      intmdOutput = intmdOutput.filter(new double[] {getStepSize()});
+      intmdOutput = intmdOutput.filter(new double[]{getStepSize()});
       double[][] temp = intmdOutput.getBlock(0).getData();
 
       // copy last row of results

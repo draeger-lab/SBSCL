@@ -36,8 +36,8 @@ import org.sbml.jsbml.SBMLException;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
- * This class computes and stores values of {@link ASTNode}s that refer to the
- * application of a {@link FunctionDefinition}.
+ * This class computes and stores values of {@link ASTNode}s that refer to the application of a
+ * {@link FunctionDefinition}.
  *
  * @author Roland Keller
  * @version $Rev$
@@ -90,12 +90,18 @@ public class FunctionValue extends ASTNodeValue {
         }
         argumentValues = new double[variables.size()];
       } else {
-        logger.warning("ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! (" + node.getName() + ", " + node.getParentSBMLObject() + ")");
-        throw new SBMLException("ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! (" + node.getName() + ", " + node.getParentSBMLObject() + ")");
+        logger.warning(
+            "ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! (" + node
+                .getName() + ", " + node.getParentSBMLObject() + ")");
+        throw new SBMLException(
+            "ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! (" + node
+                .getName() + ", " + node.getParentSBMLObject() + ")");
         // doubleValue = compiler.compile(variable);
       }
     } else {
-      logger.warning("ASTNode of type FUNCTION but the variable is null !! (" + node.getName() + ", " + node.getParentSBMLObject() + "). " + "Check that your object is linked to a Model.");
+      logger.warning(
+          "ASTNode of type FUNCTION but the variable is null !! (" + node.getName() + ", " + node
+              .getParentSBMLObject() + "). " + "Check that your object is linked to a Model.");
     }
   }
 
@@ -105,7 +111,9 @@ public class FunctionValue extends ASTNodeValue {
   @Override
   protected void computeDoubleValue(double delay) {
     if (math != null) {
-      doubleValue = interpreter.functionDouble(evaluationBlock, variables, children, numChildren, argumentValues, time, delay);
+      doubleValue = interpreter
+          .functionDouble(evaluationBlock, variables, children, numChildren, argumentValues, time,
+              delay);
     } else {
       doubleValue = Double.NaN;
     }
@@ -117,7 +125,8 @@ public class FunctionValue extends ASTNodeValue {
   @Override
   protected void computeBooleanValue() {
     if (math != null) {
-      booleanValue = interpreter.functionBoolean(evaluationBlock, variables, children, argumentValues, time);
+      booleanValue = interpreter
+          .functionBoolean(evaluationBlock, variables, children, argumentValues, time);
     } else {
       booleanValue = false;
     }

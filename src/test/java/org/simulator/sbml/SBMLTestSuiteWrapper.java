@@ -47,10 +47,9 @@ import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 
 /**
- * Automatically evaluates models from the SBML Test Suite within a given range
- * of model numbers, thereby using the {@link RosenbrockSolver} as integration
- * method.
- * 
+ * Automatically evaluates models from the SBML Test Suite within a given range of model numbers,
+ * thereby using the {@link RosenbrockSolver} as integration method.
+ *
  * @author Roland Keller
  * @version $Rev$
  */
@@ -63,6 +62,7 @@ public class SBMLTestSuiteWrapper {
 
   /**
    * Computes a statistic for the SBML test suite using the {@link RosenbrockSolver} as integrator
+   *
    * @param path
    * @param modelnr
    * @param outputPath
@@ -72,7 +72,8 @@ public class SBMLTestSuiteWrapper {
    * @throws IOException
    * @throws URISyntaxException
    */
-  public static void testRosenbrockSolver(String path, int modelnr, String outputPath, int level, int version)
+  public static void testRosenbrockSolver(String path, int modelnr, String outputPath, int level,
+      int version)
       throws FileNotFoundException, IOException, URISyntaxException {
     String sbmlfile, csvfile, configfile;
     if ((modelnr >= 1124) && (modelnr <= 1183)) {
@@ -97,12 +98,10 @@ public class SBMLTestSuiteWrapper {
     if (modelsWithStrongestTolerance.contains(modelnr)) {
       solver.setAbsTol(1E-14);
       solver.setRelTol(1E-12);
-    }
-    else if (modelsWithStrongerTolerance.contains(modelnr)) {
+    } else if (modelsWithStrongerTolerance.contains(modelnr)) {
       solver.setAbsTol(1E-12);
       solver.setRelTol(1E-8);
-    }
-    else {
+    } else {
       solver.setAbsTol(1E-12);
       solver.setRelTol(1E-6);
     }
@@ -129,10 +128,9 @@ public class SBMLTestSuiteWrapper {
     String[] amounts = String.valueOf(props.getProperty("amount"))
         .trim().split(",");
     String[] concentrations = String.valueOf(
-      props.getProperty("concentration")).trim().split(",");
+        props.getProperty("concentration")).trim().split(",");
     String[] variables = String.valueOf(props.getProperty("variables"))
         .trim().split(",");
-
 
     for (String s : amounts) {
       s = s.trim();
@@ -148,7 +146,7 @@ public class SBMLTestSuiteWrapper {
       }
     }
 
-    for (int i = 0; i!=variables.length; i++) {
+    for (int i = 0; i != variables.length; i++) {
       variables[i] = variables[i].trim();
     }
 
@@ -169,7 +167,7 @@ public class SBMLTestSuiteWrapper {
       solver.reset();
       try {
         solution = SBMLTestSuiteRunner.testModel(solver, model,
-          timepoints, duration/ steps, amountHash);
+            timepoints, duration / steps, amountHash);
       } catch (DerivativeException e) {
         logger.warning("Exception in model " + modelnr);
         solution = null;
@@ -179,27 +177,26 @@ public class SBMLTestSuiteWrapper {
         solution = null;
       }
       if (solution != null) {
-        writeMultiTableToFile(outputPath+"/" + folder + ".csv", variables, solution);
+        writeMultiTableToFile(outputPath + "/" + folder + ".csv", variables, solution);
       }
-    }
-    else {
-      logger.warning("The model "+ modelnr + " does not exist");
+    } else {
+      logger.warning("The model " + modelnr + " does not exist");
     }
   }
 
   /**
-   * 
    * @param outputFile
    * @param variables
    * @param solution
    * @throws IOException
    */
-  private static void writeMultiTableToFile(String outputFile, String[] variables, MultiTable solution) throws IOException {
+  private static void writeMultiTableToFile(String outputFile, String[] variables,
+      MultiTable solution) throws IOException {
     BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
 
     writer.append("time");
     writer.append(",");
-    for (int i = 0; i!=variables.length; i++) {
+    for (int i = 0; i != variables.length; i++) {
       writer.append(variables[i]);
       if (i < variables.length - 1) {
         writer.append(",");
@@ -210,7 +207,7 @@ public class SBMLTestSuiteWrapper {
       writer.newLine();
       writer.append(String.valueOf(solution.getTimePoint(row)));
       writer.append(',');
-      for (int i = 0; i!=variables.length; i++) {
+      for (int i = 0; i != variables.length; i++) {
         writer.append(String.valueOf(solution.getColumn(variables[i]).getValue(row)));
         if (i < variables.length - 1) {
           writer.append(',');
@@ -222,19 +219,17 @@ public class SBMLTestSuiteWrapper {
   }
 
   /**
-   * 
-   * @param args
-   *            Expected arguments are (in this order): the path to the SBML
-   *            Test Suite, number of the model where to start the test, out
-   *            path (i.e., the path where to store results), SBML Level, SBML
-   *            version (for the given level), number of the last test case to
-   *            be evaluated
+   * @param args Expected arguments are (in this order): the path to the SBML Test Suite, number of
+   *             the model where to start the test, out path (i.e., the path where to store
+   *             results), SBML Level, SBML version (for the given level), number of the last test
+   *             case to be evaluated
    * @throws NumberFormatException
    * @throws FileNotFoundException
    * @throws IOException
    * @throws URISyntaxException
    */
-  public static void main(String[] args) throws NumberFormatException, FileNotFoundException, IOException, URISyntaxException {
+  public static void main(String[] args)
+      throws NumberFormatException, FileNotFoundException, IOException, URISyntaxException {
     int begin = Integer.parseInt(args[1]);
     int end = begin;
     if (args.length > 5) {

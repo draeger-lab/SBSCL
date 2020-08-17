@@ -74,7 +74,9 @@ public class RNG {
     }
     int result = (Math.abs(RANDOM.nextInt()) % (high - low + 1)) + low;
     if ((result < low) || (result > high)) {
-      logger.fine(MessageFormat.format("Error, invalid value {0,number} in RNG.randomInt! boundaries were low = {1,number}\thigh = {2,number}", result, low, high));
+      logger.fine(MessageFormat.format(
+          "Error, invalid value {0,number} in RNG.randomInt! boundaries were low = {1,number}\thigh = {2,number}",
+          result, low, high));
       result = Math.abs(RANDOM.nextInt() % (high - low + 1)) + low;
     }
     return result;

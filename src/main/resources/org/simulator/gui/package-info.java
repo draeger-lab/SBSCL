@@ -24,12 +24,12 @@
  */
 
 /**
- * Contains classes that provide very basic functions that facilitate the
- * creation of graphical user interfaces.
- * 
+ * Contains classes that provide very basic functions that facilitate the creation of graphical user
+ * interfaces.
+ *
  * @author Andreas Dr&auml;ger
- * @since 1.2
  * @version $Rev$
+ * @since 1.2
  */
 package org.simulator.gui;
 

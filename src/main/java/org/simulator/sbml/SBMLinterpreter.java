@@ -52,9 +52,9 @@ import org.simulator.sbml.astnode.AssignmentRuleValue;
  * <p>
  * This differential equation system ({@link DESystem}) takes a model in
  * <a href="http://sbml.org" target="_blank">SBML</a>
- * format and maps it to a data structure that is understood by the
- * {@link AbstractDESSolver}. Therefore, this class implements all necessary
- * functions expected by <a href="http://sbml.org" target="_blank">SBML</a>.
+ * format and maps it to a data structure that is understood by the {@link AbstractDESSolver}.
+ * Therefore, this class implements all necessary functions expected by <a href="http://sbml.org"
+ * target="_blank">SBML</a>.
  * </p>
  *
  * @author Alexander D&ouml;rr
@@ -78,10 +78,9 @@ public class SBMLinterpreter extends EquationSystem {
 
   /**
    * <p>
-   * This constructs a new {@link DESystem} for the given SBML {@link Model}.
-   * Note that only a maximum of {@link Integer#MAX_VALUE} {@link Species} can
-   * be simulated. If the model contains more {@link Species}, this class is not
-   * applicable.
+   * This constructs a new {@link DESystem} for the given SBML {@link Model}. Note that only a
+   * maximum of {@link Integer#MAX_VALUE} {@link Species} can be simulated. If the model contains
+   * more {@link Species}, this class is not applicable.
    * </p>
    * <p>
    * Note that currently, units are not considered.
@@ -92,7 +91,7 @@ public class SBMLinterpreter extends EquationSystem {
    * @throws SBMLException
    */
   public SBMLinterpreter(Model model)
-          throws ModelOverdeterminedException, SBMLException {
+      throws ModelOverdeterminedException, SBMLException {
     this(model, 0d, 1d, 1d);
   }
 
@@ -105,8 +104,9 @@ public class SBMLinterpreter extends EquationSystem {
    * @throws SBMLException
    * @throws ModelOverdeterminedException
    */
-  public SBMLinterpreter(Model model, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue)
-          throws SBMLException, ModelOverdeterminedException {
+  public SBMLinterpreter(Model model, double defaultSpeciesValue, double defaultParameterValue,
+      double defaultCompartmentValue)
+      throws SBMLException, ModelOverdeterminedException {
     this(model, 0d, 1d, 1d, null);
   }
 
@@ -123,8 +123,9 @@ public class SBMLinterpreter extends EquationSystem {
    * @throws SBMLException
    * @throws ModelOverdeterminedException
    */
-  public SBMLinterpreter(Model model, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue, Map<String, Boolean> amountHash)
-          throws SBMLException, ModelOverdeterminedException {
+  public SBMLinterpreter(Model model, double defaultSpeciesValue, double defaultParameterValue,
+      double defaultCompartmentValue, Map<String, Boolean> amountHash)
+      throws SBMLException, ModelOverdeterminedException {
     super(model);
     init(true, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, amountHash);
   }
@@ -134,7 +135,7 @@ public class SBMLinterpreter extends EquationSystem {
    */
   @Override
   public double[] getAdditionalValues(double t, double[] Y)
-          throws DerivativeException {
+      throws DerivativeException {
     if ((t - currentTime > 1E-15) || ((Y != this.Y) && !Arrays.equals(Y, this.Y)) || (t == 0)) {
       /*
        * We have to compute the system for the given state. But we are not
@@ -151,7 +152,7 @@ public class SBMLinterpreter extends EquationSystem {
    */
   @Override
   public EventInProgress getNextEventAssignments(double t, double previousTime, double[] Y)
-          throws DerivativeException {
+      throws DerivativeException {
     if (!modelHasEvents) {
       return null;
     }
@@ -161,7 +162,7 @@ public class SBMLinterpreter extends EquationSystem {
     currentTime = t;
     Double priority, execTime = 0d;
     astNodeTime += 0.01;
-    Double triggerTimeValues[];
+    Double[] triggerTimeValues;
     Event ev;
     int i = 0, index;
     Boolean persistent, aborted;
@@ -211,7 +212,9 @@ public class SBMLinterpreter extends EquationSystem {
           events[index].refresh(currentTime);
           i--;
           aborted = true;
-        } else if ((events[index].getLastTimeFired() <= currentTime) && (events[index].getLastTimeExecuted() > previousTime) && (events[index].getLastTimeExecuted() != currentTime)) {
+        } else if ((events[index].getLastTimeFired() <= currentTime) && (
+            events[index].getLastTimeExecuted() > previousTime) && (
+            events[index].getLastTimeExecuted() != currentTime)) {
           events[index].refresh(previousTime);
         }
         persistent = ev.getTrigger().getPersistent();
@@ -223,7 +226,8 @@ public class SBMLinterpreter extends EquationSystem {
             aborted = true;
           }
         }
-        if ((events[index].hasExecutionTime()) && (events[index].getTime() <= currentTime) && !aborted) {
+        if ((events[index].hasExecutionTime()) && (events[index].getTime() <= currentTime)
+            && !aborted) {
           if (ev.getPriority() != null) {
             priority = events[index].getPriorityObject().compileDouble(astNodeTime, 0d);
             if (!priorities.contains(priority)) {
@@ -306,8 +310,7 @@ public class SBMLinterpreter extends EquationSystem {
 
 
   /**
-   * Returns the value of the ODE system at the time t given the current values
-   * of Y
+   * Returns the value of the ODE system at the time t given the current values of Y
    *
    * @param time
    * @param Y
@@ -315,10 +318,10 @@ public class SBMLinterpreter extends EquationSystem {
    * @throws DerivativeException
    */
   private double[] computeDerivatives(double time, double[] Y)
-          throws DerivativeException {
+      throws DerivativeException {
     // create a new array with the same size of Y where the rate of change
     // is stored for every symbol in the simulation
-    double changeRate[] = new double[Y.length];
+    double[] changeRate = new double[Y.length];
     computeDerivatives(time, Y, changeRate);
     return changeRate;
   }
@@ -329,7 +332,7 @@ public class SBMLinterpreter extends EquationSystem {
    */
   @Override
   public void computeDerivatives(double time, double[] Y, double[] changeRate)
-          throws DerivativeException {
+      throws DerivativeException {
     currentTime = time;
     // make sure not to have invalid older values in the change rate
     //Arrays.fill(changeRate, 0d);
@@ -368,16 +371,15 @@ public class SBMLinterpreter extends EquationSystem {
 
   /**
    * <p>
-   * This method initializes the differential equation system for simulation. In
-   * more detail: the initial amounts or concentration will be assigned to every
-   * {@link Species} or {@link InitialAssignment}s if any are executed.
+   * This method initializes the differential equation system for simulation. In more detail: the
+   * initial amounts or concentration will be assigned to every {@link Species} or {@link
+   * InitialAssignment}s if any are executed.
    * </p>
    * <p>
-   * To save computation time the results of this method should be stored in an
-   * array. Hence this method must only be called once. However, if the SBML
-   * model to be simulated contains initial assignments, this can lead to wrong
-   * simulation results because initial assignments may depend on current
-   * parameter values.
+   * To save computation time the results of this method should be stored in an array. Hence this
+   * method must only be called once. However, if the SBML model to be simulated contains initial
+   * assignments, this can lead to wrong simulation results because initial assignments may depend
+   * on current parameter values.
    * </p>
    *
    * @throws ModelOverdeterminedException
@@ -390,23 +392,22 @@ public class SBMLinterpreter extends EquationSystem {
 
 
   /**
-   * This method initializes the differential equation system for simulation.
-   * The user can tell whether the tree of {@link ASTNode}s has to be refreshed.
+   * This method initializes the differential equation system for simulation. The user can tell
+   * whether the tree of {@link ASTNode}s has to be refreshed.
    *
    * @param refreshTree
    * @throws ModelOverdeterminedException
    * @throws SBMLException
    */
   public void init(boolean refreshTree)
-          throws ModelOverdeterminedException, SBMLException {
+      throws ModelOverdeterminedException, SBMLException {
     init(refreshTree, 0d, 1d, 1d);
   }
 
 
   /**
-   * This method initializes the differential equation system for simulation.
-   * The user can tell whether the tree of {@link ASTNode}s has to be
-   * refreshed and give some default values.
+   * This method initializes the differential equation system for simulation. The user can tell
+   * whether the tree of {@link ASTNode}s has to be refreshed and give some default values.
    *
    * @param renewTree
    * @param defaultSpeciesValue
@@ -415,17 +416,17 @@ public class SBMLinterpreter extends EquationSystem {
    * @throws ModelOverdeterminedException
    * @throws SBMLException
    */
-  public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue)
-          throws ModelOverdeterminedException, SBMLException {
+  public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue,
+      double defaultCompartmentValue)
+      throws ModelOverdeterminedException, SBMLException {
     init(renewTree, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, null);
   }
 
 
   /**
-   * This method initializes the differential equation system for simulation.
-   * The user can tell whether the tree of {@link ASTNode}s has to be
-   * refreshed, give some default values and state whether a {@link Species}
-   * is seen as an amount or a concentration.
+   * This method initializes the differential equation system for simulation. The user can tell
+   * whether the tree of {@link ASTNode}s has to be refreshed, give some default values and state
+   * whether a {@link Species} is seen as an amount or a concentration.
    *
    * @param renewTree
    * @param defaultSpeciesValue
@@ -435,9 +436,11 @@ public class SBMLinterpreter extends EquationSystem {
    * @throws ModelOverdeterminedException
    * @throws SBMLException
    */
-  public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue, double defaultCompartmentValue, Map<String, Boolean> amountHash)
-          throws ModelOverdeterminedException, SBMLException {
-    super.init(renewTree, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, amountHash);
+  public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue,
+      double defaultCompartmentValue, Map<String, Boolean> amountHash)
+      throws ModelOverdeterminedException, SBMLException {
+    super.init(renewTree, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue,
+        amountHash);
     /*
      * Initial assignments
      */
@@ -494,8 +497,8 @@ public class SBMLinterpreter extends EquationSystem {
    * {@inheritDoc}
    */
   @Override
-  public boolean processAssignmentRules(double t, double Y[])
-          throws DerivativeException {
+  public boolean processAssignmentRules(double t, double[] Y)
+      throws DerivativeException {
     currentTime = t;
     astNodeTime += 0.01d;
     System.arraycopy(Y, 0, this.Y, 0, Y.length);
@@ -506,15 +509,15 @@ public class SBMLinterpreter extends EquationSystem {
 
 
   /**
-   * This method creates assignments from the events currently stored in the
-   * associated HashMap with respect to their priority.
+   * This method creates assignments from the events currently stored in the associated HashMap with
+   * respect to their priority.
    *
    * @param priorities the priorities
    * @param Y          the Y vector
    * @return the event with assignments
    */
   private SBMLEventInProgress processNextEvent(HashSet<Double> priorities, double[] Y)
-          throws DerivativeException {
+      throws DerivativeException {
     Integer symbolIndex;
     double newVal, highestPriority = -1;
     int index;
@@ -566,7 +569,8 @@ public class SBMLinterpreter extends EquationSystem {
 
           if (symbolIndex >= 0) {
             if (compartmentHash.containsValue(symbolIndex)) {
-              updateSpeciesConcentrationByCompartmentChange(symbolIndex, Y, Y[symbolIndex], newVal, -1);
+              updateSpeciesConcentrationByCompartmentChange(symbolIndex, Y, Y[symbolIndex], newVal,
+                  -1);
             }
             events[index].addAssignment(symbolIndex, newVal);
           }
@@ -582,7 +586,8 @@ public class SBMLinterpreter extends EquationSystem {
             symbolIndex = obj.getIndex();
             if (symbolIndex >= 0) {
               if (compartmentHash.containsValue(symbolIndex)) {
-                updateSpeciesConcentrationByCompartmentChange(symbolIndex, Y, Y[symbolIndex], newVal, index);
+                updateSpeciesConcentrationByCompartmentChange(symbolIndex, Y, Y[symbolIndex],
+                    newVal, index);
               }
               events[index].addAssignment(symbolIndex, newVal);
             } else {
@@ -611,7 +616,7 @@ public class SBMLinterpreter extends EquationSystem {
    * @throws SBMLException
    */
   public void processInitialAssignments(double time, double[] Y)
-          throws SBMLException {
+      throws SBMLException {
     if (Y != null) {
       for (int i = 0; i != initialAssignmentRoots.size(); i++) {
         initialAssignmentRoots.get(i).processRule(Y, time, true);
@@ -627,12 +632,12 @@ public class SBMLinterpreter extends EquationSystem {
    * @param changeRate          the changeRate vector
    * @param Y                   the Y vector
    * @param initialCalculations
-   * @return flag that is true if there has been some change caused by any
-   * rule
+   * @return flag that is true if there has been some change caused by any rule
    * @throws SBMLException
    */
-  public boolean processRules(double time, double[] changeRate, double[] Y, boolean initialCalculations)
-          throws SBMLException {
+  public boolean processRules(double time, double[] changeRate, double[] Y,
+      boolean initialCalculations)
+      throws SBMLException {
     boolean changeByAssignmentRules = false;
     double intermediateASTNodeTime = -astNodeTime;
     double oldTime = currentTime;
@@ -669,9 +674,11 @@ public class SBMLinterpreter extends EquationSystem {
           if (index != -1) {
             Y[index] = newValue;
           }
-          if (currentChange && (!initialCalculations) && (index >= 0) && (compartmentHash.containsValue(index))) {
+          if (currentChange && (!initialCalculations) && (index >= 0) && (compartmentHash
+              .containsValue(index))) {
             updateSpeciesConcentrationByCompartmentChange(index, Y, oldValue, newValue, -1);
-          } else if (currentChange && initialCalculations && (index >= 0) && (compartmentHash.containsValue(index))) {
+          } else if (currentChange && initialCalculations && (index >= 0) && (compartmentHash
+              .containsValue(index))) {
             refreshSpeciesAmount(index, Y, oldValue, newValue);
           }
           changeByAssignmentRules = changeByAssignmentRules || currentChange;
@@ -689,7 +696,7 @@ public class SBMLinterpreter extends EquationSystem {
     return changeByAssignmentRules;
   }
 
-  public void computeDerivativeWithChangingCompartment (Species sp, double[] changeRate) {
+  public void computeDerivativeWithChangingCompartment(Species sp, double[] changeRate) {
 
     double latestSpeciesValue = latestTimePointResult[symbolHash.get(sp.getId())];
     double latestCompartmentValue = latestTimePointResult[symbolHash.get(sp.getCompartment())];
@@ -697,12 +704,17 @@ public class SBMLinterpreter extends EquationSystem {
     String speciesId = sp.getId();
     String compartmentId = sp.getCompartment();
 
-    changeRate[symbolHash.get(compartmentId)] = rateRulesRoots.get(rateRuleHash.get(compartmentId)).getNodeObject().compileDouble(astNodeTime, 0d);
-    latestCompartmentValue = latestCompartmentValue + (latestTimePoint - previousTimePoint) * changeRate[symbolHash.get(sp.getCompartment())];
+    changeRate[symbolHash.get(compartmentId)] = rateRulesRoots.get(rateRuleHash.get(compartmentId))
+        .getNodeObject().compileDouble(astNodeTime, 0d);
+    latestCompartmentValue =
+        latestCompartmentValue + (latestTimePoint - previousTimePoint) * changeRate[symbolHash
+            .get(sp.getCompartment())];
 
-    changeRate[symbolHash.get(speciesId)] = rateRulesRoots.get(rateRuleHash.get(speciesId)).getNodeObject().compileDouble(astNodeTime, 0d);
+    changeRate[symbolHash.get(speciesId)] = rateRulesRoots.get(rateRuleHash.get(speciesId))
+        .getNodeObject().compileDouble(astNodeTime, 0d);
 
-    double a1 = (latestSpeciesValue / latestCompartmentValue) * changeRate[symbolHash.get(compartmentId)];
+    double a1 =
+        (latestSpeciesValue / latestCompartmentValue) * changeRate[symbolHash.get(compartmentId)];
     double a2 = latestCompartmentValue * changeRate[symbolHash.get(speciesId)];
 
     changeRate[symbolHash.get(speciesId)] = a1 + a2;
@@ -711,19 +723,18 @@ public class SBMLinterpreter extends EquationSystem {
 
 
   /**
-   * This method computes the multiplication of the stoichiometric matrix of the
-   * given model system with the reaction velocities vector passed to this
-   * method. Note, the stoichiometric matrix is only constructed implicitly by
-   * running over all reactions and considering all participating reactants and
-   * products with their according stoichiometry or stoichiometric math.
+   * This method computes the multiplication of the stoichiometric matrix of the given model system
+   * with the reaction velocities vector passed to this method. Note, the stoichiometric matrix is
+   * only constructed implicitly by running over all reactions and considering all participating
+   * reactants and products with their according stoichiometry or stoichiometric math.
    *
-   * @param changeRate An array containing the rates of change for each species in the
-   *                   model system of this class.
+   * @param changeRate An array containing the rates of change for each species in the model system
+   *                   of this class.
    * @param time
    * @throws SBMLException
    */
   protected void processVelocities(double[] changeRate, double time)
-          throws SBMLException {
+      throws SBMLException {
     // Velocities of each reaction.
     for (int reactionIndex = 0; reactionIndex != v.length; reactionIndex++) {
       if (hasFastReactions) {
@@ -761,18 +772,20 @@ public class SBMLinterpreter extends EquationSystem {
       changeRate[i] *= conversionFactors[i];
     }
     for (int i = 0; i < nRateRules; i++) {
-      changeRate[symbolHash.get(rateRulesRoots.get(i).getVariable())] /= conversionFactors[symbolHash.get(rateRulesRoots.get(i).getVariable())];
+      changeRate[symbolHash
+          .get(rateRulesRoots.get(i).getVariable())] /= conversionFactors[symbolHash
+          .get(rateRulesRoots.get(i).getVariable())];
     }
   }
 
 
   /**
-   * This method allows us to set the parameters of the model to the specified
-   * values in the given array.
+   * This method allows us to set the parameters of the model to the specified values in the given
+   * array.
    *
-   * @param params An array of parameter values to be set for this model. If the number
-   *               of given parameters does not match the number of model parameters,
-   *               an exception will be thrown.
+   * @param params An array of parameter values to be set for this model. If the number of given
+   *               parameters does not match the number of model parameters, an exception will be
+   *               thrown.
    */
   // TODO changing the model directly not allowed / does this method still
   // make sense?
@@ -787,16 +800,21 @@ public class SBMLinterpreter extends EquationSystem {
       model.getParameter(paramNum).setValue(params[paramNum]);
     }
     boolean updateSyntaxGraph = false;
-    for (reactionNum = 0; (reactionNum < model.getReactionCount()) && (paramNum < params.length); reactionNum++) {
+    for (reactionNum = 0; (reactionNum < model.getReactionCount()) && (paramNum < params.length);
+        reactionNum++) {
       KineticLaw law = model.getReaction(reactionNum).getKineticLaw();
       if (law != null) {
-        for (localPnum = 0; (localPnum < law.getLocalParameterCount()) && (paramNum < params.length); localPnum++) {
+        for (localPnum = 0;
+            (localPnum < law.getLocalParameterCount()) && (paramNum < params.length); localPnum++) {
           law.getLocalParameter(localPnum).setValue(params[paramNum++]);
           updateSyntaxGraph = true;
         }
-        law.getMath().updateVariables(); // make sure references to local parameter values are reflected in the ASTNode
+        law.getMath()
+            .updateVariables(); // make sure references to local parameter values are reflected in the ASTNode
       } else {
-        logger.log(Level.FINE, "Cannot set local parameters for reaction {0} because of missing kinetic law.", model.getReaction(reactionNum).getId());
+        logger.log(Level.FINE,
+            "Cannot set local parameters for reaction {0} because of missing kinetic law.",
+            model.getReaction(reactionNum).getId());
       }
     }
     if ((model.getInitialAssignmentCount() > 0) || (model.getEventCount() > 0)) {
@@ -804,7 +822,9 @@ public class SBMLinterpreter extends EquationSystem {
         init();
       } catch (Exception exc) {
         // This can never happen
-        logger.log(Level.WARNING, "Could not re-initialize the model with the new parameter values.", exc);
+        logger
+            .log(Level.WARNING, "Could not re-initialize the model with the new parameter values.",
+                exc);
       }
     } else {
       int nCompPlusSpec = model.getCompartmentCount() + model.getSpeciesCount();
@@ -818,8 +838,8 @@ public class SBMLinterpreter extends EquationSystem {
   }
 
   /**
-   * Updates the concentration of species due to a change in the size of their
-   * compartment (also at events)
+   * Updates the concentration of species due to a change in the size of their compartment (also at
+   * events)
    *
    * @param compartmentIndex    the index of the compartment
    * @param Y                   the Y vector
@@ -827,14 +847,16 @@ public class SBMLinterpreter extends EquationSystem {
    * @param newCompartmentValue the new value of the compartment
    * @param eventIndex
    */
-  private void updateSpeciesConcentrationByCompartmentChange(int compartmentIndex, double Y[], double oldCompartmentValue, double newCompartmentValue, int eventIndex){
+  private void updateSpeciesConcentrationByCompartmentChange(int compartmentIndex, double[] Y,
+      double oldCompartmentValue, double newCompartmentValue, int eventIndex) {
     int speciesIndex;
-    for (Entry<String, Integer> entry: compartmentHash.entrySet()) {
+    for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
       if (entry.getValue() == compartmentIndex) {
         speciesIndex = symbolHash.get(entry.getKey());
-        if ((!isAmount[speciesIndex]) && (!speciesMap.get(symbolIdentifiers[speciesIndex]).getConstant())) {
+        if ((!isAmount[speciesIndex]) && (!speciesMap.get(symbolIdentifiers[speciesIndex])
+            .getConstant())) {
           Y[speciesIndex] = (Y[speciesIndex] * oldCompartmentValue) / newCompartmentValue;
-          if (eventIndex != -1){
+          if (eventIndex != -1) {
             events[eventIndex].addAssignment(speciesIndex, Y[speciesIndex]);
           }
         }
@@ -843,51 +865,55 @@ public class SBMLinterpreter extends EquationSystem {
   }
 
   /**
-   * Updates the changeRate of species due to a change in the size of their
-   * compartment (by RateRule)
+   * Updates the changeRate of species due to a change in the size of their compartment (by
+   * RateRule)
    *
    * @param compartmentIndex
    * @param changeRate
    */
-  private void updateSpeciesConcentrationByCompartmentRateRule(int compartmentIndex, double changeRate[]) {
+  private void updateSpeciesConcentrationByCompartmentRateRule(int compartmentIndex,
+      double[] changeRate) {
     int speciesIndex;
-    for (Entry<String, Integer> entry: compartmentHash.entrySet()) {
+    for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
       if (entry.getValue() == compartmentIndex) {
         speciesIndex = symbolHash.get(entry.getKey());
-        if ((!isAmount[speciesIndex]) && (!speciesMap.get(symbolIdentifiers[speciesIndex]).getConstant())) {
-          changeRate[speciesIndex] = -changeRate[compartmentIndex] * Y[speciesIndex] / Y[compartmentIndex];
+        if ((!isAmount[speciesIndex]) && (!speciesMap.get(symbolIdentifiers[speciesIndex])
+            .getConstant())) {
+          changeRate[speciesIndex] =
+              -changeRate[compartmentIndex] * Y[speciesIndex] / Y[compartmentIndex];
         }
       }
     }
   }
 
   /**
-   * Updates the species concentration as per the updated values in the
-   * AmountManager.
+   * Updates the species concentration as per the updated values in the AmountManager.
    *
    * @param amountManager
    */
-  public void updateSpeciesConcentration(AmountManager amountManager){
-    for (int i=0;i<model.getSpeciesCount();i++){
+  public void updateSpeciesConcentration(AmountManager amountManager) {
+    for (int i = 0; i < model.getSpeciesCount(); i++) {
       Y[symbolHash.get(model.getSpecies(i).getId())] = amountManager.getAmount(i);
     }
   }
 
   /**
-   * Updates the amount of a species due to a change in the size of their
-   * compartment caused by an assignment rule overwriting the initial value
+   * Updates the amount of a species due to a change in the size of their compartment caused by an
+   * assignment rule overwriting the initial value
    *
    * @param compartmentIndex
    * @param Y
    * @param oldCompartmentValue
    * @param newCompartmentValue
    */
-  private void refreshSpeciesAmount(int compartmentIndex, double Y[], double oldCompartmentValue, double newCompartmentValue) {
+  private void refreshSpeciesAmount(int compartmentIndex, double[] Y, double oldCompartmentValue,
+      double newCompartmentValue) {
     int speciesIndex;
     for (Entry<String, Integer> entry : compartmentHash.entrySet()) {
       if (entry.getValue() == compartmentIndex) {
         speciesIndex = symbolHash.get(entry.getKey());
-        if ((isAmount[speciesIndex]) && (speciesMap.get(symbolIdentifiers[speciesIndex]).isSetInitialConcentration())) {
+        if ((isAmount[speciesIndex]) && (speciesMap.get(symbolIdentifiers[speciesIndex])
+            .isSetInitialConcentration())) {
           Y[speciesIndex] = (Y[speciesIndex] / oldCompartmentValue) * newCompartmentValue;
         }
       }

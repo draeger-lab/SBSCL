@@ -29,8 +29,7 @@ import org.sbml.jsbml.Species;
 import org.simulator.sbml.SBMLValueHolder;
 
 /**
- * This class computes and stores values of {@link ASTNode}s that refer to a
- * {@link Species}.
+ * This class computes and stores values of {@link ASTNode}s that refer to a {@link Species}.
  *
  * @author Roland Keller
  * @version $Rev: 205 $
@@ -74,8 +73,7 @@ public class SpeciesValue extends ASTNodeValue {
   protected int position;
 
   /**
-   * The position of the compartment value of the species in the Y vector of
-   * the value holder
+   * The position of the compartment value of the species in the Y vector of the value holder
    */
   protected int compartmentPosition;
 
@@ -100,7 +98,9 @@ public class SpeciesValue extends ASTNodeValue {
    * @param zeroSpatialDimensions
    * @param isAmount
    */
-  public SpeciesValue(ASTNodeInterpreter interpreter, ASTNode node, Species s, SBMLValueHolder valueHolder, int position, int compartmentPosition, String compartmentID, boolean zeroSpatialDimensions, boolean isAmount) {
+  public SpeciesValue(ASTNodeInterpreter interpreter, ASTNode node, Species s,
+      SBMLValueHolder valueHolder, int position, int compartmentPosition, String compartmentID,
+      boolean zeroSpatialDimensions, boolean isAmount) {
     super(interpreter, node);
     this.s = s;
     id = s.getId();
@@ -142,18 +142,22 @@ public class SpeciesValue extends ASTNodeValue {
     } else {
       double valueTime = interpreter.symbolTime() - delay;
       if (isAmount && !hasOnlySubstanceUnits) {
-        double compartmentValue = valueHolder.computeDelayedValue(valueTime, compartmentID, null, null, 0);
+        double compartmentValue = valueHolder
+            .computeDelayedValue(valueTime, compartmentID, null, null, 0);
         if ((compartmentValue == 0d) || zeroSpatialDimensions) {
           doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
         } else {
-          doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0) / compartmentValue;
+          doubleValue =
+              valueHolder.computeDelayedValue(valueTime, id, null, null, 0) / compartmentValue;
         }
       } else if (!isAmount && hasOnlySubstanceUnits) {
-        double compartmentValue = valueHolder.computeDelayedValue(valueTime, compartmentID, null, null, 0);
+        double compartmentValue = valueHolder
+            .computeDelayedValue(valueTime, compartmentID, null, null, 0);
         if ((compartmentValue == 0d) || zeroSpatialDimensions) {
           doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);
         } else {
-          doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0) * compartmentValue;
+          doubleValue =
+              valueHolder.computeDelayedValue(valueTime, id, null, null, 0) * compartmentValue;
         }
       } else {
         doubleValue = valueHolder.computeDelayedValue(valueTime, id, null, null, 0);

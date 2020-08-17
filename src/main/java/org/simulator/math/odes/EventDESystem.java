@@ -39,8 +39,8 @@ public interface EventDESystem extends DESystem {
   /**
    * Counts the number of events in this system.
    *
-   * @return The number of events that are to be checked and potentially
-   * evaluated in each time point.
+   * @return The number of events that are to be checked and potentially evaluated in each time
+   * point.
    */
   public int getEventCount();
 
@@ -52,33 +52,32 @@ public interface EventDESystem extends DESystem {
   public int getRuleCount();
 
   /**
-   * Calculates the changes or assignments that are defined by all rules in the system
-   * at the given simulation time point.
+   * Calculates the changes or assignments that are defined by all rules in the system at the given
+   * simulation time point.
    *
    * @param t The current simulation time.
    * @param Y The current change of the system.
-   * @return flag that is {@code true} if there has been a change in the Y vector
-   * caused by the rules.
+   * @return flag that is {@code true} if there has been a change in the Y vector caused by the
+   * rules.
    * @throws DerivativeException
    */
-  public boolean processAssignmentRules(double t, double Y[])
+  public boolean processAssignmentRules(double t, double[] Y)
       throws DerivativeException;
 
   /**
-   * Returns a list with event assignments for the events triggered either by
-   * the time t or by the concentrations of the species stored in Y.
+   * Returns a list with event assignments for the events triggered either by the time t or by the
+   * concentrations of the species stored in Y.
    *
    * @param t The current simulation time.
    * @param Y The current change of the system.
    * @return Returns a list with event assignments for the events triggered
    * @throws DerivativeException
    */
-  public EventInProgress getNextEventAssignments(double t, double previousTime, double Y[])
+  public EventInProgress getNextEventAssignments(double t, double previousTime, double[] Y)
       throws DerivativeException;
 
   /**
-   * @return flag that is {@code true}, if the change vector is always
-   * zero in the system.
+   * @return flag that is {@code true}, if the change vector is always zero in the system.
    */
   public boolean getNoDerivatives();
 }

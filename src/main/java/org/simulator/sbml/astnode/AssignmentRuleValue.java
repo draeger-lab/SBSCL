@@ -32,8 +32,8 @@ import org.sbml.jsbml.Species;
 import org.simulator.sbml.SBMLValueHolder;
 
 /**
- * This class can compute and store the value of an {@link AssignmentRule}
- * together with the variable of the rule.
+ * This class can compute and store the value of an {@link AssignmentRule} together with the
+ * variable of the rule.
  *
  * @author Roland Keller
  * @version $Rev$
@@ -46,8 +46,7 @@ public class AssignmentRuleValue extends RuleValue {
   private String speciesReferenceID;
 
   /**
-   * The map of the values of the species references that are contained in
-   * rules
+   * The map of the values of the species references that are contained in rules
    */
   private Map<String, Double> stoichiometricCoefHash;
 
@@ -66,7 +65,8 @@ public class AssignmentRuleValue extends RuleValue {
    * @param speciesReferenceID
    * @param stoichiometricCoefHash
    */
-  public AssignmentRuleValue(ASTNodeValue nodeObject, String speciesReferenceID, Map<String, Double> stoichiometricCoefHash) {
+  public AssignmentRuleValue(ASTNodeValue nodeObject, String speciesReferenceID,
+      Map<String, Double> stoichiometricCoefHash) {
     super(nodeObject, -1);
     this.speciesReferenceID = speciesReferenceID;
     this.stoichiometricCoefHash = stoichiometricCoefHash;
@@ -83,13 +83,14 @@ public class AssignmentRuleValue extends RuleValue {
    * @param valueHolder
    * @param isAmount
    */
-  public AssignmentRuleValue(ASTNodeValue nodeObject, int index, Species sp, int compartmentIndex, boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder, boolean isAmount) {
+  public AssignmentRuleValue(ASTNodeValue nodeObject, int index, Species sp, int compartmentIndex,
+      boolean hasZeroSpatialDimensions, SBMLValueHolder valueHolder, boolean isAmount) {
     super(nodeObject, index, sp, compartmentIndex, hasZeroSpatialDimensions, valueHolder, isAmount);
   }
 
   /**
-   * Processes the rule and saves the new value of the corresponding variable
-   * in the Y vector if changeY is set to true.
+   * Processes the rule and saves the new value of the corresponding variable in the Y vector if
+   * changeY is set to true.
    *
    * @param Y
    * @param time

@@ -31,8 +31,8 @@ import org.sbml.jsbml.Symbol;
 import org.simulator.sbml.SBMLValueHolder;
 
 /**
- * This class computes and stores values of {@link ASTNode}s that refer to a
- * {@link Compartment} or a {@link Parameter}.
+ * This class computes and stores values of {@link ASTNode}s that refer to a {@link Compartment} or
+ * a {@link Parameter}.
  *
  * @author Roland Keller
  * @version $Rev$
@@ -67,7 +67,8 @@ public class CompartmentOrParameterValue extends ASTNodeValue {
    * @param valueHolder
    * @param position
    */
-  public CompartmentOrParameterValue(ASTNodeInterpreter interpreter, ASTNode node, Symbol sb, SBMLValueHolder valueHolder, int position) {
+  public CompartmentOrParameterValue(ASTNodeInterpreter interpreter, ASTNode node, Symbol sb,
+      SBMLValueHolder valueHolder, int position) {
     super(interpreter, node);
     this.sb = sb;
     id = sb.getId();

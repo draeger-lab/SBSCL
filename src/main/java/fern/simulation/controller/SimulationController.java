@@ -9,18 +9,18 @@ package fern.simulation.controller;
 import fern.simulation.Simulator;
 
 /**
- * {@link Simulator}s are controlled by implementing classes. Each simulation step
- * the <code>goOn</code> method is called to check whether to go on or not.
- * 
- * @author Florian Erhard
+ * {@link Simulator}s are controlled by implementing classes. Each simulation step the
+ * <code>goOn</code> method is called to check whether to go on or not.
  *
+ * @author Florian Erhard
  */
 public interface SimulationController {
 
-	/**
-	 * Returns whether or not to go on with the given simulation
-	 * @param sim	simulation
-	 * @return		whether or not to go on
-	 */
-	public boolean goOn(Simulator sim);
+  /**
+   * Returns whether or not to go on with the given simulation
+   *
+   * @param sim simulation
+   * @return whether or not to go on
+   */
+  public boolean goOn(Simulator sim);
 }

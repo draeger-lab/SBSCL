@@ -24,6 +24,7 @@
 package org.simulator.sedml;
 
 import static org.junit.Assert.*;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -52,11 +53,10 @@ import org.simulator.plot.PlotProcessedSedmlResults;
 import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
 
 /**
- * This test class shows how a SED-ML file can be interpreted and executed using
- * SBML Simulator Core solvers. <br/>
- * It makes extensive use of jlibsedml's Execution framework which performs boiler-plate
- * code for operations such as post-processing of results, etc., Finally plots 
- * are generated and saved in the folder
+ * This test class shows how a SED-ML file can be interpreted and executed using SBML Simulator Core
+ * solvers. <br/> It makes extensive use of jlibsedml's Execution framework which performs
+ * boiler-plate code for operations such as post-processing of results, etc., Finally plots are
+ * generated and saved in the folder
  *
  * @author Shalin Shah
  * @version $Rev$
@@ -64,251 +64,263 @@ import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
  */
 public class SEDMLExecutorTest {
 
-    private String abc1test = "/sedml/sed1.xml";
-    private String miriamtest = "/sedml/ClockSedML.xml";
+  private String abc1test = "/sedml/sed1.xml";
+  private String miriamtest = "/sedml/ClockSedML.xml";
 
-    @Before
-    public void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
+  }
+
+  @After
+  public void tearDown() throws Exception {
+  }
+
+  @Test
+  public final void testBasicSEDMLExecutorForLocalFile()
+      throws XMLException, IOException, OWLOntologyCreationException {
+    // get the SED-ML object model from file. The model referred to in this
+    //SEDML file is defined by a relative path and is in the top-level folder.
+
+    String sedmlPath = TestUtils.getPathForTestResource(abc1test);
+    File file = new File(sedmlPath);
+    String sedmlDir = file.getAbsoluteFile().getParentFile().getAbsolutePath();
+
+    SEDMLDocument doc = Libsedml.readDocument(new File(sedmlPath));
+    assertNotNull(doc);
+    assertFalse(doc.hasErrors());
+
+    SedML sedml = doc.getSedMLModel();
+    // in this sedml file there's just one output. If there were several,
+    // we could either iterate or get user to  decide which output to generate.
+    Output wanted = sedml.getOutputs().get(0);
+    SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, sedmlDir);
+
+    // Here we run all the simulations needed to create an output, and get the
+    // raw results.
+    Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
+    if ((res == null) || res.isEmpty() || !exe.isExecuted()) {
+      fail("Simulation failed: " + exe.getFailureMessages().get(0).getMessage());
     }
 
-    @After
-    public void tearDown() throws Exception {
+    IProcessedSedMLSimulationResults mt = exe.processSimulationResults(wanted, res);
+    assertNotNull(mt);
+    assertTrue(5 == mt.getNumColumns());
+  }
+
+  /**
+   * Retrieves model from Miriam DB - needs internet connection
+   *
+   * @throws XMLException
+   * @throws OWLOntologyCreationException
+   */
+  @Test
+  public final void testBasicSEDMLExecutorForMiriamURNDefinedModel()
+      throws XMLException, IOException, OWLOntologyCreationException {
+
+    String miriamPath = TestUtils.getPathForTestResource(miriamtest);
+    SEDMLDocument doc = Libsedml.readDocument(new File(miriamPath));
+    assertNotNull(doc);
+
+    SedML sedml = doc.getSedMLModel();
+    assertNotNull(sedml);
+
+    // in this SED-ML file there's just one output. If there were several,
+    // we could either iterate or get user to  decide what they want to run.
+    Output wanted = sedml.getOutputs().get(0);
+    SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, null);
+
+    // This gets the raw simulation results - one for each Task that was run.
+    Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
+    if (res == null || res.isEmpty() || !exe.isExecuted()) {
+      fail("Simulation failed: " + exe.getFailureMessages().get(0));
     }
+    // now process.In this case, there's no processing performed - we're displaying the
+    // raw results.
+    IProcessedSedMLSimulationResults mt = exe.processSimulationResults(wanted, res);
+    assertNotNull(mt);
 
-    @Test
-    public final void testBasicSEDMLExecutorForLocalFile() throws XMLException, IOException, OWLOntologyCreationException {
-        // get the SED-ML object model from file. The model referred to in this
-        //SEDML file is defined by a relative path and is in the top-level folder.
+    assertTrue(3 == mt.getNumColumns());
+  }
 
-        String sedmlPath = TestUtils.getPathForTestResource(abc1test);
-        File file = new File(sedmlPath);
-        String sedmlDir = file.getAbsoluteFile().getParentFile().getAbsolutePath();
 
-        SEDMLDocument doc = Libsedml.readDocument(new File(sedmlPath));
-        assertNotNull(doc);
-        assertFalse(doc.hasErrors());
+  @Test
+  public final void testIkappab() throws XMLException, OWLOntologyCreationException, IOException {
+    String resource = "/sedml/L1V2/ikappab/ikappab.xml";
+    testSpecificationExample(resource);
+  }
 
-        SedML sedml = doc.getSedMLModel();
-        // in this sedml file there's just one output. If there were several,
-        // we could either iterate or get user to  decide which output to generate.
-        Output wanted = sedml.getOutputs().get(0);
-        SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, sedmlDir);
+  @Test
+  public final void testLeloupSBML()
+      throws XMLException, OWLOntologyCreationException, IOException {
+    String resource = "/sedml/L1V2/leloup-sbml/leloup-sbml.xml";
+    testSpecificationExample(resource);
+  }
 
-        // Here we run all the simulations needed to create an output, and get the
-        // raw results.
-        Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
-        if ((res == null) || res.isEmpty() || !exe.isExecuted()) {
-            fail("Simulation failed: " + exe.getFailureMessages().get(0).getMessage());
-        }
+  @Test
+  public final void testLorenzSBML()
+      throws XMLException, OWLOntologyCreationException, IOException {
+    String resource = "/sedml/L1V2/lorenz-sbml/lorenz.xml";
+    testSpecificationExample(resource);
+  }
 
-        IProcessedSedMLSimulationResults mt = exe.processSimulationResults(wanted, res);
-        assertNotNull(mt);
-        assertTrue(5 == mt.getNumColumns());
+  @Test
+  @Ignore
+  public final void testOscliNestedPulse()
+      throws XMLException, OWLOntologyCreationException, IOException {
+    String resource = "/sedml/L1V2/oscli-nested-pulse/oscli-nested-pulse.xml";
+    testSpecificationExample(resource);
+  }
+
+  @Test
+  @Ignore
+  //Contains nested repeated task https://github.com/shalinshah1993/SBSCL/issues/55
+  public final void testParameterScan2D()
+      throws XMLException, OWLOntologyCreationException, IOException {
+    String resource = "/sedml/L1V2/parameter-scan-2d/parameter-scan-2d.xml";
+    testSpecificationExample(resource);
+  }
+
+  @Test
+  public final void testRepeatedScanOscli()
+      throws XMLException, OWLOntologyCreationException, IOException {
+    String resource = "/sedml/L1V2/repeated-scan-oscli/repeated-scan-oscli.xml";
+    testSpecificationExample(resource);
+  }
+
+  @Test
+  public final void testRepeatedSteadyScanOscli()
+      throws XMLException, OWLOntologyCreationException, IOException {
+    String resource = "/sedml/L1V2/repeated-steady-scan-oscli/repeated-steady-scan-oscli.xml";
+    testSpecificationExample(resource);
+  }
+
+  @Test
+  public final void testRepeatedStochasticRuns()
+      throws XMLException, OWLOntologyCreationException, IOException {
+    String resource = "/sedml/L1V2/repeated-stochastic-runs/repeated-stochastic-runs.xml";
+    testSpecificationExample(resource);
+  }
+
+  @Test
+  public final void testRepressilator()
+      throws XMLException, OWLOntologyCreationException, IOException {
+    String resource = "/sedml/L1V2/repressilator/repressilator.xml";
+    testSpecificationExample(resource);
+  }
+
+
+  public void testSpecificationExample(String resource)
+      throws XMLException, OWLOntologyCreationException, IOException {
+    String sedmlPath = TestUtils.getPathForTestResource(resource);
+
+    File file = new File(sedmlPath);
+    String sedmlDir = file.getAbsoluteFile().getParentFile().getAbsolutePath();
+    SEDMLDocument doc = Libsedml.readDocument(file);
+    assertNotNull(doc);
+
+    SedML sedml = doc.getSedMLModel();
+    assertNotNull(sedml);
+
+    // iterate over outputs
+    List<Output> outputs = sedml.getOutputs();
+    for (int k = 0; k < outputs.size(); k++) {
+
+      Output wanted = outputs.get(k);
+      SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, sedmlDir);
+
+      Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
+      if (res == null || res.isEmpty() || !exe.isExecuted()) {
+        fail("Simulation failed: " + exe.getFailureMessages().get(0));
+      }
+
+      // postprocess
+      IProcessedSedMLSimulationResults pr = exe.processSimulationResults(wanted, res);
+      assertNotNull(pr);
+
+      // save the output plot
+      if (wanted.isPlot2d()) {
+        Plot2D plots = (Plot2D) wanted;
+        List<Curve> curves = plots.getListOfCurves();
+
+        // plot all processed results as per curve descriptions
+        String title = wanted.getId() + "(" + wanted.getName() + ")";
+        // UNCOMMENT THIS TO SAVE PLOT
+        // PlotProcessedSedmlResults p = new PlotProcessedSedmlResults(pr, curves, title);
+        // assertNotNull(p);
+        // p.savePlot(resource, wanted.getId());
+      }
     }
+  }
 
-    /**
-     * Retrieves model from Miriam DB - needs internet connection
-     *
-     * @throws XMLException
-     * @throws OWLOntologyCreationException 
-     */
-    @Test
-    public final void testBasicSEDMLExecutorForMiriamURNDefinedModel() throws XMLException, IOException, OWLOntologyCreationException {
+  @Test
+  public final void testRepressilator1()
+      throws XMLException, OWLOntologyCreationException, IOException {
+    String resource = "/sedml/L1V2/repressilator/repressilator.xml";
+    testSpecificationExample(resource);
+    String sedmlPath = TestUtils.getPathForTestResource(resource);
+    SEDMLDocument doc = Libsedml.readDocument(new File(sedmlPath));
+    assertNotNull(doc);
+    SedML sedml = doc.getSedMLModel();
+    assertNotNull(sedml);
 
-        String miriamPath = TestUtils.getPathForTestResource(miriamtest);
-        SEDMLDocument doc = Libsedml.readDocument(new File(miriamPath));
-        assertNotNull(doc);
+    // iterate over outputs
+    HashSet<String> outputIds = new HashSet<String>();
+    outputIds.add("timecourse");
+    outputIds.add("preprocessing");
+    outputIds.add("postprocessing");
 
-        SedML sedml = doc.getSedMLModel();
-        assertNotNull(sedml);
+    List<Output> outputs = sedml.getOutputs();
+    for (int k = 0; k < outputs.size(); k++) {
 
-        // in this SED-ML file there's just one output. If there were several,
-        // we could either iterate or get user to  decide what they want to run.
-        Output wanted = sedml.getOutputs().get(0);
-        SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, null);
+      Output wanted = outputs.get(k);
+      SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, null);
 
-        // This gets the raw simulation results - one for each Task that was run.
-        Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
-        if (res == null || res.isEmpty() || !exe.isExecuted()) {
-            fail("Simulation failed: " + exe.getFailureMessages().get(0));
-        }
-        // now process.In this case, there's no processing performed - we're displaying the
-        // raw results.
-        IProcessedSedMLSimulationResults mt = exe.processSimulationResults(wanted, res);
-        assertNotNull(mt);
+      Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
+      if (res == null || res.isEmpty() || !exe.isExecuted()) {
+        fail("Simulation failed: " + exe.getFailureMessages().get(0));
+      }
 
-        assertTrue(3 == mt.getNumColumns());
+      // postprocess
+      IProcessedSedMLSimulationResults pr = exe.processSimulationResults(wanted, res);
+      assertNotNull(pr);
+
+      String outputId = wanted.getId();
+      assertTrue(outputIds.contains(outputId));
+
+      String[] headers = pr.getColumnHeaders();
+      int ncol = pr.getNumColumns();
+      int nrow = pr.getNumDataRows();
+
+      if (outputId == "timecourse") {
+        assertEquals(3, ncol);
+        assertEquals("plot_0__plot_0_0_0__plot_0_0_1", headers[0]);
+        assertEquals("plot_0__plot_0_0_0__plot_0_1_1", headers[1]);
+        assertEquals("plot_0__plot_0_0_0__plot_0_2_1", headers[2]);
+      } else if (outputId == "preprocessing") {
+        assertEquals(3, ncol);
+        assertEquals("plot_1__plot_1_0_0__plot_1_0_1", headers[0]);
+        assertEquals("plot_1__plot_1_0_0__plot_1_1_1", headers[1]);
+        assertEquals("plot_1__plot_1_0_0__plot_1_2_1", headers[2]);
+      } else if (outputId == "postprocessing") {
+        assertEquals(3, ncol);
+        assertEquals("plot_2__plot_2_0_0__plot_2_0_1", headers[0]);
+        assertEquals("plot_2__plot_2_1_0__plot_2_0_0", headers[1]);
+        assertEquals("plot_2__plot_2_0_1__plot_2_1_0", headers[2]);
+      }
+
+      // save the output plot
+      if (wanted.isPlot2d()) {
+        Plot2D plots = (Plot2D) wanted;
+        List<Curve> curves = plots.getListOfCurves();
+
+        // plot all processed results as per curve descriptions
+        String title = wanted.getId() + "(" + wanted.getName() + ")";
+        // UNCOMMENT THIS TO SAVE PLOT
+        // PlotProcessedSedmlResults p = new PlotProcessedSedmlResults(pr, curves,  title);
+        // assertNotNull(p);
+        // p.savePlot(resource, wanted.getId());
+      }
     }
-
-
-    @Test
-    public final void testIkappab() throws XMLException, OWLOntologyCreationException, IOException {
-        String resource = "/sedml/L1V2/ikappab/ikappab.xml";
-        testSpecificationExample(resource);
-    }
-
-    @Test
-    public final void testLeloupSBML() throws XMLException, OWLOntologyCreationException, IOException {
-        String resource = "/sedml/L1V2/leloup-sbml/leloup-sbml.xml";
-        testSpecificationExample(resource);
-    }
-
-    @Test
-    public final void testLorenzSBML() throws XMLException, OWLOntologyCreationException, IOException {
-        String resource = "/sedml/L1V2/lorenz-sbml/lorenz.xml";
-        testSpecificationExample(resource);
-    }
-
-    @Test
-    @Ignore
-    public final void testOscliNestedPulse() throws XMLException, OWLOntologyCreationException, IOException {
-        String resource = "/sedml/L1V2/oscli-nested-pulse/oscli-nested-pulse.xml";
-        testSpecificationExample(resource);
-    }
-
-    @Test
-    @Ignore 
-    //Contains nested repeated task https://github.com/shalinshah1993/SBSCL/issues/55
-    public final void testParameterScan2D() throws XMLException, OWLOntologyCreationException, IOException {
-        String resource = "/sedml/L1V2/parameter-scan-2d/parameter-scan-2d.xml";
-        testSpecificationExample(resource);
-    }
-
-    @Test
-    public final void testRepeatedScanOscli() throws XMLException, OWLOntologyCreationException, IOException {
-        String resource = "/sedml/L1V2/repeated-scan-oscli/repeated-scan-oscli.xml";
-        testSpecificationExample(resource);
-    }
-
-    @Test
-    public final void testRepeatedSteadyScanOscli() throws XMLException, OWLOntologyCreationException, IOException {
-        String resource = "/sedml/L1V2/repeated-steady-scan-oscli/repeated-steady-scan-oscli.xml";
-        testSpecificationExample(resource);
-    }
-
-    @Test
-    public final void testRepeatedStochasticRuns() throws XMLException, OWLOntologyCreationException, IOException {
-        String resource = "/sedml/L1V2/repeated-stochastic-runs/repeated-stochastic-runs.xml";
-        testSpecificationExample(resource);
-    }
-
-    @Test
-    public final void testRepressilator() throws XMLException, OWLOntologyCreationException, IOException {
-        String resource = "/sedml/L1V2/repressilator/repressilator.xml";
-        testSpecificationExample(resource);
-    }
-
-
-    public void testSpecificationExample(String resource) throws XMLException, OWLOntologyCreationException, IOException {
-        String sedmlPath = TestUtils.getPathForTestResource(resource);
-
-        File file = new File(sedmlPath);
-        String sedmlDir = file.getAbsoluteFile().getParentFile().getAbsolutePath();
-        SEDMLDocument doc = Libsedml.readDocument(file);
-        assertNotNull(doc);
-
-        SedML sedml = doc.getSedMLModel();
-        assertNotNull(sedml);
-
-        // iterate over outputs
-        List<Output> outputs = sedml.getOutputs();
-        for (int k=0; k<outputs.size(); k++){
-
-            Output wanted = outputs.get(k);
-            SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, sedmlDir);
-
-            Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
-            if (res == null || res.isEmpty() || !exe.isExecuted()) {
-                fail("Simulation failed: " + exe.getFailureMessages().get(0));
-            }
-            
-            // postprocess
-            IProcessedSedMLSimulationResults pr = exe.processSimulationResults(wanted, res);
-            assertNotNull(pr);
-            
-            // save the output plot
-            if(wanted.isPlot2d()) {
-	    			Plot2D plots = (Plot2D) wanted;
-	    			List<Curve> curves = plots.getListOfCurves();
-	    			
-	    			// plot all processed results as per curve descriptions
-	    			String title = wanted.getId() + "(" + wanted.getName() + ")";
-	    			// UNCOMMENT THIS TO SAVE PLOT
-	    			// PlotProcessedSedmlResults p = new PlotProcessedSedmlResults(pr, curves, title);
-	    			// assertNotNull(p);
-	    			// p.savePlot(resource, wanted.getId());
-    			}
-        }
-    }
-
-    @Test
-    public final void testRepressilator1() throws XMLException, OWLOntologyCreationException, IOException {
-        String resource = "/sedml/L1V2/repressilator/repressilator.xml";
-        testSpecificationExample(resource);
-        String sedmlPath = TestUtils.getPathForTestResource(resource);
-        SEDMLDocument doc = Libsedml.readDocument(new File(sedmlPath));
-        assertNotNull(doc);
-        SedML sedml = doc.getSedMLModel();
-        assertNotNull(sedml);
-
-        // iterate over outputs
-        HashSet<String> outputIds = new HashSet<String>();
-        outputIds.add("timecourse");
-        outputIds.add("preprocessing");
-        outputIds.add("postprocessing");
-
-        List<Output> outputs = sedml.getOutputs();
-        for (int k=0; k<outputs.size(); k++){
-
-            Output wanted = outputs.get(k);
-            SedMLSBMLSimulatorExecutor exe = new SedMLSBMLSimulatorExecutor(sedml, wanted, null);
-
-            Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
-            if (res == null || res.isEmpty() || !exe.isExecuted()) {
-                fail("Simulation failed: " + exe.getFailureMessages().get(0));
-            }
-
-            // postprocess
-            IProcessedSedMLSimulationResults pr = exe.processSimulationResults(wanted, res);
-            assertNotNull(pr);
-
-            String outputId = wanted.getId();
-            assertTrue(outputIds.contains(outputId));
-
-            String[] headers = pr.getColumnHeaders();
-            int ncol = pr.getNumColumns();
-            int nrow = pr.getNumDataRows();
-
-            if (outputId == "timecourse"){
-                assertEquals(3, ncol);
-                assertEquals("plot_0__plot_0_0_0__plot_0_0_1", headers[0]);
-                assertEquals("plot_0__plot_0_0_0__plot_0_1_1", headers[1]);
-                assertEquals("plot_0__plot_0_0_0__plot_0_2_1", headers[2]);
-            } else if (outputId == "preprocessing") {
-                assertEquals(3, ncol);
-                assertEquals("plot_1__plot_1_0_0__plot_1_0_1", headers[0]);
-                assertEquals("plot_1__plot_1_0_0__plot_1_1_1", headers[1]);
-                assertEquals("plot_1__plot_1_0_0__plot_1_2_1", headers[2]);
-            } else if (outputId == "postprocessing") {
-                assertEquals(3, ncol);
-                assertEquals("plot_2__plot_2_0_0__plot_2_0_1", headers[0]);
-                assertEquals("plot_2__plot_2_1_0__plot_2_0_0", headers[1]);
-                assertEquals("plot_2__plot_2_0_1__plot_2_1_0", headers[2]);
-            }
-            
-            // save the output plot
-            if(wanted.isPlot2d()) {
-	    			Plot2D plots = (Plot2D) wanted;
-	    			List<Curve> curves = plots.getListOfCurves();
-	    			
-	    			// plot all processed results as per curve descriptions
-	    			String title = wanted.getId() + "(" + wanted.getName() + ")";
-	    			// UNCOMMENT THIS TO SAVE PLOT
-	    			// PlotProcessedSedmlResults p = new PlotProcessedSedmlResults(pr, curves,  title);
-	    			// assertNotNull(p);
-	    			// p.savePlot(resource, wanted.getId());
-    			}
-        }
-    }
+  }
 
 }

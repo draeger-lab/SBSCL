@@ -46,8 +46,7 @@ public abstract class QualityMeasure implements Serializable {
   private static final long serialVersionUID = -1923357284664688319L;
 
   /**
-   * The return value of the distance function in cases where the distance
-   * cannot be computed.
+   * The return value of the distance function in cases where the distance cannot be computed.
    */
   protected double defaultValue;
 
@@ -57,9 +56,8 @@ public abstract class QualityMeasure implements Serializable {
   protected MeanFunction meanFunction;
 
   /**
-   * Default constructor. This sets the standard value for the parameter as
-   * given by the getStandardParameter() method. The default value is set to
-   * NaN.
+   * Default constructor. This sets the standard value for the parameter as given by the
+   * getStandardParameter() method. The default value is set to NaN.
    */
   public QualityMeasure() {
     defaultValue = Double.NaN;
@@ -77,8 +75,8 @@ public abstract class QualityMeasure implements Serializable {
   }
 
   /**
-   * Constructor, which allows setting the parameter values for
-   * {@link #meanFunction} and {@link #defaultValue}.
+   * Constructor, which allows setting the parameter values for {@link #meanFunction} and {@link
+   * #defaultValue}.
    *
    * @param defaultValue
    * @param meanFunction
@@ -89,29 +87,26 @@ public abstract class QualityMeasure implements Serializable {
   }
 
   /**
-   * This method decides whether or not to consider the given values for the
-   * computation of a distance. This method checks if both arguments x_i and
-   * y_i are not {@link Double#NaN} and differ from each other. If other
-   * conditions should be checked, this method can be overridden.
+   * This method decides whether or not to consider the given values for the computation of a
+   * distance. This method checks if both arguments x_i and y_i are not {@link Double#NaN} and
+   * differ from each other. If other conditions should be checked, this method can be overridden.
    *
    * @param x_i
    * @param y_i
    * @param root
    * @param defaultValue
-   * @return True if the given values x_i and y_i are valid and should be
-   * considered to compute the distance.
+   * @return True if the given values x_i and y_i are valid and should be considered to compute the
+   * distance.
    */
   boolean computeDistanceFor(double x_i, double y_i, double root, double defaultValue) {
     return !Double.isNaN(y_i) && !Double.isNaN(x_i) && (y_i != x_i);
   }
 
   /**
-   * Returns the distance of the two vectors x and y where the currently set
-   * root is used.
-   * It is possible that one matrix contains more columns than the other one.
-   * If so, the additional values in the bigger matrix are ignored and do not
-   * contribute to the distance. <code>NaN</code> values do also not
-   * contribute to the distance.
+   * Returns the distance of the two vectors x and y where the currently set root is used. It is
+   * possible that one matrix contains more columns than the other one. If so, the additional values
+   * in the bigger matrix are ignored and do not contribute to the distance. <code>NaN</code> values
+   * do also not contribute to the distance.
    *
    * @param x
    * @param y
@@ -123,16 +118,15 @@ public abstract class QualityMeasure implements Serializable {
   }
 
   /**
-   * Returns the distance of the two vectors x and y with the given root. This
-   * may be the root in a formal way or a default value to be returned if the
-   * distance uses a non defined operation. If one array is longer than the
-   * other one additional values do not contribute to the distance.
+   * Returns the distance of the two vectors x and y with the given root. This may be the root in a
+   * formal way or a default value to be returned if the distance uses a non defined operation. If
+   * one array is longer than the other one additional values do not contribute to the distance.
    * {@link Double#NaN} values are also ignored.
    *
    * @param x            an array
    * @param y            another array
-   * @param defaultValue The value to be returned in cases in which no distance
-   *                     computation is possible.
+   * @param defaultValue The value to be returned in cases in which no distance computation is
+   *                     possible.
    * @return The distance between the two arrays x and y.
    * @throws IllegalArgumentException
    */
@@ -155,12 +149,11 @@ public abstract class QualityMeasure implements Serializable {
   }
 
   /**
-   * Computes the distance of two matrices as the sum of the distances of each
-   * row. It is possible that one matrix contains more columns than the other
-   * one. If so, the additional values in the bigger matrix are ignored and do
-   * not contribute to the distance. {@link Double#NaN} values do also not
-   * contribute to the distance. Only columns with matching identifiers are
-   * considered for the distance computation.
+   * Computes the distance of two matrices as the sum of the distances of each row. It is possible
+   * that one matrix contains more columns than the other one. If so, the additional values in the
+   * bigger matrix are ignored and do not contribute to the distance. {@link Double#NaN} values do
+   * also not contribute to the distance. Only columns with matching identifiers are considered for
+   * the distance computation.
    *
    * @param x
    * @param expected
@@ -169,10 +162,11 @@ public abstract class QualityMeasure implements Serializable {
   public List<Double> getColumnDistances(MultiTable x, MultiTable expected) {
     List<Double> distances = new ArrayList<Double>();
     for (int block = 0; block < x.getBlockCount(); block++) {
-      String identifiers[] = x.getBlock(block).getIdentifiers();
+      String[] identifiers = x.getBlock(block).getIdentifiers();
       for (int i = 0; i < identifiers.length; i++) {
         if ((identifiers[i] != null) && (expected.getColumn(identifiers[i]) != null)) {
-          distances.add(distance(x.getBlock(block).getColumn(i), expected.getColumn(identifiers[i])));
+          distances
+              .add(distance(x.getBlock(block).getColumn(i), expected.getColumn(identifiers[i])));
         }
       }
     }
@@ -187,12 +181,13 @@ public abstract class QualityMeasure implements Serializable {
   public Map<String, Double> getMaxAbsDistances(MultiTable x, MultiTable expected) {
     Map<String, Double> distances = new HashMap<>();
     for (int block = 0; block < x.getBlockCount(); block++) {
-      String identifiers[] = x.getBlock(block).getIdentifiers();
+      String[] identifiers = x.getBlock(block).getIdentifiers();
       for (int i = 0; i < identifiers.length; i++) {
         if ((identifiers[i] != null) && (expected.getColumn(identifiers[i]) != null)) {
           MultiTable.Block.Column a = x.getBlock(block).getColumn(i);
           MultiTable.Block.Column b = expected.getColumn(identifiers[i]);
-          distances.put(x.getBlock(block).getColumn(i).getColumnName(), distance(a, b, defaultValue));
+          distances
+              .put(x.getBlock(block).getColumn(i).getColumnName(), distance(a, b, defaultValue));
         }
       }
     }
@@ -200,8 +195,8 @@ public abstract class QualityMeasure implements Serializable {
   }
 
   /**
-   * Returns the default value that is returned by the distance function in
-   * cases in which the computation of the distance is not possible.
+   * Returns the default value that is returned by the distance function in cases in which the
+   * computation of the distance is not possible.
    *
    * @return defaultValue
    */
@@ -217,8 +212,8 @@ public abstract class QualityMeasure implements Serializable {
   }
 
   /**
-   * Set the value to be returned by the distance function in cases, in which
-   * no distance can be computed.
+   * Set the value to be returned by the distance function in cases, in which no distance can be
+   * computed.
    *
    * @param defaultValue
    */

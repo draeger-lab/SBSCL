@@ -87,7 +87,8 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
    * @see org.simulator.math.odes.AbstractDESSolver#computeChange(org.simulator.math.odes.DESystem, double[], double, double, double[], boolean)
    */
   @Override
-  public double[] computeChange(DESystem DES, double[] yTemp, double t, double h, double[] change, boolean steadyState)
+  public double[] computeChange(DESystem DES, double[] yTemp, double t, double h, double[] change,
+      boolean steadyState)
       throws DerivativeException {
     int dim = DES.getDimension();
     if ((kVals == null) || (kVals.length != 4) || (kVals[0].length != dim)) {

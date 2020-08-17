@@ -41,93 +41,91 @@ import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.fba.FluxBalanceAnalysis;
 
 /**
- * A simple test class to demonstrate the capabilities of the FBA implementation
- * in Simulation Core Library. This is based on an installation of
+ * A simple test class to demonstrate the capabilities of the FBA implementation in Simulation Core
+ * Library. This is based on an installation of
  * <a href="http://www.ibm.com/software/commerce/optimization/cplex-optimizer/">CPLEX</a>.
- * In order to run this example, it is necessary to launch the JVM with the
- * argument {@code -Djava.library.path=/path/to/the/binaries/of/CPLEX/}.
- * Note that this project does not redistribute CPLEX.
- * 
+ * In order to run this example, it is necessary to launch the JVM with the argument {@code
+ * -Djava.library.path=/path/to/the/binaries/of/CPLEX/}. Note that this project does not
+ * redistribute CPLEX.
+ *
  * @author Andreas Dr&auml;ger
  * @author Shalin Shah
  * @version 1.5
  */
 public class FBAExample {
 
-	/**
-	 * 
-	 */
-	private static final Logger logger = Logger.getLogger(FBAExample.class);
-	PrintWriter writer;
-	/**
-	 * 
-	 * @param file can be a file or a directory.
-	 * @throws SBMLException if the model is invalid or inappropriate for flux balance analysis.
-	 * @throws XMLStreamException
-	 *         if the file cannot be parsed into an {@link SBMLDocument}.
-	 * @throws IOException
-	 *         if the given path is invalid or cannot be read
-	 * @throws ModelOverdeterminedException
-	 *         if the model is over determined through {@link AlgebraicRule}s.
-	 * @throws SBMLException
-	 *         if the model is invalid or inappropriate for flux balance analysis.
-	 */
-	public FBAExample(File file) throws SBMLException, ModelOverdeterminedException, XMLStreamException, IOException {
-		solve(file);
-	}
+  private static final Logger logger = Logger.getLogger(FBAExample.class);
+  PrintWriter writer;
 
-	/**
-	 * 
-	 * @param file can be a file or a directory. In the latter case, the directory will be recursively queried.
-	 * @throws SBMLException if the model is invalid or inappropriate for flux balance analysis.
-	 * @throws XMLStreamException
-	 *         if the file cannot be parsed into an {@link SBMLDocument}.
-	 * @throws IOException
-	 *         if the given path is invalid or cannot be read
-	 * @throws ModelOverdeterminedException
-	 *         if the model is over determined through {@link AlgebraicRule}s.
-	 * @throws SBMLException
-	 *         if the model is invalid or inappropriate for flux balance analysis.
-	 */
-	public void solve(File file) throws SBMLException, ModelOverdeterminedException, XMLStreamException, IOException {
-		if (file.isDirectory()) {
-			for (File f : file.listFiles()) {
-				System.out.println("attempting to solving model: " + f.getName());
-				solve(f);
-			}
-		} else {
-			logger.error(file.getName());
-			try {
-				FluxBalanceAnalysis solver = new FluxBalanceAnalysis(SBMLReader.read(file));
-				if (solver.solve()) {
-					System.out.println(file.getName());
-					System.out.println("Objective value:\t" + solver.getObjectiveValue());
-					System.out.println("Fluxes:\t" + solver.getSolution());
-				}else {
-					logger.error("\nSolver returned null for "+ file.getName());
-				}
-			} catch (Exception exc) {
-				logger.error("\nCannot run "+ file.getName() + "\n" +exc);
-			}
-		}
-	}
+  /**
+   * @param file can be a file or a directory.
+   * @throws SBMLException                if the model is invalid or inappropriate for flux balance
+   *                                      analysis.
+   * @throws XMLStreamException           if the file cannot be parsed into an {@link
+   *                                      SBMLDocument}.
+   * @throws IOException                  if the given path is invalid or cannot be read
+   * @throws ModelOverdeterminedException if the model is over determined through {@link
+   *                                      AlgebraicRule}s.
+   * @throws SBMLException                if the model is invalid or inappropriate for flux balance
+   *                                      analysis.
+   */
+  public FBAExample(File file)
+      throws SBMLException, ModelOverdeterminedException, XMLStreamException, IOException {
+    solve(file);
+  }
+
+  /**
+   * @param file can be a file or a directory. In the latter case, the directory will be recursively
+   *             queried.
+   * @throws SBMLException                if the model is invalid or inappropriate for flux balance
+   *                                      analysis.
+   * @throws XMLStreamException           if the file cannot be parsed into an {@link
+   *                                      SBMLDocument}.
+   * @throws IOException                  if the given path is invalid or cannot be read
+   * @throws ModelOverdeterminedException if the model is over determined through {@link
+   *                                      AlgebraicRule}s.
+   * @throws SBMLException                if the model is invalid or inappropriate for flux balance
+   *                                      analysis.
+   */
+  public void solve(File file)
+      throws SBMLException, ModelOverdeterminedException, XMLStreamException, IOException {
+    if (file.isDirectory()) {
+      for (File f : file.listFiles()) {
+        System.out.println("attempting to solving model: " + f.getName());
+        solve(f);
+      }
+    } else {
+      logger.error(file.getName());
+      try {
+        FluxBalanceAnalysis solver = new FluxBalanceAnalysis(SBMLReader.read(file));
+        if (solver.solve()) {
+          System.out.println(file.getName());
+          System.out.println("Objective value:\t" + solver.getObjectiveValue());
+          System.out.println("Fluxes:\t" + solver.getSolution());
+        } else {
+          logger.error("\nSolver returned null for " + file.getName());
+        }
+      } catch (Exception exc) {
+        logger.error("\nCannot run " + file.getName() + "\n" + exc);
+      }
+    }
+  }
 
 
-	/**
-	 * Simple test function that reads and solves an SBML file in a flux balance
-	 * constraints framework.
-	 * 
-	 * @param args
-	 *        the path to a valid SBML file with fbc version 2.
-	 * @throws FileNotFoundException
-	 */
-	public static void main(String[] args) throws FileNotFoundException {
-		PropertyConfigurator.configure("MyLog4j.properties");
-		try {
-			new FBAExample(new File(args[0]));
-		} catch (Throwable exc) {
-			exc.printStackTrace();
-		}
-	}
+  /**
+   * Simple test function that reads and solves an SBML file in a flux balance constraints
+   * framework.
+   *
+   * @param args the path to a valid SBML file with fbc version 2.
+   * @throws FileNotFoundException
+   */
+  public static void main(String[] args) throws FileNotFoundException {
+    PropertyConfigurator.configure("MyLog4j.properties");
+    try {
+      new FBAExample(new File(args[0]));
+    } catch (Throwable exc) {
+      exc.printStackTrace();
+    }
+  }
 
 }

@@ -3,9 +3,8 @@ package org.simulator.math;
 import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
- * An implementation of core comparison metric of the simulator's
- * result with the pre-defined results. MaxDivergenceTolerance class
- * basically calculates the LHS of the below given metric.
+ * An implementation of core comparison metric of the simulator's result with the pre-defined
+ * results. MaxDivergenceTolerance class basically calculates the LHS of the below given metric.
  * <p>
  * Metric Formula:
  *
@@ -76,8 +75,8 @@ public class MaxDivergenceTolerance extends QualityMeasure {
   protected double relTol;
 
   /**
-   * Default constructor. Initializes the metric {@link MaxAbsDistance}
-   * and sets the absolute and relative tolerances.
+   * Default constructor. Initializes the metric {@link MaxAbsDistance} and sets the absolute and
+   * relative tolerances.
    *
    * @param absTol
    * @param relTol

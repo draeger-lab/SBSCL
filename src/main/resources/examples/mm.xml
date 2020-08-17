@@ -31,11 +31,11 @@
         <annotation name="Description">complex aggregation</annotation>
       </listOfAnnotations>
       <listOfReactants>
-        <speciesReference name="S" />
-        <speciesReference name="E" />
+        <speciesReference name="S"/>
+        <speciesReference name="E"/>
       </listOfReactants>
       <listOfProducts>
-        <speciesReference name="ES" />
+        <speciesReference name="ES"/>
       </listOfProducts>
     </reaction>
     <reaction kineticConstant="4.0">
@@ -43,11 +43,11 @@
         <annotation name="Description">complex disaggregation</annotation>
       </listOfAnnotations>
       <listOfReactants>
-        <speciesReference name="ES" />
+        <speciesReference name="ES"/>
       </listOfReactants>
       <listOfProducts>
-        <speciesReference name="S" />
-        <speciesReference name="E" />
+        <speciesReference name="S"/>
+        <speciesReference name="E"/>
       </listOfProducts>
     </reaction>
     <reaction kineticConstant="1.0">
@@ -55,11 +55,11 @@
         <annotation name="Description">product creation</annotation>
       </listOfAnnotations>
       <listOfReactants>
-        <speciesReference name="ES" />
+        <speciesReference name="ES"/>
       </listOfReactants>
       <listOfProducts>
-        <speciesReference name="P" />
-        <speciesReference name="E" />
+        <speciesReference name="P"/>
+        <speciesReference name="E"/>
       </listOfProducts>
     </reaction>
   </listOfReactions>

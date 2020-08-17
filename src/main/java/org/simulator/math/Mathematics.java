@@ -25,8 +25,8 @@
 package org.simulator.math;
 
 /**
- * This class contains a collection of mathematical functions
- * like the faculty, logarithms and several trigonometric functions.
+ * This class contains a collection of mathematical functions like the faculty, logarithms and
+ * several trigonometric functions.
  *
  * @author Marcel Kronfeld
  * @author Andreas Dr&auml;ger
@@ -142,14 +142,14 @@ public class Mathematics {
   }
 
   /**
-   * Add vectors in place setting with an offset within the target vector,
-   * meaning that {@code res[resOffs+i]=v1[v1Offs+i]+v2[v2Offs+i]} for i in
-   * length.
+   * Add vectors in place setting with an offset within the target vector, meaning that {@code
+   * res[resOffs+i]=v1[v1Offs+i]+v2[v2Offs+i]} for i in length.
    *
    * @param v1
    * @param v2
    */
-  public static void vvAddOffs(double[] v1, int v1Offs, double[] v2, int v2Offs, double[] res, int resOffs, int len) {
+  public static void vvAddOffs(double[] v1, int v1Offs, double[] v2, int v2Offs, double[] res,
+      int resOffs, int len) {
     for (int i = 0; i < len; i++) {
       res[resOffs + i] = v1[v1Offs + i] + v2[v2Offs + i];
     }

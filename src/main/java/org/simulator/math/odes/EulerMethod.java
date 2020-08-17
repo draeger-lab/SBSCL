@@ -28,8 +28,7 @@ import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.Mathematics;
 
 /**
- * In this class the Euler method for integration a differential equation system
- * is implemented.
+ * In this class the Euler method for integration a differential equation system is implemented.
  *
  * @author Andreas Dr&auml;ger
  * @version $Rev$
@@ -86,7 +85,8 @@ public class EulerMethod extends AbstractDESSolver {
    * @see org.simulator.math.odes.AbstractDESSolver#computeChange(org.simulator.math.odes.DESystem, double[], double, double, double[], boolean)
    */
   @Override
-  public double[] computeChange(DESystem DES, double[] yPrev, double t, double stepSize, double[] change, boolean steadyState)
+  public double[] computeChange(DESystem DES, double[] yPrev, double t, double stepSize,
+      double[] change, boolean steadyState)
       throws DerivativeException {
     DES.computeDerivatives(t, yPrev, change);
     Mathematics.scale(stepSize, change);

@@ -29,8 +29,8 @@ import java.io.Serializable;
 import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 
 /**
- * A differential equation system describes how to compute the rate of change at
- * a given state of the system.
+ * A differential equation system describes how to compute the rate of change at a given state of
+ * the system.
  *
  * @author Hannes Planatscher
  * @author Andreas Dr&auml;ger
@@ -41,22 +41,20 @@ public interface DESystem
     extends Serializable, FirstOrderDifferentialEquations {
 
   /**
-   * Delivers an array of {@link String}s that describe the content of each
-   * dimension of the resulting array of this {@link DESystem}.
+   * Delivers an array of {@link String}s that describe the content of each dimension of the
+   * resulting array of this {@link DESystem}.
    *
-   * @return An array of {@link String}s which has the same length than the
-   * number given by {@link #getDimension()}. Each
-   * {@link String} describes the content of the given dimension.
+   * @return An array of {@link String}s which has the same length than the number given by {@link
+   * #getDimension()}. Each {@link String} describes the content of the given dimension.
    */
   public String[] getIdentifiers();
 
   /**
-   * This method is used to check if this differential equation system contains
-   * any events or rules that would require a special treatment by the numerical
-   * solver.
+   * This method is used to check if this differential equation system contains any events or rules
+   * that would require a special treatment by the numerical solver.
    *
-   * @return flag that is {@code true} if any events or rules are contained
-   * in the differential equation system.
+   * @return flag that is {@code true} if any events or rules are contained in the differential
+   * equation system.
    */
   public boolean containsEventsOrRules();
 
@@ -66,7 +64,8 @@ public interface DESystem
   public int getPositiveValueCount();
 
   /**
-   * @param delaysIncluded Determines whether delay expression should be included in the calculation.
+   * @param delaysIncluded Determines whether delay expression should be included in the
+   *                       calculation.
    */
   public void setDelaysIncluded(boolean delaysIncluded);
 }

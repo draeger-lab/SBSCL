@@ -41,45 +41,46 @@ import org.simulator.math.odes.MultiTable;
 
 /**
  * A simple program that performs a simulation of SBML files containing hierarchical models.
- * 
+ *
  * @author Shalin Shah, Matthias König
  * @version $Rev$
  * @since 1.5
  */
 public class CompExample {
 
-	private static double stepSize = 0.1;
-	private static double timeEnd = 100;
-	private static Logger LOGGER = Logger.getLogger(CompExample.class.getName());
-	/**
-	 * Starts a simulation at the command line.
-	 * 
-	 * @throws IOException
-	 * @throws XMLStreamException
-	 * @throws SBMLException
-	 * @throws ModelOverdeterminedException
-	 * @throws DerivativeException
-	 */
-	public static void main(String[] args) throws XMLStreamException,
-	IOException, ModelOverdeterminedException, SBMLException,
-	DerivativeException {
+  private static double stepSize = 0.1;
+  private static double timeEnd = 100;
+  private static Logger LOGGER = Logger.getLogger(CompExample.class.getName());
 
-		if (args[0].isEmpty()) {
-			LOGGER.warn("No file entered!");
-			return;
-		}
-		
-		// perform comp simulation
-		File file = new File(args[0]);
+  /**
+   * Starts a simulation at the command line.
+   *
+   * @throws IOException
+   * @throws XMLStreamException
+   * @throws SBMLException
+   * @throws ModelOverdeterminedException
+   * @throws DerivativeException
+   */
+  public static void main(String[] args) throws XMLStreamException,
+      IOException, ModelOverdeterminedException, SBMLException,
+      DerivativeException {
 
-		CompSimulator compSimulator = new CompSimulator(file);
-		MultiTable solution = compSimulator.solve(stepSize=0.1, timeEnd=100.0);
+    if (args[0].isEmpty()) {
+      LOGGER.warn("No file entered!");
+      return;
+    }
 
-		// Display simulation result to the user
-		JScrollPane resultDisplay = new JScrollPane(new JTable(solution));
-		resultDisplay.setPreferredSize(new Dimension(400, 400));
-		JOptionPane.showMessageDialog(null, resultDisplay, "Comp Results",
-				JOptionPane.INFORMATION_MESSAGE);
-	}
+    // perform comp simulation
+    File file = new File(args[0]);
+
+    CompSimulator compSimulator = new CompSimulator(file);
+    MultiTable solution = compSimulator.solve(stepSize = 0.1, timeEnd = 100.0);
+
+    // Display simulation result to the user
+    JScrollPane resultDisplay = new JScrollPane(new JTable(solution));
+    resultDisplay.setPreferredSize(new Dimension(400, 400));
+    JOptionPane.showMessageDialog(null, resultDisplay, "Comp Results",
+        JOptionPane.INFORMATION_MESSAGE);
+  }
 
 }

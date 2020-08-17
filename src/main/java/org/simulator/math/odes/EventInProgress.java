@@ -29,8 +29,8 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * This class represents a compilation of the values and execution times during
- * simulation concerning events.
+ * This class represents a compilation of the values and execution times during simulation
+ * concerning events.
  *
  * @author Roland Keller
  * @version $Rev$
@@ -46,8 +46,8 @@ public class EventInProgress {
   protected Map<Integer, Double> assignments;
 
   /**
-   * Creates a new EventInProcess with the given boolean value indicating
-   * whether or not it can fire at the initial time point.
+   * Creates a new EventInProcess with the given boolean value indicating whether or not it can fire
+   * at the initial time point.
    *
    * @param fired
    */
@@ -75,18 +75,17 @@ public class EventInProgress {
   }
 
   /**
-   * The event has been aborted between trigger and execution. For this class
-   * it has the same effect as the event has been executed.
+   * The event has been aborted between trigger and execution. For this class it has the same effect
+   * as the event has been executed.
    */
   public void aborted(double time) {
     executed(time);
   }
 
   /**
-   * The event associated with this class has been triggered. Therefore set
-   * the time of execution and the values used at this point in time. Please
-   * note that values can be null when the event does not use values from
-   * trigger time.
+   * The event associated with this class has been triggered. Therefore set the time of execution
+   * and the values used at this point in time. Please note that values can be null when the event
+   * does not use values from trigger time.
    *
    * @param values
    * @param time
@@ -97,8 +96,7 @@ public class EventInProgress {
   }
 
   /**
-   * The event associated with this class has been executed therefore reset
-   * some values.
+   * The event associated with this class has been executed therefore reset some values.
    */
   public void executed(double time) {
     execTimes.poll();
@@ -115,8 +113,7 @@ public class EventInProgress {
   }
 
   /**
-   * Returns a boolean value indication if the associated event has recently
-   * been triggered / fired
+   * Returns a boolean value indication if the associated event has recently been triggered / fired
    *
    * @return fireStatus
    */
@@ -166,8 +163,8 @@ public class EventInProgress {
   }
 
   /**
-   * The trigger of the associated event has made a transition from true to
-   * false, so the event can be triggered again.
+   * The trigger of the associated event has made a transition from true to false, so the event can
+   * be triggered again.
    */
   public void recovered(double time) {
     fired = false;
@@ -175,8 +172,7 @@ public class EventInProgress {
   }
 
   /**
-   * Checks if this event has still assignments to perform for the given point
-   * in time
+   * Checks if this event has still assignments to perform for the given point in time
    *
    * @param time
    * @return moreArguments?

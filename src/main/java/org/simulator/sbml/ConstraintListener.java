@@ -29,8 +29,8 @@ import java.util.EventListener;
 import org.sbml.jsbml.Constraint;
 
 /**
- * A listener interface that allows the processing of {@link Constraint}s that
- * triggered during simulation.
+ * A listener interface that allows the processing of {@link Constraint}s that triggered during
+ * simulation.
  *
  * @author Alexander D&ouml;rr
  * @author Andreas Dr&auml;ger

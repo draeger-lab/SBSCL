@@ -58,9 +58,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.003 </cn>
-              <ci> L </ci>
-              <ci> R </ci>
+              <cn>0.003</cn>
+              <ci>L</ci>
+              <ci>R</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -77,8 +77,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.06 </cn>
-              <ci> C </ci>
+              <cn>0.06</cn>
+              <ci>C</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -95,14 +95,14 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.01 </cn>
-              <ci> C </ci>
+              <cn>0.01</cn>
+              <ci>C</ci>
               <apply>
                 <minus/>
-                <ci> C </ci>
-                <cn type="integer"> 1 </cn>
+                <ci>C</ci>
+                <cn type="integer">1</cn>
               </apply>
-              <cn> 0.5 </cn>
+              <cn>0.5</cn>
             </apply>
           </math>
         </kineticLaw>
@@ -119,8 +119,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.1 </cn>
-              <ci> C2 </ci>
+              <cn>0.1</cn>
+              <ci>C2</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -136,8 +136,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 1 </cn>
-              <ci> C2 </ci>
+              <cn>1</cn>
+              <ci>C2</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -153,8 +153,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.01 </cn>
-              <ci> C* </ci>
+              <cn>0.01</cn>
+              <ci>C*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -171,9 +171,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.003 </cn>
-              <ci> C* </ci>
-              <ci> A1 </ci>
+              <cn>0.003</cn>
+              <ci>C*</ci>
+              <ci>A1</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -190,8 +190,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.05 </cn>
-              <ci> C*A1 </ci>
+              <cn>0.05</cn>
+              <ci>C*A1</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -208,9 +208,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.01 </cn>
-              <ci> C*A1 </ci>
-              <ci> A2 </ci>
+              <cn>0.01</cn>
+              <ci>C*A1</ci>
+              <ci>A2</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -227,8 +227,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.06 </cn>
-              <ci> E0* </ci>
+              <cn>0.06</cn>
+              <ci>E0*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -245,9 +245,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.0001 </cn>
-              <ci> A1 </ci>
-              <ci> A2 </ci>
+              <cn>0.0001</cn>
+              <ci>A1</ci>
+              <ci>A2</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -264,8 +264,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.0015 </cn>
-              <ci> A1A2 </ci>
+              <cn>0.0015</cn>
+              <ci>A1A2</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -282,9 +282,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.0045 </cn>
-              <ci> C* </ci>
-              <ci> A1A2 </ci>
+              <cn>0.0045</cn>
+              <ci>C*</ci>
+              <ci>A1A2</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -301,8 +301,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.03 </cn>
-              <ci> E0* </ci>
+              <cn>0.03</cn>
+              <ci>E0*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -319,9 +319,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.01 </cn>
-              <ci> E1 </ci>
-              <ci> E0* </ci>
+              <cn>0.01</cn>
+              <ci>E1</ci>
+              <ci>E0*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -338,8 +338,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.5 </cn>
-              <ci> E1E0* </ci>
+              <cn>0.5</cn>
+              <ci>E1E0*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -356,8 +356,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.1 </cn>
-              <ci> E1E0* </ci>
+              <cn>0.1</cn>
+              <ci>E1E0*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -374,9 +374,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.01 </cn>
-              <ci> E1* </ci>
-              <ci> P1 </ci>
+              <cn>0.01</cn>
+              <ci>E1*</ci>
+              <ci>P1</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -393,8 +393,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.5 </cn>
-              <ci> E1*P1 </ci>
+              <cn>0.5</cn>
+              <ci>E1*P1</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -411,8 +411,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.1 </cn>
-              <ci> E1*P1 </ci>
+              <cn>0.1</cn>
+              <ci>E1*P1</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -429,9 +429,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.01 </cn>
-              <ci> E2 </ci>
-              <ci> E1* </ci>
+              <cn>0.01</cn>
+              <ci>E2</ci>
+              <ci>E1*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -448,8 +448,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.5 </cn>
-              <ci> E2E1* </ci>
+              <cn>0.5</cn>
+              <ci>E2E1*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -466,8 +466,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.1 </cn>
-              <ci> E2E1* </ci>
+              <cn>0.1</cn>
+              <ci>E2E1*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -484,9 +484,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.01 </cn>
-              <ci> E2* </ci>
-              <ci> P2 </ci>
+              <cn>0.01</cn>
+              <ci>E2*</ci>
+              <ci>P2</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -503,8 +503,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.5 </cn>
-              <ci> E2*P2 </ci>
+              <cn>0.5</cn>
+              <ci>E2*P2</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -521,8 +521,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.1 </cn>
-              <ci> E2*P2 </ci>
+              <cn>0.1</cn>
+              <ci>E2*P2</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -539,9 +539,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.01 </cn>
-              <ci> E3 </ci>
-              <ci> E2* </ci>
+              <cn>0.01</cn>
+              <ci>E3</ci>
+              <ci>E2*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -558,8 +558,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.5 </cn>
-              <ci> E3E2* </ci>
+              <cn>0.5</cn>
+              <ci>E3E2*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -576,8 +576,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.1 </cn>
-              <ci> E3E2* </ci>
+              <cn>0.1</cn>
+              <ci>E3E2*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -594,9 +594,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.01 </cn>
-              <ci> E3* </ci>
-              <ci> P3 </ci>
+              <cn>0.01</cn>
+              <ci>E3*</ci>
+              <ci>P3</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -613,8 +613,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.5 </cn>
-              <ci> E3*P3 </ci>
+              <cn>0.5</cn>
+              <ci>E3*P3</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -631,8 +631,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.1 </cn>
-              <ci> E3*P3 </ci>
+              <cn>0.1</cn>
+              <ci>E3*P3</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -649,9 +649,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.01 </cn>
-              <ci> E4 </ci>
-              <ci> E3* </ci>
+              <cn>0.01</cn>
+              <ci>E4</ci>
+              <ci>E3*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -668,8 +668,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.5 </cn>
-              <ci> E4E3* </ci>
+              <cn>0.5</cn>
+              <ci>E4E3*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -686,8 +686,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.1 </cn>
-              <ci> E4E3* </ci>
+              <cn>0.1</cn>
+              <ci>E4E3*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -704,9 +704,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.01 </cn>
-              <ci> E4* </ci>
-              <ci> P4 </ci>
+              <cn>0.01</cn>
+              <ci>E4*</ci>
+              <ci>P4</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -723,8 +723,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.5 </cn>
-              <ci> E4*P4 </ci>
+              <cn>0.5</cn>
+              <ci>E4*P4</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -741,8 +741,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.1 </cn>
-              <ci> E4*P4 </ci>
+              <cn>0.1</cn>
+              <ci>E4*P4</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -759,9 +759,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.01 </cn>
-              <ci> E5 </ci>
-              <ci> E4* </ci>
+              <cn>0.01</cn>
+              <ci>E5</ci>
+              <ci>E4*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -778,8 +778,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.5 </cn>
-              <ci> E5E4* </ci>
+              <cn>0.5</cn>
+              <ci>E5E4*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -796,8 +796,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.1 </cn>
-              <ci> E5E4* </ci>
+              <cn>0.1</cn>
+              <ci>E5E4*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -814,9 +814,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.01 </cn>
-              <ci> E5* </ci>
-              <ci> P5 </ci>
+              <cn>0.01</cn>
+              <ci>E5*</ci>
+              <ci>P5</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -833,8 +833,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.5 </cn>
-              <ci> E5*P5 </ci>
+              <cn>0.5</cn>
+              <ci>E5*P5</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -851,8 +851,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.1 </cn>
-              <ci> E5*P5 </ci>
+              <cn>0.1</cn>
+              <ci>E5*P5</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -869,9 +869,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.01 </cn>
-              <ci> E0* </ci>
-              <ci> E4* </ci>
+              <cn>0.01</cn>
+              <ci>E0*</ci>
+              <ci>E4*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -888,8 +888,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.5 </cn>
-              <ci> E0*E4* </ci>
+              <cn>0.5</cn>
+              <ci>E0*E4*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -907,8 +907,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.1 </cn>
-              <ci> E0*E4* </ci>
+              <cn>0.1</cn>
+              <ci>E0*E4*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -925,9 +925,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.01 </cn>
-              <ci> E2* </ci>
-              <ci> E4* </ci>
+              <cn>0.01</cn>
+              <ci>E2*</ci>
+              <ci>E4*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -944,8 +944,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.5 </cn>
-              <ci> E2*E4* </ci>
+              <cn>0.5</cn>
+              <ci>E2*E4*</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -962,8 +962,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.1 </cn>
-              <ci> E2*E4* </ci>
+              <cn>0.1</cn>
+              <ci>E2*E4*</ci>
             </apply>
           </math>
         </kineticLaw>

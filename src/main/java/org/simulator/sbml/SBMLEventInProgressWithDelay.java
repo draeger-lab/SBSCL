@@ -27,9 +27,9 @@ package org.simulator.sbml;
 import java.util.LinkedList;
 
 /**
- * This class represents a compilation of all information calculated during
- * simulation concerning events in SBML. An {@link SBMLEventInProgressWithDelay}
- * especially stands for an event with delay.
+ * This class represents a compilation of all information calculated during simulation concerning
+ * events in SBML. An {@link SBMLEventInProgressWithDelay} especially stands for an event with
+ * delay.
  *
  * @author Alexander D&ouml;rr
  * @version $Rev$
@@ -48,8 +48,8 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
   private LinkedList<Double[]> previousExecutionValues;
 
   /**
-   * Creates a new SBMLEventInProcessWithDelay with the given boolean value
-   * indicating whether or not it can fire at time point 0d.
+   * Creates a new SBMLEventInProcessWithDelay with the given boolean value indicating whether or
+   * not it can fire at time point 0d.
    *
    * @param fired
    */
@@ -105,9 +105,9 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
   }
 
   /**
-   * Due to the fact that events with delay can trigger multiple times before
-   * execution, the time of execution and the corresponding values have to be
-   * inserted at the chronological correct position in the list.
+   * Due to the fact that events with delay can trigger multiple times before execution, the time of
+   * execution and the corresponding values have to be inserted at the chronological correct
+   * position in the list.
    *
    * @param time
    * @return the index where time has been inserted
@@ -135,7 +135,8 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
       recovered(currentTime);
       lastTimeFired = -1;
     } else {
-      while ((previousExecutionTimes.peekLast() != null) && (previousExecutionTimes.peekLast() > currentTime)) {
+      while ((previousExecutionTimes.peekLast() != null) && (previousExecutionTimes.peekLast()
+          > currentTime)) {
         double time = previousExecutionTimes.pollLast();
         int index = insertTime(time);
         execTimes.add(index, time);

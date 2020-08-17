@@ -74,7 +74,8 @@ public class OMEXArchive {
     }
 
     // read description of the archive itself
-    LOGGER.debug("found " + archive.getDescriptions().size() + " meta data entries describing the archive.");
+    LOGGER.debug(
+        "found " + archive.getDescriptions().size() + " meta data entries describing the archive.");
   }
 
   public Map<String, ArchiveEntry> getFileEntries() {

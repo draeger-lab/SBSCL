@@ -20,7 +20,7 @@
  * this software distribution and also available online as
  * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
  * ---------------------------------------------------------------------
- */ 
+ */
 package org.simulator.examples;
 
 import java.io.IOException;
@@ -42,10 +42,9 @@ import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sbml.SimpleConstraintListener;
 
 /**
- * This class tests the {@link ConstraintListener} interface implementation
- * {@link SimpleConstraintListener} by evaluating a simple test model that
- * contains a {@link Constraint}.
- * 
+ * This class tests the {@link ConstraintListener} interface implementation {@link
+ * SimpleConstraintListener} by evaluating a simple test model that contains a {@link Constraint}.
+ *
  * @author Andreas Dr&auml;ger
  * @author Shalin Shah
  * @version $Rev$
@@ -55,7 +54,6 @@ public class ConstraintExample {
 
   /**
    * @param args not used.
-   * 
    * @throws XMLStreamException
    * @throws IOException
    * @throws ParseException
@@ -63,8 +61,9 @@ public class ConstraintExample {
    * @throws ModelOverdeterminedException
    * @throws DerivativeException
    */
-  public static void main(String args[]) throws XMLStreamException, IOException, ParseException, SBMLException, ModelOverdeterminedException, DerivativeException {
-	  // Configuration
+  public static void main(String args[])
+      throws XMLStreamException, IOException, ParseException, SBMLException, ModelOverdeterminedException, DerivativeException {
+    // Configuration
     String fileName = args[0];
     double stepSize = Double.parseDouble(args[1]);
     double timeEnd = Double.parseDouble(args[2]);

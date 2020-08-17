@@ -50,7 +50,7 @@ import org.simulator.sbml.SBMLinterpreter;
 
 /**
  * Tests the SEDMLWriter
- * 
+ *
  * @author Richard Adams, Matthias König
  * @version $Rev$
  * @since 1.1
@@ -58,17 +58,19 @@ import org.simulator.sbml.SBMLinterpreter;
 public class SEDMLWriterTest {
 
   private static final String COMMENT = "Standard time course of ABC1 model";
-  private File SBMLFile = new File(Thread.currentThread().getContextClassLoader().getResource("sedml/abc_1.xml").getFile());
+  private File SBMLFile = new File(
+      Thread.currentThread().getContextClassLoader().getResource("sedml/abc_1.xml").getFile());
 
 
   @Before
-  public void setUp(){}
+  public void setUp() {
+  }
 
   @After
-  public void tearDown(){}
+  public void tearDown() {
+  }
 
   /**
-   * 
    * @throws IOException
    * @throws XMLStreamException
    * @throws SBMLException
@@ -76,7 +78,8 @@ public class SEDMLWriterTest {
    * @throws XMLException
    */
   @Test
-  public final void testSaveExperimentToSEDML() throws IOException, XMLStreamException, SBMLException, ModelOverdeterminedException, XMLException {
+  public final void testSaveExperimentToSEDML()
+      throws IOException, XMLStreamException, SBMLException, ModelOverdeterminedException, XMLException {
 
     double start = 0d;
     double end = 10d;
@@ -108,10 +111,10 @@ public class SEDMLWriterTest {
 
     // save will fail if OutputStream is unavailable
     fos.close();
-    boolean IoExthrown=false;
-    try{
+    boolean IoExthrown = false;
+    try {
       writer.saveExperimentToSEDML(start, end, stepsize, solver, model, SBMLFile.toURI(), fos);
-    } catch(IOException e) {
+    } catch (IOException e) {
       IoExthrown = true;
     }
     if (!IoExthrown) {

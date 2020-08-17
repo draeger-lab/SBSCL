@@ -31,9 +31,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.17 </cn>
-              <ci> PLac </ci>
-              <ci> RNAP </ci>
+              <cn>0.17</cn>
+              <ci>PLac</ci>
+              <ci>RNAP</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -50,8 +50,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 10 </cn>
-              <ci> PLacRNAP </ci>
+              <cn>10</cn>
+              <ci>PLacRNAP</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -67,8 +67,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 1 </cn>
-              <ci> PLacRNAP </ci>
+              <cn>1</cn>
+              <ci>PLacRNAP</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -86,8 +86,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 1 </cn>
-              <ci> TrLacZ1 </ci>
+              <cn>1</cn>
+              <ci>TrLacZ1</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -103,8 +103,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.015 </cn>
-              <ci> TrLacZ2 </ci>
+              <cn>0.015</cn>
+              <ci>TrLacZ2</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -121,9 +121,9 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.17 </cn>
-              <ci> Ribosome </ci>
-              <ci> RbsLacZ </ci>
+              <cn>0.17</cn>
+              <ci>Ribosome</ci>
+              <ci>RbsLacZ</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -140,8 +140,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.45 </cn>
-              <ci> RbsRibosome </ci>
+              <cn>0.45</cn>
+              <ci>RbsRibosome</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -158,8 +158,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.4 </cn>
-              <ci> RbsRibosome </ci>
+              <cn>0.4</cn>
+              <ci>RbsRibosome</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -175,8 +175,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.015 </cn>
-              <ci> TrRbsLacZ </ci>
+              <cn>0.015</cn>
+              <ci>TrRbsLacZ</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -192,8 +192,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn type="e-notation"> 6.42 <sep/> -5 </cn>
-              <ci> LacZ </ci>
+              <cn type="e-notation">6.42
+                <sep/>
+                -5
+              </cn>
+              <ci>LacZ</ci>
             </apply>
           </math>
         </kineticLaw>
@@ -209,8 +212,8 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <cn> 0.3 </cn>
-              <ci> RbsLacZ </ci>
+              <cn>0.3</cn>
+              <ci>RbsLacZ</ci>
             </apply>
           </math>
         </kineticLaw>

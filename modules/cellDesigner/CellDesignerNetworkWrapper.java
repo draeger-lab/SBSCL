@@ -20,68 +20,72 @@ import fern.network.sbml.SBMLPropensityCalculator;
 
 public class CellDesignerNetworkWrapper extends AbstractNetworkImpl {
 
-	private PluginModel model;
-	private Map<PluginSpecies, Integer> speciesToReference = new HashMap<PluginSpecies, Integer>();
-	
-	public CellDesignerNetworkWrapper(PluginModel model) {
-		super(model.getName());
-		this.model = model;
-		
-		createAnnotationManager();
-		createSpeciesMapping();
-		createAmountManager();
-		createAdjacencyLists();
-		createPropensityCalulator();
-	}
+  private PluginModel model;
+  private Map<PluginSpecies, Integer> speciesToReference = new HashMap<PluginSpecies, Integer>();
 
-	@Override
-	protected void createAdjacencyLists() {
-		adjListPro = new int[model.getNumReactions()][];
-		adjListRea = new int[model.getNumReactions()][];
-		for (int r=0; r<model.getNumReactions(); r++) {
-			PluginReaction reaction = model.getReaction(r);
-			adjListPro[r] = new int[reaction.getNumProducts()];
-			for (int p=0; p<reaction.getNumProducts(); p++)
-				adjListPro[r][p] = speciesIdToIndex.get(reaction.getProduct(p).getSpeciesInstance().getId());
-			
-			adjListRea[r] = new int[reaction.getNumReactants()];
-			for (int p=0; p<reaction.getNumReactants(); p++)
-				adjListRea[r][p] = speciesIdToIndex.get(reaction.getReactant(p).getSpeciesInstance().getId());
-		}
-	}
+  public CellDesignerNetworkWrapper(PluginModel model) {
+    super(model.getName());
+    this.model = model;
 
-	@Override
-	protected void createAmountManager() {
-		amountManager = new DefaultAmountManager(this);
-	}
+    createAnnotationManager();
+    createSpeciesMapping();
+    createAmountManager();
+    createAdjacencyLists();
+    createPropensityCalulator();
+  }
 
-	@Override
-	protected void createAnnotationManager() {
-		annotationManager = new AnnotationManagerImpl();
-	}
+  @Override
+  protected void createAdjacencyLists() {
+    adjListPro = new int[model.getNumReactions()][];
+    adjListRea = new int[model.getNumReactions()][];
+    for (int r = 0; r < model.getNumReactions(); r++) {
+      PluginReaction reaction = model.getReaction(r);
+      adjListPro[r] = new int[reaction.getNumProducts()];
+			for (int p = 0; p < reaction.getNumProducts(); p++) {
+				adjListPro[r][p] = speciesIdToIndex
+						.get(reaction.getProduct(p).getSpeciesInstance().getId());
+			}
 
-	@Override
-	protected void createPropensityCalulator() {
-		propensitiyCalculator = new CellDesignerPropensityCalculator(model, this);
-	}
+      adjListRea[r] = new int[reaction.getNumReactants()];
+			for (int p = 0; p < reaction.getNumReactants(); p++) {
+				adjListRea[r][p] = speciesIdToIndex
+						.get(reaction.getReactant(p).getSpeciesInstance().getId());
+			}
+    }
+  }
 
-	@Override
-	protected void createSpeciesMapping() {
-		speciesIdToIndex = new HashMap<String,Integer>(model.getNumSpecies());
-		indexToSpeciesId = new String[model.getNumSpecies()];
-		
-		for (int s=0; s<model.getNumSpecies(); s++) {
-			speciesIdToIndex.put(model.getSpecies(s).getId(), s);
-			indexToSpeciesId[s] = model.getSpecies(s).getId();
-		}
-	}
+  @Override
+  protected void createAmountManager() {
+    amountManager = new DefaultAmountManager(this);
+  }
 
-	public long getInitialAmount(int species) {
-		return (long) model.getSpecies(species).getInitialAmount();
-	}
+  @Override
+  protected void createAnnotationManager() {
+    annotationManager = new AnnotationManagerImpl();
+  }
 
-	public void setInitialAmount(int species, long value) {
-		model.getSpecies(species).setInitialAmount(value);
-	}
+  @Override
+  protected void createPropensityCalulator() {
+    propensitiyCalculator = new CellDesignerPropensityCalculator(model, this);
+  }
+
+  @Override
+  protected void createSpeciesMapping() {
+    speciesIdToIndex = new HashMap<String, Integer>(model.getNumSpecies());
+    indexToSpeciesId = new String[model.getNumSpecies()];
+
+    for (int s = 0; s < model.getNumSpecies(); s++) {
+      speciesIdToIndex.put(model.getSpecies(s).getId(), s);
+      indexToSpeciesId[s] = model.getSpecies(s).getId();
+    }
+  }
+
+  public long getInitialAmount(int species) {
+    return (long) model.getSpecies(species).getInitialAmount();
+  }
+
+  public void setInitialAmount(int species, long value) {
+    model.getSpecies(species).setInitialAmount(value);
+  }
 
 }

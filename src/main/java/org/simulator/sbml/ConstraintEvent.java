@@ -29,8 +29,7 @@ import java.util.EventObject;
 import org.sbml.jsbml.Constraint;
 
 /**
- * This class represents the violation of a {@link Constraint} during
- * simulation.
+ * This class represents the violation of a {@link Constraint} during simulation.
  *
  * @author Alexander D&ouml;rr
  * @author Andreas Dr&auml;ger
@@ -50,8 +49,8 @@ public class ConstraintEvent extends EventObject {
   private double violationTime;
 
   /**
-   * Creates a new {@link ConstraintEvent} for the given {@link Constraint}
-   * and the given point in time.
+   * Creates a new {@link ConstraintEvent} for the given {@link Constraint} and the given point in
+   * time.
    *
    * @param source        the {@link Constraint}, whose condition has been violated.
    * @param violationTime the simulation time, at which the violation occurred.

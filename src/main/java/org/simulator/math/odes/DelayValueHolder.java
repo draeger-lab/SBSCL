@@ -35,17 +35,18 @@ import java.io.Serializable;
 public interface DelayValueHolder extends Serializable {
 
   /**
-   * Returns the value for the element with the given id at a time point in
-   * the past, where the time gives the amount of time in the past.
+   * Returns the value for the element with the given id at a time point in the past, where the time
+   * gives the amount of time in the past.
    *
-   * @param time          the time point (in the past) at which the value is to be
-   *                      computed for the element with the given id.
+   * @param time          the time point (in the past) at which the value is to be computed for the
+   *                      element with the given id.
    * @param id            the id of the delayed value
    * @param DES           the DESystem
    * @param initialValues the initialValues of the DES
    * @param yIndex        the index corresponding to the id in the vector of the DES
-   * @return the computed value for the element with the given identifier at
-   * the time point in the past.
+   * @return the computed value for the element with the given identifier at the time point in the
+   * past.
    */
-  public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues, int yIndex);
+  public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues,
+      int yIndex);
 }

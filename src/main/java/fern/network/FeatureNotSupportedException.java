@@ -7,9 +7,10 @@
 package fern.network;
 
 public class FeatureNotSupportedException extends Exception {
-private static final long serialVersionUID = 1L;
 
-	public FeatureNotSupportedException(String msg) {
-		super(msg);
-	}
+  private static final long serialVersionUID = 1L;
+
+  public FeatureNotSupportedException(String msg) {
+    super(msg);
+  }
 }

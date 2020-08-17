@@ -55,87 +55,87 @@ import org.simulator.sbml.SBMLinterpreter;
  */
 public class SimulatorExample implements PropertyChangeListener {
 
-    private static Logger logger = Logger.getLogger(SimulatorExample.class.getName());
-    private static final double TOLERANCE_FACTOR = 1E-3;
-    private static final int WIDTH = 400;
-    private static final int HEIGHT = 400;
-    private static final String RESULT = "result";
-    private static SimulatorExample simulatorExample;
+  private static Logger logger = Logger.getLogger(SimulatorExample.class.getName());
+  private static final double TOLERANCE_FACTOR = 1E-3;
+  private static final int WIDTH = 400;
+  private static final int HEIGHT = 400;
+  private static final String RESULT = "result";
+  private static SimulatorExample simulatorExample;
 
-    /**
-     * Starts a simulation at the command line.
-     *
-     * @param args file name, step size, and end time.
-     * @throws IOException
-     * @throws XMLStreamException
-     * @throws SBMLException
-     * @throws ModelOverdeterminedException
-     * @throws DerivativeException
-     */
-    public static void main(String[] args) throws XMLStreamException,
-            IOException, ModelOverdeterminedException, SBMLException,
-            DerivativeException {
+  /**
+   * Starts a simulation at the command line.
+   *
+   * @param args file name, step size, and end time.
+   * @throws IOException
+   * @throws XMLStreamException
+   * @throws SBMLException
+   * @throws ModelOverdeterminedException
+   * @throws DerivativeException
+   */
+  public static void main(String[] args) throws XMLStreamException,
+      IOException, ModelOverdeterminedException, SBMLException,
+      DerivativeException {
 
-        String fileName = null;
-        double stepSize = 0d;
-        double timeEnd = 0d;
-        double absTol = 0d;
-        double relTol = 0d;
+    String fileName = null;
+    double stepSize = 0d;
+    double timeEnd = 0d;
+    double absTol = 0d;
+    double relTol = 0d;
 
-        // Configuration
-        try {
-            fileName = args[0];
-            stepSize = Double.parseDouble(args[1]);
-            timeEnd = Double.parseDouble(args[2]);
-            absTol = TOLERANCE_FACTOR * Double.parseDouble(args[3]);
-            relTol = TOLERANCE_FACTOR * Double.parseDouble(args[4]);
-        } catch (NumberFormatException e) {
-            logger.warn("Please enter numerical values wherever needed");
-        } catch (IllegalArgumentException e){
-            logger.error("Provide proper arguments");
-        }
-
-        // Read the model and initialize solver
-        SBMLDocument document = (new SBMLReader()).readSBML(fileName);
-        Model model = document.getModel();
-
-        DESSolver solver = new RosenbrockSolver();
-        solver.setStepSize(stepSize);
-        EquationSystem interpreter = new SBMLinterpreter(model);
-        if (solver instanceof AbstractDESSolver) {
-            ((AbstractDESSolver) solver).setIncludeIntermediates(false);
-        }
-
-        // Compute the numerical solution of the initial value problem
-        if (solver instanceof AdaptiveStepsizeIntegrator) {
-            ((AdaptiveStepsizeIntegrator) solver).setAbsTol(absTol);
-            ((AdaptiveStepsizeIntegrator) solver).setRelTol(relTol);
-        }
-
-        simulatorExample = new SimulatorExample();
-        MultiTable solution = solver.solve(interpreter, interpreter
-                .getInitialValues(), 0d, timeEnd, simulatorExample);
-
-        // Display simulation result to the user
-        JScrollPane resultDisplay = new JScrollPane(new JTable(solution));
-        resultDisplay.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        JOptionPane.showMessageDialog(null, resultDisplay, "The solution of model "
-                + model.getId(), JOptionPane.INFORMATION_MESSAGE);
-
-        // plot all the reactions species
-        PlotMultiTable p = new PlotMultiTable(solution, "Output plot");
-        p.pack();
-        RefineryUtilities.centerFrameOnScreen(p);
-        p.setVisible(true);
+    // Configuration
+    try {
+      fileName = args[0];
+      stepSize = Double.parseDouble(args[1]);
+      timeEnd = Double.parseDouble(args[2]);
+      absTol = TOLERANCE_FACTOR * Double.parseDouble(args[3]);
+      relTol = TOLERANCE_FACTOR * Double.parseDouble(args[4]);
+    } catch (NumberFormatException e) {
+      logger.warn("Please enter numerical values wherever needed");
+    } catch (IllegalArgumentException e) {
+      logger.error("Provide proper arguments");
     }
 
-    @Override
-    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        if (propertyChangeEvent.getPropertyName().equals(RESULT)) {
-            logger.info(Arrays.toString((double[]) propertyChangeEvent.getNewValue()));
-        } else {
-            logger.info(propertyChangeEvent.getNewValue());
-        }
+    // Read the model and initialize solver
+    SBMLDocument document = (new SBMLReader()).readSBML(fileName);
+    Model model = document.getModel();
+
+    DESSolver solver = new RosenbrockSolver();
+    solver.setStepSize(stepSize);
+    EquationSystem interpreter = new SBMLinterpreter(model);
+    if (solver instanceof AbstractDESSolver) {
+      ((AbstractDESSolver) solver).setIncludeIntermediates(false);
     }
+
+    // Compute the numerical solution of the initial value problem
+    if (solver instanceof AdaptiveStepsizeIntegrator) {
+      ((AdaptiveStepsizeIntegrator) solver).setAbsTol(absTol);
+      ((AdaptiveStepsizeIntegrator) solver).setRelTol(relTol);
+    }
+
+    simulatorExample = new SimulatorExample();
+    MultiTable solution = solver.solve(interpreter, interpreter
+        .getInitialValues(), 0d, timeEnd, simulatorExample);
+
+    // Display simulation result to the user
+    JScrollPane resultDisplay = new JScrollPane(new JTable(solution));
+    resultDisplay.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+    JOptionPane.showMessageDialog(null, resultDisplay, "The solution of model "
+        + model.getId(), JOptionPane.INFORMATION_MESSAGE);
+
+    // plot all the reactions species
+    PlotMultiTable p = new PlotMultiTable(solution, "Output plot");
+    p.pack();
+    RefineryUtilities.centerFrameOnScreen(p);
+    p.setVisible(true);
+  }
+
+  @Override
+  public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+    if (propertyChangeEvent.getPropertyName().equals(RESULT)) {
+      logger.info(Arrays.toString((double[]) propertyChangeEvent.getNewValue()));
+    } else {
+      logger.info(propertyChangeEvent.getNewValue());
+    }
+  }
 
 }

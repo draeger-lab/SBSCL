@@ -3,8 +3,7 @@ package org.simulator.math;
 import org.simulator.math.odes.MultiTable.Block.Column;
 
 /**
- * Computes the relative distance of two vectors based on the {@link MaxAbsDistance}
- * distance.
+ * Computes the relative distance of two vectors based on the {@link MaxAbsDistance} distance.
  */
 public class RelativeMaxDistance extends QualityMeasure {
 

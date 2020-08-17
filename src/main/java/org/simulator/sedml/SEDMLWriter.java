@@ -109,7 +109,8 @@ public class SEDMLWriter {
    * @param os       A writeable, open {@link OutputStream}
    * @throws IOException
    */
-  public void saveExperimentToSEDML(double start, double end, double stepsize, AbstractDESSolver solver, Model model, URI modelURI, OutputStream os)
+  public void saveExperimentToSEDML(double start, double end, double stepsize,
+      AbstractDESSolver solver, Model model, URI modelURI, OutputStream os)
       throws IOException {
     SEDMLDocument doc = Libsedml.createDocument();
     SedML sedml = doc.getSedMLModel();
@@ -118,9 +119,11 @@ public class SEDMLWriter {
       addNote(comment, sedml);
     }
     // model details
-    org.jlibsedml.Model m = new org.jlibsedml.Model(modelName, modelName, SUPPORTED_LANGUAGE.SBML_GENERIC.getURN(), modelURI.toString());
+    org.jlibsedml.Model m = new org.jlibsedml.Model(modelName, modelName,
+        SUPPORTED_LANGUAGE.SBML_GENERIC.getURN(), modelURI.toString());
     // time course info
-    UniformTimeCourse utc = new UniformTimeCourse("sim1", "utc", 0, start, end, (int) ((end - start) / stepsize), new Algorithm(getKisaoIDForSolver(solver))); //
+    UniformTimeCourse utc = new UniformTimeCourse("sim1", "utc", 0, start, end,
+        (int) ((end - start) / stepsize), new Algorithm(getKisaoIDForSolver(solver))); //
     // link time course to model
     Task t1 = new Task("t1", "TASK", m.getId(), utc.getId());
     sedml.addModel(m);
@@ -129,9 +132,11 @@ public class SEDMLWriter {
     ListOf<Species> los = model.getListOfSpecies();
     // create fields for model variables
     for (Species s : los) {
-      DataGenerator dg = new DataGenerator(s.getId() + "dg", s.getId(), Libsedml.parseFormulaString(s.getId()));
+      DataGenerator dg = new DataGenerator(s.getId() + "dg", s.getId(),
+          Libsedml.parseFormulaString(s.getId()));
       SBMLSupport support = new SBMLSupport();
-      Variable v = new Variable(s.getId(), s.getId(), t1.getId(), support.getXPathForSpecies(s.getId()));
+      Variable v = new Variable(s.getId(), s.getId(), t1.getId(),
+          support.getXPathForSpecies(s.getId()));
       dg.addVariable(v);
       sedml.addDataGenerator(dg);
     }
@@ -147,7 +152,8 @@ public class SEDMLWriter {
     for (DataGenerator dg : sedml.getDataGenerators()) {
       // we don't want to plot time vs time. Equality checks are based on ID
       if (!dg.equals(time)) {
-        Curve curve = new Curve("curve" + indx++ + "", null, false, false, time.getId(), dg.getId());
+        Curve curve = new Curve("curve" + indx++ + "", null, false, false, time.getId(),
+            dg.getId());
         plot2d.addCurve(curve);
       }
     }
@@ -191,7 +197,8 @@ public class SEDMLWriter {
       return "KISAO_0000279";
     } else if (solver instanceof AdamsMoultonSolver) {
       return "KISAO_0000280";
-    } else if ((solver instanceof DormandPrince54Solver) || (solver instanceof DormandPrince853Solver)) {
+    } else if ((solver instanceof DormandPrince54Solver)
+        || (solver instanceof DormandPrince853Solver)) {
       return "KISAO_0000087";
     } else {
       return "KISAO_0000033"; // default
