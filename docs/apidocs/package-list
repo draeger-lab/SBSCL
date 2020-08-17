@@ -1,3 +1,19 @@
+fern
+fern.analysis
+fern.benchmark
+fern.example
+fern.network
+fern.network.creation
+fern.network.fernml
+fern.network.modification
+fern.network.sbml
+fern.simulation
+fern.simulation.algorithm
+fern.simulation.controller
+fern.simulation.observer
+fern.tools
+fern.tools.functions
+fern.tools.gnuplot
 org.simulator
 org.simulator.comp
 org.simulator.examples
@@ -10,3 +26,4 @@ org.simulator.plot
 org.simulator.sbml
 org.simulator.sbml.astnode
 org.simulator.sedml
+org.testsuite
