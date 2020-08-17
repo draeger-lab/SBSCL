@@ -1,5 +1,6 @@
 package org.simulator.comp;
 
+import java.util.Arrays;
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -7,8 +8,10 @@ import org.sbml.jsbml.*;
 import org.sbml.jsbml.ext.comp.util.CompFlatteningConverter;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.math.odes.AbstractDESSolver;
+import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
 import org.simulator.math.odes.DESSolver;
 import org.simulator.math.odes.MultiTable;
+import org.simulator.math.odes.MultiTable.Block;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.AddMetaInfo;
 import org.simulator.sbml.SBMLinterpreter;
@@ -110,6 +113,7 @@ public class CompSimulator {
 
     // TODO: Rel-Tolerance, Abs-Tolerance.
     MultiTable solution = solver.solve(interpreter, interpreter.getInitialValues(), 0d, timeEnd);
+    String[] identifiers = new String[solution.getColumnCount()-1];
 
     // If columns other than time exists map ids back to original
     if (solution.getColumnCount() > 1) {
@@ -119,6 +123,7 @@ public class CompSimulator {
       for (int index = 1; index < solution.getColumnCount(); index++) {
         AbstractTreeNode node = (AbstractTreeNode) doc
             .getElementBySId(solution.getColumnIdentifier(index));
+        identifiers[index-1] = (String) node.getUserObject(AddMetaInfo.ORIG_ID);
         if (node.isSetUserObjects()) {
           logger.info("flat id: " + solution.getColumnIdentifier(index) + "\t old id:" + node
               .getUserObject(AddMetaInfo.ORIG_ID) + "\t model enclosing it: " + node
@@ -126,6 +131,7 @@ public class CompSimulator {
         }
       }
     }
+    solution.getBlock(0).setIdentifiers(identifiers);
     return solution;
   }
 }

@@ -206,7 +206,7 @@ public class SBMLTestSuiteRunnerWrapper {
 
     MultiTable solution = null;
     try {
-      solution = compSimulator.solve(stepSize, duration);
+      solution = compSimulator.solve(duration, stepSize);
     } catch (Exception e) {
       e.printStackTrace();
       LOGGER.error("Error in solving the comp model!");
