@@ -53,6 +53,7 @@ The package structure in more detail:
  /
  |- dev            -> Contains the fomatting configuration files for Eclipse and IntelliJ IDEs
  |- docs           -> Contains code for the maven built website
+ |- modules        -> Contains the code for support of cellDesigner and cytoscape in FERN
  |- src            -> The main source folder containing all the code and test files
     |- assembly    -> assembly files for maven plugins
     |- lib         -> 3rd party libraries needed for compilation and execution
