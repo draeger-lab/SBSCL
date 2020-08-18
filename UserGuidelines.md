@@ -46,4 +46,29 @@ MultiTable solution = compSimulator.solve(10.0, 0.1);
 
 - After this, you can view the results either by printing or by [PlotMultiTable](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/plot/PlotMultiTable.java) (in graphical form) or by JTable (in tabular form).
 
-For complete code on how to simulate the SBML model, please refer to the [CompExample](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/CompExample.java) in the repository.
+For complete code on how to simulate the comp model, please refer to the [CompExample](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/CompExample.java) in the repository.
+
+## Simulating the SBML models with fbc extension
+
+- Similar to the CompSimulator, here we have to provide the [SBMLDocument](https://github.com/sbmlteam/jsbml/blob/master/core/src/org/sbml/jsbml/SBMLDocument.java) by reading from the file to the [FluxBalanceAnalysis](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/fba/FluxBalanceAnalysis.java) class which then performs all the functionalities.
+
+```java
+SBMLDocument document = new SBMLReader().read(sbmlfile);
+FluxBalanceAnalysis solver = new FluxBalanceAnalysis(document);
+```
+
+- After this, you just need to call `solve()` method of FluxBalanceAnalysis that returns a boolean whether the results are processed successfully or not.
+
+```java
+boolean solvedStatus = solver.solve();
+```
+
+- Once `solve()` method returns true, you can access different results as described below in the snippet.  
+```java
+if(solvedStatus == true) {
+  solver.getObjectiveValue()  // provides the objective value of the active objective function
+  solver.getSolution()        // provides the results in the form of HashMap with keys as the ids and values as their corresponding fluxes
+}
+```
+
+For complete code on how to simulate the fbc model, please refer to the [FBAExample](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/FBAExample.java) in the repository.
