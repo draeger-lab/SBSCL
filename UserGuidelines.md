@@ -28,3 +28,22 @@ MultiTable solution = solver.solve(interpreter,
 ```
 
 For complete code on how to simulate the SBML model, please refer to the [SimulatorExample](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/SimulatorExample.java) in the repository.
+
+## Simulating the SBML models with comp extension
+- Simulating the comp models is quite easy as you just need to provide a file to the [CompSimulator](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/comp/CompSimulator.java), and it performs all the tasks including the initializations and processings.
+
+```java
+CompSimulator compSimulator = new CompSimulator(sbmlfile);
+```
+
+- After creating the instance, you have to call `solve()` method of the CompSimulator class with duration and step size to get the results in the form of MultiTable.
+
+```java
+// Here, 10.0 refers to the total duration
+//       0.1 refers to the step size 
+MultiTable solution = compSimulator.solve(10.0, 0.1);
+```
+
+- After this, you can view the results either by printing or by [PlotMultiTable](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/plot/PlotMultiTable.java) (in graphical form) or by JTable (in tabular form).
+
+For complete code on how to simulate the SBML model, please refer to the [CompExample](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/CompExample.java) in the repository.
