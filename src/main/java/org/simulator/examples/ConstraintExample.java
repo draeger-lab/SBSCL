@@ -61,7 +61,7 @@ public class ConstraintExample {
    * @throws ModelOverdeterminedException
    * @throws DerivativeException
    */
-  public static void main(String args[])
+  public static void main(String[] args)
       throws XMLStreamException, IOException, ParseException, SBMLException, ModelOverdeterminedException, DerivativeException {
     // Configuration
     String fileName = args[0];

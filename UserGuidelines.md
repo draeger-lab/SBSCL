@@ -1,5 +1,11 @@
 # Guidelines to use SBSCL for simulating the models
 
+# Index  
+* [SBML model simulation](#simulating-the-sbml-models)
+* [COMP model simulation](#simulating-the-sbml-models-with-comp-extension)  
+* [FBC model simulation](#simulating-the-sbml-models-with-fbc-extension)
+* [Stochastic simualation of SBML models](#stochastic-simulation-of-the-sbml-models)
+
 ## Simulating the SBML models
 
 - First, a model has to be read from the file using the [SBMLReader](https://github.com/sbmlteam/jsbml/blob/master/core/src/org/sbml/jsbml/SBMLReader.java) by [JSBML](https://github.com/sbmlteam/jsbml). With this model as a parameter, the [SBMLinterpreter](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/sbml/SBMLinterpreter.java) instance is created which provides the basis of the simulation initializing all the properties of the model (using the [EquationSystem](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/sbml/EquationSystem.java) class), and contains the methods required for processing various functionalities like rules, events, etc.
@@ -72,3 +78,59 @@ if(solvedStatus == true) {
 ```
 
 For complete code on how to simulate the fbc model, please refer to the [FBAExample](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/FBAExample.java) in the repository.
+
+## Stochastic simulation of the SBML models
+
+- For performing the stochastic simulation, you will have to first provide the basic properties like filePath, duration, interval (step size), etc in the form of a HashMap (as remains quite handy to initialize everything at one place, and just give the key and get value).
+
+```java
+Map<String, Object> orderedArgs = new HashMap<String, Object>();
+orderedArgs.put("file", path_of_the_file);
+orderedArgs.put("time", Double.parseDouble("50.0")); // duration of the simulation
+orderedArgs.put("interval", Double.parseDouble("1.0")); // interval between two time points
+```
+
+- Once you create the basic HashMap with the arguments shown above, you need to create a [SBMLNetwork](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/network/sbml/SBMLNetwork.java) (implemented from [Network](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/network/Network.java) interface) instance, using the `loadNetwork()` method from [NetworkTools](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/tools/NetworkTools.java) class, which derives all the needed information from the model.
+
+```java
+Network net = NetworkTools.loadNetwork(new File((String) orderedArgs.get("file")));
+``` 
+
+- After creating the network, you need to initialize the [Simulator](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/simulation/Simulator.java) with the algorithm you wish to simulate by passing the SBMLNetwork instance.
+
+```java
+// Initializes simulator with the GillespieEnhanced Algorithm
+Simulator sim = new GillespieEnhanced(net);
+```
+
+All the supported algorithms for stochastic simulation are present under the [/java/fern/simulation/algorithm](https://github.com/draeger-lab/SBSCL/tree/master/src/main/java/fern/simulation/algorithm) directory.
+
+**Note:** If your SBML models contain any events, then the network has to call `registerEvents()` method passing the simulator as to keep track of event properties like trigger, delays, and others by the [SBMLEventHandlerObserver](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/network/sbml/SBMLEventHandlerObserver.java).
+```java
+((SBMLNetwork) net).registerEvents(sim);
+```  
+
+- After initializing the simulator, we need to initialize an observer (instance of [AmountIntervalObserver](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/simulation/observer/AmountIntervalObserver.java) class) which will keep track of the amounts of species throughout the simulation process. For this, we first need to get all the identifiers (species ids) using the [NetworkTools](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/tools/NetworkTools.java) class.
+
+```java
+String[] species = NetworkTools.getSpeciesNames(sim.getNet(),
+                    NumberTools.getNumbersTo(sim.getNet().getNumSpecies() - 1)); // gets the ids of the species
+
+// Initializes the observer and also registers it to the simulator using addObserver() method
+AmountIntervalObserver obs = (AmountIntervalObserver) sim.addObserver(
+        new AmountIntervalObserver(sim, (Double) orderedArgs.get("interval"),
+            ((Double) orderedArgs.get("time")).intValue(), species));
+```
+
+- Above steps completes all the initialization part and now to simulate, you just need to call the `start()` method of Simulator passing the total duration of the simulation.
+
+```java
+sim.start((Double) orderedArgs.get("time")); // runs the stochastic simulation for the defined duration
+```
+
+- On completing the simulation, all the results are stored with the observer from which you can access it in the form of 2-D array which can also be converted to [MultiTable](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/math/odes/MultiTable.java) (refer the [Start.java](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/Start.java) file).
+```java
+obs.getAvgLog() // provides the results in 2-D array form
+```
+
+The complete code of stochastic simulation of the SBML models can be found at the [Start.java](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/Start.java) file (with proper commenting) and separated under different methods defining particular use cases.
