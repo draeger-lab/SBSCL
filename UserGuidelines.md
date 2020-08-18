@@ -4,7 +4,7 @@
 * [SBML model simulation](#simulating-the-sbml-models)
 * [COMP model simulation](#simulating-the-sbml-models-with-comp-extension)  
 * [FBC model simulation](#simulating-the-sbml-models-with-fbc-extension)
-* [Stochastic simualation of SBML models](#stochastic-simulation-of-the-sbml-models)
+* [Stochastic simulation of SBML models](#stochastic-simulation-of-the-sbml-models)
 
 ## Simulating the SBML models
 
