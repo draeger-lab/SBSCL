@@ -57,7 +57,7 @@ public class FernMLNetwork extends AbstractNetworkImpl {
     sax.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
         "http://www.w3.org/2001/XMLSchema");
     sax.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", schemeFilePath);
-    ;
+
     document = sax.build(file);
 
     init();
