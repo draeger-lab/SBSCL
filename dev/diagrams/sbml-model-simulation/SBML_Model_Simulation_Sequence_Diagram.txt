@@ -1,0 +1,41 @@
+frame SBML Model Simulation
+
+User->SBMLReader:readSBML(file).getModel()
+SBMLReader->User: Sends the model extracted \n            from the file.
+destroyafter SBMLReader
+
+create SBMLinterpreter
+create EquationSystem
+User->SBMLinterpreter: Creates the instance of SBMLinterpreter \n          passing the SBML model
+note over SBMLinterpreter: Implements the EquationSystem abstract class
+
+SBMLinterpreter->EquationSystem: init()
+note over EquationSystem: Initializes all the required variables in the simulation \n - Creates the Simplified Syntax Tree: \n     - initializeKineticLaws()\n     - initializeRules()\n     - initializeConstraints()\n     - initializeEvents()
+
+EquationSystem->SBMLinterpreter: gets back to the SBMLinterpreter \n after initializing all the necessary  \n components for simulation
+
+note over SBMLinterpreter: Defines all the necessary method required while processing the simulation \n - processInitialAssignments() \n - processRules() \n - computeDerivatives() \n - getNextEventAssignments() \n - processNextEvent() \n - processVelocities()
+
+SBMLinterpreter->User: Provides the instance to the User after the\ncomplete interpretation of the model.
+
+destroysilent SBMLinterpreter
+destroysilent EquationSystem
+
+create DESolver(AbstractDESolver)
+User->DESolver(AbstractDESolver): Creates the instance of DESolver with desired solver\n**For eg. DESolver solver = new RosenbrockSolver();**
+
+note over DESolver(AbstractDESolver): Initializes the things required to solve \nthe numerical solution of the simulation.
+
+DESolver(AbstractDESolver)->User: Provides the instance of the solver to start solving.
+
+User->DESolver(AbstractDESolver): Calls the solve() method to run the simulation.
+
+note over DESolver(AbstractDESolver): - Initializes the MultiTable which will be returned as the solution \n- Processes events and rules during the simulation (It is performed \n  using the processing methods from the SBMLinterpreter class)\n- Uses the **computeNextState()** method of the solver to update \n  the values and get the next time points
+
+DESolver(AbstractDESolver)->User: Returns the results in the form of MultiTable.
+
+destroyafter DESolver(AbstractDESolver)
+
+note over User:     Simulation results are in tabular form and can be \nstored, postprocessed, printed, or graphically displayed.
+
+destroyafter User
