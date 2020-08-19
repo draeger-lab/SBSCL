@@ -1,4 +1,4 @@
-## Sequence diagrams describing the workflow of supported simulations
+# Sequence diagrams describing the workflow of supported simulations
 
 Any updates in the workflow of SBSCL can be updated in the sequence diagrams easily following the procedure given below:
 - In every folder of the specific simulation, you will find a `.txt` file which contains the content of the diagram.

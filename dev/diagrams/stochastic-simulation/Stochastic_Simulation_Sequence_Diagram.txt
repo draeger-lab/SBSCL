@@ -1,0 +1,54 @@
+frame Stochastic simulation of SBML model
+
+User->NetworkLoader:     Passes the sbmlfile to the readNetwork()\nmethod for creating the SBMLNetwork instance
+
+NetworkLoader->SBMLNetwork: Passes the file for getting the \nnecessary information from the file
+
+note over SBMLNetwork: - Gets the SBML model using the SBMLReader. \n- Instantiate the SBMLinterpreter by passing the model\n  to interpret all the information from the model (refer to \n  SBML model simulation for the working of SBMLinterpreter)\n- Initializes necessary properties:\n     - createAnnotationManager()\n     - createSpeciesMapping()\n     - createAdjacencyLists()\n     - createPropensityCalculator()\n     - createAmountManager()\n     - createEventHandlers()
+
+SBMLNetwork->User: Provides the instance of the SBMLNetwork to access\n               different initialized properties. 
+
+
+destroysilent NetworkLoader
+
+create Simulator(Gillespie Enhanced algorithm)
+
+User->Simulator(Gillespie Enhanced algorithm): create the instance of simulator as per the desired algorithm\n**For eg: Simulator sim = new GillespieEnhanced(net);**
+
+note over Simulator(Gillespie Enhanced algorithm): - Initializes the needed things for simulation
+
+Simulator(Gillespie Enhanced algorithm)->User: Provides the instance of the simulator
+
+group #2f2e7b Event checking #white [if model has events]
+User->SBMLNetwork: Registers the simulator to the EventHandlerObserver\n**For eg. ((SBMLNetwork) net).registerEvents(sim);**
+
+note over SBMLNetwork: - For each of the events, a particular\n  observer gets registered to the simulator.
+end
+
+destroysilent SBMLNetwork
+
+create AmountIntervalObserver
+
+User->AmountIntervalObserver: Creates the instance of the observer that keeps track of the amounts in simulation
+
+note over AmountIntervalObserver: - Initializes variables necessary\n       to keep track of results
+
+AmountIntervalObserver->User: Provides the instance of the observer to keep track of results.
+
+destroysilent AmountIntervalObserver
+
+User->Simulator(Gillespie Enhanced algorithm): Registers the observer to the simulator
+
+note over Simulator(Gillespie Enhanced algorithm): - The new observer gets added \n   to the existing array of observers
+
+User->Simulator(Gillespie Enhanced algorithm): Calls the **start()** method by passing the \n   total duration to start the simulation
+
+note over Simulator(Gillespie Enhanced algorithm): - Initializes the TimeController and starts the simulation\n- preRun()\n     - Initializes the important things for simulation like \n       propensities, observers, etc.\n- run()\n     - Loops to perform steps till the time reaches to the total duration\n     - Performs each step by calling the **performStep()** method of the\n       particular algorithm.\n- postRun()\n     - Observers are notified that the simulation is completed and save \n       the final results.
+
+Simulator(Gillespie Enhanced algorithm)->User: Returns back after completing the simulation
+
+destroyafter Simulator(Gillespie Enhanced algorithm)
+
+note over User: - Gets the results saved by the Observer in the\n  form of 2D array.\n- These results can be converted to MultiTable easily\n  and can be either printed in tabular form or plotted\n  in graphical form.
+
+destroyafter User
