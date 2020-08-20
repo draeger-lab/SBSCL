@@ -26,19 +26,15 @@ Bio-Informatics, Libraries, Simulations
 - Stochastic simulations support
 - Simulation Experiment Description Markup Language (SED-ML) support
 
-#### Licensing terms
-
-This file is part of Simulation Core Library, a Java-based library for efficient numerical simulation of biological models.
-
-Copyright (C) 2007 jointly held by the individual authors.
-
-This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation. A copy of the license agreement is provided in the file named "LICENSE.txt" included with this software distribution and also available online as http://www.gnu.org/licenses/lgpl-3.0-standalone.html.
-
-Please cite the original work and the authors when using this program. See the [project homepage](https://draeger-lab.github.io/SBSCL/) for details.
-
 ## Getting started
 
-For an introduction of how to use this library, please open the javadoc [homepage](https://draeger-lab.github.io/SBSCL/apidocs/overview-summary.html). There you can find instructions and source code examples, including some use cases. Once a maven build is ran, the binaries will be generated in the target folder. This folder will also include a JAR files of the simulation core library to work with.
+### For users
+For an introduction on how to use this library for simulation, please refer to the [UserGuidelines.md](UserGuidelines.md) file. There you can find explanations on how to simulate different models and code snippets, including the links to the complete code examples.
+
+### For developers
+To start working on SBSCL, you should first clone the repository and then refer to [INSTALL.md](INSTALL.md) which gives instruction to run maven build. Once a maven build is ran, the binaries will be generated in the target folder. This folder will also include a JAR files of the simulation core library to work with. 
+
+For an introduction on how things currently work in SBSCL to simulate different models, please refer to the sequence diagrams present in the [/dev/diagrams/](https://github.com/draeger-lab/SBSCL/tree/master/dev/diagrams/) where you can understand complete workflow of the library. Once you get familiarized with how things work, please open the javadoc [homepage](https://draeger-lab.github.io/SBSCL/apidocs/overview-summary.html) where you can find the complete information about the library properly documented. For formatting the code-base, please refer to [formatting-guidelines](https://github.com/draeger-lab/SBSCL/tree/master/dev/formatting-guidelines/).
 
 ## File structure
 
@@ -51,21 +47,32 @@ Most importantly, see
 The package structure in more detail:
 ```
  /
- |- dev            -> Contains the fomatting configuration files for Eclipse and IntelliJ IDEs
- |- docs           -> Contains code for the maven built website
- |- modules        -> Contains the code for support of cellDesigner and cytoscape in FERN
- |- src            -> The main source folder containing all the code and test files
-    |- assembly    -> assembly files for maven plugins
-    |- lib         -> 3rd party libraries needed for compilation and execution
-    |- main        -> Core java files of simulation library
-    |- test        -> JUnit test files along with resources required
-    |- site        -> Contains markup files, old javadoc, site.xml and other website 
-                      resources 
- |- LICENSE.txt    -> the license, under which this project is distributed
- |- pom.xml        -> Maven file for building the project
- |- README.md      -> this file
+ |- dev                 -> Contains the diagrams and fomatting-guidelines for the developers
+ |- docs                -> Contains code for the maven built website
+ |- modules             -> Contains the code for support of cellDesigner and cytoscape in FERN
+ |- src                 -> The main source folder containing all the code and test files
+    |- assembly         -> assembly files for maven plugins
+    |- lib              -> 3rd party libraries needed for compilation and execution
+    |- main             -> Core java files of simulation library
+    |- test             -> JUnit test files along with resources required
+    |- site             -> Contains markup files, old javadoc, site.xml and other website 
+                            resources 
+ |- LICENSE.txt         -> the license, under which this project is distributed
+ |- pom.xml             -> Maven file for building the project
+ |- README.md           -> this file
+ |- UserGuidelines.md   -> Contains the guidelines for using the features of library
 ```
 
 ## Troubleshooting
 
 Please e-mail any bugs, problems, suggestions, or issues regarding this library to the bug tracker at https://github.com/draeger-lab/SBSCL/issues
+
+#### Licensing terms
+
+This file is part of Simulation Core Library, a Java-based library for efficient numerical simulation of biological models.
+
+Copyright (C) 2007 jointly held by the individual authors.
+
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation. A copy of the license agreement is provided in the file named [LICENSE.txt](LICENSE.txt) included with this software distribution and also available online as http://www.gnu.org/licenses/lgpl-3.0-standalone.html.
+
+Please cite the original work and the authors when using this program. See the [project homepage](https://draeger-lab.github.io/SBSCL/) for details.
