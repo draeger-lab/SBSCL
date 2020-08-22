@@ -1,4 +1,4 @@
-# The Systems Biology Simulation Core Library
+# The Systems Biology Simulation Core Library  <img align="right" src="https://draeger-lab.github.io/SBSCL/images/SCL_icon.png"> 
 
 [![License (LGPL version 3)](https://img.shields.io/badge/license-LGPLv3.0-blue.svg?style=plastic)](http://opensource.org/licenses/LGPL-3.0)
 [![Latest version](https://img.shields.io/badge/Latest_version-1.5.0-brightgreen.svg?style=plastic)](https://github.com/draeger-lab/SBSCL/releases/)
@@ -33,7 +33,7 @@ Bio-Informatics, Libraries, Simulations
 - Simulation Experiment Description Markup Language (L1V3)
 - COMBINE archive and OMEX format
 - All models from [SBML Test Suite](https://github.com/sbmlteam/sbml-test-suite/tree/master/cases/semantic) and [BiGG models](https://github.com/matthiaskoenig/bigg-models-fba)
-- All models from [Stochastic Test Suite](https://github.com/sbmlteam/sbml-test-suite/tree/master/cases/stochastic)
+- All models from [Stochastic Test Suite] (https://github.com/sbmlteam/sbml-test-suite/tree/master/cases/stochastic)
 
 ## Getting started
 
