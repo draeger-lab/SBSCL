@@ -33,7 +33,7 @@ Bio-Informatics, Libraries, Simulations
 - Simulation Experiment Description Markup Language (L1V3)
 - COMBINE archive and OMEX format
 - All models from [SBML Test Suite](https://github.com/sbmlteam/sbml-test-suite/tree/master/cases/semantic) and [BiGG models](https://github.com/matthiaskoenig/bigg-models-fba)
-- All models from [Stochastic Test Suite] (https://github.com/sbmlteam/sbml-test-suite/tree/master/cases/stochastic)
+- All models from [Stochastic Test Suite](https://github.com/sbmlteam/sbml-test-suite/tree/master/cases/stochastic)
 
 ## Getting started
 
