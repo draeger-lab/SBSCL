@@ -26,6 +26,15 @@ Bio-Informatics, Libraries, Simulations
 - Stochastic simulations support
 - Simulation Experiment Description Markup Language (SED-ML) support
 
+### Supported Packages
+- Systems Biology Markup Language (L1V1 - L3V2)
+- SBML models with FBC V1 and V2
+- SBML models with comp extensions
+- Simulation Experiment Description Markup Language (L1V3)
+- COMBINE archive and OMEX format
+- All models from [SBML Test Suite](https://github.com/sbmlteam/sbml-test-suite/tree/master/cases/semantic) and [BiGG models](https://github.com/matthiaskoenig/bigg-models-fba)
+- All models from [Stochastic Test Suite](https://github.com/sbmlteam/sbml-test-suite/tree/master/cases/stochastic)
+
 ## Getting started
 
 ### For users

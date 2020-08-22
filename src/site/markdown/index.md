@@ -20,7 +20,7 @@ Roland Keller, Alexander Dörr, Akito Tabira, Akira Funahashi, Michael J. Ziller
 * Clear separation of [SBML](http://sbml.org) interpretation and integration routines
 * Fast [SBML](http://sbml.org) interpretation by using a transformed syntax graph
 * Full support of [SBML](http://sbml.org) events, algebraic rules and fast reactions
-* Support of all models from the [SBML Test Suite](http://sbml.org/Software/SBML_Test_Suite) (v. 3.3.0) for all levels and versions: [Simulation results](http://sbml.org/Facilities/Database/Submission/Details/45)
+* Support of all models from the [SBML Test Suite](http://sbml.org/Software/SBML_Test_Suite) (v. 3.3.0) for all levels and versions: [Simulation results](http://sbml.org/Facilities/Database/Submission/Details/257)
 
 ### Stochastic simulation of SBML models
 
