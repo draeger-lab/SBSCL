@@ -35,6 +35,9 @@ MultiTable solution = solver.solve(interpreter,
 
 For the complete code on how to simulate an SBML model, please refer to the [SimulatorExample](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/SimulatorExample.java) in the repository.
 
+Workflow of SBML model simulation using a sequence diagram:
+![](dev/diagrams/sbml-model-simulation/SBML_Model_Simulation_Sequence_Diagram.png)
+
 ## Simulating the SBML models with comp extension
 - Simulating the comp models is quite easy as you just need to provide a file to the [CompSimulator](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/comp/CompSimulator.java), and it performs all the tasks including the initializations and processings.
 
@@ -53,6 +56,9 @@ MultiTable solution = compSimulator.solve(10.0, 0.1);
 - After this, you can view the results either by printing or by [PlotMultiTable](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/plot/PlotMultiTable.java) (in graphical form) or by JTable (in tabular form).
 
 For the complete code on how to simulate the comp model, please refer to the [CompExample](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/CompExample.java) in the repository.
+
+Workflow of COMP model simulation using a sequence diagram:
+![](dev/diagrams/comp-model-simulation/COMP_Model_Simulation_Sequence_Diagram.png)
 
 ## Simulating the SBML models with fbc extension
 
@@ -78,6 +84,9 @@ if(solvedStatus == true) {
 ```
 
 For complete code on how to simulate the fbc model, please refer to the [FBAExample](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/FBAExample.java) in the repository.
+
+Workflow of FBC model simulation using a sequence diagram:
+![](dev/diagrams/fbc-model-simulation/FBC_Model_Simulation_Sequence_Diagram.png)
 
 ## Stochastic simulation of the SBML models
 
@@ -134,3 +143,6 @@ obs.getAvgLog() // provides the results in 2-D array form
 ```
 
 The complete code of stochastic simulation of the SBML models can be found at the [Start.java](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/Start.java) file (with proper commenting) and separated under different methods defining particular use cases.
+
+Workflow of stochastic simulation by sequence diagram:
+![](dev/diagrams/stochastic-simulation/Stochastic_Simulation_Sequence_Diagram.png)
