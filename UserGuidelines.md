@@ -15,7 +15,7 @@ Model model = (new SBMLReader()).readSBML(fileName).getModel();
 EquationSystem interpreter = new SBMLinterpreter(model);
 ```
 
-- Once the interpreter gets created, you can simulate the model with available solver (preferably [Rosenbrocksolver](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/math/odes/RosenbrockSolver.java)) giving time points (also you can provide initial time, end time, and the step size). The simulated results then gets stored in a separate data structure called MultiTable.
+- Once the interpreter has been created, one can simulate the model with an available solver (preferably [Rosenbrocksolver](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/math/odes/RosenbrockSolver.java)) providing time points (instead of time points the initial time, end time, and the step size can be provided). The simulation results are stored in a MultiTable.
 
 ```java
 // An example of solving with Rosenbrock solver
