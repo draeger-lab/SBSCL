@@ -25,7 +25,7 @@ MultiTable solution = solver.solve(interpreter,
               interpreter.getInitialValues(), 0d, timeEnd, simulatorExample);
 ```
 
-- You can now print the [MultiTable](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/math/odes/MultiTable.java) or can plot it using the [PlotMultiTable](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/plot/PlotMultiTable.java) where you can see the changing values in a graphical form. Also, you can view it in a tabular form using the JTable class.
+- One can now print the [MultiTable](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/math/odes/MultiTable.java) or can plot it using the [PlotMultiTable](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/plot/PlotMultiTable.java) where you can see the changing values in a graphical form. Also, you can view it in a tabular form using the JTable class.
 
 **Note:** To set the absolute and relative tolerances for the specific simulation, you can use the method provided by the [DESolver](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/math/odes/DESSolver.java) using the below code snippets:
 ```java
@@ -33,7 +33,7 @@ MultiTable solution = solver.solve(interpreter,
 ((AdaptiveStepsizeIntegrator) solver).setRelTol(relTol);
 ```
 
-For complete code on how to simulate the SBML model, please refer to the [SimulatorExample](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/SimulatorExample.java) in the repository.
+For the complete code on how to simulate an SBML model, please refer to the [SimulatorExample](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/SimulatorExample.java) in the repository.
 
 ## Simulating the SBML models with comp extension
 - Simulating the comp models is quite easy as you just need to provide a file to the [CompSimulator](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/comp/CompSimulator.java), and it performs all the tasks including the initializations and processings.
@@ -42,7 +42,7 @@ For complete code on how to simulate the SBML model, please refer to the [Simula
 CompSimulator compSimulator = new CompSimulator(sbmlfile);
 ```
 
-- After creating the instance, you have to call `solve()` method of the CompSimulator class with duration and step size to get the results in the form of MultiTable.
+- After creating the instance of the simulator, you have to call the `solve()` method of the CompSimulator class with duration and step size to get the results in the form of MultiTable.
 
 ```java
 // Here, 10.0 refers to the total duration
@@ -52,24 +52,24 @@ MultiTable solution = compSimulator.solve(10.0, 0.1);
 
 - After this, you can view the results either by printing or by [PlotMultiTable](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/plot/PlotMultiTable.java) (in graphical form) or by JTable (in tabular form).
 
-For complete code on how to simulate the comp model, please refer to the [CompExample](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/CompExample.java) in the repository.
+For the complete code on how to simulate the comp model, please refer to the [CompExample](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/CompExample.java) in the repository.
 
 ## Simulating the SBML models with fbc extension
 
-- Similar to the CompSimulator, here we have to provide the [SBMLDocument](https://github.com/sbmlteam/jsbml/blob/master/core/src/org/sbml/jsbml/SBMLDocument.java) by reading from the file to the [FluxBalanceAnalysis](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/fba/FluxBalanceAnalysis.java) class which then performs all the functionalities.
+- Similar to the CompSimulator, here we have to provide the [SBMLDocument](https://github.com/sbmlteam/jsbml/blob/master/core/src/org/sbml/jsbml/SBMLDocument.java) by reading from the file to the [FluxBalanceAnalysis](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/fba/FluxBalanceAnalysis.java) class which implements all the flux balance analysis functionality.
 
 ```java
 SBMLDocument document = new SBMLReader().read(sbmlfile);
 FluxBalanceAnalysis solver = new FluxBalanceAnalysis(document);
 ```
 
-- After this, you just need to call `solve()` method of FluxBalanceAnalysis that returns a boolean whether the results are processed successfully or not.
+- After this, you just need to call `solve()` method of FluxBalanceAnalysis that returns a boolean indicating of the simulation was successful.
 
 ```java
 boolean solvedStatus = solver.solve();
 ```
 
-- Once `solve()` method returns true, you can access different results as described below in the snippet.  
+- After solving the FBA problem the simulation results can be accessed via.  
 ```java
 if(solvedStatus == true) {
   solver.getObjectiveValue()  // provides the objective value of the active objective function
@@ -103,9 +103,9 @@ Network net = NetworkTools.loadNetwork(new File((String) orderedArgs.get("file")
 Simulator sim = new GillespieEnhanced(net);
 ```
 
-All the supported algorithms for stochastic simulation are present under the [/java/fern/simulation/algorithm](https://github.com/draeger-lab/SBSCL/tree/master/src/main/java/fern/simulation/algorithm) directory.
+All supported algorithms for stochastic simulation are available in the [/java/fern/simulation/algorithm](https://github.com/draeger-lab/SBSCL/tree/master/src/main/java/fern/simulation/algorithm) directory.
 
-**Note:** If your SBML models contain any events, then the network has to call `registerEvents()` method passing the simulator as to keep track of event properties like trigger, delays, and others by the [SBMLEventHandlerObserver](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/network/sbml/SBMLEventHandlerObserver.java).
+**Note:** If your SBML model contains any events, then the network has to call `registerEvents()` passing the simulator as to keep track of event properties like trigger, delays, and others by the [SBMLEventHandlerObserver](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/network/sbml/SBMLEventHandlerObserver.java).
 ```java
 ((SBMLNetwork) net).registerEvents(sim);
 ```  
