@@ -1,0 +1,22 @@
+frame FBC Model Simulation
+
+User->SBMLReader:readSBML(file)
+SBMLReader->User: Sends the SBMLDocument\n    extracted from the file.
+destroyafter SBMLReader
+
+User->FluxBalanceAnalysis: Sends the SBMLDocument\n       to the solver class
+
+note over FluxBalanceAnalysis: - Gets the instance of the SBMLinterpreter by passing the\n  model from the SBMLDocument.\n- Maps the species id to reaction id and their stoichiometric \n  coefficient in that reaction.\n- Initializes and updates the lower bounds and upper bounds.\n- Updates the lower bounds and upper bounds as per the \n  standards of the SCPSolver.\n- Defines the objective function and then initializes the linear \n  solver for calculating results.\n- It adds the weighted constraints equation for each reaction \n  by looping over the species.
+
+FluxBalanceAnalysis->User: Provides the instance of the solver\n      to solve the linear equation
+
+User->FluxBalanceAnalysis: Calls the solve() method to calculate the \n   optimum value of the linear equation.
+
+note over FluxBalanceAnalysis: Solves the linear problem using \n        the GLPK Solver
+
+FluxBalanceAnalysis->User: Returns true/false as per the solving status
+
+note over User: - Get the objective value of the function\n  using **solver.getObjectiveValue()**\n- Get the fluxes of the variables in the \n  HashMap using **solver.getSolution()**
+
+destroyafter FluxBalanceAnalysis
+destroyafter User

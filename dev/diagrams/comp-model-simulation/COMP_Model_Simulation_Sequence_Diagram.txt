@@ -1,0 +1,28 @@
+frame COMP Model Simulation
+
+User->CompSimulator: Passes the sbml file to get  \nthe model from the file and \ninterpret it for the simulation.
+
+note over CompSimulator: - Gets the SBMLDocument from the file\n  using SBMLReader and adds meta-info\n  about original ids
+
+create CompFlatteningConverter(from JSBML)
+
+CompSimulator->CompFlatteningConverter(from JSBML): Asks to flatten the SBMLDocument \n            extracted from the file
+
+note over CompFlatteningConverter(from JSBML): Flattens the SBML Document
+
+CompFlatteningConverter(from JSBML)->CompSimulator: Returns the flattened SBMLDocument
+
+destroyafter CompFlatteningConverter(from JSBML)
+
+CompSimulator->User: Provides its instance necessary\n            for simulation
+
+User->CompSimulator:   Calls the solve() method for \nsimulating the flattened model 
+
+note over CompSimulator: - Solves the flattened model as a simple SBML\n  model (Refer to the SBML model sequence diagram)\n- The output ids are then mapped back to the ids of the\n  original model (using the information stored\n  using AddMetaInfo class)
+
+CompSimulator->User: Returns the solution of the simulation in\n         the form of MultiTable
+
+note over User:          Results can be printed in \ntabular form or plotted in graphical form.
+
+destroyafter CompSimulator
+destroyafter User

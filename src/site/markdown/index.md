@@ -20,8 +20,13 @@ Roland Keller, Alexander Dörr, Akito Tabira, Akira Funahashi, Michael J. Ziller
 * Clear separation of [SBML](http://sbml.org) interpretation and integration routines
 * Fast [SBML](http://sbml.org) interpretation by using a transformed syntax graph
 * Full support of [SBML](http://sbml.org) events, algebraic rules and fast reactions
-* Support of all all models from the [SBML Test Suite](http://sbml.org/Software/SBML_Test_Suite) (v. 2.2) for all levels and versions: [Simulation results](http://sbml.org/Facilities/Database/Submission/Details/45)
+* Support of all models from the [SBML Test Suite](http://sbml.org/Software/SBML_Test_Suite) (v. 3.3.0) for all levels and versions: [Simulation results](http://sbml.org/Facilities/Database/Submission/Details/257)
 
+### Stochastic simulation of SBML models
+
+* Supports different solvers from the FERN library
+* Gillespie Algorithm used currently to solve the SBML models
+* Support of models from the [Stochastic Test Suite](https://github.com/sbmlteam/sbml-test-suite/tree/master/cases/stochastic) for all levels and versions
 
 ### Support for SED-ML
 
@@ -29,7 +34,7 @@ Roland Keller, Alexander Dörr, Akito Tabira, Akira Funahashi, Michael J. Ziller
 
 ## Documentation of the application programing interfaces
 
-To get startet with this library, please see the API documentation (JavaDoc) for the most recent Version 1.5. See the introduction, use-cases, and coding examples here: ([Description](project-reports.html)). 
+To get started with this library, please see the API documentation (JavaDoc) for the most recent Version 1.5. See the introduction, use-cases, and coding examples here: ([Description](project-reports.html)). 
 
 In case you like to use older versions, you can find the documentation here:
 * ([Version 1.4](old_javadoc/version_1.4/index.html))

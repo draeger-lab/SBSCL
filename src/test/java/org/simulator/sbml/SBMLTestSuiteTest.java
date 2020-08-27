@@ -333,7 +333,7 @@ public class SBMLTestSuiteTest {
     boolean errorInSolve = false;
     try {
       double stepSize = (duration / steps);
-      solution = compSimulator.solve(stepSize, duration);
+      solution = compSimulator.solve(duration, stepSize);
     } catch (Exception e) {
       errorInSolve = true;
       e.printStackTrace();

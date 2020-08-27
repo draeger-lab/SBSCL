@@ -74,7 +74,7 @@ public class CompExample {
     File file = new File(args[0]);
 
     CompSimulator compSimulator = new CompSimulator(file);
-    MultiTable solution = compSimulator.solve(stepSize = 0.1, timeEnd = 100.0);
+    MultiTable solution = compSimulator.solve(timeEnd = 100d, stepSize = 0.1d);
 
     // Display simulation result to the user
     JScrollPane resultDisplay = new JScrollPane(new JTable(solution));

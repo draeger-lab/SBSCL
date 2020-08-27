@@ -141,8 +141,8 @@ public class FluxBalanceAnalysis {
     reaction2Index = new HashMap<String, Integer>();
 
     // initialize upper and lower reaction bounds
-    double lb[] = new double[model.getReactionCount()];
-    double ub[] = new double[model.getReactionCount()];
+    double[] lb = new double[model.getReactionCount()];
+    double[] ub = new double[model.getReactionCount()];
 
     // Mapping from species id to reaction id and stoichiometric coefficient in that reaction.
     Map<String, Set<Pair<String, Double>>> species2Reaction = new HashMap<String, Set<Pair<String, Double>>>();
@@ -203,7 +203,7 @@ public class FluxBalanceAnalysis {
     }
 
     // define objective function
-    double objvals[] = new double[model.getReactionCount()];
+    double[] objvals = new double[model.getReactionCount()];
     Arrays.fill(objvals, 0d);
     Objective objective = mPlug.getActiveObjectiveInstance();
     Objective.Type type = objective.getType(); // max or min
