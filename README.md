@@ -9,6 +9,13 @@
 
 *Contributors to predecessor projects:* Philip Stevens, Marcel Kronfeld, Sandra Saliger, Simon Schäfer, Dieudonné Motsou Wouamba, Hannes Borch, Nicolas Le Novère, Max Zwiessele
 
+### Publications
+
+When using SBSCL in a research work, please cite the following works:
+
+1. Panchiwala, H.; Shah, S.; Planatscher, H.; Zakharchuk, M.; König, M.; Dräger, A. The Systems Biology Simulation Core Library. Preprints 2020, 2020120296. [doi: 10.20944/preprints202012.0296.v1](https://doi.org/10.20944/preprints202012.0296.v1).
+2. Keller, R.; Dörr, A.; Tabira, A.; Funahashi, A.; Ziller, M.J.; Adams, R.; Rodriguez, N.; Le Novère, N.; Hiroi, N.; Planatscher, H.; Zell A.; Dräger; A. The systems biology simulation core algorithm. BMC Syst Biol 7, 55 (2013). [doi: 10.1186/1752-0509-7-55](https://doi.org/10.1186/1752-0509-7-55).
+
 ### Description
 The Systems Biology Simulation Core Library (SBSCL) provides an efficient and exhaustive Java™ implementation of methods to interpret the content of models encoded in the Systems Biology Markup Language ([SBML](http://sbml.org)) and its numerical solution. This library is based on the [JSBML](http://sbml.org/Software/JSBML) project and can be used on every operating system for which a Java Virtual Machine is available. Please note that this project does not contain any user interface, neither a command-line interface, nor a graphical user interface. This project has been developed as a pure programming library. To support the [MIASE](http://co.mbine.org/standards/miase) effort, it understands [SED-ML](http://sed-ml.org) files. Its abstract type and interface hierarchy facilitates the implementation of further community standards, such as [CellML](https://www.cellml.org).
 
