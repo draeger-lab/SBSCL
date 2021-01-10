@@ -6,6 +6,8 @@
 #  source ./download_sbml-test-suite.sh
 #################################################
 
+set -euo pipefail
+
 # This URL gives the updated SBML test cases from SBML Test Suite repository
 SBML_TEST_SUITE_LINK="https://github.com/sbmlteam/sbml-test-suite/branches/develop/cases"
 
@@ -13,7 +15,6 @@ _CWD="$PWD"
 TEST_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # download and extract the bigg models for testing
-cd $TEST_DIR/../resources/sbml-test-suite
 rm -rf $TEST_DIR/../resources/sbml-test-suite
 mkdir -p $TEST_DIR/../resources/sbml-test-suite
 cd $TEST_DIR/../resources/sbml-test-suite
