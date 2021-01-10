@@ -6,7 +6,7 @@
 #  source ./download_bigg_models.sh
 #################################################
 
-set -euo pipefail
+set -eo pipefail
 
 # This URL gives the updated BiGG Models from the repository
 BIGG_MODELS_BASE_URL="https://github.com/matthiaskoenig/bigg-models-fba/raw/master/models"

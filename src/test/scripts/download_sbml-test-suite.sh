@@ -6,7 +6,7 @@
 #  source ./download_sbml-test-suite.sh
 #################################################
 
-set -euo pipefail
+set -eo pipefail
 
 # This URL gives the updated SBML test cases from SBML Test Suite repository
 SBML_TEST_SUITE_LINK="https://github.com/sbmlteam/sbml-test-suite/branches/develop/cases"
