@@ -1,5 +1,6 @@
 package org.simulator.oven;
 
+import java.util.Arrays;
 import scpsolver.constraints.LinearBiggerThanEqualsConstraint;
 import scpsolver.constraints.LinearSmallerThanEqualsConstraint;
 import scpsolver.lpsolver.LinearProgramSolver;
@@ -17,11 +18,11 @@ public class SCPSolverIssue {
 
     LinearProgramSolver solver = SolverFactory.newDefault();
     double[] sol = solver.solve(lp);
-    System.out.println(sol);
+    System.out.println(Arrays.toString(sol));
 
     LinearProgramSolver solver2 = SolverFactory.newDefault();
     double[] sol2 = solver2.solve(lp);
-    System.out.println(sol2);
+    System.out.println(Arrays.toString(sol2));
   }
 
 }

@@ -22,7 +22,6 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.validator.OverdeterminationValidator;
-import org.simulator.math.RNG;
 import org.simulator.math.odes.*;
 import org.simulator.sbml.astnode.*;
 
@@ -30,6 +29,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -1809,9 +1809,8 @@ public abstract class EquationSystem
    * @param highOrderEvents
    */
   protected void pickRandomEvent(List<Integer> highOrderEvents) {
-    int length = highOrderEvents.size();
-    int random = RNG.randomInt(0, length - 1);
-    Integer winner = highOrderEvents.get(random);
+    int randomIndex = ThreadLocalRandom.current().nextInt(highOrderEvents.size());
+    Integer winner = highOrderEvents.get(randomIndex);
     highOrderEvents.clear();
     highOrderEvents.add(winner);
   }
