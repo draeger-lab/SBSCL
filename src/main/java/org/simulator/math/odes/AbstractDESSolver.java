@@ -391,7 +391,7 @@ public abstract class AbstractDESSolver
     Mathematics.vvAdd(yPrev, change, yTemp);
     checkNonNegativity(yTemp);
     if (increase) {
-      t = BigDecimal.valueOf(stepSize).add(BigDecimal.valueOf(t)).doubleValue();
+      t += stepSize;
     }
     if (!steadyState) {
       processEventsAndRules(false, DES, t, previousTime, yTemp);
@@ -528,8 +528,7 @@ public abstract class AbstractDESSolver
     }
     double[] timePoints = new double[numSteps];
     for (int i = 0; i < timePoints.length; i++) {
-      timePoints[i] = BigDecimal.valueOf(timeBegin)
-          .add(BigDecimal.valueOf(i).multiply(BigDecimal.valueOf(stepSize))).doubleValue();
+      timePoints[i] = timeBegin + i * stepSize;
     }
     return initResultMatrix(DES, initialValues, timePoints);
   }
@@ -904,7 +903,7 @@ public abstract class AbstractDESSolver
           System.arraycopy(yPrev, 0, result[0], 0, yPrev.length);
         }
       }
-      h = BigDecimal.valueOf(timePoints[i]).subtract(BigDecimal.valueOf(t)).doubleValue();
+      h = timePoints[i] - t;
       if (h > 1E-14) {
         System.arraycopy(yTemp, 0, yPrev, 0, yTemp.length);
         t = computeNextState(DES, t, h, yTemp, change, yTemp, true, false);
@@ -992,9 +991,9 @@ public abstract class AbstractDESSolver
         computeChange(DES, yTemp, t, h, change, false);
         checkSolution(change, yTemp);
         Mathematics.vvAdd(yTemp, change, yTemp);
-        t = BigDecimal.valueOf(h).add(BigDecimal.valueOf(t)).doubleValue();
+        t += h;
       }
-      h = BigDecimal.valueOf(timePoints[i]).subtract(BigDecimal.valueOf(t)).doubleValue();
+      h = timePoints[i] - t;
       if (h > 1E-14d) {
         computeChange(DES, yTemp, t, h, change, false);
         checkSolution(change);

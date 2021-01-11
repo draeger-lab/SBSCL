@@ -264,6 +264,17 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
     JAC = new double[numEqn][numEqn];
     FAC = new double[numEqn][numEqn];
     I = new double[numEqn][numEqn];
+
+    for (int i = 0; i < numEqn; i++) {
+      for (int j = 0; j < numEqn; j++) {
+        if (i == j) {
+          I[i][j] = 1;
+        } else {
+          I[i][j] = 0;
+        }
+      }
+    }
+
     ignoreNaN = new boolean[numEqn];
   }
 
@@ -294,15 +305,6 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
       DES.computeDerivatives(t, yb, g2);
       for (int q = 0; q < numEqn; q++) {
         JAC[q][j] = (-3 * g0[q] + 4 * g1[q] - g2[q]) / (2 * h);
-      }
-    }
-    for (int i = 0; i < numEqn; i++) {
-      for (int j = 0; j < numEqn; j++) {
-        if (i == j) {
-          I[i][j] = 1;
-        } else {
-          I[i][j] = 0;
-        }
       }
     }
     for (int i = 0; i < numEqn; i++) {
@@ -440,8 +442,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
         hasDerivatives = false;
       }
     }
-    double timeEnd = BigDecimal.valueOf(time).add(BigDecimal.valueOf(currentStepSize))
-        .doubleValue();
+    double timeEnd = time + currentStepSize;
     try {
       double localError = 0;
       int solutionIndex = 0;
@@ -475,11 +476,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
         System.arraycopy(y2, 0, y, 0, y.length);
       }
       for (int i = 0; i != y.length; i++) {
-        if (Double.isInfinite(y[i]) || (Double.isNaN(y[i]))) {
-          ignoreNaN[i] = true;
-        } else {
-          ignoreNaN[i] = false;
-        }
+        ignoreNaN[i] = !Double.isFinite(y[i]);
       }
 
       // add the initial conditions to the solution matrix and let all
@@ -541,7 +538,7 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
           System.arraycopy(y, 0, oldY, 0, numEqn);
           System.arraycopy(yTemp, 0, y, 0, numEqn);
           boolean changed = false;
-          double newTime = BigDecimal.valueOf(t).add(BigDecimal.valueOf(h)).doubleValue();
+          double newTime = t + h;
           if ((DES instanceof EventDESystem) && (!steadyState)) {
             EventDESystem EDES = (EventDESystem) DES;
             if ((EDES.getEventCount() > 0) || (EDES.getRuleCount() > 0)) {
