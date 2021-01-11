@@ -107,7 +107,7 @@ public class SBMLinterpreter extends EquationSystem {
   public SBMLinterpreter(Model model, double defaultSpeciesValue, double defaultParameterValue,
       double defaultCompartmentValue)
       throws SBMLException, ModelOverdeterminedException {
-    this(model, 0d, 1d, 1d, null);
+    this(model, defaultSpeciesValue, defaultParameterValue, defaultCompartmentValue, null);
   }
 
 
@@ -548,9 +548,7 @@ public class SBMLinterpreter extends EquationSystem {
         pickRandomEvent(highOrderEvents);
       }
     } else {
-      for (int i = 0; i < runningEvents.size(); i++) {
-        highOrderEvents.add(runningEvents.get(i));
-      }
+      highOrderEvents.addAll(runningEvents);
       if (highOrderEvents.size() > 1) {
         pickRandomEvent(highOrderEvents);
       }
