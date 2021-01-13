@@ -138,14 +138,14 @@ public class FluxBalanceAnalysis {
     int level = doc.getLevel(), version = doc.getVersion();
     String fbcNamespaceV1 = FBCConstants.getNamespaceURI(level, version, 1);
     String fbcNamespaceV2 = FBCConstants.getNamespaceURI(level, version, 2);
-    reaction2Index = new HashMap<String, Integer>();
+    reaction2Index = new HashMap<>();
 
     // initialize upper and lower reaction bounds
     double[] lb = new double[model.getReactionCount()];
     double[] ub = new double[model.getReactionCount()];
 
     // Mapping from species id to reaction id and stoichiometric coefficient in that reaction.
-    Map<String, Set<Pair<String, Double>>> species2Reaction = new HashMap<String, Set<Pair<String, Double>>>();
+    Map<String, Set<Pair<String, Double>>> species2Reaction = new HashMap<>();
     for (int i = 0; i < model.getReactionCount(); i++) {
       Reaction r = model.getReaction(i);
       if (r.isSetPlugin(fbcNamespaceV2)) {
@@ -320,7 +320,7 @@ public class FluxBalanceAnalysis {
             listOfParticipants.getSBaseListType(), rId));
       }
       if (!species2Reaction.containsKey(specRef.getSpecies())) {
-        species2Reaction.put(specRef.getSpecies(), new HashSet<Pair<String, Double>>());
+        species2Reaction.put(specRef.getSpecies(), new HashSet<>());
       }
       species2Reaction.get(specRef.getSpecies()).add(pairOf(rId, factor * stoichiometry(specRef)));
     }

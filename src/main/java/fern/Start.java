@@ -143,7 +143,7 @@ public class Start {
 
 
   private static Map<String, Object> getArguments(String[] args) {
-    Map<String, Object> re = new HashMap<String, Object>();
+    Map<String, Object> re = new HashMap<>();
     if (args.length < 3) {
       throw new IllegalArgumentException("Not enough arguments!");
     }

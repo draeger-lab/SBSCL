@@ -72,7 +72,7 @@ public abstract class MeanFunction implements Serializable {
    * @return the computed value
    */
   public double computeMean(Iterable<? extends Number> values) {
-    List<Double> val = new ArrayList<Double>();
+    List<Double> val = new ArrayList<>();
     for (Number number : values) {
       val.add(number.doubleValue());
     }

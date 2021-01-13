@@ -66,7 +66,7 @@ public class ASTNodeInterpreter {
    */
   public ASTNodeInterpreter(SBMLValueHolder valueHolder) {
     this.valueHolder = valueHolder;
-    funcArgs = new HashMap<String, Double>();
+    funcArgs = new HashMap<>();
   }
 
   /**
@@ -142,7 +142,7 @@ public class ASTNodeInterpreter {
       ASTNode math = ((FunctionDefinition) nsb).getMath();
       ASTNodeValue rightChild = (ASTNodeValue) math.getRightChild()
           .getUserObject(SBMLinterpreter.TEMP_VALUE);
-      List<String> variables = new ArrayList<String>(math.getChildCount());
+      List<String> variables = new ArrayList<>(math.getChildCount());
       for (ASTNode child : math.getChildren()) {
         variables.add(compileString(child));
       }
@@ -603,7 +603,7 @@ public class ASTNodeInterpreter {
    * @return booleanValue the interpreted boolean value of the node
    */
   public boolean neq(ASTNodeValue[] children, double time) {
-    Set<Double> values = new HashSet<Double>();
+    Set<Double> values = new HashSet<>();
     for (ASTNodeValue num : children) {
       if (values.contains(num.compileDouble(time, 0d))) {
         return false;

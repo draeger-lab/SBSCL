@@ -56,8 +56,8 @@ public class CatalysedNetwork extends ModifierNetwork {
     }
 
     AnnotationManager anno = originalNet.getAnnotationManager();
-    LinkedList<Integer> rTOCreate = new LinkedList<Integer>();
-    LinkedList<Integer> cataCreate = new LinkedList<Integer>();
+    LinkedList<Integer> rTOCreate = new LinkedList<>();
+    LinkedList<Integer> cataCreate = new LinkedList<>();
     for (int i = 0; i < originalNet.getNumReactions(); i++) {
       rTOCreate.add(i);
       cataCreate.add(-1);

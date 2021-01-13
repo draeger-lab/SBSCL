@@ -41,7 +41,7 @@ public abstract class Axes implements Iterable<String> {
   private boolean hasYAxis;
 
   public Axes() {
-    additionalAxes = new LinkedList<Axes>();
+    additionalAxes = new LinkedList<>();
   }
 
   /**

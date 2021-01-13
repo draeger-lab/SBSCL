@@ -80,7 +80,7 @@ public class FernMLAnnotationManager implements AnnotationManager {
   }
 
   private Collection<String> getAnnotationTypes(List<Element> annotations) {
-    ArrayList<String> re = new ArrayList<String>(annotations.size());
+    ArrayList<String> re = new ArrayList<>(annotations.size());
     for (Element e : annotations) {
       re.add(e.getAttributeValue(NAME));
     }
@@ -119,7 +119,7 @@ public class FernMLAnnotationManager implements AnnotationManager {
   @SuppressWarnings("unchecked")
   public Collection<String> getNetworkAnnotationTypes() {
     if (root.getChild(LIST_OF_ANNOTATIONS) == null) {
-      return new LinkedList<String>();
+      return new LinkedList<>();
     }
     return getAnnotationTypes(root.getChild(LIST_OF_ANNOTATIONS).getChildren());
   }
@@ -155,7 +155,7 @@ public class FernMLAnnotationManager implements AnnotationManager {
   public Collection<String> getReactionAnnotationTypes(int reaction) {
     Element el = findReaction(reaction);
     if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
-      return new LinkedList<String>();
+      return new LinkedList<>();
     }
     return getAnnotationTypes(el.getChild(LIST_OF_ANNOTATIONS).getChildren());
   }
@@ -193,7 +193,7 @@ public class FernMLAnnotationManager implements AnnotationManager {
   public Collection<String> getSpeciesAnnotationTypes(int species) {
     Element el = (Element) root.getChild(LIST_OF_SPECIES).getChildren().get(species);
     if (el.getChild(LIST_OF_ANNOTATIONS) == null) {
-      return new LinkedList<String>();
+      return new LinkedList<>();
     }
     return getAnnotationTypes(el.getChild(LIST_OF_ANNOTATIONS).getChildren());
   }

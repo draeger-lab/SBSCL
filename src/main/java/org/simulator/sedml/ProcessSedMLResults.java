@@ -77,10 +77,10 @@ public class ProcessSedMLResults {
       throw new NullPointerException();
     }
     // calculate total number of rows in all the results
-    Map<AbstractTask, double[][]> rawTask2Results = new HashMap<AbstractTask, double[][]>();
+    Map<AbstractTask, double[][]> rawTask2Results = new HashMap<>();
     makeDefensiveCopyOfData(res, rawTask2Results);
     // Iterate over all the data generators to process results
-    List<double[]> processed = new ArrayList<double[]>();
+    List<double[]> processed = new ArrayList<>();
     IXPathToVariableIDResolver variable2IDResolver = new SBMLSupport();
     for (String dgId : wanted.getAllDataGeneratorReferences()) {
       DataGenerator dg = sedml.getDataGeneratorWithId(dgId);
@@ -90,9 +90,9 @@ public class ProcessSedMLResults {
       }
       List<Variable> vars = dg.getListOfVariables();
       List<Parameter> params = dg.getListOfParameters();
-      Map<String, String> Var2Model = new HashMap<String, String>();
-      Map<String, IRawSedmlSimulationResults> var2Result = new HashMap<String, IRawSedmlSimulationResults>();
-      Map<String, double[][]> var2Data = new HashMap<String, double[][]>();
+      Map<String, String> Var2Model = new HashMap<>();
+      Map<String, IRawSedmlSimulationResults> var2Result = new HashMap<>();
+      Map<String, double[][]> var2Data = new HashMap<>();
       String timeID = "";
       int numRows = 0;
       // map varIds to result, based upon task reference
@@ -143,7 +143,7 @@ public class ProcessSedMLResults {
       double[] mutated = new double[numRows];
       processed.add(mutated);
       // get Parameter values
-      Map<String, Double> Param2Value = new HashMap<String, Double>();
+      Map<String, Double> Param2Value = new HashMap<>();
       for (Parameter p : params) {
         Param2Value.put(p.getId(), p.getValue());
       }

@@ -176,7 +176,7 @@ public class AutocatalyticNetworkDetection extends AnalysisBase {
    * @return indices of the food molecules
    */
   protected int[] getFoodSpecies() {
-    LinkedList<Integer> re = new LinkedList<Integer>();
+    LinkedList<Integer> re = new LinkedList<>();
     for (int i = 0; i < network.getNumSpecies(); i++) {
       if (network.getSpeciesName(i).length() == 1) {
         re.add(i);
@@ -192,7 +192,7 @@ public class AutocatalyticNetworkDetection extends AnalysisBase {
    * @return reaction indices of not catalyzed reactions
    */
   private int[] getUncatalyzedReactions() {
-    LinkedList<Integer> re = new LinkedList<Integer>();
+    LinkedList<Integer> re = new LinkedList<>();
     for (int i = 0; i < numCatalysts.length; i++) {
       if (numCatalysts[i] == 0 && !removedReactions.get(i)) {
         re.add(i);
@@ -205,7 +205,7 @@ public class AutocatalyticNetworkDetection extends AnalysisBase {
   private void createAdjacencListsAsCata() {
     adjListAsCata = new LinkedList[network.getNumSpecies()];
     for (int i = 0; i < adjListAsCata.length; i++) {
-      adjListAsCata[i] = new LinkedList<Integer>();
+      adjListAsCata[i] = new LinkedList<>();
     }
     for (int i = 0; i < network.getNumReactions(); i++) {
       for (int c : cataIt.getCatalysts(i)) {

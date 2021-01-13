@@ -136,7 +136,7 @@ public abstract class AbstractDESSolver
     unstableFlag = false;
     includeIntermediates = true;
     intervalFactor = 0d;
-    listenerList = new LinkedList<PropertyChangeListener>();
+    listenerList = new LinkedList<>();
   }
 
   /**
@@ -148,7 +148,7 @@ public abstract class AbstractDESSolver
     unstableFlag = false;
     includeIntermediates = true;
     intervalFactor = 0d;
-    listenerList = new LinkedList<PropertyChangeListener>();
+    listenerList = new LinkedList<>();
   }
 
   /**
@@ -946,8 +946,8 @@ public abstract class AbstractDESSolver
     double[] timePoints = initConditions.getTimePoints();
 
     // of items to be simulated, this will cause a problem!
-    HashMap<String, Integer> idIndex = new HashMap<String, Integer>();
-    HashSet<String> missingIds = new HashSet<String>();
+    HashMap<String, Integer> idIndex = new HashMap<>();
+    HashSet<String> missingIds = new HashSet<>();
     int i, j, k;
     String[] ids = DES.getIdentifiers();
     for (i = 0; i < ids.length; i++) {

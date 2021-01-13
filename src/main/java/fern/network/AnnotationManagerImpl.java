@@ -21,7 +21,7 @@ public class AnnotationManagerImpl implements AnnotationManager {
   HashMap<String, String> bigHash = null;
 
   public AnnotationManagerImpl() {
-    bigHash = new HashMap<String, String>();
+    bigHash = new HashMap<>();
   }
 
 
@@ -61,7 +61,7 @@ public class AnnotationManagerImpl implements AnnotationManager {
   }
 
   public Collection<String> getNetworkAnnotationTypes() {
-    ArrayList<String> re = new ArrayList<String>();
+    ArrayList<String> re = new ArrayList<>();
     for (String key : bigHash.keySet()) {
       int index = key.indexOf('#');
       if (index == -1) {
@@ -76,7 +76,7 @@ public class AnnotationManagerImpl implements AnnotationManager {
   }
 
   public Collection<String> getReactionAnnotationTypes(int reaction) {
-    ArrayList<String> re = new ArrayList<String>();
+    ArrayList<String> re = new ArrayList<>();
     for (String key : bigHash.keySet()) {
       int index = key.indexOf('#');
       if (index > 0 && key.charAt(index - 1) == 'R'
@@ -92,7 +92,7 @@ public class AnnotationManagerImpl implements AnnotationManager {
   }
 
   public Collection<String> getSpeciesAnnotationTypes(int species) {
-    ArrayList<String> re = new ArrayList<String>();
+    ArrayList<String> re = new ArrayList<>();
     for (String key : bigHash.keySet()) {
       int index = key.indexOf('#');
       if (index > 0 && key.charAt(index - 1) == 'S'

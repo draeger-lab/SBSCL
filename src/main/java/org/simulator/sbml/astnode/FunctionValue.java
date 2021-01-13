@@ -79,8 +79,8 @@ public class FunctionValue extends ASTNodeValue {
     CallableSBase variable = node.getVariable();
     if ((variable != null)) {
       if (variable instanceof FunctionDefinition) {
-        variables = new ArrayList<String>(variableNodes.size());
-        indexMap = new HashMap<String, Integer>();
+        variables = new ArrayList<>(variableNodes.size());
+        indexMap = new HashMap<>();
         int index = 0;
         for (ASTNode argument : variableNodes) {
           String argumentName = interpreter.compileString(argument);

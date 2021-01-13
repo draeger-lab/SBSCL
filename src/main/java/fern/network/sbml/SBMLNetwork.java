@@ -117,7 +117,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
   }
 
   protected void createEventHandlers() throws ModelOverdeterminedException {
-    events = new LinkedList<SBMLEventHandlerObserver>();
+    events = new LinkedList<>();
     for (int i = 0; i < model.getNumEvents(); i++) {
       events.add(new SBMLEventHandlerObserver(null, this, sbmlInterpreter, model.getEvent(i)));
     }
@@ -189,7 +189,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 
   @Override
   protected void createSpeciesMapping() {
-    speciesIdToIndex = new HashMap<String, Integer>(model.getNumSpecies());
+    speciesIdToIndex = new HashMap<>(model.getNumSpecies());
     indexToSpeciesId = new String[model.getNumSpecies()];
     for (int i = 0; i < model.getNumSpecies(); i++) {
       speciesIdToIndex.put(model.getSpecies(i).getId(), i);

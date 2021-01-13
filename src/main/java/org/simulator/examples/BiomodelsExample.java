@@ -66,7 +66,7 @@ public class BiomodelsExample {
     AdaptiveStepsizeIntegrator solver = new RosenbrockSolver();
     solver.setAbsTol(1E-12);
     solver.setRelTol(1E-6);
-    List<Integer> slowModels = new LinkedList<Integer>();
+    List<Integer> slowModels = new LinkedList<>();
     for (int modelnr = from; modelnr <= to; modelnr++) {
       System.out.println("Biomodel " + modelnr);
       Model model = null;

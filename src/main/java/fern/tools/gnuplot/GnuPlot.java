@@ -63,9 +63,9 @@ public class GnuPlot extends JFrame {
   public GnuPlot() {
     super("GnuPlot");
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    commands = new ArrayList<String>();
-    axes = new LinkedList<Axes>();
-    clearedAxes = new LinkedList<Axes>();
+    commands = new ArrayList<>();
+    axes = new LinkedList<>();
+    clearedAxes = new LinkedList<>();
     defaultStyle = "";
 
     addMouseListener(new MouseAdapter() {
@@ -382,7 +382,7 @@ public class GnuPlot extends JFrame {
    */
   @SuppressWarnings("unchecked")
   public List<String> getData() {
-    List<String> re = new LinkedList<String>();
+    List<String> re = new LinkedList<>();
     for (Axes a : axes) {
       StringBuilder sb = new StringBuilder();
       for (String row : a) {
@@ -403,7 +403,7 @@ public class GnuPlot extends JFrame {
    * @throws IOException
    */
   public List<File> saveData(File file) throws IOException {
-    List<File> re = new LinkedList<File>();
+    List<File> re = new LinkedList<>();
 
     if (axes.size() == 1) {
       FileWriter fw = new FileWriter(file);

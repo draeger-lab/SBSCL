@@ -198,7 +198,7 @@ public class Dsmts {
     BufferedReader reader = new BufferedReader(new FileReader(file));
     reader.readLine(); // ignore the titles
 
-    List<double[]> re = new LinkedList<double[]>();
+    List<double[]> re = new LinkedList<>();
     String line;
     String[] tok;
     double[] ele;

@@ -46,7 +46,7 @@ public class AmountAtMomentObserver extends Observer implements SimulationContro
     this.moment = moment;
     histogram = new HashMap[species.length];
     for (int i = 0; i < histogram.length; i++) {
-      histogram[i] = new HashMap<Integer, Integer>();
+      histogram[i] = new HashMap<>();
     }
   }
 

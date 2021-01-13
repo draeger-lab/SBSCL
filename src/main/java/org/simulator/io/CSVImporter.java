@@ -147,7 +147,7 @@ public class CSVImporter {
    * @throws IOException
    */
   private List<String> getLinesFromCSV(BufferedReader reader) throws IOException {
-    List<String> lines = new LinkedList<String>();
+    List<String> lines = new LinkedList<>();
     String line = reader.readLine();
     while ((line != null) && !line.isEmpty()) {
       line = line.replaceAll("\\s", "");

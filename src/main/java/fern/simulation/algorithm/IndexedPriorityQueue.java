@@ -50,7 +50,7 @@ public class IndexedPriorityQueue {
     // create balanced binary heap and index
     index = new Node[t.length];
     heapRoot = new Node(oldIndex[0], t[0]);
-    Queue<Node> queue = new LinkedList<Node>();
+    Queue<Node> queue = new LinkedList<>();
     queue.add(heapRoot);
     index[heapRoot.index] = heapRoot;
     for (int i = 1; i < t.length; i += 2) {
@@ -82,7 +82,7 @@ public class IndexedPriorityQueue {
    */
   public int size() {
     int s = 0;
-    Queue<Node> q = new LinkedList<Node>();
+    Queue<Node> q = new LinkedList<>();
     q.add(heapRoot);
     while (!q.isEmpty()) {
       Node n = q.poll();

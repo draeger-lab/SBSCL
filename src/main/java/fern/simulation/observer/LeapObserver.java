@@ -32,7 +32,7 @@ public class LeapObserver extends Observer implements GnuPlotObserver {
    */
   public LeapObserver(Simulator sim, String... speciesNames) {
     super(sim);
-    leap = new LinkedList<double[]>();
+    leap = new LinkedList<>();
     this.species = NetworkTools.getSpeciesIndices(sim.getNet(), speciesNames);
     this.speciesNames = speciesNames;
   }
@@ -88,7 +88,7 @@ public class LeapObserver extends Observer implements GnuPlotObserver {
       return null;
     }
     String[] names = applyLabelFormat(speciesNames);
-    gnuplot.addData(new LinkedList<double[]>(leap), names, getStyles());
+    gnuplot.addData(new LinkedList<>(leap), names, getStyles());
     return gnuplot;
   }
 

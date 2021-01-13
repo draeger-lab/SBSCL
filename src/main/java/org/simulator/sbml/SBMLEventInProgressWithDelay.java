@@ -55,8 +55,8 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
    */
   public SBMLEventInProgressWithDelay(boolean fired) {
     super(fired);
-    previousExecutionTimes = new LinkedList<Double>();
-    previousExecutionValues = new LinkedList<Double[]>();
+    previousExecutionTimes = new LinkedList<>();
+    previousExecutionValues = new LinkedList<>();
   }
 
   /*
@@ -66,8 +66,8 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
   @Override
   public void refresh(boolean fired) {
     super.refresh(fired);
-    previousExecutionTimes = new LinkedList<Double>();
-    previousExecutionValues = new LinkedList<Double[]>();
+    previousExecutionTimes = new LinkedList<>();
+    previousExecutionValues = new LinkedList<>();
   }
 
   /*

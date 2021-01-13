@@ -256,7 +256,7 @@ public class MultiTable extends AbstractTableModel
      */
     private Block(MultiTable parent) {
       this.parent = parent;
-      idHash = new Hashtable<String, Integer>();
+      idHash = new Hashtable<>();
     }
 
     /**
@@ -537,7 +537,7 @@ public class MultiTable extends AbstractTableModel
    * Constructs an empty {@link MultiTable} object.
    */
   public MultiTable() {
-    listOfBlocks = new LinkedList<Block>();
+    listOfBlocks = new LinkedList<>();
   }
 
   /**
@@ -600,7 +600,7 @@ public class MultiTable extends AbstractTableModel
    * @return table the filtered table
    */
   public MultiTable filter(double[] timepoints) {
-    ArrayList<Integer> rowIndices = new ArrayList<Integer>();
+    ArrayList<Integer> rowIndices = new ArrayList<>();
     int i = 0;
     for (double time : timepoints) {
       while ((i < getTimePoints().length) && (getTimePoints()[i] <= time)) {

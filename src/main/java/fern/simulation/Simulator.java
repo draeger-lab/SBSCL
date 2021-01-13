@@ -491,12 +491,12 @@ public abstract class Simulator {
     private double nextTheta = Double.POSITIVE_INFINITY;
 
     public ThetaQueue() {
-      thetas = new HashMap<Double, LinkedList<Observer>>();
+      thetas = new HashMap<>();
     }
 
     public void pushTheta(double theta, Observer obs) {
       if (!thetas.containsKey(theta)) {
-        thetas.put(theta, new LinkedList<Observer>());
+        thetas.put(theta, new LinkedList<>());
       }
       thetas.get(theta).add(obs);
       nextTheta = Math.min(nextTheta, theta);
