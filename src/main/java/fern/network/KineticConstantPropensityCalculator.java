@@ -8,7 +8,7 @@ public interface KineticConstantPropensityCalculator extends PropensityCalculato
    * @param reaction index of the reaction
    * @return constant for the reaction
    */
-  public abstract double getConstant(int reaction);
+  double getConstant(int reaction);
 
   /**
    * Calculates the specific reaction probability rate constant c from the conventional
@@ -24,6 +24,6 @@ public interface KineticConstantPropensityCalculator extends PropensityCalculato
    * @param V        the fixed volume
    * @return the specific reaction probability rate constant
    */
-  public double getConstantFromDeterministicRateConstant(double k, int reaction, double V);
+  double getConstantFromDeterministicRateConstant(double k, int reaction, double V);
 
 }

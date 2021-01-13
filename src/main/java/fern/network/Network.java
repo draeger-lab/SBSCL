@@ -35,35 +35,35 @@ public interface Network {
    *
    * @return the <code>AmountManager</code>
    */
-  public AmountManager getAmountManager();
+  AmountManager getAmountManager();
 
   /**
    * Gets the {@link PropensityCalculator} for this network.
    *
    * @return the <code>PropensityCalculator</code>
    */
-  public PropensityCalculator getPropensityCalculator();
+  PropensityCalculator getPropensityCalculator();
 
   /**
    * Gets the {@link AnnotationManager} for this network.
    *
    * @return the <code>AnnotationManager</code>
    */
-  public AnnotationManager getAnnotationManager();
+  AnnotationManager getAnnotationManager();
 
   /**
    * Gets the number of species within the network.
    *
    * @return number of species
    */
-  public int getNumSpecies();
+  int getNumSpecies();
 
   /**
    * Gets the number of reaction within the network.
    *
    * @return number of reactions
    */
-  public int getNumReactions();
+  int getNumReactions();
 
   /**
    * Gets the reactants of the specified reaction.
@@ -71,7 +71,7 @@ public interface Network {
    * @param reaction index of the reaction
    * @return indices of the reactants
    */
-  public int[] getReactants(int reaction);
+  int[] getReactants(int reaction);
 
   /**
    * Gets the products of the specified reaction.
@@ -79,7 +79,7 @@ public interface Network {
    * @param reaction index of the reaction
    * @return indices of the products
    */
-  public int[] getProducts(int reaction);
+  int[] getProducts(int reaction);
 
   /**
    * Gets the species index by name. If the argument is no valid species, -1 is returned.
@@ -87,7 +87,7 @@ public interface Network {
    * @param name name of the species
    * @return index of the species
    */
-  public int getSpeciesByName(String name);
+  int getSpeciesByName(String name);
 
   /**
    * Gets the species name by index.
@@ -95,7 +95,7 @@ public interface Network {
    * @param index index of the species
    * @return name of the species
    */
-  public String getSpeciesName(int index);
+  String getSpeciesName(int index);
 
   /**
    * Gets a string representation of the reaction.
@@ -103,14 +103,14 @@ public interface Network {
    * @param index reaction index
    * @return string representation
    */
-  public String getReactionName(int index);
+  String getReactionName(int index);
 
   /**
    * Gets an identifier of the network.
    *
    * @return identifier of the network
    */
-  public String getName();
+  String getName();
 
   /**
    * Gets the initial amount of the specified molecule species.
@@ -118,7 +118,7 @@ public interface Network {
    * @param species index of the species
    * @return initial amount of the species
    */
-  public long getInitialAmount(int species);
+  long getInitialAmount(int species);
 
   /**
    * Sets the initial amount of the specified molecule species.
@@ -126,7 +126,7 @@ public interface Network {
    * @param species index of the species
    * @param value   initial amount of the species
    */
-  public void setInitialAmount(int species, long value);
+  void setInitialAmount(int species, long value);
 
 
 }

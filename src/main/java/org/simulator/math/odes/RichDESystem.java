@@ -44,7 +44,7 @@ public interface RichDESystem extends DESystem {
    *
    * @return The identifiers of all intermediate results computed during evaluation.
    */
-  public String[] getAdditionalValueIds();
+  String[] getAdditionalValueIds();
 
   /**
    * Computes and/or delivers the intermediate results at the given time and for the given results
@@ -59,7 +59,7 @@ public interface RichDESystem extends DESystem {
    * @throws DerivativeException If the system cannot be solved for the given configuration or no
    *                             intermediate results can be computed in this step.
    */
-  public double[] getAdditionalValues(double t, double[] Y)
+  double[] getAdditionalValues(double t, double[] Y)
       throws DerivativeException;
 
   /**
@@ -69,5 +69,5 @@ public interface RichDESystem extends DESystem {
    *
    * @return The number of intermediate values that are computed in each time step.
    */
-  public int getAdditionalValueCount();
+  int getAdditionalValueCount();
 }

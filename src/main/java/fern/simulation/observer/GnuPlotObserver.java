@@ -17,7 +17,7 @@ public interface GnuPlotObserver {
    *
    * @return styles for the columns
    */
-  public String[] getStyles();
+  String[] getStyles();
 
   /**
    * Creates a new {@link GnuPlot} object and passes the actual observer data to it.
@@ -25,7 +25,7 @@ public interface GnuPlotObserver {
    * @return the created <code>GnuPlot</code> object
    * @throws IOException if gnuplot could not be accessed
    */
-  public GnuPlot toGnuplot() throws IOException;
+  GnuPlot toGnuplot() throws IOException;
 
   /**
    * Passes the actual observer data to a {@link GnuPlot} object.
@@ -34,7 +34,7 @@ public interface GnuPlotObserver {
    * @return the <code>GnuPlot</code> object
    * @throws IOException if gnuplot could not be accessed
    */
-  public GnuPlot toGnuplot(GnuPlot gnuplot) throws IOException;
+  GnuPlot toGnuplot(GnuPlot gnuplot) throws IOException;
 
 
 }

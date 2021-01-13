@@ -42,19 +42,19 @@ public interface ConstraintListener extends EventListener {
   /**
    * Key to memorize user objects for logging the constraint violation
    */
-  public static final String CONSTRAINT_VIOLATION_LOG = "CONSTRAINT_VIOLATION_LOG";
+  String CONSTRAINT_VIOLATION_LOG = "CONSTRAINT_VIOLATION_LOG";
 
   /**
    * Processes the given {@link ConstraintEvent}.
    *
    * @param evt
    */
-  public abstract void processViolation(ConstraintEvent evt);
+  void processViolation(ConstraintEvent evt);
 
   /**
    * Notify that the constraints are satisfied again after violation.
    *
    * @param evt
    */
-  public abstract void processSatisfiedAgain(ConstraintEvent evt);
+  void processSatisfiedAgain(ConstraintEvent evt);
 }

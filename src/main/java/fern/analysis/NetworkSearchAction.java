@@ -20,28 +20,28 @@ public interface NetworkSearchAction {
    *
    * @param reaction index of the inserted reaction
    */
-  public void reactionDiscovered(int reaction);
+  void reactionDiscovered(int reaction);
 
   /**
    * Gets called when a species is inserted into the search structure.
    *
    * @param species index of the inserted species
    */
-  public void speciesDiscovered(int species);
+  void speciesDiscovered(int species);
 
   /**
    * Gets called when a reaction gets out of the search structure.
    *
    * @param reaction index of the reactions
    */
-  public void reactionFinished(int reaction);
+  void reactionFinished(int reaction);
 
   /**
    * Gets called when a species gets out of the search structure.
    *
    * @param species index of the species
    */
-  public void speciesFinished(int species);
+  void speciesFinished(int species);
 
   /**
    * Gets called, before the species is inserted into the search structure. If the implementing
@@ -51,7 +51,7 @@ public interface NetworkSearchAction {
    * @param neighborType one of the NeighborTypes
    * @return true if the species should be inserted
    */
-  public boolean checkSpecies(int species, NeighborType neighborType);
+  boolean checkSpecies(int species, NeighborType neighborType);
 
   /**
    * Gets called, before the reaction is inserted into the search structure. If the implementing
@@ -61,19 +61,19 @@ public interface NetworkSearchAction {
    * @param neighborType one of the NeighborTypes
    * @return true if the reaction should be inserted
    */
-  public boolean checkReaction(int reaction, NeighborType neighborType);
+  boolean checkReaction(int reaction, NeighborType neighborType);
 
   /**
    * Gets called before anything is inserted into the search structure.
    *
    * @param net the network where the search is going to be performed
    */
-  public void initialize(Network net);
+  void initialize(Network net);
 
   /**
    * Gets called, when the search is done.
    */
-  public void finished();
+  void finished();
 
   /**
    * Returns an iterator for additional neighbors of this reaction
@@ -81,7 +81,7 @@ public interface NetworkSearchAction {
    * @param index reaction index
    * @return iterator of additional neighbors
    */
-  public Iterable<Integer> getAdditionalSpeciesNeighbors(int index);
+  Iterable<Integer> getAdditionalSpeciesNeighbors(int index);
 
   /**
    * Returns an iterator for additional neighbors of this species
@@ -89,14 +89,14 @@ public interface NetworkSearchAction {
    * @param index species index
    * @return iterator of additional neighbors
    */
-  public Iterable<Integer> getAdditionalReactionNeighbors(int index);
+  Iterable<Integer> getAdditionalReactionNeighbors(int index);
 
   /**
    * Defines different types of neighborhoods in a <code>Network</code>.
    *
    * @author Florian Erhard
    */
-  public enum NeighborType {
+  enum NeighborType {
     Reactant, Product, Additional
   }
 }

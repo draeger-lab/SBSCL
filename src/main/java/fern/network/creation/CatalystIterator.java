@@ -17,5 +17,5 @@ public interface CatalystIterator {
    * @param reaction the index of the reaction
    * @return catalysts of the reaction
    */
-  public Iterable<Integer> getCatalysts(int reaction);
+  Iterable<Integer> getCatalysts(int reaction);
 }

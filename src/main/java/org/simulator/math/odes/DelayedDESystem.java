@@ -35,5 +35,5 @@ public interface DelayedDESystem extends DESystem {
   /**
    * @param dvh the delay value holder to be registered
    */
-  public void registerDelayValueHolder(DelayValueHolder dvh);
+  void registerDelayValueHolder(DelayValueHolder dvh);
 }

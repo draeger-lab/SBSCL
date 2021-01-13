@@ -11,7 +11,7 @@ import fern.network.Network;
  */
 public interface NodeChecker {
 
-  public boolean checkReactionNode(Network network, int reaction);
+  boolean checkReactionNode(Network network, int reaction);
 
-  public boolean checkSpeciesNode(Network network, int species);
+  boolean checkSpeciesNode(Network network, int species);
 }
