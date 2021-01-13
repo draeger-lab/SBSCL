@@ -103,7 +103,7 @@ public class SimulatorExample implements PropertyChangeListener {
     solver.setStepSize(stepSize);
     EquationSystem interpreter = new SBMLinterpreter(model);
     if (solver instanceof AbstractDESSolver) {
-      ((AbstractDESSolver) solver).setIncludeIntermediates(false);
+      solver.setIncludeIntermediates(false);
     }
 
     // Compute the numerical solution of the initial value problem

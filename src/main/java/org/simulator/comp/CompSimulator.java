@@ -108,7 +108,7 @@ public class CompSimulator {
     Model model = docFlat.getModel();
     SBMLinterpreter interpreter = new SBMLinterpreter(model);
     if (solver instanceof AbstractDESSolver) {
-      ((AbstractDESSolver) solver).setIncludeIntermediates(false);
+      solver.setIncludeIntermediates(false);
     }
 
     // TODO: Rel-Tolerance, Abs-Tolerance.

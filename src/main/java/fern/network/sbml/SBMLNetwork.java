@@ -137,7 +137,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
   }
 
   public long getInitialAmount(int species) {
-    return (long) initialAmount[species];
+    return initialAmount[species];
   }
 
   public void setInitialAmount(int species, long value) {
@@ -146,8 +146,8 @@ public class SBMLNetwork extends AbstractNetworkImpl {
 
   @Override
   protected void createAdjacencyLists() {
-    adjListPro = new int[(int) model.getNumReactions()][];
-    adjListRea = new int[(int) model.getNumReactions()][];
+    adjListPro = new int[model.getNumReactions()][];
+    adjListRea = new int[model.getNumReactions()][];
     int num;
     for (int i = 0; i < adjListPro.length; i++) {
       Reaction r = model.getReaction(i);
@@ -157,7 +157,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
       }
 
       adjListPro[i] = new int[num];
-      for (int j = (int) r.getNumProducts() - 1; j >= 0; j--) {
+      for (int j = r.getNumProducts() - 1; j >= 0; j--) {
         for (int k = 0; k < r.getProduct(j).getStoichiometry(); k++) {
           adjListPro[i][--num] = getSpeciesByName(r.getProduct(j).getSpecies());
         }
@@ -169,7 +169,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
       }
 
       adjListRea[i] = new int[num];
-      for (int j = (int) r.getNumReactants() - 1; j >= 0; j--) {
+      for (int j = r.getNumReactants() - 1; j >= 0; j--) {
         for (int k = 0; k < r.getReactant(j).getStoichiometry(); k++) {
           adjListRea[i][--num] = getSpeciesByName(r.getReactant(j).getSpecies());
         }
@@ -190,7 +190,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
   @Override
   protected void createSpeciesMapping() {
     speciesIdToIndex = new HashMap<String, Integer>(model.getNumSpecies());
-    indexToSpeciesId = new String[(int) model.getNumSpecies()];
+    indexToSpeciesId = new String[model.getNumSpecies()];
     for (int i = 0; i < model.getNumSpecies(); i++) {
       speciesIdToIndex.put(model.getSpecies(i).getId(), i);
       indexToSpeciesId[i] = model.getSpecies(i).getId();

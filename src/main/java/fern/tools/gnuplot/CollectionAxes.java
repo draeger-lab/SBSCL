@@ -116,7 +116,7 @@ public class CollectionAxes extends Axes {
         String s = itAdd.hasNext() ? itAdd.next() : "";
 
         if (o instanceof Number) {
-          return ((Number) o).toString() + s;
+          return o.toString() + s;
         } else {
           StringBuilder sb = new StringBuilder();
           for (int i = 0; i < Array.getLength(o); i++) {

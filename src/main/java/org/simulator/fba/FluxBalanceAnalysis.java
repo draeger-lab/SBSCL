@@ -301,7 +301,7 @@ public class FluxBalanceAnalysis {
   private void buildSpeciesReactionMap(Map<String, Set<Pair<String, Double>>> species2Reaction,
       ListOf<SpeciesReference> listOfParticipants)
       throws SBMLException, ModelOverdeterminedException {
-    String rId = ((Reaction) listOfParticipants.getParent()).getId();
+    String rId = listOfParticipants.getParent().getId();
     if ((rId == null) || (rId.length() == 0)) {
       Model model = listOfParticipants.getModel();
       Reaction r = (Reaction) listOfParticipants.getParent();
