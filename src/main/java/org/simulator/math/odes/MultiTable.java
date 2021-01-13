@@ -155,7 +155,7 @@ public class MultiTable extends AbstractTableModel
            */
           @Override
           public Double next() {
-            return Double.valueOf(getValue(currRow++));
+            return getValue(currRow++);
           }
 
           /* (non-Javadoc)
@@ -380,7 +380,7 @@ public class MultiTable extends AbstractTableModel
       if (columnIndex == 0) {
         return getTimePoint(rowIndex);
       }
-      return Double.valueOf(data[rowIndex][columnIndex - 1]);
+      return data[rowIndex][columnIndex - 1];
     }
 
     /**
@@ -421,7 +421,7 @@ public class MultiTable extends AbstractTableModel
       this.identifiers = identifiers;
       idHash.clear();
       for (int i = 0; i < this.identifiers.length; i++) {
-        idHash.put(this.identifiers[i], Integer.valueOf(i));
+        idHash.put(this.identifiers[i], i);
       }
     }
 
@@ -801,8 +801,8 @@ public class MultiTable extends AbstractTableModel
    */
   @Override
   public Double getValueAt(int rowIndex, int columnIndex) {
-    return Double.valueOf(columnIndex == 0 ? timePoints[rowIndex] :
-        getColumn(columnIndex).getValue(rowIndex));
+    return columnIndex == 0 ? timePoints[rowIndex] :
+        getColumn(columnIndex).getValue(rowIndex);
   }
 
   /* (non-Javadoc)

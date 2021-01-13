@@ -954,7 +954,7 @@ public abstract class AbstractDESSolver
       if (!initConditions.containsColumn(ids[i])) {
         missingIds.add(ids[i]);
       }
-      idIndex.put(ids[i], Integer.valueOf(i));
+      idIndex.put(ids[i], i);
     }
     for (int col = 0; col < initConditions.getColumnCount(); col++) {
       String columnName = initConditions.getColumnIdentifier(col);
