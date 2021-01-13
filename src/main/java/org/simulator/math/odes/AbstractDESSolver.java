@@ -961,7 +961,7 @@ public abstract class AbstractDESSolver
       if (columnName != null) {
         Integer index = idIndex.get(initConditions.getColumnIdentifier(col));
         if (index != null) {
-          initialValues[index.intValue()] = initConditions.getValueAt(0, col + 1);
+          initialValues[index] = initConditions.getValueAt(0, col + 1);
         }
       }
     }
@@ -976,11 +976,11 @@ public abstract class AbstractDESSolver
       double h = stepSize;
       if (!missingIds.isEmpty()) {
         for (k = 0; k < initConditions.getColumnCount(); k++) {
-          yTemp[idIndex.get(initConditions.getColumnIdentifier(k)).intValue()] = initConditions
+          yTemp[idIndex.get(initConditions.getColumnIdentifier(k))] = initConditions
               .getValueAt(i - 1, k + 1);
         }
         for (String key : missingIds) {
-          k = idIndex.get(key).intValue();
+          k = idIndex.get(key);
           yTemp[k] = result[i - 1][k];
         }
       } else {

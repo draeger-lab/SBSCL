@@ -84,7 +84,7 @@ public class ASTNodeInterpreter {
    * @return doubleValue the interpreted double value of the node
    */
   public double compileDouble(String name, double time, double delay) {
-    Double funcArg = funcArgs.get(name).doubleValue();
+    Double funcArg = funcArgs.get(name);
     double value;
     if (funcArg != null) {
       value = funcArg;

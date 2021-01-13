@@ -111,7 +111,7 @@ public class NumberTools {
     int[] re = new int[list.size()];
     int index = 0;
     for (Integer i : list) {
-      re[index++] = i.intValue();
+      re[index++] = i;
     }
     return re;
   }
@@ -127,7 +127,7 @@ public class NumberTools {
     double[] re = new double[list.size()];
     int index = 0;
     for (Double i : list) {
-      re[index++] = i.doubleValue();
+      re[index++] = i;
     }
     return re;
   }

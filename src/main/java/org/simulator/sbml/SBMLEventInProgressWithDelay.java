@@ -144,7 +144,7 @@ public class SBMLEventInProgressWithDelay extends SBMLEventInProgress {
       }
       Double lastTime = previousExecutionTimes.peekLast();
       if (lastTime != null) {
-        lastTimeExecuted = lastTime.doubleValue();
+        lastTimeExecuted = lastTime;
       } else {
         lastTimeExecuted = -1d;
       }

@@ -177,7 +177,7 @@ public class MultiTable extends AbstractTableModel
        * @param doubleValue The new value.
        */
       public void setValue(double doubleValue, int rowIndex) {
-        data[rowIndex][columnIndex] = ((Double) doubleValue).doubleValue();
+        data[rowIndex][columnIndex] = doubleValue;
       }
 
       /* (non-Javadoc)
@@ -289,7 +289,7 @@ public class MultiTable extends AbstractTableModel
      * column.
      */
     public Column getColumn(String identfier) {
-      return new Column(idHash.get(identfier).intValue());
+      return new Column(idHash.get(identfier));
     }
 
     /* (non-Javadoc)
@@ -456,9 +456,9 @@ public class MultiTable extends AbstractTableModel
         throw new IllegalArgumentException(ONLY_DOUBLE_VALUES_ACCEPTED);
       }
       if (columnIndex == 0) {
-        timePoints[rowIndex] = ((Double) aValue).doubleValue();
+        timePoints[rowIndex] = (Double) aValue;
       } else {
-        data[rowIndex][columnIndex - 1] = ((Double) aValue).doubleValue();
+        data[rowIndex][columnIndex - 1] = (Double) aValue;
       }
     }
 
@@ -905,9 +905,9 @@ public class MultiTable extends AbstractTableModel
       throw new IllegalArgumentException(ONLY_DOUBLE_VALUES_ACCEPTED);
     }
     if (columnIndex == 0) {
-      timePoints[rowIndex] = aValue.doubleValue();
+      timePoints[rowIndex] = aValue;
     } else {
-      getColumn(columnIndex).setValue(aValue.doubleValue(), rowIndex);
+      getColumn(columnIndex).setValue(aValue, rowIndex);
     }
   }
 

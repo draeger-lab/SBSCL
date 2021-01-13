@@ -111,7 +111,7 @@ public class AssignmentRuleValue extends RuleValue {
       processAssignmentVariable(time, null);
       Double v = stoichiometricCoefHash.get(speciesReferenceID);
       stoichiometricCoefHash.put(speciesReferenceID, value);
-      if ((v != null) && (v.doubleValue() != value)) {
+      if ((v != null) && (v != value)) {
         return true;
       }
     }
