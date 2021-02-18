@@ -24,9 +24,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+  
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.simulator</groupId>
+  <groupId>org.draeger-lab</groupId>
   <artifactId>sbscl</artifactId>
 
   <!-- Output to jar format -->
@@ -38,10 +38,11 @@
   <!-- =================================================================== -->
 
   <name>Systems Biology Simulation Core Library (SBSCL)</name>
-  <version>1.5</version>
+  <version>2.0</version>
   <url>https://github.com/draeger-lab/SBSCL/</url>
   <inceptionYear>2007</inceptionYear>
-  <description>The Systems Biology Simulation Core Library provides an efficient and exhaustive
+  <description>
+    The Systems Biology Simulation Core Library provides an efficient and exhaustive
     Java™ implementation of methods to interpret the content of models encoded in the Systems
     Biology Markup Language (SBML) and its numerical solution. This library is based on the JSBML
     project and can be used on every operating system, for which a Java Virtual Machine is
@@ -55,7 +56,7 @@
     <!-- This property is used for filtering the variable ${year} in some resource
       files -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.license.url>http://www.gnu.org/licenses/lgpl-3.0-standalone.html</project.license.url>
+    <project.license.url>https://www.gnu.org/licenses/lgpl-3.0-standalone.html</project.license.url>
     <junit.version>4.13.1</junit.version>
     <maven-javadoc-plugin.version>2.10.2</maven-javadoc-plugin.version>
   </properties>
@@ -109,6 +110,11 @@
         <role>developer</role>
       </roles>
       <timezone>Germany/Berlin</timezone>
+      <properties>
+        <picUrl>
+          https://uni-tuebingen.de/fileadmin/_processed_/a/0/csm_Andreas_Draeger_im_Buero_2a3fefe7eb.jpg
+        </picUrl>
+      </properties>
     </developer>
     <developer>
       <name>Akira Funahashi</name>
@@ -239,6 +245,17 @@
       <organization>Max Planck Institute of Psychatry</organization>
     </contributor>
   </contributors>
+
+  
+  <!-- =================================================================== -->
+  <!-- Source Control Management                                           -->
+  <!-- =================================================================== -->
+
+  <scm>
+    <connection>scm:git:git://github.com/draeger-lab/SBSCL.git</connection>
+    <developerConnection>scm:git:ssh://github.com:draeger-lab/SBSCL.git</developerConnection>
+    <url>https://github.com/draeger-lab/SBSCL/tree/master/</url>
+  </scm>
 
 
   <!-- =================================================================== -->
