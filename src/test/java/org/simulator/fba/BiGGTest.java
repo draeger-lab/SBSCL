@@ -1,5 +1,6 @@
 package org.simulator.fba;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
@@ -34,6 +35,7 @@ public class BiGGTest {
   private BufferedReader reader = new BufferedReader(
       new FileReader(TestUtils.getPathForTestResource("/bigg/bigg_reference_solutions.csv")));
   private Map<String, Double> referenceResults;
+  static String s = "";
 
   @Before
   public void setUp() throws IOException {
@@ -44,6 +46,14 @@ public class BiGGTest {
       String[] solution = line.split(",");
       referenceResults.put(solution[0], Double.parseDouble(solution[1]));
     }
+  }
+
+  @After
+  public void done() throws IOException {
+    File file = new File(TestUtils.getPathForTestResource("/bigg/sbscl_bigg_model_solutions.csv"));
+    FileWriter fr = new FileWriter(file);
+    fr.write(s);
+    fr.close();
   }
 
   /**
@@ -88,6 +98,7 @@ public class BiGGTest {
     Assert.assertEquals(objectiveValue,
         referenceResults.get(Paths.get(resource).getFileName().toString()), RESULT_DEVIATION);
 
+    s += (Paths.get(resource).getFileName().toString() + "," + objectiveValue + "\n");
   }
 
 }
