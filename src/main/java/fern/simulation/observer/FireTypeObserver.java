@@ -32,7 +32,7 @@ public class FireTypeObserver extends Observer implements GnuPlotObserver {
     super(sim);
     numTypes = new long[FireType.values().length];
     numTypesAvg = new double[numTypes.length];
-    addedTitles = new HashSet<GnuPlot>();
+    addedTitles = new HashSet<>();
   }
 
 

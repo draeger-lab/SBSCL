@@ -178,7 +178,7 @@ public class SBMLEventInProgress extends EventInProgress {
    */
   public void addRuleObject(AssignmentRuleValue assignmentRuleObject) {
     if (ruleObjects == null) {
-      ruleObjects = new LinkedList<AssignmentRuleValue>();
+      ruleObjects = new LinkedList<>();
     }
     ruleObjects.add(assignmentRuleObject);
   }

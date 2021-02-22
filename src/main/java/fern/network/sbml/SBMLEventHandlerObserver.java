@@ -45,8 +45,8 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
     this.trigger = new MathTree(interpreter, event.getTrigger().getMath());
     this.delay =
         event.getDelay() == null ? null : new MathTree(interpreter, event.getDelay().getMath());
-    variableAssignment = new HashMap<String, MathTree>();
-    parameterAssignment = new HashMap<String, MathTree>();
+    variableAssignment = new HashMap<>();
+    parameterAssignment = new HashMap<>();
 
     for (int i = 0; i < event.getNumEventAssignments(); i++) {
       String var = event.getEventAssignment(i).getVariable();

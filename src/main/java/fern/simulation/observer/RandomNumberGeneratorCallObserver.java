@@ -33,7 +33,7 @@ public class RandomNumberGeneratorCallObserver extends Observer implements GnuPl
   public RandomNumberGeneratorCallObserver(Simulator sim) {
     super(sim);
     Stochastics.getInstance().setCountGenerations(true);
-    addedTitles = new HashSet<GnuPlot>();
+    addedTitles = new HashSet<>();
   }
 
   /**

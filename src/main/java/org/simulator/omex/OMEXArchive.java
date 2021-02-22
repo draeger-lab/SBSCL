@@ -50,7 +50,7 @@ public class OMEXArchive {
   public OMEXArchive(File zipFile)
       throws IOException, ParseException, CombineArchiveException,
       JDOMException {
-    entryMap = new HashMap<String, ArchiveEntry>();
+    entryMap = new HashMap<>();
     has_models = false;
     has_sim_descp = false;
     archive = new CombineArchive(zipFile);

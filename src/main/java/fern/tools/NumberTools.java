@@ -111,7 +111,7 @@ public class NumberTools {
     int[] re = new int[list.size()];
     int index = 0;
     for (Integer i : list) {
-      re[index++] = i.intValue();
+      re[index++] = i;
     }
     return re;
   }
@@ -127,7 +127,7 @@ public class NumberTools {
     double[] re = new double[list.size()];
     int index = 0;
     for (Double i : list) {
-      re[index++] = i.doubleValue();
+      re[index++] = i;
     }
     return re;
   }
@@ -175,7 +175,7 @@ public class NumberTools {
    * @return the inverse map
    */
   public static Map<Integer, Integer> createInverseAsMap(int[] a) {
-    Map<Integer, Integer> re = new HashMap<Integer, Integer>();
+    Map<Integer, Integer> re = new HashMap<>();
     for (int i = 0; i < a.length; i++) {
       if (!re.containsKey(a[i])) {
         re.put(a[i], i);
@@ -269,7 +269,7 @@ public class NumberTools {
    * @return histogram for the array
    */
   public static Map<Integer, Integer> createHistogramAsMap(int[] a) {
-    Map<Integer, Integer> re = new HashMap<Integer, Integer>();
+    Map<Integer, Integer> re = new HashMap<>();
     if (a == null || a.length == 0) {
       return re;
     }
@@ -305,7 +305,7 @@ public class NumberTools {
    */
   public static Map<Integer, Integer> loadHistogram(File file) throws IOException {
     BufferedReader bf = new BufferedReader(new FileReader(file));
-    Map<Integer, Integer> re = new HashMap<Integer, Integer>();
+    Map<Integer, Integer> re = new HashMap<>();
     String line;
     while ((line = bf.readLine()) != null) {
       String[] vals = line.split("\t");

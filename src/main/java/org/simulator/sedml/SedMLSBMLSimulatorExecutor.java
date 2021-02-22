@@ -369,7 +369,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
   public Map<AbstractTask, List<IRawSedmlSimulationResults>> run()
       throws OWLOntologyCreationException {
     // Fetch all the tasks: Tasks + RepeatedTasks
-    Map<AbstractTask, List<IRawSedmlSimulationResults>> res = new HashMap<AbstractTask, List<IRawSedmlSimulationResults>>();
+    Map<AbstractTask, List<IRawSedmlSimulationResults>> res = new HashMap<>();
     List<AbstractTask> tasksToExecute = sedml.getTasks();
     if (tasksToExecute.isEmpty()) {
       LOGGER.warn("No Tasks could be resolved from the required output.");
@@ -384,7 +384,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
         RepeatedTask repTask = (RepeatedTask) task;
         Map<String, SubTask> subTasks = sortTasks(repTask.getSubTasks());
         Map<String, Range> range = repTask.getRanges();
-        List<IRawSedmlSimulationResults> repTaskResults = new ArrayList<IRawSedmlSimulationResults>();
+        List<IRawSedmlSimulationResults> repTaskResults = new ArrayList<>();
         // Find all the variable from listOfChanges and create tasks
         if (range.size() > 0 && subTasks.size() > 0) {
           // Load original model from one of the subtasks and update its state
@@ -392,7 +392,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
               .getModelWithId(sedml.getTaskWithId(repTask.getSubTasks().
                   values().iterator().next().getTaskId()).getModelReference());
           // 2. Get the Xpath parameter in setValue and a double[] before simulations
-          Map<String, double[]> mapChangesToList = new HashMap<String, double[]>();
+          Map<String, double[]> mapChangesToList = new HashMap<>();
           if (repTask.getChanges().size() > 0) {
             for (SetValue change : repTask.getChanges()) {
               String xPath = change.getTargetXPath().getTargetAsString();
@@ -411,7 +411,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
           // Iterate over master range
           Range masterRange = range.get(repTask.getRange());
           for (int element = 0; element < masterRange.getNumElements(); element++) {
-            List<MultTableSEDMLWrapper> stResults = new ArrayList<MultTableSEDMLWrapper>();
+            List<MultTableSEDMLWrapper> stResults = new ArrayList<>();
             // 1. Check for resetModel, original SBML model file is re-read
             if (repTask.getResetModel()) {
               curModel = sedml.getModelWithId(sedml.getTaskWithId(repTask.getSubTasks().
@@ -513,7 +513,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
           LOGGER.warn("Simulation failed during execution: " + stdTask.getSimulationReference()
               + " with model: " + stdTask.getModelReference());
         }
-        res.put(stdTask, new ArrayList<IRawSedmlSimulationResults>(Arrays.asList(results)));
+        res.put(stdTask, new ArrayList<>(Arrays.asList(results)));
       }
     }
     return res;
@@ -571,7 +571,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
    */
   private static Map<String, SubTask> sortTasks(Map<String, SubTask> unsortMap) {
     // 1. Convert Map to List of Map
-    List<Map.Entry<String, SubTask>> list = new LinkedList<Map.Entry<String, SubTask>>(
+    List<Map.Entry<String, SubTask>> list = new LinkedList<>(
         unsortMap.entrySet());
     // 2. Sort list with Collections.sort(), provide a custom Comparator
     Collections.sort(list, new Comparator<Map.Entry<String, SubTask>>() {
@@ -587,7 +587,7 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
     });
     // 3. Loop the sorted list and put it into a new insertion order Map
     // LinkedHashMap
-    Map<String, SubTask> sortedMap = new LinkedHashMap<String, SubTask>();
+    Map<String, SubTask> sortedMap = new LinkedHashMap<>();
     for (Map.Entry<String, SubTask> entry : list) {
       sortedMap.put(entry.getKey(), entry.getValue());
     }

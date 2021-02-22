@@ -124,7 +124,7 @@ public class NewGLPKSolver implements LinearProgramSolver {
 
     if (timeconstraint > 0) {
       System.out.println("Setting time constraint to:" + timeconstraint + " seconds");
-      solver.setRealParm(GlpkSolver.LPX_K_TMLIM, (double) timeconstraint);
+      solver.setRealParm(GlpkSolver.LPX_K_TMLIM, timeconstraint);
     }
 
     double[] result = null;
@@ -277,7 +277,7 @@ public class NewGLPKSolver implements LinearProgramSolver {
     double[] sol = solver.solve(lp);
     ArrayList<Constraint> constraints = lp.getConstraints();
     for (Iterator<Constraint> iterator = constraints.iterator(); iterator.hasNext(); ) {
-      Constraint constraint = (Constraint) iterator.next();
+      Constraint constraint = iterator.next();
       if (constraint.isSatisfiedBy(sol)) {
         System.out.println(constraint.getName() + " satisfied");
       }

@@ -136,7 +136,7 @@ public abstract class AbstractDESSolver
     unstableFlag = false;
     includeIntermediates = true;
     intervalFactor = 0d;
-    listenerList = new LinkedList<PropertyChangeListener>();
+    listenerList = new LinkedList<>();
   }
 
   /**
@@ -148,7 +148,7 @@ public abstract class AbstractDESSolver
     unstableFlag = false;
     includeIntermediates = true;
     intervalFactor = 0d;
-    listenerList = new LinkedList<PropertyChangeListener>();
+    listenerList = new LinkedList<>();
   }
 
   /**
@@ -794,7 +794,7 @@ public abstract class AbstractDESSolver
     addPropertyChangeListener((SBMLinterpreter) DES);
 
     // execute events that trigger at 0.0 and process rules on changes due to the events
-    processEventsAndRules(true, (EventDESystem) DES, 0d, 0d, result[0]);
+    processEventsAndRules(true, DES, 0d, 0d, result[0]);
     System.arraycopy(result[0], 0, yTemp, 0, yTemp.length);
     if (propertyChangeListener != null) {
       propertyChangeListener.propertyChange(new PropertyChangeEvent(this, PROGRESS, -stepSize, 0d));
@@ -888,7 +888,7 @@ public abstract class AbstractDESSolver
 
     addPropertyChangeListener((SBMLinterpreter) DES);
     // execute events that trigger at 0.0 and process rules on changes due to the events
-    processEventsAndRules(true, (EventDESystem) DES, 0d, 0d, result[0]);
+    processEventsAndRules(true, DES, 0d, 0d, result[0]);
     System.arraycopy(result[0], 0, yTemp, 0, result[0].length);
     firePropertyChange(-stepSize, 0d, result[0]);
     for (int i = 1; (i < timePoints.length) && (!Thread.currentThread().isInterrupted()); i++) {
@@ -946,22 +946,22 @@ public abstract class AbstractDESSolver
     double[] timePoints = initConditions.getTimePoints();
 
     // of items to be simulated, this will cause a problem!
-    HashMap<String, Integer> idIndex = new HashMap<String, Integer>();
-    HashSet<String> missingIds = new HashSet<String>();
+    HashMap<String, Integer> idIndex = new HashMap<>();
+    HashSet<String> missingIds = new HashSet<>();
     int i, j, k;
     String[] ids = DES.getIdentifiers();
     for (i = 0; i < ids.length; i++) {
       if (!initConditions.containsColumn(ids[i])) {
         missingIds.add(ids[i]);
       }
-      idIndex.put(ids[i], Integer.valueOf(i));
+      idIndex.put(ids[i], i);
     }
     for (int col = 0; col < initConditions.getColumnCount(); col++) {
       String columnName = initConditions.getColumnIdentifier(col);
       if (columnName != null) {
         Integer index = idIndex.get(initConditions.getColumnIdentifier(col));
         if (index != null) {
-          initialValues[index.intValue()] = initConditions.getValueAt(0, col + 1);
+          initialValues[index] = initConditions.getValueAt(0, col + 1);
         }
       }
     }
@@ -976,11 +976,11 @@ public abstract class AbstractDESSolver
       double h = stepSize;
       if (!missingIds.isEmpty()) {
         for (k = 0; k < initConditions.getColumnCount(); k++) {
-          yTemp[idIndex.get(initConditions.getColumnIdentifier(k)).intValue()] = initConditions
+          yTemp[idIndex.get(initConditions.getColumnIdentifier(k))] = initConditions
               .getValueAt(i - 1, k + 1);
         }
         for (String key : missingIds) {
-          k = idIndex.get(key).intValue();
+          k = idIndex.get(key);
           yTemp[k] = result[i - 1][k];
         }
       } else {

@@ -16,7 +16,7 @@ import fern.tools.gnuplot.GnuPlot;
 public abstract class Benchmark {
 
   private long startTime;
-  private Collection<double[]> data = new LinkedList<double[]>();
+  private Collection<double[]> data = new LinkedList<>();
   private int numBins = 100;
 
   /**

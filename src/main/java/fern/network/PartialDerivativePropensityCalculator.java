@@ -15,7 +15,7 @@ public interface PartialDerivativePropensityCalculator extends PropensityCalcula
    * @param volume        the volume of the reaction space
    * @return partial differential
    */
-  public double calculatePartialDerivative(int reaction, AmountManager amount, int reactantIndex,
+  double calculatePartialDerivative(int reaction, AmountManager amount, int reactantIndex,
       double volume);
 
 }

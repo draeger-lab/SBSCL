@@ -31,7 +31,7 @@ public class ConfigReader {
    * @throws IOException
    */
   public ConfigReader(String fn) throws IOException {
-    config = new HashMap<String, String>();
+    config = new HashMap<>();
 
     BufferedReader bf = new BufferedReader(new FileReader(fn));
     String line;

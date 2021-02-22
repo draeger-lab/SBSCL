@@ -55,7 +55,7 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
 
     this.entityName = entityName;
 
-    log = new LinkedList<double[]>();
+    log = new LinkedList<>();
 
     avgLog = new double[this.entityName.length + 1][0];
     quality = new int[0];
@@ -72,7 +72,7 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
 
     this.entityName = entityName;
 
-    log = new LinkedList<double[]>();
+    log = new LinkedList<>();
 
     avgLog = new double[this.entityName.length + 1][this.duration + 1];
     quality = new int[0];
@@ -266,7 +266,7 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
    * @throws IOException if gnuplot could not be accessed
    */
   public GnuPlot toGnuplotRecent(GnuPlot gnuplot) throws IOException {
-    return toGnuplot(gnuplot, new LinkedList<double[]>(log));
+    return toGnuplot(gnuplot, new LinkedList<>(log));
   }
 
   /**

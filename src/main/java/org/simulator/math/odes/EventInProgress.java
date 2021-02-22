@@ -53,12 +53,12 @@ public class EventInProgress {
    */
   public EventInProgress(boolean fired) {
     this.fired = fired;
-    execTimes = new LinkedList<Double>();
-    values = new LinkedList<Double[]>();
+    execTimes = new LinkedList<>();
+    values = new LinkedList<>();
     lastTimeFired = -1;
     lastTimeRecovered = -1;
     lastTimeExecuted = -1;
-    assignments = new HashMap<Integer, Double>();
+    assignments = new HashMap<>();
   }
 
   /**
@@ -66,12 +66,12 @@ public class EventInProgress {
    */
   public void refresh(boolean fired) {
     this.fired = fired;
-    execTimes = new LinkedList<Double>();
-    values = new LinkedList<Double[]>();
+    execTimes = new LinkedList<>();
+    values = new LinkedList<>();
     lastTimeFired = -1;
     lastTimeRecovered = -1;
     lastTimeExecuted = -1;
-    assignments = new HashMap<Integer, Double>();
+    assignments = new HashMap<>();
   }
 
   /**

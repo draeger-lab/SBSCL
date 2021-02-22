@@ -44,12 +44,12 @@ public interface DESSolver extends Cloneable, Serializable {
    *
    * @param listener
    */
-  public void addPropertyChangeListener(PropertyChangeListener listener);
+  void addPropertyChangeListener(PropertyChangeListener listener);
 
   /**
    * @return the cloned solver
    */
-  public DESSolver clone();
+  DESSolver clone();
 
   /**
    * Tell each listener that property value changed. CurrTime is the current time point of
@@ -60,7 +60,7 @@ public interface DESSolver extends Cloneable, Serializable {
    * @param currTimePoint
    * @param currResult
    */
-  public void firePropertyChange(double previousTimePoint, double currTimePoint,
+  void firePropertyChange(double previousTimePoint, double currTimePoint,
       double[] currResult);
 
   /**
@@ -69,14 +69,14 @@ public interface DESSolver extends Cloneable, Serializable {
    *
    * @return the KiSAO term of the algorithm
    */
-  public int getKiSAOterm();
+  int getKiSAOterm();
 
   /**
    * Obtain the currently set integration step size.
    *
    * @return the step size
    */
-  public double getStepSize();
+  double getStepSize();
 
   /**
    * If this method returns {@code true}, intermediate results that may originate from a {@link
@@ -85,7 +85,7 @@ public interface DESSolver extends Cloneable, Serializable {
    *
    * @return the flag
    */
-  public boolean isIncludeIntermediates();
+  boolean isIncludeIntermediates();
 
   /**
    * Method to check whether the solution of the numerical integration procedure contains {@link
@@ -93,14 +93,14 @@ public interface DESSolver extends Cloneable, Serializable {
    *
    * @return the unstable flag
    */
-  public boolean isUnstable();
+  boolean isUnstable();
 
   /**
    * remove PropertyChangedListener to this Solver
    *
    * @param listener
    */
-  public void removePropertyChangeListener(PropertyChangeListener listener);
+  void removePropertyChangeListener(PropertyChangeListener listener);
 
   /**
    * Allows switching whether or not intermediate results should be included into the {@link
@@ -109,14 +109,14 @@ public interface DESSolver extends Cloneable, Serializable {
    * @param includeIntermediates if {@code true}, intermediate results are included into the
    *                             result.
    */
-  public void setIncludeIntermediates(boolean includeIntermediates);
+  void setIncludeIntermediates(boolean includeIntermediates);
 
   /**
    * Set the integration step size.
    *
    * @param stepSize
    */
-  public void setStepSize(double stepSize);
+  void setStepSize(double stepSize);
 
   /**
    * Solves the given differential equation system
@@ -129,7 +129,7 @@ public interface DESSolver extends Cloneable, Serializable {
    * @return A matrix containing the simulation results
    * @throws DerivativeException if something's wrong...
    */
-  public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd,
+  MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd,
       PropertyChangeListener propertyChangeListener)
       throws DerivativeException;
 
@@ -143,7 +143,7 @@ public interface DESSolver extends Cloneable, Serializable {
    * @return A matrix containing the simulation results
    * @throws DerivativeException if something's wrong...
    */
-  public MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd)
+  MultiTable solve(DESystem DES, double[] initialValues, double timeBegin, double timeEnd)
       throws DerivativeException;
 
   /**
@@ -160,7 +160,7 @@ public interface DESSolver extends Cloneable, Serializable {
    * columns contain the return values for the arguments.
    * @throws DerivativeException if something's wrong...
    */
-  public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps,
+  MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps,
       PropertyChangeListener propertyChangeListener)
       throws DerivativeException;
 
@@ -177,7 +177,7 @@ public interface DESSolver extends Cloneable, Serializable {
    * columns contain the return values for the arguments.
    * @throws DerivativeException if something's wrong...
    */
-  public MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps)
+  MultiTable solve(DESystem DES, double[] initialValues, double x, double h, int steps)
       throws DerivativeException;
 
   /**
@@ -191,7 +191,7 @@ public interface DESSolver extends Cloneable, Serializable {
    * @return A matrix containing the simulation results.
    * @throws DerivativeException if something's wrong...
    */
-  public MultiTable solve(DESystem DES, double[] initialValues, double[] timepoints,
+  MultiTable solve(DESystem DES, double[] initialValues, double[] timepoints,
       PropertyChangeListener propertyChangeListener)
       throws DerivativeException;
 
@@ -205,7 +205,7 @@ public interface DESSolver extends Cloneable, Serializable {
    * @return A matrix containing the simulation results.
    * @throws DerivativeException if something's wrong...
    */
-  public MultiTable solve(DESystem DES, double[] initialValues, double[] timepoints)
+  MultiTable solve(DESystem DES, double[] initialValues, double[] timepoints)
       throws DerivativeException;
 
   /**
@@ -230,7 +230,7 @@ public interface DESSolver extends Cloneable, Serializable {
    * {@link DESystem} and simulated values at each time point.
    * @throws DerivativeException
    */
-  public MultiTable solve(DESystem DES, MultiTable.Block timeSeriesInitConditions,
+  MultiTable solve(DESystem DES, MultiTable.Block timeSeriesInitConditions,
       double[] initialValues, PropertyChangeListener propertyChangeListener)
       throws DerivativeException;
 
@@ -254,7 +254,7 @@ public interface DESSolver extends Cloneable, Serializable {
    * {@link DESystem} and simulated values at each time point.
    * @throws DerivativeException
    */
-  public MultiTable solve(DESystem DES, MultiTable.Block timeSeriesInitConditions,
+  MultiTable solve(DESystem DES, MultiTable.Block timeSeriesInitConditions,
       double[] initialValues)
       throws DerivativeException;
 }

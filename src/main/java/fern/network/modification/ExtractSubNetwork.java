@@ -78,7 +78,7 @@ public class ExtractSubNetwork extends ModifierNetwork {
   }
 
   private int[] translateAndTrimSpecies(int[] ori) {
-    LinkedList<Integer> re = new LinkedList<Integer>();
+    LinkedList<Integer> re = new LinkedList<>();
     for (int i : ori) {
       if (speciesFromOriginal[i] >= 0) {
         re.add(speciesFromOriginal[i]);

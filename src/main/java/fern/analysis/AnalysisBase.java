@@ -67,7 +67,7 @@ public class AnalysisBase {
 
     LinkedList<Integer>[] proCreate = new LinkedList[network.getNumSpecies()];
     for (int i = 0; i < proCreate.length; i++) {
-      proCreate[i] = new LinkedList<Integer>();
+      proCreate[i] = new LinkedList<>();
     }
     for (int i = 0; i < network.getNumReactions(); i++) {
       for (int j : network.getProducts(i)) {
@@ -76,7 +76,7 @@ public class AnalysisBase {
     }
     LinkedList<Integer>[] reaCreate = new LinkedList[network.getNumSpecies()];
     for (int i = 0; i < reaCreate.length; i++) {
-      reaCreate[i] = new LinkedList<Integer>();
+      reaCreate[i] = new LinkedList<>();
     }
     for (int i = 0; i < network.getNumReactions(); i++) {
       for (int j : network.getReactants(i)) {

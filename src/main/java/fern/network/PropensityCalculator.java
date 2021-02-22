@@ -21,5 +21,5 @@ public interface PropensityCalculator {
    * @param sim      Simulator
    * @return actual propensity of the reaction
    */
-  public double calculatePropensity(int reaction, AmountManager amount, Simulator sim);
+  double calculatePropensity(int reaction, AmountManager amount, Simulator sim);
 }

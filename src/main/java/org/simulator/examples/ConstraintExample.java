@@ -73,7 +73,7 @@ public class ConstraintExample {
     solver.setStepSize(stepSize);
     SBMLinterpreter interpreter = new SBMLinterpreter(doc.getModel());
     if (solver instanceof AbstractDESSolver) {
-      ((AbstractDESSolver) solver).setIncludeIntermediates(false);
+      solver.setIncludeIntermediates(false);
     }
 
     // Compute the numerical solution of the initial value problem

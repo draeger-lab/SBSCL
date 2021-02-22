@@ -47,7 +47,7 @@ public interface DESystem
    * @return An array of {@link String}s which has the same length than the number given by {@link
    * #getDimension()}. Each {@link String} describes the content of the given dimension.
    */
-  public String[] getIdentifiers();
+  String[] getIdentifiers();
 
   /**
    * This method is used to check if this differential equation system contains any events or rules
@@ -56,16 +56,16 @@ public interface DESystem
    * @return flag that is {@code true} if any events or rules are contained in the differential
    * equation system.
    */
-  public boolean containsEventsOrRules();
+  boolean containsEventsOrRules();
 
   /**
    * @return the number of values in Y that have to be positive.
    */
-  public int getPositiveValueCount();
+  int getPositiveValueCount();
 
   /**
    * @param delaysIncluded Determines whether delay expression should be included in the
    *                       calculation.
    */
-  public void setDelaysIncluded(boolean delaysIncluded);
+  void setDelaysIncluded(boolean delaysIncluded);
 }

@@ -47,7 +47,7 @@ public interface ParameterizedDESystem extends DESystem {
    * @see #getParameterIdentifiers()
    * @see #getParameterValues()
    */
-  public int getParameterCount();
+  int getParameterCount();
 
   /**
    * It is assumed that each parameter value in the system is associated with a unique identifier,
@@ -58,7 +58,7 @@ public interface ParameterizedDESystem extends DESystem {
    * @see #getParameterCount()
    * @see #getParameterValues()
    */
-  public String[] getParameterIdentifiers();
+  String[] getParameterIdentifiers();
 
   /**
    * This method allows you to access all current values of the parameters within the {@link
@@ -70,7 +70,7 @@ public interface ParameterizedDESystem extends DESystem {
    * @see #getParameterCount()
    * @see #getParameterIdentifiers()
    */
-  public double[] getParameterValues();
+  double[] getParameterValues();
 
   /**
    * With this method it is possible to change the values of particular parameters. The length of
@@ -83,5 +83,5 @@ public interface ParameterizedDESystem extends DESystem {
    * @param values the new values for all parameters.
    * @see #getParameterCount()
    */
-  public void setParameters(double[] values);
+  void setParameters(double[] values);
 }

@@ -227,7 +227,7 @@ public class ReversibleNetwork extends ModifierNetwork {
 
       public Collection<String> getReactionAnnotationTypes(int reaction) {
         Collection<String> oriList = ori.getReactionAnnotationTypes(reaction % numReactions);
-        Collection<String> re = new LinkedList<String>();
+        Collection<String> re = new LinkedList<>();
         for (String s : oriList) {
           if (s.endsWith(REVERSIBLE_SUFFIX) && reaction >= numReactions) {
             re.add(s.substring(0, s.length() - REVERSIBLE_SUFFIX.length()));

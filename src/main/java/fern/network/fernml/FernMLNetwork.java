@@ -223,7 +223,7 @@ public class FernMLNetwork extends AbstractNetworkImpl {
   protected void createSpeciesMapping() {
     List<Element> listOfSpecies = document.getRootElement().getChild("listOfSpecies").getChildren();
 
-    speciesIdToIndex = new HashMap<String, Integer>(listOfSpecies.size());
+    speciesIdToIndex = new HashMap<>(listOfSpecies.size());
     indexToSpeciesId = new String[listOfSpecies.size()];
     initialAmount = new long[indexToSpeciesId.length];
     int index = 0;

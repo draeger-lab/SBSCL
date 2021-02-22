@@ -144,7 +144,7 @@ public abstract class QualityMeasure implements Serializable {
       left = x.filter(expected.getTimePoints());
       right = expected.filter(x.getTimePoints());
     }
-    List<Double> distances = new ArrayList<Double>(getColumnDistances(left, right));
+    List<Double> distances = new ArrayList<>(getColumnDistances(left, right));
     return meanFunction.computeMean(distances);
   }
 
@@ -160,7 +160,7 @@ public abstract class QualityMeasure implements Serializable {
    * @return columnDistances the list of distances for the columns in the blocks
    */
   public List<Double> getColumnDistances(MultiTable x, MultiTable expected) {
-    List<Double> distances = new ArrayList<Double>();
+    List<Double> distances = new ArrayList<>();
     for (int block = 0; block < x.getBlockCount(); block++) {
       String[] identifiers = x.getBlock(block).getIdentifiers();
       for (int i = 0; i < identifiers.length; i++) {

@@ -642,8 +642,8 @@ public abstract class EquationSystem
       if (events == null) {
         events = new SBMLEventInProgress[model.getEventCount()];
       }
-      runningEvents = new ArrayList<Integer>();
-      delayedEvents = new ArrayList<Integer>();
+      runningEvents = new ArrayList<>();
+      delayedEvents = new ArrayList<>();
       initEvents();
       modelHasEvents = true;
     } else {
@@ -702,13 +702,13 @@ public abstract class EquationSystem
    */
   private void initializeKineticLaws() {
     int reaction = 0;
-    List<Boolean> isReactantList = new ArrayList<Boolean>();
-    List<Integer> speciesIndexList = new ArrayList<Integer>();
-    List<Integer> reactionIndexList = new ArrayList<Integer>();
-    List<Boolean> zeroChangeList = new ArrayList<Boolean>();
-    List<Boolean> constantStoichiometryList = new ArrayList<Boolean>();
-    List<StoichiometryValue> stoichiometriesList = new ArrayList<StoichiometryValue>();
-    List<ASTNodeValue> kineticLawRootsList = new ArrayList<ASTNodeValue>();
+    List<Boolean> isReactantList = new ArrayList<>();
+    List<Integer> speciesIndexList = new ArrayList<>();
+    List<Integer> reactionIndexList = new ArrayList<>();
+    List<Boolean> zeroChangeList = new ArrayList<>();
+    List<Boolean> constantStoichiometryList = new ArrayList<>();
+    List<StoichiometryValue> stoichiometriesList = new ArrayList<>();
+    List<ASTNodeValue> kineticLawRootsList = new ArrayList<>();
     for (Reaction r : model.getListOfReactions()) {
       KineticLaw kl = r.getKineticLaw();
       if (kl != null && kl.isSetMath()) {
@@ -840,9 +840,9 @@ public abstract class EquationSystem
    * Includes the math of the rules in the syntax tree.
    */
   private void initializeRules() {
-    Set<AssignmentRuleValue> assignmentRulesRootsInit = new HashSet<AssignmentRuleValue>();
-    initialAssignmentRoots = new ArrayList<AssignmentRuleValue>();
-    rateRulesRoots = new ArrayList<RateRuleValue>();
+    Set<AssignmentRuleValue> assignmentRulesRootsInit = new HashSet<>();
+    initialAssignmentRoots = new ArrayList<>();
+    rateRulesRoots = new ArrayList<>();
     Integer symbolIndex;
     for (int i = 0; i < model.getRuleCount(); i++) {
       Rule rule = model.getRule(i);
@@ -897,7 +897,7 @@ public abstract class EquationSystem
               rateRuleHash.put(rr.getVariable(), rateRulesRoots.size() - 1);
             }
           } else if (compartmentHash.containsValue(symbolIndex)) {
-            List<Integer> speciesIndices = new LinkedList<Integer>();
+            List<Integer> speciesIndices = new LinkedList<>();
             for (Map.Entry<String, Integer> entry : compartmentHash.entrySet()) {
               if (entry.getValue().equals(symbolIndex)) {
                 Species s = model.getSpecies(entry.getKey());
@@ -983,7 +983,7 @@ public abstract class EquationSystem
         }
       }
     }
-    assignmentRulesRoots = new ArrayList<AssignmentRuleValue>();
+    assignmentRulesRoots = new ArrayList<>();
     if (assignmentRulesRootsInit.size() <= 1) {
       for (AssignmentRuleValue rv : assignmentRulesRootsInit) {
         assignmentRulesRoots.add(rv);
@@ -991,9 +991,9 @@ public abstract class EquationSystem
       }
     } else {
       // Determine best order of assignment rule roots
-      Map<String, Set<String>> neededRules = new HashMap<String, Set<String>>();
-      Map<String, AssignmentRuleValue> sBaseMap = new HashMap<String, AssignmentRuleValue>();
-      Set<String> variables = new HashSet<String>();
+      Map<String, Set<String>> neededRules = new HashMap<>();
+      Map<String, AssignmentRuleValue> sBaseMap = new HashMap<>();
+      Set<String> variables = new HashSet<>();
       for (AssignmentRuleValue rv : assignmentRulesRootsInit) {
         assignmentRulesRoots.add(rv);
         if (rv.getIndex() != -1) {
@@ -1006,18 +1006,18 @@ public abstract class EquationSystem
       }
       for (String variable : variables) {
         for (String dependentVariable : getSetOfVariables(sBaseMap.get(variable).getMath(),
-            variables, new HashSet<String>())) {
+            variables, new HashSet<>())) {
           Set<String> currentSet = neededRules.get(dependentVariable);
           if (currentSet == null) {
-            currentSet = new HashSet<String>();
+            currentSet = new HashSet<>();
             neededRules.put(dependentVariable, currentSet);
           }
           currentSet.add(variable);
         }
       }
       int currentPosition = assignmentRulesRootsInit.size() - 1;
-      Set<String> toRemove = new HashSet<String>();
-      Set<String> keysToRemove = new HashSet<String>();
+      Set<String> toRemove = new HashSet<>();
+      Set<String> keysToRemove = new HashSet<>();
       boolean toContinue = variables.size() > 0;
       while (toContinue) {
         toContinue = false;
@@ -1092,7 +1092,7 @@ public abstract class EquationSystem
    * Includes the math of the {@link Constraint}s in the syntax tree.
    */
   private void initializeConstraints() {
-    constraintRoots = new ArrayList<ASTNodeValue>();
+    constraintRoots = new ArrayList<>();
     for (Constraint c : model.getListOfConstraints()) {
       if (c.isSetMath()) {
         ASTNodeValue currentConstraint = (ASTNodeValue) copyAST(c.getMath(), true, null, null)
@@ -1377,7 +1377,7 @@ public abstract class EquationSystem
           if (variable != null) {
             copiedAST.setVariable(variable);
             if (variable instanceof FunctionDefinition) {
-              List<ASTNode> arguments = new LinkedList<ASTNode>();
+              List<ASTNode> arguments = new LinkedList<>();
               ASTNode lambda = ((FunctionDefinition) variable).getMath();
               for (int i = 0; i != lambda.getChildren().size() - 1; i++) {
                 arguments.add(lambda.getChild(i));
@@ -1385,7 +1385,7 @@ public abstract class EquationSystem
               FunctionValue functionValue = new FunctionValue(nodeInterpreter, copiedAST,
                   arguments);
               copiedAST.putUserObject(TEMP_VALUE, functionValue);
-              ASTNode mathAST = copyAST(lambda, false, functionValue, new LinkedList<ASTNode>());
+              ASTNode mathAST = copyAST(lambda, false, functionValue, new LinkedList<>());
               functionValue.setMath(mathAST);
             } else if (variable instanceof Species) {
               boolean hasZeroSpatialDimensions = true;
@@ -1433,7 +1433,7 @@ public abstract class EquationSystem
           if (variable != null) {
             copiedAST.setVariable(variable);
             if (variable instanceof FunctionDefinition) {
-              List<ASTNode> arguments = new LinkedList<ASTNode>();
+              List<ASTNode> arguments = new LinkedList<>();
               ASTNode lambda = ((FunctionDefinition) variable).getMath();
               for (int i = 0; i != lambda.getChildren().size() - 1; i++) {
                 arguments.add(lambda.getChild(i));
@@ -1441,7 +1441,7 @@ public abstract class EquationSystem
               FunctionValue functionValue = new FunctionValue(nodeInterpreter, copiedAST,
                   arguments);
               copiedAST.putUserObject(TEMP_VALUE, functionValue);
-              ASTNode mathAST = copyAST(lambda, false, functionValue, new LinkedList<ASTNode>());
+              ASTNode mathAST = copyAST(lambda, false, functionValue, new LinkedList<>());
               functionValue.setMath(mathAST);
             }
           }

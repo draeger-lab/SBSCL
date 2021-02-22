@@ -14,14 +14,14 @@ public interface Probability {
    * @param l2 integer 2
    * @return probability
    */
-  public double getProb(int l1, int l2);
+  double getProb(int l1, int l2);
 
   /**
    * Implementation that yields a constant (and hence independent) probability.
    *
    * @author Florian Erhard
    */
-  public static class Constant implements Probability {
+  class Constant implements Probability {
 
     private double p;
 
@@ -45,7 +45,7 @@ public interface Probability {
    *
    * @author Florian Erhard
    */
-  public static class ReactionProbability implements Probability {
+  class ReactionProbability implements Probability {
 
     private double factor;
     private int oneToLength;

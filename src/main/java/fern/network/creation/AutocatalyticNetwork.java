@@ -123,7 +123,7 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
     adjListPro = new int[size - monomers.length][];
     adjListRea = new int[size - monomers.length][];
     indexToSpeciesId = new String[size];
-    speciesIdToIndex = new HashMap<String, Integer>(size);
+    speciesIdToIndex = new HashMap<>(size);
     for (int i = 0; i < monomers.length; i++) {
       indexToSpeciesId[i] = String.valueOf(monomers[i]);
       speciesIdToIndex.put(String.valueOf(monomers[i]), i);
@@ -355,7 +355,7 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
     String c = getAnnotationManager().getReactionAnnotation(reaction % getNumReactions(),
         reaction < getNumReactions() ? CATALYSTS_FIELD : CATALYSTS_FIELD_REVERSIBLE);
 //		String c = getAnnotationManager().getReactionAnnotation(reaction,CATALYSTS_FIELD);
-    LinkedList<Integer> re = new LinkedList<Integer>();
+    LinkedList<Integer> re = new LinkedList<>();
     if (c == null) {
       return re;
     }

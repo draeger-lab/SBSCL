@@ -19,5 +19,5 @@ public interface ComplexDependenciesPropensityCalculator extends
    * @param reaction index of the reaction
    * @return indices of the species included in the reaction's kinetic law
    */
-  public List<Integer> getKineticLawSpecies(int reaction);
+  List<Integer> getKineticLawSpecies(int reaction);
 }

@@ -280,7 +280,7 @@ public class SBMLTestSuiteRunnerWrapper {
    */
   private static Map<String, Boolean> createAmountHash(String[] amounts, String[] concentrations) {
 
-    Map<String, Boolean> amountHash = new HashMap<String, Boolean>();
+    Map<String, Boolean> amountHash = new HashMap<>();
     for (String s : amounts) {
       s = s.trim();
       if (!s.isEmpty()) {

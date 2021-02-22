@@ -22,5 +22,5 @@ public interface SimulationController {
    * @param sim simulation
    * @return whether or not to go on
    */
-  public boolean goOn(Simulator sim);
+  boolean goOn(Simulator sim);
 }

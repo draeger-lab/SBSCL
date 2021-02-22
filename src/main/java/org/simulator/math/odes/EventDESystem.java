@@ -42,14 +42,14 @@ public interface EventDESystem extends DESystem {
    * @return The number of events that are to be checked and potentially evaluated in each time
    * point.
    */
-  public int getEventCount();
+  int getEventCount();
 
   /**
    * Counts the number of rules to be evaluated in each time point.
    *
    * @return The number of rules in the system.
    */
-  public int getRuleCount();
+  int getRuleCount();
 
   /**
    * Calculates the changes or assignments that are defined by all rules in the system at the given
@@ -61,7 +61,7 @@ public interface EventDESystem extends DESystem {
    * rules.
    * @throws DerivativeException
    */
-  public boolean processAssignmentRules(double t, double[] Y)
+  boolean processAssignmentRules(double t, double[] Y)
       throws DerivativeException;
 
   /**
@@ -73,11 +73,11 @@ public interface EventDESystem extends DESystem {
    * @return Returns a list with event assignments for the events triggered
    * @throws DerivativeException
    */
-  public EventInProgress getNextEventAssignments(double t, double previousTime, double[] Y)
+  EventInProgress getNextEventAssignments(double t, double previousTime, double[] Y)
       throws DerivativeException;
 
   /**
    * @return flag that is {@code true}, if the change vector is always zero in the system.
    */
-  public boolean getNoDerivatives();
+  boolean getNoDerivatives();
 }

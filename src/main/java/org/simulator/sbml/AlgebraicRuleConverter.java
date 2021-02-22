@@ -304,9 +304,9 @@ public class AlgebraicRuleConverter {
       nestingDepth = 0;
       evaluateEquation(variableNodeParent);
       //System.out.println("nesting depth: " + nestingDepth);
-      equationObjects = new ArrayList<ArrayList<EquationObject>>();
-      equationObjects.add(new ArrayList<EquationObject>());
-      equationObjects.add(new ArrayList<EquationObject>());
+      equationObjects = new ArrayList<>();
+      equationObjects.add(new ArrayList<>());
+      equationObjects.add(new ArrayList<>());
       deleteVariable();
       sortEquationObjects(node, false, false, false, nestingDepth);
       as.setMath(buildEquation());
@@ -389,7 +389,7 @@ public class AlgebraicRuleConverter {
    * @return rules
    */
   public List<AssignmentRule> getAssignmentRules() {
-    ArrayList<AssignmentRule> assignmentRules = new ArrayList<AssignmentRule>();
+    ArrayList<AssignmentRule> assignmentRules = new ArrayList<>();
     AssignmentRule as;
     if (matching != null) {
       // TODO: What is happening here?
@@ -534,9 +534,9 @@ public class AlgebraicRuleConverter {
       // Node represents a function definiton in the model
       if (fd != null) {
         ASTNode function = fd.getMath();
-        HashMap<String, String> nameHash = new HashMap<String, String>();
-        HashMap<String, Double> numberHash = new HashMap<String, Double>();
-        HashMap<String, ASTNode> nodeHash = new HashMap<String, ASTNode>();
+        HashMap<String, String> nameHash = new HashMap<>();
+        HashMap<String, Double> numberHash = new HashMap<>();
+        HashMap<String, ASTNode> nodeHash = new HashMap<>();
         ASTNode parent;
         // Hash its variables to the parameter
         for (int i = 0; i < node.getChildCount(); i++) {

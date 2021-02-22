@@ -202,7 +202,7 @@ public class ShortestPath extends AnalysisBase {
      * @return
      */
     public Path getPath(int species) {
-      LinkedList<Integer> path = new LinkedList<Integer>();
+      LinkedList<Integer> path = new LinkedList<>();
       int reaction;
       while (species >= 0) {
         path.add(0, species);

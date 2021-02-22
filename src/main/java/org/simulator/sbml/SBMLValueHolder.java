@@ -53,7 +53,7 @@ public interface SBMLValueHolder extends DelayValueHolder, Serializable {
    * @param id
    * @return compartmentSize
    */
-  public double getCurrentCompartmentSize(String id);
+  double getCurrentCompartmentSize(String id);
 
   /**
    * Returns the size of the compartment of the species with the given id.
@@ -61,7 +61,7 @@ public interface SBMLValueHolder extends DelayValueHolder, Serializable {
    * @param speciesId
    * @return compartmentValue
    */
-  public double getCurrentCompartmentValueOf(String speciesId);
+  double getCurrentCompartmentValueOf(String speciesId);
 
   /**
    * Returns the value of the parameter with the given id.
@@ -69,7 +69,7 @@ public interface SBMLValueHolder extends DelayValueHolder, Serializable {
    * @param id
    * @return parameterValue
    */
-  public double getCurrentParameterValue(String id);
+  double getCurrentParameterValue(String id);
 
   /**
    * Returns the value of the species with the given id.
@@ -77,7 +77,7 @@ public interface SBMLValueHolder extends DelayValueHolder, Serializable {
    * @param id
    * @return speciesValue
    */
-  public double getCurrentSpeciesValue(String id);
+  double getCurrentSpeciesValue(String id);
 
   /**
    * Returns the value of the stoichiometry of the species reference with the given id.
@@ -85,14 +85,14 @@ public interface SBMLValueHolder extends DelayValueHolder, Serializable {
    * @param id
    * @return stoichiometry
    */
-  public double getCurrentStoichiometry(String id);
+  double getCurrentStoichiometry(String id);
 
   /**
    * Returns the current simulation time.
    *
    * @return time
    */
-  public double getCurrentTime();
+  double getCurrentTime();
 
   /**
    * Returns the current value of the SBase with the given id.
@@ -100,7 +100,7 @@ public interface SBMLValueHolder extends DelayValueHolder, Serializable {
    * @param id
    * @return value
    */
-  public double getCurrentValueOf(String id);
+  double getCurrentValueOf(String id);
 
   /**
    * Returns the current value of the Y vector at the given position.
@@ -108,5 +108,5 @@ public interface SBMLValueHolder extends DelayValueHolder, Serializable {
    * @param position
    * @return value
    */
-  public double getCurrentValueOf(int position);
+  double getCurrentValueOf(int position);
 }
