@@ -21,6 +21,7 @@ jsbml.log
 
 # BiGG models
 src/test/resources/bigg/v1.5/
+src/test/resources/bigg/models/
 
 # sbml-test-suite
 src/test/resources/sbml-test-suite/
