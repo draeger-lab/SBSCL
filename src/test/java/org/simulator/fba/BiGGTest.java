@@ -31,7 +31,8 @@ public class BiGGTest {
   private String resource;
   private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
   private static final double RESULT_DEVIATION = 1E-6d;
-  private static final String BIGG_MODELS_RESOURCE_PATH = "/bigg/v1.5";
+  private static final String BIGG_MODELS_RESOURCE_PATH = "/bigg/models";
+  private static final String BIGG_MODELS_RESOURCE_DIRECTORY = "/bigg";
   private BufferedReader reader = new BufferedReader(
       new FileReader(TestUtils.getPathForTestResource("/bigg/bigg_reference_solutions.csv")));
   private Map<String, Double> referenceResults;
@@ -83,7 +84,7 @@ public class BiGGTest {
     logger.info("--------------------------------------------------------");
     logger.info(String.format("%s", resource));
 
-    SBMLDocument doc = SBMLReader.read(new File(resource));
+    SBMLDocument doc = SBMLReader.read(new File(TestUtils.getPathForTestResource(BIGG_MODELS_RESOURCE_DIRECTORY) + resource));
     assertNotNull(doc);
 
     FluxBalanceAnalysis solver = new FluxBalanceAnalysis(doc);
@@ -91,7 +92,6 @@ public class BiGGTest {
     assertNotNull(success);
 
     double objectiveValue = solver.getObjectiveValue();
-    assertTrue(objectiveValue >= 0.0);
     double[] fluxes = solver.getValues();
     assertNotNull(fluxes);
 
