@@ -51,6 +51,9 @@ public class TestUtils {
     Object[][] resources = new String[N][1];
     for (int k = 0; k < N; k++) {
       String path = sbmlPaths.get(k);
+      if(path.charAt(0) == '/') {
+        path = path.substring(1);
+      }
       // create the resource
       String[] items = path.split("/");
       int mindex = -1;
