@@ -45,3 +45,17 @@ buildNumber.properties
 # Eclipse
 **/.metadata
 /bin/
+
+# Documentation (auto generated)
+
+docs/css/maven-base.css
+docs/css/maven-theme.css
+docs/images/collapsed.gif
+docs/images/expanded.gif
+docs/images/external.png
+docs/images/newwindow.png
+
+# Library folder and files (auto generated)
+lib/
+libglpkjni_x64.dylib
+
