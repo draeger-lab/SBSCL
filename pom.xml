@@ -34,19 +34,22 @@
 
 
   <!-- =================================================================== -->
-  <!-- General project information -->
+  <!-- General project information                                         -->
   <!-- =================================================================== -->
 
   <name>Systems Biology Simulation Core Library (SBSCL)</name>
-  <version>2.1</version> <!---SNAPSHOT</version>-->
+  <version>2.1-SNAPSHOT</version>
   <url>https://github.com/draeger-lab/SBSCL/</url>
   <inceptionYear>2007</inceptionYear>
   <description>
-    The Systems Biology Simulation Core Library provides an efficient and exhaustive
-    Java™ implementation of methods to interpret the content of models encoded in the Systems
-    Biology Markup Language (SBML) and its numerical solution. This library is based on the JSBML
-    project and can be used on every operating system, for which a Java Virtual Machine is
-    available.
+    The Systems Biology Simulation Core Library provides an efficient and
+    exhaustive Java™ implementation of methods to interpret the content of
+    models encoded in the Systems Biology Markup Language (SBML) and its
+    numerical solution. This library is based on the JSBML project. It can be
+    used on every operating system for which a Java Virtual Machine is available.
+    Version 2.0 and beyond support simulation in three frameworks:
+    constraint-based analysis, stochastic simulation, and ordinary differential
+    equation systems. SBSCL supports SED-ML and COMBINE archives in OMEX format.
   </description>
 
   <properties>
@@ -63,7 +66,7 @@
 
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>https://github.com/draeger-lab/SBSCL/issues</url>
+    <url>${project.url}/issues</url>
   </issueManagement>
 
   <distributionManagement>
@@ -71,7 +74,7 @@
       <id>SBSCL</id>
       <url>https://draeger-lab.github.io/SBSCL</url>
     </site>
-    <downloadUrl>https://github.com/draeger-lab/SBSCL</downloadUrl>
+    <downloadUrl>${project.url}</downloadUrl>
     <repository>
       <uniqueVersion>false</uniqueVersion>
       <id>ossrh</id>
@@ -100,6 +103,10 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+  
+  <!-- =================================================================== -->
+  <!-- The team of developers and contributors                             -->
+  <!-- =================================================================== -->
 
   <developers>
     <developer>
@@ -107,12 +114,18 @@
       <id>otter606</id>
       <email>ra22597@gmail.com</email>
       <url>https://github.com/otter606</url>
+      <roles>
+        <role>developer</role>
+      </roles>
     </developer>
     <developer>
       <name>Alexander Dörr</name>
       <email>alexander.doerr@uni-tuebingen.de</email>
       <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/doerr/</url>
       <timezone>Germany/Berlin</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
     </developer>
     <developer>
       <name>Andreas Dräger</name>
@@ -138,6 +151,9 @@
       <url>http://fun.bio.keio.ac.jp/people/</url>
       <organization>Keio University</organization>
       <timezone>Japan/Tokyo</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
     </developer>
     <developer>
       <name>Roland Keller</name>
@@ -145,6 +161,9 @@
       <email>http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/</email>
       <url>roland.keller@gmx.de</url>
       <timezone>Germany/Berlin</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
     </developer>
     <developer>
       <name>Matthias König</name>
@@ -153,6 +172,9 @@
       <url>https://github.com/matthiaskoenig</url>
       <organization>Humboldt University</organization>
       <timezone>Germany/Berlin</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
     </developer>
     <developer>
       <name>Hannes Planatscher</name>
@@ -160,6 +182,9 @@
       <email>hannes.planatscher@nmi.de</email>
       <url>https://github.com/planatscher</url>
       <timezone>Germany/Berlin</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
     </developer>
     <developer>
       <name>Nicolas Rodriguez</name>
@@ -168,6 +193,9 @@
       <url>https://github.com/niko-rodrigue</url>
       <organization>The Babraham Institute</organization>
       <timezone>UK/London</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
       <properties>
         <picUrl>
           https://www.lenoverelab.org/sites/default/files/pictures/Nicolas_Rodriguez-170x150.jpg
@@ -206,6 +234,9 @@
       <url>https://github.com/mythosil</url>
       <organization>Keio University</organization>
       <timezone>Japan/Tokyo</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
     </developer>
   </developers>
 
@@ -269,12 +300,12 @@
   <scm>
     <connection>scm:git:git://github.com/draeger-lab/SBSCL.git</connection>
     <developerConnection>scm:git:ssh://github.com:draeger-lab/SBSCL.git</developerConnection>
-    <url>https://github.com/draeger-lab/SBSCL/tree/master/</url>
+    <url>${project.url}/tree/master/</url>
   </scm>
 
 
   <!-- =================================================================== -->
-  <!-- Repositories -->
+  <!-- Repositories                                                        -->
   <!-- =================================================================== -->
 
   <repositories>
@@ -309,7 +340,7 @@
   </repositories>
 
   <!-- =================================================================== -->
-  <!-- Dependencies -->
+  <!-- Dependencies                                                        -->
   <!-- =================================================================== -->
 
   <dependencies>
@@ -397,7 +428,7 @@
 
 
   <!-- =================================================================== -->
-  <!-- Building -->
+  <!-- Building                                                            -->
   <!-- =================================================================== -->
 
   <!-- To build the project run: -->
@@ -633,6 +664,10 @@
       </resource>
     </resources>
   </build>
+  
+  <!-- =================================================================== -->
+  <!-- Profiles                                                            -->
+  <!-- =================================================================== -->
 
   <!--  To stop maven errors from javadoc warnings -->
   <profiles>
@@ -646,6 +681,10 @@
       </properties>
     </profile>
   </profiles>
+  
+  <!-- =================================================================== -->
+  <!-- Reporting                                                           -->
+  <!-- =================================================================== -->
 
   <!-- Generate javadoc and integrate with generated website with 'mvn site' -->
   <reporting>
@@ -670,4 +709,5 @@
       </plugin>
     </plugins>
   </reporting>
+  
 </project>
