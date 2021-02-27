@@ -33,7 +33,10 @@
   <!--
      Hints for deployment:
      
-     mvn clean source:jar source:jar-no-fork javadoc:jar release:clean release:prepare release:perform deploy
+     mvn clean source:jar source:jar-no-fork javadoc:jar gpg:sign install:install deploy:deploy
+     release:clean release:prepare release:perform deploy
+     
+      mvn clean verify source:jar source:jar-no-fork javadoc:jar gpg:sign deploy -Dgpg.passphrase=<pw>
   -->
 
 
@@ -114,10 +117,9 @@
   <!-- =================================================================== -->
 
   <scm>
-    <connection>scm:git:git@github.com/draeger-lab/SBSCL.git</connection>
-    <developerConnection>scm:git:git@github.com/draeger-lab/SBSCL.git</developerConnection>
+    <connection>scm:git:git://github.com/draeger-lab/SBSCL.git</connection>
+    <developerConnection>scm:git:ssh://github.com/draeger-lab/SBSCL.git</developerConnection>
     <url>${project.url}/tree/master/</url>
-    <tag>sbscl-2.1</tag>
   </scm>
   
   
@@ -499,7 +501,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.0</version>
+          <version>3.0.0-M5</version>
           <configuration>
             <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
           </configuration>
