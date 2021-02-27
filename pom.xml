@@ -29,6 +29,12 @@
 
   <!-- Output to jar format -->
   <packaging>jar</packaging>
+  
+  <!--
+     Hints for deployment:
+     
+     mvn clean source:jar source:jar-no-fork javadoc:jar release:clean release:prepare release:perform deploy
+  -->
 
 
   <!-- =================================================================== -->
@@ -36,7 +42,7 @@
   <!-- =================================================================== -->
 
   <name>Systems Biology Simulation Core Library (SBSCL)</name>
-  <version>2.1</version>
+  <version>2.1-SNAPSHOT</version>
   <url>https://github.com/draeger-lab/SBSCL/</url>
   <inceptionYear>2007</inceptionYear>
   <description>
@@ -101,6 +107,18 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+  
+    
+  <!-- =================================================================== -->
+  <!-- Source Control Management                                           -->
+  <!-- =================================================================== -->
+
+  <scm>
+    <connection>scm:git:git://github.com/draeger-lab/SBSCL.git</connection>
+    <developerConnection>scm:git:ssh://github.com/draeger-lab/SBSCL.git</developerConnection>
+    <url>${project.url}/tree/master/</url>
+  </scm>
+  
   
   <!-- =================================================================== -->
   <!-- The team of developers and contributors                             -->
@@ -289,18 +307,6 @@
       <organization>Max Planck Institute of Psychatry</organization>
     </contributor>
   </contributors>
-
-  
-  <!-- =================================================================== -->
-  <!-- Source Control Management                                           -->
-  <!-- =================================================================== -->
-
-  <scm>
-    <connection>scm:git:git://github.com/draeger-lab/SBSCL.git</connection>
-    <developerConnection>scm:git:ssh://github.com:draeger-lab/SBSCL.git</developerConnection>
-    <url>${project.url}/tree/master/</url>
-    <tag>sbscl-2.1</tag>
-  </scm>
 
 
   <!-- =================================================================== -->
