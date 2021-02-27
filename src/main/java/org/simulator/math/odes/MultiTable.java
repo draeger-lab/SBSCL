@@ -30,6 +30,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.table.AbstractTableModel;
 
 import org.simulator.math.odes.MultiTable.Block.Column;
@@ -45,12 +46,11 @@ import org.simulator.math.odes.MultiTable.Block.Column;
  * Note that the access to the elements in this object therefore puts both elements together, i.e.,
  * the time column is considered to be the first column in the table.
  *
- * @author draeger
- * @version $Rev$
+ * @author Andreas Dr&auml;ger
  * @since 0.9
  */
 public class MultiTable extends AbstractTableModel
-    implements Iterable<Iterable<Double>> {
+implements Iterable<Iterable<Double>> {
 
   /**
    * A {@link Block} is a data structure with a two-dimensional double array of actual data together
@@ -63,7 +63,7 @@ public class MultiTable extends AbstractTableModel
     /**
      * A column of the {@link MultiTable.Block} matrix.
      *
-     * @author Andreas Dr&aumlg;ger
+     * @author Andreas Dr&auml;ger
      */
     public class Column implements Iterable<Double> {
 
@@ -92,7 +92,7 @@ public class MultiTable extends AbstractTableModel
        */
       public String getColumnName() {
         return ((columnNames != null) && (columnNames[columnIndex] != null)) ?
-            columnNames[columnIndex] : getId();
+          columnNames[columnIndex] : getId();
       }
 
       /**
@@ -189,7 +189,7 @@ public class MultiTable extends AbstractTableModel
         sb.append('[');
         for (int i = 0; i < getRowCount(); i++) {
           sb.append(getValue(i));
-          if (i < getRowCount() - 1) {
+          if (i < (getRowCount() - 1)) {
             sb.append(", ");
           }
         }
@@ -314,7 +314,7 @@ public class MultiTable extends AbstractTableModel
     @Override
     public String getColumnName(int column) {
       return (columnNames == null) || (columnNames[column] == null) ?
-          getColumnIdentifier(column) : columnNames[column];
+        getColumnIdentifier(column) : columnNames[column];
     }
 
     /**
@@ -405,7 +405,7 @@ public class MultiTable extends AbstractTableModel
     public void setData(double[][] data) {
       if (isSetTimePoints() && (data.length != getRowCount())) {
         throw new IllegalArgumentException(
-            String.format(UNEQUAL_DATA_AND_TIME_POINTS, data.length, timePoints.length));
+          String.format(UNEQUAL_DATA_AND_TIME_POINTS, data.length, timePoints.length));
       }
       this.data = data;
     }
@@ -416,7 +416,7 @@ public class MultiTable extends AbstractTableModel
     public void setIdentifiers(String[] identifiers) {
       if (isSetData() && (identifiers.length != data[0].length)) {
         throw new IllegalArgumentException(
-            String.format(UNEQUAL_COLUMNS_AND_IDENTIFIERS, data[0].length, identifiers.length));
+          String.format(UNEQUAL_COLUMNS_AND_IDENTIFIERS, data[0].length, identifiers.length));
       }
       this.identifiers = identifiers;
       idHash.clear();
@@ -442,7 +442,7 @@ public class MultiTable extends AbstractTableModel
     public void setRowData(int rowIndex, double[] array) {
       if (array.length != getColumnCount()) {
         throw new IllegalArgumentException(
-            String.format(UNEQUAL_COLUMNS_AND_IDENTIFIERS, array.length, identifiers.length));
+          String.format(UNEQUAL_COLUMNS_AND_IDENTIFIERS, array.length, identifiers.length));
       }
       data[rowIndex] = array;
     }
@@ -473,7 +473,7 @@ public class MultiTable extends AbstractTableModel
         sb.append(", ");
         for (int i = 0; i < getRowCount(); i++) {
           sb.append(Arrays.toString(getRow(i)));
-          if (i < getRowCount() - 1) {
+          if (i < (getRowCount() - 1)) {
             sb.append(", ");
           }
         }
@@ -558,11 +558,11 @@ public class MultiTable extends AbstractTableModel
    * @param columnNames
    */
   public MultiTable(double[] timePoints, double[][] data, String[] columnIdentifiers,
-      String[] columnNames) {
+    String[] columnNames) {
     this();
     setTimePoints(timePoints);
     String[] ids;
-    if (columnIdentifiers.length == data[0].length + 1) {
+    if (columnIdentifiers.length == (data[0].length + 1)) {
       setTimeName(columnIdentifiers[0]);
       ids = new String[columnIdentifiers.length - 1];
       System.arraycopy(columnIdentifiers, 1, ids, 0, ids.length);
@@ -570,7 +570,7 @@ public class MultiTable extends AbstractTableModel
       ids = columnIdentifiers;
     }
     String[] names = columnNames;
-    if ((columnNames != null) && (columnNames.length == data[0].length + 1)) {
+    if ((columnNames != null) && (columnNames.length == (data[0].length + 1))) {
       setTimeName(columnNames[0]);
       names = new String[columnNames.length - 1];
       System.arraycopy(columnNames, 1, names, 0, names.length);
@@ -621,7 +621,7 @@ public class MultiTable extends AbstractTableModel
     for (int block = 0; block != getBlockCount(); block++) {
       filtered.addBlock(getBlock(block).getIdentifiers());
       filtered.getBlock(block)
-          .setData(new double[rowIndices.size()][getBlock(block).getIdentifiers().length]);
+      .setData(new double[rowIndices.size()][getBlock(block).getIdentifiers().length]);
       int rowCounter = 0;
       for (int rowIndex : rowIndices) {
         filtered.getBlock(block).setRowData(rowCounter, getBlock(block).getRow(rowIndex));
@@ -802,7 +802,7 @@ public class MultiTable extends AbstractTableModel
   @Override
   public Double getValueAt(int rowIndex, int columnIndex) {
     return columnIndex == 0 ? timePoints[rowIndex] :
-        getColumn(columnIndex).getValue(rowIndex);
+      getColumn(columnIndex).getValue(rowIndex);
   }
 
   /* (non-Javadoc)
@@ -837,7 +837,7 @@ public class MultiTable extends AbstractTableModel
        */
       @Override
       public boolean hasNext() {
-        return currCol < getColumnCount() - 1;
+        return currCol < (getColumnCount() - 1);
       }
 
       /* (non-Javadoc)
@@ -891,8 +891,8 @@ public class MultiTable extends AbstractTableModel
   public void setTimePoints(double[] timePoints) {
     if ((listOfBlocks.size() > 0) && (listOfBlocks.get(0).getRowCount() != timePoints.length)) {
       throw new IllegalArgumentException(String
-          .format(UNEQUAL_DATA_AND_TIME_POINTS, listOfBlocks.get(0).getRowCount(),
-              timePoints.length));
+        .format(UNEQUAL_DATA_AND_TIME_POINTS, listOfBlocks.get(0).getRowCount(),
+          timePoints.length));
     }
     this.timePoints = timePoints;
   }
@@ -922,7 +922,7 @@ public class MultiTable extends AbstractTableModel
     sb.append("] [");
     for (int i = 0; i < timePoints.length; i++) {
       sb.append(timePoints[i]);
-      if (i < timePoints.length - 1) {
+      if (i < (timePoints.length - 1)) {
         sb.append(", ");
       }
     }

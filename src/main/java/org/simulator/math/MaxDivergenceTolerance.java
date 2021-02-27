@@ -60,6 +60,11 @@ import org.simulator.math.odes.MultiTable.Block.Column;
 public class MaxDivergenceTolerance extends QualityMeasure {
 
   /**
+   * Generated serial version identifier
+   */
+  private static final long serialVersionUID = 1L;
+
+  /**
    * The metric the relative distance is based on
    */
   protected MaxAbsDistance metric;

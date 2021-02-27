@@ -25,7 +25,10 @@
 package org.simulator.math;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.MultiTable.Block.Column;
@@ -35,7 +38,6 @@ import org.simulator.math.odes.MultiTable.Block.Column;
  *
  * @author Roland Keller
  * @author Andreas Dr&auml;ger
- * @version $Rev$
  * @since 1.0
  */
 public abstract class QualityMeasure implements Serializable {
@@ -166,7 +168,7 @@ public abstract class QualityMeasure implements Serializable {
       for (int i = 0; i < identifiers.length; i++) {
         if ((identifiers[i] != null) && (expected.getColumn(identifiers[i]) != null)) {
           distances
-              .add(distance(x.getBlock(block).getColumn(i), expected.getColumn(identifiers[i])));
+          .add(distance(x.getBlock(block).getColumn(i), expected.getColumn(identifiers[i])));
         }
       }
     }
@@ -187,7 +189,7 @@ public abstract class QualityMeasure implements Serializable {
           MultiTable.Block.Column a = x.getBlock(block).getColumn(i);
           MultiTable.Block.Column b = expected.getColumn(identifiers[i]);
           distances
-              .put(x.getBlock(block).getColumn(i).getColumnName(), distance(a, b, defaultValue));
+          .put(x.getBlock(block).getColumn(i).getColumnName(), distance(a, b, defaultValue));
         }
       }
     }

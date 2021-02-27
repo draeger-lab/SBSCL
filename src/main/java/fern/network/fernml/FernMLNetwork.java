@@ -24,10 +24,10 @@ import fern.tools.NetworkTools;
 
 
 /**
- * A <code>FernMLNetwork</code> is usually loaded from a file. For specifications see the included
- * FernMLSchema.xsd or the examples. Additionally, a <code>FernMLNetwork</code> can be created out
- * of an arbitrary {@link Network}. By using the <code>saveToFile</code> method, every
- * <code>Network</code> can be saved as a fernml-File.
+ * A {@code FernMLNetwork} is usually loaded from a file. For specifications see the included
+ * FernMLSchema.xsd or the examples. Additionally, a {@code FernMLNetwork} can be created out
+ * of an arbitrary {@link Network}. By using the {@code saveToFile} method, every
+ * {@code Network} can be saved as a fernml-File.
  *
  * @author Florian Erhard
  */
@@ -40,7 +40,7 @@ public class FernMLNetwork extends AbstractNetworkImpl {
 
 
   /**
-   * Creates a <code>FernMLNetwork</code> from a file.
+   * Creates a {@code FernMLNetwork} from a file.
    *
    * @param file file containing the network
    * @throws IOException   if the file cannot be read
@@ -64,30 +64,30 @@ public class FernMLNetwork extends AbstractNetworkImpl {
   }
 
   /**
-   * Create a <code>FernMLNetwork</code> from an existing {@link Network}. If the network's {@link
+   * Create a {@code FernMLNetwork} from an existing {@link Network}. If the network's {@link
    * PropensityCalculator} is not an {@link AbstractKineticConstantPropensityCalculator}, the
    * constant for the rate reaction is obtained by the propensity calculator by setting each
    * reactant species' amount to 1. If the stoichiometry of some reactant is greater than 1 the
    * value is set accordingly.
    *
-   * @param net the network to create a <code>FernMLNetwork</code> from
+   * @param net the network to create a {@code FernMLNetwork} from
    */
   public FernMLNetwork(Network net) {
     super(net.getName());
-//		if (!(net.getPropensityCalculator() instanceof AbstractKineticConstantPropensityCalculator))
-//			throw new IllegalArgumentException("net's PropensitiyCalculator is not a AbstractKineticConstantPropensityCalculator! Use FernMLNetwork(Network,double[]) instead!");
+    //		if (!(net.getPropensityCalculator() instanceof AbstractKineticConstantPropensityCalculator))
+    //			throw new IllegalArgumentException("net's PropensitiyCalculator is not a AbstractKineticConstantPropensityCalculator! Use FernMLNetwork(Network,double[]) instead!");
     document = createDocument(net, null);
     init();
   }
 
   /**
-   * Creates a FernMLNetwork out of an existing network (e.g. to save it to a fernml file) using
-   * explicitly given kineticConstants (when <dode>net</code> doesn't use
-   * <code>KineticConstantPropensityCalculator</code> If <code>kineticConstants</code> is
-   * <code>null</code> or to short, a default value of 1 is taken.
+   * Creates a FernMLNetwork out of an existing network (e.g., to save it to a fernml file) using
+   * explicitly given kineticConstants (when {@code net}} doesn't use
+   * {@code KineticConstantPropensityCalculator} If {@code kineticConstants} is
+   * {@code null} or to short, a default value of 1 is taken.
    *
    * @param net              An existing network
-   * @param kineticConstants kinetic constants for each reaction in <code>net</code>
+   * @param kineticConstants kinetic constants for each reaction in {@code net}
    */
   public FernMLNetwork(Network net, double[] kineticConstants) {
     super(net.getName());
@@ -119,6 +119,7 @@ public class FernMLNetwork extends AbstractNetworkImpl {
     return numSpecies;
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public void setInitialAmount(int species, long value) {
     List<Element> speciesList = document.getRootElement().getChild("listOfSpecies").getChildren();
@@ -127,6 +128,7 @@ public class FernMLNetwork extends AbstractNetworkImpl {
     initialAmount[species] = value;
   }
 
+  @Override
   public long getInitialAmount(int species) {
     return initialAmount[species];
   }
@@ -179,7 +181,7 @@ public class FernMLNetwork extends AbstractNetworkImpl {
   }
 
   /**
-   * Does nothing, the {@link PropensityCalculator} is created in <code>createAdjacencyLists</code>
+   * Does nothing, the {@link PropensityCalculator} is created in {@code createAdjacencyLists}
    * because the reactions constants are already parsed there.
    */
   @Override
@@ -239,7 +241,7 @@ public class FernMLNetwork extends AbstractNetworkImpl {
   }
 
   /**
-   * Saves the actual <code>FernMLNetwork</code> to a file.
+   * Saves the actual {@code FernMLNetwork} to a file.
    *
    * @param file the file to save the network in
    * @throws IOException if the file cannot be written
@@ -268,7 +270,7 @@ public class FernMLNetwork extends AbstractNetworkImpl {
 
     // create network annotations if present
     Collection<String> annotations = prop.getNetworkAnnotationTypes();
-    if (annotations != null && annotations.size() > 0) {
+    if ((annotations != null) && (annotations.size() > 0)) {
       Element annotationsRoot = new Element("listOfAnnotations");
       for (String key : annotations) {
         annotationsRoot.getChildren().add(createAnnotation(key, prop.getNetworkAnnotation(key)));
@@ -287,11 +289,11 @@ public class FernMLNetwork extends AbstractNetworkImpl {
       Element s = new Element("species");
       s.setAttribute("name", name);
       s.setAttribute("initialAmount", String.valueOf(initialAmount));
-      if (speciesAnnotations != null && speciesAnnotations.size() > 0) {
+      if ((speciesAnnotations != null) && (speciesAnnotations.size() > 0)) {
         Element annotationsRoot = new Element("listOfAnnotations");
         for (String key : speciesAnnotations) {
           annotationsRoot.getChildren()
-              .add(createAnnotation(key, prop.getSpeciesAnnotation(i, key)));
+          .add(createAnnotation(key, prop.getSpeciesAnnotation(i, key)));
         }
         s.getChildren().add(annotationsRoot);
       }
@@ -305,7 +307,7 @@ public class FernMLNetwork extends AbstractNetworkImpl {
       Collection<String> reactionAnnotations = prop.getReactionAnnotationTypes(i);
       double constant;
 
-      if (kineticConstants != null && i < kineticConstants.length) {
+      if ((kineticConstants != null) && (i < kineticConstants.length)) {
         constant = kineticConstants[i];
       } else if (kin != null) {
         constant = kin.getConstant(i);
@@ -315,11 +317,11 @@ public class FernMLNetwork extends AbstractNetworkImpl {
 
       Element r = new Element("reaction");
       r.setAttribute("kineticConstant", String.valueOf(constant));
-      if (reactionAnnotations != null && reactionAnnotations.size() > 0) {
+      if ((reactionAnnotations != null) && (reactionAnnotations.size() > 0)) {
         Element annotationsRoot = new Element("listOfAnnotations");
         for (String key : reactionAnnotations) {
           annotationsRoot.getChildren()
-              .add(createAnnotation(key, prop.getReactionAnnotation(i, key)));
+          .add(createAnnotation(key, prop.getReactionAnnotation(i, key)));
         }
         r.getChildren().add(annotationsRoot);
       }

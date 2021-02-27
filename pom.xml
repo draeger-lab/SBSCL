@@ -19,7 +19,7 @@
 	* agreement is provided in the file named "LICENSE.txt" included with 
 	* this software distribution and also available online as 
 	* <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>. 
-	-->
+-->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -58,7 +58,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.license.url>https://www.gnu.org/licenses/lgpl-3.0-standalone.html</project.license.url>
     <junit.version>4.13.1</junit.version>
-    <maven-javadoc-plugin.version>2.10.2</maven-javadoc-plugin.version>
+    <javadoc.version>3.0.1</javadoc.version>
   </properties>
 
   <issueManagement>
@@ -404,8 +404,7 @@
   <!-- mvn clean compile package assembly:single -->
 
   <build>
-    <finalName>${project.artifactId}-${project.version}</finalName>
-
+    <!--<finalName>${project.artifactId}-${project.version}</finalName>-->
     <pluginManagement>
       <plugins>
         <!--  Run mvn license:third-party-report to build report of licenses -->
@@ -439,9 +438,10 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.7.1</version>
+          <version>3.9.1</version>
           <configuration>
             <locales>en</locales>
+            <pomPackagingOnly>false</pomPackagingOnly>
           </configuration>
           <executions>
             <execution>
@@ -538,10 +538,11 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>2.2.1</version>
+          <version>3.2.0</version>
           <executions>
             <execution>
               <id>attach-sources</id>
+              <phase>verify</phase>
               <goals>
                 <goal>jar-no-fork</goal>
               </goals>
@@ -552,7 +553,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>${javadoc.version}</version>
           <executions>
             <execution>
               <id>attach-javadocs</id>
@@ -561,13 +562,27 @@
               </goals>
             </execution>
           </executions>
+          <configuration> 
+            <!-- add this to disable checking -->
+            <!-- <doclint>none</doclint> -->
+            <!-- <doclint>syntax</doclint> -->
+            <!-- <doclint>html</doclint> -->
+            <doclint>accessibility</doclint>
+            <doclint>reference</doclint>
+            <!-- 
+              This sets the command-line option -Xdoclint:none. In addition 
+              to 'none' there are further options available, including 'all',
+              'html', 'syntax', 'accessibility', and more. For further information see
+              https://docs.oracle.com/javase/8/docs/technotes/tools/unix/javadoc.html
+            -->
+          </configuration>
         </plugin>
         <!-- Needed to upload the distribution to Maven Central to sign the JAR file -->
         <!-- Execute with mvn clean deploy -Dgpg.passphrase=yourpassphrase -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
-          <version>1.5</version>
+          <version>1.6</version>
           <executions>
             <execution>
               <id>sign-artifacts</id>
@@ -575,6 +590,10 @@
               <goals>
                 <goal>sign</goal>
               </goals>
+              <configuration>
+                <keyname>${gpg.keyname}</keyname>
+                <passphraseServerId>${gpg.keyname}</passphraseServerId>
+              </configuration>
             </execution>
           </executions>
         </plugin>
@@ -628,13 +647,13 @@
     </profile>
   </profiles>
 
-  <!-- Generate javadoc and integrate with generated website -->
+  <!-- Generate javadoc and integrate with generated website with 'mvn site' -->
   <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.0.1</version>
+        <version>${javadoc.version}</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -646,6 +665,7 @@
           <overview>${project.basedir}/src/main/javadoc/overview.html</overview>
           <additionalOptions>${javadoc.opts}</additionalOptions>
           <failOnError>false</failOnError>
+          <show>public</show> <!-- Display only public methods and classes -->
         </configuration>
       </plugin>
     </plugins>

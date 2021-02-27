@@ -136,8 +136,8 @@ public class NumberTools {
    * Creates the inverse array to the given array. In the inverse array a' of a following condition
    * holds:
    * <p>
-   * <code> a[i]=j <=>  a'[j]=i<code>
-   * <p>
+   *   {@code a[i] = j} &#8660; {@code a'[j] = i}
+   * </p>
    * Be careful with sparse arrays, the inverse array could be very large (prefer {@link
    * NumberTools#createInverseAsMap(int[])}. It should preferably be used with bijective arrays.
    *
@@ -169,8 +169,8 @@ public class NumberTools {
    * Creates the inverse map to the given array. In the inverse map a' of a following condition
    * holds:
    * <p>
-   * <code> a[i]=j <=>  a'.get(j)=i<code>
-   *
+   *   {@code a[i] = j} &#8660;  {@code a'.get(j) = i}
+   * </p>
    * @param a the array
    * @return the inverse map
    */
@@ -213,11 +213,11 @@ public class NumberTools {
       }
     }
 
-    double binSize = (max - min) / (double) numBins;
+    double binSize = (max - min) / numBins;
     double[][] re = new double[numBins][indices.length > 0 ? indices.length + 1
-        : data.iterator().next().length + 1];
+      : data.iterator().next().length + 1];
     for (int i = 0; i < re.length; i++) {
-      re[i][0] = min + (i + 1) * binSize;
+      re[i][0] = min + ((i + 1) * binSize);
     }
 
     for (double[] d : data) {
@@ -242,7 +242,7 @@ public class NumberTools {
    * @return histogram for the array
    */
   public static int[] createHistogram(int[] a) {
-    if (a == null || a.length == 0) {
+    if ((a == null) || (a.length == 0)) {
       return a;
     }
 
@@ -270,7 +270,7 @@ public class NumberTools {
    */
   public static Map<Integer, Integer> createHistogramAsMap(int[] a) {
     Map<Integer, Integer> re = new HashMap<>();
-    if (a == null || a.length == 0) {
+    if ((a == null) || (a.length == 0)) {
       return re;
     }
 
@@ -284,7 +284,7 @@ public class NumberTools {
   }
 
   /**
-   * Writes a histogram to a file. Then it can be loaded by <code> loadHistogram</code>.
+   * Writes a histogram to a file. Then it can be loaded by {@code loadHistogram}.
    *
    * @param histo the histogram to save
    * @param file  the file
@@ -314,6 +314,7 @@ public class NumberTools {
       }
       re.put(Integer.parseInt(vals[0]), Integer.parseInt(vals[1]));
     }
+    bf.close();
     return re;
   }
 
@@ -341,11 +342,11 @@ public class NumberTools {
 
   /**
    * Gets the content of the given array as {@link BitVector}, which means, that the
-   * <code>BitVector</code> will have a size equal to the maximal value in the array and contains a
+   * {@code BitVector} will have a size equal to the maximal value in the array and contains a
    * 1 for each element which is contained at least once in the array
    *
    * @param a array
-   * @return <code>BitVector> for the array
+   * @return {@code BitVector} for the array
    */
   public static BitVector getContentAsBitVector(int[] a) {
     int max = a[0];
@@ -362,7 +363,7 @@ public class NumberTools {
   /**
    * Gets the indices of the set bits of the given {@link BitVector} as array.
    *
-   * @param bv the <code>BitVector</code>
+   * @param bv the {@code BitVector}
    * @return array with the set indices
    */
   public static int[] getContentAsArray(BitVector bv) {
@@ -423,16 +424,16 @@ public class NumberTools {
   /**
    * Calculates the histogram distance of two histograms.
    * <p>
-   * For reference see Cao & Petzold, Accuracy limitations and the measurement of errors in the
+   * For reference see Cao &amp; Petzold, Accuracy limitations and the measurement of errors in the
    * stochastic simulation of chemically reacting systems, Journal of Computational Physics 212
-   * (2006) 6�24
+   * (2006) 6-24, <a href="https://doi.org/10.1016/j.jcp.2005.06.012">doi: 10.1016/j.jcp.2005.06.012</a>
    *
    * @param h1 first histogram
    * @param h2 second histogram
    * @return histogram distance
    */
   public static double calculateHistogramDistance(Map<Integer, Integer> h1,
-      Map<Integer, Integer> h2) {
+    Map<Integer, Integer> h2) {
     int min = Integer.MAX_VALUE;
     int max = Integer.MIN_VALUE;
     double s1 = 0;
@@ -452,7 +453,7 @@ public class NumberTools {
     double sum = 0;
     for (int i = min; i <= max; i++) {
       sum += Math
-          .abs((h1.containsKey(i) ? h1.get(i) : 0) / s1 - (h2.containsKey(i) ? h2.get(i) : 0) / s2);
+          .abs(((h1.containsKey(i) ? h1.get(i) : 0) / s1) - ((h2.containsKey(i) ? h2.get(i) : 0) / s2));
     }
     return sum;
   }
@@ -494,7 +495,7 @@ public class NumberTools {
    */
   public static String[] inverse(String[] a) {
     String d;
-    for (int i = 0; i < a.length / 2; i++) {
+    for (int i = 0; i < (a.length / 2); i++) {
       d = a[i];
       a[i] = a[a.length - 1 - i];
       a[a.length - 1 - i] = d;
@@ -513,7 +514,7 @@ public class NumberTools {
     StringBuffer sb = new StringBuffer();
     for (int i = 0; i < a.length; i++) {
       sb.append(a[i]);
-      if (i < a.length - 1) {
+      if (i < (a.length - 1)) {
         sb.append(glue);
       }
     }
@@ -535,32 +536,32 @@ public class NumberTools {
     int firstIndex = getIntervalIndex(time[0], interval);
     int lastIndex = getIntervalIndex(time[time.length - 1], interval);
 
-    double[] re = new double[lastIndex - firstIndex + 1];
+    double[] re = new double[(lastIndex - firstIndex) + 1];
 
     // search for the moments in time[] that fit best to the intervals
     // j points to the element in time[], which fits best to the corresponding time
     int j = 0;
     for (int i = 0; i < re.length; i++) {
       double desiredTime = (i + firstIndex) * interval;
-      while (j + 1 < time.length && Math.abs(desiredTime - time[j]) > Math
-          .abs(desiredTime - time[j + 1])) {
+      while (((j + 1) < time.length) && (Math.abs(desiredTime - time[j]) > Math
+          .abs(desiredTime - time[j + 1]))) {
         j++;
       }
 
       int a, b;
       if (time[j] < desiredTime) {
         a = b = j;
-        while (time[a] <= time[b] && a < time.length - 1) {
+        while ((time[a] <= time[b]) && (a < (time.length - 1))) {
           a++;
         }
       } else {
         a = b = j;
-        while (time[a] <= time[b] && b > 0) {
+        while ((time[a] <= time[b]) && (b > 0)) {
           b--;
         }
       }
 
-      if (a == b || time[a] < desiredTime) {
+      if ((a == b) || (time[a] < desiredTime)) {
         re[i] = value[a];
       } else {
         re[i] = NumberTools.interpolateLinear(desiredTime, time[b], time[a], value[b], value[a]);
@@ -582,15 +583,15 @@ public class NumberTools {
    * @return interpolated value
    */
   public static double interpolateLinear(double desiredTime, double beforeTime, double afterTime,
-      double beforeValue, double afterValue) {
-    if (desiredTime < beforeTime || desiredTime > afterTime) {
+    double beforeValue, double afterValue) {
+    if ((desiredTime < beforeTime) || (desiredTime > afterTime)) {
       throw new IllegalArgumentException(
-          "Cannot interpolate " + desiredTime + " in [" + beforeTime + ":" + afterTime + "]");
+        "Cannot interpolate " + desiredTime + " in [" + beforeTime + ":" + afterTime + "]");
     }
 
     double b = desiredTime - beforeTime;
     double a = afterTime - desiredTime;
-    return beforeValue * a / (a + b) + afterValue * b / (a + b);
+    return ((beforeValue * a) / (a + b)) + ((afterValue * b) / (a + b));
   }
 
   private static int getIntervalIndex(double time, double interval) {
