@@ -68,7 +68,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.license.url>https://www.gnu.org/licenses/lgpl-3.0-standalone.html</project.license.url>
     <junit.version>4.13.1</junit.version>
-    <javadoc.version>3.0.1</javadoc.version>
+    <javadoc.version>3.2.0</javadoc.version>
   </properties>
 
   <issueManagement>
@@ -339,7 +339,7 @@
     <repository>
       <id>sems-maven-repository-releases</id>
       <name>SEMS Maven Repo</name>
-      <url>http://mvn.sems.uni-rostock.de/releases/</url>
+      <url>https://mvn.bio.informatik.uni-rostock.de/releases/</url>
       <layout>default</layout>
       <snapshots>
         <enabled>false</enabled>
@@ -578,6 +578,9 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
           <version>3.2.0</version>
+          <!--<configuration>
+            <attach>true</attach>
+          </configuration>-->
           <executions>
             <execution>
               <id>attach-sources</id>
