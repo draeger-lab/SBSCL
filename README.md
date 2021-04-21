@@ -1,9 +1,12 @@
 # The Systems Biology Simulation Core Library  <img align="right" src="https://draeger-lab.github.io/SBSCL/images/SCL_icon.png"> 
 
 [![License (LGPL version 3)](https://img.shields.io/badge/license-LGPLv3.0-blue.svg?style=plastic)](http://opensource.org/licenses/LGPL-3.0)
-[![Latest version](https://img.shields.io/badge/Latest_version-2.0-brightgreen.svg?style=plastic)](https://github.com/draeger-lab/SBSCL/releases/)
-[![DOI](https://img.shields.io/badge/DOI-10.1186%2F1752--0509--7--55-blue.svg?style=plastic)](https://doi.org/10.1186/1752-0509-7-55)
-[![Build Status](https://travis-ci.com/draeger-lab/SBSCL.svg?branch=master&style=plastic)](https://travis-ci.com/draeger-lab/SBSCL)
+[![Latest version](https://img.shields.io/badge/Latest_version-2.1-brightgreen.svg?style=plastic)](https://github.com/draeger-lab/SBSCL/releases/)
+[![DOI](https://img.shields.io/badge/DOI-10.20944%2Fpreprints202012.0296.v1-blue.svg?style=plastic)](https://doi.org/10.20944/preprints202012.0296.v1)
+[![Maven Central](https://img.shields.io/maven-central/v/org.draegerlab/sbscl.svg?style=plastic&label=Maven%20Central)](https://search.maven.org/search?q=g:%22org.draegerlab%22%20AND%20a:%22sbscl%22)
+![Code Size](https://img.shields.io/github/languages/code-size/draeger-lab/SBSCL.svg?style=plastic)
+![Downloads of all releases](https://img.shields.io/github/downloads/draeger-lab/SBSCL/total.svg?style=plastic)
+[![Build Status](https://img.shields.io/travis/com/draeger-lab/SBSCL.svg?style=plastic)](https://travis-ci.com/draeger-lab/SBSCL)
 
 *Authors*: [Roland Keller](https://github.com/RolandKeller5), [Andreas Dräger](https://github.com/draeger), [Hemil Panchiwala](https://github.com/hemilpanchiwala), [Shalin Shah](https://github.com/shalinshah1993), [Matthias König](https://github.com/matthiaskoenig), [Alexander Dörr](https://github.com/a-doerr), [Richard Adams](https://github.com/otter606)
 
@@ -49,6 +52,16 @@ For an introduction on how to use this library for simulation, please refer to t
 To start working on SBSCL, you should first clone the repository and then refer to [INSTALL.md](INSTALL.md) which gives instruction to run maven build. Once a maven build is ran, the binaries will be generated in the target folder. This folder will also include a JAR files of the simulation core library to work with. 
 
 For an introduction on how things currently work in SBSCL to simulate different models, please refer to the sequence diagrams present in the [/dev/diagrams/](https://github.com/draeger-lab/SBSCL/tree/master/dev/diagrams/) where you can understand complete workflow of the library. Once you get familiarized with how things work, please open the javadoc [homepage](https://draeger-lab.github.io/SBSCL/apidocs/overview-summary.html) where you can find the complete information about the library properly documented. For formatting the code-base, please refer to [formatting-guidelines](https://github.com/draeger-lab/SBSCL/tree/master/dev/formatting-guidelines/).
+
+Import SBSCL into your project via Maven as follows:
+```XML
+<dependency>
+  <groupId>org.draegerlab</groupId>
+  <artifactId>sbscl</artifactId>
+  <version>2.1</version>
+</dependency>
+```
+See [Releases](https://github.com/draeger-lab/SBSCL/releases) and [Maven Central](https://search.maven.org/artifact/org.draegerlab/sbscl) for the most recent version number.
 
 ## File structure
 
