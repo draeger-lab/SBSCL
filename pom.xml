@@ -145,10 +145,15 @@
       <name>Alexander Dörr</name>
       <email>alexander.doerr@uni-tuebingen.de</email>
       <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/doerr/</url>
-      <timezone>Germany/Berlin</timezone>
+      <timezone>Europe/Berlin</timezone>
       <roles>
         <role>developer</role>
       </roles>
+      <properties>
+        <picUrl>
+          http://www.cogsys.cs.uni-tuebingen.de/mitarb/doerr/portrait.jpg
+        </picUrl>
+      </properties>
     </developer>
     <developer>
       <name>Andreas Dräger</name>
@@ -156,14 +161,15 @@
       <email>draeger@informatik.uni-tuebingen.de</email>
       <url>https://github.com/draeger</url>
       <organization>University of Tübingen</organization>
+      <organizationUrl>https://uni-tuebingen.de/en/127116</organizationUrl>
       <roles>
         <role>architect</role>
         <role>developer</role>
       </roles>
-      <timezone>Germany/Berlin</timezone>
+      <timezone>Europe/Berlin</timezone>
       <properties>
         <picUrl>
-          https://uni-tuebingen.de/fileadmin/_processed_/a/0/csm_Andreas_Draeger_im_Buero_2a3fefe7eb.jpg
+          https://publons.com/media/thumbs/academic/photos/dd5f988fb8ee4bc8a8cbecbb7b71c58e.jpg.200x200_q95_crop_detail_upscale.jpg
         </picUrl>
       </properties>
     </developer>
@@ -177,16 +183,26 @@
       <roles>
         <role>developer</role>
       </roles>
+      <properties>
+        <picURL>
+          https://groups.oist.jp/sites/default/files/styles/group_image/public/eventimg/1611/funahashi-sensei_0.jpeg
+        </picURL>
+      </properties>
     </developer>
     <developer>
       <name>Roland Keller</name>
       <id>RolandKeller5</id>
       <email>http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/</email>
       <url>roland.keller@gmx.de</url>
-      <timezone>Germany/Berlin</timezone>
+      <timezone>Europe/Berlin</timezone>
       <roles>
         <role>developer</role>
       </roles>
+      <properties>
+        <picURL>
+          http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/portrait.jpg
+        </picURL>
+      </properties>
     </developer>
     <developer>
       <name>Matthias König</name>
@@ -194,20 +210,30 @@
       <email>konigmatt@googlemail.com</email>
       <url>https://github.com/matthiaskoenig</url>
       <organization>Humboldt University</organization>
-      <timezone>Germany/Berlin</timezone>
+      <timezone>Europe/Berlin</timezone>
       <roles>
         <role>developer</role>
       </roles>
+      <properties>
+        <picURL>
+          https://seek.lisym.org/assets/avatar-images/134-120x120.png
+        </picURL>
+      </properties>
     </developer>
     <developer>
       <name>Hannes Planatscher</name>
       <id>planatscher</id>
       <email>hannes.planatscher@nmi.de</email>
       <url>https://github.com/planatscher</url>
-      <timezone>Germany/Berlin</timezone>
+      <timezone>Europe/Berlin</timezone>
       <roles>
         <role>developer</role>
       </roles>
+      <properties>
+        <picURL>
+          http://www.ra.cs.uni-tuebingen.de/mitarb/planatsc/img/PlanatscherHannes_small.png
+        </picURL>
+      </properties>
     </developer>
     <developer>
       <name>Nicolas Rodriguez</name>
@@ -235,6 +261,11 @@
       <roles>
         <role>developer</role>
       </roles>
+      <properties>
+        <picURL>
+          https://uni-tuebingen.de/fileadmin/_processed_/3/d/csm_Shalin_Shah_85b583dd09.png
+        </picURL>
+      </properties>
     </developer>
     <developer>
       <name>Hemil Panchiwala</name>
