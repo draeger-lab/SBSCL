@@ -72,6 +72,7 @@
     <project.license.url>https://www.gnu.org/licenses/lgpl-3.0-standalone.html</project.license.url>
     <junit.version>4.13.1</junit.version>
     <javadoc.version>3.2.0</javadoc.version>
+    <site.path>https://draeger-lab.github.io/SBSCL/docs/</site.path>
   </properties>
 
   <issueManagement>
@@ -122,7 +123,7 @@
   <scm>
     <connection>scm:git:git://github.com/draeger-lab/SBSCL.git</connection>
     <developerConnection>scm:git:ssh://github.com/draeger-lab/SBSCL.git</developerConnection>
-    <url>${project.url}/tree/master/</url>
+    <url>https://github.com/draeger-lab/SBSCL/tree/master/</url> <!-- Expanding ${project.url} does not work in Maven Central -->
   </scm>
   
   
@@ -263,6 +264,10 @@
   </developers>
 
   <contributors>
+    <contributor>
+      <name>Leonhard Markert</name>
+      <url>https://github.com/curiousleo</url>
+    </contributor>
     <contributor>
       <name>Max Zwießele</name>
       <url>https://github.com/mzwiessele</url>
@@ -490,7 +495,20 @@
               <id>attach-descriptor</id>
               <goals>
                 <goal>attach-descriptor</goal>
+                <goal>site</goal>
               </goals>
+              <!-- select the Maven phase in which the plugin will be executed -->
+              <phase>site-deploy</phase>
+              <configuration>
+                <!-- Plugin configuration ges here -->
+                <server>github</server>
+                <!-- The commit message -->
+                <message>Building site for my project</message>
+                <!-- The location where the site is uploaded -->
+                <path>${site.path}</path>
+                <!-- Use merge or override the content -->
+                <merge>true</merge>
+              </configuration>
             </execution>
           </executions>
           <dependencies>
