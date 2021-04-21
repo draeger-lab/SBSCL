@@ -184,9 +184,9 @@
         <role>developer</role>
       </roles>
       <properties>
-        <picURL>
+        <picUrl>
           https://groups.oist.jp/sites/default/files/styles/group_image/public/eventimg/1611/funahashi-sensei_0.jpeg
-        </picURL>
+        </picUrl>
       </properties>
     </developer>
     <developer>
@@ -199,9 +199,9 @@
         <role>developer</role>
       </roles>
       <properties>
-        <picURL>
+        <picUrl>
           http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/portrait.jpg
-        </picURL>
+        </picUrl>
       </properties>
     </developer>
     <developer>
@@ -215,9 +215,9 @@
         <role>developer</role>
       </roles>
       <properties>
-        <picURL>
+        <picUrl>
           https://seek.lisym.org/assets/avatar-images/134-120x120.png
-        </picURL>
+        </picUrl>
       </properties>
     </developer>
     <developer>
@@ -230,9 +230,9 @@
         <role>developer</role>
       </roles>
       <properties>
-        <picURL>
+        <picUrl>
           http://www.ra.cs.uni-tuebingen.de/mitarb/planatsc/img/PlanatscherHannes_small.png
-        </picURL>
+        </picUrl>
       </properties>
     </developer>
     <developer>
@@ -262,9 +262,9 @@
         <role>developer</role>
       </roles>
       <properties>
-        <picURL>
+        <picUrl>
           https://uni-tuebingen.de/fileadmin/_processed_/3/d/csm_Shalin_Shah_85b583dd09.png
-        </picURL>
+        </picUrl>
       </properties>
     </developer>
     <developer>
