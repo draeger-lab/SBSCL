@@ -1,9 +1,12 @@
 # The Systems Biology Simulation Core Library  <img align="right" src="https://draeger-lab.github.io/SBSCL/images/SCL_icon.png"> 
 
 [![License (LGPL version 3)](https://img.shields.io/badge/license-LGPLv3.0-blue.svg?style=plastic)](http://opensource.org/licenses/LGPL-3.0)
-[![Latest version](https://img.shields.io/badge/Latest_version-2.0-brightgreen.svg?style=plastic)](https://github.com/draeger-lab/SBSCL/releases/)
-[![DOI](https://img.shields.io/badge/DOI-10.1186%2F1752--0509--7--55-blue.svg?style=plastic)](https://doi.org/10.1186/1752-0509-7-55)
-[![Build Status](https://travis-ci.com/draeger-lab/SBSCL.svg?branch=master&style=plastic)](https://travis-ci.com/draeger-lab/SBSCL)
+[![Latest version](https://img.shields.io/badge/Latest_version-2.1-brightgreen.svg?style=plastic)](https://github.com/draeger-lab/SBSCL/releases/)
+[![DOI](https://img.shields.io/badge/DOI-10.20944%2Fpreprints202012.0296.v1-blue.svg?style=plastic)](https://doi.org/10.20944/preprints202012.0296.v1)
+[![Maven Central](https://img.shields.io/maven-central/v/org.draegerlab/sbscl.svg?style=plastic&label=Maven%20Central)](https://search.maven.org/search?q=g:%22org.draegerlab%22%20AND%20a:%22sbscl%22)
+[![Build Status](https://img.shields.io/travis/com/draeger-lab/SBSCL.svg?style=plastic)](https://travis-ci.com/draeger-lab/SBSCL)
+![Code Size](https://img.shields.io/github/languages/code-size/draeger-lab/SBSCL.svg?style=plastic)
+![Downloads of all releases](https://img.shields.io/github/downloads/draeger-lab/SBSCL/total.svg?style=plastic)
 
 *Authors*: [Roland Keller](https://github.com/RolandKeller5), [Andreas Dräger](https://github.com/draeger), [Hemil Panchiwala](https://github.com/hemilpanchiwala), [Shalin Shah](https://github.com/shalinshah1993), [Matthias König](https://github.com/matthiaskoenig), [Alexander Dörr](https://github.com/a-doerr), [Richard Adams](https://github.com/otter606)
 
@@ -13,8 +16,10 @@
 
 When using SBSCL in a research work, please cite the following works:
 
-1. Panchiwala, H.; Shah, S.; Planatscher, H.; Zakharchuk, M.; König, M.; Dräger, A. The Systems Biology Simulation Core Library. Preprints 2020, 2020120296. [doi: 10.20944/preprints202012.0296.v1](https://doi.org/10.20944/preprints202012.0296.v1).
-2. Keller, R.; Dörr, A.; Tabira, A.; Funahashi, A.; Ziller, M.J.; Adams, R.; Rodriguez, N.; Le Novère, N.; Hiroi, N.; Planatscher, H.; Zell A.; Dräger; A. The systems biology simulation core algorithm. BMC Syst Biol 7, 55 (2013). [doi: 10.1186/1752-0509-7-55](https://doi.org/10.1186/1752-0509-7-55).
+1. Panchiwala, H.; Shah, S.; Planatscher, H.; Zakharchuk, M.; König, M.; Dräger, A. The Systems Biology Simulation Core Library. Preprints 2020, 2020120296.
+   [![DOI](https://img.shields.io/badge/DOI-10.20944%2Fpreprints202012.0296.v1-blue.svg?style=plastic)](https://doi.org/10.20944/preprints202012.0296.v1)
+2. Keller, R.; Dörr, A.; Tabira, A.; Funahashi, A.; Ziller, M.J.; Adams, R.; Rodriguez, N.; Le Novère, N.; Hiroi, N.; Planatscher, H.; Zell A.; Dräger; A. The systems biology simulation core algorithm. BMC Syst Biol 7, 55 (2013).
+   [![DOI](https://img.shields.io/badge/DOI-10.1186%2F1752--0509--7--55-blue.svg?style=plastic)](https://doi.org/10.1186/1752-0509-7-55)
 
 ### Description
 The Systems Biology Simulation Core Library (SBSCL) provides an efficient and exhaustive Java™ implementation of methods to interpret the content of models encoded in the Systems Biology Markup Language ([SBML](http://sbml.org)) and its numerical solution. This library is based on the [JSBML](http://sbml.org/Software/JSBML) project. It can be used on every operating system for which a Java Virtual Machine is available. Please note that this project does not contain any user interface neither a command-line interface, nor a graphical user interface. This project has been developed as a pure programming library. To support the [MIASE](http://co.mbine.org/standards/miase) effort, it understands [SED-ML](http://sed-ml.org) files. Its abstract type and interface hierarchy facilitates the implementation of further community standards, such as [CellML](https://www.cellml.org).
@@ -49,6 +54,16 @@ For an introduction on how to use this library for simulation, please refer to t
 To start working on SBSCL, you should first clone the repository and then refer to [INSTALL.md](INSTALL.md) which gives instruction to run maven build. Once a maven build is ran, the binaries will be generated in the target folder. This folder will also include a JAR files of the simulation core library to work with. 
 
 For an introduction on how things currently work in SBSCL to simulate different models, please refer to the sequence diagrams present in the [/dev/diagrams/](https://github.com/draeger-lab/SBSCL/tree/master/dev/diagrams/) where you can understand complete workflow of the library. Once you get familiarized with how things work, please open the javadoc [homepage](https://draeger-lab.github.io/SBSCL/apidocs/overview-summary.html) where you can find the complete information about the library properly documented. For formatting the code-base, please refer to [formatting-guidelines](https://github.com/draeger-lab/SBSCL/tree/master/dev/formatting-guidelines/).
+
+Import SBSCL into your project via Maven as follows:
+```XML
+<dependency>
+  <groupId>org.draegerlab</groupId>
+  <artifactId>sbscl</artifactId>
+  <version>2.1</version>
+</dependency>
+```
+See [Releases](https://github.com/draeger-lab/SBSCL/releases) and [Maven Central](https://search.maven.org/artifact/org.draegerlab/sbscl) for the most recent version number.
 
 ## File structure
 

@@ -15,10 +15,10 @@ import fern.tools.NumberTools;
 
 
 /**
- * Modifies the network by adding reactions X+C -> Y+C (where C is each catalyst of the original
- * reaction). If a reaction has n catalysts, there will be n+1 reactions generated. It is only
- * possible to create a <code>CatalysedNetwork</code> out of a {@link AutocatalyticNetwork} (or at
- * least of a {@link ModifierNetwork} whose original network is a <code>AutocatalyticNetwork</code>).
+ * Modifies the network by adding reactions X+C &#8594; Y+C (where C is each catalyst of the original
+ * reaction). If a reaction has <i>n</i> catalysts, there will be <i>n + 1</i> reactions generated. It is only
+ * possible to create a {@code CatalysedNetwork} out of a {@link AutocatalyticNetwork} (or at
+ * least of a {@link ModifierNetwork} whose original network is a {@code AutocatalyticNetwork}).
  * <p>
  * The {@link AmountManager} automatically monitors the food molecules amounts and whenever it
  * changes, it is reset to the initial value (given by {@link AutocatalyticNetwork#getMonomerAmount()}.
@@ -28,7 +28,7 @@ import fern.tools.NumberTools;
  * for the other ones.
  * <p>
  * The {@link AnnotationManager} uses the underlying one but removes the {@link
- * AutocatalyticNetwork#CATALYSTS_FIELD} and the field <code>Autocatalytic</code> from not catalyzed
+ * AutocatalyticNetwork#CATALYSTS_FIELD} and the field {@code Autocatalytic} from not catalyzed
  * reactions.
  *
  * @author Florian Erhard
@@ -100,10 +100,11 @@ public class CatalysedNetwork extends ModifierNetwork {
     }
 
     propensityCalculator = new AbstractKineticConstantPropensityCalculator(adjListRea) {
+      @Override
       public double getConstant(int i) {
         return catalyst[i] != -1 ? ((AutocatalyticNetwork) getOriginalNetwork())
-            .getCatalyzedKineticConstant()
-            : ((AutocatalyticNetwork) getOriginalNetwork()).getUncatalyzedKineticConstant();
+          .getCatalyzedKineticConstant()
+          : ((AutocatalyticNetwork) getOriginalNetwork()).getUncatalyzedKineticConstant();
       }
     };
 
@@ -131,14 +132,14 @@ public class CatalysedNetwork extends ModifierNetwork {
   @Override
   public int[] getProducts(int reaction) {
     return adjListPro[reaction];
-//		if (catalyst[reaction]==-1) return super.getProducts(reactionToOriginal[reaction]);
-//		else {
-//			int[] ori = super.getProducts(reactionToOriginal[reaction]);
-//			int[] re = new int[ori.length+1];
-//			System.arraycopy(ori, 0, re, 0, ori.length);
-//			re[re.length-1] = catalyst[reaction];
-//			return re;
-//		}
+    //		if (catalyst[reaction]==-1) return super.getProducts(reactionToOriginal[reaction]);
+    //		else {
+    //			int[] ori = super.getProducts(reactionToOriginal[reaction]);
+    //			int[] re = new int[ori.length+1];
+    //			System.arraycopy(ori, 0, re, 0, ori.length);
+    //			re[re.length-1] = catalyst[reaction];
+    //			return re;
+    //		}
   }
 
   private int getOriginalReaction(int reaction) {
@@ -160,31 +161,37 @@ public class CatalysedNetwork extends ModifierNetwork {
     final AnnotationManager ori = getParentNetwork().getAnnotationManager();
     return new AnnotationManager() {
 
+      @Override
       public boolean containsNetworkAnnotation(String typ) {
         return ori.containsNetworkAnnotation(typ);
       }
 
+      @Override
       public boolean containsReactionAnnotation(int reaction, String typ) {
         boolean re = ori.containsReactionAnnotation(getOriginalReaction(reaction), typ);
         if (typ.equals(AutocatalyticNetwork.CATALYSTS_FIELD) || typ.equals("Autocatalytic")) {
-          return catalyst[reaction] != -1 && re;
+          return (catalyst[reaction] != -1) && re;
         } else {
           return re;
         }
       }
 
+      @Override
       public boolean containsSpeciesAnnotation(int species, String typ) {
         return ori.containsSpeciesAnnotation((species), typ);
       }
 
+      @Override
       public String getNetworkAnnotation(String typ) {
         return ori.getNetworkAnnotation(typ);
       }
 
+      @Override
       public Collection<String> getNetworkAnnotationTypes() {
         return ori.getNetworkAnnotationTypes();
       }
 
+      @Override
       public String getReactionAnnotation(int reaction, String typ) {
         String re = ori.getReactionAnnotation(getOriginalReaction(reaction), typ);
         if (!containsReactionAnnotation(reaction, typ)) {
@@ -194,6 +201,7 @@ public class CatalysedNetwork extends ModifierNetwork {
         }
       }
 
+      @Override
       public Collection<String> getReactionAnnotationTypes(int reaction) {
         Collection<String> re = ori.getReactionAnnotationTypes(getOriginalReaction(reaction));
         Iterator<String> it = re.iterator();
@@ -205,25 +213,30 @@ public class CatalysedNetwork extends ModifierNetwork {
         return re;
       }
 
+      @Override
       public String getSpeciesAnnotation(int species, String typ) {
         return ori.getSpeciesAnnotation((species), typ);
       }
 
+      @Override
       public Collection<String> getSpeciesAnnotationTypes(int species) {
         return ori.getSpeciesAnnotationTypes((species));
       }
 
+      @Override
       public void setNetworkAnnotation(String typ, String annotation) {
         ori.setNetworkAnnotation(typ, annotation);
       }
 
+      @Override
       public void setReactionAnnotation(int reaction, String typ,
-          String annotation) {
+        String annotation) {
         ori.setReactionAnnotation(getOriginalReaction(reaction), typ, annotation);
       }
 
+      @Override
       public void setSpeciesAnnotation(int species, String typ,
-          String annotation) {
+        String annotation) {
         ori.setSpeciesAnnotation((species), typ, annotation);
       }
 

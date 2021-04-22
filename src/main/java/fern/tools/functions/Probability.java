@@ -29,6 +29,7 @@ public interface Probability {
       this.p = p;
     }
 
+    @Override
     public double getProb(int l1, int l2) {
       return p;
     }
@@ -37,11 +38,11 @@ public interface Probability {
   /**
    * Implementation for the reaction probability for the autocatalytic network creation. The
    * probability is calculated by the formula
-   * <p>
-   * <code>factor / max(l1,l2)</code>
-   * <p>
+   * <pre>
+   *   factor / max(l1,l2)
+   * </pre>
    * if
-   * <code>l1+l2 > oneToLength<code>, else 1.
+   * {@code l1 + l2 > oneToLength}, else 1.
    *
    * @author Florian Erhard
    */
@@ -55,8 +56,9 @@ public interface Probability {
       this.oneToLength = oneToLength;
     }
 
+    @Override
     public double getProb(int l1, int l2) {
-      return l1 + l2 <= oneToLength ? 1 : factor / Math.max(l1, l2);
+      return (l1 + l2) <= oneToLength ? 1 : factor / Math.max(l1, l2);
     }
 
   }

@@ -1,18 +1,19 @@
 package fern.simulation.algorithm;
 
+import java.util.Map;
+
 import cern.colt.bitvector.BitVector;
 import fern.network.AbstractKineticConstantPropensityCalculator;
 import fern.network.Network;
 import fern.simulation.controller.SimulationController;
 import fern.tools.NetworkTools;
 import fern.tools.NumberTools;
-import java.util.Map;
 
 
 /**
  * Base class for all tau leaping procedures (which are different in the methods choosing the
  * timestep candidates for critical and noncritical reactions). It extends
- * <code>GillespieEnhanced</code> because it uses the SSP algorithm, when the timestep candidate is
+ * {@code GillespieEnhanced} because it uses the SSP algorithm, when the timestep candidate is
  * to small.
  * <p>
  * Each tau leaping algorithm only works with an {@link AbstractKineticConstantPropensityCalculator}
@@ -101,7 +102,7 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
    * Performs a tau leaping step. First, critical reactions (that could exhaust one of its
    * reactants) are idenfied. The threshold for criticals can be controlled by the field nCriticals.
    * Second, a candidate timestep is chosen for noncritical reactions. If this timestep is to little
-   * (controlled by useSimpleFactor), <code>numSimpleCalls</code> steps from the SSP-Algorithm
+   * (controlled by useSimpleFactor), {@code numSimpleCalls} steps from the SSP-Algorithm
    * GillespieEnhanced are perform. Otherwise a second timestep candidate is drawn for the criticals
    * (such that only one critical reaction is firing and only once in this leap). The smaller
    * candidate is then used as tau.
@@ -118,7 +119,7 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
 
     tau3 = getNextThetaEvent() - getTime();
 
-    while (control.goOn(this) && getNextThetaEvent() <= getTime()) {
+    while (control.goOn(this) && (getNextThetaEvent() <= getTime())) {
       thetaEvent();
     }
 
@@ -131,7 +132,7 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
 
     if (verbose) {
       System.out.println("critical reactions: \n" + NetworkTools
-          .getReactionNameWithAmounts(getNet(), NumberTools.getContentAsArray(criticals)) + "\n");
+        .getReactionNameWithAmounts(getNet(), NumberTools.getContentAsArray(criticals)) + "\n");
     }
 
     tau1 = chooseTauNonCriticals(criticals);
@@ -143,12 +144,12 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
         System.out.println("Chose tau': " + tau1);
       }
 
-      if (tau1 < useSimpleFactor / a_sum) {
+      if (tau1 < (useSimpleFactor / a_sum)) {
         if (verbose) {
           System.out.println("Perform " + numSimpleCalls + " SSA steps");
         }
 
-        for (int i = 0; i < numSimpleCalls && control.goOn(this); i++) {
+        for (int i = 0; (i < numSimpleCalls) && control.goOn(this); i++) {
           super.performStep(control);
         }
         success = true;
@@ -160,7 +161,7 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
         }
 
         getNet().getAmountManager().save();
-        if (tau3 < tau1 && tau3 < tau2) {
+        if ((tau3 < tau1) && (tau3 < tau2)) {
           success = leapBy(tau3, criticals, FireType.TauLeapNonCritical);
           if (verbose) {
             System.out.println("Leaped to theta");
@@ -256,14 +257,14 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
     }
 
     for (int j = 0; j < criticals.size(); j++) {
-      if (a[j] > 0 && computeL(j) < nCritical) {
+      if ((a[j] > 0) && (computeL(j) < nCritical)) {
         criticals.set(j);
       }
     }
   }
 
   /**
-   * Determines the maximal number of times that the reaction <code>reaction</code> can fire before
+   * Determines the maximal number of times that the reaction {@code reaction} can fire before
    * exhausting one of its reactants.
    *
    * @param reaction the index of the reaction
@@ -275,7 +276,7 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
     Map<Integer, Integer> reactantHisto = this.reactantHistos[reaction];
     for (Integer reactant : reactantHisto.keySet()) {
       firings = Math.min(firings,
-          (int) Math.floor(getAmountManager().getAmount(reactant) / reactantHisto.get(reactant)));
+        (int) Math.floor(getAmountManager().getAmount(reactant) / reactantHisto.get(reactant)));
     }
 
     return firings;
@@ -285,7 +286,7 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
    * Tries to perform the tau leap by generating random numbers for the times of firings of each
    * noncritical reaction. If the leap is unsuccessful (because the reactants of one reaction are
    * exhausted), false is returned (but the already performed firings are not canceled). If the
-   * parameter for the used Poisson distribution is greater than <code>langevinThreshold</code>, a
+   * parameter for the used Poisson distribution is greater than {@code langevinThreshold}, a
    * Normal distribution is used as an approximation (which is faster).
    *
    * @param tau       the timestep for the leap
@@ -304,7 +305,7 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
         }
         at = a[i] * tau;
         if (at > langevinThreshold) {
-          times = Math.max(0, (int) Math.round(at + Math.sqrt(at) * stochastics.getNormal()));
+          times = Math.max(0, (int) Math.round(at + (Math.sqrt(at) * stochastics.getNormal())));
         } else {
           times = stochastics.getPoisson(at);
         }
@@ -352,7 +353,7 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
 
   /**
    * The useSimpleFactor determines, when the tau leaping is abandoned and the SSA method is used
-   * (if tau<useSimpleFactor/a_0). The default value is 10.
+   * (if tau &lt; useSimpleFactor / a_0). The default value is 10.
    *
    * @return the useSimpleFactor
    */
@@ -363,7 +364,7 @@ public abstract class AbstractBaseTauLeaping extends GillespieEnhanced {
 
   /**
    * The useSimpleFactor determines, when the tau leaping is abandoned and the SSA method is used
-   * (if tau<useSimpleFactor/a_0).The default value is 10.
+   * (if tau &lt; useSimpleFactor / a_0).The default value is 10.
    *
    * @param useSimpleFactor the useSimpleFactor to set
    */

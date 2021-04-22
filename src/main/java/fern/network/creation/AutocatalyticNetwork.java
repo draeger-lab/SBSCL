@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import cern.colt.bitvector.BitVector;
-import fern.network.AnnotationManagerImpl;
 import fern.network.AbstractKineticConstantPropensityCalculator;
 import fern.network.AbstractNetworkImpl;
 import fern.network.AmountManager;
 import fern.network.AnnotationManager;
+import fern.network.AnnotationManagerImpl;
 import fern.network.DefaultAmountManager;
 import fern.network.PropensityCalculator;
 import fern.network.modification.ReversibleNetwork;
@@ -18,18 +18,18 @@ import fern.tools.Stochastics;
 import fern.tools.functions.Probability;
 
 /**
- * Evolve an autocatalytic network. The evolution starts at some monomers, let them aggregate (e.g.
- * A+B -> AB) by a given probability and up to a given length. Then, each reaction is catalyzed by a
+ * Evolve an autocatalytic network. The evolution starts at some monomers, let them aggregate (e.g.,
+ * A + B &#8594; AB) by a given probability and up to a given length. Then, each reaction is catalyzed by a
  * given probability by some molecule species (the catalysts are stored as fields in the net's
  * annotation). Since the reactions are only unidirectional you have to create a {@link
  * ReversibleNetwork} out of it. Because of this, also catalysts for the reverse reactions are
  * stored in the corresponding fields.
  * <p>
  * The advantage of the unidirectional reactions is space efficiency since the
- * <code>ReversibleNetwork</code> does not copy the reactions but redirects the indices.
+ * {@code ReversibleNetwork} does not copy the reactions but redirects the indices.
  * <p>
  * This network can of course be used for stochastic simulations. If it is just converted into a
- * <code>ReversibleNetwork</code>, there are just different kinetic constants used for catalyzed
+ * {@code ReversibleNetwork}, there are just different kinetic constants used for catalyzed
  * and
  * not catalyzed reactions ({@link AutocatalyticNetwork#getCatalyzedKineticConstant} and {@link
  * AutocatalyticNetwork#getUncatalyzedKineticConstant}).
@@ -77,7 +77,7 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
    * @see Probability
    */
   public AutocatalyticNetwork(char[] monomers, Probability createProb, Probability catProb,
-      int maxLength) {
+    int maxLength) {
     this(monomers, createProb, catProb, maxLength, true);
   }
 
@@ -95,7 +95,7 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
    * @see Probability
    */
   public AutocatalyticNetwork(char[] monomers, Probability createProb, Probability catProb,
-      int maxLength, boolean useFastMethod) {
+    int maxLength, boolean useFastMethod) {
     super("Autocatalytic network");
     this.monomers = monomers;
     this.catProb = catProb;
@@ -171,15 +171,15 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
       int i1 = 0, i2 = 0;
       int productValue = -1;
       // obtain reactants
-      while (productValue == -1 || used.get(productValue)) {
+      while ((productValue == -1) || used.get(productValue)) {
         i1 = Stochastics.getInstance().getUnif(0, shellSize[s1]);
         i2 = Stochastics.getInstance().getUnif(0, shellSize[s2]);
-        productValue = i1 * shellSize[s2] + i2;
+        productValue = (i1 * shellSize[s2]) + i2;
       }
       used.set(productValue);
       // now we have our two reactants / their creating reactions
-      int r1 = s1 == 1 ? i1 : adjListPro[i1 + shellSizeCumSum[s1 - 1] - monomers.length][0];
-      int r2 = s2 == 1 ? i2 : adjListPro[i2 + shellSizeCumSum[s2 - 1] - monomers.length][0];
+      int r1 = s1 == 1 ? i1 : adjListPro[(i1 + shellSizeCumSum[s1 - 1]) - monomers.length][0];
+      int r2 = s2 == 1 ? i2 : adjListPro[(i2 + shellSizeCumSum[s2 - 1]) - monomers.length][0];
       String product = getSpeciesName(r1) + getSpeciesName(r2);
       // maybe the product is already present
       if (!speciesIdToIndex.containsKey(product)) {
@@ -195,15 +195,15 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
   }
 
   private void createRandomProductsFromShellsFast(int count, int s1, int s2, Offset offset) {
-    int[] r = NumberTools.getNumbersTo(shellSize[s1] * shellSize[s2] - 1);
+    int[] r = NumberTools.getNumbersTo((shellSize[s1] * shellSize[s2]) - 1);
     NumberTools.shuffle(r);
 
     // obtain count new reactions
     for (int i = 0; i < count; i++) {
       int i1 = r[i] / shellSize[s2], i2 = r[i] % shellSize[s2];
       // now we have our two reactants / their creating reactions
-      int r1 = s1 == 1 ? i1 : adjListPro[i1 + shellSizeCumSum[s1 - 1] - monomers.length][0];
-      int r2 = s2 == 1 ? i2 : adjListPro[i2 + shellSizeCumSum[s2 - 1] - monomers.length][0];
+      int r1 = s1 == 1 ? i1 : adjListPro[(i1 + shellSizeCumSum[s1 - 1]) - monomers.length][0];
+      int r2 = s2 == 1 ? i2 : adjListPro[(i2 + shellSizeCumSum[s2 - 1]) - monomers.length][0];
       String product = getSpeciesName(r1) + getSpeciesName(r2);
       // maybe the product is already present
       if (!speciesIdToIndex.containsKey(product)) {
@@ -220,12 +220,12 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
 
   private void catalyzeRandom(int count, int reaction, String field) {
     BitVector used = new BitVector(getNumSpecies());
-    StringBuilder sb = new StringBuilder(count * (maxLength / 2 + 1));
+    StringBuilder sb = new StringBuilder(count * ((maxLength / 2) + 1));
     // obtain count catalysts
     for (int i = 0; i < count; i++) {
       int cat = -1;
 
-      while (cat == -1 || used.get(cat)) {
+      while ((cat == -1) || used.get(cat)) {
         cat = Stochastics.getInstance().getUnif(0, getNumSpecies());
       }
 
@@ -243,7 +243,7 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
     int[] r = NumberTools.getNumbersTo(getNumSpecies());
     NumberTools.shuffle(r);
 
-    StringBuilder sb = new StringBuilder(count * (maxLength / 2 + 1));
+    StringBuilder sb = new StringBuilder(count * ((maxLength / 2) + 1));
     // obtain count catalysts
     for (int i = 0; i < count; i++) {
       int cat = r[i];
@@ -268,8 +268,8 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
       //cutpos
       for (int c = 1; c < shell; c++) {
         shellCutPosSize[shell][c] = Stochastics.getInstance().getBinom(
-            shellSize[c] * shellSize[shell - c],
-            createProb.getProb(c, shell - c));
+          shellSize[c] * shellSize[shell - c],
+          createProb.getProb(c, shell - c));
       }
       shellSize[shell] = NumberTools.sum(shellCutPosSize[shell]);
     }
@@ -304,23 +304,25 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
   @Override
   protected void createPropensityCalculator() {
     propensitiyCalculator = new AbstractKineticConstantPropensityCalculator(adjListRea) {
+      @Override
       public double getConstant(int i) {
-        return (getCatalystsPopulation(i, CATALYSTS_FIELD)) * catalyzedKineticConstant
+        return ((getCatalystsPopulation(i, CATALYSTS_FIELD)) * catalyzedKineticConstant)
             + uncatalyzedKineticConstant;
       }
     };
   }
 
   /**
-   * Gets the <code>PropensityCalculator</code> which has to be used for instantiation of the {@link
+   * Gets the {@code PropensityCalculator} which has to be used for instantiation of the {@link
    * ReversibleNetwork}.
    *
-   * @return the <code>PropensityCalculator</code> for the <code>ReversibleNetwork</code>
+   * @return the {@code PropensityCalculator} for the {@code ReversibleNetwork}
    */
   public PropensityCalculator getReversePropensityCalculator() {
     return new AbstractKineticConstantPropensityCalculator(adjListPro) {
+      @Override
       public double getConstant(int i) {
-        return (getCatalystsPopulation(i, CATALYSTS_FIELD_REVERSIBLE)) * catalyzedKineticConstant
+        return ((getCatalystsPopulation(i, CATALYSTS_FIELD_REVERSIBLE)) * catalyzedKineticConstant)
             + uncatalyzedKineticConstant;
       }
     };
@@ -345,16 +347,17 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
 
   /**
    * Implementation for the {@link CatalystIterator}. Returns the indices of catalysts for the given
-   * reaction. By using <code>getAnnotationManager</code> it returns the correct catalysts even if a
+   * reaction. By using {@code getAnnotationManager} it returns the correct catalysts even if a
    * {@link ReversibleNetwork} is used.
    *
    * @param reaction index of the reaction for which the catalysts have to be returned
    * @return the catalysts of the reaction
    */
+  @Override
   public Iterable<Integer> getCatalysts(int reaction) {
     String c = getAnnotationManager().getReactionAnnotation(reaction % getNumReactions(),
-        reaction < getNumReactions() ? CATALYSTS_FIELD : CATALYSTS_FIELD_REVERSIBLE);
-//		String c = getAnnotationManager().getReactionAnnotation(reaction,CATALYSTS_FIELD);
+      reaction < getNumReactions() ? CATALYSTS_FIELD : CATALYSTS_FIELD_REVERSIBLE);
+    //		String c = getAnnotationManager().getReactionAnnotation(reaction,CATALYSTS_FIELD);
     LinkedList<Integer> re = new LinkedList<>();
     if (c == null) {
       return re;
@@ -382,10 +385,12 @@ public class AutocatalyticNetwork extends AbstractNetworkImpl implements Catalys
   }
 
 
+  @Override
   public long getInitialAmount(int species) {
     return (species < monomers.length) ? monomerAmount : otherAmount;
   }
 
+  @Override
   public void setInitialAmount(int species, long value) {
     if (species < monomers.length) {
       monomerAmount = value;

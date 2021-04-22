@@ -48,3 +48,8 @@ buildNumber.properties
 # Eclipse
 **/.metadata
 /bin/
+
+# Library folder and files (auto generated)
+lib/
+libglpkjni_x64.dylib
+

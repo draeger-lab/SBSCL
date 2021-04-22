@@ -9,7 +9,9 @@ Please note that this project does not contain any user interface, neither a com
 Its abstract type and interface hierarchy facilitates the implementation of further community standards, such as [CellML](http://www.cellml.org).
 
 When using the Simulation Core Library, please cite:
-Roland Keller, Alexander Dörr, Akito Tabira, Akira Funahashi, Michael J. Ziller, Richard Adams, Nicolas Rodriguez, Nicolas Le Novère, Noriko Hiroi, Hannes Planatscher, Andreas Zell, and Andreas Dräger. The systems biology simulation core algorithm. *BMC Systems Biology*, 7:55, July 2013. [ [DOI](https://doi.org/10.1186/1752-0509-7-55) | [link](https://bmcsystbiol.biomedcentral.com/articles/10.1186/1752-0509-7-55) | [pdf](https://bmcsystbiol.biomedcentral.com/track/pdf/10.1186/1752-0509-7-55) ]
+
+1. Hemil Panchiwala, Shalin Shah, Hannes Planatscher, Mykola Zakharchuk, Matthias König, Andreas Dräger. The Systems Biology Simulation Core Library. Preprints 2020, 2020120296. [ [DOI](https://doi.org/10.20944/preprints202012.0296.v1) | [PDF](https://www.preprints.org/manuscript/202012.0296/v1/download) ]
+2. Roland Keller, Alexander Dörr, Akito Tabira, Akira Funahashi, Michael J. Ziller, Richard Adams, Nicolas Rodriguez, Nicolas Le Novère, Noriko Hiroi, Hannes Planatscher, Andreas Zell, and Andreas Dräger. The systems biology simulation core algorithm. *BMC Systems Biology*, 7:55, July 2013. [ [DOI](https://doi.org/10.1186/1752-0509-7-55) | [link](https://bmcsystbiol.biomedcentral.com/articles/10.1186/1752-0509-7-55) | [pdf](https://bmcsystbiol.biomedcentral.com/track/pdf/10.1186/1752-0509-7-55) ]
 
 ## Capabilities
 
@@ -34,7 +36,7 @@ Roland Keller, Alexander Dörr, Akito Tabira, Akira Funahashi, Michael J. Ziller
 
 ## Documentation of the application programing interfaces
 
-To get started with this library, please see the API documentation (JavaDoc) for the most recent Version 1.5. See the introduction, use-cases, and coding examples here: ([Description](project-reports.html)). 
+To get started with this library, please see the API documentation (JavaDoc) for the most recent Version 1.5. See the introduction, use-cases, and coding examples here: ([Description](project-reports.html)).
 
 In case you like to use older versions, you can find the documentation here:
 * ([Version 1.4](old_javadoc/version_1.4/index.html))
@@ -55,4 +57,3 @@ Many thanks to B. Kotcon, S. Mesuro, D. Rozenfeld, A. Yodpinyanee, A. Perez, E. 
 We like to thank [Michael T. Cooling](http://www.abi.auckland.ac.nz/uoa/mike-cooling/), University of Auckland, New Zealand, for fruitful discussion.
 
 This work was funded by the Federal Ministry of Education and Research ([BMBF](http://www.bmbf.de/en/), Germany) as part of the [Virtual Liver Network](http://www.virtual-liver.de).
-

@@ -19,11 +19,9 @@
 	* agreement is provided in the file named "LICENSE.txt" included with 
 	* this software distribution and also available online as 
 	* <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>. 
-	-->
+-->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.draegerlab</groupId>
@@ -31,10 +29,22 @@
 
   <!-- Output to jar format -->
   <packaging>jar</packaging>
+  
+  <!--
+     Hints for deployment:
+     
+     mvn clean verify source:jar source:jar-no-fork javadoc:jar install:install gpg:sign deploy:deploy release:clean release:prepare release:perform deploy
+     
+     Optionally also add: -Dmaven.test.skip=true
+     
+     Minimal execution with: mvn deploy
+     
+     mvn clean verify source:jar source:jar-no-fork javadoc:jar gpg:sign deploy -Dgpg.passphrase=<pw>
+  -->
 
 
   <!-- =================================================================== -->
-  <!-- General project information -->
+  <!-- General project information                                         -->
   <!-- =================================================================== -->
 
   <name>Systems Biology Simulation Core Library (SBSCL)</name>
@@ -42,11 +52,14 @@
   <url>https://github.com/draeger-lab/SBSCL/</url>
   <inceptionYear>2007</inceptionYear>
   <description>
-    The Systems Biology Simulation Core Library provides an efficient and exhaustive
-    Java™ implementation of methods to interpret the content of models encoded in the Systems
-    Biology Markup Language (SBML) and its numerical solution. This library is based on the JSBML
-    project and can be used on every operating system, for which a Java Virtual Machine is
-    available.
+    The Systems Biology Simulation Core Library provides an efficient and
+    exhaustive Java™ implementation of methods to interpret the content of
+    models encoded in the Systems Biology Markup Language (SBML) and its
+    numerical solution. This library is based on the JSBML project. It can be
+    used on every operating system for which a Java Virtual Machine is available.
+    Version 2.0 and beyond support simulation in three frameworks:
+    constraint-based analysis, stochastic simulation, and ordinary differential
+    equation systems. SBSCL supports SED-ML and COMBINE archives in OMEX format.
   </description>
 
   <properties>
@@ -58,12 +71,13 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.license.url>https://www.gnu.org/licenses/lgpl-3.0-standalone.html</project.license.url>
     <junit.version>4.13.1</junit.version>
-    <maven-javadoc-plugin.version>2.10.2</maven-javadoc-plugin.version>
+    <javadoc.version>3.2.0</javadoc.version>
+    <site.path>https://draeger-lab.github.io/SBSCL/docs/</site.path>
   </properties>
 
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>https://github.com/draeger-lab/SBSCL/issues</url>
+    <url>${project.url}/issues</url>
   </issueManagement>
 
   <distributionManagement>
@@ -71,6 +85,21 @@
       <id>SBSCL</id>
       <url>https://draeger-lab.github.io/SBSCL</url>
     </site>
+    <downloadUrl>${project.url}</downloadUrl>
+    <repository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>ossrh</id>
+      <name>Releases</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <layout>default</layout>
+    </repository>
+    <snapshotRepository>
+      <uniqueVersion>true</uniqueVersion>
+      <id>ossrh</id>
+      <name>Snapshots</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <layout>default</layout>
+    </snapshotRepository>
   </distributionManagement>
 
   <ciManagement>
@@ -86,33 +115,61 @@
     </license>
   </licenses>
 
+
+  <!-- =================================================================== -->
+  <!-- Source Control Management                                           -->
+  <!-- =================================================================== -->
+
+  <scm>
+    <connection>scm:git:git://github.com/draeger-lab/SBSCL.git</connection>
+    <developerConnection>scm:git:ssh://github.com/draeger-lab/SBSCL.git</developerConnection>
+    <url>https://github.com/draeger-lab/SBSCL/tree/master/</url> <!-- Expanding ${project.url} does not work in Maven Central -->
+  </scm>
+  
+  
+  <!-- =================================================================== -->
+  <!-- The team of developers and contributors                             -->
+  <!-- =================================================================== -->
+
   <developers>
     <developer>
       <name>Richard Adams</name>
       <id>otter606</id>
       <email>ra22597@gmail.com</email>
       <url>https://github.com/otter606</url>
+      <roles>
+        <role>developer</role>
+      </roles>
     </developer>
     <developer>
       <name>Alexander Dörr</name>
       <email>alexander.doerr@uni-tuebingen.de</email>
       <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/doerr/</url>
-      <timezone>Germany/Berlin</timezone>
+      <timezone>Europe/Berlin</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <properties>
+        <picUrl>
+          http://www.cogsys.cs.uni-tuebingen.de/mitarb/doerr/portrait.jpg
+        </picUrl>
+      </properties>
     </developer>
     <developer>
       <name>Andreas Dräger</name>
       <id>draeger</id>
-      <email>andreas.draeger@uni-tuebingen.de</email>
+      <email>draeger@informatik.uni-tuebingen.de</email>
       <url>https://github.com/draeger</url>
       <organization>University of Tübingen</organization>
+      <organizationUrl>https://uni-tuebingen.de/en/127116</organizationUrl>
       <roles>
         <role>architect</role>
         <role>developer</role>
       </roles>
-      <timezone>Germany/Berlin</timezone>
+      <timezone>Europe/Berlin</timezone>
       <properties>
         <picUrl>
-          https://uni-tuebingen.de/fileadmin/_processed_/a/0/csm_Andreas_Draeger_im_Buero_2a3fefe7eb.jpg
+          https://publons.com/media/thumbs/academic/photos/dd5f988fb8ee4bc8a8cbecbb7b71c58e.jpg.200x200_q95_crop_detail_upscale.jpg
         </picUrl>
       </properties>
     </developer>
@@ -123,13 +180,29 @@
       <url>http://fun.bio.keio.ac.jp/people/</url>
       <organization>Keio University</organization>
       <timezone>Japan/Tokyo</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <properties>
+        <picUrl>
+          https://groups.oist.jp/sites/default/files/styles/group_image/public/eventimg/1611/funahashi-sensei_0.jpeg
+        </picUrl>
+      </properties>
     </developer>
     <developer>
       <name>Roland Keller</name>
       <id>RolandKeller5</id>
       <email>http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/</email>
       <url>roland.keller@gmx.de</url>
-      <timezone>Germany/Berlin</timezone>
+      <timezone>Europe/Berlin</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <properties>
+        <picUrl>
+          http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/portrait.jpg
+        </picUrl>
+      </properties>
     </developer>
     <developer>
       <name>Matthias König</name>
@@ -137,14 +210,30 @@
       <email>konigmatt@googlemail.com</email>
       <url>https://github.com/matthiaskoenig</url>
       <organization>Humboldt University</organization>
-      <timezone>Germany/Berlin</timezone>
+      <timezone>Europe/Berlin</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <properties>
+        <picUrl>
+          https://seek.lisym.org/assets/avatar-images/134-120x120.png
+        </picUrl>
+      </properties>
     </developer>
     <developer>
       <name>Hannes Planatscher</name>
       <id>planatscher</id>
       <email>hannes.planatscher@nmi.de</email>
       <url>https://github.com/planatscher</url>
-      <timezone>Germany/Berlin</timezone>
+      <timezone>Europe/Berlin</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <properties>
+        <picUrl>
+          http://www.ra.cs.uni-tuebingen.de/mitarb/planatsc/img/PlanatscherHannes_small.png
+        </picUrl>
+      </properties>
     </developer>
     <developer>
       <name>Nicolas Rodriguez</name>
@@ -153,6 +242,9 @@
       <url>https://github.com/niko-rodrigue</url>
       <organization>The Babraham Institute</organization>
       <timezone>UK/London</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
       <properties>
         <picUrl>
           https://www.lenoverelab.org/sites/default/files/pictures/Nicolas_Rodriguez-170x150.jpg
@@ -169,6 +261,11 @@
       <roles>
         <role>developer</role>
       </roles>
+      <properties>
+        <picUrl>
+          https://uni-tuebingen.de/fileadmin/_processed_/3/d/csm_Shalin_Shah_85b583dd09.png
+        </picUrl>
+      </properties>
     </developer>
     <developer>
       <name>Hemil Panchiwala</name>
@@ -191,10 +288,17 @@
       <url>https://github.com/mythosil</url>
       <organization>Keio University</organization>
       <timezone>Japan/Tokyo</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
     </developer>
   </developers>
 
   <contributors>
+    <contributor>
+      <name>Leonhard Markert</name>
+      <url>https://github.com/curiousleo</url>
+    </contributor>
     <contributor>
       <name>Max Zwießele</name>
       <url>https://github.com/mzwiessele</url>
@@ -246,20 +350,9 @@
     </contributor>
   </contributors>
 
-  
-  <!-- =================================================================== -->
-  <!-- Source Control Management                                           -->
-  <!-- =================================================================== -->
-
-  <scm>
-    <connection>scm:git:git://github.com/draeger-lab/SBSCL.git</connection>
-    <developerConnection>scm:git:ssh://github.com:draeger-lab/SBSCL.git</developerConnection>
-    <url>https://github.com/draeger-lab/SBSCL/tree/master/</url>
-  </scm>
-
 
   <!-- =================================================================== -->
-  <!-- Repositories -->
+  <!-- Repositories                                                        -->
   <!-- =================================================================== -->
 
   <repositories>
@@ -285,7 +378,7 @@
     <repository>
       <id>sems-maven-repository-releases</id>
       <name>SEMS Maven Repo</name>
-      <url>http://mvn.sems.uni-rostock.de/releases/</url>
+      <url>https://mvn.bio.informatik.uni-rostock.de/releases/</url>
       <layout>default</layout>
       <snapshots>
         <enabled>false</enabled>
@@ -294,7 +387,7 @@
   </repositories>
 
   <!-- =================================================================== -->
-  <!-- Dependencies -->
+  <!-- Dependencies                                                        -->
   <!-- =================================================================== -->
 
   <dependencies>
@@ -382,15 +475,14 @@
 
 
   <!-- =================================================================== -->
-  <!-- Building -->
+  <!-- Building                                                            -->
   <!-- =================================================================== -->
 
   <!-- To build the project run: -->
   <!-- mvn clean compile package assembly:single -->
 
   <build>
-    <finalName>${project.artifactId}-${project.version}</finalName>
-
+    <!--<finalName>${project.artifactId}-${project.version}</finalName>-->
     <pluginManagement>
       <plugins>
         <!--  Run mvn license:third-party-report to build report of licenses -->
@@ -424,16 +516,30 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.7.1</version>
+          <version>3.9.1</version>
           <configuration>
             <locales>en</locales>
+            <pomPackagingOnly>false</pomPackagingOnly>
           </configuration>
           <executions>
             <execution>
               <id>attach-descriptor</id>
               <goals>
                 <goal>attach-descriptor</goal>
+                <goal>site</goal>
               </goals>
+              <!-- select the Maven phase in which the plugin will be executed -->
+              <phase>site-deploy</phase>
+              <configuration>
+                <!-- Plugin configuration ges here -->
+                <server>github</server>
+                <!-- The commit message -->
+                <message>Building site for my project</message>
+                <!-- The location where the site is uploaded -->
+                <path>${site.path}</path>
+                <!-- Use merge or override the content -->
+                <merge>true</merge>
+              </configuration>
             </execution>
           </executions>
           <dependencies>
@@ -447,7 +553,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.0</version>
+          <version>3.0.0-M5</version>
           <configuration>
             <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
           </configuration>
@@ -523,10 +629,14 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>2.2.1</version>
+          <version>3.2.0</version>
+          <!--<configuration>
+            <attach>true</attach>
+          </configuration>-->
           <executions>
             <execution>
               <id>attach-sources</id>
+              <phase>verify</phase>
               <goals>
                 <goal>jar-no-fork</goal>
               </goals>
@@ -537,7 +647,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>${javadoc.version}</version>
           <executions>
             <execution>
               <id>attach-javadocs</id>
@@ -546,13 +656,27 @@
               </goals>
             </execution>
           </executions>
+          <configuration> 
+            <!-- add this to disable checking -->
+            <!-- <doclint>none</doclint> -->
+            <!-- <doclint>syntax</doclint> -->
+            <!-- <doclint>html</doclint> -->
+            <doclint>accessibility</doclint>
+            <doclint>reference</doclint>
+            <!-- 
+              This sets the command-line option -Xdoclint:none. In addition 
+              to 'none' there are further options available, including 'all',
+              'html', 'syntax', 'accessibility', and more. For further information see
+              https://docs.oracle.com/javase/8/docs/technotes/tools/unix/javadoc.html
+            -->
+          </configuration>
         </plugin>
         <!-- Needed to upload the distribution to Maven Central to sign the JAR file -->
         <!-- Execute with mvn clean deploy -Dgpg.passphrase=yourpassphrase -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
-          <version>1.5</version>
+          <version>1.6</version>
           <executions>
             <execution>
               <id>sign-artifacts</id>
@@ -560,6 +684,10 @@
               <goals>
                 <goal>sign</goal>
               </goals>
+              <configuration>
+                <keyname>${gpg.keyname}</keyname>
+                <passphraseServerId>${gpg.keyname}</passphraseServerId>
+              </configuration>
             </execution>
           </executions>
         </plugin>
@@ -599,6 +727,10 @@
       </resource>
     </resources>
   </build>
+  
+  <!-- =================================================================== -->
+  <!-- Profiles                                                            -->
+  <!-- =================================================================== -->
 
   <!--  To stop maven errors from javadoc warnings -->
   <profiles>
@@ -612,14 +744,18 @@
       </properties>
     </profile>
   </profiles>
+  
+  <!-- =================================================================== -->
+  <!-- Reporting                                                           -->
+  <!-- =================================================================== -->
 
-  <!-- Generate javadoc and integrate with generated website -->
+  <!-- Generate javadoc and integrate with generated website with 'mvn site' -->
   <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.0.1</version>
+        <version>${javadoc.version}</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -631,8 +767,10 @@
           <overview>${project.basedir}/src/main/javadoc/overview.html</overview>
           <additionalOptions>${javadoc.opts}</additionalOptions>
           <failOnError>false</failOnError>
+          <show>public</show> <!-- Display only public methods and classes -->
         </configuration>
       </plugin>
     </plugins>
   </reporting>
+  
 </project>
