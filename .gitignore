@@ -26,6 +26,9 @@ src/test/resources/bigg/models/
 # sbml-test-suite
 src/test/resources/sbml-test-suite/
 
+#biomodels
+src/test/resources/biomodels/
+
 # log files
 *.log
 
