@@ -27,10 +27,7 @@ import org.simulator.math.odes.MultiTable.Block.Column;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -384,7 +381,67 @@ public class StochasticTestSuiteTest {
 
       MultiTable inputData = getReferenceResult(sbmlfile, csvfile);
       compareResults(meanSD, inputData);
+
+      // Map of variables present in the test suite results file
+      Map<String, Integer> resultColumns = new HashMap<>();
+      for (int i = 0; i < inputData.getColumnCount(); i++) {
+        resultColumns.put(inputData.getColumnName(i), 1);
+      }
+
+      boolean[] variablesToAdd = new boolean[meanSD.getColumnCount()];
+      if (resultColumns.containsKey(meanSD.getColumnName(0))) {
+        variablesToAdd[0] = true;
+      }
+      for (int i = 1; i < meanSD.getColumnCount(); i++) {
+        if (resultColumns.containsKey(meanSD.getColumnName(i))) {
+          variablesToAdd[i] = true;
+        }
+      }
+
+      File file1 = new File(TestUtils.getPathForTestResource("/sbml/stochastic/stochastic_"+testcase+".csv"));
+      FileWriter fr = new FileWriter(file1);
+      StringBuilder s = getSBMLOrCompResultAsCSV(meanSD, variablesToAdd);
+      fr.write(s.toString());
+      fr.close();
     }
+  }
+
+  private static StringBuilder getSBMLOrCompResultAsCSV(MultiTable result,
+                                                        boolean[] variablesToAdd) {
+    StringBuilder output = new StringBuilder("");
+    if (variablesToAdd[0]) {
+      output.append(result.getColumnName(0)).append(",");
+    }
+    for (int i = 1; i < result.getColumnCount() - 1; i++) {
+      if (variablesToAdd[i]) {
+        output.append(result.getColumnName(i)).append(",");
+      }
+    }
+    if (variablesToAdd[result.getColumnCount() - 1]) {
+      output.append(result.getColumnName(result.getColumnCount() - 1)).append("\n");
+    } else {
+      if (output.length() > 0) {
+        output.deleteCharAt(output.length() - 1);
+        output.append("\n");
+      }
+    }
+
+    for (int i = 0; i < result.getRowCount(); i++) {
+      for (int j = 0; j < result.getColumnCount() - 1; j++) {
+        if (variablesToAdd[j]) {
+          output.append(result.getValueAt(i, j)).append(",");
+        }
+      }
+      if (variablesToAdd[result.getColumnCount() - 1]) {
+        output.append(result.getValueAt(i, result.getColumnCount() - 1)).append("\n");
+      } else {
+        if (output.length() > 0) {
+          output.deleteCharAt(output.length() - 1);
+          output.append("\n");
+        }
+      }
+    }
+    return output;
   }
 
   /**
