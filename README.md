@@ -65,6 +65,25 @@ Import SBSCL into your project via Maven as follows:
 ```
 See [Releases](https://github.com/draeger-lab/SBSCL/releases) and [Maven Central](https://search.maven.org/artifact/org.draegerlab/sbscl) for the most recent version number.
 
+### Example Code and Demos
+
+A [Demo Repository](https://github.com/draeger-lab/SBSCL-demo) provides a few use case examples and an exemplary [POM](https://github.com/draeger-lab/SBSCL-demo/blob/main/pom.xml) file that helps setting up the project.
+
+Further examples can be found directly within this repository in the [Examples Package](https://github.com/draeger-lab/SBSCL/tree/master/src/main/java/org/simulator/examples), including:
+* How to [run models directly from BioModels](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/BiomodelsExample.java) database
+* How to [run hierarchically structured models](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/CompExample.java) that use the SBML extension package "comp"
+* How to [listen to constraint violations](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/ConstraintExample.java)
+* How to run a [flux balance analysis](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/FBAExample.java)
+* How to work with an [OMEX archive](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/OMEXExample.java) file
+* How to execute a simulation as instructed in a [SED-ML file](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/SEDMLExample.java)
+* How to run a [dynamic simulation](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/SimulatorExample.java)
+
+
+### Comparison to Similar Libraries
+
+To compare SBSCL to other simulation engines and to benchmark its predictions and results, a separate project, [SBSCL simulator comparison](https://github.com/matthiaskoenig/sbscl-simulator-comparison), is available.
+
+
 ## File structure
 
 Just a brief explanation of the folders and files contained in this distribution.
