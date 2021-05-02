@@ -77,6 +77,7 @@ Further examples can be found directly within this repository in the [Examples P
 * How to work with an [OMEX archive](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/OMEXExample.java) file
 * How to execute a simulation as instructed in a [SED-ML file](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/SEDMLExample.java)
 * How to run a [dynamic simulation](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/SimulatorExample.java)
+* How to run a [stochastic simulation](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/Start.java)
 
 
 ### Comparison to Similar Libraries
