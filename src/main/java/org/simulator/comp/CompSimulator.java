@@ -1,24 +1,24 @@
 package org.simulator.comp;
 
-import java.util.Arrays;
+import java.io.File;
+import java.io.IOException;
+
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.commons.math.ode.DerivativeException;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.sbml.jsbml.*;
+import org.sbml.jsbml.AbstractTreeNode;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.ext.comp.util.CompFlatteningConverter;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.math.odes.AbstractDESSolver;
-import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
 import org.simulator.math.odes.DESSolver;
 import org.simulator.math.odes.MultiTable;
-import org.simulator.math.odes.MultiTable.Block;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.AddMetaInfo;
 import org.simulator.sbml.SBMLinterpreter;
-
-import javax.xml.stream.XMLStreamException;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Class for simulating models encoded in the SBML comp package.
@@ -51,10 +51,16 @@ public class CompSimulator {
    * @throws XMLStreamException
    */
   public CompSimulator(File file) throws IOException, XMLStreamException {
-
     // Read original SBML file and add meta-info about original ID
-    doc = SBMLReader.read(file);
-    doc = AddMetaInfo.putOrigId(doc);
+    this(SBMLReader.read(file));
+  }
+
+  /**
+   *
+   * @param doc
+   */
+  public CompSimulator(SBMLDocument doc) {
+    this.doc = AddMetaInfo.putOrigId(doc);
 
     // Flatten the model extra information in userObjects
     CompFlatteningConverter compFlatteningConverter = new CompFlatteningConverter();
@@ -126,8 +132,8 @@ public class CompSimulator {
         identifiers[index-1] = (String) node.getUserObject(AddMetaInfo.ORIG_ID);
         if (node.isSetUserObjects()) {
           logger.info("flat id: " + solution.getColumnIdentifier(index) + "\t old id:" + node
-              .getUserObject(AddMetaInfo.ORIG_ID) + "\t model enclosing it: " + node
-              .getUserObject(AddMetaInfo.MODEL_ID));
+            .getUserObject(AddMetaInfo.ORIG_ID) + "\t model enclosing it: " + node
+            .getUserObject(AddMetaInfo.MODEL_ID));
         }
       }
     }
