@@ -1,5 +1,20 @@
 package org.simulator.sbml;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.CallableSBase;
@@ -22,20 +37,46 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.validator.OverdeterminationValidator;
-import org.simulator.math.odes.*;
-import org.simulator.sbml.astnode.*;
+import org.simulator.math.odes.DESystem;
+import org.simulator.math.odes.DelayValueHolder;
+import org.simulator.math.odes.DelayedDESystem;
+import org.simulator.math.odes.EventDESystem;
+import org.simulator.math.odes.FastProcessDESystem;
+import org.simulator.math.odes.RichDESystem;
+import org.simulator.sbml.astnode.ASTNodeInterpreter;
+import org.simulator.sbml.astnode.ASTNodeValue;
+import org.simulator.sbml.astnode.AssignmentRuleValue;
+import org.simulator.sbml.astnode.CompartmentOrParameterValue;
+import org.simulator.sbml.astnode.DivideValue;
+import org.simulator.sbml.astnode.FunctionValue;
+import org.simulator.sbml.astnode.IntegerValue;
+import org.simulator.sbml.astnode.LocalParameterValue;
+import org.simulator.sbml.astnode.MinusValue;
+import org.simulator.sbml.astnode.NamedValue;
+import org.simulator.sbml.astnode.PlusValue;
+import org.simulator.sbml.astnode.PowerValue;
+import org.simulator.sbml.astnode.RateRuleValue;
+import org.simulator.sbml.astnode.ReactionValue;
+import org.simulator.sbml.astnode.RootFunctionValue;
+import org.simulator.sbml.astnode.SpeciesReferenceValue;
+import org.simulator.sbml.astnode.SpeciesValue;
+import org.simulator.sbml.astnode.StoichiometryValue;
+import org.simulator.sbml.astnode.TimesValue;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+/**
+ *
+ * @author Hemil Panchiwala
+ * @author Andreas Dr&auml;ger
+ *
+ */
 public abstract class EquationSystem
-    implements SBMLValueHolder, DelayedDESystem, EventDESystem,
-    FastProcessDESystem, RichDESystem, PropertyChangeListener {
+implements SBMLValueHolder, DelayedDESystem, EventDESystem,
+FastProcessDESystem, RichDESystem, PropertyChangeListener {
+
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -5059388953358396837L;
 
   /**
    * A {@link Logger}.
@@ -381,8 +422,8 @@ public abstract class EquationSystem
    * @throws SBMLException
    */
   public void init(boolean renewTree, double defaultSpeciesValue, double defaultParameterValue,
-      double defaultCompartmentValue, Map<String, Boolean> amountHash)
-      throws ModelOverdeterminedException {
+    double defaultCompartmentValue, Map<String, Boolean> amountHash)
+        throws ModelOverdeterminedException {
 
     v = new double[this.model.getNumReactions()];
     symbolHash = new HashMap<>();
@@ -439,7 +480,7 @@ public abstract class EquationSystem
     }
 
     int sizeY = model.getCompartmentCount() + model.getSpeciesCount() + model.getParameterCount()
-        + speciesReferencesInRateRules;
+    + speciesReferencesInRateRules;
     Y = new double[sizeY];
     oldY = new double[sizeY];
     oldY2 = new double[sizeY];
@@ -582,7 +623,7 @@ public abstract class EquationSystem
         fastReactions = true;
       }
       if (r.getKineticLaw() != null) {
-        if (r.getKineticLaw().getListOfLocalParameters().size() > 0 && r.getKineticLaw()
+        if ((r.getKineticLaw().getListOfLocalParameters().size() > 0) && r.getKineticLaw()
             .isSetMath()) {
           r.getKineticLaw().getMath().updateVariables();
         }
@@ -711,7 +752,7 @@ public abstract class EquationSystem
     List<ASTNodeValue> kineticLawRootsList = new ArrayList<>();
     for (Reaction r : model.getListOfReactions()) {
       KineticLaw kl = r.getKineticLaw();
-      if (kl != null && kl.isSetMath()) {
+      if ((kl != null) && kl.isSetMath()) {
         ASTNodeValue currentLaw = (ASTNodeValue) copyAST(kl.getMath(), true, null, null)
             .getUserObject(TEMP_VALUE);
         kineticLawRootsList.add(currentLaw);
@@ -760,8 +801,8 @@ public abstract class EquationSystem
           speciesIndexList.add(speciesIndex);
           isReactantList.add(true);
           stoichiometriesList.add(
-              new StoichiometryValue(speciesRef, srIndex, stoichiometricCoefHash, Y,
-                  currentMathValue));
+            new StoichiometryValue(speciesRef, srIndex, stoichiometricCoefHash, Y,
+              currentMathValue));
         }
         for (SpeciesReference speciesRef : r.getListOfProducts()) {
           String speciesID = speciesRef.getSpecies();
@@ -807,8 +848,8 @@ public abstract class EquationSystem
           speciesIndexList.add(speciesIndex);
           isReactantList.add(false);
           stoichiometriesList.add(
-              new StoichiometryValue(speciesRef, srIndex, stoichiometricCoefHash, Y,
-                  currentMathValue));
+            new StoichiometryValue(speciesRef, srIndex, stoichiometricCoefHash, Y,
+              currentMathValue));
         }
       } else {
         kineticLawRootsList.add(new ASTNodeValue(nodeInterpreter, new ASTNode(0d)));
@@ -859,23 +900,23 @@ public abstract class EquationSystem
             }
             if (as.isSetMath()) {
               assignmentRulesRootsInit.add(new AssignmentRuleValue(
-                  (ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE),
-                  symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this,
-                  isAmount[symbolIndex]));
+                (ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE),
+                symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this,
+                isAmount[symbolIndex]));
             }
           } else {
             if (as.isSetMath()) {
               assignmentRulesRootsInit.add(new AssignmentRuleValue(
-                  (ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE),
-                  symbolIndex));
+                (ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE),
+                symbolIndex));
             }
           }
         } else if (model.findSpeciesReference(as.getVariable()) != null) {
           SpeciesReference sr = model.findSpeciesReference(as.getVariable());
           if (!sr.isConstant() && as.isSetMath()) {
             assignmentRulesRootsInit.add(new AssignmentRuleValue(
-                (ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE),
-                sr.getId(), stoichiometricCoefHash));
+              (ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE),
+              sr.getId(), stoichiometricCoefHash));
           }
         }
       } else if (rule.isRate()) {
@@ -891,9 +932,9 @@ public abstract class EquationSystem
             }
             if (rr.isSetMath()) {
               rateRulesRoots.add(new RateRuleValue(
-                  (ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE),
-                  symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this,
-                  rr.getVariable(), isAmount[symbolIndex]));
+                (ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE),
+                symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this,
+                rr.getVariable(), isAmount[symbolIndex]));
               rateRuleHash.put(rr.getVariable(), rateRulesRoots.size() - 1);
             }
           } else if (compartmentHash.containsValue(symbolIndex)) {
@@ -909,15 +950,15 @@ public abstract class EquationSystem
             }
             if (rr.isSetMath()) {
               rateRulesRoots.add(new RateRuleValue(
-                  (ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE),
-                  symbolIndex, speciesIndices, this, rr.getVariable()));
+                (ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE),
+                symbolIndex, speciesIndices, this, rr.getVariable()));
               rateRuleHash.put(rr.getVariable(), rateRulesRoots.size() - 1);
             }
           } else {
             if (rr.isSetMath()) {
               rateRulesRoots.add(new RateRuleValue(
-                  (ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE),
-                  symbolIndex, rr.getVariable()));
+                (ASTNodeValue) copyAST(rr.getMath(), true, null, null).getUserObject(TEMP_VALUE),
+                symbolIndex, rr.getVariable()));
               rateRuleHash.put(rr.getVariable(), rateRulesRoots.size() - 1);
             }
           }
@@ -943,7 +984,7 @@ public abstract class EquationSystem
 
             if ((c != null) && (rateRuleHash.get(c.getId()) != null)) {
               rateRulesRoots.get(rateRuleHash.get(sp.getId()))
-                  .setCompartmentRateRule(rateRulesRoots.get(rateRuleHash.get(c.getId())));
+              .setCompartmentRateRule(rateRulesRoots.get(rateRuleHash.get(c.getId())));
             }
           }
         }
@@ -962,23 +1003,23 @@ public abstract class EquationSystem
             }
             if (as.isSetMath()) {
               assignmentRulesRootsInit.add(new AssignmentRuleValue(
-                  (ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE),
-                  symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this,
-                  isAmount[symbolIndex]));
+                (ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE),
+                symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this,
+                isAmount[symbolIndex]));
             }
           } else {
             if (as.isSetMath()) {
               assignmentRulesRootsInit.add(new AssignmentRuleValue(
-                  (ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE),
-                  symbolIndex));
+                (ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE),
+                symbolIndex));
             }
           }
         } else if (model.findSpeciesReference(as.getVariable()) != null) {
           SpeciesReference sr = model.findSpeciesReference(as.getVariable());
           if (!sr.isConstant() && as.isSetMath()) {
             assignmentRulesRootsInit.add(new AssignmentRuleValue(
-                (ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE),
-                sr.getId(), stoichiometricCoefHash));
+              (ASTNodeValue) copyAST(as.getMath(), true, null, null).getUserObject(TEMP_VALUE),
+              sr.getId(), stoichiometricCoefHash));
           }
         }
       }
@@ -1006,7 +1047,7 @@ public abstract class EquationSystem
       }
       for (String variable : variables) {
         for (String dependentVariable : getSetOfVariables(sBaseMap.get(variable).getMath(),
-            variables, new HashSet<>())) {
+          variables, new HashSet<>())) {
           Set<String> currentSet = neededRules.get(dependentVariable);
           if (currentSet == null) {
             currentSet = new HashSet<>();
@@ -1064,23 +1105,23 @@ public abstract class EquationSystem
           }
           if (iA.isSetMath()) {
             initialAssignmentRoots.add(new AssignmentRuleValue(
-                (ASTNodeValue) copyAST(iA.getMath(), true, null, null).getUserObject(TEMP_VALUE),
-                symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this,
-                isAmount[symbolIndex]));
+              (ASTNodeValue) copyAST(iA.getMath(), true, null, null).getUserObject(TEMP_VALUE),
+              symbolIndex, sp, compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this,
+              isAmount[symbolIndex]));
           }
         } else {
           if (iA.isSetMath()) {
             initialAssignmentRoots.add(new AssignmentRuleValue(
-                (ASTNodeValue) copyAST(iA.getMath(), true, null, null).getUserObject(TEMP_VALUE),
-                symbolIndex));
+              (ASTNodeValue) copyAST(iA.getMath(), true, null, null).getUserObject(TEMP_VALUE),
+              symbolIndex));
           }
         }
       } else if (model.findSpeciesReference(iA.getVariable()) != null) {
         SpeciesReference sr = model.findSpeciesReference(iA.getVariable());
         if (iA.isSetMath()) {
           initialAssignmentRoots.add(new AssignmentRuleValue(
-              (ASTNodeValue) copyAST(iA.getMath(), true, null, null).getUserObject(TEMP_VALUE),
-              sr.getId(), stoichiometricCoefHash));
+            (ASTNodeValue) copyAST(iA.getMath(), true, null, null).getUserObject(TEMP_VALUE),
+            sr.getId(), stoichiometricCoefHash));
         }
       }
     }
@@ -1114,17 +1155,17 @@ public abstract class EquationSystem
           events[i].setUseValuesFromTriggerTime(e.getUseValuesFromTriggerTime());
           events[i].setPersistent(e.getTrigger().getPersistent());
           events[i].setTriggerObject(
-              (ASTNodeValue) copyAST(e.getTrigger().getMath(), true, null, null)
-                  .getUserObject(TEMP_VALUE));
-          if (e.getPriority() != null && e.getPriority().isSetMath()) {
+            (ASTNodeValue) copyAST(e.getTrigger().getMath(), true, null, null)
+            .getUserObject(TEMP_VALUE));
+          if ((e.getPriority() != null) && e.getPriority().isSetMath()) {
             events[i].setPriorityObject(
-                (ASTNodeValue) copyAST(e.getPriority().getMath(), true, null, null)
-                    .getUserObject(TEMP_VALUE));
+              (ASTNodeValue) copyAST(e.getPriority().getMath(), true, null, null)
+              .getUserObject(TEMP_VALUE));
           }
-          if (e.getDelay() != null && e.getDelay().isSetMath()) {
+          if ((e.getDelay() != null) && e.getDelay().isSetMath()) {
             events[i].setDelayObject(
-                (ASTNodeValue) copyAST(e.getDelay().getMath(), true, null, null)
-                    .getUserObject(TEMP_VALUE));
+              (ASTNodeValue) copyAST(e.getDelay().getMath(), true, null, null)
+              .getUserObject(TEMP_VALUE));
           }
           events[i].clearRuleObjects();
           for (EventAssignment as : e.getListOfEventAssignments()) {
@@ -1139,24 +1180,24 @@ public abstract class EquationSystem
                 }
                 if (as.isSetMath()) {
                   events[i].addRuleObject(new AssignmentRuleValue(
-                      (ASTNodeValue) copyAST(as.getMath(), true, null, null)
-                          .getUserObject(TEMP_VALUE), symbolIndex, sp,
-                      compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this,
-                      isAmount[symbolIndex]));
+                    (ASTNodeValue) copyAST(as.getMath(), true, null, null)
+                    .getUserObject(TEMP_VALUE), symbolIndex, sp,
+                    compartmentHash.get(sp.getId()), hasZeroSpatialDimensions, this,
+                    isAmount[symbolIndex]));
                 }
               } else {
                 if (as.isSetMath()) {
                   events[i].addRuleObject(new AssignmentRuleValue(
-                      (ASTNodeValue) copyAST(as.getMath(), true, null, null)
-                          .getUserObject(TEMP_VALUE), symbolIndex));
+                    (ASTNodeValue) copyAST(as.getMath(), true, null, null)
+                    .getUserObject(TEMP_VALUE), symbolIndex));
                 }
               }
             } else if (model.findSpeciesReference(as.getVariable()) != null) {
               SpeciesReference sr = model.findSpeciesReference(as.getVariable());
               if (!sr.isConstant() && as.isSetMath()) {
                 events[i].addRuleObject(new AssignmentRuleValue(
-                    (ASTNodeValue) copyAST(as.getMath(), true, null, null)
-                        .getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
+                  (ASTNodeValue) copyAST(as.getMath(), true, null, null)
+                  .getUserObject(TEMP_VALUE), sr.getId(), stoichiometricCoefHash));
               }
             }
           }
@@ -1191,7 +1232,7 @@ public abstract class EquationSystem
             events[i].refresh(model.getEvent(i).getTrigger().getInitialValue());
           } else {
             events[i] = new SBMLEventInProgressWithDelay(
-                model.getEvent(i).getTrigger().getInitialValue());
+              model.getEvent(i).getTrigger().getInitialValue());
           }
         }
       } else {
@@ -1261,14 +1302,14 @@ public abstract class EquationSystem
    * @return the found node
    */
   public ASTNode copyAST(ASTNode node, boolean mergingPossible, FunctionValue function,
-      List<ASTNode> inFunctionNodes) {
+    List<ASTNode> inFunctionNodes) {
     String nodeString = node.toString();
     ASTNode copiedAST = null;
     if (mergingPossible && !nodeString.equals("") && !nodeString.contains("")) {
       //Be careful with local parameters!
       if (!(node.isName()) || (node.getType() == ASTNode.Type.NAME_TIME) || (node.getType()
           == ASTNode.Type.NAME_AVOGADRO) || !((node.getVariable() != null) && (node
-          .getVariable() instanceof LocalParameter))) {
+              .getVariable() instanceof LocalParameter))) {
         List<ASTNode> nodesToLookAt = null;
         if (function != null) {
           nodesToLookAt = inFunctionNodes;
@@ -1278,9 +1319,9 @@ public abstract class EquationSystem
         for (ASTNode current : nodesToLookAt) {
           if (!(current.isName()) || (current.getType() == ASTNode.Type.NAME_TIME) || (
               current.getType() == ASTNode.Type.NAME_AVOGADRO) || ((current.isName()) && !(current
-              .getVariable() instanceof LocalParameter))) {
+                  .getVariable() instanceof LocalParameter))) {
             if ((current.toString().equals(nodeString)) && (!containUnequalLocalParameters(current,
-                node))) {
+              node))) {
               copiedAST = current;
               break;
             }
@@ -1291,7 +1332,7 @@ public abstract class EquationSystem
     if (copiedAST == null) {
       copiedAST = new ASTNode(node.getType());
       copiedAST.setParentSBMLObject(
-          node.getParentSBMLObject()); // The variable is not stored any more directly in the ASTNode2
+        node.getParentSBMLObject()); // The variable is not stored any more directly in the ASTNode2
       for (ASTNode child : node.getChildren()) {
         if (function != null) {
           copiedAST.addChild(copyAST(child, true, function, inFunctionNodes));
@@ -1308,157 +1349,157 @@ public abstract class EquationSystem
         copiedAST.setUnits(node.getUnits());
       }
       switch (node.getType()) {
-        case REAL:
-          double value = node.getReal();
-          int integerValue = (int) value;
-          if (value - integerValue == 0.0d) {
-            copiedAST.setValue(integerValue);
-            copiedAST.putUserObject(TEMP_VALUE, new IntegerValue(nodeInterpreter, copiedAST));
-          } else {
-            copiedAST.setValue(value);
-            copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
-          }
-          break;
-        case FUNCTION_POWER:
-          copiedAST.putUserObject(TEMP_VALUE, new PowerValue(nodeInterpreter, copiedAST));
-          break;
-        case POWER:
-          copiedAST.putUserObject(TEMP_VALUE, new PowerValue(nodeInterpreter, copiedAST));
-          break;
-        case PLUS:
-          copiedAST.putUserObject(TEMP_VALUE, new PlusValue(nodeInterpreter, copiedAST));
-          break;
-        case TIMES:
-          copiedAST.putUserObject(TEMP_VALUE, new TimesValue(nodeInterpreter, copiedAST));
-          break;
-        case DIVIDE:
-          copiedAST.putUserObject(TEMP_VALUE, new DivideValue(nodeInterpreter, copiedAST));
-          break;
-        case MINUS:
-          copiedAST.putUserObject(TEMP_VALUE, new MinusValue(nodeInterpreter, copiedAST));
-          break;
-        case INTEGER:
-          copiedAST.setValue(node.getInteger());
+      case REAL:
+        double value = node.getReal();
+        int integerValue = (int) value;
+        if ((value - integerValue) == 0.0d) {
+          copiedAST.setValue(integerValue);
           copiedAST.putUserObject(TEMP_VALUE, new IntegerValue(nodeInterpreter, copiedAST));
-          break;
-        case RATIONAL:
-          copiedAST.setValue(node.getNumerator(), node.getDenominator());
+        } else {
+          copiedAST.setValue(value);
           copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
-          break;
-        case NAME_TIME:
-          copiedAST.setName(node.getName());
-          copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
-          break;
-        case FUNCTION_DELAY:
-          copiedAST.setName(node.getName());
-          copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
-          break;
+        }
+        break;
+      case FUNCTION_POWER:
+        copiedAST.putUserObject(TEMP_VALUE, new PowerValue(nodeInterpreter, copiedAST));
+        break;
+      case POWER:
+        copiedAST.putUserObject(TEMP_VALUE, new PowerValue(nodeInterpreter, copiedAST));
+        break;
+      case PLUS:
+        copiedAST.putUserObject(TEMP_VALUE, new PlusValue(nodeInterpreter, copiedAST));
+        break;
+      case TIMES:
+        copiedAST.putUserObject(TEMP_VALUE, new TimesValue(nodeInterpreter, copiedAST));
+        break;
+      case DIVIDE:
+        copiedAST.putUserObject(TEMP_VALUE, new DivideValue(nodeInterpreter, copiedAST));
+        break;
+      case MINUS:
+        copiedAST.putUserObject(TEMP_VALUE, new MinusValue(nodeInterpreter, copiedAST));
+        break;
+      case INTEGER:
+        copiedAST.setValue(node.getInteger());
+        copiedAST.putUserObject(TEMP_VALUE, new IntegerValue(nodeInterpreter, copiedAST));
+        break;
+      case RATIONAL:
+        copiedAST.setValue(node.getNumerator(), node.getDenominator());
+        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
+        break;
+      case NAME_TIME:
+        copiedAST.setName(node.getName());
+        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
+        break;
+      case FUNCTION_DELAY:
+        copiedAST.setName(node.getName());
+        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
+        break;
         /*
          * Names of identifiers: parameters, functions, species etc.
          */
-        case NAME:
-          copiedAST.setName(node.getName());
-          CallableSBase variable = node.getVariable();
+      case NAME:
+        copiedAST.setName(node.getName());
+        CallableSBase variable = node.getVariable();
+        if ((variable == null) && (function == null)) {
+          variable = model.findQuantity(node.getName());
           if ((variable == null) && (function == null)) {
-            variable = model.findQuantity(node.getName());
-            if ((variable == null) && (function == null)) {
-              String id = node.getName();
-              for (Reaction r : model.getListOfReactions()) {
-                KineticLaw kl = r.getKineticLaw();
-                for (LocalParameter lp : kl.getListOfLocalParameters()) {
-                  if (lp.getId().equals(id)) {
-                    variable = lp;
-                    break;
-                  }
+            String id = node.getName();
+            for (Reaction r : model.getListOfReactions()) {
+              KineticLaw kl = r.getKineticLaw();
+              for (LocalParameter lp : kl.getListOfLocalParameters()) {
+                if (lp.getId().equals(id)) {
+                  variable = lp;
+                  break;
                 }
               }
             }
           }
-          if (variable != null) {
-            copiedAST.setVariable(variable);
-            if (variable instanceof FunctionDefinition) {
-              List<ASTNode> arguments = new LinkedList<>();
-              ASTNode lambda = ((FunctionDefinition) variable).getMath();
-              for (int i = 0; i != lambda.getChildren().size() - 1; i++) {
-                arguments.add(lambda.getChild(i));
-              }
-              FunctionValue functionValue = new FunctionValue(nodeInterpreter, copiedAST,
-                  arguments);
-              copiedAST.putUserObject(TEMP_VALUE, functionValue);
-              ASTNode mathAST = copyAST(lambda, false, functionValue, new LinkedList<>());
-              functionValue.setMath(mathAST);
-            } else if (variable instanceof Species) {
-              boolean hasZeroSpatialDimensions = true;
-              Species sp = (Species) variable;
-              Compartment c = sp.getCompartmentInstance();
-              if ((c != null) && c.getSpatialDimensions() > 0) {
-                hasZeroSpatialDimensions = false;
-              }
-              copiedAST.putUserObject(TEMP_VALUE,
-                  new SpeciesValue(nodeInterpreter, copiedAST, sp, this,
-                      symbolHash.get(variable.getId()), compartmentHash.get(variable.getId()),
-                      sp.getCompartment(), hasZeroSpatialDimensions,
-                      isAmount[symbolHash.get(variable.getId())]));
-            } else if ((variable instanceof Compartment) || (variable instanceof Parameter)) {
-              copiedAST.putUserObject(TEMP_VALUE,
-                  new CompartmentOrParameterValue(nodeInterpreter, copiedAST, (Symbol) variable,
-                      this, symbolHash.get(variable.getId())));
-            } else if (variable instanceof LocalParameter) {
-              copiedAST.putUserObject(TEMP_VALUE,
-                  new LocalParameterValue(nodeInterpreter, copiedAST, (LocalParameter) variable));
-            } else if (variable instanceof SpeciesReference) {
-              copiedAST.putUserObject(TEMP_VALUE,
-                  new SpeciesReferenceValue(nodeInterpreter, copiedAST, (SpeciesReference) variable,
-                      this));
-            } else if (variable instanceof Reaction) {
-              copiedAST.putUserObject(TEMP_VALUE,
-                  new ReactionValue(nodeInterpreter, copiedAST, (Reaction) variable));
-            }
-          } else {
-            copiedAST
-                .putUserObject(TEMP_VALUE, new NamedValue(nodeInterpreter, copiedAST, function));
-          }
-          break;
-        case NAME_AVOGADRO:
-          copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
-          copiedAST.setName(node.getName());
-          break;
-        case REAL_E:
-          copiedAST.setValue(node.getMantissa(), node.getExponent());
-          copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
-          break;
-        case FUNCTION: {
-          copiedAST.setName(node.getName());
-          variable = node.getVariable();
-          if (variable != null) {
-            copiedAST.setVariable(variable);
-            if (variable instanceof FunctionDefinition) {
-              List<ASTNode> arguments = new LinkedList<>();
-              ASTNode lambda = ((FunctionDefinition) variable).getMath();
-              for (int i = 0; i != lambda.getChildren().size() - 1; i++) {
-                arguments.add(lambda.getChild(i));
-              }
-              FunctionValue functionValue = new FunctionValue(nodeInterpreter, copiedAST,
-                  arguments);
-              copiedAST.putUserObject(TEMP_VALUE, functionValue);
-              ASTNode mathAST = copyAST(lambda, false, functionValue, new LinkedList<>());
-              functionValue.setMath(mathAST);
-            }
-          }
-          break;
         }
-        case FUNCTION_PIECEWISE:
-          copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
-          break;
-        case FUNCTION_ROOT:
-          copiedAST.putUserObject(TEMP_VALUE, new RootFunctionValue(nodeInterpreter, copiedAST));
-          break;
-        case LAMBDA:
-          copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
-          break;
-        default:
-          copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(this, nodeInterpreter, copiedAST));
-          break;
+        if (variable != null) {
+          copiedAST.setVariable(variable);
+          if (variable instanceof FunctionDefinition) {
+            List<ASTNode> arguments = new LinkedList<>();
+            ASTNode lambda = ((FunctionDefinition) variable).getMath();
+            for (int i = 0; i != (lambda.getChildren().size() - 1); i++) {
+              arguments.add(lambda.getChild(i));
+            }
+            FunctionValue functionValue = new FunctionValue(nodeInterpreter, copiedAST,
+              arguments);
+            copiedAST.putUserObject(TEMP_VALUE, functionValue);
+            ASTNode mathAST = copyAST(lambda, false, functionValue, new LinkedList<>());
+            functionValue.setMath(mathAST);
+          } else if (variable instanceof Species) {
+            boolean hasZeroSpatialDimensions = true;
+            Species sp = (Species) variable;
+            Compartment c = sp.getCompartmentInstance();
+            if ((c != null) && (c.getSpatialDimensions() > 0)) {
+              hasZeroSpatialDimensions = false;
+            }
+            copiedAST.putUserObject(TEMP_VALUE,
+              new SpeciesValue(nodeInterpreter, copiedAST, sp, this,
+                symbolHash.get(variable.getId()), compartmentHash.get(variable.getId()),
+                sp.getCompartment(), hasZeroSpatialDimensions,
+                isAmount[symbolHash.get(variable.getId())]));
+          } else if ((variable instanceof Compartment) || (variable instanceof Parameter)) {
+            copiedAST.putUserObject(TEMP_VALUE,
+              new CompartmentOrParameterValue(nodeInterpreter, copiedAST, (Symbol) variable,
+                this, symbolHash.get(variable.getId())));
+          } else if (variable instanceof LocalParameter) {
+            copiedAST.putUserObject(TEMP_VALUE,
+              new LocalParameterValue(nodeInterpreter, copiedAST, (LocalParameter) variable));
+          } else if (variable instanceof SpeciesReference) {
+            copiedAST.putUserObject(TEMP_VALUE,
+              new SpeciesReferenceValue(nodeInterpreter, copiedAST, (SpeciesReference) variable,
+                this));
+          } else if (variable instanceof Reaction) {
+            copiedAST.putUserObject(TEMP_VALUE,
+              new ReactionValue(nodeInterpreter, copiedAST, (Reaction) variable));
+          }
+        } else {
+          copiedAST
+          .putUserObject(TEMP_VALUE, new NamedValue(nodeInterpreter, copiedAST, function));
+        }
+        break;
+      case NAME_AVOGADRO:
+        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
+        copiedAST.setName(node.getName());
+        break;
+      case REAL_E:
+        copiedAST.setValue(node.getMantissa(), node.getExponent());
+        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
+        break;
+      case FUNCTION: {
+        copiedAST.setName(node.getName());
+        variable = node.getVariable();
+        if (variable != null) {
+          copiedAST.setVariable(variable);
+          if (variable instanceof FunctionDefinition) {
+            List<ASTNode> arguments = new LinkedList<>();
+            ASTNode lambda = ((FunctionDefinition) variable).getMath();
+            for (int i = 0; i != (lambda.getChildren().size() - 1); i++) {
+              arguments.add(lambda.getChild(i));
+            }
+            FunctionValue functionValue = new FunctionValue(nodeInterpreter, copiedAST,
+              arguments);
+            copiedAST.putUserObject(TEMP_VALUE, functionValue);
+            ASTNode mathAST = copyAST(lambda, false, functionValue, new LinkedList<>());
+            functionValue.setMath(mathAST);
+          }
+        }
+        break;
+      }
+      case FUNCTION_PIECEWISE:
+        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
+        break;
+      case FUNCTION_ROOT:
+        copiedAST.putUserObject(TEMP_VALUE, new RootFunctionValue(nodeInterpreter, copiedAST));
+        break;
+      case LAMBDA:
+        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(nodeInterpreter, copiedAST));
+        break;
+      default:
+        copiedAST.putUserObject(TEMP_VALUE, new ASTNodeValue(this, nodeInterpreter, copiedAST));
+        break;
       }
     }
     return copiedAST;
@@ -1478,7 +1519,7 @@ public abstract class EquationSystem
     }
     if ((node1.getType() == ASTNode.Type.NAME) && (node2.getType() == ASTNode.Type.NAME) && (node1
         .getVariable() instanceof LocalParameter) && (node2
-        .getVariable() instanceof LocalParameter)) {
+            .getVariable() instanceof LocalParameter)) {
       LocalParameter lp1 = (LocalParameter) node1.getVariable();
       LocalParameter lp2 = (LocalParameter) node2.getVariable();
       if ((lp1.getId().equals(lp2.getId())) && (!lp1.equals(lp2))) {
@@ -1489,8 +1530,8 @@ public abstract class EquationSystem
     } else if ((node1.getType() == ASTNode.Type.NAME) && (node2.getType() == ASTNode.Type.NAME) && (
         ((node1.getVariable() instanceof LocalParameter) && !(node2
             .getVariable() instanceof LocalParameter)) || (
-            !(node1.getVariable() instanceof LocalParameter) && (node2
-                .getVariable() instanceof LocalParameter)))) {
+                !(node1.getVariable() instanceof LocalParameter) && (node2
+                    .getVariable() instanceof LocalParameter)))) {
       return true;
     } else {
       boolean result = false;
@@ -1584,7 +1625,7 @@ public abstract class EquationSystem
       } catch (SBMLException exc) {
         // TODO: Localize
         logger.log(Level.WARNING, MessageFormat
-            .format("Could not compile stoichiometry math of species reference {0}.", id), exc);
+          .format("Could not compile stoichiometry math of species reference {0}.", id), exc);
       }
     } else if (sr != null) {
       return sr.getStoichiometry();
@@ -1623,7 +1664,7 @@ public abstract class EquationSystem
 
   @Override
   public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues,
-      int yIndex) {
+    int yIndex) {
     containsDelays = true;
     if (!delaysIncluded) {
       return Y[symbolHash.get(id)];
@@ -1657,7 +1698,7 @@ public abstract class EquationSystem
     } else if (delayValueHolder == null) {
       // TODO: Localize
       logger.warning(MessageFormat
-          .format("Cannot access delayed value at time {0,number} for {1}.", time, id));
+        .format("Cannot access delayed value at time {0,number} for {1}.", time, id));
       return Double.NaN;
     }
     return delayValueHolder
@@ -1966,7 +2007,7 @@ public abstract class EquationSystem
           constraint.putUserObject(ConstraintListener.CONSTRAINT_VIOLATION_LOG, Boolean.TRUE);
         } else if (!violation && (
             constraint.getUserObject(ConstraintListener.CONSTRAINT_VIOLATION_LOG)
-                == Boolean.TRUE)) {
+            == Boolean.TRUE)) {
           ConstraintEvent evt = new ConstraintEvent(constraint, time);
           for (ConstraintListener listener : listOfConstraintListeners) {
             listener.processSatisfiedAgain(evt);

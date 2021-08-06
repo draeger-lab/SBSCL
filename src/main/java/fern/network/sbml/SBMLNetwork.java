@@ -6,17 +6,14 @@
  */
 package fern.network.sbml;
 
-import fern.network.AbstractNetworkImpl;
-import fern.network.AnnotationManagerImpl;
-import fern.network.DefaultAmountManager;
-import fern.network.FeatureNotSupportedException;
-import fern.simulation.Simulator;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+
 import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
@@ -25,8 +22,14 @@ import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.sbml.SBMLinterpreter;
 
+import fern.network.AbstractNetworkImpl;
+import fern.network.AnnotationManagerImpl;
+import fern.network.DefaultAmountManager;
+import fern.network.FeatureNotSupportedException;
+import fern.simulation.Simulator;
+
 /**
- * For specifications of the sbml format refer to http:\\www.sbml.org. Not every feature is
+ * For specifications of the sbml format refer to http://www.sbml.org. Not every feature is
  * implemented in FERN (for a list please see the user guide).
  * <p>
  * When you want to use a sbml model with events included, you have to call
@@ -71,7 +74,7 @@ public class SBMLNetwork extends AbstractNetworkImpl {
       throws FeatureNotSupportedException, IOException, XMLStreamException, ModelOverdeterminedException {
     super(file.toString());
 
-    document = new SBMLReader().readSBML(file.toString());
+    document = SBMLReader.read(file);
 
     if (!ignoreExceptions) {
       if (document.getModel().getNumRules() > 0) {
@@ -136,10 +139,12 @@ public class SBMLNetwork extends AbstractNetworkImpl {
     }
   }
 
+  @Override
   public long getInitialAmount(int species) {
     return initialAmount[species];
   }
 
+  @Override
   public void setInitialAmount(int species, long value) {
     initialAmount[species] = value;
   }

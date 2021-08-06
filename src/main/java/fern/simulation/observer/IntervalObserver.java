@@ -3,6 +3,7 @@ package fern.simulation.observer;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import fern.simulation.Simulator;
 import fern.simulation.Simulator.FireType;
@@ -34,7 +35,7 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
   private boolean thetaMethod = true;
   private double interval;
   private String[] entityName;
-  private LinkedList<double[]> log;
+  private List<double[]> log;
   private int duration;
 
 
@@ -131,12 +132,12 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
     }
 
     double[][] newAvgLog = new double[entityName.length + 1][Math
-        .max(avgLog[0].length, actLog[0].length)];
+                                                             .max(avgLog[0].length, actLog[0].length)];
     for (int i = 0; i < newAvgLog.length; i++) {
       for (int j = 0; j < newAvgLog[i].length; j++) {
-        if (j < actLog[i].length && j < avgLog[i].length) {
+        if ((j < actLog[i].length) && (j < avgLog[i].length)) {
           newAvgLog[i][j] =
-              (actLog[i][j] + avgLog[i][j] * getNumSimulations()) / (getNumSimulations() + 1);
+              (actLog[i][j] + (avgLog[i][j] * getNumSimulations())) / (getNumSimulations() + 1);
         } else if (j < actLog[i].length) {
           newAvgLog[i][j] = actLog[i][j];
         } else {
@@ -165,8 +166,8 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
    */
   @Override
   public void step() {
-    if (!thetaMethod && (int) (getSimulator().getTime() / interval) > (int) (recentStep
-        / interval)) {
+    if (!thetaMethod && ((int) (getSimulator().getTime() / interval) > (int) (recentStep
+        / interval))) {
       double[] l = new double[entityName.length + 1];
       l[0] = getSimulator().getTime();
       for (int i = 0; i < entityName.length; i++) {
@@ -216,18 +217,20 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
     this.thetaMethod = thetaMethod;
   }
 
+  @Override
   public GnuPlot toGnuplot() throws IOException {
     return toGnuplot(new GnuPlot());
   }
 
+  @Override
   public GnuPlot toGnuplot(GnuPlot gnuplot) throws IOException {
     GnuPlot gp = toGnuplot(gnuplot, avgLog);
     if (plotQuality) {
       gp.getAxes().get(gp.getAxes().size() - 1).addAxes(new TransposedArrayMatrixAxes(
-          new int[][]{quality},
-          new String[]{"quality"},
-          null
-      ));
+        new int[][]{quality},
+        new String[]{"quality"},
+        null
+          ));
     }
     return gp;
   }
@@ -332,7 +335,7 @@ public abstract class IntervalObserver extends Observer implements GnuPlotObserv
   }
 
 
-  private double[][] getAsArray(LinkedList<double[]> l) {
+  private double[][] getAsArray(List<double[]> l) {
     double[][] re = new double[l.get(0).length][l.size()];
     int i = 0;
     for (double[] t : l) {

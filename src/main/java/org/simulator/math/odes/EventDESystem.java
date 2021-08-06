@@ -80,4 +80,5 @@ public interface EventDESystem extends DESystem {
    * @return flag that is {@code true}, if the change vector is always zero in the system.
    */
   boolean getNoDerivatives();
+
 }

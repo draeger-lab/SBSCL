@@ -1,11 +1,13 @@
 package fern.network;
 
-import fern.network.fernml.FernMLNetwork;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
 import org.jdom.JDOMException;
+
+import fern.network.fernml.FernMLNetwork;
 
 public class NetworkLoader {
 
@@ -41,14 +43,14 @@ public class NetworkLoader {
         // this makes sure that the package fern.network.sbml can be deleted
         try {
           net = (Network) ClassLoader.getSystemClassLoader()
-              .loadClass("fern.network.sbml.SBMLNetwork").getConstructor(File.class)
+              .loadClass(fern.network.sbml.SBMLNetwork.class.getName()).getConstructor(File.class)
               .newInstance(file);
         } catch (Exception e) {
           r.close();
           e.printStackTrace();
           throw new ClassNotFoundException(
-              "The SBMLNetwork could not be loaded! Maybe libsml.so/dll or libsbmlj.jar is not accessible. Check your LD_LIBRARY variable and your classpath.\n"
-                  + e.getClass().getSimpleName() + " message: " + e.getMessage());
+            "The SBMLNetwork could not be loaded!\n"
+                + e.getClass().getSimpleName() + " message: " + e.getMessage());
         }
         break;
       } else if (line.toLowerCase().contains("<fernml")) {

@@ -1,6 +1,4 @@
 /*
- * $Id$
- * $URL$
  * ---------------------------------------------------------------------
  * This file is part of Simulation Core Library, a Java-based library
  * for efficient numerical simulation of biological models.
@@ -38,7 +36,7 @@ import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
  * @since 0.9
  */
 public interface DESystem
-    extends Serializable, FirstOrderDifferentialEquations {
+extends Serializable, FirstOrderDifferentialEquations {
 
   /**
    * Delivers an array of {@link String}s that describe the content of each dimension of the
