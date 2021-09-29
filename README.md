@@ -5,6 +5,7 @@
 [![DOI](https://img.shields.io/badge/DOI-10.1093%2Fbioinformatics%2Fbtab669-blue.svg?style=plastic)](https://doi.org/10.1093/bioinformatics/btab669)
 [![Maven Central](https://img.shields.io/maven-central/v/org.draegerlab/sbscl.svg?style=plastic&label=Maven%20Central)](https://search.maven.org/search?q=g:%22org.draegerlab%22%20AND%20a:%22sbscl%22)
 [![Build Status](https://img.shields.io/travis/com/draeger-lab/SBSCL.svg?style=plastic)](https://travis-ci.com/draeger-lab/SBSCL)
+![Lines of Code](https://img.shields.io/tokei/lines/github/draeger-lab/SBSCL?color=orange&style=plastic)
 ![Code Size](https://img.shields.io/github/languages/code-size/draeger-lab/SBSCL.svg?style=plastic)
 ![Downloads of all releases](https://img.shields.io/github/downloads/draeger-lab/SBSCL/total.svg?style=plastic)
 
