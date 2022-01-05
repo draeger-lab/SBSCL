@@ -3,7 +3,7 @@
 	* This file is part of Simulation Core Library, a Java-based library 
 	* for efficient numerical simulation of biological models. 
 	* 
-	* Copyright (C) 2007-2018 jointly by the following organizations: 
+	* Copyright (C) 2007-2022 jointly by the following organizations: 
 	* 1. University of Tuebingen, Germany 
 	* 2. Keio University, Japan 
 	* 3. Harvard University, USA 
@@ -48,7 +48,7 @@
   <!-- =================================================================== -->
 
   <name>Systems Biology Simulation Core Library (SBSCL)</name>
-  <version>2.1</version>
+  <version>2.1.1</version>
   <url>https://github.com/draeger-lab/SBSCL/</url>
   <inceptionYear>2007</inceptionYear>
   <description>
@@ -399,7 +399,7 @@
     <dependency>
       <groupId>org.sbml.jsbml</groupId>
       <artifactId>jsbml</artifactId>
-      <version>1.6-SNAPSHOT</version>
+      <version>1.6.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.jdom</groupId>
