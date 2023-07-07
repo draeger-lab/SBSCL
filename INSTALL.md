@@ -9,8 +9,8 @@ mvn clean install -DskipTests
 
 The tests require additional resources which have to be downloaded. These include the [sbml-testsuite](https://github.com/sbmlteam/sbml-test-suite) and the [BiGG models](https://github.com/matthiaskoenig/bigg-models-fba).
 ```
-source ./src/test/scripts/download_bigg_models.sh
-source ./src/test/scripts/download_sbml-test-suite.sh
+bash ./src/test/scripts/download_bigg_models.sh
+bash ./src/test/scripts/download_sbml-test-suite.sh
 ```
 which then can be run as part of the build step
 ```
