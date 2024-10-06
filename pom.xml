@@ -292,6 +292,28 @@
         <role>developer</role>
       </roles>
     </developer>
+    <developer>
+      <name>Arthur Neumann</name>
+      <id>NeumannArthur</id>
+      <email>art.neumann@outlook.com</email>
+      <url>https://github.com/NeumannArthur</url>
+      <organization>University of Tübingen</organization>
+      <timezone>Europe/Berlin</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Taichi Araki</name>
+      <id>...</id>
+      <email>...</email>
+      <url>...</url>
+      <organization>Keio University</organization>
+      <timezone>Japan/Tokyo</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
   </developers>
 
   <contributors>

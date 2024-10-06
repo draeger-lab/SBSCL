@@ -82,7 +82,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         }
     }
 
-    // needs to be changed, I misunderstood the documentation --> uses BDF for stiff steps
+    // TODO needs to be changed, I misunderstood the documentation --> uses BDF for stiff steps
+    // when implementing BDF (Gear's Solver), should I just add the solver directly into this function or should I create a new class and then call the class?
     private void stiffStep(DESystem DES, double t, double[] y, double[] yDot, double h, double[] error) {
 
         RosenbrockSolver rosenbrockSolver = new RosenbrockSolver();

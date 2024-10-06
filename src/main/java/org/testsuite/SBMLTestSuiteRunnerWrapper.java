@@ -27,6 +27,7 @@ import org.simulator.io.CSVImporter;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
 import org.simulator.math.odes.DESSolver;
+import org.simulator.math.odes.LSODAIntegrator;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
@@ -225,6 +226,12 @@ public class SBMLTestSuiteRunnerWrapper {
     return solution;
   }
 
+  
+ // TODO: create the function to call LSODA Integrator --> use Rosenbrock as example
+ // --> should I take lines 236-249 or lines 251-268 (especially 260) as an example?
+ // TODO: main function should call LSODA Integrator --> dependent on previous 
+
+
   /**
    * Performs the simulation of the SBML models using {@link RosenbrockSolver}.
    *
@@ -249,6 +256,8 @@ public class SBMLTestSuiteRunnerWrapper {
         .parseDouble(properties.getProperty(RELATIVE)) : 0d;
 
         DESSolver solver = new RosenbrockSolver();
+        DESSolver solver2 = new LSODAIntegrator();
+        solver2.setStepSize(duration / steps);
         solver.setStepSize(duration / steps);
 
         if (solver instanceof AbstractDESSolver) {
