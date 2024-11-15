@@ -13,7 +13,7 @@ cd "/Users/arthur/Documents/Uni/HiWi-SBSCL/Code/SBSCL"
 mvn clean compile -X
 
 #compile the java file
-echo "Attempting to complie java file"
+echo "Attempting to compile java file"
 if [ $? -ne 0 ]; then
     echo "Compiling failed"
     exit 1
@@ -37,3 +37,5 @@ fi
 
 
 #echo "Test completed"
+
+wirte coe which build mpak.xml file
