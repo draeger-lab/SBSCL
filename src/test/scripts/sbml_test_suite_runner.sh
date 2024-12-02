@@ -37,5 +37,3 @@ fi
 
 
 #echo "Test completed"
-
-wirte coe which build mpak.xml file
