@@ -27,7 +27,7 @@ import org.simulator.io.CSVImporter;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
 import org.simulator.math.odes.DESSolver;
-import org.simulator.math.odes.LSODAIntegrator;
+import org.simulator.math.odes.LSODAIntegrator_F;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
@@ -154,7 +154,12 @@ public class SBMLTestSuiteRunnerWrapper {
 
       } else {
         if (model.getExtension(CompConstants.shortLabel) == null) {
-          solution = runSBMLSimulation(model, duration, steps, properties, timePoints, amountHash);
+
+          if (useLSODA(properties)) {
+            solution = runLSODASimulation(model, duration, steps, properties, timePoints, amountHash);
+          } else {
+            solution = runSBMLSimulation(model, duration, steps, properties, timePoints, amountHash);
+          }
         } else {
           solution = runCompSimulation(sbmlfile, duration, steps);
         }
@@ -188,6 +193,12 @@ public class SBMLTestSuiteRunnerWrapper {
       csvWriter.flush();
       csvWriter.close();
 
+  }
+
+  private static boolean useLSODA(Properties properties) {
+    // this right now checks if "solver" property´s value is LSODA
+    // TODO: implement correct checking
+    return "LSODA".equalsIgnoreCase(properties.getProperty("solver"));
   }
 
   /**
@@ -226,12 +237,6 @@ public class SBMLTestSuiteRunnerWrapper {
     return solution;
   }
 
-  
- // TODO: create the function to call LSODA Integrator --> use Rosenbrock as example
- // --> should I take lines 236-249 or lines 251-268 (especially 260) as an example?
- // TODO: main function should call LSODA Integrator --> dependent on previous 
-
-
   /**
    * Performs the simulation of the SBML models using {@link RosenbrockSolver}.
    *
@@ -256,8 +261,6 @@ public class SBMLTestSuiteRunnerWrapper {
         .parseDouble(properties.getProperty(RELATIVE)) : 0d;
 
         DESSolver solver = new RosenbrockSolver();
-        DESSolver solver2 = new LSODAIntegrator();
-        solver2.setStepSize(duration / steps);
         solver.setStepSize(duration / steps);
 
         if (solver instanceof AbstractDESSolver) {
@@ -287,6 +290,38 @@ public class SBMLTestSuiteRunnerWrapper {
 
         // Compute the numerical solution of the problem
         return solver.solve(interpreter, interpreter.getInitialValues(), timePoints);
+  }
+
+  public static MultiTable runLSODASimulation(Model model, double duration, double steps,
+  Properties properties, double[] timePoints,
+  Map<String, Boolean> amountHash) throws DerivativeException {
+    double absolute = (!properties.getProperty(ABSOLUTE).isEmpty()) ? Double
+      .parseDouble(properties.getProperty(ABSOLUTE)) : 0d;
+      double relative = (!properties.getProperty(RELATIVE).isEmpty()) ? Double
+        .parseDouble(properties.getProperty(RELATIVE)) : 0d;
+
+        DESSolver solver = new LSODAIntegrator();
+        solver.setStepSize(duration / steps);
+
+        if (solver instanceof AbstractDESSolver) {
+          solver.setIncludeIntermediates(false);
+        }
+
+        if (solver instanceof AdaptiveStepsizeIntegrator) {
+          ((AdaptiveStepsizeIntegrator) solver).setAbsTol(TOLERANCE_FACTOR * absolute);
+          ((AdaptiveStepsizeIntegrator) solver).setRelTol(TOLERANCE_FACTOR * relative);
+        }
+
+        SBMLinterpreter interpreter = null;
+        try {
+          interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);
+        } catch (ModelOverdeterminedException e) {
+          e.printStackTrace();
+          LOGGER.error(
+              "Model Overdetermined while creating a mapping for converting Algebraic rule to Assignment rule");
+        }
+
+          return solver.solve(interpreter, interpreter.getInitialValues(), timePoints);
   }
 
   /**
