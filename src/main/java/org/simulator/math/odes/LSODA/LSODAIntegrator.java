@@ -5,8 +5,7 @@ import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
 import org.simulator.math.odes.DESystem;
-import org.simulator.math.odes.LSODAContext;
-import org.simulator.math.odes.LSODAOptions;
+import org.simulator.math.odes.LSODA.LSODAOptions;
 
 public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     
@@ -202,7 +201,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         int kflag;
         int jstart;
 
-        LSODACommon common = ctx.getCommon(); // TODO: Define "Common" class as in "common.c" and add .getCommon() to LSODAContext class
+        LSODACommon common = ctx.getCommon();
         LSODAOptions opt = ctx.getOpt(); 
 
         y = Arrays.copyOfRange(y, 1, y.length);
@@ -247,13 +246,13 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 }
             }
             jstart = 0;
-            common.setNq(1); //defined when implementing common
+            common.setNq(1); //DONE: defined when implementing common
             
             ctx.getFunction() // define .getFuntion() within LSODAContext
                     .apply(t[0], Arrays.copyOfRange(y, 1, y.length),
-                    common.getYh()[2], //will be defined when implementing "common"
+                    common.getYh()[2], //DONE: will be defined when implementing "common"
                     ctx.getData()); //define .getData() within LSODAContext
-            common.setNfe(1); //define when implementing common
+            common.setNfe(1); //DONE: define when implementing common
 
             ewset(y); // implement ewset.c function; look for _C function in the original code
 
@@ -296,16 +295,12 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 h0 /= rh;
             }
 
-            common.setH(h0); //define when implementing common
+            common.setH(h0);   //DONE: define when implementing common
             for (i = 1; i <= neq; i++) {
-                common.getYh()[2][i] *= h0; //define when implementing common
+                common.getYh()[2][i] *= h0; //DONE: define when implementing common
             }
 
-            // beginning of Block d as per lsoda.c
-            // reference https://github.com/libsbmlsim/liblsoda/blob/feature_ginac/src/lsoda.c
-
-            if (ctx.state == 2 || ctx.state == 3) {
-                int jstart = 1;
+            if (ctx.getState() == 2 || ctx.getState() == 3) {
                 ctx.nslast = ctx.nst; // probably to be defined in a different class
 
                 switch (itask) {
@@ -322,7 +317,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                         double tp = ctx.tn - ctx.hu * (1.0 + 100.0 * ETA); //fill out later, figure out tp definitions
                         
                     case 4:
-                        tcrit = opt.getTcrit(); // find out what tcrit is
+                        tcrit = opt.getTcrit();
                         if((ctx.tn[0] - tcrit) * ctx.h > 0d) {
                             hardFailure("[lsoda] itask = 4 or 5 and tcrit behind tcur\n");
                         }
@@ -343,6 +338,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                         }
                         
                         double hmx = Math.abs(ctx.tn[0]) + Math.abs(ctx.h); // finish later, figure out hmx definitions
+                        break;
 
                     default:
                         throw new IllegalArgumentException("Invalid itask value: " + itask);
@@ -357,3 +353,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
 
 }   
+
+
+// which common did I mention above? the common defined in the repo only contains a single array, not mention of an array called ETA...should it be SM1 instead of ETA?

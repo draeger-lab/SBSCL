@@ -1,4 +1,4 @@
-package org.simulator.math.odes;
+package org.simulator.math.odes.LSODA;
 
 class LSODAOptions {
 

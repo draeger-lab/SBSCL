@@ -1,4 +1,4 @@
-package org.simulator.math.odes;
+package org.simulator.math.odes.LSODA;
 
 import java.util.Objects;
 
@@ -7,6 +7,8 @@ class LSODAContext {
     private int state;
     private int neq;
     private LSODAOptions opt;
+    public Object nslast;
+    private LSODACommon common;
 
     public LSODAContext() {
     }
@@ -40,6 +42,14 @@ class LSODAContext {
 
     public void setOpt(LSODAOptions opt) {
         this.opt = opt;
+    }
+
+    public LSODACommon getCommon() {
+        return common;
+    }
+
+    public void setCommon(LSODACommon common) {
+        this.common = common;
     }
 
     @Override
