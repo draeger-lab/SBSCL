@@ -195,6 +195,26 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return true;
     }
 
+    public void lsodaReset(LSODAContext ctx) {
+        ctx.setState(1);
+        ctx.setError(null);
+    }
+
+    public void lsodaFree(LSODAContext ctx) {
+        ctx.setCommon(null);
+        ctx.setOpt(null);
+    }
+
+    public LSODAContext lsodaCreateCtx() {
+        LSODAContext ctx = new LSODAContext();
+        ctx.setState(1);
+        return ctx;
+    }
+
+    public LSODAOptions lsodaCreateOpt() {
+        return new LSODAOptions();
+    }
+
 
 
     public int lsoda(LSODAContext ctx, double[] y, double[] t, double tout) {
@@ -210,7 +230,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         final int neq = ctx.getNeq();
         double big, h0, hmx, rh, tcrit, tdist, tnext, tol, tolsf, tp, size, sum, w0;
 
-        if (common == null) { // will work when common is implemented
+        if (common == null) {
             // throw some error (which type???)
         }
 
@@ -233,7 +253,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         final double[] atol = Arrays.copyOfRange(opt.getAtol(), 1, opt.getAtol().length);
 
         if (ctx.getState() == 1) {
-            common.setMeth(1);
+            common.setMeth(1); // enum to define which method to use
             common.setTn(t[0]);
             common.setTsw(t[0]); //these three functions need to be defined when implementing common!
             if (itask == 4 || itask == 5) {
@@ -345,6 +365,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 }
             }
         }
+        return 0;
 
         
         
@@ -353,6 +374,3 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
 
 }   
-
-
-// which common did I mention above? the common defined in the repo only contains a single array, not mention of an array called ETA...should it be SM1 instead of ETA?

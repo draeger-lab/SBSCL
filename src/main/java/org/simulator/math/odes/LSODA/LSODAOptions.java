@@ -15,6 +15,7 @@ class LSODAOptions {
     private double[] atol;
     private double[] rtol;
     private double h0;
+    private double tcrit;
 
     public LSODAOptions() {
     }
@@ -113,5 +114,13 @@ class LSODAOptions {
 
     public void setH0(double h0) {
         this.h0 = h0;
+    }
+
+    public double getTcrit() {
+        return tcrit;
+    }
+
+    private void setTcrit(double tcrit) {
+        this.tcrit = tcrit;
     }
 }

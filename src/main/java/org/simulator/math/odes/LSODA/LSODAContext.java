@@ -4,8 +4,11 @@ import java.util.Objects;
 
 class LSODAContext {
 
+    private LSODAFunction function; // what is this supposed to be?
+    private Object data;
     private int state;
     private int neq;
+    private String error;
     private LSODAOptions opt;
     public Object nslast;
     private LSODACommon common;
@@ -50,6 +53,30 @@ class LSODAContext {
 
     public void setCommon(LSODACommon common) {
         this.common = common;
+    }
+
+    public LSODAFunction getFunction() {
+        return function;
+    }
+    
+    public void setFunction(LSODAFunction function) {
+        this.function = function;
+    }
+
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 
     @Override
