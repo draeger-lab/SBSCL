@@ -215,6 +215,20 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return new LSODAOptions();
     }
 
+    private void ewset(double[] ycur, double[] rtol, double[] atol, int neq, LSODACommon common) {
+        double[] ewt = common.getEwt();
+
+        for (int i = 1; i <= neq; i++) {
+            ewt[i] = rtol[i - 1] * Math.abs(ycur[i]) + atol[i - 1];
+        }
+
+        for (int i = 1; i <= neq; i++) {
+            ewt[i] = 1d / ewt[i];
+        }
+
+        common.setEwt(ewt);
+    }
+
 
 
     public int lsoda(LSODAContext ctx, double[] y, double[] t, double tout) {
