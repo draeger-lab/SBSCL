@@ -23,9 +23,45 @@ public class LSODACommon {
         0.0d, 0.5d, 0.575d, 0.55d, 0.45d, 0.35d, 0.25d, 0.2d, 0.15d, 0.1d, 0.075d, 0.05d, 0.025d
     };
 
-    public static double[] getSM1() {
-        return SM1.clone();
+    public static double getEta() {
+        return ETA;
     }
+
+    public static double getSqrteta() {
+        return SQRTETA;
+    }
+
+    public static double getCcmax() {
+        return CCMAX;
+    }
+
+    public static int getMaxcor() {
+        return MAXCOR;
+    }
+
+    public static int getMsbp() {
+        return MSBP;
+    }
+
+    public static int getMxncf() {
+        return MXNCF;
+    }
+
+    public static double getRatio() {
+        return RATIO;
+    }
+
+    public static double[] getSm1() {
+        return SM1;
+    }
+
+    public LSODACommonContext createContext() { //should I implement this
+        return new LSODACommonContext();
+    } 
+
+    // OR
+
+    LSODACommon common = new LSODACommon(); // and then add getter and setter methods
 
     // lsoda_common_t struct from common.h 
     public static class LSODACommonContext {

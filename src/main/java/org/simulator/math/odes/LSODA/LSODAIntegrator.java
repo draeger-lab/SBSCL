@@ -216,7 +216,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     }
 
     private void ewset(double[] ycur, double[] rtol, double[] atol, int neq, LSODACommon common) {
-        double[] ewt = common.getEwt();
+        double[] ewt = common.LSODACommonContext.getEwt(); // need to create an instance of LSODACommon.LSODACommonContext
 
         for (int i = 1; i <= neq; i++) {
             ewt[i] = rtol[i - 1] * Math.abs(ycur[i]) + atol[i - 1];
