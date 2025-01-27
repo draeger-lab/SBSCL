@@ -269,9 +269,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         if (ctx.getState() == 1) {
             common.setMeth(1); // enum to define which method to use
             common.setTn(t[0]);
-            common.setTsw(t[0]); //these three functions need to be defined when implementing common!
+            common.setTsw(t[0]);
             if (itask == 4 || itask == 5) {
-                tcrit = opt.getTcrit(); // need to define this method within LSODAOptions
+                tcrit = opt.getTcrit();
                 if ((tcrit - tout) * (tout - t[0]) < 0.) {
                     // throw some error again
                 }
@@ -280,13 +280,13 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 }
             }
             jstart = 0;
-            common.setNq(1); //DONE: defined when implementing common
+            common.setNq(1); 
             
-            ctx.getFunction() // define .getFuntion() within LSODAContext
+            ctx.getFunction() 
                     .apply(t[0], Arrays.copyOfRange(y, 1, y.length),
-                    common.getYh()[2], //DONE: will be defined when implementing "common"
-                    ctx.getData()); //define .getData() within LSODAContext
-            common.setNfe(1); //DONE: define when implementing common
+                    common.getYh()[2],
+                    ctx.getData());
+            common.setNfe(1);
 
             ewset(y); // implement ewset.c function; look for _C function in the original code
 
@@ -299,7 +299,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             if (h0 == 0.) {
                 tdist = Math.abs(tout - t[0]);
                 w0 = Math.max(Math.abs(t[0]), Math.abs(tout));
-                if (tdist < 2. * ETA * w0) { // ETA defined within "common"
+                if (tdist < 2. * ETA * w0) { 
                     // throw error
                 }
                 tol = 0.;
@@ -315,7 +315,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                         }
                     }
                 }
-                tol = Math.max(tol, 100. * ETA); // ETA defined within "common"
+                tol = Math.max(tol, 100. * ETA);
                 tol = Math.min(tol, 0.001);
                 sum = vmnorm(neq, common.getYh()[2], common.getEwt());
                 sum = 1. / (tol * w0 * w0) + tol * sum * sum;
@@ -329,13 +329,13 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 h0 /= rh;
             }
 
-            common.setH(h0);   //DONE: define when implementing common
+            common.setH(h0);
             for (i = 1; i <= neq; i++) {
-                common.getYh()[2][i] *= h0; //DONE: define when implementing common
+                common.getYh()[2][i] *= h0;
             }
 
             if (ctx.getState() == 2 || ctx.getState() == 3) {
-                ctx.nslast = ctx.nst; // probably to be defined in a different class
+                ctx.nslast = ctx.nst; // nst define in LSODACommonContext but not in LSODAContext...can it be that I am confusing the two?
 
                 switch (itask) {
                     case 1:
