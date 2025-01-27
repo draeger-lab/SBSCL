@@ -118,4 +118,12 @@ class LSODAContext {
     protected LSODAContext clone() throws CloneNotSupportedException {
         return new LSODAContext(this);
     }
+
+    public Object getNslast() {
+        return nslast;
+    }
+
+    public void setNslast(Object nslast) {
+        this.nslast = nslast;
+    }
 }
