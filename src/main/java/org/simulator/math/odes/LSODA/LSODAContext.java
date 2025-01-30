@@ -2,7 +2,7 @@ package org.simulator.math.odes.LSODA;
 
 import java.util.Objects;
 
-class LSODAContext {
+public class LSODAContext {
 
     private LSODAFunction function; // what is this supposed to be?
     private Object data;
@@ -20,7 +20,6 @@ class LSODAContext {
         this.state = ctx.state;
         this.neq = ctx.neq;
         this.opt = ctx.opt;
-
     }
 
     public int getNeq() {

@@ -6,6 +6,7 @@ import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
 import org.simulator.math.odes.DESystem;
 import org.simulator.math.odes.LSODA.LSODAOptions;
+import org.simulator.sbml.EquationSystem;
 
 public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     
@@ -215,8 +216,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return new LSODAOptions();
     }
 
-    private void ewset(double[] ycur, double[] rtol, double[] atol, int neq, LSODACommon common) {
-        double[] ewt = common.LSODACommonContext.getEwt(); // need to create an instance of LSODACommon.LSODACommonContext
+    private void ewset(double[] ycur, double[] rtol, double[] atol, int neq, LSODACommon common, LSODACommonContext cmnctx) {
+        double[] ewt = cmnctx.getEwt(); // need to create an instance of LSODACommon.LSODACommonContext
 
         for (int i = 1; i <= neq; i++) {
             ewt[i] = rtol[i - 1] * Math.abs(ycur[i]) + atol[i - 1];
@@ -226,7 +227,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             ewt[i] = 1d / ewt[i];
         }
 
-        common.setEwt(ewt);
+        cmnctx.setEwt(ewt);
     }
 
 
@@ -245,14 +246,14 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         double big, h0, hmx, rh, tcrit, tdist, tnext, tol, tolsf, tp, size, sum, w0;
 
         if (common == null) {
-            // throw some error (which type???)
+            // create custom error "hardfailure" & "softfailure" lsoda.c line 102-122
         }
 
         if (ctx.getState() == 1 || ctx.getState() == 3) {
             h0 = opt.getH0();
             if (ctx.getState() == 1) {
                 if ((tout - t[0]) * h0 < 0.) {
-                    //throw error (whicht type???)
+                    // create custom error "hardfailure" & "softfailure" lsoda.c line 102-122
                 }
             }
         }
@@ -273,14 +274,14 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             if (itask == 4 || itask == 5) {
                 tcrit = opt.getTcrit();
                 if ((tcrit - tout) * (tout - t[0]) < 0.) {
-                    // throw some error again
+                    // create custom error "hardfailure" & "softfailure" lsoda.c line 102-122
                 }
                 if (h0 != 0. && (t[0] + h0 - tcrit) * h0 > 0.) {
                     h0 = tcrit - t[0];
                 }
             }
             jstart = 0;
-            common.setNq(1); 
+            common.setNq(1);
             
             ctx.getFunction() 
                     .apply(t[0], Arrays.copyOfRange(y, 1, y.length),
@@ -292,7 +293,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
             for (i = 1; i <= neq; i++) {
                 if (common.getEwt()[i] <= 0.) {
-                    // throw error
+                    // create custom error "hardfailure" & "softfailure" lsoda.c line 102-122
                 }
             }
 
@@ -300,7 +301,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 tdist = Math.abs(tout - t[0]);
                 w0 = Math.max(Math.abs(t[0]), Math.abs(tout));
                 if (tdist < 2. * ETA * w0) { 
-                    // throw error
+                    // create custom error "hardfailure" & "softfailure" lsoda.c line 102-122
                 }
                 tol = 0.;
                 for (i = 1; i <= neq; i++) {

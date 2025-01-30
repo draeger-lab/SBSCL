@@ -27,7 +27,7 @@ import org.simulator.io.CSVImporter;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
 import org.simulator.math.odes.DESSolver;
-import org.simulator.math.odes.LSODAIntegrator_F;
+import org.simulator.math.odes.LSODA.LSODAIntegrator;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
