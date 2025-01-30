@@ -9,6 +9,7 @@ public class LSODACommon {
     public static final int MSBP = 20;
     public static final int MXNCF = 10;
     public static final double RATIO = 5.0d;
+    private LSODACommonContext commonCtx;
 
     public static double max(double a, double b) {
         return (a > b) ? a : b;
@@ -55,16 +56,16 @@ public class LSODACommon {
         return SM1;
     }
 
-    public LSODACommonContext createContext() { //should I implement this
-        return new LSODACommonContext();
+    public LSODACommonContext getCommonCtx() {
+        return commonCtx;
     }
 
-    // OR
+    public void setCommonCtx(LSODACommonContext commonCtx) {
+        this.commonCtx = commonCtx;
+    }
 
-    LSODACommonContext common = new LSODACommonContext(); // and then add getter and setter methods
-
-    public LSODACommon(LSODACommonContext common) {
-        this.common = common;
+    public LSODACommon(LSODACommonContext commonCtx) {
+        this.commonCtx = commonCtx;
     }
 
 }

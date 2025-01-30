@@ -52,19 +52,25 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     }
 
 
-    private void hardFailure(String message) {
-        System.err.println(message);
-        this.state = -3;
-        throw new RuntimeException("LSODA hard failure: " + message);
+    private int hardFailure(LSODAContext ctx, String format, Object... args) {
+        System.err.printf(format, args);
+        ctx.setState(-3);
+        throw new RuntimeException("LSODA hard failure: " + String.format(format, args));
     }
 
-    private void softFailure(int code, String message, double[] y, double t) {
-        System.err.println(message);
-        for (int i = 1; i <= neq; i++) {
-            y[i] = yh[i];
+    private int softFailure(LSODAContext ctx, int code, String format, double[] y, double t, Object... args) {
+        System.err.printf(format, args);
+
+        LSODACommonContext common = ctx.getCommonCtx();
+
+        if (common != null) {
+            for (int i = 1; i <= ctx.getNeq(); i++) {
+                y[i] = common.getYh()[i][i];
+            }
+            t = common.getTn();
         }
-        t = tn[0];
-        this.state = code;
+        ctx.setState(code);
+        return code;
     }
 
     private int successReturn(double[] y, double[] t, int itask, double tcrit, boolean ihit) {
@@ -237,6 +243,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         int jstart;
 
         LSODACommon common = ctx.getCommon();
+        LSODACommonContext commonCtx = ctx.getCommonCtx();
         LSODAOptions opt = ctx.getOpt(); 
 
         y = Arrays.copyOfRange(y, 1, y.length);
@@ -246,14 +253,14 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         double big, h0, hmx, rh, tcrit, tdist, tnext, tol, tolsf, tp, size, sum, w0;
 
         if (common == null) {
-            // create custom error "hardfailure" & "softfailure" lsoda.c line 102-122
+            return hardFailure(ctx, opt.toString(), "common is null"); // check if this implementation of hardfailure is correct
         }
 
         if (ctx.getState() == 1 || ctx.getState() == 3) {
             h0 = opt.getH0();
             if (ctx.getState() == 1) {
                 if ((tout - t[0]) * h0 < 0.) {
-                    // create custom error "hardfailure" & "softfailure" lsoda.c line 102-122
+                    hardFailure(ctx, opt.toString(), "tout behind tcur"); // check if this implementation of hardfailure is correct
                 }
             }
         }
@@ -268,9 +275,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         final double[] atol = Arrays.copyOfRange(opt.getAtol(), 1, opt.getAtol().length);
 
         if (ctx.getState() == 1) {
-            common.setMeth(1); // enum to define which method to use
-            common.setTn(t[0]);
-            common.setTsw(t[0]);
+            common.getCommonCtx().setMeth(1); // enum to define which method to use
+            common.getCommonCtx().setTn(t[0]);
+            common.getCommonCtx().setTsw(t[0]);
             if (itask == 4 || itask == 5) {
                 tcrit = opt.getTcrit();
                 if ((tcrit - tout) * (tout - t[0]) < 0.) {
@@ -281,7 +288,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 }
             }
             jstart = 0;
-            common.setNq(1);
+            common.getCommonCtx().setNq(1);
             
             ctx.getFunction() 
                     .apply(t[0], Arrays.copyOfRange(y, 1, y.length),

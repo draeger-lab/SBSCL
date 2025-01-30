@@ -1,6 +1,6 @@
 package org.simulator.math.odes.LSODA;
 
-public class LSODACommonContext extends LSODAContext {
+public class LSODACommonContext {
     public double[][] yh;
     public double[][] wm;
     public double[] ewt;
