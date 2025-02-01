@@ -236,6 +236,10 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         cmnctx.setEwt(ewt);
     }
 
+    private int stoda(LSODAContext ctx, double[]y, int jstart) {
+        return 0; //implement stoda.c function, "stoda.c" in source code
+    }
+
 
 
     public int lsoda(LSODAContext ctx, double[] y, double[] t, double tout) {
@@ -275,9 +279,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         final double[] atol = Arrays.copyOfRange(opt.getAtol(), 1, opt.getAtol().length);
 
         if (ctx.getState() == 1) {
-            common.getCommonCtx().setMeth(1); // enum to define which method to use
-            common.getCommonCtx().setTn(t[0]);
-            common.getCommonCtx().setTsw(t[0]);
+            commonCtx.setMeth(1); // enum to define which method to use
+            commonCtx.setTn(t[0]);
+            commonCtx.setTsw(t[0]);
             if (itask == 4 || itask == 5) {
                 tcrit = opt.getTcrit();
                 if ((tcrit - tout) * (tout - t[0]) < 0.) {
@@ -292,9 +296,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             
             ctx.getFunction() 
                     .apply(t[0], Arrays.copyOfRange(y, 1, y.length),
-                    common.getYh()[2],
+                    commonCtx.getYh()[2], // this is a multi-dimensional array...I want to grab an entire "row" so to say --> look up how to do this!
                     ctx.getData());
-            common.setNfe(1);
+            commonCtx.setNfe(1);
 
             ewset(y); // implement ewset.c function; look for _C function in the original code
 
@@ -341,6 +345,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             for (i = 1; i <= neq; i++) {
                 common.getYh()[2][i] *= h0;
             }
+
+            kflag = stoda(ctx, y, jstart);
 
             if (ctx.getState() == 2 || ctx.getState() == 3) {
                 ctx.nslast = ctx.nst; // nst define in LSODACommonContext but not in LSODAContext...can it be that I am confusing the two?

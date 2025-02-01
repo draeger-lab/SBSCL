@@ -2,7 +2,7 @@ package org.simulator.math.odes.LSODA;
 
 import java.util.Objects;
 
-public class LSODAContext{
+public class LSODAContext {
 
     private LSODAFunction function; // what is this supposed to be?
     private Object data;

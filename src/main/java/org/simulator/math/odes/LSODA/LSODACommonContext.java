@@ -1,6 +1,6 @@
 package org.simulator.math.odes.LSODA;
 
-public class LSODACommonContext {
+public class LSODACommonContext extends LSODACommon{
     public double[][] yh;
     public double[][] wm;
     public double[] ewt;
@@ -365,5 +365,4 @@ public class LSODACommonContext {
     public void setMiter(int miter) {
         this.miter = miter;
     }
-}
 }
