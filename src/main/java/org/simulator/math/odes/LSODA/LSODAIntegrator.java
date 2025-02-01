@@ -5,7 +5,6 @@ import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
 import org.simulator.math.odes.DESystem;
-import org.w3c.jigsaw.http.CommonLogger;
 
 public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     
@@ -434,22 +433,42 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                         }
                     }
                 }
-            /*
-                tolsf = ETA * vmnorm(neq, _C(yh)[1], _C(ewt));
-                if (tolsf > 0.01) {
-                    tolsf = tolsf * 200.;
-                    if (_C(nst) == 0) {
-                        hardfailure("lsoda -- at start of problem, too much accuracy\n"
-                                " requested for precision of machine,\n"
-                                " suggested scaling factor = %g\n", tolsf);
+                tolsf = common.ETA * vmnorm(ctx.getNeq(), common.getYh()[1], common.getEwt());
+                if (tolsf > 0.01d) {
+                    tolsf = tolsf * 200d;
+                    if (common.getNst() == 0) {
+                        hardFailure(ctx, "[lsoda] -- at start of problem, too much accuracy\n requested for precision of machine, \n suggested scalilng factor = \n" + tolsf);
                     }
-                    softfailure(-2, "lsoda -- at t = %g, too much accuracy requested\n"
-                                "         for precision of machine, suggested\n"
-                                "         scaling factor = %g\n", *t, tolsf);
-			}
-             */
-                tolsf = common.ETA * vnorm(ctx.getNeq(), common.getYh()[1], common.getEwt());
-
+                    softFailure(ctx, -2, "[lsoda] -- at t = " + t[0] + ", too much accurary requested\n          for precision of machine, suggested\n           scaling factor = " + tolsf);
+                }
+                
+                /*
+                    if ((_C(tn) + _C(h)) == _C(tn)) {
+                    _C(nhnil)++;
+                    if (_C(nhnil) <= opt->mxhnil) {
+                        fprintf(stderr, "lsoda -- warning..internal t = %g and _C(h) = %g are\n", _C(tn), _C(h));
+                        fprintf(stderr, "         such that in the machine, t + _C(h) = t on the next step\n");
+                        fprintf(stderr, "         solver will continue anyway.\n");
+                        if (_C(nhnil) == opt->mxhnil) {
+                            fprintf(stderr, "lsoda -- above warning has been issued %d times,\n", _C(nhnil));
+                            fprintf(stderr, "         it will not be issued again for this problem\n");
+                        }
+                    }
+                }
+                }
+                 */
+                if ((common.getTn() + common.getH()) == common.getTn()) {
+                    common.setNhnil(common.getNhnil() + 1);
+                    if (common.getNhnil() <= opt.getMxhnil()) {
+                        logError(String.format("[lsoda] -- warning..internal t = %f and h = %f are\n", common.getTn(), common.getH()));
+                        logError(String.format("[lsoda] -- such that in the machine, t + %f = t on the next step\n", common.getH()));
+                        logError("[lsoda] -- solver will continue anyway.\n");
+                        if (common.getNhnil() == opt.getMxhnil()) {
+                            logError(String.format("[lsoda] -- above warning has been issued %d times,\n", common.getNhnil()));
+                            logError("[lsoda] -- it will not be issued again for this problem\n");
+                        }
+                    }
+                    //TODO: change the error messages with variables into String.format() form!!!                }
                 
             }
 
