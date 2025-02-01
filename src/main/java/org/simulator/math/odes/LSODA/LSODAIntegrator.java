@@ -1,12 +1,12 @@
 package org.simulator.math.odes.LSODA;
 import java.util.Arrays;
 
+import javax.naming.Context;
+
 import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
 import org.simulator.math.odes.DESystem;
-import org.simulator.math.odes.LSODA.LSODAOptions;
-import org.simulator.sbml.EquationSystem;
 
 public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     
@@ -248,12 +248,20 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
         LSODACommon common = ctx.getCommon();
         LSODAOptions opt = ctx.getOpt(); 
+        LSODAFunction function = ctx.getFunction();
 
         y = Arrays.copyOfRange(y, 1, y.length);
         
         int i = 0, ihit;
         final int neq = ctx.getNeq();
         double big, h0, hmx, rh, tcrit, tdist, tnext, tol, tolsf, tp, size, sum, w0;
+
+        double[] yOffset = new double[y.length - 1];
+        System.arraycopy(y, 1, yOffset, 0, yOffset.length);
+
+        double[][] yh = ctx.getCommon().getYh();
+        double[] yhOffset = new double[yh[2].length - 1];
+        System.arraycopy(yh[2], 1, yhOffset, 0, yhOffset.length);
 
         if (common == null) {
             return hardFailure(ctx, opt.toString(), "common is null"); // check if this implementation of hardfailure is correct
@@ -293,10 +301,14 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             jstart = 0;
             common.setNq(1);
             
-            ctx.getFunction() 
-                    .apply(t[0], Arrays.copyOfRange(y, 1, y.length),
-                    common.getYh()[2], // this is a multi-dimensional array...I want to grab an entire "row" so to say --> look up how to do this!
-                    ctx.getData());
+            if (function != null) {
+                function.evaluate(t[0], yOffset, yhOffset, ctx.getData());
+            }
+            common.setNfe(1);
+
+            for (int k; k <= ctx.getNeq(); k++) {
+                common.getYh()[1][k] = y[k];
+            }
             common.setNfe(1);
 
             ewset(y); // implement ewset.c function; look for _C function in the original code

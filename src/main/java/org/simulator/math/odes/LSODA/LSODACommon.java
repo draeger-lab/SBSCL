@@ -35,7 +35,7 @@ public class LSODACommon {
     private int ixmer;
     private int illin, nhnil, nslast, jcur, meth, mused, nq, nst, ncf, nfe, nje, nqu, miter;
 
-    // end LSODACommonContext variables
+    // end of LSODACommonContext variables
 
     public static double max(double a, double b) {
         return (a > b) ? a : b;
