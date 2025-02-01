@@ -12,24 +12,15 @@ public class LSODAContext {
     private LSODAOptions opt;
     public Object nslast;
     private LSODACommon common;
-    private LSODACommonContext commonCtx;
 
     public LSODAContext() {
     }
 
-    public LSODAContext(LSODAContext ctx, LSODACommonContext commonCtx) {
+    public LSODAContext(LSODAContext ctx, LSODACommon common) {
         this.state = ctx.state;
-        this.commonCtx = commonCtx;
         this.neq = ctx.neq;
         this.opt = ctx.opt;
-    }
-
-    public LSODACommonContext getCommonCtx() {
-        return this.commonCtx;
-    }
-
-    public void setCommonCtx(LSODACommonContext commonCtx) {
-        this.commonCtx = commonCtx;
+        this.common = common;
     }
 
     public int getNeq() {
@@ -125,7 +116,7 @@ public class LSODAContext {
 
     @Override
     protected LSODAContext clone() throws CloneNotSupportedException {
-        return new LSODAContext(this, this.getCommonCtx());
+        return new LSODAContext(this, this.common);
     }
 
     public Object getNslast() {

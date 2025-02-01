@@ -61,7 +61,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     private int softFailure(LSODAContext ctx, int code, String format, double[] y, double t, Object... args) {
         System.err.printf(format, args);
 
-        LSODACommonContext common = ctx.getCommonCtx();
+        LSODACommon common = ctx.getCommon();
 
         if (common != null) {
             for (int i = 1; i <= ctx.getNeq(); i++) {
@@ -222,8 +222,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return new LSODAOptions();
     }
 
-    private void ewset(double[] ycur, double[] rtol, double[] atol, int neq, LSODACommon common, LSODACommonContext cmnctx) {
-        double[] ewt = cmnctx.getEwt(); // need to create an instance of LSODACommon.LSODACommonContext
+    private void ewset(double[] ycur, double[] rtol, double[] atol, int neq, LSODACommon common) {
+        double[] ewt = common.getEwt();
 
         for (int i = 1; i <= neq; i++) {
             ewt[i] = rtol[i - 1] * Math.abs(ycur[i]) + atol[i - 1];
@@ -233,7 +233,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             ewt[i] = 1d / ewt[i];
         }
 
-        cmnctx.setEwt(ewt);
+        common.setEwt(ewt);
     }
 
     private int stoda(LSODAContext ctx, double[]y, int jstart) {
@@ -247,7 +247,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         int jstart;
 
         LSODACommon common = ctx.getCommon();
-        LSODACommonContext commonCtx = ctx.getCommonCtx();
         LSODAOptions opt = ctx.getOpt(); 
 
         y = Arrays.copyOfRange(y, 1, y.length);
@@ -279,9 +278,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         final double[] atol = Arrays.copyOfRange(opt.getAtol(), 1, opt.getAtol().length);
 
         if (ctx.getState() == 1) {
-            commonCtx.setMeth(1); // enum to define which method to use
-            commonCtx.setTn(t[0]);
-            commonCtx.setTsw(t[0]);
+            common.setMeth(1); // enum to define which method to use
+            common.setTn(t[0]);
+            common.setTsw(t[0]);
             if (itask == 4 || itask == 5) {
                 tcrit = opt.getTcrit();
                 if ((tcrit - tout) * (tout - t[0]) < 0.) {
@@ -292,13 +291,13 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 }
             }
             jstart = 0;
-            common.getCommonCtx().setNq(1);
+            common.setNq(1);
             
             ctx.getFunction() 
                     .apply(t[0], Arrays.copyOfRange(y, 1, y.length),
-                    commonCtx.getYh()[2], // this is a multi-dimensional array...I want to grab an entire "row" so to say --> look up how to do this!
+                    common.getYh()[2], // this is a multi-dimensional array...I want to grab an entire "row" so to say --> look up how to do this!
                     ctx.getData());
-            commonCtx.setNfe(1);
+            common.setNfe(1);
 
             ewset(y); // implement ewset.c function; look for _C function in the original code
 
@@ -349,7 +348,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             kflag = stoda(ctx, y, jstart);
 
             if (ctx.getState() == 2 || ctx.getState() == 3) {
-                ctx.nslast = ctx.nst; // nst define in LSODACommonContext but not in LSODAContext...can it be that I am confusing the two?
+                ctx.nslast = ctx.nst;
 
                 switch (itask) {
                     case 1:
