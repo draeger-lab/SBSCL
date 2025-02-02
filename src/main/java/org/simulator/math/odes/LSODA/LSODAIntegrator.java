@@ -254,8 +254,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         y = Arrays.copyOfRange(y, 1, y.length);
         
         int i;
-        boolean ihit;
         double big, hmx, rh, tcrit, tdist, tnext, tol, tolsf, tp, size, sum, w0;
+        hmx = Math.abs(common.getTn()) + Math.abs(common.getH());
+        boolean ihit = Math.abs(common.getTn() - opt.getTcrit()) <= (100d * common.ETA * hmx);
         double h0 = opt.getH0();
 
         final int itask = opt.getItask();
@@ -441,22 +442,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     }
                     softFailure(ctx, -2, "[lsoda] -- at t = " + t[0] + ", too much accurary requested\n          for precision of machine, suggested\n           scaling factor = " + tolsf);
                 }
-                
-                /*
-                    if ((_C(tn) + _C(h)) == _C(tn)) {
-                    _C(nhnil)++;
-                    if (_C(nhnil) <= opt->mxhnil) {
-                        fprintf(stderr, "lsoda -- warning..internal t = %g and _C(h) = %g are\n", _C(tn), _C(h));
-                        fprintf(stderr, "         such that in the machine, t + _C(h) = t on the next step\n");
-                        fprintf(stderr, "         solver will continue anyway.\n");
-                        if (_C(nhnil) == opt->mxhnil) {
-                            fprintf(stderr, "lsoda -- above warning has been issued %d times,\n", _C(nhnil));
-                            fprintf(stderr, "         it will not be issued again for this problem\n");
-                        }
-                    }
-                }
-                }
-                 */
+
                 if ((common.getTn() + common.getH()) == common.getTn()) {
                     common.setNhnil(common.getNhnil() + 1);
                     if (common.getNhnil() <= opt.getMxhnil()) {
@@ -468,8 +454,87 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                             logError("[lsoda] -- it will not be issued again for this problem\n");
                         }
                     }
-                    //TODO: change the error messages with variables into String.format() form!!!                }
-                
+                }
+
+                kflag = stoda(ctx, y, jstart);
+                if (kflag == 0) {
+                    jstart = 1;
+
+                    if (common.getMeth() != common.getMused()) {
+                        common.setTsw(common.getTn());
+                        jstart = -1;
+
+                        if (opt.getIxpr() != 0) { // lsoda.c, line 787 say if(opt.getIxpr() != null), not available in Java --> still correct implementation?
+                            if (common.getMeth() == 2) {
+                                logError("[lsoda] a swith to the stiff method has occured.");
+                            }
+                            if (common.getMeth() == 1) {
+                                logError("[lsoda] a switch to the non-stiff method has occured.");
+                            }
+                            logError(String.format("[lsoda] at t = %f and tentative step size h = %f, step = %d\n", common.getTn(), common.getH(), common.getNst()));
+                        } 
+                    }
+
+                    switch (itask) {
+                        case 1:
+                            if ((common.getTn() - tout) * common.getH() < 0d) {
+                                continue;
+                            }
+                            intdyReturn(y, t, tout, itask);
+                        
+                        case 2:
+                            successReturn(ctx, y, t, itask, ihit);
+
+                        case 3:
+                            if ((common.getTn() - tout) * common.getH() >= 0d) {
+                                successReturn(ctx, y, t, itask, ihit);
+                            }
+                            continue; 
+
+                        case 4:
+                            tcrit = opt.getTcrit();
+                            if ((common.getTn() - tout) * common.getH() >= 0d) {
+                                intdyReturn(y, t, tout, itask);
+                            } else {
+                                hmx = Math.abs(common.getTn()) + Math.abs(common.getH());
+                                ihit = Math.abs(common.getTn() - tcrit) <= (100d * common.ETA * hmx);
+                                if (ihit) {
+                                    successReturn(ctx, y, t, itask, ihit);
+                                }
+                                tnext = common.getTn() + common.getH() * (1d + 4d + common.ETA);
+                                if ((tnext - tcrit) * common.getH() <= 0d) {
+                                    continue;
+                                }
+                                common.setH((tcrit - common.getTn()) * (1d - 4d * common.ETA));
+                                jstart = -2;
+                                continue;
+                            }
+                        
+                        case 5:
+                            tcrit = opt.getTcrit();
+                            hmx = Math.abs(common.getTn() + Math.abs(common.getH()));
+                            ihit = Math.abs(common.getTn() - tcrit) <= (100d * common.ETA * hmx);
+                            successReturn(ctx, y, t, itask, ihit);
+                    }
+                }
+            }
+            if (kflag == -1 || kflag == -2) {
+                big = 0d;
+                common.setIxmer(1);
+
+                for (i = 0; i <= ctx.getNeq(); i++) {
+                    size = Math.abs(common.getAcor()[i] * common.getEwt()[i]);
+                    if (big < size) {
+                        big = size;
+                        common.setIxmer(i);
+                    }
+                }
+                if (kflag == -1) {
+                    softFailure(ctx, -4, String.format("[lsoda] -- at t = %f and step size h = %f, the\n      error test failed repeatedly of\n      with Math.abs(h) = hmin\n", common.getTn(), common.getH()));
+                }
+                if (kflag == -2) {
+                    softFailure(ctx, -5, String.format("[lsoda] -- at t = %f and step size h = %f, the\n      corrector convergence failed repeatedly\n     with Math.abs(h) = hmin\n", common.getTn(), common.getH()));
+                }
             }
 
         }
