@@ -290,7 +290,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             if (itask == 4 || itask == 5) {
                 tcrit = opt.getTcrit();
                 if ((tcrit - tout) * (tout - t[0]) < 0.) {
-                    hardFailure(ctx, opt.toString(), "[lsoda] itask = 4 or 5 and tcrit behind tout%s");
+                    hardFailure(ctx, opt.toString(), "[lsoda] itask = 4 or 5 and tcrit behind tout");
                 }
                 if (h0 != 0. && (t[0] + h0 - tcrit) * h0 > 0.) {
                     h0 = tcrit - t[0];
@@ -313,7 +313,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
             for (i = 1; i <= neq; i++) {
                 if (common.getEwt()[i] <= 0.) {
-                    hardFailure(ctx, opt.toString(), "[lsoda] ewt[%d] = %g <= 0.", i, common.getEwt());
+                    hardFailure(ctx, opt.toString(), String.format("[lsoda] ewt[%d] = %g <= 0.", i, common.getEwt()));
                 }
             }
 
@@ -373,7 +373,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     case 3:
                         tp = common.getTn() - common.getHu() * (1.0 + 100.0 * common.getEta());
                         if ((tp - tout) * common.getH() > 0d) {
-                            hardFailure(ctx, opt.toString(), "[lsoda] itask = " + itask + " and tout behind tcur - " + common.getHu());
+                            hardFailure(ctx, opt.toString(), String.format("[lsoda] itask = %g and tout behind tcur = %f", itask, common.getHu()));
                         }
                         if ((common.getTn() - tout) * common.getH() < 0d) break;
                         //return success
@@ -425,7 +425,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             while (k == 0) {
                 if (ctx.getState() != 1 || common.getNst() != 0) {
                     if ((common.getNst() - common.getNslast()) >= opt.getMxstep()) {
-                        softFailure(ctx, -1, "[lsoda] " + opt.getMxstep() + " steps taken before reaching tout");
+                        softFailure(ctx, -1, String.format("[lsoda] %f steps taken before reaching tout.", opt.getMxstep()));
                     }
                     ewset(y, rtol, atol, ctx.getNeq(), common);
                     for (int j = 1; j <= ctx.getNeq(); j++) {
@@ -438,9 +438,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 if (tolsf > 0.01d) {
                     tolsf = tolsf * 200d;
                     if (common.getNst() == 0) {
-                        hardFailure(ctx, "[lsoda] -- at start of problem, too much accuracy\n requested for precision of machine, \n suggested scalilng factor = \n" + tolsf);
+                        hardFailure(ctx, String.format("[lsoda] -- at start of problem, too much accuracy\n requested for precision of machine, \n suggested scalilng factor = %f", tolsf));
                     }
-                    softFailure(ctx, -2, "[lsoda] -- at t = " + t[0] + ", too much accurary requested\n          for precision of machine, suggested\n           scaling factor = " + tolsf);
+                    softFailure(ctx, -2, String.format("[lsoda] -- at t = %f , too much accurary requested for precision of machine, suggested scaling factor = %f", t[0], tolsf));
                 }
 
                 if ((common.getTn() + common.getH()) == common.getTn()) {
