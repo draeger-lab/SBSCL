@@ -31,7 +31,7 @@ public class LSODACommon {
     private double pdest, pdlast;
 
     private int ialth, ipup, nslp;
-    private int icout, irflag;
+    private int icount, irflag;
     private int ixmer;
     private int illin, nhnil, nslast, jcur, meth, mused, nq, nst, ncf, nfe, nje, nqu, miter;
 
@@ -296,12 +296,12 @@ public class LSODACommon {
         this.nslp = nslp;
     }
 
-    public int getIcout() {
-        return icout;
+    public int getIcount() {
+        return icount;
     }
 
-    public void setIcout(int icout) {
-        this.icout = icout;
+    public void setIcount(int icount) {
+        this.icount = icount;
     }
 
     public int getIrflag() {

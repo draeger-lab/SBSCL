@@ -1,5 +1,7 @@
 package org.simulator.math.odes.LSODA;
 
+//deprecated, LSODACommonContext is now implemented within LSODACommon
+
 public class LSODACommonContext extends LSODACommon{
     public double[][] yh;
     public double[][] wm;
