@@ -8,27 +8,27 @@ import org.simulator.math.odes.DESystem;
 import org.simulator.math.odes.LSODAContext;
 import org.simulator.math.odes.LSODAOptions;
 
-public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
+public class LSODAIntegratorDeprecated extends AdaptiveStepsizeIntegrator {
     
     private int neq;
     private double[] yh;
     private double[] tn;
     private int state;
     
-    public LSODAIntegrator(int neq) {
+    public LSODAIntegratorDeprecated(int neq) {
         super();
         this.neq = neq;
         this.yh = new double[neq + 1];
         this.state = 0;
     }
 
-    public LSODAIntegrator(LSODAIntegrator integrator) {
+    public LSODAIntegratorDeprecated(LSODAIntegratorDeprecated integrator) {
         super(integrator);
     }
 
     @Override
     public AbstractDESSolver clone() {
-        return new LSODAIntegrator(this);
+        return new LSODAIntegratorDeprecated(this);
     }
 
     @Override
