@@ -231,7 +231,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return 0; //implement stoda.c function, "stoda.c" in source code
     }
 
-    private double vmnorm(int n, double[] v, double[] w) {
+    public static double vmnorm(int n, double[] v, double[] w) {
         double vm = 0d;
 
         for (int i = 0; i <= n; i++) {
@@ -474,7 +474,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                             logError(String.format("[lsoda] at t = %f and tentative step size h = %f, step = %d\n", common.getTn(), common.getH(), common.getNst()));
                         } 
                     }
-
+                    
                     switch (itask) {
                         case 1:
                             if ((common.getTn() - tout) * common.getH() < 0d) {

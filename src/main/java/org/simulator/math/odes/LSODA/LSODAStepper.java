@@ -1,17 +1,14 @@
 package org.simulator.math.odes.LSODA;
 
-import javax.naming.Context;
-
-import org.semanticweb.owlapi.util.CommonBaseIRIMapper;
-
 public class LSODAStepper {
     private LSODAContext ctx;
-    private LSODACommon common = ctx.getCommon();
+    private LSODACommon common;
     private double[] y;
     private int jstart;
 
     public LSODAStepper(LSODAContext ctx, double[] y, int jstart) {
         this.ctx = ctx;
+        this.common = ctx.getCommon();
     }
 
     public int stoda(double[] y, int jstart) {
@@ -51,8 +48,11 @@ public class LSODAStepper {
 
     public int stoda(LSODAContext ctx, double[]y, int jstart) {
         int kflag;
-        int m;
-        double del, delp, dsm, dup, exup, r, rh, told;
+        int m = -1;
+        double del = 0d;
+        double delp = 0d;
+        double rh = 1d;
+        double dsm, dup, exup, r, told;
         double pnorm;
 
         double hmin = ctx.getOpt().getHmin();
@@ -83,7 +83,7 @@ public class LSODAStepper {
             common.setEl(newEl);
 
             // initialize switching parameters
-            common.setIcout(20);
+            common.setIcount(20);
             common.setIrflag(0);
             common.setPdest(0d);
             common.setPdlast(0d);
@@ -122,10 +122,10 @@ public class LSODAStepper {
             common.setJcur(0);
 
             while (true) {
-                if (Math.abs(common.getRc() - 1d) > CCMAX) { //what is CCMAX???
+                if (Math.abs(common.getRc() - 1d) > common.getCcmax()) { //what is CCMAX???
                     common.setIpup(common.getMiter());
                 }
-                if (common.getNst() >= common.getNslp() + MSBP) {
+                if (common.getNst() >= common.getNslp() + common.getMsbp()) {
                     common.setIpup(common.getMiter());
                 }
                 common.setTn(common.getTn() + common.getH());
@@ -140,7 +140,7 @@ public class LSODAStepper {
                     }
                 }
 
-                pnorm = 0d; //vmnorm(neq, common.getYh()[1], common.getEwt()); // fix vnorm definitions
+                pnorm = LSODAIntegrator.vmnorm(neq, common.getYh()[1], common.getEwt()); // fix vnorm definitions
                 
                 int corflag = 0; //correction(ctx, y, pnorm, &del, &delp, told, &m); //implement correction
 
@@ -163,7 +163,7 @@ public class LSODAStepper {
                 dsm = del / common.getTesco()[common.getNq()][2];
             }
             if (m > 0) {
-                dsm = 0d; //vmnorm(neq, common.getAcor(), common.getEwt() / common.getTesco()[common.getNq()][2]);
+                dsm = LSODAIntegrator.vmnorm(neq, common.getAcor(), common.getEwt()) / common.getTesco()[common.getNq()][2];
             }
             if (dsm <= 1d) {
                 kflag = 0;
@@ -181,7 +181,7 @@ public class LSODAStepper {
                     }
                 }
                 common.setIcount(common.getIcount() - 1);
-                if (common.getIcount < 0) {
+                if (common.getIcount() < 0) {
                     // methodswitch(ctx, dsm, pnorm, &rh);
                     if (common.getMeth() != common.getMused()) {
                         rh = Math.max(rh, hmin / Math.abs(common.getH()));
@@ -214,10 +214,101 @@ public class LSODAStepper {
                     if (orderflag == 1) {
                         rh = Math.max(rh, hmin / Math.abs(common.getH()));
                         // sclaeh(ctx, rh);
+                        common.setRmax(10d);
+                        endStoda();
+                        break;
+                    }
+
+                    if (orderflag == 2) {
+                        resetCoeff();
+                        rh = Math.max(rh, (hmin / Math.abs(common.getH())));
+                        //scaleh(ctx, rh);
+                        common.setRmax(10d);
+                        endStoda();
+                        break;
+                    }
+                }
+                if (common.getIalth() > 1 || (common.getNq() + 1) == maxord + 1) {
+                    endStoda();
+                    break;
+                }
+                for (int i = 1; i <= neq; i++) {
+                    double[][] newYh = common.getYh();
+                    newYh[maxord + 1][i] = common.getAcor()[i];
+                    common.setYh(newYh);
+                }
+                endStoda();
+                break;
+
+            }
+            else {
+                kflag -= 1;
+                common.setTn(told);
+                for (int j = common.getNq(); j >= 1; j--) {
+                    for (int i = j; i <= common.getNq(); i++) {
+                        for (int i1 = 1; i <= neq; i++) {
+                            double[][] newYh = common.getYh();
+                            newYh[i][i1] -= newYh[i+1][i];
+                            common.setYh(newYh);
+                        }
+                    }
+                }
+                common.setRmax(2d);
+                if (Math.abs(common.getH()) <= hmin * 1.00001) {
+                    kflag = -1;
+                    common.setHold(common.getH());
+                    jstart = 1;
+                    break;
+                }
+                if (kflag > -3) {
+                    int orderflag = 0; //should be: orderswitch(ctx, 0d, dsm, &rh, kflag, maxord);
+                    if (orderflag == 1 || orderflag == 0) {
+                        if (orderflag == 0) {
+                            rh = Math.min(rh, 0.2d);
+                        }
+                        rh = Math.max(rh, (hmin / Math.abs(common.getH())));
+                        //scaleh(ctx, rh);
+                    }
+                    if (orderflag == 2) {
+                        resetCoeff();
+                        rh = Math.max(rh, (hmin / Math.abs(common.getH())));
+                        //scaleh(ctx, rh);
+                    }
+                    continue;
+                }
+                else {
+                    if (kflag == -10) {
+                        kflag = -1;
+                        common.setHold(common.getH());
+                        jstart = 1;
+                        break;
+                    } else {
+                        rh = 0.1d;
+                        rh = Math.max((hmin / Math.abs(common.getH())), rh);
+                        common.setH(common.getH() * rh);
+                        for (int i = 1; i <= neq; i++) {
+                            y[i] = common.getYh()[1][i];
+                        }
+                        //(*ctx->function), stoda.c line 351;
+                        common.setNfe(common.getNfe() + 1);
+                        for (int i = 1; i <= neq; i++) {
+                            double[][] newYh = common.getYh();
+                            newYh[2][i] = common.getH() * common.getSavf()[i];
+                            common.setYh(newYh);
+                        }
+                        common.setIpup(common.getMiter());
+                        common.setIalth(5);
+                        if (common.getNq() == 1) {
+                            continue;
+                        }
+                        common.setNq(1);
+                        resetCoeff();
+                        continue;
                     }
                 }
             }
         }
+        return kflag;
     }
 
 }

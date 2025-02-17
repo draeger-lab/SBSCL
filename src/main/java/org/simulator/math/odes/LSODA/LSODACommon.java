@@ -4,7 +4,7 @@ public class LSODACommon {
     
     public final double ETA = 2.2204460492503131e-16;
     public final double SQRTETA = 1.4901161193847656e-08;
-    public final double CCMAX = 0.3d;
+    public final double CCMAX = 0.3d; // definition, see source code line 170
     public final int MAXCOR = 3;
     public final int MSBP = 20;
     public final int MXNCF = 10;
