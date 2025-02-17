@@ -488,6 +488,31 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         }
         return 1;
     }
+    
+    private int corfailure(LSODAContext ctx, double told) {
+        LSODACommon common = ctx.getCommon();
+        int j, i1, i;
+        int neq = ctx.getNeq();
+        double hmin = ctx.getOpt().getHmin();
+        common.setNcf(common.getNcf() + 1);
+        common.setRmax(2d);
+        common.setTn(told);
+
+        for (j = common.getNq(); j >= 1; j--) {
+            for (i1 = j; i1 <= common.getNq(); i1++) {
+                for (i = 1; i <= neq; i++) {
+                    double[][] yh = common.getYh();
+                    yh[i1][i] -= yh[i1 + 1][i];
+                    common.setYh(yh);
+                }
+            }
+        }
+        if (Math.abs(common.getH()) <= hmin * 1.0001d || common.getNcf() == common.getMxncf()) {
+            return 2;
+        }
+        common.setIpup(common.getMiter());
+        return 1;
+    }
 
     public int lsoda(LSODAContext ctx, double[] y, double[] t, double tout) {
         int jstart;
