@@ -240,7 +240,101 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return vm;
     }
 
-    
+    public static void cfode(LSODAContext ctx, int meth) {
+        LSODACommon common = ctx.getCommon();
+        int i, nq, nqm1, nqp1;
+        double agamq, fnq, fnqm1, pint, ragq, rqfac, rq1fac, tsign, xpin;
+        double[] pc = new double[13];
+        
+        
+        if (meth == 1) {
+            double[][] newElco = common.getElco();
+            newElco[1][1] = 1d;
+            newElco[1][2] = 1d;
+            common.setElco(newElco);
+
+            double[][] newTesco = common.getTesco();
+            newTesco[1][1] = 1d;
+            newTesco[1][2] = 2d;
+            newTesco[2][1] = 1d;
+            newTesco[12][3] = 0d;
+            common.setTesco(newTesco);
+            pc[1] = 1d;
+            rqfac = 1d;
+            for (nq = 2; nq <= 12; nq++) {
+                rq1fac = rqfac;
+                rqfac = rqfac / (double) nq;
+                nqm1 = nq - 1;
+                fnqm1 = (double) nqm1;
+                nqp1 = nq + 1;
+
+                pc[nq] = 0d;
+                for (i = nq; i >= 2; i--) {
+                    pc[i] = pc[i - 1] + fnqm1 * pc[i];
+                }
+                pc[1] = fnqm1 * pc[1];
+                pint = pc[i];
+                xpin = pc[1] / 2d;
+                tsign = 1d;
+                for (i = 2; i <= nq; i++) {
+                    tsign = -tsign;
+                    pint += tsign * pc[i] / (double) i;
+                    xpin += tsign * pc[i] / (double) (i + 1);
+                }
+                newElco = common.getElco();
+                newElco[nq][1] = pint * rq1fac;
+                newElco[nq][2] = 1d;
+                common.setElco(newElco);
+
+                for (i = 2; i <= nq; i++) {
+                    newElco = common.getElco();
+                    newElco[nq][i+1] = rq1fac * pc[i] / (double) i;
+                }
+                agamq = rqfac * xpin;
+                ragq = 1d / agamq;
+                newTesco = common.getTesco();
+                newTesco[nq][2] = agamq;
+                common.setTesco(newTesco);
+                if (nq < 12) {
+                    newTesco[nqp1][1] = ragq * rqfac / (double) nqp1;
+                    common.setTesco(newTesco);
+                }
+                newTesco[nqm1][3] = ragq;
+                common.setTesco(newTesco);
+            }
+            return;
+        }
+        if (meth == 2) {
+        pc[1] = 1d;
+        rq1fac = 1d;
+        double[][] newElco = common.getElco();
+        double[][] newTesco = common.getTesco();
+
+        for (nq = 1; nq <= 5; nq++) {
+            fnq = (double) nq;
+            nqp1 = nq + 1;
+
+            pc[nqp1] = 0d;
+            for (i = nq + 1; i >= 2; i--) {
+                pc[i] = pc[i-1] + fnq * pc[i];
+            }
+            pc[1] *= fnq;
+
+            for (i = 1; i <= nqp1; i++) {
+                newElco = common.getElco();
+                newElco[nq][i] = pc[i] / pc[2];
+                common.setElco(newElco);
+            }
+            newElco[nq][2] = 1d;
+            common.setElco(newElco);
+            newTesco[nq][1] = rq1fac;
+            newTesco[nq][2] = ((double) nqp1) / common.getElco()[nq][1];
+            newTesco[nq][3] = ((double) (nq + 2)) / common.getElco()[nq][1];
+            common.setTesco(newTesco);
+            rq1fac /= fnq;
+        }
+        }
+    }
 
     public int lsoda(LSODAContext ctx, double[] y, double[] t, double tout) {
         int jstart;

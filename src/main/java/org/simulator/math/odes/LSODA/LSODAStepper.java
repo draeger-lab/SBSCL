@@ -1,4 +1,5 @@
 package org.simulator.math.odes.LSODA;
+import org.simulator.math.odes.LSODA.LSODAIntegrator;
 
 public class LSODAStepper {
     private LSODAContext ctx;
@@ -87,7 +88,7 @@ public class LSODAStepper {
             common.setPdest(0d);
             common.setPdlast(0d);
 
-            // implement function cfode(ctx, 1);
+            LSODAIntegrator.cfode(ctx, 1);
             resetCoeff();
         }
 
@@ -97,7 +98,7 @@ public class LSODAStepper {
                 common.setIalth(2);
             }
             if (common.getMeth() != common.getMused()) {
-                // cfode(ctx, common.getMeth());
+                LSODAIntegrator.cfode(ctx, common.getMeth());
                 common.setIalth((common.getNq() + 1));
                 resetCoeff();
             }
@@ -117,7 +118,7 @@ public class LSODAStepper {
         }
 
         dsm = 0d;
-        while (true) { 
+        while (true) {
             common.setJcur(0);
 
             while (true) {
