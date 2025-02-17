@@ -11,17 +11,6 @@ public class LSODAStepper {
         this.common = ctx.getCommon();
     }
 
-    public int stoda(double[] y, int jstart) {
-        this.y = y;
-        this.jstart = jstart;
-
-        int kflag = 0;
-        double told = common.getTn();
-
-        return kflag;
-
-    }
-
     private void endStoda() {
         double r = 1d / common.getTesco()[ctx.getNeq()][1];
         double[] acor = common.getAcor();
@@ -288,7 +277,7 @@ public class LSODAStepper {
                         for (int i = 1; i <= neq; i++) {
                             y[i] = common.getYh()[1][i];
                         }
-                        //(*ctx->function), stoda.c line 351;
+                        ctx.getFunction().evaluate(common.getTn(), y[1], common.getSavf(), ctx.getData());
                         common.setNfe(common.getNfe() + 1);
                         for (int i = 1; i <= neq; i++) {
                             double[][] newYh = common.getYh();

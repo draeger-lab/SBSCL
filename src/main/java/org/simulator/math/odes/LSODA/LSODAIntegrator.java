@@ -1,6 +1,8 @@
 package org.simulator.math.odes.LSODA;
 import java.util.Arrays;
 
+import javax.naming.Context;
+
 import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
@@ -227,10 +229,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         common.setEwt(ewt);
     }
 
-    private int stoda(LSODAContext ctx, double[]y, int jstart) {
-        return 0; //implement stoda.c function, "stoda.c" in source code
-    }
-
     public static double vmnorm(int n, double[] v, double[] w) {
         double vm = 0d;
 
@@ -368,12 +366,124 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         common.setIalth(common.getNq() + 1);
     }
     
+    /*
+     * in the following function, y, del, delp and m were passed as pass-by-references in the original C source code. 
+     * In order to implement this in Java, I changed these parameters to be passed as arrays, with the intended value stored within the first index
+     * of the array, which can then be modified.
+     */
+    public static int correction(LSODAContext ctx, double[] y, double pnorm, double[] del, double[] delp, double told, int[] m) {
+        LSODACommon common = ctx.getCommon();
+        int i;
+        double rm, rate, dcon;
+        int neq = ctx.getNeq();
+
+        m[0] = 0;
+        rate = 0d;
+        del[0] = 0d;
+        for (i = 1; i <= neq; i++) {
+            y[i] = common.getYh()[1][i];
+        }
+        ctx.getFunction().evaluate(common.getTn(), y[1], common.getSavf(), ctx.getData());
+        common.setNfe(common.getNfe() + 1);
+        
+        while (true) { 
+            if (m[0] == 0) {
+                if (common.getIpup() > 0) {
+                    int ierpj = prja(ctx, y);
+                    common.setJcur(1);
+                    common.setIpup(0);
+                    common.setRc(1d);
+                    common.setNslp(common.getNst());
+                    common.setCrate(0.7d);
+                    if (ierpj == 0) {
+                        return corfailure(ctx, told);
+                    }
+                }
+                for (i = 1; i <= neq; i++) {
+                    double[] acor = common.getAcor();
+                    acor[i] = 0d;
+                    common.setAcor(acor);
+                }
+            }
+            if (common.getMiter() == 0) {
+                for (i = 1; i <= neq; i++) {
+                    double[] savf = common.getSavf();
+                    savf[i] = common.getH() * common.getSavf()[i] - common.getYh()[2][i];
+                    common.setSavf(savf);
+                    y[i] = savf[i] - common.getAcor()[i];
+                }
+                del[0] = vmnorm(neq, y, common.getEwt());
+                for (i = 1; i <= neq; i++) {
+                    y[i] = common.getYh()[1][i] + common.getEl()[1] * common.getSavf()[i];
+                    double[] acor = common.getAcor();
+                    acor[i] = common.getSavf()[i];
+                    common.setAcor(acor);
+                }
+            }
+            else {
+                for (i = 1; i <= neq; i++) {
+                    y[i] = common.getH() * common.getSavf()[i] - (common.getYh()[2][i] + common.getAcor()[i]);
+                }
+                solsy(ctx, y);
+                del[0] = vmnorm(neq, y, common.getEwt());
+                for (i = 1; i <= neq; i++) {
+                    double[] acor = common.getAcor();
+                    acor[i] += y[i];
+                    common.setAcor(acor);
+                    y[i] = common.getYh()[1][i] + common.getEl()[1] * common.getAcor()[i];
+                }
+            }
+            if (del[0] <= 100d * pnorm * common.getEta()) {
+                break;
+            }
+            if (m[0] != 0 || common.getMeth() != 1) {
+                if (m[0] != 0) {
+                    rm = 1024d;
+                    if (del[0] <= (1024d * delp[0])) {
+                        rm = del[0] / delp[0];
+                    }
+                    rate = Math.max(rate, rm);
+                    common.setCrate(Math.max(0.2 * common.getCrate(), rm));
+                }
+                double conit = 0.5 / (double) (common.getNq() + 2);
+                dcon = del[0] * Math.min(1d, 1.5 * common.getCrate()) / (common.getTesco()[common.getNq()][2] * conit);
+                if (dcon <= 1d) {
+                    common.setPdest(Math.max(common.getPdest(), rate / Math.abs(common.getH() * common.getEl()[1])));
+                    if (common.getPdest() != 0d) {
+                        common.setPdlast(common.getPdest());
+                    }
+                    break;
+                }
+            }
+            m[0]++;
+            if (m[0] == common.getMaxcor() || (m[0] >= 2 && del[0] > 2d * delp[0])) {
+                if (common.getMiter() == 0 || common.getJcur() == 1) {
+                    return corfailure(ctx, told);
+                }
+                common.setIpup(common.getMiter());
+                rate = 0d;
+                del[0] = 0d;
+                for (i = 1; i <= neq; i++) {
+                    y[i] = common.getYh()[1][i];
+                }
+                ctx.getFunction().evaluate(common.getTn(), y[1], common.getSavf(), ctx.getData());
+                common.setNfe(common.getNfe() + 1);
+            }
+            else {
+                delp[0] = del[0];
+                ctx.getFunction().evaluate(common.getTn(), y[1], common.getSavf(), ctx.getData());
+            }
+        }
+        return 0;
+    }
+    
     public int lsoda(LSODAContext ctx, double[] y, double[] t, double tout) {
         int jstart;
 
         LSODACommon common = ctx.getCommon();
         LSODAOptions opt = ctx.getOpt(); 
         LSODAFunction function = ctx.getFunction();
+        LSODAStepper stepper = new LSODAStepper(ctx, null, 0);
 
         if (common == null) {
             return hardFailure(ctx, opt.toString(), "[lsoda] illegal common block, did you call lsoda_pre");
@@ -426,9 +536,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             }
             jstart = 0;
             common.setNq(1);
-            
+
             if (function != null) {
-                function.evaluate(t[0], yOffset, yhOffset, ctx.getData());
+                function.evaluate(t[0], y[1], common.getYh()[3], ctx.getData());
             }
             common.setNfe(1);
 
@@ -483,7 +593,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 common.getYh()[2][i] *= h0;
             }
 
-            int kflag = stoda(ctx, y, jstart);
+            int kflag = stepper.stoda(ctx, y, jstart);
 
             if (ctx.getState() == 2 || ctx.getState() == 3) {
                 ctx.nslast = common.getNst();
@@ -584,7 +694,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     }
                 }
 
-                kflag = stoda(ctx, y, jstart);
+                kflag = stepper.stoda(ctx, y, jstart);
                 if (kflag == 0) {
                     jstart = 1;
 
