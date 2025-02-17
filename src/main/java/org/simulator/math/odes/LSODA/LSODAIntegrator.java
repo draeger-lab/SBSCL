@@ -477,6 +477,18 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return 0;
     }
     
+    private int solsy(LSODAContext ctx, double[] y) {
+        int neq = ctx.getNeq();
+        LSODACommon common = ctx.getCommon();
+        if (common.getMiter() != 2) {
+            System.exit(0); //I chose to use System.exit() here, as the original C code uses the C equivalent abort()
+        }
+        if (common.getMiter() == 2) {
+            dgesl(common.getWm(), neq, common.getIpvt(), y, 0);
+        }
+        return 1;
+    }
+
     public int lsoda(LSODAContext ctx, double[] y, double[] t, double tout) {
         int jstart;
 
