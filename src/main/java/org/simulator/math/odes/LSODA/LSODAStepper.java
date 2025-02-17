@@ -36,13 +36,11 @@ public class LSODAStepper {
     }
 
     private void resetCoeff() {
-        double el0 = common.getEl()[0];
-        double[] el = common.getEl();
 
         for (int i = 1; i <= (common.getNq() + 1); i++) {
-            double newEl = common.getEl()[i];
-            el[i] = newEl;
-            //common.setEl() = common.getElco()[common.getNq()][i]; figure out this definition
+            double[] newEl = common.getEl();
+            newEl[i] = common.getElco()[common.getNq()][i];
+            common.setEl(newEl);
         }
     }
 
@@ -80,6 +78,7 @@ public class LSODAStepper {
             common.setNslp(0);
             common.setIpup(common.getMiter());
             double[] newEl = common.getEl();
+            newEl[0] = 1d;
             common.setEl(newEl);
 
             // initialize switching parameters
