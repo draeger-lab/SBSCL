@@ -336,6 +336,38 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         }
     }
 
+    public static void scaleh(LSODAContext ctx, double rh) {
+        double r;
+        int j, i;
+        LSODACommon common = ctx.getCommon();
+        int neq = ctx.getNeq();
+        double hmxi = ctx.getOpt().getHmxi();
+
+        rh = Math.min(rh, common.getRmax());
+        rh = rh / Math.max(1d, Math.abs(common.getH()) * hmxi * rh);
+
+        if (common.getMeth() == 1) {
+            common.setIrflag(0);
+            double pdh = Math.max(Math.abs(common.getH()) * common.getPdlast(), 0.000001d);
+            if ((rh * pdh * 1.00001d) >= common.getSm1()[common.getNq()]) {
+                rh = common.getSm1()[common.getNq()] / pdh;
+                common.setIrflag(1);
+            }
+        }
+        r = 1d;
+        for (j = 2; j <= (common.getNq() + 1); j++) {
+            r *= rh;
+            for (i = 1; i <= neq; i++) {
+                double[][] newYh = common.getYh();
+                newYh[j][i] *= r;
+                common.setYh(newYh);
+            }
+        }
+        common.setH(common.getH() * rh);
+        common.setRc(common.getRc() * rh);
+        common.setIalth(common.getNq() + 1);
+    }
+    
     public int lsoda(LSODAContext ctx, double[] y, double[] t, double tout) {
         int jstart;
 

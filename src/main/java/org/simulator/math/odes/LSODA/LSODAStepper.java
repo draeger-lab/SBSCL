@@ -1,5 +1,4 @@
 package org.simulator.math.odes.LSODA;
-import org.simulator.math.odes.LSODA.LSODAIntegrator;
 
 public class LSODAStepper {
     private LSODAContext ctx;
@@ -105,7 +104,7 @@ public class LSODAStepper {
             if (common.getH() != common.getHold()) {
                 rh = common.getH() / common.getHold();
                 common.setH(common.getHold());
-                // scaleh(ctx, rh);
+                LSODAIntegrator.scaleh(ctx, rh);
             }
         }
 
@@ -113,7 +112,7 @@ public class LSODAStepper {
             if (common.getH() != common.getHold()) {
                 rh = common.getH() / common.getHold();
                 common.setH(common.getHold());
-                // scaleh(ctx, rh);
+                LSODAIntegrator.scaleh(ctx, rh);
             }
         }
 
@@ -149,7 +148,7 @@ public class LSODAStepper {
                 }
                 if (corflag == 1) {
                     rh = Math.max(0.25, hmin / Math.abs(common.getH()));
-                    // scaleh(ctx, rh);
+                    LSODAIntegrator.scaleh(ctx, rh);
                     continue;
                 }
                 if (corflag == 2) {
@@ -185,7 +184,7 @@ public class LSODAStepper {
                     // methodswitch(ctx, dsm, pnorm, &rh);
                     if (common.getMeth() != common.getMused()) {
                         rh = Math.max(rh, hmin / Math.abs(common.getH()));
-                        // scaleh(ctx, rh);
+                        LSODAIntegrator.scaleh(ctx, rh);
                         common.setRmax(10d);
                         endStoda();
                         break;
@@ -213,7 +212,7 @@ public class LSODAStepper {
 
                     if (orderflag == 1) {
                         rh = Math.max(rh, hmin / Math.abs(common.getH()));
-                        // sclaeh(ctx, rh);
+                        LSODAIntegrator.scaleh(ctx, rh);
                         common.setRmax(10d);
                         endStoda();
                         break;
@@ -222,7 +221,7 @@ public class LSODAStepper {
                     if (orderflag == 2) {
                         resetCoeff();
                         rh = Math.max(rh, (hmin / Math.abs(common.getH())));
-                        //scaleh(ctx, rh);
+                        LSODAIntegrator.scaleh(ctx, rh);
                         common.setRmax(10d);
                         endStoda();
                         break;
@@ -267,12 +266,12 @@ public class LSODAStepper {
                             rh = Math.min(rh, 0.2d);
                         }
                         rh = Math.max(rh, (hmin / Math.abs(common.getH())));
-                        //scaleh(ctx, rh);
+                        LSODAIntegrator.scaleh(ctx, rh);
                     }
                     if (orderflag == 2) {
                         resetCoeff();
                         rh = Math.max(rh, (hmin / Math.abs(common.getH())));
-                        //scaleh(ctx, rh);
+                        LSODAIntegrator.scaleh(ctx, rh);
                     }
                     continue;
                 }
