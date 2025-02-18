@@ -72,6 +72,10 @@ public class LSODACommon {
             "}";
     }
 
+    public double[] getSM1() {
+        return SM1;
+    }
+
     public double[][] getYh() {
         return yh;
     }
