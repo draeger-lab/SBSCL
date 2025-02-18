@@ -696,6 +696,57 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return dotprod;
     }
 
+    private int prja(LSODAContext ctx, double[] y) {
+        int i, ier, j;
+        double fac, hl0, r, r0, yj;
+        LSODACommon common = ctx.getCommon();
+        int neq = ctx.getNeq();
+
+        common.setNje(common.getNje() + 1);
+        hl0 = common.getH() * common.getEl()[1];
+
+        if (common.getMiter() != 2) {
+            logError(String.format("[prja] miter != 2, miter = %d", common.getMiter()), ctx.getData());
+            return 0;
+        }
+        if (common.getMiter() == 2) {
+            fac = vmnorm(neq, common.getSavf(), common.getEwt());
+            r0 = 1000d * Math.abs(common.getH()) * common.ETA * ((double) neq) * fac;
+            if (r0 == 0d) {
+                r0 = 1d;
+            }
+
+            for (j = 1; j <= neq; j++) {
+                yj = y[j];
+                r = Math.max(common.SQRTETA * Math.abs(yj), r0 / common.getEwt()[j]);
+                y[j] += r;
+                fac = -hl0 / r;
+                ctx.getFunction().evaluate(common.getTn(), y[1], common.getAcor(), ctx.getData());
+                for (i = 1; i <= neq; i++) {
+                    double[][] wm = common.getWm();
+                    wm[i][j] = (common.getAcor()[i] - common.getSavf()[i]) * fac;
+                    common.setWm(wm);
+                }
+                y[j] = yj;
+            }
+            common.setNfe(common.getNfe() + neq);
+
+            common.setPdnorm(fnorm(neq, common.getWm(), common.getEwt()) / Math.abs(hl0));
+            
+            for (i = 1; i <= neq; i++) {
+                double[][] wm = common.getWm();
+                wm[i][i] += 1d;
+                common.setWm(wm);
+            }
+
+            dgefa(common.getWm(), neq, common.getIpvt(), ier);
+            if (ier != 0) {
+                return 0;
+            }
+        }
+        return 1;
+    }
+
     public int lsoda(LSODAContext ctx, double[] y, double[] t, double tout) {
         int jstart;
 
