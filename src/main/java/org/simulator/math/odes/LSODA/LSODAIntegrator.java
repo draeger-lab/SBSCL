@@ -566,6 +566,46 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return 1;
     }
 
+    private void dgesl(double[][] a, int n, int[] ipvt, double[] b, int job) {
+
+        int k, j;
+        double t;
+
+        if (job == 0) {
+            for (k = 1; k <= n; k++) {
+                t = ddot(k-1, a[k], 1, b, 1); // arr + int???
+                b[k] = (b[k] - t) / a[k][k];
+            }
+
+            for (k = n - 1; k >= 1; k--) {
+                b[k] = b[k] + ddot(n -  k, a[k][k] + k, 1, b[k] + k, 1); // arr + int???
+                j = ipvt[k];
+                if (j != k) {
+                    t = b[j];
+                    b[j] = b[k];
+                    b[k] = t;
+                }
+            }
+            return;
+        }
+
+        for (k = 1; k <= n - 1; k++) {
+            j = ipvt[k];
+            t = b[j];
+            if (j != k) {
+                b[j] = b[k];
+                b[k] = t;
+            }
+            daxpy(n-k, t, a[k][k] + k, 1, b[k] + k, 1); // arr + int???
+        }
+
+        for (k = n; k >= 1; k--) {
+            b[k] = b[k] / a[k][k];
+            t = -b[k];
+            axpy(k-1, t, a[k], 1, b, 1); // arr + int???
+        }
+    }
+
     public int lsoda(LSODAContext ctx, double[] y, double[] t, double tout) {
         int jstart;
 
