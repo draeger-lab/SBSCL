@@ -747,6 +747,105 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return 1;
     }
 
+    private void dgefa(double[][] a, int n, int[] ipvt, int[] info) {
+        int j, k, i;
+        double t;
+
+        info[0] = 0;
+        for (k = 1; k <= n - 1; k++) {
+            j = idamax(n- k +1, a[k][k], 1) + k - 1;
+            ipvt[k] = j;
+
+            if (a[k][j] == 0d) {
+                info[0] = k;
+                continue;
+            }
+
+            if (j != k) {
+                t = a[k][j];
+                a[k][j] = a[k][k];
+                a[k][k] = t;
+            }
+
+            t = -1d / a[k][k];
+            dscal(n-k, t, a[k][k], 1);
+
+            for (i = k + 1; i <= n; i++) {
+                t = a[i][j];
+                if (j != k) {
+                    a[i][j] = a [i][k];
+                    a[i][k] = t;
+                }
+
+                daxpy(n - k, t, Arrays.copyOfRange(a[k], k, a[k].length), 1, 1, Arrays.copyOfRange(a[i], k, a[i].length));
+            }
+        }
+
+        ipvt[n] = n;
+        if (a[n][n] == 0d) {
+            info[0] = n;
+        }
+
+    }
+
+    private double fnorm(int n, double[][] a, double[] w) {
+
+        int i, j;
+        double an, sum;
+        double[] ap1;
+
+        an = 0d;
+        for (i = 1; i <= n; i++) {
+            sum = 0d;
+            ap1 = a[i];
+            for (j = 1; j <= n; j++) {
+                sum += Math.abs(ap1[j]) / w[j];
+            }
+            an = Math.max(an, sum * w[i]);
+        }
+
+        return an;
+    }
+
+    private int idamax(int n, double[] dx, int incx) {
+
+        double dmax, xmag;
+        int i, ii, xindex;
+
+        xindex = 0;
+        if (n <= 0) {
+            return xindex;
+        }
+        xindex = 1;
+        if (n <= 1 || incx <= 0) {
+            return xindex;
+        }
+
+        if (incx != 1) {
+            dmax = Math.abs(dx[1]);
+            ii = 2;
+            for (i = 1 + incx; i <= n * incx; i += incx) {
+                xmag = Math.abs(dx[i]);
+                if (xmag > dmax) {
+                    xindex = ii;
+                    dmax = xmag;
+                }
+                i++;
+            }
+            return xindex;
+        }
+
+        dmax = Math.abs(dx[1]);
+        for (i = 2; i <= n; i++) {
+            xmag = Math.abs(dx[i]);
+            if (xmag > dmax) {
+                xindex = i;
+                dmax = xmag;
+            }
+        }
+        return xindex;
+    }
+
     public int lsoda(LSODAContext ctx, double[] y, double[] t, double tout) {
         int jstart;
 
