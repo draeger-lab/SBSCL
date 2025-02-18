@@ -1,8 +1,6 @@
 package org.simulator.math.odes.LSODA;
 import java.util.Arrays;
 
-import javax.naming.Context;
-
 import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
@@ -573,12 +571,12 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
         if (job == 0) {
             for (k = 1; k <= n; k++) {
-                t = ddot(k-1, a[k], 1, b, 1); // arr + int???
+                t = ddot(k-1, a[k], b, 1, 1); // arr + int???
                 b[k] = (b[k] - t) / a[k][k];
             }
 
             for (k = n - 1; k >= 1; k--) {
-                b[k] = b[k] + ddot(n -  k, a[k][k] + k, 1, b[k] + k, 1); // arr + int???
+                b[k] = b[k] + ddot(n -  k, Arrays.copyOfRange(a[k], k, a[k].length), Arrays.copyOfRange(b, k, b.length), 1, 1); // arr + int???
                 j = ipvt[k];
                 if (j != k) {
                     t = b[j];
@@ -697,7 +695,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     }
 
     private int prja(LSODAContext ctx, double[] y) {
-        int i, ier, j;
+        int i, j; 
+        int[] ier = new int[1]; //in the original code, ier was of type int and passed by reference. I changed it to simulate this logic.
         double fac, hl0, r, r0, yj;
         LSODACommon common = ctx.getCommon();
         int neq = ctx.getNeq();
@@ -738,9 +737,11 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 wm[i][i] += 1d;
                 common.setWm(wm);
             }
-
-            dgefa(common.getWm(), neq, common.getIpvt(), ier);
-            if (ier != 0) {
+            
+            double[][] wm = common.getWm(); //I defined a separate variable here because my compiler was 
+            //throwing an error when I tried to use common.getWm() directly in the dgefa function call, saying common.getWm() was int[] and not double[][].
+            dgefa(wm, neq, common.getIpvt(), ier);
+            if (ier[0] != 0) {
                 return 0;
             }
         }
@@ -753,7 +754,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
         info[0] = 0;
         for (k = 1; k <= n - 1; k++) {
-            j = idamax(n- k +1, a[k][k], 1) + k - 1;
+            j = idamax(n- k +1, Arrays.copyOfRange(a[k], k, a[k].length), 1) + k - 1;
             ipvt[k] = j;
 
             if (a[k][j] == 0d) {
@@ -768,7 +769,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             }
 
             t = -1d / a[k][k];
-            dscal(n-k, t, a[k][k], 1);
+            dscal(n-k, t, 1, Arrays.copyOfRange(a[k], k, a[k].length));
 
             for (i = k + 1; i <= n; i++) {
                 t = a[i][j];
