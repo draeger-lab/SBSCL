@@ -91,9 +91,61 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     private void logError(String message, Object... args) {
         System.err.printf(message, args);
     }
+    
+    private int intdy(LSODAContext ctx, double t, int k, double[] dky) {
+        int i, ic, j, jj, jp1;
+        double c, r, s, tp;
+        
+        LSODACommon common = ctx.getCommon();
+        int neq = ctx.getNeq();
+        
+        if (k < 0 || k > common.getNq()) {
+            logError(String.format("[intdy] k = %d illegal", k), ctx.getData());
+            return -1;
+        }
+        
+        tp = common.getTn() - common.getHu() - 100d * common.ETA * (common.getTn() + common.getHu());
+        
+        if ((t - tp) * (t - common.getTn()) > 0d) {
+            logError(String.format("intdy -- t = &g illegal. t not in interval tcur - %d to tcur", t, common.getHu()), ctx.getData());
+            return -2;
+        }
 
-    private int intdy(double tout, int k, double[] y) {
-        return 0; //i dont know what intdy is supposed to be
+        s = (t - common.getTn()) / common.getH();
+        ic = 1;
+
+        for (jj = (common.getNq() + 1) - k; jj <= common.getNq(); jj++) {
+            ic *= jj;
+        }
+
+        c = (double) ic;
+
+        for (i = 1; i <= neq; i++) {
+            dky[i] = c * common.getYh()[common.getNq() + 1][i];
+        }
+
+        for (j = common.getNq() - 1; j >= k; j--) {
+            jp1 = j + 1;
+            ic = 1;
+            for (jj = jp1 - k; jj <= j; jj++) {
+                ic *= jj;
+            }
+            c = (double) ic;
+            for (i = 1; i <= neq; i++) {
+                dky[i] = c * common.getYh()[jp1][i] + s * dky[i];
+            }
+        }
+
+        if (k == 0) {
+            return 0;
+        }
+
+        r = Math.pow(common.getH(), (double) (-k));
+
+        for (i = 1; i <= neq; i++) {
+            dky[i] *= r;
+        }
+        return 0;
     }
 
     private int intdyReturn(double[] y, double[] t, double tout, int itask) {

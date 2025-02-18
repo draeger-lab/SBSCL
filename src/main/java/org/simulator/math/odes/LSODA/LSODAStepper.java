@@ -110,10 +110,10 @@ public class LSODAStepper {
             common.setJcur(0);
 
             while (true) {
-                if (Math.abs(common.getRc() - 1d) > common.getCcmax()) { //what is CCMAX???
+                if (Math.abs(common.getRc() - 1d) > common.CCMAX) { //what is CCMAX???
                     common.setIpup(common.getMiter());
                 }
-                if (common.getNst() >= common.getNslp() + common.getMsbp()) {
+                if (common.getNst() >= common.getNslp() + common.MSBP) {
                     common.setIpup(common.getMiter());
                 }
                 common.setTn(common.getTn() + common.getH());
