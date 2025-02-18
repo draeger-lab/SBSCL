@@ -656,6 +656,46 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     
     }
 
+    private double ddot(int n, double[] dx, double[] dy, int incx, int incy) {
+        double dotprod;
+        int ix, iy, i;
+
+        dotprod = 0d;
+        if (n <= 0) {
+            return dotprod;
+        }
+
+        if (incx != incy || incx < 1) {
+            ix = 1; 
+            iy = 1;
+            if (incx < 0) {
+                ix = (-n + 1) * incx + 1;
+            }
+            if (incy < 0) {
+                iy = (-n + 1) * incy + 1;
+            }
+            for (i = 1; i <= n; i++) {
+                dotprod += dx[ix] * dy[iy];
+                ix += incx;
+                iy += incy;
+            }
+            return dotprod;
+        }
+
+        if (incx == 1) {
+
+            for (i = 1; i<= n; i++) {
+                dotprod += dx[i] * dy[i];
+            }
+            return dotprod;
+        }
+
+        for (i = 1; i <= n * incx; i += incx) {
+            dotprod += dx[i] * dy[i];
+        }
+        return dotprod;
+    }
+
     public int lsoda(LSODAContext ctx, double[] y, double[] t, double tout) {
         int jstart;
 
