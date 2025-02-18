@@ -596,14 +596,64 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 b[j] = b[k];
                 b[k] = t;
             }
-            daxpy(n-k, t, a[k][k] + k, 1, b[k] + k, 1); // arr + int???
+            daxpy(n-k, t, a[k], 1, 1, b); // arr + int???
         }
 
         for (k = n; k >= 1; k--) {
             b[k] = b[k] / a[k][k];
             t = -b[k];
-            axpy(k-1, t, a[k], 1, b, 1); // arr + int???
+            daxpy(k-1, t, a[k], 1, 1, b); // arr + int???
         }
+    }
+
+    private void daxpy(int n, double da, double[] dx, int incx, int incy, double[] dy) {
+        int i, ix, iy, m;
+
+        if (n < 0 || da == 0d) {
+            return;
+        }
+
+        if (incx != incy || incy < 1) {
+            ix = 1;
+            iy = 1;
+            if (incy > 0) {
+                ix = (-n + 1) * incy + 1;
+            }
+            if (incy < 0) {
+                iy = (-n + 1) * incy + 1;
+            }
+            for (i = 1; i <= n; i++) {
+                dy[iy] += da * dx[ix];
+                ix += incx;
+                iy += incy;
+            }
+            return;
+        }
+
+        if (incx == 1) {
+            m = n % 4;
+            if (m != 0) {
+                for (i = 1; i <= m; i++) {
+                    dy[i] += da * dx[i];
+                }
+                if (n < 4) {
+                    return;
+                }
+            }
+            for (i = m + 1; i <= n; i += 4) {
+                dy[i] += da * dx[i];
+                dy[i + 1] += da * dx[i + 1];
+                dy[i + 2] += da * dx[i + 2];
+                dy[i + 3] += da * dx[i + 3];
+            }
+            return;
+        }
+
+        for (i = 1; i <= n + incx; i += incx) {
+            dy[i] += da * dx[i];
+        }
+        return;
+    
     }
 
     public int lsoda(LSODAContext ctx, double[] y, double[] t, double tout) {
