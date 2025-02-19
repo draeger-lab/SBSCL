@@ -571,11 +571,11 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
         if (job == 0) {
             for (k = 1; k <= n; k++) {
-                t = ddot(k-1, a[k], b, 1, 1); // arr + int???
+                t = ddot(k-1, a[k], b, 1, 1);
                 b[k] = (b[k] - t) / a[k][k];
             }
 
-            for (k = n - 1; k >= 1; k--) {
+            for (k = n - 1; k >= 1; k--) { // C passes a reference of a, and then modifies the k-th index, s.t. the original a is also modified...TODO: find solution in Java
                 b[k] = b[k] + ddot(n -  k, Arrays.copyOfRange(a[k], k, a[k].length), Arrays.copyOfRange(b, k, b.length), 1, 1); // arr + int???
                 j = ipvt[k];
                 if (j != k) {

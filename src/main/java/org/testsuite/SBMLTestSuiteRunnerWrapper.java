@@ -27,7 +27,6 @@ import org.simulator.io.CSVImporter;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
 import org.simulator.math.odes.DESSolver;
-import org.simulator.math.odes.LSODA.LSODAIntegrator;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
@@ -300,7 +299,7 @@ public class SBMLTestSuiteRunnerWrapper {
       double relative = (!properties.getProperty(RELATIVE).isEmpty()) ? Double
         .parseDouble(properties.getProperty(RELATIVE)) : 0d;
 
-        DESSolver solver = new LSODAIntegrator();
+        /*DESSolver solver = new LSODAIntegrator();
         solver.setStepSize(duration / steps);
 
         if (solver instanceof AbstractDESSolver) {
@@ -310,7 +309,7 @@ public class SBMLTestSuiteRunnerWrapper {
         if (solver instanceof AdaptiveStepsizeIntegrator) {
           ((AdaptiveStepsizeIntegrator) solver).setAbsTol(TOLERANCE_FACTOR * absolute);
           ((AdaptiveStepsizeIntegrator) solver).setRelTol(TOLERANCE_FACTOR * relative);
-        }
+        } */
 
         SBMLinterpreter interpreter = null;
         try {
@@ -321,7 +320,8 @@ public class SBMLTestSuiteRunnerWrapper {
               "Model Overdetermined while creating a mapping for converting Algebraic rule to Assignment rule");
         }
 
-          return solver.solve(interpreter, interpreter.getInitialValues(), timePoints);
+          //return solver.solve(interpreter, interpreter.getInitialValues(), timePoints);
+          return null;
   }
 
   /**
