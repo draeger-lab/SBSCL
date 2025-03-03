@@ -278,6 +278,19 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         common.setEwt(ewt);
     }
 
+    /**
+     * Computes the weighted maximum norm of a vector v of length n.
+     * The norm is computed using the formula:
+     * <pre>
+     *      vmnorm = max(i=0,...,n) (|v[i]| * |w[i]|)
+     * </pre>
+     * where 'w' is a weight vector of the same length as 'v'.
+     * 
+     * @param n the length of the vector v (index range: 1 to n) 
+     * @param v the vector whose weighted max-norm is to be computed
+     * @param w the weight vector of the same length as v
+     * @return the computed weightes max-norm of the vector
+     */
     public static double vmnorm(int n, double[] v, double[] w) {
         double vm = 0d;
 
@@ -653,6 +666,21 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     
     }
 
+    /**
+     * Compute the Euclidian norm of a vector dx and dy of length n, with increments incx and incy respectively.
+     * The norm is computed using the formula:
+     * <pre>
+     *    fnorm = sqrt(sum(i=1,...,n) (dx[i] * dy[i])^2)
+     * </pre>
+     * 
+     * 
+     * @param n the length of the vectors dx and dy (index range: 1 to n)
+     * @param dx the first vector whose dot product is to be computed
+     * @param dy the second vector whose dot product is to be computed
+     * @param incx the increment for the vector dx
+     * @param incy the increment for the vector dy
+     * @return the computed Euclidian norm (dot product) of the two vectors
+     */
     public static double ddot(int n, double[] dx, double[] dy, int incx, int incy) {
         double dotprod;
         int ix, iy, i;
@@ -792,6 +820,20 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
     }
 
+    /**
+     * Computes the Frobenius norm of an n x n matrix a, which is consistent with the weighted max-norm on vectors.
+     * The norm is calculated using the formula:
+     * <pre>
+     *    fnorm = max(i=1,...,n) (w[i] * sum(j=1,...,n) fabs(a[i][j]) / w[j])
+     * </pre>
+     * 
+     * where 'w' is a weight vector.
+     * 
+     * @param n the size of the (square) matrix
+     * @param a the n x n matrix whose norm is to be calculated
+     * @param w the weight vector of length n used for normalization
+     * @return the computed weighted norm of the matrix
+     */
     public static double fnorm(int n, double[][] a, double[] w) {
 
         int i, j;
