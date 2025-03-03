@@ -1,4 +1,5 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.simulator.math.odes.LSODA.LSODAIntegrator;
 
@@ -176,4 +177,109 @@ public class LSODAIntegratorTest {
         double result = LSODAIntegrator.vmnorm(n, v, w);
         assertEquals(0d, result, 1e-6);
     }
+
+
+    /** 
+     * The following tests are for the function .fnorm() within LSODAIntegrator.java
+     * The function computes the weighted matrix norm 
+    **/
+
+    /* Basic matrix norm */
+    @Test
+    void Fnorm_BasicMatrixNorm() {
+        int n = 2;
+        double[][] a = {
+            {0d, 0d, 0d},
+            {0d, 1d, -2d},
+            {0d, 3d, 4d}
+        };
+        double[] w = {0d, 2d, 1d};
+
+        double result = LSODAIntegrator.fnorm(n, a, w);
+        double expected = Math.max(
+            2d * (Math.abs(1d) / 2d + Math.abs(-2d) / 1d),
+            1d * (Math.abs(3d) / 2d + Math.abs(4d) / 1d)
+        );
+
+        assertEquals(expected, result, 1e-6);
+    }
+
+    /* Matrix has all zero elements */
+    @Test
+    void Fnorm_AllZero() {
+        int n = 2;
+        double[][] a = {
+            {0d, 0d, 0d},
+            {0d, 0d, 0d},
+            {0d, 0d, 0d}
+        };
+        double[] w = {0d, 2d, 1d};
+
+        double result = LSODAIntegrator.fnorm(n, a, w);
+        assertEquals(0d, result, 1e-6);
+    }
+
+    /* Matrix has a single element (n = 1) */
+    @Test
+    void Fnorm_SingleElement() {
+        int n = 1;
+        double[][] a = {
+            {0d, 0d},
+            {0d, -7.5}
+        };
+        double[] w = {0d, 2d};
+
+        double result = LSODAIntegrator.fnorm(n, a, w);
+
+        assertEquals(Math.abs(-7.5), result, 1e-6);
+    }
+
+    /* Matrix has negative values */
+    @Test
+    void Fnorm_NegativeValues() {
+        int n = 2;
+        double[][] a = {
+            {0d, 0d, 0d},
+            {0d, -1d, -2d},
+            {0d, -3d, -4d}
+        };
+        double[] w = {0d, 1d, 2d};
+
+        double result = LSODAIntegrator.fnorm(n, a, w);
+        double expected = Math.max(
+            1d * (Math.abs(-1d) / 1d + Math.abs(-2d) / 2d),
+            2d * (Math.abs(-3d) / 1d + Math.abs(-4d) / 2d)
+        );
+
+        assertEquals(expected, result, 1e-6);
+    }
+
+    /* Negative weights in w */
+    @Test
+    void Fnorm_NegativeWeights() {
+        int n = 2;
+        double[][] a = {
+            {0d, 0d, 0d},
+            {0d, 1d, -2d},
+            {0d, 3d, 4d}
+        };
+        double[] w = {0d, -1d, -2d};
+
+        double result = LSODAIntegrator.fnorm(n, a, w);
+        assertTrue(result > 0);
+    }
+
+    /* Zero length matrix (n = 0) */
+    @Test
+    void Fnorm_ZeroLengthMatrix() {
+        int n = 0;
+        double[][] a = {{0d}};
+        double[] w = {0d};
+
+        double result = LSODAIntegrator.fnorm(n, a, w);
+        assertEquals(0d, result, 1e-6);
+    }
+
 }
+
+

@@ -792,7 +792,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
     }
 
-    private double fnorm(int n, double[][] a, double[] w) {
+    public static double fnorm(int n, double[][] a, double[] w) {
 
         int i, j;
         double an, sum;
