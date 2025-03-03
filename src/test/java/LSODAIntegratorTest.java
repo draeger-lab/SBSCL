@@ -103,4 +103,77 @@ public class LSODAIntegratorTest {
         double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
         assertEquals(Double.NaN, result, 1e-6);
     }
+
+    
+    /** 
+     * The following tests are for the function .vmnorm within LSODAIntegrator.java 
+     * The function calculates the weighted max-norm of a vector.
+    **/
+
+    /* Basic max-norm test */
+    @Test
+    void Vmnorm_BasicMaxNorm() {
+        int n = 3;
+        double[] v = {0d, 1d, -2d, 3d};
+        double[] w = {0d, 4d, 1.5, 2d};
+
+        double result = LSODAIntegrator.vmnorm(n, v, w);
+        assertEquals(Math.max(Math.abs(1d) * 4d, Math.max(Math.abs(-2d) * 1.5, Math.abs(3d) * 2.0)), result, 1e-6);
+    }
+
+    /* Test vector with all elements zero */
+    @Test
+    void Vmnorm_AllZero() {
+        int n = 3;
+        double[] v = {0d, 0d, 0d, 0d};
+        double[] w = {0d, 0d, 0d, 0d};
+
+        double result = LSODAIntegrator.vmnorm(n, v, w);
+        assertEquals(0d, result, 1e-6);
+    }
+
+
+    /* Test single element */
+    @Test
+    void Vmnorm_SingleElement() {
+        int n = 1;
+        double[] v = {0d, 7.5};
+        double[] w = {0d, 2d};
+
+        double result = LSODAIntegrator.vmnorm(n, v, w);
+        assertEquals(Math.abs(7.5) * 2d, result, 1e-6);
+    }
+
+    /* Test negative values in v */
+    @Test
+    void Vmnorm_NegativeValues() {
+        int n = 3;
+        double[] v = {0d, -1d, -2d, -3d};
+        double[] w = {0d, 1d, 2d, 3d};
+
+        double result = LSODAIntegrator.vmnorm(n, v, w);
+        assertEquals(3d * 3d, result, 1e-6);
+    }
+
+    /* Test negative values in w */
+    @Test
+    void Vmnorm_NegativeWeights() {
+        int n = 3;
+        double[] v = {0d, 1d, 2d, 3d};
+        double[] w = {0d, -1d, -2d, -3d};
+
+        double result = LSODAIntegrator.vmnorm(n, v, w);
+        assertEquals(3d * 3d, result, 1e-6);
+    }
+
+    /* Test zero length vector */
+    @Test
+    void Vmnorm_ZeroLengthVector() {
+        int n = 0;
+        double[] v = {0d};
+        double[] w = {0d};
+
+        double result = LSODAIntegrator.vmnorm(n, v, w);
+        assertEquals(0d, result, 1e-6);
+    }
 }

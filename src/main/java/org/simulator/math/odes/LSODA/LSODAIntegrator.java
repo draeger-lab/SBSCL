@@ -282,7 +282,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         double vm = 0d;
 
         for (int i = 0; i <= n; i++) {
-            vm = Math.max(vm, Math.abs(v[i]) * w[i]);
+            vm = Math.max(vm, Math.abs(v[i]) * Math.abs(w[i]));
         }
         return vm;
     }
