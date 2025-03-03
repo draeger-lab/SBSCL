@@ -8,16 +8,15 @@ import org.simulator.math.odes.DESystem;
 
 public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     
+    private LSODAContext ctx;
     private int neq;
     private double[] yh;
     private double[] tn;
     private int state;
     
-    public LSODAIntegrator(int neq) {
+    public LSODAIntegrator(LSODAContext ctx) {
         super();
-        this.neq = neq;
-        this.yh = new double[neq + 1];
-        this.state = 0;
+        this.ctx = ctx;
     }
 
     public LSODAIntegrator(LSODAIntegrator integrator) {
@@ -265,11 +264,11 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         ctx.setOpt(null);
     }
 
-    private void ewset(double[] y, double[] rtol, double[] atol, int neq, LSODACommon common) {
+    private void ewset(double[] ycur, double[] rtol, double[] atol, int neq, LSODACommon common) {
         double[] ewt = common.getEwt();
 
         for (int i = 1; i <= neq; i++) {
-            ewt[i] = rtol[i - 1] * Math.abs(y[i]) + atol[i - 1];
+            ewt[i] = rtol[i - 1] * Math.abs(ycur[i]) + atol[i - 1];
         }
 
         for (int i = 1; i <= neq; i++) {
@@ -654,9 +653,13 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     
     }
 
-    private double ddot(int n, double[] dx, double[] dy, int incx, int incy) {
+    public static double ddot(int n, double[] dx, double[] dy, int incx, int incy) {
         double dotprod;
         int ix, iy, i;
+
+        if (dx.length < (1 + (n - 1) * Math.abs(incx)) || dy.length < (1 + (n - 1) * Math.abs(incy))) {
+            throw new IndexOutOfBoundsException("Array size too small for given incx and incy");
+        }
 
         dotprod = 0d;
         if (n <= 0) {
@@ -1185,6 +1188,45 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         
     }
 
+    public LSODAContext getCtx() {
+        return ctx;
+    }
+
+    public void setCtx(LSODAContext ctx) {
+        this.ctx = ctx;
+    }
+
+    public int getNeq() {
+        return neq;
+    }
+
+    public void setNeq(int neq) {
+        this.neq = neq;
+    }
+
+    public double[] getYh() {
+        return yh;
+    }
+
+    public void setYh(double[] yh) {
+        this.yh = yh;
+    }
+
+    public double[] getTn() {
+        return tn;
+    }
+
+    public void setTn(double[] tn) {
+        this.tn = tn;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
 
 
 }   
