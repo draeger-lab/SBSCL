@@ -620,22 +620,23 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         }
     }
 
-    private static void daxpy(int n, double da, double[] dx, int incx, int incy, double[] dy) {
+    public static void daxpy(int n, double da, double[] dx, int incx, int incy, double[] dy) {
         int i, ix, iy, m;
 
         if (n < 0 || da == 0d) {
             return;
         }
-
+        
         if (incx != incy || incy < 1) {
             ix = 1;
             iy = 1;
-            if (incy > 0) {
-                ix = (-n + 1) * incy + 1;
+            if (incx < 0) {
+                ix = (-n + 1) * incx + 1;
             }
             if (incy < 0) {
                 iy = (-n + 1) * incy + 1;
             }
+
             for (i = 1; i <= n; i++) {
                 dy[iy] += da * dx[ix];
                 ix += incx;
@@ -776,7 +777,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
             
             for (i = 1; i <= neq; i++) {
-                
                 double[][] wm = common.getWm();
                 wm[i][i] += 1d;
                 common.setWm(wm);
@@ -789,7 +789,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             dgefa(wm, neq, common.getIpvt(), ier);
 
             if (ier[0] != 0) {
-                System.out.println("Made it here!");
                 return 0;
             }
         }

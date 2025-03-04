@@ -1,3 +1,4 @@
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
@@ -754,11 +755,124 @@ public class LSODAIntegratorTest {
     // }
 
 
-    /* I will finish implementing tests for prja once I have tested all the other functions prja calls upon */
+    /* I will finish implementing tests for prja once its helper functions for are fully tested. */
 
-    
+    /**
+     * The following test cases are for the function daxpy() within LSODAIntegrator.java.
+     * Daxpy computes <pre>dy = da * dx + dy</pre> for vectors <pre>dx</pre> and <pre>dy</pre> and scalar <pre>da</pre>.
+     */
+    @Test
+    void daxpy_Basic() {
+        int n = 3;
+        double da = 2d;
+        double[] dx = {0d, 1d, 2d, 3d};
+        double[] dy = {0d, 4d, 5d, 6d};
+        int incx = 1, incy = 1;
 
-    
+        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
+
+        double[] expectedDy = {0d, 6d, 9d, 12d};
+        assertArrayEquals(expectedDy, dy, 1e-6);
+    }
+
+    @Test
+    void daxpy_ZeroScalarMultiplier() {
+        int n = 3;
+        double da = 0d;
+        double[] dx = {0d, 1d, 2d, 3d};
+        double[] dy = {0d, 4d, 5d, 6d};
+        int incx = 1, incy = 1;
+
+        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
+
+        double[] expectedDy = {0d, 4d, 5d, 6d};
+        assertArrayEquals(expectedDy, dy, 1e-6);
+    }
+
+    @Test
+    void daxpy_NegativeN() {
+        int n = -5;
+        double da = 2d;
+        double[] dx = {0d, 1d, 2d, 3d};
+        double[] dy = {0d, 4d, 5d, 6d};
+        int incx = 1, incy = 1;
+
+        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
+
+        double[] expectedDy = {0d, 4d, 5d, 6d};
+        assertArrayEquals(expectedDy, dy, 1e-6);
+    }
+
+    @Test
+    void daxpy_NonUnitaryIncrements() {
+        int n = 2;
+        double da = 3d;
+        double[] dx = {0d, 1d, 2d, 3d, 4d};
+        double[] dy = {0d, 5d, 6d, 7d, 8d};
+        int incx = 2, incy = 1;
+
+        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
+
+        double[] expectedDy = {0d, 8d, 15d, 7d, 8d};
+        assertArrayEquals(expectedDy, dy, 1e-6);
+    }
+
+    @Test
+    void daxpy_NegativeStrides() {
+        int n = 3;
+        double da = 2d;
+        double[] dx = {0d, 3d, 2d, 1d};
+        double[] dy = {0d, 6d, 5d, 4d};
+        int incx = -1, incy = -1;
+
+        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
+
+        double[] expectedDy = {0d, 12d, 9d, 6d};
+        assertArrayEquals(expectedDy, dy, 1e-6);
+    }
+
+    @Test
+    void daxpy_AllZeroDx() {
+        int n = 3;
+        double da = 2d;
+        double[] dx = {0d, 0d, 0d, 0d};
+        double[] dy = {0d, 4d, 5d, 6d};
+        int incx = 1, incy = 1;
+
+        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
+
+        double[] expectedDy = {0d, 4d, 5d, 6d};
+        assertArrayEquals(expectedDy, dy, 1e-6);
+    }
+
+    @Test
+    void daxpy_LargeValues() {
+        int n = 3;
+        double da = 1e9d;
+        double[] dx = {0d, 1e9d, -2e9d, 3e9d};
+        double[] dy = {0d, 1e9d, 2e9d, -3e9d};
+        int incx = 1, incy = 1;
+
+        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
+
+        double[] expectedDy = {0d, 1.000000001e18, -1.999999998e18, 2.999999997e18};
+        assertArrayEquals(expectedDy, dy, 1e-6);
+    }
+
+    @Test
+    void daxpy_InPlaceModification() {
+        int n = 3;
+        double da = 2d;
+        double[] dx = {0d, 1d, 2d, 3d};
+        double[] dy = dx;
+        int incx = 1, incy = 1;
+
+        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
+
+        double[] expectedDy = {0d, 3d, 6d, 9d};
+        assertArrayEquals(expectedDy, dy, 1e-6);
+    }
+
 }
 
 
