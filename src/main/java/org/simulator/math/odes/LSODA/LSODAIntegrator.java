@@ -931,7 +931,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return xindex;
     }
 
-    private static void dscal(int n, double da, int incx, double[] dx) {
+    public static void dscal(int n, double da, int incx, double[] dx) {
         int m, i;
 
         if (n <= 0) {

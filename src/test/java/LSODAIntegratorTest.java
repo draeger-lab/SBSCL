@@ -915,8 +915,100 @@ public class LSODAIntegratorTest {
 
     /* dgefa() tests will be finished when helper functions are fully tested */
 
-    
 
+    /**
+     * The following test cases are for the function dscal() within LSODAIntegrator
+     */
+    @Test
+    void dscal_Basic() {
+        int n = 5;
+        double da = 2d;
+        double[] dx = {0d, 1d, 2d, 3d, 4d, 5d};
+        int incx = 1;
+
+        LSODAIntegrator.dscal(n, da, incx, dx);
+
+        double[] expected = {0d, 2d, 4d, 6d, 8d, 10d};
+        assertArrayEquals(expected, dx, 1e-6);
+    }
+
+    @Test
+    void dscal_ZeroLengthVector() {
+        int n = 0;
+        double da = 2d;
+        double[] dx = {0d, 1d, 2d, 3d};
+        int incx = 1;
+
+        LSODAIntegrator.dscal(n, da, incx, dx);
+
+        double[] expected = {0d, 1d, 2d, 3d};
+        assertArrayEquals(expected, dx, 1e-6);   
+    }
+
+    @Test
+    void dscal_NegativeN() {
+        int n = -3;
+        double da = 2d;
+        double[] dx = {0d, 1d, 2d, 3d};
+        int incx = 1;
+
+        LSODAIntegrator.dscal(n, da, incx, dx);
+
+        double[] expected = {0d, 1d, 2d, 3d};
+        assertArrayEquals(expected, dx, 1e-6);   
+    }
+
+    @Test
+    void dscal_UnitaryScalar() {
+        int n = 3;
+        double da = 1d;
+        double[] dx = {0d, 1d, 2d, 3d};
+        int incx = 1;
+
+        LSODAIntegrator.dscal(n, da, incx, dx);
+
+        double[] expected = {0d, 1d, 2d, 3d};
+        assertArrayEquals(expected, dx, 1e-6);   
+    }
+
+    @Test
+    void dscal_ZeroScalar() {
+        int n = 3;
+        double da = 0d;
+        double[] dx = {0d, 1d, 2d, 3d};
+        int incx = 1;
+
+        LSODAIntegrator.dscal(n, da, incx, dx);
+
+        double[] expected = {0d, 0d, 0d, 0d};
+        assertArrayEquals(expected, dx, 1e-6);   
+    }
+
+    @Test
+    void dscal_NegativeScalar() {
+        int n = 3;
+        double da = -1d;
+        double[] dx = {0d, 1d, 2d, 3d};
+        int incx = 1;
+
+        LSODAIntegrator.dscal(n, da, incx, dx);
+
+        double[] expected = {0d, -1d, -2d, -3d};
+        assertArrayEquals(expected, dx, 1e-6);   
+    }
+
+    @Test
+    void dscal_FractionalScalar() {
+        int n = 3;
+        double da = 0.5;
+        double[] dx = {0d, 2d, 4d, 6d};
+        int incx = 1;
+
+        LSODAIntegrator.dscal(n, da, incx, dx);
+
+        double[] expected = {0d, 1d, 2d, 3d};
+        assertArrayEquals(expected, dx, 1e-6);   
+    }
 }
 
 
