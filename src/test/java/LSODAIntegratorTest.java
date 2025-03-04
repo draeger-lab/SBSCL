@@ -873,6 +873,50 @@ public class LSODAIntegratorTest {
         assertArrayEquals(expectedDy, dy, 1e-6);
     }
 
+    /**
+     * The following tests are for the functions dgefa() within LSODAIntegrator
+     */
+    // @Test
+    // void dgefa_Basic() {
+    //     int n = 3;
+    //     int[] ipvt = new int[4];
+    //     int[] info = {0};
+    //     double[][] a = {
+    //         {0, 0, 0, 0},
+    //         {0, 4, 3, 2},
+    //         {0, 2, 3, 1},
+    //         {0, 1, 1, 2}
+    //     };
+
+    //     LSODAIntegrator.dgefa(a, n, ipvt, info);
+
+    //     assertEquals(0, info[0]);
+    // }
+
+    // @Test
+    // void dgefa_UpperTriangular() {
+    //     System.out.println("Starting UpperTriangular");
+    //     int n = 3;
+    //     int[] ipvt = new int[4];
+    //     int[] info = {0};
+    //     double[][] a = {
+    //         {0d, 0d, 0d, 0d},
+    //         {0d, 3d, 1d, 2d},
+    //         {0d, 0d, 4d, 5d},
+    //         {0d, 0d, 0d, 6d}
+    //     };
+
+    //     LSODAIntegrator.dgefa(a, n, ipvt, info);
+
+    //     System.out.println("finishing UpperTriangular");
+
+    //     assertEquals(0, info[0]);
+    // }
+
+    /* dgefa() tests will be finished when helper functions are fully tested */
+
+    
+
 }
 
 

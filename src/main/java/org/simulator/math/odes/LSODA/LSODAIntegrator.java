@@ -796,11 +796,12 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     }
 
     public static void dgefa(double[][] a, int n, int[] ipvt, int[] info) {
+        
         int j, k, i;
         double t;
-
+        
         info[0] = 0;
-
+        
         for (k = 1; k <= n - 1; k++) {
             
             j = idamax(n- k +1, a[k], 1) + k - 1;
