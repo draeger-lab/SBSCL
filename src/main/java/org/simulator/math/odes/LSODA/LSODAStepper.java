@@ -277,7 +277,7 @@ public class LSODAStepper {
                         for (int i = 1; i <= neq; i++) {
                             y[i] = common.getYh()[1][i];
                         }
-                        ctx.getFunction().evaluate(common.getTn(), y[1], common.getSavf(), ctx.getData());
+                        ctx.getFunction().evaluate(common.getTn(), y, common.getSavf(), ctx.getData());
                         common.setNfe(common.getNfe() + 1);
                         for (int i = 1; i <= neq; i++) {
                             double[][] newYh = common.getYh();

@@ -354,7 +354,6 @@ public class LSODAIntegratorTest {
      * 
      * @see LSODAIntegrator#idamax(int, double[], int)
      */
-
     @Test
     void Idamax_EmptyVector() {
         int n = 0;
@@ -640,6 +639,124 @@ public class LSODAIntegratorTest {
         assertEquals(1, result);
 
     }
+
+    // @Test
+    // void prja_AllZero() {
+    //     System.out.println("Starting all Zeros test");
+    //     ctx.setNeq(3);
+    //     common.setMiter(2);
+    //     common.setH(0.1);
+    //     double[] newEl = new double[]{0d, 1d};
+    //     common.setEl(newEl);
+    //     double[] newEwt = new double[]{0d, 1d, 1d, 1d};
+    //     common.setEwt(newEwt);
+    //     double[] newSavf = new double[]{0d, 0d, 0d, 0d};
+    //     common.setSavf(newSavf);
+    //     double[][] newWm = new double[4][4];
+    //     common.setWm(newWm);
+    //     double[] newAcor = new double[]{0d, 0d, 0d, 0d};
+    //     common.setAcor(newAcor);
+    //     common.setTn(0d);
+    //     common.setNje(0);
+    //     common.setNfe(0);
+    //     int[] newIpvt = new int[4];
+    //     common.setIpvt(newIpvt);
+
+    //     double[] y = {0d, 0d, 0d, 0d};
+    //     int result = LSODAIntegrator.prja(ctx, y);
+
+    //     assertEquals(1, result);
+
+    // }
+
+    // @Test
+    // void prja_LargeSystem() {
+    //     ctx.setNeq(1001);
+    //     common.setMiter(2);
+    //     common.setH(0.1);
+    //     double[] newEl = new double[]{0d, 1d};
+    //     common.setEl(newEl);
+    //     double[] newEwt = new double[1002];
+    //     common.setEwt(newEwt);
+    //     double[] newSavf = new double[1002];
+    //     common.setSavf(newSavf);
+    //     double[][] newWm = new double[1002][1002];
+    //     common.setWm(newWm);
+    //     common.setTn(0d);
+    //     common.setNje(0);
+    //     common.setNfe(0);
+    //     int[] newIpvt = new int[1002];
+    //     common.setIpvt(newIpvt);
+
+    //     double[] y = new double[1002];
+    //     int result = LSODAIntegrator.prja(ctx, y);
+
+    //     assertEquals(1, result);
+    // }
+
+    // @Test
+    // void prja_LUDecompositionFailure() {
+    //     ctx.setNeq(3);
+    //     common.setMiter(2);
+    //     common.setH(0.1);
+    //     double[] newEl = new double[]{0d, 1d};
+    //     common.setEl(newEl);
+    //     double[] newEwt = new double[]{0d, 1d, 1d, 1d};
+    //     common.setEwt(newEwt);
+    //     double[] newSavf = new double[]{0d, 1d, 2d, 3d};
+    //     common.setSavf(newSavf);
+    //     double[][] newWm = new double[4][4];
+    //     common.setWm(newWm);
+    //     double[] newAcor = new double[]{0d, 0.1, 0.2, 0.3};
+    //     common.setAcor(newAcor);
+    //     common.setTn(0d);
+    //     common.setNje(0);
+    //     common.setNfe(0);
+    //     int[] newIpvt = new int[4];
+    //     common.setIpvt(newIpvt);
+
+    //     double[] y = {0d, 1d, 2d, 3d};
+    //     newWm[1][1] = 0d;
+    //     newWm[2][2] = 0d;
+    //     newWm[3][3] = 0d;
+    //     common.setWm(newWm);
+
+    //     int result = LSODAIntegrator.prja(ctx, y);
+
+    //     assertEquals(0, result);
+    // }
+
+    // @Test
+    // void prja_FunctionEvaluationsIncrement() {
+    //     ctx.setNeq(3);
+    //     common.setMiter(2);
+    //     common.setH(0.1);
+    //     double[] newEl = new double[]{0d, 1d};
+    //     common.setEl(newEl);
+    //     double[] newEwt = new double[]{0d, 1d, 1d, 1d};
+    //     common.setEwt(newEwt);
+    //     double[] newSavf = new double[]{0d, 1d, 2d, 3d};
+    //     common.setSavf(newSavf);
+    //     double[][] newWm = new double[4][4];
+    //     common.setWm(newWm);
+    //     double[] newAcor = new double[]{0d, 0.1, 0.2, 0.3};
+    //     common.setAcor(newAcor);
+    //     common.setTn(0d);
+    //     common.setNje(0);
+    //     common.setNfe(0);
+    //     int[] newIpvt = new int[4];
+    //     common.setIpvt(newIpvt);
+
+    //     double[] y = {0d, 1d, 2d, 3d};
+    //     LSODAIntegrator.prja(ctx, y);
+
+    //     assertEquals(3, common.getNfe());
+    // }
+
+
+    /* I will finish implementing tests for prja once I have tested all the other functions prja calls upon */
+
+    
 
     
 }

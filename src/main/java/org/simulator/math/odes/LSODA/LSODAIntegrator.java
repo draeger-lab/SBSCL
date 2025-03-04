@@ -297,7 +297,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         if(v.length == 0 || w.length == 0) {
             return vm;
         }
-        
+
         for (int i = 0; i <= n; i++) {
             vm = Math.max(vm, Math.abs(v[i]) * Math.abs(w[i]));
         }
@@ -789,6 +789,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             dgefa(wm, neq, common.getIpvt(), ier);
 
             if (ier[0] != 0) {
+                System.out.println("Made it here!");
                 return 0;
             }
         }
