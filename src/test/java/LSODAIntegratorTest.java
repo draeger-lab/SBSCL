@@ -11,7 +11,6 @@ public class LSODAIntegratorTest {
     LSODAOptions opt = new LSODAOptions();
     LSODAContext ctx = new LSODAContext(common, opt);
     LSODAIntegrator integrator = new LSODAIntegrator(ctx);
-    // boolean prepared = integrator.lsoda_prepare(ctx, ctx.getOpt());
 
     /** 
      * The following tests are for the function .ddot() within LSODAIntegrator.java 
@@ -582,8 +581,9 @@ public class LSODAIntegratorTest {
     }
 
     /**
-    * The following tests are for the function .prja() within LSODAIntegrator.java
-    * The function scales, computes the norm of, modifies and performs LU decomposition on the Jacobian matrix.
+    * The following tests are for the function <code>.prja()</code> within LSODAIntegrator.java
+    * The function computes and processes the matrix using finite differencing, calls <code>vmonrm()</code> to calculate the norm of the Jacobian, calls <code>fnorm()</code> to compute the norm of, and performs LU decomposition using <code>dgefa()</code>.
+    * 
     */
     @Test
     void prja_Basic() {
@@ -606,12 +606,41 @@ public class LSODAIntegratorTest {
         int[] newIpvt = new int[4];
         common.setIpvt(newIpvt);
 
+
         double[] y = {0d, 1d, 2d, 3d};
         int result = LSODAIntegrator.prja(ctx, y);
 
         assertEquals(1, result);
 
     }
+
+    @Test
+    void prja_MiterNotTwo() {
+        ctx.setNeq(3);
+        common.setMiter(5);
+
+        double[] y = {0d, 1d, 2d, 3d};
+        int result = LSODAIntegrator.prja(ctx, y);
+
+        assertEquals(0, result);
+
+    }
+
+
+    @Test
+    void prja_ZeroLengthSystem() {
+        common.setMiter(2);
+        ctx.setNeq(0);
+        int[] newIpvt = new int[4];
+        common.setIpvt(newIpvt);
+
+        double[] y = {0d};
+        int result = LSODAIntegrator.prja(ctx, y);
+
+        assertEquals(1, result);
+
+    }
+
     
 }
 

@@ -294,6 +294,10 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     public static double vmnorm(int n, double[] v, double[] w) {
         double vm = 0d;
 
+        if(v.length == 0 || w.length == 0) {
+            return vm;
+        }
+        
         for (int i = 0; i <= n; i++) {
             vm = Math.max(vm, Math.abs(v[i]) * Math.abs(w[i]));
         }
@@ -737,6 +741,10 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         common.setNje(common.getNje() + 1);
         hl0 = common.getH() * common.getEl()[1];
 
+        if (neq == 0) {
+            return 1;
+        }
+
         if (common.getMiter() != 2) {
             logError(String.format("[prja] miter != 2, miter = %d", common.getMiter()), ctx.getData());
             return 0;
@@ -747,7 +755,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             if (r0 == 0d) {
                 r0 = 1d;
             }
-
+            
             for (j = 1; j <= neq; j++) {  
                 yj = y[j];
                 r = Math.max(common.SQRTETA * Math.abs(yj), r0 / common.getEwt()[j]);
@@ -761,17 +769,19 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 }
                 y[j] = yj;
             }
-
+            
             common.setNfe(common.getNfe() + neq);
-
+            
             common.setPdnorm(fnorm(neq, common.getWm(), common.getEwt()) / Math.abs(hl0));
+
             
             for (i = 1; i <= neq; i++) {
-    
+                
                 double[][] wm = common.getWm();
                 wm[i][i] += 1d;
                 common.setWm(wm);
-            }
+            }  
+
             
             double[][] wm = common.getWm(); //I defined a separate variable here because my compiler was 
             //throwing an error when I tried to use common.getWm() directly in the dgefa function call, saying common.getWm() was int[] and not double[][].
@@ -790,37 +800,38 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         double t;
 
         info[0] = 0;
+
         for (k = 1; k <= n - 1; k++) {
-
+            
             j = idamax(n- k +1, a[k], 1) + k - 1;
-
+            
             ipvt[k] = j;
-
+            
             if (a[k][j] == 0d) {
                 info[0] = k;
                 continue;
             }
-
+            
             if (j != k) {
                 t = a[k][j];
                 a[k][j] = a[k][k];
                 a[k][k] = t;
             }
-
+            
             t = -1d / a[k][k];
             dscal(n-k, t, 1, Arrays.copyOfRange(a[k], k, a[k].length));
-
+            
             for (i = k + 1; i <= n; i++) {
                 t = a[i][j];
                 if (j != k) {
                     a[i][j] = a [i][k];
                     a[i][k] = t;
                 }
-
-                daxpy(n - k, t, Arrays.copyOfRange(a[k], k, a[k].length), 1, 1, Arrays.copyOfRange(a[i], k, a[i].length));
+                
+                daxpy(n - k, t, a[k], 1, 1, Arrays.copyOfRange(a[i], k, a[i].length));
             }
         }
-
+   
         ipvt[n] = n;
         if (a[n][n] == 0d) {
             info[0] = n;
