@@ -281,9 +281,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     /**
      * Computes the weighted maximum norm of a vector v of length n.
      * The norm is computed using the formula:
-     * <pre>
+     * <p>
      *      vmnorm = max(i=0,...,n) (|v[i]| * |w[i]|)
-     * </pre>
+     * </p>
      * where 'w' is a weight vector of the same length as 'v'.
      * 
      * @param n the length of the vector v (index range: 1 to n) 
@@ -667,20 +667,22 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     }
 
     /**
-     * Compute the Euclidian norm of a vector dx and dy of length n, with increments incx and incy respectively.
-     * The norm is computed using the formula:
+     * Computes the dot product of two vectors dx and dy of length n, with given increments incx and incy.
+     * The dot product is computed using the formula:
      * <pre>
-     *    fnorm = sqrt(sum(i=1,...,n) (dx[i] * dy[i])^2)
+     *    dotprod = sum(i=0,...,n-1) dx[start_x + i * incx] * dy[start_y + i * incy]
      * </pre>
+     * where `start_x` and `start_y` depend on the increment direction.
      * 
-     * 
-     * @param n the length of the vectors dx and dy (index range: 1 to n)
-     * @param dx the first vector whose dot product is to be computed
-     * @param dy the second vector whose dot product is to be computed
-     * @param incx the increment for the vector dx
-     * @param incy the increment for the vector dy
-     * @return the computed Euclidian norm (dot product) of the two vectors
+     * @param n the number of elements to include in the dot product computation
+     * @param dx the first vector
+     * @param dy the second vector
+     * @param incx the increment for accessing elements in dx
+     * @param incy the increment for accessing elements in dy
+     * @return the computed dot product of the two vectors
+     * @throws IndexOutOfBoundsException if dx or dy are too small for the given increments
      */
+
     public static double ddot(int n, double[] dx, double[] dy, int incx, int incy) {
         double dotprod;
         int ix, iy, i;
@@ -853,7 +855,26 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return an;
     }
 
-    private int idamax(int n, double[] dx, int incx) {
+   
+    /**
+     * Finds the index of the element with the maxiumum absolute value in the vector dx.
+     * 
+     * <p>
+     * The method scans a vector of double precision numbers over <code>n</code> elements using a specified increment <code>incx</code>.
+     * It returns the 1-indexed position of the element whose absolute value is the largest.
+     * 
+     * If <code>n</code> is less than or equal to 0, the method returns 0.
+     * If <code>n</code> is 1 or if <code>incx</code> is not positive, the method returns 1 (i.e. the first element is the maximum by default).
+     * When <code>incx</code> is not equal to 1, the method steps through the vector by <code>incx</code> increments;
+     * otherwise, it processes the vector sequentially for better performance.
+     * </p>
+     * 
+     * @param n     the number of elements in dx to be examined
+     * @param dx    the input vector of double values
+     * @param incx  the increment for iterating through elements in dx
+     * @return      the 1-indexed position of the element with the larges absolute value, of 0 if n is less that or equal to 0
+     */
+    public static int idamax(int n, double[] dx, int incx) {
 
         double dmax, xmag;
         int i, ii, xindex;
