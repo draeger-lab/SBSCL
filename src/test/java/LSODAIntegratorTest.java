@@ -1,9 +1,16 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
+import org.simulator.math.odes.LSODA.LSODACommon;
+import org.simulator.math.odes.LSODA.LSODAContext;
 import org.simulator.math.odes.LSODA.LSODAIntegrator;
 
 public class LSODAIntegratorTest {
+
+    LSODACommon common = new LSODACommon();
+    LSODAContext ctx = new LSODAContext(common);
+    LSODAIntegrator integrator = new LSODAIntegrator(ctx);
+    boolean prepared = integrator.lsoda_prepare(ctx, ctx.getOpt());
 
     /** 
      * The following tests are for the function .ddot() within LSODAIntegrator.java 
@@ -573,6 +580,38 @@ public class LSODAIntegratorTest {
         assertEquals(expected, result);
     }
 
+    /**
+    * The following tests are for the function .prja() within LSODAIntegrator.java
+    * The function scales, computes the norm of, modifies and performs LU decomposition on the Jacobian matrix.
+    */
+    @Test
+    void prja_Basic() {
+        ctx.setNeq(3);
+        common.setMiter(2);
+        common.setH(0.1);
+        double[] newEl = new double[]{0d, 1d};
+        common.setEl(newEl);
+        double[] newEwt = new double[]{0d, 1d, 1d, 1d};
+        common.setEwt(newEwt);
+        double[] newSavf = new double[]{0d, 1d, 2d, 3d};
+        common.setSavf(newSavf);
+        double[][] newWm = new double[4][4];
+        common.setWm(newWm);
+        double[] newAcor = new double[]{0d, 0.2, 0.2, 0.3};
+        common.setAcor(newAcor);
+        common.setTn(0d);
+        common.setNje(0);
+        common.setNfe(0);
+        int[] newIpvt = new int[4];
+        common.setIpvt(newIpvt);
+
+        double[] y = {0d, 1d, 2d, 3d};
+        int result = LSODAIntegrator.prja(ctx, y);
+
+        assertEquals(1, result);
+
+    }
+    
 }
 
 

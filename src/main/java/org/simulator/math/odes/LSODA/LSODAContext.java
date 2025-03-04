@@ -13,7 +13,8 @@ public class LSODAContext {
     public Object nslast;
     private LSODACommon common;
 
-    public LSODAContext() {
+    public LSODAContext(LSODACommon common) {
+        this.common = common;
     }
 
     public LSODAContext(LSODAContext ctx, LSODACommon common) {

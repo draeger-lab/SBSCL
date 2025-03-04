@@ -8,7 +8,7 @@ import org.simulator.math.odes.DESystem;
 
 public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     
-    private LSODAContext ctx;
+    public static LSODAContext ctx;
     private int neq;
     private double[] yh;
     private double[] tn;
@@ -85,7 +85,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return ctx.getState();
     }
 
-    private void logError(String message, Object... args) {
+    private static void logError(String message, Object... args) {
         System.err.printf(message, args);
     }
     
@@ -145,7 +145,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return 0;
     }
 
-    private int intdyReturn(LSODAContext ctx, double[] y, double[] t, double tout, int itask) {
+    private int intdyReturn(double[] y, double[] t, double tout, int itask) {
         int iflag = intdy(ctx, tout, 0, y);
         if (iflag != 0) {
             logError("[lsoda] trouble from indty, itas = %d, tout = %g\n", itask, tout);
@@ -158,7 +158,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return this.state;
     }
 
-    private boolean checkOpt(LSODAContext ctx, LSODAOptions opt) {
+    private static boolean checkOpt(LSODAContext ctx, LSODAOptions opt) {
         final int mxstp0 = 500;
         final int[] mord = {0, 12, 5};
 
@@ -246,7 +246,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return true;
     }
 
-    private boolean lsoda_prepare(LSODAContext ctx, LSODAOptions opt) {
+    public static boolean lsoda_prepare(LSODAContext ctx, LSODAOptions opt) {
         if(!checkOpt(ctx, opt)) {
             return false;
         }
@@ -727,7 +727,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return dotprod;
     }
 
-    private int prja(LSODAContext ctx, double[] y) {
+    public static int prja(LSODAContext ctx, double[] y) {
         int i, j; 
         int[] ier = new int[1]; //in the original code, ier was of type int and passed by reference. I changed it to simulate this logic.
         double fac, hl0, r, r0, yj;
@@ -781,7 +781,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return 1;
     }
 
-    private void dgefa(double[][] a, int n, int[] ipvt, int[] info) {
+    private static void dgefa(double[][] a, int n, int[] ipvt, int[] info) {
         int j, k, i;
         double t;
 
@@ -1070,7 +1070,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 switch (itask) {
                     case 1:
                         if ((common.getTn() - tout) * common.getH() >= 0d) {
-                            intdyReturn(ctx, y, t, tout, itask);
+                            intdyReturn(y, t, tout, itask);
                         }
                         break;
 
@@ -1094,7 +1094,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                             hardFailure(ctx, "[lsoda] itask = 4 or 5 and tcrit behind tout");
                         }
                         if((common.getTn() - tout) * common.getH() >= 0d) {
-                            intdyReturn(ctx, y, t, tout, itask);
+                            intdyReturn(y, t, tout, itask);
                         }
                         break;
                     
@@ -1187,7 +1187,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                             if ((common.getTn() - tout) * common.getH() < 0d) {
                                 continue;
                             }
-                            intdyReturn(ctx, y, t, tout, itask);
+                            intdyReturn(y, t, tout, itask);
                         
                         case 2:
                             successReturn(ctx, y, t, itask, ihit);
@@ -1201,7 +1201,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                         case 4:
                             tcrit = opt.getTcrit();
                             if ((common.getTn() - tout) * common.getH() >= 0d) {
-                                intdyReturn(ctx, y, t, tout, itask);
+                                intdyReturn(y, t, tout, itask);
                             } else {
                                 hmx = Math.abs(common.getTn()) + Math.abs(common.getH());
                                 ihit = Math.abs(common.getTn() - tcrit) <= (100d * common.ETA * hmx);
