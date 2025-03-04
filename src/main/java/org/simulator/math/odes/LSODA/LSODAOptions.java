@@ -1,6 +1,6 @@
 package org.simulator.math.odes.LSODA;
 
-class LSODAOptions {
+public class LSODAOptions {
 
     
     private int mxordn;

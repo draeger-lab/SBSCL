@@ -445,7 +445,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         for (i = 1; i <= neq; i++) {
             y[i] = common.getYh()[1][i];
         }
-        ctx.getFunction().evaluate(common.getTn(), y[1], common.getSavf(), ctx.getData());
+        ctx.getFunction().evaluate(common.getTn(), y, common.getSavf(), ctx.getData());
         common.setNfe(common.getNfe() + 1);
         
         while (true) { 
@@ -528,12 +528,12 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 for (i = 1; i <= neq; i++) {
                     y[i] = common.getYh()[1][i];
                 }
-                ctx.getFunction().evaluate(common.getTn(), y[1], common.getSavf(), ctx.getData());
+                ctx.getFunction().evaluate(common.getTn(), y, common.getSavf(), ctx.getData());
                 common.setNfe(common.getNfe() + 1);
             }
             else {
                 delp[0] = del[0];
-                ctx.getFunction().evaluate(common.getTn(), y[1], common.getSavf(), ctx.getData());
+                ctx.getFunction().evaluate(common.getTn(), y, common.getSavf(), ctx.getData());
             }
         }
         return 0;
@@ -616,7 +616,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         }
     }
 
-    private void daxpy(int n, double da, double[] dx, int incx, int incy, double[] dy) {
+    private static void daxpy(int n, double da, double[] dx, int incx, int incy, double[] dy) {
         int i, ix, iy, m;
 
         if (n < 0 || da == 0d) {
@@ -748,12 +748,12 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 r0 = 1d;
             }
 
-            for (j = 1; j <= neq; j++) {
+            for (j = 1; j <= neq; j++) {  
                 yj = y[j];
                 r = Math.max(common.SQRTETA * Math.abs(yj), r0 / common.getEwt()[j]);
                 y[j] += r;
                 fac = -hl0 / r;
-                ctx.getFunction().evaluate(common.getTn(), y[1], common.getAcor(), ctx.getData());
+                ctx.getFunction().evaluate(common.getTn(), y, common.getAcor(), ctx.getData());
                 for (i = 1; i <= neq; i++) {
                     double[][] wm = common.getWm();
                     wm[i][j] = (common.getAcor()[i] - common.getSavf()[i]) * fac;
@@ -761,11 +761,13 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 }
                 y[j] = yj;
             }
+
             common.setNfe(common.getNfe() + neq);
 
             common.setPdnorm(fnorm(neq, common.getWm(), common.getEwt()) / Math.abs(hl0));
             
             for (i = 1; i <= neq; i++) {
+    
                 double[][] wm = common.getWm();
                 wm[i][i] += 1d;
                 common.setWm(wm);
@@ -773,7 +775,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             
             double[][] wm = common.getWm(); //I defined a separate variable here because my compiler was 
             //throwing an error when I tried to use common.getWm() directly in the dgefa function call, saying common.getWm() was int[] and not double[][].
+
             dgefa(wm, neq, common.getIpvt(), ier);
+
             if (ier[0] != 0) {
                 return 0;
             }
@@ -781,13 +785,15 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return 1;
     }
 
-    private static void dgefa(double[][] a, int n, int[] ipvt, int[] info) {
+    public static void dgefa(double[][] a, int n, int[] ipvt, int[] info) {
         int j, k, i;
         double t;
 
         info[0] = 0;
         for (k = 1; k <= n - 1; k++) {
-            j = idamax(n- k +1, Arrays.copyOfRange(a[k], k, a[k].length), 1) + k - 1;
+
+            j = idamax(n- k +1, a[k], 1) + k - 1;
+
             ipvt[k] = j;
 
             if (a[k][j] == 0d) {
@@ -913,7 +919,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return xindex;
     }
 
-    private void dscal(int n, double da, int incx, double[] dx) {
+    private static void dscal(int n, double da, int incx, double[] dx) {
         int m, i;
 
         if (n <= 0) {
@@ -1007,7 +1013,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             common.setNq(1);
 
             if (function != null) {
-                function.evaluate(t[0], y[1], common.getYh()[3], ctx.getData());
+                function.evaluate(t[0], y, common.getYh()[3], ctx.getData());
             }
             common.setNfe(1);
 

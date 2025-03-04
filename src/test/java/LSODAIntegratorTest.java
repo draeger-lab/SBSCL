@@ -4,13 +4,14 @@ import org.junit.jupiter.api.Test;
 import org.simulator.math.odes.LSODA.LSODACommon;
 import org.simulator.math.odes.LSODA.LSODAContext;
 import org.simulator.math.odes.LSODA.LSODAIntegrator;
-
+import org.simulator.math.odes.LSODA.LSODAOptions;
 public class LSODAIntegratorTest {
 
     LSODACommon common = new LSODACommon();
-    LSODAContext ctx = new LSODAContext(common);
+    LSODAOptions opt = new LSODAOptions();
+    LSODAContext ctx = new LSODAContext(common, opt);
     LSODAIntegrator integrator = new LSODAIntegrator(ctx);
-    boolean prepared = integrator.lsoda_prepare(ctx, ctx.getOpt());
+    // boolean prepared = integrator.lsoda_prepare(ctx, ctx.getOpt());
 
     /** 
      * The following tests are for the function .ddot() within LSODAIntegrator.java 

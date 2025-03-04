@@ -13,8 +13,10 @@ public class LSODAContext {
     public Object nslast;
     private LSODACommon common;
 
-    public LSODAContext(LSODACommon common) {
+    public LSODAContext(LSODACommon common, LSODAOptions opt) {
         this.common = common;
+        this.opt = opt;
+        this.function = new LSODAFunction();
     }
 
     public LSODAContext(LSODAContext ctx, LSODACommon common) {

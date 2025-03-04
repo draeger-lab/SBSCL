@@ -1,6 +1,11 @@
 package org.simulator.math.odes.LSODA;
 
-@FunctionalInterface
-public interface LSODAFunction {
-    int evaluate(double t, double y, double[] ydot, Object data);
+// @FunctionalInterface
+public class LSODAFunction {
+    public int evaluate(double t, double[] y, double[] ydot, Object data) {
+        return 1;
+    }
+
+    public LSODAFunction(){
+    }
 }
