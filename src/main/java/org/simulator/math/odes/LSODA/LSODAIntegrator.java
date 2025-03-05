@@ -786,7 +786,11 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             double[][] wm = common.getWm(); //I defined a separate variable here because my compiler was 
             //throwing an error when I tried to use common.getWm() directly in the dgefa function call, saying common.getWm() was int[] and not double[][].
 
+            System.out.println("Ier: " + Arrays.toString(ier));
+            System.out.println("Wm: " + Arrays.deepToString(wm));
             dgefa(wm, neq, common.getIpvt(), ier);
+            System.out.println("Ier after: " + Arrays.toString(ier));
+
 
             if (ier[0] != 0) {
                 return 0;
@@ -804,33 +808,45 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         
         for (k = 1; k <= n - 1; k++) {
             
-            j = idamax(n- k +1, a[k], 1) + k - 1;
-            
+            //since in the original C code a pointer to the first column vector was passed, this needs to be replicated using a helper array in Java
+            double[] columnVector = new double[n + 1];
+            for (i = k; i <= n; i++) {
+                columnVector[i] = a[i][k]; 
+            }
+            j = idamax(n - k + 1, columnVector, 1);
             ipvt[k] = j;
+
+
             
-            if (a[k][j] == 0d) {
+            if (a[j][k] == 0d) {
                 info[0] = k;
-                continue;
+                System.out.println("Singularity detected");
+                return;
             }
             
             if (j != k) {
-                t = a[k][j];
-                a[k][j] = a[k][k];
-                a[k][k] = t;
+                double[] tempRow = a[k];
+                a[k] = a[j];
+                a[j] = tempRow;
+                // t = a[k][j];
+                // a[k][j] = a[k][k];
+                // a[k][k] = t;
+
             }
             
             t = -1d / a[k][k];
-            dscal(n-k, t, 1, Arrays.copyOfRange(a[k], k, a[k].length));
+            dscal(n-k, t, 1, a[k]);
             
             for (i = k + 1; i <= n; i++) {
-                t = a[i][j];
+                t = a[i][k];
                 if (j != k) {
                     a[i][j] = a [i][k];
                     a[i][k] = t;
                 }
                 
-                daxpy(n - k, t, a[k], 1, 1, Arrays.copyOfRange(a[i], k, a[i].length));
+                daxpy(n - k, t, a[k], 1, 1, a[i]);
             }
+
         }
    
         ipvt[n] = n;

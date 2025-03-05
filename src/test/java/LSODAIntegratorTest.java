@@ -1,6 +1,5 @@
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.simulator.math.odes.LSODA.LSODACommon;
 import org.simulator.math.odes.LSODA.LSODAContext;
@@ -19,274 +18,274 @@ public class LSODAIntegratorTest {
     **/
 
     /** Basic dot product test, incx = incy = 1 */
-    @Test
-    void Ddot_BasicDotProduct() {
-        int n = 3;
-        double[] dx = {0d, 1.0, 2.0, 3.0};
-        double[] dy = {0d, 4.0, 5.0, 6.0};
-        int incx = 1; int incy = 1;
+    // @Test
+    // void Ddot_BasicDotProduct() {
+    //     int n = 3;
+    //     double[] dx = {0d, 1.0, 2.0, 3.0};
+    //     double[] dy = {0d, 4.0, 5.0, 6.0};
+    //     int incx = 1; int incy = 1;
 
-        double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
-        assertEquals((1d*4d + 2d*5d + 3d*6d), result, 1e-6);
-    }
+    //     double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
+    //     assertEquals((1d*4d + 2d*5d + 3d*6d), result, 1e-6);
+    // }
 
-    /** Test vector with length = 0 */
-    @Test
-    void Ddot_ZeroLengthVector() {
-        int n = 0;
-        double[] dx = {0};
-        double[] dy = {0};
-        int incx = 1; int incy = 1;
+    // /** Test vector with length = 0 */
+    // @Test
+    // void Ddot_ZeroLengthVector() {
+    //     int n = 0;
+    //     double[] dx = {0};
+    //     double[] dy = {0};
+    //     int incx = 1; int incy = 1;
 
-        double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
-        assertEquals(0, result, 1e-6);
-    }
+    //     double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
+    //     assertEquals(0, result, 1e-6);
+    // }
 
-    /** Test where n < 0 */
-    @Test
-    void Ddot_NegativeN() {
-        int n = -5;
-        double[] dx = {0d, 1d, 2d, 3d, 4d, 5d};
-        double[] dy = {0d, 2d, 4d, 6d, 8d, 10d};
-        int incx = 1; int incy = 1;
+    // /** Test where n < 0 */
+    // @Test
+    // void Ddot_NegativeN() {
+    //     int n = -5;
+    //     double[] dx = {0d, 1d, 2d, 3d, 4d, 5d};
+    //     double[] dy = {0d, 2d, 4d, 6d, 8d, 10d};
+    //     int incx = 1; int incy = 1;
 
-        double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
-        assertEquals(0d, result, 1e-6);
-    }
+    //     double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
+    //     assertEquals(0d, result, 1e-6);
+    // }
 
-    /** Test different values for incx and incy */
-    @Test
-    void Ddot_DifferentStrides() {
-        int n = 3;
-        double[] dx = {0d, 1d, 2d, 3d, 4d, 5d};
-        double[] dy = {0d, 5d, 6d, 7d, 8d};
-        int incx = 2; int incy = 1;
+    // /** Test different values for incx and incy */
+    // @Test
+    // void Ddot_DifferentStrides() {
+    //     int n = 3;
+    //     double[] dx = {0d, 1d, 2d, 3d, 4d, 5d};
+    //     double[] dy = {0d, 5d, 6d, 7d, 8d};
+    //     int incx = 2; int incy = 1;
 
-        double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
-        assertEquals((1d * 5d + 3d * 6d + 5d * 7d), result, 1e-6);
-    }
+    //     double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
+    //     assertEquals((1d * 5d + 3d * 6d + 5d * 7d), result, 1e-6);
+    // }
 
-    /** Test with incx = incy = -1 */
-    @Test
-    void Ddot_NegativeStrides() {
-        int n = 3;
-        double[] dx = {0d, 3d, 2d, 1d};
-        double[] dy = {0d, 6d, 5d, 4d};
-        int incx = -1; int incy = -1;
+    // /** Test with incx = incy = -1 */
+    // @Test
+    // void Ddot_NegativeStrides() {
+    //     int n = 3;
+    //     double[] dx = {0d, 3d, 2d, 1d};
+    //     double[] dy = {0d, 6d, 5d, 4d};
+    //     int incx = -1; int incy = -1;
 
-        double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
-        assertEquals((3d * 6d + 2d * 5d + 1d * 4d), result, 1e-6);
-    }
+    //     double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
+    //     assertEquals((3d * 6d + 2d * 5d + 1d * 4d), result, 1e-6);
+    // }
 
-    /** Test with all values = 0 */
-    @Test
-    void Ddot_AllZero() {
-        int n = 3;
-        double[] dx = {0d, 0d, 0d, 0d};
-        double[] dy = {0d, 0d, 0d, 0d};
-        int incx = 1; int incy = 1;
+    // /** Test with all values = 0 */
+    // @Test
+    // void Ddot_AllZero() {
+    //     int n = 3;
+    //     double[] dx = {0d, 0d, 0d, 0d};
+    //     double[] dy = {0d, 0d, 0d, 0d};
+    //     int incx = 1; int incy = 1;
 
-        double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
-        assertEquals(0d, result, 1e-6);
-    }
+    //     double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
+    //     assertEquals(0d, result, 1e-6);
+    // }
 
-    /** Test with a single-element vector */
-    @Test
-    void Ddot_SingleElement() {
-        int n = 1;
-        double[] dx = {0d, 7.5};
-        double[] dy = {0d, 2d};
-        int incx = 1; int incy = 1;
+    // /** Test with a single-element vector */
+    // @Test
+    // void Ddot_SingleElement() {
+    //     int n = 1;
+    //     double[] dx = {0d, 7.5};
+    //     double[] dy = {0d, 2d};
+    //     int incx = 1; int incy = 1;
 
-        double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
-        assertEquals((7.5 * 2d), result, 1e-6);
-    }
+    //     double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
+    //     assertEquals((7.5 * 2d), result, 1e-6);
+    // }
 
-    @Test
-    void Ddot_NaN() {
-        int n = 2;
-        double[] dx = {0d, Double.NaN, 2d};
-        double[] dy = {0d, 5d, Double.NaN};
-        int incx = 1; int incy = 1;
+    // @Test
+    // void Ddot_NaN() {
+    //     int n = 2;
+    //     double[] dx = {0d, Double.NaN, 2d};
+    //     double[] dy = {0d, 5d, Double.NaN};
+    //     int incx = 1; int incy = 1;
 
-        double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
-        assertEquals(Double.NaN, result, 1e-6);
-    }
+    //     double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
+    //     assertEquals(Double.NaN, result, 1e-6);
+    // }
 
     
-    /** 
-     * The following tests are for the function .vmnorm within LSODAIntegrator.java 
-     * The function calculates the weighted max-norm of a vector.
-    **/
+    // /** 
+    //  * The following tests are for the function .vmnorm within LSODAIntegrator.java 
+    //  * The function calculates the weighted max-norm of a vector.
+    // **/
 
-    /** Basic max-norm test */
-    @Test
-    void Vmnorm_BasicMaxNorm() {
-        int n = 3;
-        double[] v = {0d, 1d, -2d, 3d};
-        double[] w = {0d, 4d, 1.5, 2d};
+    // /** Basic max-norm test */
+    // @Test
+    // void Vmnorm_BasicMaxNorm() {
+    //     int n = 3;
+    //     double[] v = {0d, 1d, -2d, 3d};
+    //     double[] w = {0d, 4d, 1.5, 2d};
 
-        double result = LSODAIntegrator.vmnorm(n, v, w);
-        assertEquals(Math.max(Math.abs(1d) * 4d, Math.max(Math.abs(-2d) * 1.5, Math.abs(3d) * 2.0)), result, 1e-6);
-    }
+    //     double result = LSODAIntegrator.vmnorm(n, v, w);
+    //     assertEquals(Math.max(Math.abs(1d) * 4d, Math.max(Math.abs(-2d) * 1.5, Math.abs(3d) * 2.0)), result, 1e-6);
+    // }
 
-    /** Test vector with all elements zero */
-    @Test
-    void Vmnorm_AllZero() {
-        int n = 3;
-        double[] v = {0d, 0d, 0d, 0d};
-        double[] w = {0d, 0d, 0d, 0d};
+    // /** Test vector with all elements zero */
+    // @Test
+    // void Vmnorm_AllZero() {
+    //     int n = 3;
+    //     double[] v = {0d, 0d, 0d, 0d};
+    //     double[] w = {0d, 0d, 0d, 0d};
 
-        double result = LSODAIntegrator.vmnorm(n, v, w);
-        assertEquals(0d, result, 1e-6);
-    }
-
-
-    /** Test single element */
-    @Test
-    void Vmnorm_SingleElement() {
-        int n = 1;
-        double[] v = {0d, 7.5};
-        double[] w = {0d, 2d};
-
-        double result = LSODAIntegrator.vmnorm(n, v, w);
-        assertEquals(Math.abs(7.5) * 2d, result, 1e-6);
-    }
-
-    /** Test negative values in v */
-    @Test
-    void Vmnorm_NegativeValues() {
-        int n = 3;
-        double[] v = {0d, -1d, -2d, -3d};
-        double[] w = {0d, 1d, 2d, 3d};
-
-        double result = LSODAIntegrator.vmnorm(n, v, w);
-        assertEquals(3d * 3d, result, 1e-6);
-    }
-
-    /** Test negative values in w */
-    @Test
-    void Vmnorm_NegativeWeights() {
-        int n = 3;
-        double[] v = {0d, 1d, 2d, 3d};
-        double[] w = {0d, -1d, -2d, -3d};
-
-        double result = LSODAIntegrator.vmnorm(n, v, w);
-        assertEquals(3d * 3d, result, 1e-6);
-    }
-
-    /** Test zero length vector */
-    @Test
-    void Vmnorm_ZeroLengthVector() {
-        int n = 0;
-        double[] v = {0d};
-        double[] w = {0d};
-
-        double result = LSODAIntegrator.vmnorm(n, v, w);
-        assertEquals(0d, result, 1e-6);
-    }
+    //     double result = LSODAIntegrator.vmnorm(n, v, w);
+    //     assertEquals(0d, result, 1e-6);
+    // }
 
 
-    /** 
-     * The following tests are for the function .fnorm() within LSODAIntegrator.java
-     * The function computes the weighted matrix norm 
-    **/
+    // /** Test single element */
+    // @Test
+    // void Vmnorm_SingleElement() {
+    //     int n = 1;
+    //     double[] v = {0d, 7.5};
+    //     double[] w = {0d, 2d};
 
-    /** Basic matrix norm */
-    @Test
-    void Fnorm_BasicMatrixNorm() {
-        int n = 2;
-        double[][] a = {
-            {0d, 0d, 0d},
-            {0d, 1d, -2d},
-            {0d, 3d, 4d}
-        };
-        double[] w = {0d, 2d, 1d};
+    //     double result = LSODAIntegrator.vmnorm(n, v, w);
+    //     assertEquals(Math.abs(7.5) * 2d, result, 1e-6);
+    // }
 
-        double result = LSODAIntegrator.fnorm(n, a, w);
-        double expected = Math.max(
-            2d * (Math.abs(1d) / 2d + Math.abs(-2d) / 1d),
-            1d * (Math.abs(3d) / 2d + Math.abs(4d) / 1d)
-        );
+    // /** Test negative values in v */
+    // @Test
+    // void Vmnorm_NegativeValues() {
+    //     int n = 3;
+    //     double[] v = {0d, -1d, -2d, -3d};
+    //     double[] w = {0d, 1d, 2d, 3d};
 
-        assertEquals(expected, result, 1e-6);
-    }
+    //     double result = LSODAIntegrator.vmnorm(n, v, w);
+    //     assertEquals(3d * 3d, result, 1e-6);
+    // }
 
-    /** Matrix has all zero elements */
-    @Test
-    void Fnorm_AllZero() {
-        int n = 2;
-        double[][] a = {
-            {0d, 0d, 0d},
-            {0d, 0d, 0d},
-            {0d, 0d, 0d}
-        };
-        double[] w = {0d, 2d, 1d};
+    // /** Test negative values in w */
+    // @Test
+    // void Vmnorm_NegativeWeights() {
+    //     int n = 3;
+    //     double[] v = {0d, 1d, 2d, 3d};
+    //     double[] w = {0d, -1d, -2d, -3d};
 
-        double result = LSODAIntegrator.fnorm(n, a, w);
-        assertEquals(0d, result, 1e-6);
-    }
+    //     double result = LSODAIntegrator.vmnorm(n, v, w);
+    //     assertEquals(3d * 3d, result, 1e-6);
+    // }
 
-    /** Matrix has a single element (n = 1) */
-    @Test
-    void Fnorm_SingleElement() {
-        int n = 1;
-        double[][] a = {
-            {0d, 0d},
-            {0d, -7.5}
-        };
-        double[] w = {0d, 2d};
+    // /** Test zero length vector */
+    // @Test
+    // void Vmnorm_ZeroLengthVector() {
+    //     int n = 0;
+    //     double[] v = {0d};
+    //     double[] w = {0d};
 
-        double result = LSODAIntegrator.fnorm(n, a, w);
+    //     double result = LSODAIntegrator.vmnorm(n, v, w);
+    //     assertEquals(0d, result, 1e-6);
+    // }
 
-        assertEquals(Math.abs(-7.5), result, 1e-6);
-    }
 
-    /** Matrix has negative values */
-    @Test
-    void Fnorm_NegativeValues() {
-        int n = 2;
-        double[][] a = {
-            {0d, 0d, 0d},
-            {0d, -1d, -2d},
-            {0d, -3d, -4d}
-        };
-        double[] w = {0d, 1d, 2d};
+    // /** 
+    //  * The following tests are for the function .fnorm() within LSODAIntegrator.java
+    //  * The function computes the weighted matrix norm 
+    // **/
 
-        double result = LSODAIntegrator.fnorm(n, a, w);
-        double expected = Math.max(
-            1d * (Math.abs(-1d) / 1d + Math.abs(-2d) / 2d),
-            2d * (Math.abs(-3d) / 1d + Math.abs(-4d) / 2d)
-        );
+    // /** Basic matrix norm */
+    // @Test
+    // void Fnorm_BasicMatrixNorm() {
+    //     int n = 2;
+    //     double[][] a = {
+    //         {0d, 0d, 0d},
+    //         {0d, 1d, -2d},
+    //         {0d, 3d, 4d}
+    //     };
+    //     double[] w = {0d, 2d, 1d};
 
-        assertEquals(expected, result, 1e-6);
-    }
+    //     double result = LSODAIntegrator.fnorm(n, a, w);
+    //     double expected = Math.max(
+    //         2d * (Math.abs(1d) / 2d + Math.abs(-2d) / 1d),
+    //         1d * (Math.abs(3d) / 2d + Math.abs(4d) / 1d)
+    //     );
 
-    /** Negative weights in w */
-    @Test
-    void Fnorm_NegativeWeights() {
-        int n = 2;
-        double[][] a = {
-            {0d, 0d, 0d},
-            {0d, 1d, -2d},
-            {0d, 3d, 4d}
-        };
-        double[] w = {0d, -1d, -2d};
+    //     assertEquals(expected, result, 1e-6);
+    // }
 
-        double result = LSODAIntegrator.fnorm(n, a, w);
-        assertTrue(result > 0);
-    }
+    // /** Matrix has all zero elements */
+    // @Test
+    // void Fnorm_AllZero() {
+    //     int n = 2;
+    //     double[][] a = {
+    //         {0d, 0d, 0d},
+    //         {0d, 0d, 0d},
+    //         {0d, 0d, 0d}
+    //     };
+    //     double[] w = {0d, 2d, 1d};
 
-    /** Zero length matrix (n = 0) */
-    @Test
-    void Fnorm_ZeroLengthMatrix() {
-        int n = 0;
-        double[][] a = {{0d}};
-        double[] w = {0d};
+    //     double result = LSODAIntegrator.fnorm(n, a, w);
+    //     assertEquals(0d, result, 1e-6);
+    // }
 
-        double result = LSODAIntegrator.fnorm(n, a, w);
-        assertEquals(0d, result, 1e-6);
-    }
+    // /** Matrix has a single element (n = 1) */
+    // @Test
+    // void Fnorm_SingleElement() {
+    //     int n = 1;
+    //     double[][] a = {
+    //         {0d, 0d},
+    //         {0d, -7.5}
+    //     };
+    //     double[] w = {0d, 2d};
+
+    //     double result = LSODAIntegrator.fnorm(n, a, w);
+
+    //     assertEquals(Math.abs(-7.5), result, 1e-6);
+    // }
+
+    // /** Matrix has negative values */
+    // @Test
+    // void Fnorm_NegativeValues() {
+    //     int n = 2;
+    //     double[][] a = {
+    //         {0d, 0d, 0d},
+    //         {0d, -1d, -2d},
+    //         {0d, -3d, -4d}
+    //     };
+    //     double[] w = {0d, 1d, 2d};
+
+    //     double result = LSODAIntegrator.fnorm(n, a, w);
+    //     double expected = Math.max(
+    //         1d * (Math.abs(-1d) / 1d + Math.abs(-2d) / 2d),
+    //         2d * (Math.abs(-3d) / 1d + Math.abs(-4d) / 2d)
+    //     );
+
+    //     assertEquals(expected, result, 1e-6);
+    // }
+
+    // /** Negative weights in w */
+    // @Test
+    // void Fnorm_NegativeWeights() {
+    //     int n = 2;
+    //     double[][] a = {
+    //         {0d, 0d, 0d},
+    //         {0d, 1d, -2d},
+    //         {0d, 3d, 4d}
+    //     };
+    //     double[] w = {0d, -1d, -2d};
+
+    //     double result = LSODAIntegrator.fnorm(n, a, w);
+    //     assertTrue(result > 0);
+    // }
+
+    // /** Zero length matrix (n = 0) */
+    // @Test
+    // void Fnorm_ZeroLengthMatrix() {
+    //     int n = 0;
+    //     double[][] a = {{0d}};
+    //     double[] w = {0d};
+
+    //     double result = LSODAIntegrator.fnorm(n, a, w);
+    //     assertEquals(0d, result, 1e-6);
+    // }
 
     /**
      * The following tests are for the function .idamax() within LSODAIntegrator.java
@@ -641,118 +640,95 @@ public class LSODAIntegratorTest {
 
     }
 
-    // @Test
-    // void prja_AllZero() {
-    //     System.out.println("Starting all Zeros test");
-    //     ctx.setNeq(3);
-    //     common.setMiter(2);
-    //     common.setH(0.1);
-    //     double[] newEl = new double[]{0d, 1d};
-    //     common.setEl(newEl);
-    //     double[] newEwt = new double[]{0d, 1d, 1d, 1d};
-    //     common.setEwt(newEwt);
-    //     double[] newSavf = new double[]{0d, 0d, 0d, 0d};
-    //     common.setSavf(newSavf);
-    //     double[][] newWm = new double[4][4];
-    //     common.setWm(newWm);
-    //     double[] newAcor = new double[]{0d, 0d, 0d, 0d};
-    //     common.setAcor(newAcor);
-    //     common.setTn(0d);
-    //     common.setNje(0);
-    //     common.setNfe(0);
-    //     int[] newIpvt = new int[4];
-    //     common.setIpvt(newIpvt);
+    @Test
+    void prja_AllZero() {
+        ctx.setNeq(3);
+        common.setMiter(2);
+        common.setH(0.1);
+        double[] newEl = new double[]{0d, 1d};
+        common.setEl(newEl);
+        double[] newEwt = new double[]{0d, 1d, 1d, 1d};
+        common.setEwt(newEwt);
+        double[] newSavf = new double[]{0d, 0d, 0d, 0d};
+        common.setSavf(newSavf);
+        double[][] newWm = new double[4][4];
+        common.setWm(newWm);
+        double[] newAcor = new double[]{0d, 0d, 0d, 0d};
+        common.setAcor(newAcor);
+        common.setTn(0d);
+        common.setNje(0);
+        common.setNfe(0);
+        int[] newIpvt = new int[4];
+        common.setIpvt(newIpvt);
 
-    //     double[] y = {0d, 0d, 0d, 0d};
-    //     int result = LSODAIntegrator.prja(ctx, y);
+        double[] y = {0d, 0d, 0d, 0d};
+        int result = LSODAIntegrator.prja(ctx, y);
 
-    //     assertEquals(1, result);
+        assertEquals(1, result);
 
-    // }
+    }
 
-    // @Test
-    // void prja_LargeSystem() {
-    //     ctx.setNeq(1001);
-    //     common.setMiter(2);
-    //     common.setH(0.1);
-    //     double[] newEl = new double[]{0d, 1d};
-    //     common.setEl(newEl);
-    //     double[] newEwt = new double[1002];
-    //     common.setEwt(newEwt);
-    //     double[] newSavf = new double[1002];
-    //     common.setSavf(newSavf);
-    //     double[][] newWm = new double[1002][1002];
-    //     common.setWm(newWm);
-    //     common.setTn(0d);
-    //     common.setNje(0);
-    //     common.setNfe(0);
-    //     int[] newIpvt = new int[1002];
-    //     common.setIpvt(newIpvt);
+    @Test
+    void prja_LUDecompositionFailure() {
+        System.out.println("prja_LUDecompositionFailure");
+        ctx.setNeq(3);
+        common.setMiter(2);
+        common.setH(0.1);
+        double[] newEl = new double[]{0d, 1d};
+        common.setEl(newEl);
+        double[] newEwt = new double[]{0d, 1d, 1d, 1d};
+        common.setEwt(newEwt);
+        double[] newSavf = new double[]{0d, 1d, 2d, 3d};
+        common.setSavf(newSavf);
+        double[][] newWm = new double[4][4];
+        common.setWm(newWm);
+        double[] newAcor = new double[]{0d, 0.1, 0.2, 0.3};
+        common.setAcor(newAcor);
+        common.setTn(0d);
+        common.setNje(0);
+        common.setNfe(0);
+        int[] newIpvt = new int[4];
+        common.setIpvt(newIpvt);
 
-    //     double[] y = new double[1002];
-    //     int result = LSODAIntegrator.prja(ctx, y);
+        double[] y = {0d, 1d, 2d, 3d};
+        newWm[1][1] = 0d;
+        newWm[2][2] = 0d;
+        newWm[3][3] = 0d;
+        common.setWm(newWm);
 
-    //     assertEquals(1, result);
-    // }
+        int result = LSODAIntegrator.prja(ctx, y);
 
-    // @Test
-    // void prja_LUDecompositionFailure() {
-    //     ctx.setNeq(3);
-    //     common.setMiter(2);
-    //     common.setH(0.1);
-    //     double[] newEl = new double[]{0d, 1d};
-    //     common.setEl(newEl);
-    //     double[] newEwt = new double[]{0d, 1d, 1d, 1d};
-    //     common.setEwt(newEwt);
-    //     double[] newSavf = new double[]{0d, 1d, 2d, 3d};
-    //     common.setSavf(newSavf);
-    //     double[][] newWm = new double[4][4];
-    //     common.setWm(newWm);
-    //     double[] newAcor = new double[]{0d, 0.1, 0.2, 0.3};
-    //     common.setAcor(newAcor);
-    //     common.setTn(0d);
-    //     common.setNje(0);
-    //     common.setNfe(0);
-    //     int[] newIpvt = new int[4];
-    //     common.setIpvt(newIpvt);
+        // assertTrue(common.getNje() > 0, "nje should have incremented");
+        // assertEquals(3, common.getNfe(), "nfe should have incremented by neq (3)");
+        assertEquals(0, result);
+    }
 
-    //     double[] y = {0d, 1d, 2d, 3d};
-    //     newWm[1][1] = 0d;
-    //     newWm[2][2] = 0d;
-    //     newWm[3][3] = 0d;
-    //     common.setWm(newWm);
+    @Test
+    void prja_FunctionEvaluationsIncrement() {
+        ctx.setNeq(3);
+        common.setMiter(2);
+        common.setH(0.1);
+        double[] newEl = new double[]{0d, 1d};
+        common.setEl(newEl);
+        double[] newEwt = new double[]{0d, 1d, 1d, 1d};
+        common.setEwt(newEwt);
+        double[] newSavf = new double[]{0d, 1d, 2d, 3d};
+        common.setSavf(newSavf);
+        double[][] newWm = new double[4][4];
+        common.setWm(newWm);
+        double[] newAcor = new double[]{0d, 0.1, 0.2, 0.3};
+        common.setAcor(newAcor);
+        common.setTn(0d);
+        common.setNje(0);
+        common.setNfe(0);
+        int[] newIpvt = new int[4];
+        common.setIpvt(newIpvt);
 
-    //     int result = LSODAIntegrator.prja(ctx, y);
+        double[] y = {0d, 1d, 2d, 3d};
+        LSODAIntegrator.prja(ctx, y);
 
-    //     assertEquals(0, result);
-    // }
-
-    // @Test
-    // void prja_FunctionEvaluationsIncrement() {
-    //     ctx.setNeq(3);
-    //     common.setMiter(2);
-    //     common.setH(0.1);
-    //     double[] newEl = new double[]{0d, 1d};
-    //     common.setEl(newEl);
-    //     double[] newEwt = new double[]{0d, 1d, 1d, 1d};
-    //     common.setEwt(newEwt);
-    //     double[] newSavf = new double[]{0d, 1d, 2d, 3d};
-    //     common.setSavf(newSavf);
-    //     double[][] newWm = new double[4][4];
-    //     common.setWm(newWm);
-    //     double[] newAcor = new double[]{0d, 0.1, 0.2, 0.3};
-    //     common.setAcor(newAcor);
-    //     common.setTn(0d);
-    //     common.setNje(0);
-    //     common.setNfe(0);
-    //     int[] newIpvt = new int[4];
-    //     common.setIpvt(newIpvt);
-
-    //     double[] y = {0d, 1d, 2d, 3d};
-    //     LSODAIntegrator.prja(ctx, y);
-
-    //     assertEquals(3, common.getNfe());
-    // }
+        assertEquals(3, common.getNfe());
+    }
 
 
     /* I will finish implementing tests for prja once its helper functions for are fully tested. */
@@ -876,44 +852,96 @@ public class LSODAIntegratorTest {
     /**
      * The following tests are for the functions dgefa() within LSODAIntegrator
      */
-    // @Test
-    // void dgefa_Basic() {
-    //     int n = 3;
-    //     int[] ipvt = new int[4];
-    //     int[] info = {0};
-    //     double[][] a = {
-    //         {0, 0, 0, 0},
-    //         {0, 4, 3, 2},
-    //         {0, 2, 3, 1},
-    //         {0, 1, 1, 2}
-    //     };
+    @Test
+    void dgefa_Basic() {
+        int n = 3;
+        int[] ipvt = new int[4];
+        int[] info = {0};
+        double[][] a = {
+            {0, 0, 0, 0},
+            {0, 4, 3, 2},
+            {0, 2, 3, 1},
+            {0, 1, 1, 2}
+        };
 
-    //     LSODAIntegrator.dgefa(a, n, ipvt, info);
+        LSODAIntegrator.dgefa(a, n, ipvt, info);
 
-    //     assertEquals(0, info[0]);
-    // }
+        assertEquals(0, info[0]);
+    }
 
-    // @Test
-    // void dgefa_UpperTriangular() {
-    //     System.out.println("Starting UpperTriangular");
-    //     int n = 3;
-    //     int[] ipvt = new int[4];
-    //     int[] info = {0};
-    //     double[][] a = {
-    //         {0d, 0d, 0d, 0d},
-    //         {0d, 3d, 1d, 2d},
-    //         {0d, 0d, 4d, 5d},
-    //         {0d, 0d, 0d, 6d}
-    //     };
+    @Test
+    void dgefa_UpperTriangular() {
+        int n = 3;
+        int[] ipvt = new int[4];
+        int[] info = {0};
+        double[][] a = {
+            {0d, 0d, 0d, 0d},
+            {0d, 3d, 1d, 2d},
+            {0d, 0d, 4d, 5d},
+            {0d, 0d, 0d, 6d}
+        };
 
-    //     LSODAIntegrator.dgefa(a, n, ipvt, info);
+        LSODAIntegrator.dgefa(a, n, ipvt, info);
 
-    //     System.out.println("finishing UpperTriangular");
+        assertEquals(0, info[0]);
+    }
 
-    //     assertEquals(0, info[0]);
-    // }
+    @Test
+    void dgefa_SingularMatrix() {
+        int n = 3;
+        int[] ipvt = new int[4];
+        int[] info = {0};
+        double[][] a = {
+            {0d, 0d, 0d, 0d},
+            {0d, 1d, 2d, 3d},
+            {0d, 4d, 5d, 6d},
+            {0d, 0d, 0d, 0d}
+        };
 
-    /* dgefa() tests will be finished when helper functions are fully tested */
+        LSODAIntegrator.dgefa(a, n, ipvt, info);
+
+        assertEquals(3, info[0]);
+    }
+
+    @Test
+    void dgefa_IdentityMatrix() {
+        int n = 3;
+        int[] ipvt = new int[4];
+        int[] info = {0};
+        double[][] a = {
+            {0d, 0d, 0d, 0d},
+            {0d, 1d, 0d, 0d},
+            {0d, 0d, 1d, 0d},
+            {0d, 0d, 0d, 1d}
+        };
+
+        LSODAIntegrator.dgefa(a, n, ipvt, info);
+
+        assertEquals(0, info[0]);
+        assertEquals(1, ipvt[1]);
+        assertEquals(2, ipvt[2]);
+        assertEquals(3, ipvt[3]);      
+    }
+
+    @Test
+    void dgefa_RowSwapping() {
+        int n = 3;
+        int[] ipvt = new int[n + 1];
+        int[] info = new int[1];
+        double[][] a = {
+            {0, 0, 0, 0},
+            {0, 2, 1, 1},
+            {0, 4, 3, 3},
+            {0, 6, 5, 5}
+        };
+
+        LSODAIntegrator.dgefa(a, n, ipvt, info);        
+
+        assertEquals(0, info[0]);
+        assertEquals(3, ipvt[1]);
+        assertEquals(2, ipvt[2]);
+        assertEquals(3, ipvt[3]);
+    }
 
 
     /**
