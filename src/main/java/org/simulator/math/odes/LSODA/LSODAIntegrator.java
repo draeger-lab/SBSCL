@@ -687,7 +687,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * @return the computed dot product of the two vectors
      * @throws IndexOutOfBoundsException if dx or dy are too small for the given increments
      */
-
     public static double ddot(int n, double[] dx, double[] dy, int incx, int incy) {
         double dotprod;
         int ix, iy, i;
@@ -780,17 +779,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 double[][] wm = common.getWm();
                 wm[i][i] += 1d;
                 common.setWm(wm);
-            }  
+            }
 
-            
-            double[][] wm = common.getWm(); //I defined a separate variable here because my compiler was 
-            //throwing an error when I tried to use common.getWm() directly in the dgefa function call, saying common.getWm() was int[] and not double[][].
-
-            System.out.println("Ier: " + Arrays.toString(ier));
-            System.out.println("Wm: " + Arrays.deepToString(wm));
-            dgefa(wm, neq, common.getIpvt(), ier);
-            System.out.println("Ier after: " + Arrays.toString(ier));
-
+            dgefa(common.getWm(), neq, common.getIpvt(), ier);
 
             if (ier[0] != 0) {
                 return 0;
@@ -820,7 +811,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             
             if (a[j][k] == 0d) {
                 info[0] = k;
-                System.out.println("Singularity detected");
                 return;
             }
             

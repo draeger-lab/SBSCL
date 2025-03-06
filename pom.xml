@@ -621,6 +621,12 @@
             <target>${jdk.version}</target>
             <!-- <excludes> <exclude>**/org/simulator/fba/COBRAsolver.java</exclude>
               <exclude>**/org/simulator/fba/COBRAsolverExample.java</exclude> </excludes> -->
+            <excludes>
+              <exclude>org/simulator/examples/**</exclude>
+            </excludes>
+            <testExcludes>
+              <testExclude>org/simulator/**</testExclude>
+            </testExcludes>
           </configuration>
         </plugin>
 
