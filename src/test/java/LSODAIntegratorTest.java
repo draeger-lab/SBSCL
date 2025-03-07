@@ -1,5 +1,6 @@
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.simulator.math.odes.LSODA.LSODACommon;
@@ -1001,6 +1002,103 @@ public class LSODAIntegratorTest {
         double[] expected = {0d, 1d, 2d, 3d};
         assertArrayEquals(expected, dx, 1e-6);   
     }
+
+    /** The following tests are for the function solsy() within LSODAIntegrator */
+    
+    /* Test that solsy() calls dgesl() when miter == 2 */
+    // @Test
+    // void solsy_BasicLUDecomposition() {
+    //     ctx.setNeq(3);
+    //     common.setMiter(2);
+    //     double[] y = {0d, 1d, 2d, 3d};
+    //     double[][] wm = {
+    //         {0, 0, 0, 0},
+    //         {0, 1, 2, 3},
+    //         {0, 4, 5, 6},
+    //         {0, 7, 8, 9}
+    //     };
+    //     common.setWm(wm);
+    //     int[] ipvt = {0, 1, 2, 3};
+    //     common.setIpvt(ipvt);
+
+    //     int result = LSODAIntegrator.solsy(ctx, y);
+    //     assertEquals(1, result);
+
+    // }
+
+
+    /** The following tests are for the function dgesl() within LSODAIntegrator */
+
+    /**
+     * Test solving a simple 2x2 system Ax = b
+     * A = [2 1]
+     *     [5 7]
+     * b = [11, 13]
+     * Solution should be x = [3.4285..., -2.0714...]
+     */
+    @Test
+    void dgesl_Basic() {
+        System.out.println("Starting dgesl");
+        int n = 2;
+        double[][] a = {
+            {0d, 0d, 0d},
+            {0d, 2d, 1d},
+            {0d, 5d, 7d}
+        };
+        int[] ipvt = {0, 1, 2};
+        double[] b = {0d, 11d, 13d};
+
+        LSODAIntegrator.dgesl(a, n, ipvt, b, 0);
+        System.out.println("Finished dgesl");
+
+        assertArrayEquals(new double[]{0, 3.4285714286, -2.0714285714}, b, 1e-10);
+    }
+
+        /**
+     * Test solving A^T * x = b for a simple 2x2 system with row swaps and transposition.
+     * A = [2 1]
+     *     [5 7]
+     * b = [11, 13]
+     * Solution should be x ≈ [-3.07, 0.343]
+     */
+    @Test
+    void dgesl_TransposeSolve() {
+        int n = 2;
+        double[][] a = {
+            {0, 0, 0},  // Unused row (1-based index)
+            {0, 2, 1},  // Row 1
+            {0, 5, 7}   // Row 2
+        };
+        int[] ipvt = {0, 1, 2}; // No row swaps
+        double[] b = {0, 11, 13};
+
+        LSODAIntegrator.dgesl(a, n, ipvt, b, 1);
+
+        assertArrayEquals(new double[]{0, -3.0714285714285716, 3.4285714285714284}, b, 1e-6, "Incorrect solution for A^T x = b");
+    }
+
+    /** solving for a larger 4x4 system */
+    @Test
+    void dgesl_LargeSystem() {
+        int n = 2;
+        // Build a matrix 'a' where row 0 is unused (1-based indexing),
+        // row 1 is normal, and row 2 has a zero on the diagonal.
+        double[][] a = {
+            {0, 0, 0},    // Unused row (1-based index)
+            {0, 1, 2},    // Row 1: a[1][1] = 1, a[1][2] = 2
+            {0, 0, 0}     // Row 2: a[2][2] = 0 --> singular matrix
+        };
+        // No row swaps.
+        int[] ipvt = {0, 1, 2};
+        double[] b = {0, 3, 6};
+
+        // We expect an exception due to division by zero on a[2][2].
+        assertThrows(ArithmeticException.class, () -> {
+            LSODAIntegrator.dgesl(a, n, ipvt, b, 0);
+        }, "Expected an ArithmeticException due to singular matrix");
+    }
+
+
 }
 
 
