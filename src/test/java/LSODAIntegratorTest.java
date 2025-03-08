@@ -1148,6 +1148,112 @@ public class LSODAIntegratorTest {
     }
 
     /** The following tests are for the function corfailure() within LSODAIntegrator */
+    @Test
+    void corfailure_Basic() {
+        ctx.setNeq(3);
+        ctx.getOpt().setHmin(0.1);
+        common.setH(1d);
+        common.setNq(2);
+        common.setNcf(0);
+        common.setMiter(3);
+
+        double[][] yh = {
+            {0d, 0d, 0d, 0d},
+            {0d, 10d, 20d, 30d},
+            {0d, 1d, 2d, 3d},
+            {0d, 0.5, 1d, 1.5}
+        };
+        common.setYh(yh);
+        double told = 5d;
+
+        int result = LSODAIntegrator.corfailure(ctx, told);
+        double[][] expected = {
+            {0d, 0d, 0d, 0d},
+            {0d, 9.5, 19d, 28.5},
+            {0d, 0d, 0d, 0d},
+            {0d, 0.5, 1d, 1.5}
+        };
+
+        assertEquals(1, result);
+        assertEquals(1, common.getNcf());
+        assertEquals(2d, common.getRmax());
+        assertEquals(told, common.getTn());
+        assertEquals(common.getMiter(), common.getIpup());
+
+        for (int row = 1; row <= 3; row++) {
+            for (int col = 1; col <= 3; col++) {
+                assertEquals(expected[row][col], common.getYh()[row][col], 1e-9);
+            }
+        }
+
+    }
+
+    @Test
+    void corfailure_HTooSmall() {
+        ctx.setNeq(2);
+        ctx.getOpt().setHmin(0.1);
+        common.setH(0.1 * 1.00001 - 1e-9);
+        common.setNq(1);
+        common.setNcf(0);
+        common.setMiter(4);
+
+        double[][] yh = {
+            {0d, 0d, 0d},
+            {0d, 5d, 6d},
+            {0d, 2d, 3d}
+        };
+        common.setYh(yh);
+
+        double told = 2.5;
+        int result = LSODAIntegrator.corfailure(ctx, told);
+
+        assertEquals(2, result);
+        assertEquals(1, common.getNcf());
+    }
+
+    @Test
+    void corfailure_NcfLimit() {
+        ctx.setNeq(2);
+        ctx.getOpt().setHmin(0.1);
+        common.setH(1.0);
+        common.setNq(1);
+        common.setNcf(common.MXNCF - 1);
+        common.setMiter(5);
+
+        double[][] yh = {
+            {0d, 0d, 0d},
+            {0d, 3d, 4d},
+            {0d, 1d, 2d}
+        };
+        common.setYh(yh);
+
+        double told = 7.0;
+        int result = LSODAIntegrator.corfailure(ctx, told);
+
+        assertEquals(2, result);
+        assertEquals(common.MXNCF, common.getNcf());
+    }
+
+    @Test
+    void corfailure_ZeroNq() {
+        ctx.setNeq(2);
+        ctx.getOpt().setHmin(0.1);
+        common.setH(1.0);
+        common.setNq(0);
+        common.setNcf(0);
+        common.setMiter(6);
+
+        double[][] yh = new double[1][3];
+        common.setYh(yh);
+
+        double told = 10.0;
+        int result = LSODAIntegrator.corfailure(ctx, told);
+
+        assertEquals(1, result);
+        assertEquals(common.getMiter(), common.getIpup());
+    }
+
+
 
 }
 

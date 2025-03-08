@@ -555,7 +555,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return 1;
     }
     
-    private int corfailure(LSODAContext ctx, double told) {
+    public static int corfailure(LSODAContext ctx, double told) {
         LSODACommon common = ctx.getCommon();
         int j, i1, i;
         int neq = ctx.getNeq();
