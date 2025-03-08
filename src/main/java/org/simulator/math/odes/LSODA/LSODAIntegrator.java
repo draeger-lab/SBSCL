@@ -547,7 +547,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         int neq = ctx.getNeq();
         LSODACommon common = ctx.getCommon();
         if (common.getMiter() != 2) {
-            System.exit(0); //I chose to use System.exit() here, as the original C code uses the C equivalent abort()
+            throw new IllegalStateException("Solsy called with miter != 2: miter = " + common.getMiter());
         }
         if (common.getMiter() == 2) {
             dgesl(common.getWm(), neq, common.getIpvt(), y, 0);

@@ -1006,25 +1006,61 @@ public class LSODAIntegratorTest {
     /** The following tests are for the function solsy() within LSODAIntegrator */
     
     /* Test that solsy() calls dgesl() when miter == 2 */
-    // @Test
-    // void solsy_BasicLUDecomposition() {
-    //     ctx.setNeq(3);
-    //     common.setMiter(2);
-    //     double[] y = {0d, 1d, 2d, 3d};
-    //     double[][] wm = {
-    //         {0, 0, 0, 0},
-    //         {0, 1, 2, 3},
-    //         {0, 4, 5, 6},
-    //         {0, 7, 8, 9}
-    //     };
-    //     common.setWm(wm);
-    //     int[] ipvt = {0, 1, 2, 3};
-    //     common.setIpvt(ipvt);
+    @Test
+    void solsy_BasicLUDecomposition() {
+        ctx.setNeq(3);
+        common.setMiter(2);
+        double[] y = {0d, 1d, 2d, 3d};
+        double[][] wm = {
+            {0, 0, 0, 0},
+            {0, 1, 2, 3},
+            {0, 4, 5, 6},
+            {0, 7, 8, 9}
+        };
+        common.setWm(wm);
+        int[] ipvt = {0, 1, 2, 3};
+        common.setIpvt(ipvt);
 
-    //     int result = LSODAIntegrator.solsy(ctx, y);
-    //     assertEquals(1, result);
+        int result = LSODAIntegrator.solsy(ctx, y);
+        assertEquals(1, result);
+    }
 
-    // }
+    @Test
+    void solsy_MiterNotTwo() {
+        ctx.setNeq(3);
+        common.setMiter(5);
+        double[] y = {0d, 1d, 2d, 3d};
+        double[][] wm = {
+            {0, 0, 0, 0},
+            {0, 1, 2, 3},
+            {0, 4, 5, 6},
+            {0, 7, 8, 9}
+        };
+        common.setWm(wm);
+        int[] ipvt = {0, 1, 2, 3};
+        common.setIpvt(ipvt);
+
+        assertThrows(IllegalStateException.class, () -> {
+            LSODAIntegrator.solsy(ctx, y);
+        });
+    }
+
+    @Test
+    void solsy_ZeroNeq() {
+        ctx.setNeq(0);
+        common.setMiter(2);
+        double[] y = new double[0];
+
+        double[][] wm = new double[1][1];
+        int[] ipvt = new int[1];
+        common.setWm(wm);
+        common.setIpvt(ipvt);
+
+        int result = LSODAIntegrator.solsy(ctx, y);
+        assertEquals(1, result);
+    }
+
+
 
 
     /** The following tests are for the function dgesl() within LSODAIntegrator */
@@ -1110,6 +1146,8 @@ public class LSODAIntegratorTest {
 
         assertArrayEquals(new double[] {0d, 3d, 4d}, b, 1e-6);
     }
+
+    /** The following tests are for the function corfailure() within LSODAIntegrator */
 
 }
 
