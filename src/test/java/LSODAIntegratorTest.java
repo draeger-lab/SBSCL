@@ -1065,12 +1065,12 @@ public class LSODAIntegratorTest {
     void dgesl_TransposeSolve() {
         int n = 2;
         double[][] a = {
-            {0, 0, 0},  // Unused row (1-based index)
-            {0, 2, 1},  // Row 1
-            {0, 5, 7}   // Row 2
+            {0d, 0d, 0d},  // Unused row (1-based index)
+            {0d, 2d, 1d},  // Row 1
+            {0d, 5d, 7d}   // Row 2
         };
         int[] ipvt = {0, 1, 2}; // No row swaps
-        double[] b = {0, 11, 13};
+        double[] b = {0d, 11d, 13d};
 
         LSODAIntegrator.dgesl(a, n, ipvt, b, 1);
 
@@ -1079,25 +1079,37 @@ public class LSODAIntegratorTest {
 
     /** solving for a larger 4x4 system */
     @Test
-    void dgesl_LargeSystem() {
-        int n = 2;
-        // Build a matrix 'a' where row 0 is unused (1-based indexing),
-        // row 1 is normal, and row 2 has a zero on the diagonal.
-        double[][] a = {
-            {0, 0, 0},    // Unused row (1-based index)
-            {0, 1, 2},    // Row 1: a[1][1] = 1, a[1][2] = 2
-            {0, 0, 0}     // Row 2: a[2][2] = 0 --> singular matrix
-        };
-        // No row swaps.
-        int[] ipvt = {0, 1, 2};
-        double[] b = {0, 3, 6};
+    void dgesl_SingularMatrix() {
+    int n = 2;
+    double[][] a = {
+        {0d, 0d, 0d},    
+        {0d, 1d, 2d},    
+        {0d, 0d, 0d}     
+    };
+    int[] ipvt = {0, 1, 2};
+    double[] b = {0d, 3d, 6d};
 
-        // We expect an exception due to division by zero on a[2][2].
-        assertThrows(ArithmeticException.class, () -> {
-            LSODAIntegrator.dgesl(a, n, ipvt, b, 0);
-        }, "Expected an ArithmeticException due to singular matrix");
+    assertThrows(IllegalArgumentException.class, () -> {
+        LSODAIntegrator.dgesl(a, n, ipvt, b, 0);
+    }, "Matrix is singular or nearly singular at index 2");
     }
 
+    /* Solving for an identity matrix */
+    @Test
+    void dgesl_IdentityMatrix() {
+        double[][] a = {
+            {0d, 0d, 0d},
+            {0d, 1d, 0d},
+            {0d, 0d, 1d}
+        };
+        int n = 2;
+        int[] ipvt = {0, 1, 2};
+        double[] b = {0d, 3d, 4d};
+
+        LSODAIntegrator.dgesl(a, n, ipvt, b, 0);
+
+        assertArrayEquals(new double[] {0d, 3d, 4d}, b, 1e-6);
+    }
 
 }
 

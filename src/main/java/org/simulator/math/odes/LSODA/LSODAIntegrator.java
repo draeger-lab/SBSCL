@@ -592,6 +592,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             System.out.println("Solving L * y = b...");
             for (k = 1; k <= n; k++) {
                 t = ddot(k-1, a[k], b, 1, 1);
+                if (Math.abs(a[k][k]) < 1e-12) {
+                    throw new IllegalArgumentException("Matrix is singular or nearly singular at index " + k);
+                }
                 System.out.println("Forward Substitution - k: " + k + ", t: " + t + ", b[k]: " + b[k]);
                 b[k] = (b[k] - t) / a[k][k];
                 System.out.println("Updated b[k]: " + b[k] + k);
