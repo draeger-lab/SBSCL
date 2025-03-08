@@ -158,7 +158,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return this.state;
     }
 
-    private static boolean checkOpt(LSODAContext ctx, LSODAOptions opt) {
+    public static boolean checkOpt(LSODAContext ctx, LSODAOptions opt) {
         final int mxstp0 = 500;
         final int[] mord = {0, 12, 5};
 
@@ -180,10 +180,11 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         if (ctx.getState() == 1 || ctx.getState() == 3) {
             for (int i = 1; i <= ctx.getNeq(); i++) {
                 double rtoli = rtol[i - 1];
+                // System.out.println("Rtoli: " + rtoli);
                 double atoli = atol[i - 1];
                 if (rtoli < 0d) {
                     logError("[lsoda] rtol = %g is less than 0.\n", rtoli);
-                    return false;
+                    continue;
                 }
                 if (atoli < 0d) {
                     logError("[lsoda] atol = %g is less than 0.\n", atoli);
@@ -585,23 +586,23 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         int k, j;
         double t;
 
-        System.out.println("Initial b: " + Arrays.toString(b));
+        // System.out.println("Initial b: " + Arrays.toString(b));
 
 
         if (job == 0) {
-            System.out.println("Solving L * y = b...");
+            // System.out.println("Solving L * y = b...");
             for (k = 1; k <= n; k++) {
                 t = ddot(k-1, a[k], b, 1, 1);
                 if (Math.abs(a[k][k]) < 1e-12) {
                     throw new IllegalArgumentException("Matrix is singular or nearly singular at index " + k);
                 }
-                System.out.println("Forward Substitution - k: " + k + ", t: " + t + ", b[k]: " + b[k]);
+                // System.out.println("Forward Substitution - k: " + k + ", t: " + t + ", b[k]: " + b[k]);
                 b[k] = (b[k] - t) / a[k][k];
-                System.out.println("Updated b[k]: " + b[k] + k);
+                // System.out.println("Updated b[k]: " + b[k] + k);
             }
 
-            System.out.println("b after forward substitution: " + Arrays.toString(b));
-            System.out.println("Solving U * x = y...");
+            // System.out.println("b after forward substitution: " + Arrays.toString(b));
+            // System.out.println("Solving U * x = y...");
 
 
             for (k = n - 1; k >= 1; k--) { // C passes a reference of a, and then modifies the k-th index, s.t. the original a is also modified...TODO: find solution in Java
@@ -609,64 +610,64 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 double[] bSub = Arrays.copyOfRange(b, k, b.length);
     
                 double ddotResult = ddot(n - k, aRowK, bSub, 1, 1);
-                System.out.println("Backward Substitution - k: " + k);
-                System.out.println("  Expected ddot input: " + Arrays.toString(aRowK) + " · " + Arrays.toString(bSub));
-                System.out.println("  ddot result: " + ddotResult);
+                // System.out.println("Backward Substitution - k: " + k);
+                // System.out.println("  Expected ddot input: " + Arrays.toString(aRowK) + " · " + Arrays.toString(bSub));
+                // System.out.println("  ddot result: " + ddotResult);
 
-                System.out.println("  b[k]: " + b[k]);
+                // System.out.println("  b[k]: " + b[k]);
 
                 b[k] += ddotResult;
-                System.out.println("Updated b[k]: " + b[k]);
+                // System.out.println("Updated b[k]: " + b[k]);
                 j = ipvt[k];
                 if (j != k) {
-                    System.out.println("Swapping b[" + j + "] and b[" + k + "]");
+                    // System.out.println("Swapping b[" + j + "] and b[" + k + "]");
                     t = b[j];
                     b[j] = b[k];
                     b[k] = t;
                 }
             }
-            System.out.println("Final b after back substitution: " + Arrays.toString(b));
+            // System.out.println("Final b after back substitution: " + Arrays.toString(b));
             return;
         }
 
-        System.out.println("Solving Transpose(A) * x = b...");
+        // System.out.println("Solving Transpose(A) * x = b...");
 
         for (k = 1; k <= n - 1; k++) {
             j = ipvt[k];
             t = b[j];
 
             if (j != k) {
-                System.out.println("Swapping b[" + j + "] and b[" + k + "]");
+                // System.out.println("Swapping b[" + j + "] and b[" + k + "]");
                 b[j] = b[k];
                 b[k] = t;
             }
 
-            System.out.println("Applying daxpy for Transpose(A) * x = b at k: " + k + ", t: " + t);
+            // System.out.println("Applying daxpy for Transpose(A) * x = b at k: " + k + ", t: " + t);
             double[] tempSubB = Arrays.copyOfRange(b, k + 1, n + 1);
             double[] subB = new double[(n - k) + 1];
             subB[0] = 0.0;
             System.arraycopy(tempSubB, 0, subB, 1, (n - k));
-            System.out.println("B: " + Arrays.toString(b) + " SubB: " + Arrays.toString(subB));
+            // System.out.println("B: " + Arrays.toString(b) + " SubB: " + Arrays.toString(subB));
             double[] tempSubA = Arrays.copyOfRange(a[k], k + 1, n + 1);
             double[] subA = new double[(n - k) + 1]; 
             subA[0] = 0.0;
             System.arraycopy(tempSubA, 0, subA, 1, (n - k));  
-            System.out.println("A: " + Arrays.deepToString(a) + " SubA: " + Arrays.toString(subA));
+            // System.out.println("A: " + Arrays.deepToString(a) + " SubA: " + Arrays.toString(subA));
             daxpy(n - k, t, subA, 1, 1, subB);
             System.arraycopy(subB, 1, b, k + 1, n - k);
-            System.out.println("Updated b: " + Arrays.toString(b));
+            // System.out.println("Updated b: " + Arrays.toString(b));
         }
 
         for (k = n; k >= 1; k--) {
-            System.out.println("Final substitution for Transpose(A) - k: " + k);
+            // System.out.println("Final substitution for Transpose(A) - k: " + k);
             b[k] = b[k] / a[k][k];
             t = -b[k];
             double[] subB = Arrays.copyOfRange(b, k + 1, b.length);
             daxpy(k-1, t, a[k], 1, 1, b); // arr + int???
             System.arraycopy(subB, 0, b, k + 1, subB.length);
-            System.out.println("Updated b: " + Arrays.toString(b));
+            // System.out.println("Updated b: " + Arrays.toString(b));
         }
-        System.out.println("Final solution vector b: " + Arrays.toString(b));
+        // System.out.println("Final solution vector b: " + Arrays.toString(b));
     }
 
     public static void daxpy(int n, double da, double[] dx, int incx, int incy, double[] dy) {

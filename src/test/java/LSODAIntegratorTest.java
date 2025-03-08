@@ -1,5 +1,6 @@
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
@@ -1074,7 +1075,6 @@ public class LSODAIntegratorTest {
      */
     @Test
     void dgesl_Basic() {
-        System.out.println("Starting dgesl");
         int n = 2;
         double[][] a = {
             {0d, 0d, 0d},
@@ -1085,7 +1085,6 @@ public class LSODAIntegratorTest {
         double[] b = {0d, 11d, 13d};
 
         LSODAIntegrator.dgesl(a, n, ipvt, b, 0);
-        System.out.println("Finished dgesl");
 
         assertArrayEquals(new double[]{0, 3.4285714286, -2.0714285714}, b, 1e-10);
     }
@@ -1151,7 +1150,7 @@ public class LSODAIntegratorTest {
     @Test
     void corfailure_Basic() {
         ctx.setNeq(3);
-        ctx.getOpt().setHmin(0.1);
+        opt.setHmin(0.1);
         common.setH(1d);
         common.setNq(2);
         common.setNcf(0);
@@ -1191,7 +1190,7 @@ public class LSODAIntegratorTest {
     @Test
     void corfailure_HTooSmall() {
         ctx.setNeq(2);
-        ctx.getOpt().setHmin(0.1);
+        opt.setHmin(0.1);
         common.setH(0.1 * 1.00001 - 1e-9);
         common.setNq(1);
         common.setNcf(0);
@@ -1214,7 +1213,7 @@ public class LSODAIntegratorTest {
     @Test
     void corfailure_NcfLimit() {
         ctx.setNeq(2);
-        ctx.getOpt().setHmin(0.1);
+        opt.setHmin(0.1);
         common.setH(1.0);
         common.setNq(1);
         common.setNcf(common.MXNCF - 1);
@@ -1237,7 +1236,7 @@ public class LSODAIntegratorTest {
     @Test
     void corfailure_ZeroNq() {
         ctx.setNeq(2);
-        ctx.getOpt().setHmin(0.1);
+        opt.setHmin(0.1);
         common.setH(1.0);
         common.setNq(0);
         common.setNcf(0);
@@ -1253,7 +1252,361 @@ public class LSODAIntegratorTest {
         assertEquals(common.getMiter(), common.getIpup());
     }
 
+    /** The following tests are for checkOpt() within LSODAIntegrator */
+    @Test
+    void checkOpt_BasicCase_State0() {
+        ctx.setState(0);
+        ctx.setNeq(3);
 
+        opt.setRtol(new double[]{1e-4, 1e-4, 1e-4});
+        opt.setAtol(new double[]{1e-6, 1e-6, 1e-6});
+        opt.setItask(0);
+        opt.setIxpr(1);
+        opt.setMxstep(0);
+        opt.setMxhnil(0);
+        opt.setMxordn(99);
+        opt.setMxords(99);
+        opt.setHmax(2.0);
+        opt.setHmin(0.01);
+
+        boolean result = LSODAIntegrator.checkOpt(ctx, opt);
+
+        assertTrue(result);
+        assertEquals(1, ctx.getState());
+        assertEquals(0d, opt.getH0());
+        assertEquals(1, opt.getItask());
+        assertEquals(500, opt.getMxstep());
+        assertEquals(12, opt.getMxordn());
+        assertEquals(5, opt.getMxords());
+        assertEquals(0.5, opt.getHmxi(), 1e-9);
+    }
+
+    @Test
+    void checkOpt_BasicCase_State3() {
+        ctx.setState(3);
+        ctx.setNeq(2);
+
+        opt.setRtol(new double[]{1e-4, 1e-4});
+        opt.setAtol(new double[]{1e-6, 1e-6});
+        opt.setItask(1);
+        opt.setIxpr(0);
+        opt.setMxstep(10);
+        opt.setMxhnil(0);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        boolean result = LSODAIntegrator.checkOpt(ctx, opt);
+
+        assertTrue(result);
+        assertEquals(1.0, opt.getHmxi(), 1e-9);
+    }
+
+    @Test
+       void checkOpt_NeqZero() {
+        ctx.setState(1);
+        ctx.setNeq(0);
+
+        opt.setRtol(new double[]{});
+        opt.setAtol(new double[]{});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+    }
+
+    @Test
+    void checkOpt_NegativeRtol() {
+        ctx.setState(1);
+        ctx.setNeq(2);
+    
+        opt.setRtol(new double[]{-1e-4, 1e-4});
+        opt.setAtol(new double[]{1e-6, 1e-6});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertTrue(LSODAIntegrator.checkOpt(ctx, opt));
+    }
+
+    @Test
+    void checkOpt_NegativeAtol() {
+        ctx.setState(1);
+        ctx.setNeq(2);
+
+        opt.setRtol(new double[]{1e-4, 1e-4});
+        opt.setAtol(new double[]{1e-6, -1e-6});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+    }
+
+    @Test
+    void checkOpt_IllegalItaskHigh() {
+        ctx.setState(1);
+        ctx.setNeq(1);
+
+        opt.setRtol(new double[]{1e-4});
+        opt.setAtol(new double[]{1e-6});
+        opt.setItask(6);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+    }
+
+    @Test
+    void checkOpt_IllegalItaskLow() {
+        ctx.setState(1);
+        ctx.setNeq(1);
+
+        opt.setRtol(new double[]{1e-4});
+        opt.setAtol(new double[]{1e-6});
+        opt.setItask(-1);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+    }
+
+    @Test
+    void checkOpt_IllegalIxprLow() {
+        ctx.setState(1);
+        ctx.setNeq(1);
+
+        opt.setRtol(new double[]{1e-4});
+        opt.setAtol(new double[]{1e-6});
+        opt.setItask(1);
+        opt.setIxpr(-1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+    }
+
+    @Test
+    void checkOpt_IllegalIxprHigh() {
+        ctx.setState(1);
+        ctx.setNeq(1);
+
+        opt.setRtol(new double[]{1e-4});
+        opt.setAtol(new double[]{1e-6});
+        opt.setItask(1);
+        opt.setIxpr(2);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+    }
+
+    @Test
+    void checkOpt_NegativeMxstep() {
+        ctx.setState(1);
+        ctx.setNeq(1);
+
+        opt.setRtol(new double[]{1e-4});
+        opt.setAtol(new double[]{1e-6});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(-1);
+        opt.setMxhnil(0);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+    }
+
+    @Test
+    void checkOpt_MxstepZero() {
+        ctx.setState(1);
+        ctx.setNeq(1);
+
+        opt.setRtol(new double[]{1e-4});
+        opt.setAtol(new double[]{1e-6});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(0);
+        opt.setMxhnil(0);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertTrue(LSODAIntegrator.checkOpt(ctx, opt));
+        assertEquals(500, opt.getMxstep());
+    }
+
+    @Test
+    void checkOpt_NegativeMxhnil() {
+        ctx.setState(1);
+        ctx.setNeq(1);
+
+        opt.setRtol(new double[]{1e-4});
+        opt.setAtol(new double[]{1e-6});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(-1);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+    }
+
+    @Test
+    void checkOpt_NegativeMxordn() {
+        ctx.setState(1);
+        ctx.setNeq(1);
+
+        opt.setRtol(new double[]{1e-4});
+        opt.setAtol(new double[]{1e-6});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setMxordn(-1);
+        opt.setMxords(1);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertTrue(LSODAIntegrator.checkOpt(ctx, opt));
+    }
+
+    @Test
+    void checkOpt_MxordnZero() {
+        ctx.setState(1);
+        ctx.setNeq(1);
+
+        opt.setRtol(new double[]{1e-4});
+        opt.setAtol(new double[]{1e-6});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setMxordn(0); 
+        opt.setMxords(1);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertTrue(LSODAIntegrator.checkOpt(ctx, opt));
+        assertEquals(12, opt.getMxordn());
+    }
+
+    @Test
+    void checkOpt_NegativeMxords() {
+        ctx.setState(1);
+        ctx.setNeq(1);
+
+        opt.setRtol(new double[]{1e-4});
+        opt.setAtol(new double[]{1e-6});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setMxordn(5);
+        opt.setMxords(-1);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertTrue(LSODAIntegrator.checkOpt(ctx, opt));
+    }
+
+    @Test
+    void checkOpt_MxordsZero() {
+        ctx.setState(1);
+        ctx.setNeq(1);
+
+        opt.setRtol(new double[]{1e-4});
+        opt.setAtol(new double[]{1e-6});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setMxordn(5);
+        opt.setMxords(0); 
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertTrue(LSODAIntegrator.checkOpt(ctx, opt));
+        assertEquals(5, opt.getMxords());
+    }
+
+    @Test
+    void checkOpt_NegativeHmax() {
+        ctx.setState(1);
+        ctx.setNeq(1);
+
+        opt.setRtol(new double[]{1e-4});
+        opt.setAtol(new double[]{1e-6});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setMxordn(5);
+        opt.setMxords(3);
+        opt.setHmax(-1.0);
+        opt.setHmin(0.01);
+
+        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+    }
+
+    @Test
+    void checkOpt_HmxiCalculation() {
+        ctx.setState(1);
+        ctx.setNeq(1);
+
+        opt.setRtol(new double[]{1e-4});
+        opt.setAtol(new double[]{1e-6});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setMxordn(5);
+        opt.setMxords(3);
+        opt.setHmax(4.0);
+        opt.setHmin(0.01);
+
+        assertTrue(LSODAIntegrator.checkOpt(ctx, opt));
+        assertEquals(0.25, opt.getHmxi(), 1e-9);
+    }
+
+    @Test
+    void checkOpt_NegativeHmin() {
+        ctx.setState(1);
+        ctx.setNeq(1);
+
+        opt.setRtol(new double[]{1e-4});
+        opt.setAtol(new double[]{1e-6});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setMxordn(5);
+        opt.setMxords(3);
+        opt.setHmax(1.0);
+        opt.setHmin(-0.01);
+
+        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+    }
 
 }
 
