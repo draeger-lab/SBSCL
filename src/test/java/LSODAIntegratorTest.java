@@ -1608,6 +1608,52 @@ public class LSODAIntegratorTest {
         assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
     }
 
+    /** The following test cases are for the function correction() within LSODAIntegrator */
+
+    @Test
+    void correction_Basic() {
+        ctx.setNeq(3);
+        
+        common.setMiter(0);
+        common.setIpup(0);
+        common.setH(1.0);
+        common.setNq(1);
+        
+        double[][] yh = new double[3][ctx.getNeq() + 1];
+        yh[1] = new double[] {0, 1.0, 2.0, 3.0};
+        yh[2] = new double[] {0, 0.0, 0.0, 0.0};
+        common.setYh(yh);
+        common.setSavf(new double[ctx.getNeq() + 1]);
+        common.setAcor(new double[ctx.getNeq() + 1]);
+        
+        double[] el = new double[2];
+        el[1] = 1.0;
+        common.setEl(el);
+        double[] ewt = new double[ctx.getNeq() + 1];
+        for (int i = 1; i <= ctx.getNeq(); i++) {
+            ewt[i] = 1.0;
+        }
+        common.setEwt(ewt);
+        
+        double pnorm = 1e-3;
+        double told = 10.0;
+        double[] y = new double[ctx.getNeq() + 1];
+        double[] del = new double[1];
+        double[] delp = new double[1];
+        int[] m = new int[1];
+        common.setNfe(0);
+        
+        int result = LSODAIntegrator.correction(ctx, y, pnorm, del, delp, told, m);
+        
+        assertEquals(0, result);
+        assertEquals(0, m[0]);
+        assertEquals(0.0, del[0], 1e-9);
+    }
+
 }
+
+
+
+
 
 

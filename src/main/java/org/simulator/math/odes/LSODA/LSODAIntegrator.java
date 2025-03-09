@@ -438,7 +438,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * In order to implement this in Java, I changed these parameters to be passed as arrays, with the intended value stored within the first index
      * of the array, which can then be modified.
      */
-    public int correction(LSODAContext ctx, double[] y, double pnorm, double[] del, double[] delp, double told, int[] m) {
+    public static int correction(LSODAContext ctx, double[] y, double pnorm, double[] del, double[] delp, double told, int[] m) {
         LSODACommon common = ctx.getCommon();
         int i;
         double rm, rate, dcon;
@@ -791,6 +791,29 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return dotprod;
     }
 
+    /** 
+     * Approximates and factorizes the Jacobian matrix used for preconditioning in the ODE solver.
+     * <p>
+     * This function computes a finite difference approximation to the Jacobian matrix for the current state of the ODE system.
+     * I perturbs the state vector <code>y</code> and evaluates the system function to estimate the directional derivatives.
+     * The resulting differences, scaled by the step size, tolerance and a computed factor, are used to update the weighted
+     * difference matrix <code>Wm</code>. The matrix is then modifiec by unitizing its diagonal elements and factorized 
+     * via LU decomposition (by calling <code>dgefa()</code>). This makes it ready for use as a preconditioner in the
+     * iterative solution process.
+     * </p>
+     * <p>
+     * The algorithm is executed only if the iteration method <code>miter</code> = 2. In cases where this is not true, an error
+     * is logged and the function returns a failure status.
+     * Additionally, counters for Jacobian evaluations (<code>nje</code>) and function evaluations (<code>nfe</code>) are updated accordingly.
+     * </p>
+     * 
+     * @param ctx   the LSODA context containing solver state, common data, tolerances (abosulte and relative),
+     *              and ODE function evaluation information
+     * @param y     the state vector of the ODE system that is used to compute the finite differences for Jacobian approximation
+     * 
+     * @return      1: if the Jacobian approximation and subsequent matrix factorization succeed;
+     *              2: 0 if an error occurs (e.g., an unexpected iteration method)
+     */
     public static int prja(LSODAContext ctx, double[] y) {
         int i, j; 
         int[] ier = new int[1]; //in the original code, ier was of type int and passed by reference. I changed it to simulate this logic.
