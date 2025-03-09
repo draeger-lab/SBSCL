@@ -556,6 +556,29 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return 1;
     }
     
+    /**
+     * Handles correction failure.
+     * <p>
+     * Updates the solver's internal state when a correction failure occurs during integration.
+     * Following key operations are performed:
+     *  <ul>
+     *      <li>Increment the correction failure counter <code>Ncf</code>.</li>
+     *      <li>Sets maximum residual factor <code>Rmax</code> to 2 and resets the current time <code>Tn</code> to the
+     *          provided <code>told</code> value.</li>
+     *      <li>Adjusts the correction history matrix <code>Yh</code> by computing the difference between successive rows.</li>
+     *      <li>Checks whether the absolute value of the step size <code>H</code> is less than or equal to a slightly scaled
+     *          minimum step size (<code>hmin * 1.0001</code>), or if the number of correction failures has reached the maximum
+     *          allowed <code>MXNCF</code>. If either condition holds, the function returns <code>2</code>, indicating a fatal failure.</li>
+     *      <li>If non of the fatal conditions are met, the preconditioner type <code>Ipup</code> is updated based on the current
+     *          iteration method <code>Miter</code>, and the function returns <code>1</code> to signal the failure is recoverable.</li>
+     *  </ul>
+     * </p>
+     * 
+     * @param ctx   Contains the current solver state, internal counters, matrices and configuation parameters.
+     * @param told  The previous time value to which the solver reverts upon a correction failure.
+     * @return      <code>1</code> if the correction failure is recoverable and the solver can continue;
+     *              <code>2</code> if the failure is fatal.
+    */
     public static int corfailure(LSODAContext ctx, double told) {
         LSODACommon common = ctx.getCommon();
         int j, i1, i;
@@ -581,98 +604,136 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return 1;
     }
 
+    /**
+     * Solves a system of linear equations using an LU-factorized matrix.
+     * <p>
+     * This function solvers either <code>A * x = b</code> or <code>A<sup>T</sup> * x = b</code>, depending on the value of <code>job</code>.
+     * The matrix <code>A</code> is assumed to have previously factorized into its LU components, with pivot indices stored in <code>ipvt</code>.
+     * The solution is computed in place, with <code>b</code> being overwritte by the solution vector.
+     * </p>
+     * <p>
+     * When <code>job == 0</code>, the routine performs a forward substitution followed by a back substiution to solve <code>A * x = b</code>.
+     * In the forward phase, a dot product (using <code>ddot()</code>) is used to add contribution from previous vectors, and the algorithm
+     * checks for singular or nearly singular pivot elements.
+     * In the back substitution phase, additional dot product computations are performed and pivot interchages are applied as per <code>ipvt</code>.
+     * </p>
+     * <p>
+     * When <code>job != 0</code> (will typicall be 1), the function solves the transpoed system <code>A<sup>T</sup> * x = b</code>.
+     * This method uses temporary array copies to simulate the pass-by-reference behavior of the original C implementation.
+     * It applies pivot interchanges and performs scaled vector updates (vie <code>daxpy()</code>).
+     * 
+     * @param a     The LU-factorized matrix of order <code>n</code>, stored as a 2D array with 1-based indexing (index 0 is unused).
+     * @param n     The order of the matrix <code>a</code>.
+     * @param ipvt  The pivot indices resulting from the LU factorization; 
+     *              <code>ipvt</code> indicates the pivot row for column <code>k</code>.
+     * @param b     The right-hand side vector; on output, <code>b</code> is overwritten with the solution vector.
+     * @param job   Indicates the system to be solved: 
+     *              <ul><li><code>job == 0</code> for solving <code>A * x = b</code></li>
+     *                  <li><code>job != 0</code> for solving <code>A<sup>T</sup> * x = b</code></ul>
+     */
     public static void dgesl(double[][] a, int n, int[] ipvt, double[] b, int job) {
 
         int k, j;
         double t;
 
-        // System.out.println("Initial b: " + Arrays.toString(b));
-
 
         if (job == 0) {
-            // System.out.println("Solving L * y = b...");
             for (k = 1; k <= n; k++) {
                 t = ddot(k-1, a[k], b, 1, 1);
                 if (Math.abs(a[k][k]) < 1e-12) {
                     throw new IllegalArgumentException("Matrix is singular or nearly singular at index " + k);
                 }
-                // System.out.println("Forward Substitution - k: " + k + ", t: " + t + ", b[k]: " + b[k]);
                 b[k] = (b[k] - t) / a[k][k];
-                // System.out.println("Updated b[k]: " + b[k] + k);
             }
 
-            // System.out.println("b after forward substitution: " + Arrays.toString(b));
-            // System.out.println("Solving U * x = y...");
-
-
-            for (k = n - 1; k >= 1; k--) { // C passes a reference of a, and then modifies the k-th index, s.t. the original a is also modified...TODO: find solution in Java
+            for (k = n - 1; k >= 1; k--) { 
                 double[] aRowK = Arrays.copyOfRange(a[k], k, a[k].length);
                 double[] bSub = Arrays.copyOfRange(b, k, b.length);
     
                 double ddotResult = ddot(n - k, aRowK, bSub, 1, 1);
-                // System.out.println("Backward Substitution - k: " + k);
-                // System.out.println("  Expected ddot input: " + Arrays.toString(aRowK) + " · " + Arrays.toString(bSub));
-                // System.out.println("  ddot result: " + ddotResult);
-
-                // System.out.println("  b[k]: " + b[k]);
 
                 b[k] += ddotResult;
-                // System.out.println("Updated b[k]: " + b[k]);
                 j = ipvt[k];
                 if (j != k) {
-                    // System.out.println("Swapping b[" + j + "] and b[" + k + "]");
                     t = b[j];
                     b[j] = b[k];
                     b[k] = t;
                 }
             }
-            // System.out.println("Final b after back substitution: " + Arrays.toString(b));
             return;
         }
 
-        // System.out.println("Solving Transpose(A) * x = b...");
-
+        /* The following two loops use a system of array copies to simulate pass-by-reference behavios in the original C code. */
         for (k = 1; k <= n - 1; k++) {
             j = ipvt[k];
             t = b[j];
 
             if (j != k) {
-                // System.out.println("Swapping b[" + j + "] and b[" + k + "]");
                 b[j] = b[k];
                 b[k] = t;
             }
 
-            // System.out.println("Applying daxpy for Transpose(A) * x = b at k: " + k + ", t: " + t);
             double[] tempSubB = Arrays.copyOfRange(b, k + 1, n + 1);
             double[] subB = new double[(n - k) + 1];
             subB[0] = 0.0;
             System.arraycopy(tempSubB, 0, subB, 1, (n - k));
-            // System.out.println("B: " + Arrays.toString(b) + " SubB: " + Arrays.toString(subB));
             double[] tempSubA = Arrays.copyOfRange(a[k], k + 1, n + 1);
             double[] subA = new double[(n - k) + 1]; 
             subA[0] = 0.0;
             System.arraycopy(tempSubA, 0, subA, 1, (n - k));  
-            // System.out.println("A: " + Arrays.deepToString(a) + " SubA: " + Arrays.toString(subA));
             daxpy(n - k, t, subA, 1, 1, subB);
             System.arraycopy(subB, 1, b, k + 1, n - k);
-            // System.out.println("Updated b: " + Arrays.toString(b));
         }
 
         for (k = n; k >= 1; k--) {
-            // System.out.println("Final substitution for Transpose(A) - k: " + k);
             b[k] = b[k] / a[k][k];
             t = -b[k];
             double[] subB = Arrays.copyOfRange(b, k + 1, b.length);
-            daxpy(k-1, t, a[k], 1, 1, b); // arr + int???
+            daxpy(k-1, t, a[k], 1, 1, b);
             System.arraycopy(subB, 0, b, k + 1, subB.length);
-            // System.out.println("Updated b: " + Arrays.toString(b));
         }
-        // System.out.println("Final solution vector b: " + Arrays.toString(b));
     }
 
+    /**
+     * Performs a constant times vector plus vector operation (AXPY) on double precision arrays.
+     * <p>
+     * This function computes the operation:
+     * <pre>
+     *      dy = da * dx + dy
+     * </pre>
+     * where <code>dx</code> and <code>dy</code> are vectors and <code>da</code> is a scalar multiplier.
+     * The computation is performed on <code>n</code> elements of the vectors, with the the ability to account 
+     * for non-unit increments in accessing elements from both <code>dx</code> and <code>dy</code> (set by 
+     * <code>incx</code> and <code>incy</code>).
+     * </p>
+     * <p>
+     * The function first checks if the number of elements (<code>n</code>) is negative or if the scalar <code>da</code>
+     * is zero; in both cases, no operation is performed and the functino terminates.
+     * </p>
+     * <p>
+     * The function is set to handle several cases:
+     *  <ul>
+     *      <li>If <code>incx</code> differs from <code>incy</code> or if <code>incy</code> <= 1, the function computes effective
+     *          indices for the <code>dx</code> and <code>dy</code> arrays (adjusting for negative increments if necessary) and
+     *          perform the AXPY operation in a simple loop.</li>
+     *      <li>If the increment for <code>dx</code> is 1, optimized looping is applied. In this case, the function first processes
+     *          any remaining elements (<code>n % 4</code>) individually, and the updates the remaining elements in blocks of four
+     *          to enhance performance.</li>
+     *      <li>For any other cases, a default iteration over the vector elements is used.</li>
+     *  </ul>
+     * </p>
+     * 
+     * 
+     * @param n     The number of elements in the vectors to be processed;
+     *              if <code>n</code> is less than 0, no operation will be completed.
+     * @param da    The scalar multiplier applied to each element of <code>dx</code>.
+     * @param dx    The vector whose elements are scaled by <code>da</code> and then added to the corresponding elements in <code>dy</code>.
+     * @param incx  The increment for accessing successive elements of <code>dx</code>.
+     * @param incy  The increment for accessing successive elements of <code>dy</code>.
+     * @param dy    The destination vector that is updated in place with the result of the AXPY operation.
+    */
     public static void daxpy(int n, double da, double[] dx, int incx, int incy, double[] dy) {
         int i, ix, iy, m;
-        // System.out.println("Received arrays: " + Arrays.toString(dx) + " " + Arrays.toString(dy));
 
         if (n < 0 || da == 0d) {
             return;
@@ -697,25 +758,16 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         }
 
         if (incx == 1) {
-            // System.out.println("Incx == 1, n = " + n);
             m = n % 4;
-            // System.out.println("m: " + m);
             if (m != 0) {
-                // System.out.println("m =! 0 " + dy.length);
                 for (i = 1; i <= m; i++) {
-                    // System.out.println("iterating from i to m");
-                    // System.out.println("dy[1] = " + dy[1] + " da: " + da + " dx[1]: " + dx[1]);
                     dy[i] += da * dx[i];
-                    // System.out.println("New dy: " + Arrays.toString(dy));
                 }
-                // System.out.println("Iterated through i to m, dy = " + Arrays.toString(dy) + " dx = " + Arrays.toString(dx));
                 if (n < 4) {
-                    // System.out.println("n < 4, returning: dy: " + Arrays.toString(dy) + " dx: " + Arrays.toString(dx));
                     return;
                 }
             }
             for (i = m + 1; i <= n; i += 4) {
-                // System.out.println("Starting iteration from m + 1 to i = n " + m + " " + i);
                 dy[i] += da * dx[i];
                 dy[i + 1] += da * dx[i + 1];
                 dy[i + 2] += da * dx[i + 2];
@@ -873,6 +925,37 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return 1;
     }
 
+    /**
+     * Perform an LU factorization of a square matrix using Gaussian elimination **with** partial pivoting.
+     * <p>
+     * This function factorizes the matrix <code>a</code> in place into a product of a lower triangular matrix L
+     * and an upper triangular matrix U (with the unit diagonal of L bein implicit). The factorization is computed
+     * per Gaussian elimination with partial pivoting, i.e. for each column the pivot is selected based on the 
+     * maximum absolute value in the current column segment (utilizing <code>idamax()</code>)
+     * </p>
+     * <p>
+     * For each column index <code>k</code> from 1 to <code>n - 1</code>, the algorithm perform the following steps:
+     * <ol>
+     *   <li>A helper column vector is constructed from <code>a[k..n][k]</code> to replicate pointer logic of the original
+     *       C code, or better said, to simulate pass-by-reference from the C code. The pivot index is then determined by
+     *       <code>idamax()</code></li>
+     *   <li>The pivot index is stored in the <code>ipvt</code> array. If the pivot element is zero, which indicates that
+     *       the matrix is singular, the rountine sets <code>info[0]</code> to <code>k</code> and terminates.</li>
+     *   <li>If the pivot is not already in position <code>k</code>, the corresponding rows are swapped.</li>
+     *   <li>The pivot row is scaled by computing a factor of <code>(-1) / a[k][k]</code> (using <code>dscal()</code>). The
+     *       submatrix is then updaated by calling on <code>daxpy</code>.</li>
+     * </ol>
+     * </p>
+     * 
+     * @param a     The square matrix to be factorized, stored as a 2D array; it is modified in place to contain
+     *              the L and U factors. Note: the implementation uses 1-based indexing as in the original C code!
+     * @param n     The order of the matrix (number of rows and columns).
+     * @param ipvt  An integer array in which the pivot indices are recorded;
+     *              On output, <code>ipvt[k]</code> holds the index of the pivot element for column <code>k</code>.
+     * @param info  An integer array of length >= 1 used as an output flag;
+     *              <code>info[0]</code> is set to 0 if the factorization is successful. If a zero pivot is encountered
+     *              at column <code>k</code>, <code>info[0]</code> is set to <code>k</code> and the routine terminates.
+     */
     public static void dgefa(double[][] a, int n, int[] ipvt, int[] info) {
         
         int j, k, i;
@@ -1020,6 +1103,24 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return xindex;
     }
 
+    /**
+     * Scales a vector by a constant factor.
+     * <p>
+     * The function multiplies <code>n</code> elements of the input vector <code>dx</code> by the scalar <code>da</code>.
+     * The elements to be scaled are iterated using <code>incx</code>.
+     * </p>
+     * <p>
+     * When <code>incx</code> is not equal to 1, the function iterates over the vector with steps of size <code>incx</code>.
+     * If <code>incx</code> = 1, the remaining elements (<code>m = n % 5</code>) are first scaled individually, and then the
+     * remaining elements are processed in blocks of five.
+     * </p>
+     * 
+     * @param n     The number of elements in the vector <code>dx</code> to be scaled;
+     *              if <code>n</code> <= 0, no operation is performed and the function terminates.
+     * @param da    The scalar value by which each element of <code>dx</code> is multiplied.
+     * @param incx  The increment by which elements in the vector <code>dx</code> are accessed.
+     * @param dx    The vector to be scaled; the selected elements are modified in place.
+     */
     public static void dscal(int n, double da, int incx, double[] dx) {
         int m, i;
 
