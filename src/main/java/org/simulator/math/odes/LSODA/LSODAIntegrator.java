@@ -319,7 +319,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             common.setElco(newElco);
 
             double[][] newTesco = common.getTesco();
-            newTesco[1][1] = 1d;
+            newTesco[1][1] = 0d;
             newTesco[1][2] = 2d;
             newTesco[2][1] = 1d;
             newTesco[12][3] = 0d;
@@ -369,7 +369,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             }
             return;
         }
-        if (meth == 2) {
+
         pc[1] = 1d;
         rq1fac = 1d;
         double[][] newElco = common.getElco();
@@ -397,7 +397,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             newTesco[nq][3] = ((double) (nq + 2)) / common.getElco()[nq][1];
             common.setTesco(newTesco);
             rq1fac /= fnq;
-        }
         }
     }
 
@@ -1045,7 +1044,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return an;
     }
 
-   
     /**
      * Finds the index of the element with the maxiumum absolute value in the vector dx.
      * 

@@ -1,6 +1,7 @@
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
@@ -1650,6 +1651,318 @@ public class LSODAIntegratorTest {
         assertEquals(0.0, del[0], 1e-9);
     }
 
+    /* The following tests are for the function scaleh() within LSODAIntegrator */
+    @Test
+    void scaleh_NoStability() {
+        ctx.setNeq(3);
+        common.setH(1d);
+        common.setRc(2d);
+        common.setMeth(2);
+        common.setPdlast(0d);
+        common.setNq(2);
+        
+        opt.setHmxi(0.1);
+        common.setRmax(0.5);
+        
+        double[][] yh = new double[common.getNq() + 2][ctx.getNeq() + 1];
+        yh[2][1] = 1;  yh[2][2] = 2;  yh[2][3] = 3;
+        yh[3][1] = 4;  yh[3][2] = 5;  yh[3][3] = 6;
+        common.setYh(yh);
+        
+        double rhInput = 0.4;
+        LSODAIntegrator.scaleh(ctx, rhInput);
+        
+        // Expected effective rh:
+        //   rh = fmin(0.4, 0.5) = 0.4; denominator = fmax(1, 1.0*0.1*0.4)=1, so rh remains 0.4.
+        // Then:
+        //   h becomes 1.0 * 0.4 = 0.4
+        //   rc becomes 2.0 * 0.4 = 0.8
+        //   ialth becomes (nq+1) = 3.
+        // And the yh array is updated in the loop:
+        //   For j=2: multiplier = 0.4  → row2: {1*0.4, 2*0.4, 3*0.4} = {0.4, 0.8, 1.2}
+        //   For j=3: multiplier = 0.4^2 = 0.16 → row3: {4*0.16, 5*0.16, 6*0.16} = {0.64, 0.80, 0.96}
+        assertEquals(0.4, common.getH(), 1e-8);
+        assertEquals(0.8, common.getRc(), 1e-8);
+        assertEquals(3, common.getIalth());
+        
+        double[][] resultYh = common.getYh();
+        // Check row 2 scaling
+        assertEquals(0.4, resultYh[2][1], 1e-8);
+        assertEquals(0.8, resultYh[2][2], 1e-8);
+        assertEquals(1.2, resultYh[2][3], 1e-8);
+        // Check row 3 scaling
+        assertEquals(0.64, resultYh[3][1], 1e-8);
+        assertEquals(0.80, resultYh[3][2], 1e-8);
+        assertEquals(0.96, resultYh[3][3], 1e-8);
+        
+        // Since meth != 1, irflag is not changed (assumed default 0)
+        assertEquals(0, common.getIrflag());
+    }
+
+    @Test
+    void scaleh_StabilityNoAdjustment() {
+        ctx.setNeq(2);
+        common.setH(2d);
+        common.setRc(3d);
+        common.setMeth(1);
+        common.setPdlast(0.3);
+        common.setNq(3);
+        common.setRmax(1.5);
+
+        double[] SM1 = common.getSM1();
+        SM1[3] = 0.7;
+        common.setSM1(SM1);
+        
+        double[][] yh = new double[common.getNq() + 2][ctx.getNeq() + 1];
+        yh[2][1] = 10;  yh[2][2] = 20;
+        yh[3][1] = 30;  yh[3][2] = 40;
+        yh[4][1] = 50;  yh[4][2] = 60;
+        common.setYh(yh);
+        
+        double rhInput = 1.0;
+        LSODAIntegrator.scaleh(ctx, rhInput);
+        
+        // Expected: effective rh remains 1.0.
+        // h remains 2.0, rc remains 3.0, ialth becomes 4.
+        // No change in yh rows (all multiplications by 1).
+        assertEquals(2.0, common.getH(), 1e-8);
+        assertEquals(3.0, common.getRc(), 1e-8);
+        assertEquals(4, common.getIalth());
+        
+        double[][] resultYh = common.getYh();
+        assertEquals(10, resultYh[2][1], 1e-8);
+        assertEquals(20, resultYh[2][2], 1e-8);
+        assertEquals(30, resultYh[3][1], 1e-8);
+        assertEquals(40, resultYh[3][2], 1e-8);
+        assertEquals(50, resultYh[4][1], 1e-8);
+        assertEquals(60, resultYh[4][2], 1e-8);
+        
+        // irflag should be 0 because the condition did not trigger adjustment.
+        assertEquals(0, common.getIrflag());
+    }
+
+    @Test
+    void scaleh_StabilityAdjustment() {
+        ctx.setNeq(2);
+        common.setH(2.0);
+        common.setRc(4.0);
+        common.setMeth(1);
+        common.setPdlast(1.0);
+        common.setNq(2);
+        opt.setHmxi(0.2);
+        common.setRmax(1.5);
+        
+        
+        // For nq = 2, set sm1[2] low enough so that the condition triggers.
+        // pdh = fmax(2.0*1.0, 1e-6) = 2.0, and initial (1.0*2.0*1.00001) ≈ 2.00002 >= sm1[2]
+        double[] SM1 = common.getSM1();
+        SM1[2] = 1.5;
+        common.setSM1(SM1);
+        
+        double[][] yh = new double[common.getNq() + 2][ctx.getNeq() + 1];
+        yh[2][1] = 7;  yh[2][2] = 8;
+        yh[3][1] = 9;  yh[3][2] = 10;
+        common.setYh(yh);
+        
+        double rhInput = 1.0;
+        LSODAIntegrator.scaleh(ctx, rhInput);
+        
+        // Expected effective rh becomes: new rh = sm1[2] / pdh = 1.5/2.0 = 0.75, and irflag = 1.
+        // Then, h becomes 2.0*0.75 = 1.5, rc becomes 4.0*0.75 = 3.0, ialth becomes 3.
+        // The yh rows are scaled: row2 by 0.75 and row3 by 0.75^2 = 0.5625.
+        assertEquals(1.5, common.getH(), 1e-8);
+        assertEquals(3.0, common.getRc(), 1e-8);
+        assertEquals(3, common.getIalth());
+        
+        double[][] resultYh = common.getYh();
+        // For row2: 7*0.75 = 5.25, 8*0.75 = 6.0
+        assertEquals(5.25, resultYh[2][1], 1e-8);
+        assertEquals(6.0, resultYh[2][2], 1e-8);
+        // For row3: 9*0.5625 = 5.0625, 10*0.5625 = 5.625
+        assertEquals(5.0625, resultYh[3][1], 1e-8);
+        assertEquals(5.625, resultYh[3][2], 1e-8);
+        
+        // Verify that the stability branch set irflag to 1.
+        assertEquals(1, common.getIrflag());
+    }
+
+    @Test
+    void scaleh_RhLimitedByRmax() {
+        ctx.setNeq(2);
+        common.setH(1.0);
+        common.setRc(5.0);
+        common.setMeth(2);
+        common.setPdlast(0.0);
+        common.setNq(2);
+        opt.setHmxi(0.5);
+        common.setRmax(0.8);
+        
+        double[][] yh = new double[common.getNq() + 2][ctx.getNeq() + 1];
+        yh[2][1] = 2;  yh[2][2] = 3;
+        yh[3][1] = 4;  yh[3][2] = 5;
+        common.setYh(yh);
+        
+        double rhInput = 1.0;
+        LSODAIntegrator.scaleh(ctx, rhInput);
+        
+        // Expected effective rh:
+        //   rh = fmin(1.0, 0.8) = 0.8; denominator = fmax(1, 1.0*0.5*0.8 = 0.4) = 1,
+        // so rh remains 0.8.
+        // Then, h becomes 1.0*0.8 = 0.8, rc becomes 5.0*0.8 = 4.0, and ialth becomes 3.
+        // yh row scaling:
+        //   Row2: multiplied by 0.8 → {2*0.8, 3*0.8} = {1.6, 2.4}
+        //   Row3: multiplied by 0.8^2 = 0.64 → {4*0.64, 5*0.64} = {2.56, 3.2}
+        assertEquals(0.8, common.getH(), 1e-8);
+        assertEquals(4.0, common.getRc(), 1e-8);
+        assertEquals(3, common.getIalth());
+        
+        double[][] resultYh = common.getYh();
+        assertEquals(1.6, resultYh[2][1], 1e-8);
+        assertEquals(2.4, resultYh[2][2], 1e-8);
+        assertEquals(2.56, resultYh[3][1], 1e-8);
+        assertEquals(3.2, resultYh[3][2], 1e-8);
+    }
+
+    @Test
+    void scaleh_NegativeH() {
+        ctx.setNeq(2);
+        common.setH(-1.0);
+        common.setRc(-3.0);
+        common.setMeth(2);
+        common.setPdlast(0.0);
+        common.setNq(2);
+        
+        opt.setHmxi(0.3);
+        common.setRmax(2.0);
+        
+        double[][] yh = new double[common.getNq() + 2][ctx.getNeq() + 1];
+        yh[2][1] = -2;  yh[2][2] = -4;
+        yh[3][1] = -6;  yh[3][2] = -8;
+        common.setYh(yh);
+        
+        double rhInput = 1.0;
+        LSODAIntegrator.scaleh(ctx, rhInput);
+        
+        // Expected effective rh:
+        //   rh = fmin(1.0,2.0) = 1.0; denominator = fmax(1, | -1.0 |*0.3*1.0 = 0.3)=1.
+        // So rh remains 1.0 and no scaling occurs.
+        // h remains -1.0, rc remains -3.0, and ialth becomes 3.
+        double[][] resultYh = common.getYh();
+        assertEquals(-1.0, common.getH(), 1e-8);
+        assertEquals(-3.0, common.getRc(), 1e-8);
+        assertEquals(3, common.getIalth());
+        assertEquals(-2, resultYh[2][1], 1e-8);
+        assertEquals(-4, resultYh[2][2], 1e-8);
+        assertEquals(-6, resultYh[3][1], 1e-8);
+        assertEquals(-8, resultYh[3][2], 1e-8);
+    }
+
+    /* The following tests are for the function .cfode() within LSODAIntegrator */
+    @Test
+    void cfode_Method1() {
+        LSODAIntegrator.cfode(ctx, 1);
+
+        // For order 1 the algorithm sets:
+        //   _C(elco)[1][1] = 1.0, _C(elco)[1][2] = 1.0,
+        //   _C(tesco)[1][1] = 0.0, _C(tesco)[1][2] = 2.0.
+        double elco11 = common.getElco()[1][1];
+        double elco12 = common.getElco()[1][2];
+        double tesco11 = common.getTesco()[1][1];
+        double tesco12 = common.getTesco()[1][2];
+        assertEquals(1.0, elco11, 1e-10, "Order 1 elco[1][1] should be 1.0");
+        assertEquals(1.0, elco12, 1e-10, "Order 1 elco[1][2] should be 1.0");
+        assertEquals(0.0, tesco11, 1e-10, "Order 1 tesco[1][1] should be 0.0");
+        assertEquals(2.0, tesco12, 1e-10, "Order 1 tesco[1][2] should be 2.0");
+
+        // In addition, the algorithm explicitly sets:
+        //   _C(tesco)[2][1] = 1.0 and _C(tesco)[12][3] = 0.0.
+        double tesco21 = common.getTesco()[2][1];
+        double tesco123 = common.getTesco()[12][3];
+        assertEquals(1.0, tesco21, 1e-10, "Order 2 tesco[2][1] should be 1.0");
+        assertEquals(0.0, tesco123, 1e-10, "Order 12 tesco[12][3] should be 0.0");
+    }
+
+    @Test
+    void cfode_CoefficentConsistency() {
+        LSODAIntegrator.cfode(ctx, 1);
+        
+        // For each order from 2 to 12, check that the first coefficient (elco[nq][1]) is not zero.
+        for (int nq = 2; nq <= 12; nq++) {
+            double coeff = common.getElco()[nq][1];
+            assertNotEquals(0.0, coeff, 1e-10, "Coefficient elco[" + nq + "][1] must be nonzero");
+        }
+    }
+
+    @Test
+    void cfode_InitalCoefficients() {
+        LSODAIntegrator.cfode(ctx, 2);
+
+        // Order 1 values (nq == 1)
+        double elco11 = common.getElco()[1][1];
+        double elco12 = common.getElco()[1][2];
+        assertEquals(1.0, elco11, 1e-10, "For meth==2, order 1: elco[1][1] should be 1.0");
+        assertEquals(1.0, elco12, 1e-10, "For meth==2, order 1: elco[1][2] should be 1.0");
+
+        double tesco11 = common.getTesco()[1][1];
+        double tesco12 = common.getTesco()[1][2];
+        double tesco13 = common.getTesco()[1][3];
+        assertEquals(1.0, tesco11, 1e-10, "For meth==2, order 1: tesco[1][1] should be 1.0");
+        assertEquals(2.0, tesco12, 1e-10, "For meth==2, order 1: tesco[1][2] should be 2.0");
+        assertEquals(3.0, tesco13, 1e-10, "For meth==2, order 1: tesco[1][3] should be 3.0");
+
+        // For order 2, we can check one computed value.
+        // For example, from a manual simulation one finds:
+        //   _C(elco)[2][1] should equal 2/3.
+        double elco21 = common.getElco()[2][1];
+        assertEquals(2.0 / 3.0, elco21, 1e-10, "For meth==2, order 2: elco[2][1] should be 2/3");
+
+        // And for order 2, the test constants:
+        //   _C(tesco)[2][1] = previous rq1fac = 1, 
+        //   _C(tesco)[2][2] = (nqp1)/elco[2][1] = 3/(2/3) = 4.5,
+        //   _C(tesco)[2][3] = (nq+2)/elco[2][1] = 4/(2/3) = 6.
+        double tesco21 = common.getTesco()[2][1];
+        double tesco22 = common.getTesco()[2][2];
+        double tesco23 = common.getTesco()[2][3];
+        assertEquals(1.0, tesco21, 1e-10, "For meth==2, order 2: tesco[2][1] should be 1.0");
+        assertEquals(4.5, tesco22, 1e-10, "For meth==2, order 2: tesco[2][2] should be 4.5");
+        assertEquals(6.0, tesco23, 1e-10, "For meth==2, order 2: tesco[2][3] should be 6.0");
+    }
+
+    @Test
+    void cfode_AlternateMeth() {
+        LSODAIntegrator.cfode(ctx, 3);
+
+        // The same initial values as for meth==2 should appear.
+        double elco11 = common.getElco()[1][1];
+        double elco12 = common.getElco()[1][2];
+        double tesco11 = common.getTesco()[1][1];
+        double tesco12 = common.getTesco()[1][2];
+        double tesco13 = common.getTesco()[1][3];
+        assertEquals(1.0, elco11, 1e-10, "Nonstandard meth should yield elco[1][1]==1.0");
+        assertEquals(1.0, elco12, 1e-10, "Nonstandard meth should yield elco[1][2]==1.0");
+        assertEquals(1.0, tesco11, 1e-10, "Nonstandard meth should yield tesco[1][1]==1.0");
+        assertEquals(2.0, tesco12, 1e-10, "Nonstandard meth should yield tesco[1][2]==2.0");
+        assertEquals(3.0, tesco13, 1e-10, "Nonstandard meth should yield tesco[1][3]==3.0");
+    }
+
+    @Test
+    void cfode_RepeatedCalls() {
+        // First call with meth==1.
+        LSODAIntegrator.cfode(ctx, 1);
+        double elco11Meth1 = common.getElco()[1][1];
+        double tesco11Meth1 = common.getTesco()[1][1];
+        
+        // Next, call with meth==2.
+        LSODAIntegrator.cfode(ctx, 2);
+        double elco11Meth2 = common.getElco()[1][1];
+        double tesco11Meth2 = common.getTesco()[1][1];
+        
+        // For order 1, elco[1][1] remains 1.0 in both cases.
+        assertEquals(1.0, elco11Meth1, 1e-10, "Meth==1: elco[1][1] must be 1.0");
+        assertEquals(1.0, elco11Meth2, 1e-10, "Meth==2: elco[1][1] must be 1.0");
+        // However, tesco[1][1] is 0.0 for meth==1 and 1.0 for meth==2.
+        assertNotEquals(tesco11Meth1, tesco11Meth2, "tesco[1][1] should change between methods");
+    }
 }
 
 
