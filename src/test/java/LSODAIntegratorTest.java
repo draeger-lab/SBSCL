@@ -1963,6 +1963,109 @@ public class LSODAIntegratorTest {
         // However, tesco[1][1] is 0.0 for meth==1 and 1.0 for meth==2.
         assertNotEquals(tesco11Meth1, tesco11Meth2, "tesco[1][1] should change between methods");
     }
+
+    /* The following tests are for the function .ewset() within LSODAIntegrator */
+    @Test
+    void ewset_Basic() {
+        ctx.setNeq(3);
+        opt.setRtol(new double[] {0d, 0.1, 0.1, 0.1});
+        opt.setAtol(new double[] {0d, 0.001, 0.001, 0.001});
+        double[] y = {0d, 1d, 2d, 3d};
+        LSODAIntegrator.ewset(y, opt.getRtol(), opt.getAtol(), ctx.getNeq(), common);
+        double[] ewt = common.getEwt();
+
+        assertEquals(1/(0.1*1d + 0.001), ewt[1], 1e-6);
+        assertEquals(1/(0.1*2.0 + 0.001), ewt[2], 1e-6);
+        assertEquals(1/(0.1*3.0 + 0.001), ewt[3], 1e-6);
+    }
+
+    @Test
+    void ewset_ZeroYValues() {
+        ctx.setNeq(3);
+        opt.setRtol(new double[] { 0, 0.1, 0.1, 0.1 });
+        opt.setAtol(new double[] { 0, 0.001, 0.001, 0.001 });
+        double[] y = { 0, 0.0, 0.0, 0.0 };
+
+        LSODAIntegrator.ewset(y, opt.getRtol(), opt.getAtol(), ctx.getNeq(), common);
+        double[] ewt = common.getEwt();
+
+        for (int i = 1; i <= 3; i++) {
+            assertEquals(1000d, ewt[i], 1e-6);
+        }
+    }
+
+    @Test
+    void ewset_NegativeYValues() {
+        ctx.setNeq(3);
+        opt.setRtol(new double[] { 0, 0.1, 0.1, 0.1 });
+        opt.setAtol(new double[] { 0, 0.001, 0.001, 0.001 });
+        double[] y = { 0, -1.0, -2.0, -3.0 };
+        
+        LSODAIntegrator.ewset(y, opt.getRtol(), opt.getAtol(), ctx.getNeq(), common);
+        double[] ewt = common.getEwt();
+        
+        assertEquals(1/(0.1*1.0 + 0.001), ewt[1], 1e-6);
+        assertEquals(1/(0.1*2.0 + 0.001), ewt[2], 1e-6);
+        assertEquals(1/(0.1*3.0 + 0.001), ewt[3], 1e-6);
+    }
+
+    @Test
+    void ewset_ZeroRelativeTolerance() {
+        ctx.setNeq(3);
+        opt.setRtol(new double[] { 0, 0.0, 0.0, 0.0 });
+        opt.setAtol(new double[] { 0, 0.001, 0.001, 0.001 });
+        double[] y = { 0, 10.0, 20.0, 30.0 };
+        
+        LSODAIntegrator.ewset(y, opt.getRtol(), opt.getAtol(), ctx.getNeq(), common);
+        double[] ewt = common.getEwt();
+        
+        for (int i = 1; i <= 3; i++) {
+            assertEquals(1000.0, ewt[i], 1e-6);
+        }
+    }
+
+    @Test
+    void ewset_ZeroAbsoluteTolerance_NonZeroY() {
+        ctx.setNeq(3);
+        opt.setRtol(new double[] { 0, 0.1, 0.1, 0.1 });
+        opt.setAtol(new double[] { 0, 0.0, 0.0, 0.0 });
+        double[] y = { 0, 1.0, 2.0, 3.0 };
+        
+        LSODAIntegrator.ewset(y, opt.getRtol(), opt.getAtol(), ctx.getNeq(), common);
+        double[] ewt = common.getEwt();
+        
+        assertEquals(1/(0.1*1.0), ewt[1], 1e-6);
+        assertEquals(1/(0.1*2.0), ewt[2], 1e-6);
+        assertEquals(1/(0.1*3.0), ewt[3], 1e-6);
+    }
+    
+    @Test
+    void ewset_ZeroAbsoluteTolerance_ZeroY() {
+        ctx.setNeq(3);
+        opt.setRtol(new double[] { 0, 0.1, 0.1, 0.1 });
+        opt.setAtol(new double[] { 0, 0.0, 0.0, 0.0 });
+        double[] y = { 0, 0.0, 0.0, 0.0 };
+        
+        LSODAIntegrator.ewset(y, opt.getRtol(), opt.getAtol(), ctx.getNeq(), common);
+        double[] ewt = common.getEwt();
+        
+        for (int i = 1; i <= 3; i++) {
+            assertTrue(Double.isInfinite(ewt[i]));
+        }
+    }
+    
+    @Test
+    void ewset_NoEquations() {
+        ctx.setNeq(0);
+        opt.setRtol(new double[] { 0 });
+        opt.setAtol(new double[] { 0 });
+        double[] y = { 0 };
+        
+        LSODAIntegrator.ewset(y, opt.getRtol(), opt.getAtol(), ctx.getNeq(), common);
+        double[] ewt = common.getEwt();
+        
+        assertEquals(1, ewt.length);
+    }
 }
 
 

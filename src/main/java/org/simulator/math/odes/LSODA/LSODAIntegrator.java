@@ -265,11 +265,21 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         ctx.setOpt(null);
     }
 
-    private void ewset(double[] ycur, double[] rtol, double[] atol, int neq, LSODACommon common) {
+    public static void ewset(double[] ycur, double[] rtol, double[] atol, int neq, LSODACommon common) {
         double[] ewt = common.getEwt();
-
+        
+        if (ewt.length == 0) {
+            ewt = new double[neq + 1]; 
+            common.setEwt(ewt);
+            /* 1-based indexing. Ewset is initialised using a special memory allocation function within the original C code, 
+            so I added this check in order to replicate this. This is a temporary solution, a cleaner implementation would be to add ewt intialisation 
+            within the constructor or within lsoda_prepare(). */ 
+        }
+        System.out.println("Neq" + neq);
+        System.out.println("Ewt" + common.getEwt().length);
+        
         for (int i = 1; i <= neq; i++) {
-            ewt[i] = rtol[i - 1] * Math.abs(ycur[i]) + atol[i - 1];
+            ewt[i] = rtol[i] * Math.abs(ycur[i]) + atol[i];
         }
 
         for (int i = 1; i <= neq; i++) {
