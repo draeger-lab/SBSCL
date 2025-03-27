@@ -1253,7 +1253,7 @@ public class LSODAIntegratorTest {
         assertEquals(common.getMiter(), common.getIpup());
     }
 
-    /** The following tests are for checkOpt() within LSODAIntegrator */
+    /** The following tests are for checkOpt() within LSODAIntegrator.java */
     @Test
     void checkOpt_BasicCase_State0() {
         ctx.setState(0);
@@ -1609,7 +1609,7 @@ public class LSODAIntegratorTest {
         assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
     }
 
-    /** The following test cases are for the function correction() within LSODAIntegrator */
+    /** The following test cases are for the function correction() within LSODAIntegrator.java */
 
     @Test
     void correction_Basic() {
@@ -1651,7 +1651,7 @@ public class LSODAIntegratorTest {
         assertEquals(0.0, del[0], 1e-9);
     }
 
-    /* The following tests are for the function scaleh() within LSODAIntegrator */
+    /* The following tests are for the function scaleh() within LSODAIntegrator.java */
     @Test
     void scaleh_NoStability() {
         ctx.setNeq(3);
@@ -1857,7 +1857,7 @@ public class LSODAIntegratorTest {
         assertEquals(-8, resultYh[3][2], 1e-8);
     }
 
-    /* The following tests are for the function .cfode() within LSODAIntegrator */
+    /* The following tests are for the function .cfode() within LSODAIntegrator.java */
     @Test
     void cfode_Method1() {
         LSODAIntegrator.cfode(ctx, 1);
@@ -1964,7 +1964,7 @@ public class LSODAIntegratorTest {
         assertNotEquals(tesco11Meth1, tesco11Meth2, "tesco[1][1] should change between methods");
     }
 
-    /* The following tests are for the function .ewset() within LSODAIntegrator */
+    /* The following tests are for the function .ewset() within LSODAIntegrator.java */
     @Test
     void ewset_Basic() {
         ctx.setNeq(3);
@@ -2066,6 +2066,167 @@ public class LSODAIntegratorTest {
         
         assertEquals(1, ewt.length);
     }
+
+
+    /* The following tests are for the function .intdy() within LSODAIntegrator.java */
+    /**
+     * Valid test with k = 0.
+     * The function should compute the 0th-derivative by returning yh[1].
+     */
+    @Test
+    void testIntdy_k0_valid() {
+        ctx.setNeq(2);
+        common.setNq(2);
+        common.setTn(10d);
+        common.setH(0.5);
+        common.setHu(0.5);
+        double[][] yh = new double[4][3];
+        yh[1][1] = 1.0; yh[1][2] = 2.0;
+        yh[2][1] = 3.0; yh[2][2] = 4.0;
+        yh[3][1] = 5.0; yh[3][2] = 6.0;
+        common.setYh(yh);
+
+        double t = 10d;
+        int k = 0;
+        double[] dky = new double[ctx.getNeq() + 1];
+
+        int res = LSODAIntegrator.intdy(ctx, t, k , dky);
+        assertEquals(0, res);
+        assertEquals(1d, dky[1], 1e-6);
+        assertEquals(2d, dky[2], 1e-6);
+    }
+
+    /**
+     * Valid test with k = 1.
+     * Using the same context as k0_valid, but with t set to (tcur - h),
+     * the computed first derivative is manually checked.
+     */
+    @Test
+    void testIntdy_k1_valid() {
+        ctx.setNeq(2);
+        common.setNq(2);
+        common.setTn(10d);
+        common.setH(0.5);
+        common.setHu(0.5);
+        double[][] yh = new double[4][3];
+        yh[1][1] = 1.0; yh[1][2] = 2.0;
+        yh[2][1] = 3.0; yh[2][2] = 4.0;
+        yh[3][1] = 5.0; yh[3][2] = 6.0;
+        common.setYh(yh);
+
+        double t = 9.5;
+        int k = 1;
+        double[] dky = new double[ctx.getNeq() + 1];
+
+        int res = LSODAIntegrator.intdy(ctx, t, k, dky);
+        assertEquals(0, res);
+        assertEquals(-14.0, dky[1], 1e-6);
+        assertEquals(-16.0, dky[2], 1e-6);
+    }
+
+    /**
+     * Valid test with k equal to _C(nq).
+     */
+    @Test
+    void testIntdy_kEqualsNq() {
+        ctx.setNeq(2);
+        common.setNq(2);
+        common.setTn(10.0);
+        common.setH(0.5);
+        common.setHu(0.5);
+        double[][] yh = new double[4][3];
+        yh[1][1] = 1.0; yh[1][2] = 2.0;
+        yh[2][1] = 3.0; yh[2][2] = 4.0;
+        yh[3][1] = 5.0; yh[3][2] = 6.0;
+        common.setYh(yh);
+
+        double t = 10.0;
+        int k = 2;
+        double[] dky = new double[ctx.getNeq() + 1];
+
+        int res = LSODAIntegrator.intdy(ctx, t, k, dky);
+        assertEquals(0, res);
+        assertEquals(40.0, dky[1], 1e-6);
+        assertEquals(48.0, dky[2], 1e-6);
+    }
+
+        /**
+     * Error test when k is negative.
+     * The function should return -1 if k < 0.
+     */
+    @Test
+    void testIntdy_negativeK() {
+        ctx.setNeq(1);
+        common.setNq(1);
+        common.setTn(5.0);
+        common.setH(0.5);
+        common.setHu(0.5);
+        double[][] yh = new double[3][2];
+        yh[1][1] = 10.0;
+        yh[2][1] = 20.0;
+        common.setYh(yh);
+
+        double t = 5.0;
+        int k = -1;  // Illegal value
+        double[] dky = new double[ctx.getNeq() + 1];
+
+        int res = LSODAIntegrator.intdy(ctx, t, k, dky);
+        assertEquals(-1, res);
+    }
+
+        /**
+     * Error test when k is greater than _C(nq).
+     * For example, if _C(nq)=1 then k=2 should be illegal.
+     */
+    @Test
+    void testIntdy_kGreaterThanNq() {
+        ctx.setNeq(1);
+        common.setNq(1);
+        common.setTn(5.0);
+        common.setH(0.5);
+        common.setHu(0.5);
+        double[][] yh = new double[3][2];
+        yh[1][1] = 10.0;
+        yh[2][1] = 20.0;
+        common.setYh(yh);
+
+        double t = 5.0;
+        int k = 2;
+        double[] dky = new double[ctx.getNeq() + 1];
+
+        int res = LSODAIntegrator.intdy(ctx, t, k, dky);
+        assertEquals(-1, res);
+    }
+
+
+    /**
+     * Error test when t is out of bounds.
+     * Here we choose a t value that is greater than _C(tn)
+     * (i.e. outside the interval [tcur - _C(hu) - 100*ETA*(tcur+_C(hu)), tcur]).
+     */
+    @Test
+    void testIntdy_tOutOfBounds() {
+        ctx.setNeq(2);
+        common.setNq(2);
+        common.setTn(10.0);
+        common.setH(0.5);
+        common.setHu(0.5);
+        double[][] yh = new double[4][3];
+        yh[1][1] = 1.0; yh[1][2] = 2.0;
+        yh[2][1] = 3.0; yh[2][2] = 4.0;
+        yh[3][1] = 5.0; yh[3][2] = 6.0;
+        common.setYh(yh);
+
+        double t = 10.1;
+        int k = 0;
+        double[] dky = new double[ctx.getNeq() + 1];
+
+        int res = LSODAIntegrator.intdy(ctx, t, k, dky);
+        assertEquals(-2, res);
+    }
+
+
+
 }
 
 

@@ -89,7 +89,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         System.err.printf(message, args);
     }
     
-    private int intdy(LSODAContext ctx, double t, int k, double[] dky) {
+    public static int intdy(LSODAContext ctx, double t, int k, double[] dky) {
         int i, ic, j, jj, jp1;
         double c, r, s, tp;
         
@@ -104,7 +104,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         tp = common.getTn() - common.getHu() - 100d * common.ETA * (common.getTn() + common.getHu());
 
         if ((t - tp) * (t - common.getTn()) > 0d) {
-            logError(String.format("intdy -- t = &g illegal. t not in interval tcur - %d to tcur", t, common.getHu()), ctx.getData());
+            logError(String.format("intdy -- t = %f illegal. t not in interval (tcur - _C(hu)) to tcur", t, t, ctx.getData()));
             return -2;
         }
 
