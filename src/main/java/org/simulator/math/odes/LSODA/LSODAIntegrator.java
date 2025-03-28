@@ -89,6 +89,26 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         System.err.printf(message, args);
     }
     
+    /**
+     * Computes the k-th derivative of the solution at a given time t ({@code t}).
+     * <p>
+     * This method evaluates the interpolating polznomial (or its derivatives) for the dependent variables at the given time {@code t},
+     * using the historz data stored in the {@code LSODACommon} object.
+     * The result is returned in the arrray {@code dky}, which represents the k-th derivative of y(t).
+     * The function performs bounds checking on both {@code k} and {@ code t} to ensure interpolation is valid.
+     * 
+     * The interpolation is based on Newton-form divided differences and applies a nested multiplication scheme to evaluate the polynomial.
+     * The result is scaled appropriately if {@code k} > 0.
+     * </p>
+     * 
+     * @param ctx   the {@code LSODAContext} object containing the integration state, history arrays and control parameters
+     * @param t     the time at which interpolation is to be performed (must lie within the last time interval)
+     * @param k     the order of the derivative to be computed (must be in range 0 ≤ k ≤ nq)
+     * @param dky   the output array into which the k-th derivative of y(t) will be written (must have at least length neq + 1)
+     * @return      0 if successful
+     *              <li>-1 if {@code k} is out of range</li>
+     *              <li>-2 if {@code t} is outside the valid interpolation interval</li>
+     */
     public static int intdy(LSODAContext ctx, double t, int k, double[] dky) {
         int i, ic, j, jj, jp1;
         double c, r, s, tp;
@@ -290,6 +310,23 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         ctx.setOpt(null);
     }
 
+    /**
+     * Computes and sets the error weight vector used for controlling local error.
+     * <p>
+     * This method computes a vector ({@code ewt}) based on the current estimate {@code ycur}, relative tolerance ({@code rtol})
+     * and absolute tolerance ({@code atol}) with the formula:
+     * <pre>
+     *      ewt[i] = 1 / (rtol[i] * |ycur[i]| + atol[i]) for i = 1, ..., neq
+     * </pre>
+     * The computed vector is stored in the {@code LSODACommon} object.
+     * </p>
+     * 
+     * @param ycur      the current solution vector
+     * @param rtol      the relative tolerance vector
+     * @param atol      the absolute tolerance vector
+     * @param neq       the number of equations in the system
+     * @param common    the {@code LSODACommon} object holding the error weight vector and other shared data
+     */
     public static void ewset(double[] ycur, double[] rtol, double[] atol, int neq, LSODACommon common) {
         double[] ewt = common.getEwt();
         
@@ -340,6 +377,25 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return vm;
     }
 
+    /**
+     * Initializes method-specific coefficients used in the LSODA algorithm.
+     * <p>
+     * This method pre-computes and fills the coefficient tables ({@code elco} and {@code tesco}) based on
+     * the chosen integratio method. These coefficient tables are required for evaluating predictor and
+     * corrector formulas in the Adams or BDF methods.
+     * 
+     * For Adams method ({@code meth} == 1), the fucntion calculates:
+     * <ul>
+     *      <li>{@code elco[nq][*]}: Coefficients for the polznomial historz in the predictor step</li>
+     *      <li>{@code tesco[nq][*]}: Time-step and error estimation related constants</li>
+     * </ul>
+     * 
+     * For BDF method ({@code meth} != 1), it computes a simpler version of the same tables for use in the BDF formula.
+     * </p>
+     * 
+     * @param ctx   the {@code LSODAContext} object containing integration parameters, method state and history arrays
+     * @param meth  the integration method identifiert (1 for Adams, 2 for BDF)
+     */
     public static void cfode(LSODAContext ctx, int meth) {
         LSODACommon common = ctx.getCommon();
         int i, nq, nqm1, nqp1;
@@ -435,6 +491,19 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         }
     }
 
+    /**
+     * Scales the integration step size and the higher-order method history arrays.
+     * <p>
+     * Used to rescale the step size {@code rh} and associated history terms after a change
+     * in the integration step size is requested. It ensures numerical stability by scaling
+     * the multi-step method history array {@code zh}.
+     * If the method used is Adams ({@code meth} == 1). The function also performs additional
+     * checks and restricts the scaling factor ({@code rh}) to maintain accuracy.
+     * </p>
+     * 
+     * @param ctx   the {@code LSODAContext} containing integration parameters, method state and history arrays
+     * @param rh    proposed scaling factor for the integration step size
+     */
     public static void scaleh(LSODAContext ctx, double rh) {
         double r;
         int j, i;
@@ -578,6 +647,25 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return 0;
     }
     
+    /**
+     * Solves a linear system arising during the numerical integration process.
+     * This method is specifically made for the case where the method indicator ('miter') is equal to 2,
+     * which means that the system is solved linearly using LU decomposition with partial pivoting.
+     * <p>
+     * The system solved is of the form>
+     * <pre>
+     *      P * L * U * x = y
+     * </pre>
+     * where the LU decomposition and pivoting are already performed and stored in the context.
+     * The result of the solution replaces the contents of the input vector {@code y}.
+     * </p>
+     * 
+     * @param ctx   the {@code LSODAContext} holding the system's dimension, method flags, working memory
+     *              LU factorization and pivot indices (i.e. {@code wm} and {@code ipvt}).
+     * @param y     the right hand side vector of the linear system; upon return, {@code y} is overwritten with the solution.
+     * @return      1, if the system was successfully solved.\n
+     * @throws      IllegalStateException if the method flag {@code miter} is not equal to 2.
+     */
     public static int solsy(LSODAContext ctx, double[] y) {
         int neq = ctx.getNeq();
         LSODACommon common = ctx.getCommon();
@@ -1311,7 +1399,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 switch (itask) {
                     case 1:
                         if ((common.getTn() - tout) * common.getH() >= 0d) {
-                            intdyReturn(y, t, tout, itask);
+                            intdyReturn(ctx, y, t, tout, itask);
                         }
                         break;
 
@@ -1335,7 +1423,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                             hardFailure(ctx, "[lsoda] itask = 4 or 5 and tcrit behind tout");
                         }
                         if((common.getTn() - tout) * common.getH() >= 0d) {
-                            intdyReturn(y, t, tout, itask);
+                            intdyReturn(ctx, y, t, tout, itask);
                         }
                         break;
                     
@@ -1428,7 +1516,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                             if ((common.getTn() - tout) * common.getH() < 0d) {
                                 continue;
                             }
-                            intdyReturn(y, t, tout, itask);
+                            intdyReturn(ctx, y, t, tout, itask);
                         
                         case 2:
                             successReturn(ctx, y, t, itask, ihit);
@@ -1442,7 +1530,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                         case 4:
                             tcrit = opt.getTcrit();
                             if ((common.getTn() - tout) * common.getH() >= 0d) {
-                                intdyReturn(y, t, tout, itask);
+                                intdyReturn(ctx, y, t, tout, itask);
                             } else {
                                 hmx = Math.abs(common.getTn()) + Math.abs(common.getH());
                                 ihit = Math.abs(common.getTn() - tcrit) <= (100d * common.ETA * hmx);
