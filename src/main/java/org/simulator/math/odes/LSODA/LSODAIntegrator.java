@@ -145,17 +145,42 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return 0;
     }
 
-    private int intdyReturn(double[] y, double[] t, double tout, int itask) {
+    public static int intdyReturn(LSODAContext ctx, double[] y, double[] t, double tout, int itask) {
+        System.out.println("[intdyReturn] Starting execution");
+        System.out.println("[intdyReturn] Inputs: y = " + Arrays.toString(y) + ", t = " + Arrays.toString(t) +
+                           ", tout = " + tout + ", itask = " + itask);
+
+        LSODACommon common = ctx.getCommon();
+
+        System.out.println("[intdyReturn] LSODACommon obtained, yh array: " + Arrays.deepToString(common.getYh()));
+
+        System.out.println("[intdyReturn] Calling intdy function...");
+        System.out.println("Y before intdy: " + Arrays.toString(y));
         int iflag = intdy(ctx, tout, 0, y);
+        System.out.println("y after intdy: " + Arrays.toString(y));
+        System.out.println("[intdyReturn] intdy returned iflag: " + iflag);
+
+
         if (iflag != 0) {
+            System.out.println("[intdyReturn] Error detected (iflag != 0), logging error...");
             logError("[lsoda] trouble from indty, itas = %d, tout = %g\n", itask, tout);
-            for (int i = 1; i <= neq; i++) {
-                y[i] = yh[i];
+            System.out.println("[intdyReturn] Copying backup values from common.getYh()[1] to y:");
+            for (int i = 1; i <= ctx.getNeq(); i++) {
+                y[i] = common.getYh()[1][i];
+                System.out.println("  [intdyReturn] y[" + i + "] updated to backup value: " + y[i]);
             }
+        } else {
+            System.out.println("[intdyReturn] No error detected; skipping backup value copying.");
         }
         t[0] = tout;
-        this.state = 2;
-        return this.state;
+        System.out.println("[intdyReturn] t[0] set to tout: " + t[0]);
+
+        ctx.setState(2);
+        System.out.println("[intdyReturn] Context state set to: " + ctx.getState());
+
+        System.out.println("[intdyReturn] Execution complete, returning state: " + ctx.getState());
+        return ctx.getState();
+
     }
 
     public static boolean checkOpt(LSODAContext ctx, LSODAOptions opt) {

@@ -2225,6 +2225,61 @@ public class LSODAIntegratorTest {
         assertEquals(-2, res);
     }
 
+    /* The following tests are for .intdyReturn() within LSODAIntegrator.java */
+    /**
+     *  iflag == 0
+    */
+    @Test
+    void intdyReturn_Basic() {
+        ctx.setNeq(2);
+        common.setNq(2);
+        common.setTn(10d);
+        common.setH(0.5);
+        common.setHu(0.5);
+
+        double[][] yh = new double[4][3];
+        yh[1][1] = 5.0;  yh[1][2] = 6.0;
+        common.setYh(yh);
+        
+        double tout = 10.0;
+        double[] t = new double[1]; 
+    
+        double[] y = new double[ctx.getNeq() + 1];
+        y[1] = 1d;
+        y[2] = 2d;
+        
+        int state = LSODAIntegrator.intdyReturn(ctx, y, t, tout, opt.getItask());
+        
+        assertEquals(2, state);
+        assertEquals(tout, t[0], 1e-10);
+    }
+
+    @Test
+    void intdyReturn_errorCase() {
+        ctx.setNeq(2);
+        ctx.setNeq(2);
+        common.setTn(10d);
+        common.setH(0.5);
+        common.setHu(0.5);
+        double[][] yh = new double[4][3];
+        yh[1][1] = 5d; yh[1][2] = 6;
+        common.setYh(yh);
+
+        double tout = 10d;
+        double[] t = new double[1];
+
+        double[] y = new double[ctx.getNeq() + 1];
+        y[1] = 1d; y[2] = 2d;
+
+        int state = LSODAIntegrator.intdyReturn(ctx, y, t, tout, opt.getItask());
+
+        assertEquals(2, state);
+        assertEquals(tout, t[0], 1e-10);
+
+        assertEquals(5d, y[1], 1e-10);
+        assertEquals(6d, y[2], 1e-10);
+    }
+
 
 
 }
