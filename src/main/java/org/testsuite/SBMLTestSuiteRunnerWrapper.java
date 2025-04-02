@@ -6,7 +6,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.Map;
 import java.util.Properties;
 
@@ -168,19 +170,17 @@ public class SBMLTestSuiteRunnerWrapper {
           left = solution.filter(inputData.getTimePoints());
         }
 
-        // Map of variables present in the test suite results file
-        Map<String, Integer> resultColumns = new HashMap<>();
+        // Set of variables present in the test suite results file
+        Set<String> resultColumns = new HashSet<>();
         for (int i = 0; i < inputData.getColumnCount(); i++) {
-          resultColumns.put(inputData.getColumnName(i), 1);
+          resultColumns.add(inputData.getColumnName(i));
         }
 
         // Boolean array to check which variables are present in the test suite results file
         boolean[] variablesToAdd = new boolean[solution.getColumnCount()];
-        if (resultColumns.containsKey(left.getColumnName(0))) {
-          variablesToAdd[0] = true;
-        }
-        for (int i = 1; i < left.getColumnCount(); i++) {
-          if (resultColumns.containsKey(left.getColumnName(i))) {
+        
+        for (int i = 0; i < left.getColumnCount(); i++) {
+          if (resultColumns.contains(left.getColumnName(i))) {
             variablesToAdd[i] = true;
           }
         }
