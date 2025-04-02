@@ -96,26 +96,36 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
       kVals = new double[4][dim];
       kHelp = new double[dim];
     }
-    // k0
+
+    double halfStep = h * 0.5;
+    double tMid = t + halfStep;
+    double tEnd = t + h;
+
+    // k0 = h * f(t, yTemp)
     DES.computeDerivatives(t, yTemp, kVals[0]);
     Mathematics.svMult(h, kVals[0], kVals[0]);
-    // k1
+
+    // k1 = h * f(t + h/2, y + k0/2)
     Mathematics.svvAddScaled(0.5, kVals[0], yTemp, kHelp);
-    DES.computeDerivatives(t + h / 2, kHelp, kVals[1]);
+    DES.computeDerivatives(tMid, kHelp, kVals[1]);
     Mathematics.svMult(h, kVals[1], kVals[1]);
-    // k2
+
+    // k2 = h * f(t + h/2, y + k1/2)
     Mathematics.svvAddScaled(0.5, kVals[1], yTemp, kHelp);
-    DES.computeDerivatives(t + h / 2, kHelp, kVals[2]);
+    DES.computeDerivatives(tMid, kHelp, kVals[2]);
     Mathematics.svMult(h, kVals[2], kVals[2]);
-    // k3
+
+    // k3 = h * f(t + h, y + k2)
     Mathematics.vvAdd(yTemp, kVals[2], kHelp);
-    DES.computeDerivatives(t + h, kHelp, kVals[3]);
+    DES.computeDerivatives(tEnd, kHelp, kVals[3]);
     Mathematics.svMult(h, kVals[3], kVals[3]);
+
     // combining all k's
-    Mathematics.svvAddScaled(2, kVals[2], kVals[3], kVals[3]);
-    Mathematics.svvAddScaled(2, kVals[1], kVals[3], kVals[2]);
-    Mathematics.svvAddAndScale(1d / 6d, kVals[0], kVals[2], change);
+    for (int i = 0; i < dim; i++) {
+      change[i] = (kVals[0][i] + (2 * (kVals[1][i] + kVals[2][i])) + kVals[3][i]) / 6d;
+    }
     return change;
+    
   }
 
   /* (non-Javadoc)
