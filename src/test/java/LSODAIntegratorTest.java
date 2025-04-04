@@ -107,7 +107,7 @@ public class LSODAIntegratorTest {
     }
 
     @Test
-    void ddot_NaN() {
+    void ddotNaN() {
         int n = 2;
         double[] dx = {0d, Double.NaN, 2d};
         double[] dy = {0d, 5d, Double.NaN};
@@ -789,7 +789,7 @@ public class LSODAIntegratorTest {
     }
 
     @Test
-    void ddot_LargeNumbers() {
+    void ddotLargeNumbers() {
         int n = 2;
         double[] dx = {0d, 1e100, -1e100};
         double[] dy = {0d, 1e-100, 1e-100};
@@ -817,7 +817,7 @@ public class LSODAIntegratorTest {
     }
 
    @Test
-    void daxpy_InPlaceModification() {
+    void daxpyInPlaceModification() {
         int n = 3;
         double da = 2d;
         double[] dx = {0d, 1d, 2d, 3d};
