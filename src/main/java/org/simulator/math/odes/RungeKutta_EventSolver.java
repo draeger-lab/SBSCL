@@ -27,6 +27,7 @@ package org.simulator.math.odes;
 import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.Mathematics;
 import java.util.logging.Logger;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 /**
@@ -51,7 +52,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   /**
    * Enum representing supported RungeKutta methods
    */
-  public enum validMethod{
+  public static enum validMethod{
     RK2,
     RK4
   }
@@ -77,6 +78,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   public RungeKutta_EventSolver() {
     super();
     this.method = validMethod.RK4;
+    logger.log(Level.INFO, "No method passed. Defaulting to 'RK4'.");
   }
 
   /**
@@ -84,7 +86,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
    */
   public RungeKutta_EventSolver(String method) {
     super();
-    this.method = getValidMethod(method);
+    this.method = parseValidMethodOrDefault(method);
   }
 
   /**
@@ -93,6 +95,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   public RungeKutta_EventSolver(double stepSize) {
     super(stepSize);
     this.method = validMethod.RK4;
+    logger.log(Level.INFO, "No method passed. Defaulting to 'RK4'.");
   }
 
   /**
@@ -101,7 +104,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
    */
   public RungeKutta_EventSolver(double stepSize, String method) {
     super(stepSize);
-    this.method = getValidMethod(method);
+    this.method = parseValidMethodOrDefault(method);
   }
 
   /**
@@ -112,6 +115,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   public RungeKutta_EventSolver(double stepSize, boolean nonnegative) {
     super(stepSize, nonnegative);
     this.method = validMethod.RK4;
+    logger.log(Level.INFO, "No method passed. Defaulting to 'RK4'.");
   }
 
   /**
@@ -122,7 +126,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
    */
   public RungeKutta_EventSolver(double stepSize, boolean nonnegative, String method) {
     super(stepSize, nonnegative);
-    this.method = getValidMethod(method);
+    this.method = parseValidMethodOrDefault(method);
   }
 
   /**
@@ -138,11 +142,11 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   /**
    * Parses the string into a validMethod enum, defaults to RK4 if invalid.
    */
-  private validMethod getValidMethod(String method) {
+  private validMethod parseValidMethodOrDefault(String method) {
     try {
       return validMethod.valueOf(method.toUpperCase());
     } catch (IllegalArgumentException | NullPointerException e) {
-      logger.log(Level.INFO, "Unsupported method: {0}. Defaulting to 'RK4'.", method);
+      logger.log(Level.WARNING, "Unsupported method: {0}. Defaulting to 'RK4'.", method);
       return validMethod.RK4;
     }
   }
@@ -163,7 +167,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
             return computeRK4(DES, yTemp, t, h, change);
 
           default:
-            throw new IllegalArgumentException("Unexpected method: " + method);
+            throw new IllegalArgumentException("Unexpected method: " + method + ". Supported methods are: " + Arrays.toString(validMethod.values()));
         }
     }
   
