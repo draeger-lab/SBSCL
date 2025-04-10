@@ -107,14 +107,14 @@ public class LSODAIntegratorTest {
     }
 
     @Test
-    void Ddot_NaN() {
+    void ddotNaN() {
         int n = 2;
         double[] dx = {0d, Double.NaN, 2d};
         double[] dy = {0d, 5d, Double.NaN};
-        int incx = 1; int incy = 1;
-
-        double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
-        assertEquals(Double.NaN, result, 1e-6);
+        int incX = 1, incY = 1;
+    
+        double result = LSODAIntegrator.ddot(n, dx, dy, incX, incY);
+        assertTrue(Double.isNaN(result));
     }
 
     
@@ -789,6 +789,20 @@ public class LSODAIntegratorTest {
     }
 
     @Test
+    void ddotLargeNumbers() {
+        int n = 2;
+        double[] dx = {0d, 1e100, -1e100};
+        double[] dy = {0d, 1e-100, 1e-100};
+        int incX = 1, incY = 1;  
+    
+        double sumOfProducts = (dx[1] * dy[1]) + (dx[2] * dy[2]); 
+        double result = LSODAIntegrator.ddot(n, dx, dy, incX, incY);
+    
+        assertEquals(sumOfProducts, result, 1e-6);
+    }
+
+
+    @Test
     void daxpy_LargeValues() {
         int n = 3;
         double da = 1e9d;
@@ -802,19 +816,21 @@ public class LSODAIntegratorTest {
         assertArrayEquals(expectedDy, dy, 1e-6);
     }
 
-    @Test
-    void daxpy_InPlaceModification() {
+   @Test
+    void daxpyInPlaceModification() {
         int n = 3;
         double da = 2d;
         double[] dx = {0d, 1d, 2d, 3d};
-        double[] dy = dx;
-        int incx = 1, incy = 1;
-
-        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
-
+        double[] dy = dx.clone();
+        int incX = 1, incY = 1;
+    
+        LSODAIntegrator.daxpy(n, da, dx, incX, incY, dy);
+    
         double[] expectedDy = {0d, 3d, 6d, 9d};
         assertArrayEquals(expectedDy, dy, 1e-6);
     }
+
+
 
     /**
      * The following tests are for the functions dgefa() within LSODAIntegrator
