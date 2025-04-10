@@ -24,8 +24,11 @@
  */
 package org.simulator.math.odes;
 
+import com.sun.org.apache.xml.internal.security.utils.UnsyncBufferedOutputStream;
 import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.Mathematics;
+import org.simulator.math.odes.exception.UnsupportedMethodException;
+
 import java.util.logging.Logger;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -84,7 +87,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   /**
    * @param method
    */
-  public RungeKutta_EventSolver(String method) {
+  public RungeKutta_EventSolver(String method) throws UnsupportedMethodException {
     super();
     this.method = parseValidMethodOrDefault(method);
   }
@@ -102,7 +105,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
    * @param stepSize
    * @param method
    */
-  public RungeKutta_EventSolver(double stepSize, String method) {
+  public RungeKutta_EventSolver(double stepSize, String method) throws UnsupportedMethodException {
     super(stepSize);
     this.method = parseValidMethodOrDefault(method);
   }
@@ -124,7 +127,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
    * @param method
    * @see AbstractDESSolver
    */
-  public RungeKutta_EventSolver(double stepSize, boolean nonnegative, String method) {
+  public RungeKutta_EventSolver(double stepSize, boolean nonnegative, String method) throws UnsupportedMethodException {
     super(stepSize, nonnegative);
     this.method = parseValidMethodOrDefault(method);
   }
@@ -142,12 +145,12 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   /**
    * Parses the string into a validMethod enum, defaults to RK4 if invalid.
    */
-  private validMethod parseValidMethodOrDefault(String method) {
+
+  private validMethod parseValidMethodOrDefault(String method) throws UnsupportedMethodException {
     try {
       return validMethod.valueOf(method.toUpperCase());
     } catch (IllegalArgumentException | NullPointerException e) {
-      logger.log(Level.WARNING, "Unsupported method: {0}. Defaulting to 'RK4'.", method);
-      return validMethod.RK4;
+      throw new UnsupportedMethodException(method);
     }
   }
 
@@ -157,17 +160,15 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   @Override
   public double[] computeChange(DESystem DES, double[] yTemp, double t, double h, double[] change,
       boolean steadyState)
-      throws DerivativeException {
-
+      throws DerivativeException, UnsupportedMethodException {
         switch(method) {
           case RK2:
             return computeRK2(DES, yTemp, t, h, change);
           
           case RK4:
             return computeRK4(DES, yTemp, t, h, change);
-
           default:
-            throw new IllegalArgumentException("Unexpected method: " + method + ". Supported methods are: " + Arrays.toString(validMethod.values()));
+            throw new UnsupportedMethodException(method.toString());
         }
     }
   
