@@ -30,6 +30,7 @@ import org.simulator.math.Mathematics;
 import org.simulator.math.odes.exception.UnsupportedMethodException;
 
 import java.util.logging.Logger;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 /**
@@ -54,7 +55,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   /**
    * Enum representing supported RungeKutta methods
    */
-  public enum validMethod{
+  public static enum validMethod{
     RK2,
     RK4
   }
@@ -80,14 +81,15 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   public RungeKutta_EventSolver() {
     super();
     this.method = validMethod.RK4;
+    logger.log(Level.INFO, "No method passed. Defaulting to 'RK4'.");
   }
 
   /**
    * @param method
    */
-  public RungeKutta_EventSolver(String method) {
+  public RungeKutta_EventSolver(String method) throws UnsupportedMethodException {
     super();
-    this.method = getValidMethod(method);
+    this.method = parseValidMethodOrDefault(method);
   }
 
   /**
@@ -96,15 +98,16 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   public RungeKutta_EventSolver(double stepSize) {
     super(stepSize);
     this.method = validMethod.RK4;
+    logger.log(Level.INFO, "No method passed. Defaulting to 'RK4'.");
   }
 
   /**
    * @param stepSize
    * @param method
    */
-  public RungeKutta_EventSolver(double stepSize, String method) {
+  public RungeKutta_EventSolver(double stepSize, String method) throws UnsupportedMethodException {
     super(stepSize);
-    this.method = getValidMethod(method);
+    this.method = parseValidMethodOrDefault(method);
   }
 
   /**
@@ -115,6 +118,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   public RungeKutta_EventSolver(double stepSize, boolean nonnegative) {
     super(stepSize, nonnegative);
     this.method = validMethod.RK4;
+    logger.log(Level.INFO, "No method passed. Defaulting to 'RK4'.");
   }
 
   /**
@@ -125,7 +129,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
    */
   public RungeKutta_EventSolver(double stepSize, boolean nonnegative, String method) throws UnsupportedMethodException {
     super(stepSize, nonnegative);
-    this.method = getValidMethod(method);
+    this.method = parseValidMethodOrDefault(method);
   }
 
   /**
@@ -141,11 +145,12 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   /**
    * Parses the string into a validMethod enum, defaults to RK4 if invalid.
    */
-  private validMethod getValidMethod(String method) throws UnsupportedMethodException {
+
+  private validMethod parseValidMethodOrDefault(String method) throws UnsupportedMethodException {
     try {
       return validMethod.valueOf(method.toUpperCase());
     } catch (IllegalArgumentException | NullPointerException e) {
-        throw new UnsupportedMethodException(method);
+      throw new UnsupportedMethodException(method);
     }
   }
 
