@@ -24,13 +24,10 @@
  */
 package org.simulator.math.odes;
 
-import com.sun.org.apache.xml.internal.security.utils.UnsyncBufferedOutputStream;
 import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.Mathematics;
 import org.simulator.math.odes.exception.UnsupportedMethodException;
-
 import java.util.logging.Logger;
-import java.util.Arrays;
 import java.util.logging.Level;
 
 /**
