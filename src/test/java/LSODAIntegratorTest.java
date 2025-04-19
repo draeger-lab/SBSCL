@@ -32,7 +32,7 @@ public class LSODAIntegratorTest {
         int incy = 1;
 
         double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
-        assertEquals((1d*4d + 2d*5d + 3d*6d), result, 1e-6, "Dot product should be 32.0");
+        assertEquals((1d*4d + 2d*5d + 3d*6d), result, 1e-6, "Dot product should be "+ 1d*4d + 2d*5d + 3d*6d);
     }
 
     /** Test vector with length = 0 */
@@ -142,9 +142,6 @@ public class LSODAIntegratorTest {
         double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
         assertTrue(Double.isNaN(result));
     }
-
-    
-
 
     /**
      * The following tests are for the function .vmnorm within LSODAIntegrator.java
@@ -2229,6 +2226,7 @@ public class LSODAIntegratorTest {
     @Test
     void ewsetBasic() {
         logger.info("Running ewsetBasic test...");
+        
         ctx.setNeq(3);
         opt.setRtol(new double[] {0d, 0.1, 0.1, 0.1});
         opt.setAtol(new double[] {0d, 0.001, 0.001, 0.001});
@@ -2246,6 +2244,7 @@ public class LSODAIntegratorTest {
     @Test
     void ewsetZeroYValues() {
         logger.info("Running ewsetZeroYValues test...");
+        
         ctx.setNeq(3);
         opt.setRtol(new double[] { 0, 0.1, 0.1, 0.1 });
         opt.setAtol(new double[] { 0, 0.001, 0.001, 0.001 });
@@ -2263,6 +2262,7 @@ public class LSODAIntegratorTest {
     @Test
     void ewsetNegativeYValues() {
         logger.info("Running ewsetNegativeYValues test...");
+        
         ctx.setNeq(3);
         opt.setRtol(new double[] { 0, 0.1, 0.1, 0.1 });
         opt.setAtol(new double[] { 0, 0.001, 0.001, 0.001 });
@@ -2280,6 +2280,7 @@ public class LSODAIntegratorTest {
     @Test
     void ewsetZeroRelativeTolerance() {
         logger.info("Running ewsetZeroRelativeTolerance test...");
+        
         ctx.setNeq(3);
         opt.setRtol(new double[] { 0, 0.0, 0.0, 0.0 });
         opt.setAtol(new double[] { 0, 0.001, 0.001, 0.001 });
@@ -2297,6 +2298,7 @@ public class LSODAIntegratorTest {
     @Test
     void ewsetZeroAbsoluteToleranceNonZeroY() {
         logger.info("Running ewsetZeroAbsoluteToleranceNonZeroY test...");
+        
         ctx.setNeq(3);
         opt.setRtol(new double[] { 0, 0.1, 0.1, 0.1 });
         opt.setAtol(new double[] { 0, 0.0, 0.0, 0.0 });
@@ -2314,6 +2316,7 @@ public class LSODAIntegratorTest {
     @Test
     void ewsetZeroAbsoluteToleranceZeroY() {
         logger.info("Running ewsetZeroAbsoluteToleranceZeroY test...");
+        
         ctx.setNeq(3);
         opt.setRtol(new double[] { 0, 0.1, 0.1, 0.1 });
         opt.setAtol(new double[] { 0, 0.0, 0.0, 0.0 });
@@ -2331,6 +2334,7 @@ public class LSODAIntegratorTest {
     @Test
     void ewsetNoEquations() {
         logger.info("Running ewsetNoEquations test...");
+        
         ctx.setNeq(0);
         opt.setRtol(new double[] { 0 });
         opt.setAtol(new double[] { 0 });
