@@ -130,6 +130,14 @@ Runge-Kutta method.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>public &nbsp;enum</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/simulator/math/odes/RungeKutta_EventSolver.html#validMethod">validMethod</A></B></CODE>
+  
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enum representing the supported Runge-Kutta methods.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected &nbsp;double[]</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../org/simulator/math/odes/RungeKutta_EventSolver.html#kHelp">kHelp</A></B></CODE>
 
@@ -143,6 +151,14 @@ Runge-Kutta method.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Stores temporary results for the fourth-order Runge-Kutta method.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>private &nbsp;validMethod</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/simulator/math/odes/RungeKutta_EventSolver.html#method">method</A></B></CODE>
+  
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Variable to store the Runge-Kutta method</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="fields_inherited_from_class_org.simulator.math.odes.AbstractDESSolver"><!-- --></A>
@@ -179,8 +195,21 @@ Runge-Kutta method.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default constructor</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/simulator/math/odes/RungeKutta_EventSolver.html#RungeKutta_EventSolver(String)">RungeKutta_EventSolver</A></B>(String&nbsp;method)</CODE>
+  
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD><CODE><B><A HREF="../../../../org/simulator/math/odes/RungeKutta_EventSolver.html#RungeKutta_EventSolver(double)">RungeKutta_EventSolver</A></B>(double&nbsp;stepSize)</CODE>
 
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/simulator/math/odes/RungeKutta_EventSolver.html#RungeKutta_EventSolver(double, String)">RungeKutta_EventSolver</A></B>(double&nbsp;stepSize, 
+                      String&nbsp;method)</CODE>
+  
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
@@ -188,6 +217,14 @@ Runge-Kutta method.
 <TD><CODE><B><A HREF="../../../../org/simulator/math/odes/RungeKutta_EventSolver.html#RungeKutta_EventSolver(double, boolean)">RungeKutta_EventSolver</A></B>(double&nbsp;stepSize,
                        boolean&nbsp;nonnegative)</CODE>
 
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/simulator/math/odes/RungeKutta_EventSolver.html#RungeKutta_EventSolver(double, boolean, String)">RungeKutta_EventSolver</A></B>(double&nbsp;stepSize,
+                         boolean&nbsp;nonnegative,
+                         String&nbsp;method)</CODE>
+  
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
@@ -287,6 +324,18 @@ Runge-Kutta method.
 </TR>
 </TABLE>
 
+<A NAME="validMethod"><!-- --></A><H3>
+validMethod</H3>
+<PRE>
+public static enum <B>validMethod</B></PRE>
+<DL>
+<DD> Enum representing the supported Runge-Kutta methods. Currently supported Runge-Kutta methods are RK2 and RK4.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
 <A NAME="kVals"><!-- --></A><H3>
 kVals</H3>
 <PRE>
@@ -309,6 +358,18 @@ protected transient double[] <B>kHelp</B></PRE>
 <DL>
 </DL>
 </DL>
+<HR>
+
+<A NAME="method"><!-- --></A><H3>
+method</H3>
+<PRE>
+private validMethod <B>method</B></PRE>
+<DL>
+<DD>Variable to store the Runge-Kutta method.
+<P>
+<DL>
+</DL>
+</DL>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -325,8 +386,19 @@ RungeKutta_EventSolver</H3>
 <PRE>
 public <B>RungeKutta_EventSolver</B>()</PRE>
 <DL>
-<DD>default constructor
+<DD>Default Constructor. RK4 is default method.
 <P>
+</DL>
+<HR>
+
+<A NAME="RungeKutta_EventSolver(String)"><!-- --></A><H3>
+RungeKutta_EventSolver</H3>
+<PRE>
+public <B>RungeKutta_EventSolver</B>(String&nbsp;method)
+                      throws UnsupportedMethodException</PRE>
+<DL>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>method</CODE> - the Runge-Kutta method to be used<DT></DT></DL>
 </DL>
 <HR>
 
@@ -335,8 +407,21 @@ RungeKutta_EventSolver</H3>
 <PRE>
 public <B>RungeKutta_EventSolver</B>(double&nbsp;stepSize)</PRE>
 <DL>
+<DD> RK4 is default method.
 <DL>
 <DT><B>Parameters:</B><DD><CODE>stepSize</CODE> - </DL>
+</DL>
+<HR>
+
+<A NAME="RungeKutta_EventSolver(double, String)"><!-- --></A><H3>
+RungeKutta_EventSolver</H3>
+<PRE>
+public <B>RungeKutta_EventSolver</B>(double&nbsp;stepSize,
+                              String&nbsp;method)
+                      throws UnsupportedMethodException</PRE>
+<DL>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>stepSize</CODE> - <DD><CODE>method</CODE> - the Runge-Kutta method to be used<DT></DL>
 </DL>
 <HR>
 
@@ -346,8 +431,22 @@ RungeKutta_EventSolver</H3>
 public <B>RungeKutta_EventSolver</B>(double&nbsp;stepSize,
                               boolean&nbsp;nonnegative)</PRE>
 <DL>
+<DD> RK4 is default method.
 <DL>
 <DT><B>Parameters:</B><DD><CODE>stepSize</CODE> - <DD><CODE>nonnegative</CODE> - the nonnegative flag of the super class<DT><B>See Also:</B><DD><A HREF="../../../../org/simulator/math/odes/AbstractDESSolver.html" title="class in org.simulator.math.odes"><CODE>AbstractDESSolver</CODE></A></DL>
+</DL>
+<HR>
+
+<A NAME="RungeKutta_EventSolver(double, boolean, String)"><!-- --></A><H3>
+RungeKutta_EventSolver</H3>
+<PRE>
+public <B>RungeKutta_EventSolver</B>(double&nbsp;stepSize,
+                              boolean&nbsp;nonnegative,
+                              String method)
+                      throws UnsupportedMethodException</PRE>
+<DL>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>stepSize</CODE> - <DD><CODE>nonnegative</CODE> - the nonnegative flag of the super class<DT> <DD><CODE>method</CODE> - the Runge-Kutta method to be used<DT></DT><B>See Also:</B><DD><A HREF="../../../../org/simulator/math/odes/AbstractDESSolver.html" title="class in org.simulator.math.odes"><CODE>AbstractDESSolver</CODE></A></DL>
 </DL>
 <HR>
 
@@ -385,7 +484,7 @@ public double[] <B>computeChange</B>(<A HREF="../../../../org/simulator/math/ode
 <DL>
 <DD><B>Description copied from class: <CODE><A HREF="../../../../org/simulator/math/odes/AbstractDESSolver.html#computeChange(org.simulator.math.odes.DESystem, double[], double, double, double[], boolean)">AbstractDESSolver</A></CODE></B></DD>
 <DD>Computes the change for a given system at the current time with the
- current setting for the integration step size.
+ current setting for the integration step size, as per the Runge-Kutta method.
 <P>
 <DD><DL>
 <DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/simulator/math/odes/AbstractDESSolver.html#computeChange(org.simulator.math.odes.DESystem, double[], double, double, double[], boolean)">computeChange</A></CODE> in class <CODE><A HREF="../../../../org/simulator/math/odes/AbstractDESSolver.html" title="class in org.simulator.math.odes">AbstractDESSolver</A></CODE></DL>

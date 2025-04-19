@@ -127,6 +127,7 @@ public class LSODAIntegratorTest {
         assertEquals((7.5 * 2d), result, 1e-6, "Dot product of single-element vectors should be correct");
     }
 
+
     /** Test with NaN values */
     @Test
     void ddotNaN() {
@@ -139,8 +140,10 @@ public class LSODAIntegratorTest {
         int incy = 1;
 
         double result = LSODAIntegrator.ddot(n, dx, dy, incx, incy);
-        assertEquals(Double.NaN, result, 1e-6);
+        assertTrue(Double.isNaN(result));
     }
+
+    
 
 
     /**

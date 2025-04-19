@@ -536,11 +536,27 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         common.setIalth(common.getNq() + 1);
     }
     
-    /*
-     * in the following function, y, del, delp and m were passed as pass-by-references in the original C source code. 
-     * In order to implement this in Java, I changed these parameters to be passed as arrays, with the intended value stored within the first index
-     * of the array, which can then be modified.
-     */
+    /**
+     * Perform the nonlinear corrector step for the current integration step.
+     * <p>
+     * This method applies the Newton iteration or the functional iteration (depending on the method and solver state) to compute a corrected solution verctor {@code y} for the current step. 
+     * The correction is applied using the method defined by {@code miter}, and convergence is assessed using the weighted norm of the correction vector {@code del}.
+     * </p>
+     * 
+     * <p>
+     * If convergence fails within the maximum number of allwed iterations, a failure is reported.
+     * If necessary, the Jacobian is recomputed during the first corrector iteration.
+     * </p>
+     * 
+     * @param ctx   the LSODA context object holding the solver configuration, state, memory arrays and user functions
+     * @param y     the working solution vector to be corrected; update in-place with the final corrected solution
+     * @param pnorm the norm of the predicted solution (used in convergence check)
+     * @param del   the output parameter (length-1 array) for the weighted norm of the current correction
+     * @param delp  the output parameter (length-1 array) for the previous occrection norm (used in convergence rate estimation)
+     * @param told  the value of t at the beginning of the current step (in case of correction failure)
+     * @param m     the output parameter (length-1 array) for the number of correction interations used
+     * @return      0 if the correction process converges successfully; nonzero if it failed
+     **/
     public static int correction(LSODAContext ctx, double[] y, double pnorm, double[] del, double[] delp, double told, int[] m) {
         LSODACommon common = ctx.getCommon();
         int i;
