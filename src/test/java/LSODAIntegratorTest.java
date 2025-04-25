@@ -632,8 +632,6 @@ public class LSODAIntegratorTest {
 
     @Test
     void prjaMiterNotTwo() {
-        logger.info("Running: prjaMiterNotTwo");
-
         ctx.setNeq(3);
         common.setMiter(5);
 
