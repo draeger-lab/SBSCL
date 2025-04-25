@@ -23,8 +23,6 @@ public class LSODAIntegratorTest {
     /** Basic dot product test, incx = incy = 1 */
     @Test
     void ddotBasicDotProduct() {
-        logger.info("Running: ddotBasicDotProduct");
-
         int n = 3;
         double[] dx = {0d, 1.0, 2.0, 3.0};
         double[] dy = {0d, 4.0, 5.0, 6.0};
@@ -38,8 +36,6 @@ public class LSODAIntegratorTest {
     /** Test vector with length = 0 */
     @Test
     void ddotZeroLengthVector() {
-        logger.info("Running: ddotZeroLengthVector");
-
         int n = 0;
         double[] dx = {0};
         double[] dy = {0};
@@ -53,8 +49,6 @@ public class LSODAIntegratorTest {
     /** Test where n < 0 */
     @Test
     void ddotNegativeN() {
-        logger.info("Running: ddotNegativeN");
-
         int n = -5;
         double[] dx = {0d, 1d, 2d, 3d, 4d, 5d};
         double[] dy = {0d, 2d, 4d, 6d, 8d, 10d};
@@ -68,8 +62,6 @@ public class LSODAIntegratorTest {
     /** Test different values for incx and incy */
     @Test
     void ddotDifferentStrides() {
-        logger.info("Running: ddotDifferentStrides");
-
         int n = 3;
         double[] dx = {0d, 1d, 2d, 3d, 4d, 5d};
         double[] dy = {0d, 5d, 6d, 7d, 8d};
@@ -84,8 +76,6 @@ public class LSODAIntegratorTest {
     /** Test with incx = incy = -1 */
     @Test
     void ddotNegativeStrides() {
-        logger.info("Running: ddotNegativeStrides");
-
         int n = 3;
         double[] dx = {0d, 3d, 2d, 1d};
         double[] dy = {0d, 6d, 5d, 4d};
@@ -100,8 +90,6 @@ public class LSODAIntegratorTest {
     /** Test with all values = 0 */
     @Test
     void ddotAllZero() {
-        logger.info("Running: ddotAllZero");
-
         int n = 3;
         double[] dx = {0d, 0d, 0d, 0d};
         double[] dy = {0d, 0d, 0d, 0d};
@@ -115,8 +103,6 @@ public class LSODAIntegratorTest {
     /** Test with a single-element vector */
     @Test
     void ddotSingleElement() {
-        logger.info("Running: ddotSingleElement");
-
         int n = 1;
         double[] dx = {0d, 7.5};
         double[] dy = {0d, 2.0};
@@ -131,8 +117,6 @@ public class LSODAIntegratorTest {
     /** Test with NaN values */
     @Test
     void ddotNaN() {
-        logger.info("Running: ddotNaN");
-
         int n = 2;
         double[] dx = {0d, Double.NaN, 2.0};
         double[] dy = {0d, 5.0, Double.NaN};
@@ -151,8 +135,6 @@ public class LSODAIntegratorTest {
     /** Basic max-norm test */
     @Test
     void vmnormBasicMaxNorm() {
-        logger.info("Running: vmnormBasicMaxNorm");
-
         int n = 3;
         double[] v = {0d, 1d, -2d, 3d};
         double[] w = {0d, 4d, 1.5, 2d};
@@ -165,8 +147,6 @@ public class LSODAIntegratorTest {
     /** Test vector with all elements zero */
     @Test
     void vmnormAllZero() {
-        logger.info("Running: vmnormAllZero");
-
         int n = 3;
         double[] v = {0d, 0d, 0d, 0d};
         double[] w = {0d, 0d, 0d, 0d};
@@ -178,8 +158,6 @@ public class LSODAIntegratorTest {
     /** Test single element */
     @Test
     void vmnormSingleElement() {
-        logger.info("Running: vmnormSingleElement");
-
         int n = 1;
         double[] v = {0d, 7.5};
         double[] w = {0d, 2d};
@@ -191,8 +169,6 @@ public class LSODAIntegratorTest {
     /** Test negative values in v */
     @Test
     void vmnormNegativeValues() {
-        logger.info("Running: vmnormNegativeValues");
-
         int n = 3;
         double[] v = {0d, -1d, -2d, -3d};
         double[] w = {0d, 1d, 2d, 3d};
@@ -205,8 +181,6 @@ public class LSODAIntegratorTest {
     /** Test negative values in w */
     @Test
     void vmnormNegativeWeights() {
-        logger.info("Running: vmnormNegativeWeights");
-
         int n = 3;
         double[] v = {0d, 1d, 2d, 3d};
         double[] w = {0d, -1d, -2d, -3d};
@@ -219,8 +193,6 @@ public class LSODAIntegratorTest {
     /** Test zero-length vector */
     @Test
     void vmnormZeroLengthVector() {
-        logger.info("Running: vmnormZeroLengthVector");
-
         int n = 0;
         double[] v = {0d};
         double[] w = {0d};
@@ -238,8 +210,6 @@ public class LSODAIntegratorTest {
     /** Basic matrix norm */
     @Test
     void fnormBasicMatrixNorm() {
-        logger.info("Running: fnormBasicMatrixNorm");
-
         int n = 2;
         double[][] a = {
             {0d, 0d, 0d},
@@ -260,8 +230,6 @@ public class LSODAIntegratorTest {
     /** Matrix has all zero elements */
     @Test
     void fnormAllZeroMatrix() {
-        logger.info("Running: fnormAllZeroMatrix");
-
         int n = 2;
         double[][] a = {
             {0d, 0d, 0d},
@@ -277,8 +245,6 @@ public class LSODAIntegratorTest {
     /** Matrix has a single element (n = 1) */
     @Test
     void fnormSingleElementMatrix() {
-        logger.info("Running: fnormSingleElementMatrix");
-
         int n = 1;
         double[][] a = {
             {0d, 0d},
@@ -293,8 +259,6 @@ public class LSODAIntegratorTest {
     /** Matrix has negative values */
     @Test
     void fnormNegativeValues() {
-        logger.info("Running: fnormNegativeValues");
-
         int n = 2;
         double[][] a = {
             {0d, 0d, 0d},
@@ -315,8 +279,6 @@ public class LSODAIntegratorTest {
     /** Negative weights in w */
     @Test
     void fnormNegativeWeights() {
-        logger.info("Running: fnormNegativeWeights");
-
         int n = 2;
         double[][] a = {
             {0d, 0d, 0d},
@@ -332,8 +294,6 @@ public class LSODAIntegratorTest {
     /** Zero length matrix (n = 0) */
     @Test
     void fnormZeroLengthMatrix() {
-        logger.info("Running: fnormZeroLengthMatrix");
-
         int n = 0;
         double[][] a = {{0d}};
         double[] w = {0d};
@@ -373,8 +333,6 @@ public class LSODAIntegratorTest {
      */
     @Test
     void idamaxBasic() {
-        logger.info("Running: idamaxBasic");
-
         int n = 3;
         double[] dx = {0d, 1d, -3d, 2d};
         int incx = 1;
@@ -413,8 +371,6 @@ public class LSODAIntegratorTest {
      */
     @Test
     void idamaxEmptyVector() {
-        logger.info("Running: idamaxEmptyVector");
-
         int n = 0;
         double[] dx = {0d, 1d, 2d};
         int incx = 1;
@@ -453,8 +409,6 @@ public class LSODAIntegratorTest {
      */
     @Test
     void idamaxSingleElement() {
-        logger.info("Running: idamaxSingleElement");
-
         int n = 1;
         double[] dx = {0d, 3.14};
         int incx = 1;
@@ -497,8 +451,6 @@ public class LSODAIntegratorTest {
      */
     @Test
     void idamaxMultipleElementsIncxOne() {
-        logger.info("Running: idamaxMultipleElementsIncxOne");
-
         int n = 3;
         double[] dx = {0d, 1d, -3d, 2d};
         int incx = 1;
@@ -549,8 +501,6 @@ public class LSODAIntegratorTest {
      */
     @Test
     void idamaxMultipleElementsIncxTwo() {
-        logger.info("Running: idamaxMultipleElementsIncxTwo");
-
         int n = 3;
         double[] dx = {0d, 1d, 0d, -4d, -5d, 3d, 3d};
         int incx = 2;
@@ -588,8 +538,6 @@ public class LSODAIntegratorTest {
      */
     @Test
     void idamaxNegativeIncrement() {
-        logger.info("Running: idamaxNegativeIncrement");
-
         int n = 3;
         double[] dx = {0d, 1d, -3d, 2d};
         int incx = -1;
@@ -641,8 +589,6 @@ public class LSODAIntegratorTest {
     */
     @Test
     void idamaxMultipleElementsIncxThree() {
-        logger.info("Running: idamaxMultipleElementsIncxThree");
-
         int n = 4;
         double[] dx = {0d, 2d, 0d, 0d, -5d, 0d, 0d, 3d, 0d, 0d, -5d, 0d, 0d};
         int incx = 3;
@@ -660,8 +606,6 @@ public class LSODAIntegratorTest {
     */
     @Test
     void prjaBasic() {
-        logger.info("Running: prjaBasic");
-
         ctx.setNeq(3);
         common.setMiter(2);
         common.setH(0.1);
@@ -685,7 +629,6 @@ public class LSODAIntegratorTest {
         int result = LSODAIntegrator.prja(ctx, y);
 
         assertEquals(1, result);
-        logger.info("prjaBasic completed successfully.");
     }
 
     @Test
@@ -699,14 +642,11 @@ public class LSODAIntegratorTest {
         int result = LSODAIntegrator.prja(ctx, y);
 
         assertEquals(0, result);
-        logger.info("prjaMiterNotTwo completed with result 0 (miter not equal to 2).");
     }
 
 
     @Test
     void prjaZeroLengthSystem() {
-        logger.info("Running: prjaZeroLengthSystem");
-
         common.setMiter(2);
         ctx.setNeq(0);
         int[] newIpvt = new int[4];
@@ -716,13 +656,10 @@ public class LSODAIntegratorTest {
         int result = LSODAIntegrator.prja(ctx, y);
 
         assertEquals(1, result);
-        logger.info("prjaZeroLengthSystem completed successfully (zero-length system).");
     }
 
     @Test
     void prjaAllZero() {
-        logger.info("Running: prjaAllZero");
-
         ctx.setNeq(3);
         common.setMiter(2);
         common.setH(0.1);
@@ -746,13 +683,10 @@ public class LSODAIntegratorTest {
         int result = LSODAIntegrator.prja(ctx, y);
 
         assertEquals(1, result);
-        logger.info("prjaAllZero completed successfully (all zero values).");
     }
 
     @Test
     void prjaFunctionEvaluationsIncrement() {
-        logger.info("Running: prjaFunctionEvaluationsIncrement");
-
         ctx.setNeq(3);
         common.setMiter(2);
         common.setH(0.1);
@@ -776,7 +710,6 @@ public class LSODAIntegratorTest {
         LSODAIntegrator.prja(ctx, y);
 
         assertEquals(3, common.getNfe());
-        logger.info("prjaFunctionEvaluationsIncrement completed with 3 function evaluations.");
     }
 
     /**
@@ -785,8 +718,6 @@ public class LSODAIntegratorTest {
      */
     @Test
     void daxpyBasic() {
-        logger.info("Running: daxpyBasic");
-
         int n = 3;
         double da = 2d;
         double[] dx = {0d, 1d, 2d, 3d};
@@ -797,13 +728,10 @@ public class LSODAIntegratorTest {
 
         double[] expectedDy = {0d, 6d, 9d, 12d};
         assertArrayEquals(expectedDy, dy, 1e-6);
-        logger.info("daxpyBasic completed successfully.");
     }
 
     @Test
     void daxpyZeroScalarMultiplier() {
-        logger.info("Running: daxpyZeroScalarMultiplier");
-
         int n = 3;
         double da = 0d;
         double[] dx = {0d, 1d, 2d, 3d};
@@ -814,13 +742,10 @@ public class LSODAIntegratorTest {
 
         double[] expectedDy = {0d, 4d, 5d, 6d};
         assertArrayEquals(expectedDy, dy, 1e-6);
-        logger.info("daxpyZeroScalarMultiplier completed successfully (no modification).");
     }
 
     @Test
     void daxpyNegativeN() {
-        logger.info("Running: daxpyNegativeN");
-
         int n = -5;
         double da = 2d;
         double[] dx = {0d, 1d, 2d, 3d};
@@ -831,13 +756,10 @@ public class LSODAIntegratorTest {
 
         double[] expectedDy = {0d, 4d, 5d, 6d};
         assertArrayEquals(expectedDy, dy, 1e-6);
-        logger.info("daxpyNegativeN completed successfully (no modification with negative n).");
     }
 
     @Test
     void daxpyNonUnitaryIncrements() {
-        logger.info("Running: daxpyNonUnitaryIncrements");
-
         int n = 2;
         double da = 3d;
         double[] dx = {0d, 1d, 2d, 3d, 4d};
@@ -848,13 +770,10 @@ public class LSODAIntegratorTest {
 
         double[] expectedDy = {0d, 8d, 15d, 7d, 8d};
         assertArrayEquals(expectedDy, dy, 1e-6);
-        logger.info("daxpyNonUnitaryIncrements completed successfully.");
     }
 
     @Test
     void daxpyNegativeStrides() {
-        logger.info("Running: daxpyNegativeStrides");
-
         int n = 3;
         double da = 2d;
         double[] dx = {0d, 3d, 2d, 1d};
@@ -865,13 +784,10 @@ public class LSODAIntegratorTest {
 
         double[] expectedDy = {0d, 12d, 9d, 6d};
         assertArrayEquals(expectedDy, dy, 1e-6);
-        logger.info("daxpyNegativeStrides completed successfully.");
     }
 
     @Test
     void daxpyAllZeroDx() {
-        logger.info("Running: daxpyAllZeroDx");
-
         int n = 3;
         double da = 2d;
         double[] dx = {0d, 0d, 0d, 0d};
@@ -882,13 +798,10 @@ public class LSODAIntegratorTest {
 
         double[] expectedDy = {0d, 4d, 5d, 6d};
         assertArrayEquals(expectedDy, dy, 1e-6);
-        logger.info("daxpyAllZeroDx completed successfully (dx is zero).");
     }
 
     @Test
     void ddotLargeNumbers() {
-        logger.info("Starting test: ddotLargeNumbers");
-
         int n = 2;
         double[] dx = {0d, 1e100, -1e100};
         double[] dy = {0d, 1e-100, 1e-100};
@@ -904,8 +817,6 @@ public class LSODAIntegratorTest {
 
     @Test
     void daxpyLargeValues() {
-        logger.info("Running: daxpyLargeValues");
-
         int n = 3;
         double da = 1e9d;
         double[] dx = {0d, 1e9d, -2e9d, 3e9d};
@@ -916,13 +827,10 @@ public class LSODAIntegratorTest {
 
         double[] expectedDy = {0d, 1.000000001e18, -1.999999998e18, 2.999999997e18};
         assertArrayEquals(expectedDy, dy, 1e-6);
-        logger.info("daxpyLargeValues completed successfully (large values).");
     }
 
     @Test
     void daxpyInPlaceModification() {
-        logger.info("Running: daxpyInPlaceModification");
-
         int n = 3;
         double da = 2d;
         double[] dx = {0d, 1d, 2d, 3d};
@@ -933,7 +841,6 @@ public class LSODAIntegratorTest {
 
         double[] expectedDy = {0d, 3d, 6d, 9d};
         assertArrayEquals(expectedDy, dy, 1e-6);
-        logger.info("daxpyInPlaceModification completed successfully (in-place modification).");
     }
 
     /**
@@ -941,8 +848,6 @@ public class LSODAIntegratorTest {
      */
     @Test
     void dgefaBasic() {
-        logger.info("Running: dgefaBasic");
-
         int n = 3;
         int[] ipvt = new int[4];
         int[] info = {0};
@@ -956,13 +861,10 @@ public class LSODAIntegratorTest {
         LSODAIntegrator.dgefa(a, n, ipvt, info);
 
         assertEquals(0, info[0]);
-        logger.info("dgefaBasic completed successfully.");
     }
 
     @Test
     void dgefaUpperTriangular() {
-        logger.info("Running: dgefaUpperTriangular");
-
         int n = 3;
         int[] ipvt = new int[4];
         int[] info = {0};
@@ -976,13 +878,10 @@ public class LSODAIntegratorTest {
         LSODAIntegrator.dgefa(a, n, ipvt, info);
 
         assertEquals(0, info[0]);
-        logger.info("dgefaUpperTriangular completed successfully.");
     }
 
     @Test
     void dgefaSingularMatrix() {
-        logger.info("Running: dgefaSingularMatrix");
-
         int n = 3;
         int[] ipvt = new int[4];
         int[] info = {0};
@@ -996,13 +895,10 @@ public class LSODAIntegratorTest {
         LSODAIntegrator.dgefa(a, n, ipvt, info);
 
         assertEquals(3, info[0]);
-        logger.info("dgefaSingularMatrix completed successfully.");
     }
 
     @Test
     void dgefaIdentityMatrix() {
-        logger.info("Running: dgefaIdentityMatrix");
-
         int n = 3;
         int[] ipvt = new int[4];
         int[] info = {0};
@@ -1019,13 +915,10 @@ public class LSODAIntegratorTest {
         assertEquals(1, ipvt[1]);
         assertEquals(2, ipvt[2]);
         assertEquals(3, ipvt[3]);
-        logger.info("dgefaIdentityMatrix completed successfully.");
     }
 
     @Test
     void dgefaRowSwapping() {
-        logger.info("Running: dgefaRowSwapping");
-
         int n = 3;
         int[] ipvt = new int[n + 1];
         int[] info = new int[1];
@@ -1042,7 +935,6 @@ public class LSODAIntegratorTest {
         assertEquals(3, ipvt[1]);
         assertEquals(2, ipvt[2]);
         assertEquals(3, ipvt[3]);
-        logger.info("dgefaRowSwapping completed successfully.");
     }
 
 
@@ -1051,8 +943,6 @@ public class LSODAIntegratorTest {
      */
     @Test
     void dscalBasic() {
-        logger.info("Running: dscalBasic");
-
         int n = 5;
         double da = 2d;
         double[] dx = {0d, 1d, 2d, 3d, 4d, 5d};
@@ -1062,13 +952,10 @@ public class LSODAIntegratorTest {
 
         double[] expected = {0d, 2d, 4d, 6d, 8d, 10d};
         assertArrayEquals(expected, dx, 1e-6);
-        logger.info("dscalBasic completed successfully.");
     }
 
     @Test
     void dscalZeroLengthVector() {
-        logger.info("Running: dscalZeroLengthVector");
-
         int n = 0;
         double da = 2d;
         double[] dx = {0d, 1d, 2d, 3d};
@@ -1078,13 +965,10 @@ public class LSODAIntegratorTest {
 
         double[] expected = {0d, 1d, 2d, 3d};
         assertArrayEquals(expected, dx, 1e-6);
-        logger.info("dscalZeroLengthVector completed successfully.");
     }
 
     @Test
     void dscalNegativeN() {
-        logger.info("Running: dscalNegativeN");
-
         int n = -3;
         double da = 2d;
         double[] dx = {0d, 1d, 2d, 3d};
@@ -1094,13 +978,10 @@ public class LSODAIntegratorTest {
 
         double[] expected = {0d, 1d, 2d, 3d};
         assertArrayEquals(expected, dx, 1e-6);
-        logger.info("dscalNegativeN completed successfully.");
     }
 
     @Test
     void dscalUnitaryScalar() {
-        logger.info("Running: dscalUnitaryScalar");
-
         int n = 3;
         double da = 1d;
         double[] dx = {0d, 1d, 2d, 3d};
@@ -1110,13 +991,10 @@ public class LSODAIntegratorTest {
 
         double[] expected = {0d, 1d, 2d, 3d};
         assertArrayEquals(expected, dx, 1e-6);
-        logger.info("dscalUnitaryScalar completed successfully.");
     }
 
     @Test
     void dscalZeroScalar() {
-        logger.info("Running: dscalZeroScalar");
-
         int n = 3;
         double da = 0d;
         double[] dx = {0d, 1d, 2d, 3d};
@@ -1126,13 +1004,10 @@ public class LSODAIntegratorTest {
 
         double[] expected = {0d, 0d, 0d, 0d};
         assertArrayEquals(expected, dx, 1e-6);
-        logger.info("dscalZeroScalar completed successfully.");
     }
 
     @Test
     void dscalNegativeScalar() {
-        logger.info("Running: dscalNegativeScalar");
-
         int n = 3;
         double da = -1d;
         double[] dx = {0d, 1d, 2d, 3d};
@@ -1142,13 +1017,10 @@ public class LSODAIntegratorTest {
 
         double[] expected = {0d, -1d, -2d, -3d};
         assertArrayEquals(expected, dx, 1e-6);
-        logger.info("dscalNegativeScalar completed successfully.");
     }
 
     @Test
     void dscalFractionalScalar() {
-        logger.info("Running: dscalFractionalScalar");
-
         int n = 3;
         double da = 0.5;
         double[] dx = {0d, 2d, 4d, 6d};
@@ -1158,7 +1030,6 @@ public class LSODAIntegratorTest {
 
         double[] expected = {0d, 1d, 2d, 3d};
         assertArrayEquals(expected, dx, 1e-6);
-        logger.info("dscalFractionalScalar completed successfully.");
     }
 
     /** The following tests are for the function solsy() within LSODAIntegrator */
@@ -1166,8 +1037,6 @@ public class LSODAIntegratorTest {
     /* Test that solsy() calls dgesl() when miter == 2 */
     @Test
     void solsyBasicLUDecomposition() {
-        logger.info("Running: solsyBasicLUDecomposition");
-
         ctx.setNeq(3);
         common.setMiter(2);
         double[] y = {0d, 1d, 2d, 3d};
@@ -1183,13 +1052,10 @@ public class LSODAIntegratorTest {
 
         int result = LSODAIntegrator.solsy(ctx, y);
         assertEquals(1, result);
-        logger.info("solsyBasicLUDecomposition completed successfully.");
     }
 
     @Test
     void solsyMiterNotTwo() {
-        logger.info("Running: solsyMiterNotTwo");
-
         ctx.setNeq(3);
         common.setMiter(5);
         double[] y = {0d, 1d, 2d, 3d};
@@ -1206,13 +1072,10 @@ public class LSODAIntegratorTest {
         assertThrows(IllegalStateException.class, () -> {
             LSODAIntegrator.solsy(ctx, y);
         });
-        logger.info("solsyMiterNotTwo completed successfully.");
     }
 
     @Test
     void solsyZeroNeq() {
-        logger.info("Running: solsyZeroNeq");
-
         ctx.setNeq(0);
         common.setMiter(2);
         double[] y = new double[0];
@@ -1248,8 +1111,6 @@ public class LSODAIntegratorTest {
         int[] pivotArray = {0, 1, 2};
         double[] rightHandSide = {0d, 11d, 13d};
 
-        logger.info("Solving system: A = [[2, 1], [5, 7]], b = [11, 13]. Expected solution: x = [3.4285714286, -2.0714285714].");
-
         LSODAIntegrator.dgesl(coefficientMatrix, numberOfEquations, pivotArray, rightHandSide, 0);
 
         assertArrayEquals(new double[]{0d, 3.4285714286, -2.0714285714}, rightHandSide, 1e-10);
@@ -1272,8 +1133,6 @@ public class LSODAIntegratorTest {
         };
         int[] pivotArray = {0, 1, 2};
         double[] rightHandSide = {0d, 11d, 13d};
-
-        logger.info("Solving for A^T * x = b: A = [[2, 1], [5, 7]], b = [11, 13]. Expected solution: x ≈ [-3.07, 0.343].");
 
         LSODAIntegrator.dgesl(coefficientMatrix, numberOfEquations, pivotArray, rightHandSide, 1);
 
@@ -1309,8 +1168,6 @@ public class LSODAIntegratorTest {
         int[] pivotArray = {0, 1, 2};
         double[] rightHandSide = {0d, 3d, 4d};
 
-        logger.info("Solving for identity matrix: A = [[1, 0], [0, 1]], b = [3, 4]. Expected solution: x = [3, 4].");
-
         LSODAIntegrator.dgesl(coefficientMatrix, numberOfEquations, pivotArray, rightHandSide, 0);
 
         assertArrayEquals(new double[]{0d, 3d, 4d}, rightHandSide, 1e-6);
@@ -1334,8 +1191,6 @@ public class LSODAIntegratorTest {
         };
         common.setYh(yh);
         double told = 5d;
-
-        logger.info("Testing corfailure with neq = 3, h = 1.0, nq = 2, told = 5.0");
 
         int result = LSODAIntegrator.corfailure(ctx, told);
         double[][] expected = {
@@ -1432,8 +1287,6 @@ public class LSODAIntegratorTest {
     /** The following tests are for checkOpt() within LSODAIntegrator.java */
     @Test
     void checkOptBasicCaseState0() {
-        logger.info("Starting test: checkOptBasicCaseState0");
-
         ctx.setState(0);
         ctx.setNeq(3);
 
@@ -1458,12 +1311,10 @@ public class LSODAIntegratorTest {
         assertEquals(12, opt.getMxordn());
         assertEquals(5, opt.getMxords());
         assertEquals(0.5, opt.getHmxi(), 1e-9);
-        logger.info("Test checkOptBasicCaseState0 passed");
     }
 
     @Test
     void checkOptBasicCaseState3() {
-        logger.info("Starting test: checkOptBasicCaseState3");
 
         ctx.setState(3);
         ctx.setNeq(2);
@@ -1481,13 +1332,10 @@ public class LSODAIntegratorTest {
 
         assertTrue(result);
         assertEquals(1.0, opt.getHmxi(), 1e-9);
-        logger.info("Test checkOptBasicCaseState3 passed");
     }
 
     @Test
     void checkOptNeqZero() {
-        logger.info("Starting test: checkOptNeqZero");
-
         ctx.setState(1);
         ctx.setNeq(0);
 
@@ -1501,13 +1349,10 @@ public class LSODAIntegratorTest {
         opt.setHmin(0.01);
 
         assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
-        logger.info("Test checkOptNeqZero passed");
     }
 
     @Test
     void checkOptNegativeRtol() {
-        logger.info("Starting test: checkOptNegativeRtol");
-
         ctx.setState(1);
         ctx.setNeq(2);
 
@@ -1521,13 +1366,10 @@ public class LSODAIntegratorTest {
         opt.setHmin(0.01);
 
         assertTrue(LSODAIntegrator.checkOpt(ctx, opt));
-        logger.info("Test checkOptNegativeRtol passed");
     }
 
     @Test
     void checkOptNegativeAtol() {
-        logger.info("Starting test: checkOptNegativeAtol");
-
         ctx.setState(1);
         ctx.setNeq(2);
 
@@ -1541,13 +1383,10 @@ public class LSODAIntegratorTest {
         opt.setHmin(0.01);
 
         assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
-        logger.info("Test checkOptNegativeAtol passed");
     }
 
     @Test
     void checkOptIllegalItaskHigh() {
-        logger.info("Starting test: checkOptIllegalItaskHigh");
-
         ctx.setState(1);
         ctx.setNeq(1);
 
@@ -1561,13 +1400,10 @@ public class LSODAIntegratorTest {
         opt.setHmin(0.01);
 
         assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
-        logger.info("Test checkOptIllegalItaskHigh passed");
     }
 
     @Test
     void checkOptIllegalItaskLow() {
-        logger.info("Starting test: checkOptIllegalItaskLow");
-
         ctx.setState(1);
         ctx.setNeq(1);
 
@@ -1581,13 +1417,10 @@ public class LSODAIntegratorTest {
         opt.setHmin(0.01);
 
         assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
-        logger.info("Test checkOptIllegalItaskLow passed");
     }
 
     @Test
     void checkOptIllegalIxprLow() {
-        logger.info("Starting test: checkOptIllegalIxprLow");
-
         ctx.setState(1);
         ctx.setNeq(1);
 
@@ -1601,13 +1434,10 @@ public class LSODAIntegratorTest {
         opt.setHmin(0.01);
 
         assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
-        logger.info("Test checkOptIllegalIxprLow passed");
     }
 
     @Test
     void checkOptIllegalIxprHigh() {
-        logger.info("Starting test: checkOptIllegalIxprHigh");
-
         ctx.setState(1);
         ctx.setNeq(1);
 
@@ -1621,13 +1451,10 @@ public class LSODAIntegratorTest {
         opt.setHmin(0.01);
 
         assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
-        logger.info("Test checkOptIllegalIxprHigh passed");
     }
 
     @Test
     void checkOptNegativeMxstep() {
-        logger.info("Starting test: checkOptNegativeMxstep");
-
         ctx.setState(1);
         ctx.setNeq(1);
 
@@ -1641,13 +1468,10 @@ public class LSODAIntegratorTest {
         opt.setHmin(0.01);
 
         assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
-        logger.info("Test checkOptNegativeMxstep passed");
     }
 
     @Test
     void checkOptMxstepZero() {
-        logger.info("Starting test: checkOptMxstepZero");
-
         ctx.setState(1);
         ctx.setNeq(1);
 
@@ -1662,13 +1486,10 @@ public class LSODAIntegratorTest {
 
         assertTrue(LSODAIntegrator.checkOpt(ctx, opt));
         assertEquals(500, opt.getMxstep());
-        logger.info("Test checkOptMxstepZero passed");
     }
 
     @Test
     void checkOptNegativeMxhnil() {
-        logger.info("Starting test: checkOptNegativeMxhnil");
-
         ctx.setState(1);
         ctx.setNeq(1);
 
@@ -1682,13 +1503,10 @@ public class LSODAIntegratorTest {
         opt.setHmin(0.01);
 
         assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
-        logger.info("Test checkOptNegativeMxhnil passed");
     }
 
     @Test
     void checkOptNegativeMxordn() {
-        logger.info("Starting test: checkOptNegativeMxordn");
-
         ctx.setState(1);
         ctx.setNeq(1);
 
@@ -1704,13 +1522,10 @@ public class LSODAIntegratorTest {
         opt.setHmin(0.01);
 
         assertTrue(LSODAIntegrator.checkOpt(ctx, opt));
-        logger.info("Test checkOptNegativeMxordn passed");
     }
 
     @Test
     void checkOptMxordnZero() {
-        logger.info("Starting test: checkOptMxordnZero");
-
         ctx.setState(1);
         ctx.setNeq(1);
 
@@ -1727,13 +1542,10 @@ public class LSODAIntegratorTest {
 
         assertTrue(LSODAIntegrator.checkOpt(ctx, opt));
         assertEquals(12, opt.getMxordn());
-        logger.info("Test checkOptMxordnZero passed");
     }
 
     @Test
     void checkOptNegativeMxords() {
-        logger.info("Starting test: checkOptNegativeMxords");
-
         ctx.setState(1);
         ctx.setNeq(1);
 
@@ -1749,13 +1561,10 @@ public class LSODAIntegratorTest {
         opt.setHmin(0.01);
 
         assertTrue(LSODAIntegrator.checkOpt(ctx, opt));
-        logger.info("Test checkOptNegativeMxords passed");
     }
 
     @Test
     void checkOptMxordsZero() {
-        logger.info("Starting test: checkOptMxordsZero");
-
         ctx.setState(1);
         ctx.setNeq(1);
 
@@ -1772,13 +1581,10 @@ public class LSODAIntegratorTest {
 
         assertTrue(LSODAIntegrator.checkOpt(ctx, opt));
         assertEquals(5, opt.getMxords());
-        logger.info("Test checkOptMxordsZero passed");
     }
 
     @Test
     void checkOptNegativeHmax() {
-        logger.info("Starting test: checkOptNegativeHmax");
-
         ctx.setState(1);
         ctx.setNeq(1);
 
@@ -1794,13 +1600,10 @@ public class LSODAIntegratorTest {
         opt.setHmin(0.01);
 
         assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
-        logger.info("Test checkOptNegativeHmax passed");
     }
 
     @Test
     void checkOptHmxiCalculation() {
-        logger.info("Starting test: checkOptHmxiCalculation");
-
         ctx.setState(1);
         ctx.setNeq(1);
 
@@ -1817,13 +1620,10 @@ public class LSODAIntegratorTest {
 
         assertTrue(LSODAIntegrator.checkOpt(ctx, opt));
         assertEquals(0.25, opt.getHmxi(), 1e-9);
-        logger.info("Test checkOptHmxiCalculation passed");
     }
 
     @Test
     void checkOptNegativeHmin() {
-        logger.info("Starting test: checkOptNegativeHmin");
-
         ctx.setState(1);
         ctx.setNeq(1);
 
@@ -1839,8 +1639,6 @@ public class LSODAIntegratorTest {
         opt.setHmin(-0.01);
 
         assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
-
-        logger.info("Test checkOptNegativeHmin passed");
     }
 
     @Test
@@ -1870,8 +1668,6 @@ public class LSODAIntegratorTest {
         double[] del = new double[1];
         int[] m = new int[1];
 
-        logger.info("Starting correction test with initial conditions.");
-
         int result = LSODAIntegrator.correction(ctx, new double[ctx.getNeq() + 1], pnorm, del, new double[1], told, m);
 
         logger.info("Correction test result: " + result);
@@ -1886,8 +1682,6 @@ public class LSODAIntegratorTest {
     /* The following tests are for the function scaleh() within LSODAIntegrator.java */
     @Test
     void scalehNoStability() {
-        logger.info("Starting test scalehNoStability");
-
         ctx.setNeq(3);
         common.setH(1d);
         common.setRc(2d);
@@ -1906,7 +1700,6 @@ public class LSODAIntegratorTest {
         double rhInput = 0.4;
         LSODAIntegrator.scaleh(ctx, rhInput);
 
-        logger.info("Test scalehNoStability executed");
         logger.info("Updated h: " + common.getH());
         logger.info("Updated rc: " + common.getRc());
         logger.info("Updated ialth: " + common.getIalth());
@@ -1924,14 +1717,10 @@ public class LSODAIntegratorTest {
         assertEquals(0.96, resultYh[3][3], 1e-8);
 
         assertEquals(0, common.getIrflag());
-
-        logger.info("Completed test scalehNoStability");
     }
 
     @Test
     void scalehStabilityNoAdjustment() {
-        logger.info("Starting test scalehStabilityNoAdjustment");
-
         ctx.setNeq(2);
         common.setH(2d);
         common.setRc(3d);
@@ -1953,7 +1742,6 @@ public class LSODAIntegratorTest {
         double rhInput = 1.0;
         LSODAIntegrator.scaleh(ctx, rhInput);
 
-        logger.info("Test scalehStabilityNoAdjustment executed");
         logger.info("Updated h: " + common.getH());
         logger.info("Updated rc: " + common.getRc());
         logger.info("Updated ialth: " + common.getIalth());
@@ -1971,14 +1759,10 @@ public class LSODAIntegratorTest {
         assertEquals(60, resultYh[4][2], 1e-8);
 
         assertEquals(0, common.getIrflag());
-
-        logger.info("Completed test scalehStabilityNoAdjustment");
     }
 
     @Test
     void scalehStabilityAdjustment() {
-        logger.info("Starting test scalehStabilityAdjustment");
-
         ctx.setNeq(2);
         common.setH(2.0);
         common.setRc(4.0);
@@ -2002,7 +1786,6 @@ public class LSODAIntegratorTest {
         double rhInput = 1.0;
         LSODAIntegrator.scaleh(ctx, rhInput);
 
-        logger.info("Test scalehStabilityAdjustment executed");
         logger.info("Updated h: " + common.getH());
         logger.info("Updated rc: " + common.getRc());
         logger.info("Updated ialth: " + common.getIalth());
@@ -2024,14 +1807,10 @@ public class LSODAIntegratorTest {
 
         // Verify that the stability branch set irflag to 1.
         assertEquals(1, common.getIrflag());
-
-        logger.info("Completed test scalehStabilityAdjustment");
     }
 
     @Test
     void scalehRhLimitedByRmax() {
-        logger.info("Starting test scalehRhLimitedByRmax");
-
         ctx.setNeq(2);
         common.setH(1.0);
         common.setRc(5.0);
@@ -2049,7 +1828,6 @@ public class LSODAIntegratorTest {
         double rhInput = 1.0;
         LSODAIntegrator.scaleh(ctx, rhInput);
 
-        logger.info("Test scalehRhLimitedByRmax executed");
         logger.info("Updated h: " + common.getH());
         logger.info("Updated rc: " + common.getRc());
         logger.info("Updated ialth: " + common.getIalth());
@@ -2070,14 +1848,10 @@ public class LSODAIntegratorTest {
         assertEquals(2.4, resultYh[2][2], 1e-8);
         assertEquals(2.56, resultYh[3][1], 1e-8);
         assertEquals(3.2, resultYh[3][2], 1e-8);
-
-        logger.info("Completed test scalehRhLimitedByRmax");
     }
 
    @Test
     void scalehNegativeH() {
-        logger.info("Running test: scaleh_NegativeH");
-
         // Setup basic parameters
         ctx.setNeq(2);
         common.setH(-1.0);
@@ -2116,8 +1890,6 @@ public class LSODAIntegratorTest {
     /* The following tests are for the function .cfode() within LSODAIntegrator.java */
     @Test
     void cfodeMethod1() {
-        logger.info("Running test: cfode_Method1");
-
         LSODAIntegrator.cfode(ctx, 1); // Set coefficients for method 1
 
         // Retrieve elco and tesco values for order 1
@@ -2138,14 +1910,10 @@ public class LSODAIntegratorTest {
 
         assertEquals(1.0, tesco21, 1e-10, "Order 2 tesco[2][1] should be 1.0");
         assertEquals(0.0, tesco123, 1e-10, "Order 12 tesco[12][3] should be 0.0");
-
-        logger.fine("cfode_Method1 passed: elco and tesco values are correct");
     }
 
     @Test
     void cfodeCoefficentConsistency() {
-        logger.info("Running test: cfode_CoefficentConsistency");
-
         LSODAIntegrator.cfode(ctx, 1); // Generate elco coefficients
 
         // For each order from 2 to 12, ensure elco[nq][1] is not zero
@@ -2154,8 +1922,6 @@ public class LSODAIntegratorTest {
             logger.fine("Checking elco[" + nq + "][1] = " + coeff);
             assertNotEquals(0.0, coeff, 1e-10, "Coefficient elco[" + nq + "][1] must be nonzero");
         }
-
-        logger.fine("cfode_CoefficentConsistency passed: all elco[nq][1] ≠ 0 for nq=2..12");
     }
 
     @Test
@@ -2224,9 +1990,7 @@ public class LSODAIntegratorTest {
 
     /* The following tests are for the function .ewset() within LSODAIntegrator.java */
     @Test
-    void ewsetBasic() {
-        logger.info("Running ewsetBasic test...");
-        
+    void ewsetBasic() {        
         ctx.setNeq(3);
         opt.setRtol(new double[] {0d, 0.1, 0.1, 0.1});
         opt.setAtol(new double[] {0d, 0.001, 0.001, 0.001});
@@ -2242,9 +2006,7 @@ public class LSODAIntegratorTest {
     }
 
     @Test
-    void ewsetZeroYValues() {
-        logger.info("Running ewsetZeroYValues test...");
-        
+    void ewsetZeroYValues() {        
         ctx.setNeq(3);
         opt.setRtol(new double[] { 0, 0.1, 0.1, 0.1 });
         opt.setAtol(new double[] { 0, 0.001, 0.001, 0.001 });
@@ -2260,9 +2022,7 @@ public class LSODAIntegratorTest {
     }
 
     @Test
-    void ewsetNegativeYValues() {
-        logger.info("Running ewsetNegativeYValues test...");
-        
+    void ewsetNegativeYValues() {        
         ctx.setNeq(3);
         opt.setRtol(new double[] { 0, 0.1, 0.1, 0.1 });
         opt.setAtol(new double[] { 0, 0.001, 0.001, 0.001 });
@@ -2278,9 +2038,7 @@ public class LSODAIntegratorTest {
     }
 
     @Test
-    void ewsetZeroRelativeTolerance() {
-        logger.info("Running ewsetZeroRelativeTolerance test...");
-        
+    void ewsetZeroRelativeTolerance() {        
         ctx.setNeq(3);
         opt.setRtol(new double[] { 0, 0.0, 0.0, 0.0 });
         opt.setAtol(new double[] { 0, 0.001, 0.001, 0.001 });
@@ -2296,9 +2054,7 @@ public class LSODAIntegratorTest {
     }
 
     @Test
-    void ewsetZeroAbsoluteToleranceNonZeroY() {
-        logger.info("Running ewsetZeroAbsoluteToleranceNonZeroY test...");
-        
+    void ewsetZeroAbsoluteToleranceNonZeroY() {        
         ctx.setNeq(3);
         opt.setRtol(new double[] { 0, 0.1, 0.1, 0.1 });
         opt.setAtol(new double[] { 0, 0.0, 0.0, 0.0 });
@@ -2314,9 +2070,7 @@ public class LSODAIntegratorTest {
     }
 
     @Test
-    void ewsetZeroAbsoluteToleranceZeroY() {
-        logger.info("Running ewsetZeroAbsoluteToleranceZeroY test...");
-        
+    void ewsetZeroAbsoluteToleranceZeroY() {        
         ctx.setNeq(3);
         opt.setRtol(new double[] { 0, 0.1, 0.1, 0.1 });
         opt.setAtol(new double[] { 0, 0.0, 0.0, 0.0 });
@@ -2332,9 +2086,7 @@ public class LSODAIntegratorTest {
     }
 
     @Test
-    void ewsetNoEquations() {
-        logger.info("Running ewsetNoEquations test...");
-        
+    void ewsetNoEquations() {        
         ctx.setNeq(0);
         opt.setRtol(new double[] { 0 });
         opt.setAtol(new double[] { 0 });
@@ -2355,8 +2107,6 @@ public class LSODAIntegratorTest {
      */
     @Test
     void testIntdyK0Valid() {
-        logger.info("Running testIntdyK0Valid test...");
-
         // Set up the test context
         ctx.setNeq(2);
         common.setNq(2);
@@ -2399,8 +2149,6 @@ public class LSODAIntegratorTest {
      */
     @Test
     void testIntdyK1Valid() {
-        logger.info("Running testIntdyK1Valid test...");
-
         // Set up the test context
         ctx.setNeq(2);
         common.setNq(2);
@@ -2441,8 +2189,6 @@ public class LSODAIntegratorTest {
      */
     @Test
     void testIntdyKEqualsNq() {
-        logger.info("Running testIntdyKEqualsNq test...");
-
         // Set up the test context
         ctx.setNeq(2);
         common.setNq(2);
@@ -2484,8 +2230,6 @@ public class LSODAIntegratorTest {
      */
     @Test
     void testIntdyNegativeK() {
-        logger.info("Running testIntdyNegativeK test...");
-
         // Set up the test context
         ctx.setNeq(1);
         common.setNq(1);
@@ -2510,8 +2254,6 @@ public class LSODAIntegratorTest {
         // Assertions
         assertEquals(-1, res, "intdy should return -1 when k is negative");
 
-        // Log the result for verification
-        logger.info("Test Results for k = -1: res = " + res);
     }
 
         /**
@@ -2520,8 +2262,6 @@ public class LSODAIntegratorTest {
      */
     @Test
     void testIntdyKGreaterThanNq() {
-        logger.info("Running testIntdyKGreaterThanNq test...");
-
         // Set up the test context
         ctx.setNeq(1);
         common.setNq(1);
@@ -2545,9 +2285,6 @@ public class LSODAIntegratorTest {
 
         // Assertions
         assertEquals(-1, res, "intdy should return -1 when k is greater than nq");
-
-        // Log the result for verification
-        logger.info("Test Results for k > nq: res = " + res);
     }
 
 
@@ -2558,8 +2295,6 @@ public class LSODAIntegratorTest {
      */
     @Test
     void testIntdyTOutOfBounds() {
-        logger.info("Running testIntdyTOutOfBounds test...");
-
         // Set up the test context
         ctx.setNeq(2);
         common.setNq(2);
@@ -2584,9 +2319,6 @@ public class LSODAIntegratorTest {
 
         // Assertions
         assertEquals(-2, res, "intdy should return -2 when t is out of bounds");
-
-        // Log the result for verification
-        logger.info("Test Results for t out of bounds: res = " + res);
     }
 
     /* The following tests are for .intdyReturn() within LSODAIntegrator.java */
@@ -2595,8 +2327,6 @@ public class LSODAIntegratorTest {
     */
     @Test
     void testIntdyReturnBasic() {
-        logger.info("Running testIntdyReturnBasic test...");
-
         // Set up the test context
         ctx.setNeq(2);
         common.setNq(2);
@@ -2626,8 +2356,6 @@ public class LSODAIntegratorTest {
 
     @Test
     void testIntdyReturnErrorCase() {
-        logger.info("Running testIntdyReturnErrorCase test...");
-
         // Set up the test context
         ctx.setNeq(2);
         common.setTn(10d);
@@ -2656,8 +2384,6 @@ public class LSODAIntegratorTest {
         assertEquals(5d, y[1], 1e-10, "y[1] should be 5 after the call");
         assertEquals(6d, y[2], 1e-10, "y[2] should be 6 after the call");
     }
-
-
 
 }
 
