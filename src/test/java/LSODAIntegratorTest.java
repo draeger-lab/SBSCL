@@ -507,7 +507,6 @@ public class LSODAIntegratorTest {
 
         int expected = 2;
         int result = LSODAIntegrator.idamax(n, dx, incx);
-
         assertEquals(expected, result, "idamax should return 2 for max(abs) at dx[3] = -4.0");
     }
 
