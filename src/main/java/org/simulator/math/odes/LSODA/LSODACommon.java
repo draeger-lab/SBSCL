@@ -46,7 +46,7 @@ public class LSODACommon {
     }
 
     // SM1 array, implementation from common.c
-    private static double[] SM1 = {
+    private static final double[] SM1 = {
         0.0d, 0.5d, 0.575d, 0.55d, 0.45d, 0.35d, 0.25d, 0.2d, 0.15d, 0.1d, 0.075d, 0.05d, 0.025d
     };
 
@@ -74,10 +74,6 @@ public class LSODACommon {
 
     public double[] getSM1() {
         return SM1;
-    }
-
-    public void setSM1(double[] SM1) {
-        this.SM1 = SM1;
     }
 
     public double[][] getYh() {
