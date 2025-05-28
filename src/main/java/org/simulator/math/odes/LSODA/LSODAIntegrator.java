@@ -63,7 +63,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
         if (common != null) {
             for (int i = 1; i <= ctx.getNeq(); i++) {
-                y[i] = common.getYh()[i][i];
+                y[i] = common.getYh()[1][i];
             }
             double t = common.getTn();
         }
@@ -328,15 +328,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * @param common    the {@code LSODACommon} object holding the error weight vector and other shared data
      */
     public static void ewset(double[] ycur, double[] rtol, double[] atol, int neq, LSODACommon common) {
-        double[] ewt = common.getEwt();
+        double[] ewt = new double[neq + 1];
         
-        if (ewt.length == 0) {
-            ewt = new double[neq + 1]; 
-            common.setEwt(ewt);
-            /* 1-based indexing. Ewset is initialised using a special memory allocation function within the original C code, 
-            so I added this check in order to replicate this. This is a temporary solution, a cleaner implementation would be to add ewt intialisation 
-            within the constructor or within lsoda_prepare(). */ 
-        }
         System.out.println("Neq" + neq);
         System.out.println("Ewt" + common.getEwt().length);
         
@@ -355,7 +348,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * Computes the weighted maximum norm of a vector v of length n.
      * The norm is computed using the formula:
      * <p>
-     *      vmnorm = max(i=0,...,n) (|v[i]| * |w[i]|)
+     *      vmnorm = max(i=0,...,n) (|v[i]| * w[i])
      * </p>
      * where 'w' is a weight vector of the same length as 'v'.
      * 
@@ -371,8 +364,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             return vm;
         }
 
-        for (int i = 0; i <= n; i++) {
-            vm = Math.max(vm, Math.abs(v[i]) * Math.abs(w[i]));
+        for (int i = 1; i <= n; i++) {
+            vm = Math.max(vm, Math.abs(v[i]) * w[i]);
         }
         return vm;
     }
@@ -811,24 +804,19 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 b[k] = t;
             }
 
-            double[] tempSubB = Arrays.copyOfRange(b, k + 1, n + 1);
-            double[] subB = new double[(n - k) + 1];
-            subB[0] = 0.0;
-            System.arraycopy(tempSubB, 0, subB, 1, (n - k));
-            double[] tempSubA = Arrays.copyOfRange(a[k], k + 1, n + 1);
-            double[] subA = new double[(n - k) + 1]; 
-            subA[0] = 0.0;
-            System.arraycopy(tempSubA, 0, subA, 1, (n - k));  
-            daxpy(n - k, t, subA, 1, 1, subB);
-            System.arraycopy(subB, 1, b, k + 1, n - k);
+            double[] tempSubB = Arrays.copyOfRange(b, k, n + 1);
+            double[] tempSubA = Arrays.copyOfRange(a[k], k, n + 1);
+     
+            daxpy(n - k, t, tempSubA, 1, 1, tempSubB);
+            System.arraycopy(tempSubB, 1, b, k + 1, n - k);
         }
 
-        for (k = n; k >= 1; k--) {
+          for (k = n; k >= 1; k--) {
             b[k] = b[k] / a[k][k];
             t = -b[k];
-            double[] subB = Arrays.copyOfRange(b, k + 1, b.length);
+        
             daxpy(k-1, t, a[k], 1, 1, b);
-            System.arraycopy(subB, 0, b, k + 1, subB.length);
+            
         }
     }
 
@@ -1104,32 +1092,34 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         for (k = 1; k <= n - 1; k++) {
             
             //since in the original C code a pointer to the first column vector was passed, this needs to be replicated using a helper array in Java
-            double[] columnVector = new double[n + 1];
-            for (i = k; i <= n; i++) {
-                columnVector[i] = a[i][k]; 
-            }
-            j = idamax(n - k + 1, columnVector, 1);
+            double[] temp1 = Arrays.copyOfRange(a[k], k-1, n+1);
+
+            j = idamax(n - k + 1, temp1, 1) + k - 1;
             ipvt[k] = j;
 
 
             
             if (a[j][k] == 0d) {
                 info[0] = k;
-                return;
+                continue;
             }
             
             if (j != k) {
-                double[] tempRow = a[k];
-                a[k] = a[j];
-                a[j] = tempRow;
-                // t = a[k][j];
-                // a[k][j] = a[k][k];
-                // a[k][k] = t;
+                
+                t = a[k][j];
+                a[k][j] = a[k][k];
+                a[k][k] = t;
 
             }
             
             t = -1d / a[k][k];
-            dscal(n-k, t, 1, a[k]);
+
+            double[] temp2 = Arrays.copyOfRange(a[k], k, n+1);
+            dscal(n-k, t, 1, temp2);
+
+            for(int it = k; it <= n+1; it++){
+                a[k][it] = temp2[it - k];
+            }
             
             for (i = k + 1; i <= n; i++) {
                 t = a[i][k];
@@ -1138,7 +1128,13 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     a[i][k] = t;
                 }
                 
-                daxpy(n - k, t, a[k], 1, 1, a[i]);
+                double[] temp3 = Arrays.copyOfRange(a[k], k, n+1);
+                double[] temp4 = Arrays.copyOfRange(a[i], k, n+1);
+                daxpy(n - k, t, temp3, 1, 1, temp4);
+
+                for(int it = k; it<= n+1; it++){
+                    a[i][it] = temp4[it - k];
+                }
             }
 
         }
@@ -1166,16 +1162,12 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      */
     public static double fnorm(int n, double[][] a, double[] w) {
 
-        int i, j;
-        double an, sum;
-        double[] ap1;
+        double an = 0d, sum;
 
-        an = 0d;
-        for (i = 1; i <= n; i++) {
+        for (int i = 1; i <= n; i++) {
             sum = 0d;
-            ap1 = a[i];
-            for (j = 1; j <= n; j++) {
-                sum += Math.abs(ap1[j]) / w[j];
+            for (int j = 1; j <= n; j++) {
+                sum += Math.abs(a[i][j]) / w[j];
             }
             an = Math.max(an, sum * w[i]);
         }
@@ -1352,11 +1344,11 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             common.setNq(1);
 
             if (function != null) {
-                function.evaluate(t[0], y, common.getYh()[3], ctx.getData());
+                function.evaluate(t[0], y, common.getYh()[2], ctx.getData());
             }
             common.setNfe(1);
 
-            for (int k = 0; k <= ctx.getNeq(); k++) {
+            for (int k = 1; k <= ctx.getNeq(); k++) {
                 common.getYh()[1][k] = y[k];
             }
             common.setNfe(1);

@@ -12,7 +12,7 @@ public class LSODAStepper {
     }
 
     private void endStoda() {
-        double r = 1d / common.getTesco()[ctx.getNeq()][1];
+        double r = 1d / common.getTesco()[ctx.getNeq()][2];
         double[] acor = common.getAcor();
 
         for (int i = 1; i <= ctx.getNeq(); i++) {
