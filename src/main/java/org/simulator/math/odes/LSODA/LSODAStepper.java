@@ -1,5 +1,7 @@
 package org.simulator.math.odes.LSODA;
 
+import org.apache.commons.math.ode.DerivativeException;
+
 public class LSODAStepper {
     private LSODAContext ctx;
     private LSODACommon common;
@@ -12,32 +14,33 @@ public class LSODAStepper {
     }
 
     private void endStoda() {
-        double r = 1d / common.getTesco()[ctx.getNeq()][2];
+        double r = 1d / common.getTesco()[common.getNqu()][2];
         double[] acor = common.getAcor();
 
         for (int i = 1; i <= ctx.getNeq(); i++) {
-            double acorR = acor[i] * r;
-            acor[i] = acorR;
-            common.setAcor(acor);
-
-            common.setHold(common.getH());
+            acor[i] = acor[i] * r;
         }
+        common.setAcor(acor);
+
+        common.setHold(common.getH());
     }
 
     private void resetCoeff() {
-
+        double el0 = common.getEl()[1];
+        double[] newEl = common.getEl();
         for (int i = 1; i <= (common.getNq() + 1); i++) {
-            double[] newEl = common.getEl();
             newEl[i] = common.getElco()[common.getNq()][i];
-            common.setEl(newEl);
         }
+        common.setEl(newEl);
+        double rc = common.getRc() * newEl[1] / el0;
+        common.setRc(rc);
     }
 
-    public int stoda(LSODAContext ctx, double[]y, int jstart) {
+    public int stoda(LSODAContext ctx, double[]y, int jstart) throws DerivativeException{
         int kflag;
-        int m = -1;
-        double del = 0d;
-        double delp = 0d;
+        int[] m = new int[1];
+        double[] del = new double[1];
+        double[] delp = new double[1];
         double rh = 1d;
         double dsm, dup, exup, r, told;
         double pnorm;
@@ -51,7 +54,7 @@ public class LSODAStepper {
         kflag = 0;
         told = common.getTn();
         common.setNcf(0);
-        delp = 0d;
+        delp[0] = 0d;
 
         int maxord = mxordn;
         if (common.getMeth() == 2) {
@@ -67,7 +70,7 @@ public class LSODAStepper {
             common.setNslp(0);
             common.setIpup(common.getMiter());
             double[] newEl = common.getEl();
-            newEl[0] = 1d;
+            newEl[1] = 1d;
             common.setEl(newEl);
 
             // initialize switching parameters
@@ -120,17 +123,17 @@ public class LSODAStepper {
 
                 for (int j = common.getNq(); j >= 1; j--) {
                     for (int i1 = j; i1 <= common.getNq(); i1++) {
+                        double[][] newYh = common.getYh();
                         for (int i = 1; i <= neq; i++) {
-                            double[][] newYh = common.getYh();
                             newYh[i1][i] = newYh[i1 + 1][i];
-                            common.setYh(newYh);
                         }
+                        common.setYh(newYh);
                     }
                 }
 
                 pnorm = LSODAIntegrator.vmnorm(neq, common.getYh()[1], common.getEwt()); // fix vnorm definitions
                 
-                int corflag = 0; //correction(ctx, y, pnorm, &del, &delp, told, &m); //implement correction
+                int corflag = LSODAIntegrator.correction(ctx, y, pnorm, del, delp, told, m); 
 
                 if (corflag == 0) {
                     break;
@@ -147,10 +150,10 @@ public class LSODAStepper {
                     return kflag;
                 }
             }
-            if (m == 0) {
-                dsm = del / common.getTesco()[common.getNq()][2];
+            if (m[0] == 0) {
+                dsm = del[0] / common.getTesco()[common.getNq()][2];
             }
-            if (m > 0) {
+            if (m[0] > 0) {
                 dsm = LSODAIntegrator.vmnorm(neq, common.getAcor(), common.getEwt()) / common.getTesco()[common.getNq()][2];
             }
             if (dsm <= 1d) {
@@ -162,11 +165,11 @@ public class LSODAStepper {
                 
                 for (int j = 1; j <= (common.getNq() + 1); j++) {
                     r = common.getEl()[j];
+                    double[][] newYh = common.getYh();
                     for (int i = 1; i <= neq; i++) {
-                        double[][] newYh = common.getYh();
                         newYh[j][i] = newYh[j][i] + (common.getAcor()[i] * r);
-                        common.setYh(newYh);
                     }
+                    common.setYh(newYh);
                 }
                 common.setIcount(common.getIcount() - 1);
                 if (common.getIcount() < 0) {
@@ -183,12 +186,12 @@ public class LSODAStepper {
                 if (common.getIalth() == 0) {
                     double rhup = 0d;
                     if ((common.getNq() + 1) != maxord + 1) {
+                        double[] savf = common.getSavf();
                         for (int i = 1; i <= neq; i++) {
-                            double[] savf = common.getSavf();
                             savf[i] = common.getAcor()[i] - common.getYh()[maxord + 1][i];
-                            common.setSavf(savf);
                         }
-                        dup = 0d; //vmnorm(neq, common.getSavf(), (common.getEwt()) / common.getTesco()[common.getNq()][2]);
+                        common.setSavf(savf);
+                        dup = LSODAIntegrator.vmnorm(neq, common.getSavf(), common.getEwt()) / common.getTesco()[common.getNq()][3];
                         exup = 1d / (double) ((common.getNq() + 1) + 1);
                         rhup = 1d / (1.4 * Math.pow(dup, exup) + 0.0000014);
                     }
@@ -220,11 +223,11 @@ public class LSODAStepper {
                     endStoda();
                     break;
                 }
+                double[][] newYh = common.getYh();
                 for (int i = 1; i <= neq; i++) {
-                    double[][] newYh = common.getYh();
                     newYh[maxord + 1][i] = common.getAcor()[i];
-                    common.setYh(newYh);
                 }
+                common.setYh(newYh);
                 endStoda();
                 break;
 
@@ -234,11 +237,11 @@ public class LSODAStepper {
                 common.setTn(told);
                 for (int j = common.getNq(); j >= 1; j--) {
                     for (int i = j; i <= common.getNq(); i++) {
+                        double[][] newYh = common.getYh();
                         for (int i1 = 1; i <= neq; i++) {
-                            double[][] newYh = common.getYh();
-                            newYh[i][i1] -= newYh[i+1][i];
-                            common.setYh(newYh);
+                            newYh[i1][i] -= newYh[i1+1][i];
                         }
+                        common.setYh(newYh);
                     }
                 }
                 common.setRmax(2d);
@@ -277,13 +280,13 @@ public class LSODAStepper {
                         for (int i = 1; i <= neq; i++) {
                             y[i] = common.getYh()[1][i];
                         }
-                        ctx.getFunction().evaluate(common.getTn(), y, common.getSavf(), ctx.getData());
+                        common.setSavf(LSODAIntegrator.findDerivatives(ctx.getOdeSystem(), common.getTn(), y));
                         common.setNfe(common.getNfe() + 1);
+                        double[][] newYh = common.getYh();
                         for (int i = 1; i <= neq; i++) {
-                            double[][] newYh = common.getYh();
                             newYh[2][i] = common.getH() * common.getSavf()[i];
-                            common.setYh(newYh);
                         }
+                        common.setYh(newYh);
                         common.setIpup(common.getMiter());
                         common.setIalth(5);
                         if (common.getNq() == 1) {

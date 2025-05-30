@@ -374,12 +374,12 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * Initializes method-specific coefficients used in the LSODA algorithm.
      * <p>
      * This method pre-computes and fills the coefficient tables ({@code elco} and {@code tesco}) based on
-     * the chosen integratio method. These coefficient tables are required for evaluating predictor and
+     * the chosen integration method. These coefficient tables are required for evaluating predictor and
      * corrector formulas in the Adams or BDF methods.
      * 
      * For Adams method ({@code meth} == 1), the fucntion calculates:
      * <ul>
-     *      <li>{@code elco[nq][*]}: Coefficients for the polznomial historz in the predictor step</li>
+     *      <li>{@code elco[nq][*]}: Coefficients for the polynomial history in the predictor step</li>
      *      <li>{@code tesco[nq][*]}: Time-step and error estimation related constants</li>
      * </ul>
      * 
@@ -400,14 +400,13 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             double[][] newElco = common.getElco();
             newElco[1][1] = 1d;
             newElco[1][2] = 1d;
-            common.setElco(newElco);
 
             double[][] newTesco = common.getTesco();
             newTesco[1][1] = 0d;
             newTesco[1][2] = 2d;
             newTesco[2][1] = 1d;
             newTesco[12][3] = 0d;
-            common.setTesco(newTesco);
+            
             pc[1] = 1d;
             rqfac = 1d;
             for (nq = 2; nq <= 12; nq++) {
@@ -430,23 +429,22 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     pint += tsign * pc[i] / (double) i;
                     xpin += tsign * pc[i] / (double) (i + 1);
                 }
-                newElco = common.getElco();
+    
                 newElco[nq][1] = pint * rq1fac;
                 newElco[nq][2] = 1d;
-                common.setElco(newElco);
 
                 for (i = 2; i <= nq; i++) {
-                    newElco = common.getElco();
                     newElco[nq][i+1] = rq1fac * pc[i] / (double) i;
                 }
+                common.setElco(newElco);
+
                 agamq = rqfac * xpin;
                 ragq = 1d / agamq;
-                newTesco = common.getTesco();
+
                 newTesco[nq][2] = agamq;
-                common.setTesco(newTesco);
+                
                 if (nq < 12) {
                     newTesco[nqp1][1] = ragq * rqfac / (double) nqp1;
-                    common.setTesco(newTesco);
                 }
                 newTesco[nqm1][3] = ragq;
                 common.setTesco(newTesco);
@@ -470,15 +468,13 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             pc[1] *= fnq;
 
             for (i = 1; i <= nqp1; i++) {
-                newElco = common.getElco();
                 newElco[nq][i] = pc[i] / pc[2];
-                common.setElco(newElco);
             }
             newElco[nq][2] = 1d;
-            common.setElco(newElco);
             newTesco[nq][1] = rq1fac;
-            newTesco[nq][2] = ((double) nqp1) / common.getElco()[nq][1];
-            newTesco[nq][3] = ((double) (nq + 2)) / common.getElco()[nq][1];
+            newTesco[nq][2] = ((double) nqp1) / newElco[nq][1];
+            newTesco[nq][3] = ((double) (nq + 2)) / newElco[nq][1];
+            common.setElco(newElco);
             common.setTesco(newTesco);
             rq1fac /= fnq;
         }
@@ -532,7 +528,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     /**
      * Perform the nonlinear corrector step for the current integration step.
      * <p>
-     * This method applies the Newton iteration or the functional iteration (depending on the method and solver state) to compute a corrected solution verctor {@code y} for the current step. 
+     * This method applies the Newton iteration or the functional iteration (depending on the method and solver state) to compute a corrected solution vector {@code y} for the current step. 
      * The correction is applied using the method defined by {@code miter}, and convergence is assessed using the weighted norm of the correction vector {@code del}.
      * </p>
      * 
@@ -550,7 +546,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * @param m     the output parameter (length-1 array) for the number of correction interations used
      * @return      0 if the correction process converges successfully; nonzero if it failed
      **/
-    public static int correction(LSODAContext ctx, double[] y, double pnorm, double[] del, double[] delp, double told, int[] m) {
+    public static int correction(LSODAContext ctx, double[] y, double pnorm, double[] del, double[] delp, double told, int[] m) throws DerivativeException{
         LSODACommon common = ctx.getCommon();
         int i;
         double rm, rate, dcon;
@@ -562,7 +558,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         for (i = 1; i <= neq; i++) {
             y[i] = common.getYh()[1][i];
         }
-        ctx.getFunction().evaluate(common.getTn(), y, common.getSavf(), ctx.getData());
+
+        common.setSavf(findDerivatives(ctx.getOdeSystem(), common.getTn(), y)); 
         common.setNfe(common.getNfe() + 1);
         
         while (true) { 
@@ -578,26 +575,27 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                         return corfailure(ctx, told);
                     }
                 }
+
+                double[] acor = common.getAcor();
                 for (i = 1; i <= neq; i++) {
-                    double[] acor = common.getAcor();
                     acor[i] = 0d;
-                    common.setAcor(acor);
                 }
+                common.setAcor(acor);
             }
+
             if (common.getMiter() == 0) {
+                double[] savf = common.getSavf();
                 for (i = 1; i <= neq; i++) {
-                    double[] savf = common.getSavf();
-                    savf[i] = common.getH() * common.getSavf()[i] - common.getYh()[2][i];
-                    common.setSavf(savf);
+                    savf[i] = common.getH() * savf[i] - common.getYh()[2][i];
                     y[i] = savf[i] - common.getAcor()[i];
                 }
+                common.setSavf(savf);
+
                 del[0] = vmnorm(neq, y, common.getEwt());
                 for (i = 1; i <= neq; i++) {
                     y[i] = common.getYh()[1][i] + common.getEl()[1] * common.getSavf()[i];
-                    double[] acor = common.getAcor();
-                    acor[i] = common.getSavf()[i];
-                    common.setAcor(acor);
                 }
+                common.setAcor(common.getSavf());
             }
             else {
                 for (i = 1; i <= neq; i++) {
@@ -605,12 +603,12 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 }
                 solsy(ctx, y);
                 del[0] = vmnorm(neq, y, common.getEwt());
+                double[] acor = common.getAcor();
                 for (i = 1; i <= neq; i++) {
-                    double[] acor = common.getAcor();
                     acor[i] += y[i];
-                    common.setAcor(acor);
-                    y[i] = common.getYh()[1][i] + common.getEl()[1] * common.getAcor()[i];
+                    y[i] = common.getYh()[1][i] + common.getEl()[1] * acor[i];
                 }
+                common.setAcor(acor);
             }
             if (del[0] <= 100d * pnorm * common.ETA) {
                 break;
@@ -640,18 +638,20 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     return corfailure(ctx, told);
                 }
                 common.setIpup(common.getMiter());
+                m[0] = 0;
                 rate = 0d;
                 del[0] = 0d;
                 for (i = 1; i <= neq; i++) {
                     y[i] = common.getYh()[1][i];
                 }
-                ctx.getFunction().evaluate(common.getTn(), y, common.getSavf(), ctx.getData());
-                common.setNfe(common.getNfe() + 1);
+                
             }
             else {
                 delp[0] = del[0];
-                ctx.getFunction().evaluate(common.getTn(), y, common.getSavf(), ctx.getData());
             }
+
+            common.setSavf(findDerivatives(ctx.getOdeSystem(), common.getTn(), y));  
+            common.setNfe(common.getNfe() + 1);
         }
         return 0;
     }
@@ -992,7 +992,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * @return      1: if the Jacobian approximation and subsequent matrix factorization succeed;
      *              2: 0 if an error occurs (e.g., an unexpected iteration method)
      */
-    public static int prja(LSODAContext ctx, double[] y) {
+    public static int prja(LSODAContext ctx, double[] y) throws DerivativeException{
         int i, j; 
         int[] ier = new int[1]; //in the original code, ier was of type int and passed by reference. I changed it to simulate this logic.
         double fac, hl0, r, r0, yj;
@@ -1022,12 +1022,14 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 r = Math.max(common.SQRTETA * Math.abs(yj), r0 / common.getEwt()[j]);
                 y[j] += r;
                 fac = -hl0 / r;
-                ctx.getFunction().evaluate(common.getTn(), y, common.getAcor(), ctx.getData());
+
+                common.setAcor(findDerivatives(ctx.getOdeSystem(), common.getTn(), y));
+
+                double[][] wm = common.getWm();
                 for (i = 1; i <= neq; i++) {
-                    double[][] wm = common.getWm();
                     wm[i][j] = (common.getAcor()[i] - common.getSavf()[i]) * fac;
-                    common.setWm(wm);
                 }
+                common.setWm(wm);
                 y[j] = yj;
             }
             
@@ -1035,12 +1037,11 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             
             common.setPdnorm(fnorm(neq, common.getWm(), common.getEwt()) / Math.abs(hl0));
 
-            
+            double[][] wm = common.getWm();
             for (i = 1; i <= neq; i++) {
-                double[][] wm = common.getWm();
                 wm[i][i] += 1d;
-                common.setWm(wm);
             }
+            common.setWm(wm);
 
             dgefa(common.getWm(), neq, common.getIpvt(), ier);
 
@@ -1283,12 +1284,24 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return;
     }
 
-    public int lsoda(LSODAContext ctx, double[] y, double[] t, double tout) {
+    /*
+     * Helper function to compute derivatives
+     */
+    public static double[] findDerivatives(DESystem odeSystem, double t, double[] y) throws DerivativeException{
+        int n = odeSystem.getDimension();
+        double[] ydot = new double[n];
+        odeSystem.computeDerivatives(t, Arrays.copyOfRange(y, 1, n+1), ydot);
+        double[] ydot1 = new double[n + 1];
+        System.arraycopy(ydot, 0, ydot1, 1, n);
+        return ydot1;
+    }
+
+    public int lsoda(LSODAContext ctx, double[] y, double[] t, double tout) throws DerivativeException {
         int jstart;
 
         LSODACommon common = ctx.getCommon();
         LSODAOptions opt = ctx.getOpt(); 
-        LSODAFunction function = ctx.getFunction();
+        DESystem odeSystem = ctx.getOdeSystem();
         LSODAStepper stepper = new LSODAStepper(ctx, null, 0);
 
         if (common == null) {
@@ -1343,9 +1356,10 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             jstart = 0;
             common.setNq(1);
 
-            if (function != null) {
-                function.evaluate(t[0], y, common.getYh()[2], ctx.getData());
-            }
+            double[][] newYh = common.getYh();
+            newYh[2] = findDerivatives(odeSystem, t[0], y);
+            common.setYh(newYh);
+
             common.setNfe(1);
 
             for (int k = 1; k <= ctx.getNeq(); k++) {

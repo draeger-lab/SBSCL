@@ -2,9 +2,11 @@ package org.simulator.math.odes.LSODA;
 
 import java.util.Objects;
 
+import org.simulator.math.odes.DESystem;
+
 public class LSODAContext {
 
-    private LSODAFunction function; // what is this supposed to be?
+    private DESystem odeSystem;
     private Object data;
     private int state;
     private int neq;
@@ -16,7 +18,6 @@ public class LSODAContext {
     public LSODAContext(LSODACommon common, LSODAOptions opt) {
         this.common = common;
         this.opt = opt;
-        this.function = new LSODAFunction();
     }
 
     public LSODAContext(LSODAContext ctx, LSODACommon common) {
@@ -58,12 +59,12 @@ public class LSODAContext {
         this.common = common;
     }
 
-    public LSODAFunction getFunction() {
-        return function;
+    public DESystem getOdeSystem() {
+        return odeSystem;
     }
     
-    public void setFunction(LSODAFunction function) {
-        this.function = function;
+    public void setFunction(DESystem odeSystem) {
+        this.odeSystem= odeSystem;
     }
 
     public Object getData() {
