@@ -592,10 +592,12 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 common.setSavf(savf);
 
                 del[0] = vmnorm(neq, y, common.getEwt());
+                double[] acor = common.getAcor();
                 for (i = 1; i <= neq; i++) {
                     y[i] = common.getYh()[1][i] + common.getEl()[1] * common.getSavf()[i];
+                    acor[i] = common.getSavf()[i];
                 }
-                common.setAcor(common.getSavf());
+                common.setAcor(acor);
             }
             else {
                 for (i = 1; i <= neq; i++) {
@@ -1100,7 +1102,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
 
             
-            if (a[j][k] == 0d) {
+            if (a[k][j] == 0d) {
                 info[0] = k;
                 continue;
             }
@@ -1118,14 +1120,12 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             double[] temp2 = Arrays.copyOfRange(a[k], k, n+1);
             dscal(n-k, t, 1, temp2);
 
-            for(int it = k; it <= n+1; it++){
-                a[k][it] = temp2[it - k];
-            }
+            System.arraycopy(temp2, 1, a[k], k + 1, n - k);
             
             for (i = k + 1; i <= n; i++) {
-                t = a[i][k];
+                t = a[i][j];
                 if (j != k) {
-                    a[i][j] = a [i][k];
+                    a[i][j] = a[i][k];
                     a[i][k] = t;
                 }
                 
@@ -1133,9 +1133,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 double[] temp4 = Arrays.copyOfRange(a[i], k, n+1);
                 daxpy(n - k, t, temp3, 1, 1, temp4);
 
-                for(int it = k; it<= n+1; it++){
-                    a[i][it] = temp4[it - k];
-                }
+                System.arraycopy(temp4, 1, a[i], k + 1, n - k);
             }
 
         }
