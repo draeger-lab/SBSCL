@@ -63,7 +63,7 @@ public class LSODAContext {
         return odeSystem;
     }
     
-    public void setFunction(DESystem odeSystem) {
+    public void setOdeSystem(DESystem odeSystem) {
         this.odeSystem= odeSystem;
     }
 
