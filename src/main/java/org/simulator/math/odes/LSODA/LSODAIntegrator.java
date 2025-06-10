@@ -92,8 +92,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     /**
      * Computes the k-th derivative of the solution at a given time t ({@code t}).
      * <p>
-     * This method evaluates the interpolating polznomial (or its derivatives) for the dependent variables at the given time {@code t},
-     * using the historz data stored in the {@code LSODACommon} object.
+     * This method evaluates the interpolating polynomial (or its derivatives) for the dependent variables at the given time {@code t},
+     * using the history data stored in the {@code LSODACommon} object.
      * The result is returned in the arrray {@code dky}, which represents the k-th derivative of y(t).
      * The function performs bounds checking on both {@code k} and {@ code t} to ensure interpolation is valid.
      * 
@@ -954,7 +954,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * This function computes a finite difference approximation to the Jacobian matrix for the current state of the ODE system.
      * I perturbs the state vector <code>y</code> and evaluates the system function to estimate the directional derivatives.
      * The resulting differences, scaled by the step size, tolerance and a computed factor, are used to update the weighted
-     * difference matrix <code>Wm</code>. The matrix is then modifiec by unitizing its diagonal elements and factorized 
+     * difference matrix <code>Wm</code>. The matrix is then modified by unitizing its diagonal elements and factorized 
      * via LU decomposition (by calling <code>dgefa()</code>). This makes it ready for use as a preconditioner in the
      * iterative solution process.
      * </p>
@@ -1006,7 +1006,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
                 double[][] wm = common.getWm();
                 for (i = 1; i <= neq; i++) {
-                    wm[i][j] = (common.getAcor()[i] - common.getSavf()[i]) * fac;
+                    wm[i][j] = (common.getAcor()[i] - common.getSavf()[i]) * fac; // -h*el[1]*J
                 }
                 common.setWm(wm);
                 y[j] = yj;
@@ -1020,7 +1020,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             for (i = 1; i <= neq; i++) {
                 wm[i][i] += 1d;
             }
-            common.setWm(wm);
+            common.setWm(wm); // I - h*el[1]*J
 
             dgefa(common.getWm(), neq, common.getIpvt(), ier);
 
@@ -1253,6 +1253,239 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             dx[i + 4] *= da;
         }
         return;
+    }
+
+   /**
+    * detects whether to change the method
+    * @param ctx
+    * @param dsm 
+    * @param pnorm
+    * @param rh
+    */
+    public static void methodSwitch(LSODAContext ctx, double dsm, double pnorm, double[] rh) {
+
+        // cm1 and cm2 are precomputed step-size multipliers associated with going one order up or down in the current method family (Adams or BDF)
+        double[] cm1 = {
+            0x0p+0, 0x1p+1, 0x1.7ffffffffffffp+2, 0x1p+2, 
+            0x1.9435e50d79434p+0, 0x1.c71c71c71c721p-2, 0x1.8eaf0473189ecp-4, 0x1.1df9ab7934513p-6, 
+            0x1.5b6f81b154515p-9, 0x1.6e1dd3d149b81p-12, 0x1.54a9415f71629p-15, 0x1.1bcb8f930a98p-18, 
+            0x1.ac0fa4b46f6c6p-22, };
+
+        double[] cm2 = {
+            0x0p+0, 0x1p+1, 0x1.8p+0, 0x1.5555555555556p-1, 
+            0x1.aaaaaaaaaaaacp-3, 0x1.9999999999999p-5, 0x1.8eaf0473189ecp-4, 0x1.1df9ab7934513p-6, 
+            0x1.5b6f81b154515p-9, 0x1.6e1dd3d149b81p-12, 0x1.54a9415f71629p-15, 0x1.1bcb8f930a98p-18, 
+            0x1.ac0fa4b46f6c6p-22, };
+            
+        int lm1, lm1p1, lm2, lm2p1, nqm1, nqm2;
+        double rh1, rh2, rh1it, exm2, dm2, exm1, dm1, alpha, exsm;
+        double pdh;
+        int neq = ctx.getNeq();
+        int mxordn = ctx.getOpt().getMxordn();
+        int mxords = ctx.getOpt().getMxords();
+        LSODACommon common = ctx.getCommon();
+
+        // currently using Adams method, considering switching to BDF 
+        if(common.getMeth() == 1) {
+            if(common.getNq() > 5) {
+                return;
+            }
+
+            if(dsm <= (100d * pnorm * common.ETA) || common.getPdest() == 0d) {
+                if(common.getIrflag() == 0) {
+                    return;
+                }
+
+                rh2 = 2d;
+                nqm2 = (int) common.min(common.getNq(), mxords);
+            }
+            else {
+                exsm = 1d / (double) (common.getNq() + 1);
+                rh1 = 1d / (1.2 * Math.pow(dsm, exsm) + 0.0000012);
+                rh1it = 2d * rh1;
+                pdh = common.getPdlast() * Math.abs(common.getH());
+
+                if((pdh * rh1) > 0.00001d) {
+                    rh1it = common.getSM1()[common.getNq()] / pdh;
+                }
+
+                rh1 = common.min(rh1, rh1it);
+                if(common.getNq() > mxords) {
+                    nqm2 = mxords;
+                    lm2 = mxords + 1;
+                    exm2 = 1d / (double) lm2;
+                    lm2p1 = lm2 + 1;
+                    dm2 = vmnorm(neq, common.getYh()[lm2p1], common.getEwt()) / cm2[mxords];
+                    rh2 = 1d / (1.2d * Math.pow(dm2, exm2) + 0.0000012d);
+                } 
+                else {
+                    dm2 = dsm * (cm1[common.getNq()] / cm2[common.getNq()]);
+                    rh2 = 1d / (1.2d * Math.pow(dm2, exsm) + 0.0000012d);
+                    nqm2 = common.getNq();
+                }
+
+                if (rh2 < (common.RATIO * rh1) ) {
+                    return;
+                }
+            }
+
+            // method switch test passed. Reset relevant quantities for BDF
+            rh[0] = rh2;
+            common.setIcount(20);
+            common.setMeth(2);
+            common.setMiter(2);
+            common.setPdlast(0d);
+            common.setNq(nqm2);
+            return;
+        }
+
+        // currently using BDF method, considering switching to Adams 
+        exsm = 1d / (double) (common.getNq() + 1);
+        if (mxordn < common.getNq()) {
+            nqm1 = mxordn;
+            lm1 = mxordn + 1;
+            exm1 = 1d / (double) lm1;
+            lm1p1 = lm1 + 1;
+            dm1 = vmnorm(neq, common.getYh()[lm1p1], common.getEwt()) / cm1[mxordn];
+            rh1 = 1d / (1.2d * Math.pow(dm1, exm1) + 0.0000012d);
+        } 
+        else {
+            dm1 = dsm * (cm2[common.getNq()] / cm1[common.getNq()]);
+            rh1 = 1d / (1.2d * Math.pow(dm1, exsm) + 0.0000012d);
+            nqm1 = common.getNq();
+            exm1 = exsm;
+        }
+
+        rh1it = 2d * rh1;
+        pdh = common.getPdnorm() * Math.abs(common.getH());
+
+        if ((pdh * rh1) > 0.00001d) {
+            rh1it = common.getSM1()[nqm1] / pdh;
+        }
+
+        rh1 = common.min(rh1, rh1it);
+        rh2 = 1d / (1.2d * Math.pow(dsm, exsm) + 0.0000012d);
+
+        if ((rh1 * common.RATIO) < (5d * rh2)) {
+            return;
+        }
+
+        alpha = common.max(0.001d, rh1);
+        dm1 *= Math.pow(alpha, exm1);
+        if (dm1 <= 1000. * common.ETA * pnorm) {
+            return;
+        }
+
+        // method switch test passed. Reset relevant quantities for Adams
+        rh[0] = rh1;
+        common.setIcount(20);
+        common.setMeth(1);
+        common.setMiter(0);
+        common.setPdlast(0d);
+        common.setNq(nqm1);    
+    }
+
+    /**
+     * detects whether to change the order of current method
+     * @param ctx
+     * @param rhup
+     * @param dsm
+     * @param rh
+     * @param kflag
+     * @param maxord
+     * @return          0: Keep the same stepsize and order
+     *                  1: Change in stepsize but saem order
+     *                  2: Change in both stepsize and order
+     */
+    public static int orderSwitch(LSODAContext ctx, double rhup, double dsm, double[] rh, int kflag, int maxord) {
+        int newq, i;
+        double exsm, rhdn, rhsm, ddn, exdn, r;
+        double pdh = 0;
+
+        LSODACommon common = ctx.getCommon();
+        int neq = ctx.getNeq();
+        exsm = 1d / (double) (common.getNq() + 1);
+        rhsm = 1d / (1.2d * Math.pow(dsm, exsm) + 0.0000012d);
+
+        rhdn = 0d;
+        if(common.getNq() != 1) {
+            ddn = vmnorm(neq, common.getYh()[(common.getNq() + 1)], common.getEwt()) / common.getTesco()[common.getNq()][1];
+            exdn = 1d / (double) common.getNq();
+            rhdn = 1d / (1.3d * Math.pow(ddn, exdn) + 0.0000013d);
+        }
+
+        if(common.getMeth() == 1) {
+            pdh = common.max(Math.abs(common.getH()) * common.getPdlast(), 0.000001d);
+            if((common.getNq() + 1) < maxord + 1) {
+                rhup = common.min(rhup, common.getSM1()[(common.getNq() + 1)] / pdh);
+            }
+            rhsm = common.min(rhsm, common.getSM1()[common.getNq()] / pdh);
+            if(common.getNq() > 1) {
+                rhdn = common.min(rhdn, common.getSM1()[common.getNq() - 1] / pdh);
+            }
+            common.setPdest(0d);;
+        }
+
+        if(rhsm >= rhup) {
+            if(rhsm >= rhdn) {
+                newq = common.getNq();
+                rh[0] = rhsm;
+            } 
+            else {
+                newq = common.getNq() - 1;
+                rh[0] = rhdn;
+                if(kflag < 0 && rh[0] > 1d)
+                    rh[0] = 1d;
+            }
+        } 
+        else {
+            if(rhup <= rhdn) {
+                newq = common.getNq() - 1;
+                rh[0] = rhdn;
+                if(kflag < 0 && rh[0] > 1.)
+                    rh[0] = 1d;
+            } 
+            else {
+                rh[0] = rhup;
+                if(rh[0] >= 1.1d) {
+                    r = common.getEl()[(common.getNq() + 1)] / (double) (common.getNq() + 1);
+                    common.setNq(common.getNq() + 1);
+                    double[][] tempYh = common.getYh();
+                    for(i = 1; i <= neq; i++) {
+                        tempYh[common.getNq() + 1][i] = common.getAcor()[i] * r;
+                    }
+                    common.setYh(tempYh);
+                    return 2;
+                } 
+                else {
+                    common.setIalth(3);
+                    return 0;
+                }
+            }
+        }
+
+        if(common.getMeth() == 1) {
+            if((rh[0] * pdh * 1.00001d) < common.getSM1()[newq])
+                if(kflag == 0 && rh[0] < 1.1) {
+                    common.setIalth(3);;
+                    return 0;
+                }
+        } 
+        else {
+            if(kflag == 0 && rh[0] < 1.1) {
+                common.setIalth(3);;
+                return 0;
+            }
+        }
+        if(kflag <= -2) {
+            rh[0] = common.min(rh[0], 0.2);
+        }
+
+        if(newq == common.getNq()) {
+            return 1;
+        }
+        common.setNq(newq);
+        return 2;
     }
 
     /*
