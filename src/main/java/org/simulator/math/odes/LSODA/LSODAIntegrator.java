@@ -1,5 +1,7 @@
 package org.simulator.math.odes.LSODA;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.odes.AbstractDESSolver;
@@ -8,6 +10,11 @@ import org.simulator.math.odes.DESystem;
 
 public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     
+    /**
+     * Logger for this class
+     */
+    private static final Logger logger = Logger.getLogger(LSODAIntegrator.class.getName());
+
     public static LSODAContext ctx;
     private int neq;
     private double[] yh;
@@ -1304,6 +1311,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 nqm2 = (int) common.min(common.getNq(), mxords);
             }
             else {
+                
                 // compute ideal stepsize factor for Adams method, rh1
                 exsm = 1d / (double) (common.getNq() + 1);
                 rh1 = 1d / (1.2 * Math.pow(dsm, exsm) + 0.0000012d);
@@ -1333,6 +1341,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
                 // switch only when new stepsize factor is more than ratio = 5 times the previous stepsize factor
                 if(rh2 < (common.RATIO * rh1) ) {
+                    logger.log(Level.INFO, "No switching " + rh1 + " " + rh2);
                     return;
                 }
             }
