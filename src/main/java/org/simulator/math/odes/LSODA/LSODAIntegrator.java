@@ -166,39 +166,20 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     }
 
     public static int intdyReturn(LSODAContext ctx, double[] y, double[] t, double tout, int itask) {
-        System.out.println("[intdyReturn] Starting execution");
-        System.out.println("[intdyReturn] Inputs: y = " + Arrays.toString(y) + ", t = " + Arrays.toString(t) +
-                           ", tout = " + tout + ", itask = " + itask);
 
         LSODACommon common = ctx.getCommon();
-
-        System.out.println("[intdyReturn] LSODACommon obtained, yh array: " + Arrays.deepToString(common.getYh()));
-
-        System.out.println("[intdyReturn] Calling intdy function...");
-        System.out.println("Y before intdy: " + Arrays.toString(y));
         int iflag = intdy(ctx, tout, 0, y);
-        System.out.println("y after intdy: " + Arrays.toString(y));
-        System.out.println("[intdyReturn] intdy returned iflag: " + iflag);
-
-
+    
         if (iflag != 0) {
-            System.out.println("[intdyReturn] Error detected (iflag != 0), logging error...");
             logError("[lsoda] trouble from indty, itas = %d, tout = %g\n", itask, tout);
-            System.out.println("[intdyReturn] Copying backup values from common.getYh()[1] to y:");
             for (int i = 1; i <= ctx.getNeq(); i++) {
                 y[i] = common.getYh()[1][i];
-                System.out.println("  [intdyReturn] y[" + i + "] updated to backup value: " + y[i]);
             }
-        } else {
-            System.out.println("[intdyReturn] No error detected; skipping backup value copying.");
         }
         t[0] = tout;
-        System.out.println("[intdyReturn] t[0] set to tout: " + t[0]);
 
         ctx.setState(2);
-        System.out.println("[intdyReturn] Context state set to: " + ctx.getState());
 
-        System.out.println("[intdyReturn] Execution complete, returning state: " + ctx.getState());
         return ctx.getState();
 
     }
@@ -329,9 +310,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      */
     public static void ewset(double[] ycur, double[] rtol, double[] atol, int neq, LSODACommon common) {
         double[] ewt = new double[neq + 1];
-        
-        System.out.println("Neq" + neq);
-        System.out.println("Ewt" + common.getEwt().length);
         
         for (int i = 1; i <= neq; i++) {
             ewt[i] = rtol[i] * Math.abs(ycur[i]) + atol[i];
@@ -805,19 +783,15 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 b[j] = b[k];
                 b[k] = t;
             }
-
-            double[] tempSubB = Arrays.copyOfRange(b, k, n + 1);
-            double[] tempSubA = Arrays.copyOfRange(a[k], k, n + 1);
      
-            daxpy(n - k, t, tempSubA, 1, 1, tempSubB);
-            System.arraycopy(tempSubB, 1, b, k + 1, n - k);
+            daxpy(n - k, t, a[k], 1, b, 1, k + 1, k + 1);
         }
 
           for (k = n; k >= 1; k--) {
             b[k] = b[k] / a[k][k];
             t = -b[k];
         
-            daxpy(k-1, t, a[k], 1, 1, b);
+            daxpy(k-1, t, a[k], 1, b, 1, 1, 1);
             
         }
     }
@@ -847,34 +821,37 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      *      <li>If the increment for <code>dx</code> is 1, optimized looping is applied. In this case, the function first processes
      *          any remaining elements (<code>n % 4</code>) individually, and the updates the remaining elements in blocks of four
      *          to enhance performance.</li>
-     *      <li>For any other cases, a default iteration over the vector elements is used.</li>
+     *      <li>For any other cases, a default iteration over the vector elements is used with <code>offsetX</code> and <code>offsetY</code>
+     *          as starting iteration index in <code>dx</code> and <code>dy</code> respectively.</li>
      *  </ul>
      * </p>
      * 
      * 
-     * @param n     The number of elements in the vectors to be processed;
-     *              if <code>n</code> is less than 0, no operation will be completed.
-     * @param da    The scalar multiplier applied to each element of <code>dx</code>.
-     * @param dx    The vector whose elements are scaled by <code>da</code> and then added to the corresponding elements in <code>dy</code>.
-     * @param incx  The increment for accessing successive elements of <code>dx</code>.
-     * @param incy  The increment for accessing successive elements of <code>dy</code>.
-     * @param dy    The destination vector that is updated in place with the result of the AXPY operation.
+     * @param n         The number of elements in the vectors to be processed;
+     *                  if <code>n</code> is less than 0, no operation will be completed.
+     * @param da        The scalar multiplier applied to each element of <code>dx</code>.
+     * @param dx        The vector whose elements are scaled by <code>da</code> and then added to the corresponding elements in <code>dy</code>.
+     * @param incx      The increment for accessing successive elements of <code>dx</code>.
+     * @param dy        The destination vector that is updated in place with the result of the AXPY operation.
+     * @param incy      The increment for accessing successive elements of <code>dy</code>.
+     * @param offsetX   The start position for <code>dx</code>
+     * @param offsetY   The start position for <code>dy</code>
     */
-    public static void daxpy(int n, double da, double[] dx, int incx, int incy, double[] dy) {
+    public static void daxpy(int n, double da, double[] dx, int incx, double[] dy, int incy, int offsetX, int offsetY) {
         int i, ix, iy, m;
 
-        if (n < 0 || da == 0d) {
+        if (n < 0 || da == 0d || (incx * (n - 1) + offsetX) >= dx.length || (incy * (n - 1) + offsetY) >= dy.length) {
             return;
         }
         
         if (incx != incy || incy < 1) {
-            ix = 1;
-            iy = 1;
+            ix = offsetX;
+            iy = offsetY;
             if (incx < 0) {
-                ix = (-n + 1) * incx + 1;
+                ix = (-n + 1) * incx + offsetX;
             }
             if (incy < 0) {
-                iy = (-n + 1) * incy + 1;
+                iy = (-n + 1) * incy + offsetY;
             }
 
             for (i = 1; i <= n; i++) {
@@ -889,23 +866,23 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             m = n % 4;
             if (m != 0) {
                 for (i = 1; i <= m; i++) {
-                    dy[i] += da * dx[i];
+                    dy[i + offsetY - 1] += da * dx[i + offsetX - 1];
                 }
                 if (n < 4) {
                     return;
                 }
             }
             for (i = m + 1; i <= n; i += 4) {
-                dy[i] += da * dx[i];
-                dy[i + 1] += da * dx[i + 1];
-                dy[i + 2] += da * dx[i + 2];
-                dy[i + 3] += da * dx[i + 3];
+                dy[i + offsetY - 1] += da * dx[i + offsetX - 1];
+                dy[i + offsetY] += da * dx[i + offsetX];
+                dy[i + offsetY + 1] += da * dx[i + offsetX + 1];
+                dy[i + offsetY + 2] += da * dx[i + offsetX + 2];
             }
             return;
         }
 
         for (i = 1; i <= n + incx; i += incx) {
-            dy[i] += da * dx[i];
+            dy[i + offsetY - 1] += da * dx[i + offsetX - 1];
         }
         return;
     
@@ -1128,12 +1105,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     a[i][j] = a[i][k];
                     a[i][k] = t;
                 }
-                
-                double[] temp3 = Arrays.copyOfRange(a[k], k, n+1);
-                double[] temp4 = Arrays.copyOfRange(a[i], k, n+1);
-                daxpy(n - k, t, temp3, 1, 1, temp4);
-
-                System.arraycopy(temp4, 1, a[i], k + 1, n - k);
+            
+                daxpy(n - k, t, a[k], 1, a[i], 1, k + 1, k + 1);
             }
 
         }

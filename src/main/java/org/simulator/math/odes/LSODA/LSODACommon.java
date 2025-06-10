@@ -1,5 +1,7 @@
 package org.simulator.math.odes.LSODA;
 
+import java.util.Arrays;
+
 public class LSODACommon {
     
     public final double ETA = 2.2204460492503131e-16;
@@ -73,7 +75,7 @@ public class LSODACommon {
     }
 
     public double[] getSM1() {
-        return SM1;
+        return Arrays.copyOf(SM1, SM1.length);
     }
 
     public double[][] getYh() {

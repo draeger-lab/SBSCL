@@ -711,6 +711,73 @@ public class LSODAIntegratorTest {
     }
 
     @Test
+    void prjaTwoLengthSystem() throws DerivativeException {
+        ctx.setNeq(2);
+        common.setMiter(2);
+
+        DESystem system = new DESystem() {
+
+            @Override
+            public int getDimension() {
+                return 2;
+            }
+
+            @Override
+            public void computeDerivatives(double t, double[] y, double[] yDot) throws DerivativeException {
+                yDot[0] = 1;
+                yDot[1] = y[0] + y[1];
+            }
+
+            @Override
+            public String[] getIdentifiers() {
+                throw new UnsupportedOperationException("Unimplemented method 'getIdentifiers'");
+            }
+
+            @Override
+            public boolean containsEventsOrRules() {
+                throw new UnsupportedOperationException("Unimplemented method 'containsEventsOrRules'");
+            }
+
+            @Override
+            public int getPositiveValueCount() {
+                throw new UnsupportedOperationException("Unimplemented method 'getPositiveValueCount'");
+            }
+
+            @Override
+            public void setDelaysIncluded(boolean delaysIncluded) {
+                throw new UnsupportedOperationException("Unimplemented method 'setDelaysIncluded'");
+            }
+            
+        };
+
+        ctx.setOdeSystem(system);
+        common.setMiter(2);
+        common.setH(0.1);
+        double[] newEl = new double[]{0d, 1d};
+        common.setEl(newEl);
+        double[] newEwt = new double[]{0d, 1d, 1d};
+        common.setEwt(newEwt);
+        double[] newSavf = new double[]{0d, 1d, 5d}; // f(t, y0) = 1, f(t, y1) = y0 + y1;
+        common.setSavf(newSavf);
+        double[][] newWm = new double[3][3];
+        common.setWm(newWm);
+        double[] newAcor = new double[3];
+        common.setAcor(newAcor);
+        common.setTn(0d);
+        common.setNje(0);
+        common.setNfe(0);
+        int[] newIpvt = new int[3];
+        common.setIpvt(newIpvt);
+
+        double[] y = {0d, 3d, 2d};
+        int result = LSODAIntegrator.prja(ctx, y);
+
+        assertEquals(1, common.getNje());
+        assertEquals(2, common.getNfe());
+        assertEquals(1, result);
+    }
+
+    @Test
     void prjaAllZero() throws DerivativeException {
         ctx.setNeq(3);
 
@@ -871,7 +938,7 @@ public class LSODAIntegratorTest {
         double[] dy = {0d, 4d, 5d, 6d};
         int incx = 1, incy = 1;
 
-        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
+        LSODAIntegrator.daxpy(n, da, dx, incx, dy, incy, 1, 1);
 
         double[] expectedDy = {0d, 6d, 9d, 12d};
         assertArrayEquals(expectedDy, dy, 1e-6);
@@ -885,7 +952,7 @@ public class LSODAIntegratorTest {
         double[] dy = {0d, 4d, 5d, 6d};
         int incx = 1, incy = 1;
 
-        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
+        LSODAIntegrator.daxpy(n, da, dx, incx, dy, incy, 1, 1);
 
         double[] expectedDy = {0d, 4d, 5d, 6d};
         assertArrayEquals(expectedDy, dy, 1e-6);
@@ -899,7 +966,7 @@ public class LSODAIntegratorTest {
         double[] dy = {0d, 4d, 5d, 6d};
         int incx = 1, incy = 1;
 
-        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
+        LSODAIntegrator.daxpy(n, da, dx, incx, dy, incy, 1, 1);
 
         double[] expectedDy = {0d, 4d, 5d, 6d};
         assertArrayEquals(expectedDy, dy, 1e-6);
@@ -913,7 +980,7 @@ public class LSODAIntegratorTest {
         double[] dy = {0d, 5d, 6d, 7d, 8d};
         int incx = 2, incy = 1;
 
-        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
+        LSODAIntegrator.daxpy(n, da, dx, incx, dy, incy, 1, 1);
 
         double[] expectedDy = {0d, 8d, 15d, 7d, 8d};
         assertArrayEquals(expectedDy, dy, 1e-6);
@@ -927,7 +994,7 @@ public class LSODAIntegratorTest {
         double[] dy = {0d, 6d, 5d, 4d};
         int incx = -1, incy = -1;
 
-        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
+        LSODAIntegrator.daxpy(n, da, dx, incx, dy, incy, 1, 1);
 
         double[] expectedDy = {0d, 12d, 9d, 6d};
         assertArrayEquals(expectedDy, dy, 1e-6);
@@ -941,7 +1008,7 @@ public class LSODAIntegratorTest {
         double[] dy = {0d, 4d, 5d, 6d};
         int incx = 1, incy = 1;
 
-        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
+        LSODAIntegrator.daxpy(n, da, dx, incx, dy, incy, 1, 1);
 
         double[] expectedDy = {0d, 4d, 5d, 6d};
         assertArrayEquals(expectedDy, dy, 1e-6);
@@ -970,7 +1037,7 @@ public class LSODAIntegratorTest {
         double[] dy = {0d, 1e9d, 2e9d, -3e9d};
         int incx = 1, incy = 1;
 
-        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
+        LSODAIntegrator.daxpy(n, da, dx, incx, dy, incy, 1, 1);
 
         double[] expectedDy = {0d, 1.000000001e18, -1.999999998e18, 2.999999997e18};
         assertArrayEquals(expectedDy, dy, 1e-6);
@@ -984,7 +1051,7 @@ public class LSODAIntegratorTest {
         double[] dy = dx.clone();
         int incx = 1, incy = 1;
 
-        LSODAIntegrator.daxpy(n, da, dx, incx, incy, dy);
+        LSODAIntegrator.daxpy(n, da, dx, incx, dy, incy, 1, 1);
 
         double[] expectedDy = {0d, 3d, 6d, 9d};
         assertArrayEquals(expectedDy, dy, 1e-6);

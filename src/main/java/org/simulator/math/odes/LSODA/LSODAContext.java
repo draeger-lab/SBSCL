@@ -20,6 +20,12 @@ public class LSODAContext {
         this.opt = opt;
     }
 
+    public LSODAContext(LSODACommon common, LSODAOptions opt, DESystem odeSystem) {
+        this.common = common;
+        this.opt = opt;
+        this.odeSystem = odeSystem;
+    }
+
     public LSODAContext(LSODAContext ctx, LSODACommon common) {
         this.state = ctx.state;
         this.neq = ctx.neq;
