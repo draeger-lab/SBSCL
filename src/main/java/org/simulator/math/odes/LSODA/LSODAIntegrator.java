@@ -965,6 +965,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * </p>
      * 
      * @param ctx   the LSODA context containing solver state, common data, tolerances (abosulte and relative),
+     *              and ODE function evaluation informationthe LSODA context containing solver state, common data, tolerances (abosulte and relative),
      *              and ODE function evaluation information
      * @param y     the state vector of the ODE system that is used to compute the finite differences for Jacobian approximation
      * 
@@ -1256,11 +1257,14 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     }
 
    /**
-    * detects whether to change the method
-    * @param ctx
-    * @param dsm 
-    * @param pnorm
-    * @param rh
+    * handles switching between nonstiff (Adams) and stiff (BDF) methods
+    * <p>
+    * Compares estimated performance and stability of the current method <code>meth</code> with the alternative method.
+    * </p>
+    * @param ctx    the LSODA context containing solver state, common data, options data and number of equations
+    * @param dsm    normalized local-error estimate at current order
+    * @param pnorm  predicted error norm
+    * @param rh     output: the factor by which to multiply the current stepsize <code>h</code>
     */
     public static void methodSwitch(LSODAContext ctx, double dsm, double pnorm, double[] rh) {
 
@@ -1291,7 +1295,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 return;
             }
 
-            if(dsm <= (100d * pnorm * common.ETA) || common.getPdest() == 0d) {
+            if(dsm <= (100d * pnorm * common.ETA) || common.getPdest() == 0d) {         // guard against polluted error estimates
                 if(common.getIrflag() == 0) {
                     return;
                 }
@@ -1300,16 +1304,19 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 nqm2 = (int) common.min(common.getNq(), mxords);
             }
             else {
+                // compute ideal stepsize factor for Adams method, rh1
                 exsm = 1d / (double) (common.getNq() + 1);
-                rh1 = 1d / (1.2 * Math.pow(dsm, exsm) + 0.0000012);
+                rh1 = 1d / (1.2 * Math.pow(dsm, exsm) + 0.0000012d);
+
+                // guard against roundoff errors
                 rh1it = 2d * rh1;
                 pdh = common.getPdlast() * Math.abs(common.getH());
-
                 if((pdh * rh1) > 0.00001d) {
                     rh1it = common.getSM1()[common.getNq()] / pdh;
                 }
-
                 rh1 = common.min(rh1, rh1it);
+
+                // compute stepsize factor for BDF method, rh2
                 if(common.getNq() > mxords) {
                     nqm2 = mxords;
                     lm2 = mxords + 1;
@@ -1324,7 +1331,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     nqm2 = common.getNq();
                 }
 
-                if (rh2 < (common.RATIO * rh1) ) {
+                // switch only when new stepsize factor is more than ratio = 5 times the previous stepsize factor
+                if(rh2 < (common.RATIO * rh1) ) {
                     return;
                 }
             }
@@ -1341,7 +1349,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
         // currently using BDF method, considering switching to Adams 
         exsm = 1d / (double) (common.getNq() + 1);
-        if (mxordn < common.getNq()) {
+        if(mxordn < common.getNq()) {
             nqm1 = mxordn;
             lm1 = mxordn + 1;
             exm1 = 1d / (double) lm1;
@@ -1356,23 +1364,24 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             exm1 = exsm;
         }
 
+        // guard against roundoff errors
         rh1it = 2d * rh1;
         pdh = common.getPdnorm() * Math.abs(common.getH());
-
-        if ((pdh * rh1) > 0.00001d) {
+        if((pdh * rh1) > 0.00001d) {
             rh1it = common.getSM1()[nqm1] / pdh;
         }
-
         rh1 = common.min(rh1, rh1it);
+
         rh2 = 1d / (1.2d * Math.pow(dsm, exsm) + 0.0000012d);
 
-        if ((rh1 * common.RATIO) < (5d * rh2)) {
+        // switch only when new stepsize factor is more than previous stepsize factor
+        if((rh1 * common.RATIO) < (5d * rh2)) {
             return;
         }
 
         alpha = common.max(0.001d, rh1);
         dm1 *= Math.pow(alpha, exm1);
-        if (dm1 <= 1000. * common.ETA * pnorm) {
+        if(dm1 <= 1000. * common.ETA * pnorm) {
             return;
         }
 
@@ -1387,12 +1396,27 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
     /**
      * detects whether to change the order of current method
-     * @param ctx
-     * @param rhup
-     * @param dsm
-     * @param rh
-     * @param kflag
-     * @param maxord
+     * <p>
+     * This function is called by <code>stoda</code> after each successful or failed
+     * step to evaluate whether to adjust the multistep method's order (nq) and/or the 
+     * integration step size (h) based on local error estimates, stored derivative history, 
+     * and stability constraints.
+     * </p>
+     * <p>
+     * It computes three candidate step-size factors:
+     *       <code>rhdn</code> : for decreasing order (nq - 1)
+     *       <code>rhsm</code> : for keeping the same order (nq)
+     *       <code>rhup</code> : for increasing order (nq + 1)
+     * and then chooses the order yielding the largest stable step size.
+     * If order is increased, the corresponding additional backward difference
+     *      <code>yh[nq+1]</code> is computed using the most recent corrector vector, <code>acor</code>.
+     * </p>
+     * @param ctx       the LSODA context containing solver state, common data, options data and number of equations
+     * @param rhup      ideal stepsize factor, if one step up in order
+     * @param dsm       normalized local-error estimate at current order
+     * @param rh        output: the factor by which to multiply the current stepsize <code>h</code>
+     * @param kflag     flag from previous step, negative if prior error test or correction failure
+     * @param maxord    maximum allowed order in current family   
      * @return          0: Keep the same stepsize and order
      *                  1: Change in stepsize but saem order
      *                  2: Change in both stepsize and order
@@ -1404,9 +1428,12 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
         LSODACommon common = ctx.getCommon();
         int neq = ctx.getNeq();
+
+        // calculate rh-same factor, for staying at current order nq 
         exsm = 1d / (double) (common.getNq() + 1);
         rhsm = 1d / (1.2d * Math.pow(dsm, exsm) + 0.0000012d);
 
+        // calculate rh-down factor, for dropping to order nq-1
         rhdn = 0d;
         if(common.getNq() != 1) {
             ddn = vmnorm(neq, common.getYh()[(common.getNq() + 1)], common.getEwt()) / common.getTesco()[common.getNq()][1];
@@ -1414,9 +1441,10 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             rhdn = 1d / (1.3d * Math.pow(ddn, exdn) + 0.0000013d);
         }
 
+        // caps for stability region restrictions when using the Adams method.
         if(common.getMeth() == 1) {
             pdh = common.max(Math.abs(common.getH()) * common.getPdlast(), 0.000001d);
-            if((common.getNq() + 1) < maxord + 1) {
+            if(common.getNq() < maxord) {
                 rhup = common.min(rhup, common.getSM1()[(common.getNq() + 1)] / pdh);
             }
             rhsm = common.min(rhsm, common.getSM1()[common.getNq()] / pdh);
@@ -1427,27 +1455,27 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         }
 
         if(rhsm >= rhup) {
-            if(rhsm >= rhdn) {
+            if(rhsm >= rhdn) {                  // stay at same order
                 newq = common.getNq();
                 rh[0] = rhsm;
             } 
-            else {
+            else {                              // drop one order
                 newq = common.getNq() - 1;
                 rh[0] = rhdn;
-                if(kflag < 0 && rh[0] > 1d)
+                if(kflag < 0 && rh[0] > 1d)     // failure detected, reset rh to 1
                     rh[0] = 1d;
             }
         } 
         else {
-            if(rhup <= rhdn) {
+            if(rhup <= rhdn) {                  // drop one order
                 newq = common.getNq() - 1;
                 rh[0] = rhdn;
-                if(kflag < 0 && rh[0] > 1.)
+                if(kflag < 0 && rh[0] > 1.)     // failure detected, reset rh to 1
                     rh[0] = 1d;
             } 
-            else {
+            else {                              // propose order increment
                 rh[0] = rhup;
-                if(rh[0] >= 1.1d) {
+                if(rh[0] >= 1.1d) {             // increase order by one, 10% minimum threshold to allow order increase satisfied (rhup >= 1.1).
                     r = common.getEl()[(common.getNq() + 1)] / (double) (common.getNq() + 1);
                     common.setNq(common.getNq() + 1);
                     double[][] tempYh = common.getYh();
@@ -1455,9 +1483,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                         tempYh[common.getNq() + 1][i] = common.getAcor()[i] * r;
                     }
                     common.setYh(tempYh);
-                    return 2;
+                    return 2;              
                 } 
-                else {
+                else {                          // stepsize factor too small, no need to increase order
                     common.setIalth(3);
                     return 0;
                 }
@@ -1477,6 +1505,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 return 0;
             }
         }
+
+        // in case of several failures, limit maximum stepsize growth to 0.2
         if(kflag <= -2) {
             rh[0] = common.min(rh[0], 0.2);
         }
@@ -1484,6 +1514,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         if(newq == common.getNq()) {
             return 1;
         }
+
         common.setNq(newq);
         return 2;
     }
