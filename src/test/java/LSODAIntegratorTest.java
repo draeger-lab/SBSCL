@@ -2751,6 +2751,87 @@ public class LSODAIntegratorTest {
         assertEquals(6d, y[2], 1e-10, "y[2] should be 6 after the call");
     }
 
+    /*
+     * test for methodSwitch() helper function
+     */
+    @Test
+    void methodSwitchNonstiffOrderMoreThan5() {
+        ctx.setNeq(1);
+        opt.setMxordn(12);
+        opt.setMxords(5);
+        common.setMeth(1);
+        common.setNq(7);
+        double[] rh = new double[1];
+        LSODAIntegrator.methodSwitch(ctx, 0, 0, rh);
+
+        assertEquals(1, common.getMeth());  // no change in method
+    } 
+
+    @Test
+    void methodSwitchNonstiffPollutedErrorCase1() {
+        ctx.setNeq(1);
+        opt.setMxordn(12);
+        opt.setMxords(5);
+        common.setMeth(1);
+        common.setNq(3);
+        common.setPdest(0);                     // last lipschitz estimate, pdest set to 0
+        common.setIrflag(0);                   // No stepsize stability, irflag set to 0
+        double[] rh = new double[1];
+        LSODAIntegrator.methodSwitch(ctx, 0, 0, rh);
+
+        assertEquals(1, common.getMeth());  // no change in method
+    } 
+
+    @Test
+    void methodSwitchNonstiffPollutedErrorCase2() {
+        ctx.setNeq(1);
+        opt.setMxordn(12);
+        opt.setMxords(5);
+        common.setMeth(1);
+        common.setNq(3);           
+        common.setPdest(1);    
+        common.setIrflag(0);                   // No stepsize stability, irflag set to 0
+        double[] rh = new double[1];
+        LSODAIntegrator.methodSwitch(ctx, 1e-12, 1000, rh);
+
+        assertEquals(1, common.getMeth());  // no change in method
+    } 
+
+    @Test
+    void methodSwitchNonstiffPollutedErrorCase3() {
+        ctx.setNeq(1);
+        opt.setMxordn(12);
+        opt.setMxords(3);
+        common.setMeth(1);
+        common.setNq(4);           
+        common.setPdest(0);    
+        common.setIrflag(1);   
+        double[] rh = new double[1];
+        LSODAIntegrator.methodSwitch(ctx, 1, 1, rh);
+
+        assertEquals(2, common.getMeth());  // method switched to BDF
+        assertEquals(2, rh[0]);             
+        assertEquals(3, common.getNq());    // order is minimum of mxords and current order
+    } 
+
+    @Test
+    void methodSwitchNonstiffLessStepsizeFactorGain() {
+        ctx.setNeq(1);
+        opt.setMxordn(10);
+        opt.setMxords(5);
+        common.setMeth(1);
+        common.setNq(5);           
+        common.setPdest(1);    
+        common.setIrflag(1); 
+        common.setH(0.1);
+        common.setPdlast(5);  
+        double[] rh = new double[1];
+        LSODAIntegrator.methodSwitch(ctx, 1e-2, 1, rh);
+
+        assertEquals(1, common.getMeth());  // No method switch, rh2 < rh1 * 5
+    } 
+
+
     void print2DArray(double[][]a){
         for(int i=0; i<a.length; i++){
             for(int j=0; j<a[0].length; j++){
