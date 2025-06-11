@@ -2762,6 +2762,7 @@ public class LSODAIntegratorTest {
         common.setMeth(1);
         common.setNq(7);
         double[] rh = new double[1];
+
         LSODAIntegrator.methodSwitch(ctx, 0, 0, rh);
 
         assertEquals(1, common.getMeth());  // no change in method
@@ -2777,6 +2778,7 @@ public class LSODAIntegratorTest {
         common.setPdest(0);                     // last lipschitz estimate, pdest set to 0
         common.setIrflag(0);                   // No stepsize stability, irflag set to 0
         double[] rh = new double[1];
+
         LSODAIntegrator.methodSwitch(ctx, 0, 0, rh);
 
         assertEquals(1, common.getMeth());  // no change in method
@@ -2792,6 +2794,7 @@ public class LSODAIntegratorTest {
         common.setPdest(1);    
         common.setIrflag(0);                   // No stepsize stability, irflag set to 0
         double[] rh = new double[1];
+
         LSODAIntegrator.methodSwitch(ctx, 1e-12, 1000, rh);
 
         assertEquals(1, common.getMeth());  // no change in method
@@ -2805,8 +2808,9 @@ public class LSODAIntegratorTest {
         common.setMeth(1);
         common.setNq(4);           
         common.setPdest(0);    
-        common.setIrflag(1);   
+        common.setIrflag(1);                  // irflag set to 1
         double[] rh = new double[1];
+
         LSODAIntegrator.methodSwitch(ctx, 1, 1, rh);
 
         assertEquals(2, common.getMeth());  // method switched to BDF
@@ -2826,10 +2830,226 @@ public class LSODAIntegratorTest {
         common.setH(0.1);
         common.setPdlast(5);  
         double[] rh = new double[1];
+
         LSODAIntegrator.methodSwitch(ctx, 1e-2, 1, rh);
 
         assertEquals(1, common.getMeth());  // No method switch, rh2 < rh1 * 5
     } 
+
+    @Test
+    void methodSwitchNonstiffToStiff1() {
+        ctx.setNeq(1);
+        opt.setMxordn(10);
+        opt.setMxords(5);
+        common.setMeth(1);
+        common.setNq(5);           
+        common.setPdest(1);    
+        common.setIrflag(1); 
+        common.setH(0.5);
+        common.setPdlast(5);  
+        double[] rh = new double[1];
+
+        LSODAIntegrator.methodSwitch(ctx, 1e-2, 1, rh);
+
+        assertEquals(2, common.getMeth());  // Method switched to BDF, rh2 > rh1 * 5
+    } 
+
+    @Test
+    void methodSwitchNonstiffToStiff2() {
+        ctx.setNeq(1);
+        opt.setMxordn(10);
+        opt.setMxords(3);
+        common.setMeth(1);
+        common.setNq(5);                        // order > mxords
+        common.setPdest(1);    
+        common.setIrflag(1); 
+        common.setH(0.5);
+        common.setPdlast(5);  
+        double[][] yh = new double[11][2];
+        yh[5] = new double[] {0d, 1d};
+        common.setYh(yh);
+        double[] ewt = new double[] {0d, 1d};
+        common.setEwt(ewt);
+        double[] rh = new double[1];
+
+        LSODAIntegrator.methodSwitch(ctx, 1e-2, 1, rh);
+
+        assertEquals(2, common.getMeth());  // Method switched to BDF, rh2 > rh1 * 5
+    } 
+
+    @Test
+    void methodSwitchStiffLessStepsizeFactorGain() {
+        ctx.setNeq(1);
+        opt.setMxordn(10);
+        opt.setMxords(5);
+        common.setMeth(2);
+        common.setNq(5);           
+        common.setPdest(1);    
+        common.setIrflag(1); 
+        common.setH(0.5);
+        common.setPdnorm(1);  
+        double[] rh = new double[1];
+
+        LSODAIntegrator.methodSwitch(ctx, 1e-2, 1, rh);
+
+        assertEquals(2, common.getMeth());  // No method switch, rh1 < rh2
+    } 
+
+    @Test
+    void methodSwitchStiffToNonstiff() {
+        ctx.setNeq(1);
+        opt.setMxordn(10);
+        opt.setMxords(5);
+        common.setMeth(2);
+        common.setNq(5);           
+        common.setPdest(1);    
+        common.setIrflag(1); 
+        common.setH(0.1);
+        common.setPdnorm(1);  
+        double[] rh = new double[1];
+
+        LSODAIntegrator.methodSwitch(ctx, 1e-1, 1, rh);
+
+        assertEquals(1, common.getMeth());  // Method switched to Adams, rh1 > rh2
+    } 
+
+    /*
+     * Tests for orderSwitch() helper function
+     */
+
+    @Test
+    void orderSwitchOrderSame() {
+        ctx.setNeq(1);
+        common.setNq(1);                                        // order = 1, which implies rhdn = 0.
+        common.setMeth(1);
+        common.setH(0.5);
+        common.setPdlast(1);
+        double[] rh = new double[1];
+
+        int orderflag = LSODAIntegrator.orderSwitch(ctx, 0.7, 1, rh, 1, 10);
+
+        assertEquals(1, orderflag);                       // rhsm > rhdn & rhsm > rhup, therefore change in stepsize but order remains same
+        assertEquals(0.8333325d, rh[0], 1e-12);     // calculate manually
+        assertEquals(1, common.getNq());                  // same order
+    }
+
+    @Test
+    void orderSwitchOrderUp() {
+        ctx.setNeq(2);
+        common.setNq(2);                                        
+        common.setMeth(2);
+        common.setH(0.5);
+        common.setPdlast(1);
+        double[][] yh = new double[5][ctx.getNeq() + 1];
+        yh[3] = new double[] {0d, 1d, 1d};
+        common.setYh(yh);
+        double[] ewt = new double[] {0d, 1d, 1d};
+        common.setEwt(ewt);
+        double[][] tesco = new double[13][4];
+        tesco[2][1] = 1d;
+        common.setTesco(tesco);
+        double[] el = new double[14];
+        el[3] = 1d;
+        common.setEl(el);
+        double[] acor = new double[] {0d, 1d, 1d};
+        common.setAcor(acor);
+        double[] rh = new double[1];
+
+        int orderflag = LSODAIntegrator.orderSwitch(ctx, 1.1d, 1, rh, 1, 10);
+
+        assertEquals(2, orderflag);                       // rhup > rhdn & rhup > rhdn
+        assertEquals(1.1d, rh[0]);
+        assertEquals(3, common.getNq());                  // order up by one
+    }
+
+    @Test
+    void orderSwitchOrderUpThresholdNotAchieved() {
+        ctx.setNeq(2);
+        common.setNq(2);                                        
+        common.setMeth(2);
+        common.setH(0.5);
+        common.setPdlast(1);
+        double[][] yh = new double[5][ctx.getNeq() + 1];
+        yh[3] = new double[] {0d, 1d, 1d};
+        common.setYh(yh);
+        double[] ewt = new double[] {0d, 1d, 1d};
+        common.setEwt(ewt);
+        double[][] tesco = new double[12][4];
+        tesco[2][1] = 1d;
+        common.setTesco(tesco);
+        double[] rh = new double[1];
+
+        int orderflag = LSODAIntegrator.orderSwitch(ctx, 1d, 1, rh, 1, 10);
+
+        assertEquals(0, orderflag);                       // rhup > rhdn & rhup > rhdn, but rhup = 1 < 1.1, threshold of 10% increment not achieved   
+        assertEquals(2, common.getNq());                  // same order
+        assertEquals(3, common.getIalth());
+    }
+
+    @Test
+    void orderSwitchOrderDown() {
+        ctx.setNeq(2);
+        common.setNq(2);                                        
+        common.setMeth(2);
+        common.setH(0.5);
+        common.setPdlast(1);
+        double[][] yh = new double[5][ctx.getNeq() + 1];
+        yh[3] = new double[] {0d, 1d, 1d};
+        common.setYh(yh);
+        double[] ewt = new double[] {0d, 1d, 1d};
+        common.setEwt(ewt);
+        double[][] tesco = new double[12][4];
+        tesco[2][1] = 1d;
+        common.setTesco(tesco);
+        double[] rh = new double[1];
+
+        int orderflag = LSODAIntegrator.orderSwitch(ctx, 0.7d, 1.5d, rh, 1, 10);
+
+        assertEquals(2, orderflag);                       // rhdn > rhup & rhdn > rhsm
+        assertEquals(0.76923, rh[0], 1e-12);        // calculated manually
+        assertEquals(1, common.getNq());                  // order down by one
+    }
+
+    @Test
+    void orderSwitchNegativeKflag() {
+        ctx.setNeq(2);
+        common.setNq(2);                                        
+        common.setMeth(2);
+        common.setH(0.5);
+        common.setPdlast(1);
+        double[][] yh = new double[5][ctx.getNeq() + 1];
+        yh[3] = new double[] {0d, 1d, 1d};
+        common.setYh(yh);
+        double[] ewt = new double[] {0d, 1d, 1d};
+        common.setEwt(ewt);
+        double[][] tesco = new double[12][4];
+        tesco[2][1] = 10d;
+        common.setTesco(tesco);
+        double[] rh = new double[1];
+
+        int orderflag = LSODAIntegrator.orderSwitch(ctx, 0.7d, 1.5d, rh, -1, 10);
+
+        assertEquals(2, orderflag);                       // rhdn > rhup & rhdn > rhsm, but rhdn < 1d and kflag < 0
+        assertEquals(1, common.getNq());                  // order down by 1
+        assertEquals(1, rh[0]);                           // rh[0] reset to 1
+    }
+
+    @Test
+    void orderSwitchMultipleFailures() {
+        ctx.setNeq(1);
+        common.setNq(1);                                        
+        common.setMeth(1);
+        common.setH(0.5);
+        common.setPdlast(1);
+        double[] rh = new double[1];
+
+        int kflag = -2;
+        int orderflag = LSODAIntegrator.orderSwitch(ctx, 0.7, 1, rh, kflag, 10);
+
+        assertEquals(1, orderflag);                       // rhsm > rhdn & rhsm > rhup, 
+        assertEquals(0.2d, rh[0]);                        // tiny step after several failures
+        assertEquals(1, common.getNq());                  // same order
+    }
 
 
     void print2DArray(double[][]a){

@@ -1341,9 +1341,10 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
                 // switch only when new stepsize factor is more than ratio = 5 times the previous stepsize factor
                 if(rh2 < (common.RATIO * rh1) ) {
-                    logger.log(Level.INFO, "No switching " + rh1 + " " + rh2);
+                    // logger.log(Level.INFO, "No switching: rh1 = " + rh1 + ", rh2 = " + rh2);
                     return;
                 }
+                // logger.log(Level.INFO, "Switching to BDF: rh1 = " + rh1 + ", rh2 = " + rh2);
             }
 
             // method switch test passed. Reset relevant quantities for BDF
@@ -1385,6 +1386,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
         // switch only when new stepsize factor is more than previous stepsize factor
         if((rh1 * common.RATIO) < (5d * rh2)) {
+            // logger.log(Level.INFO, "No Switching: rh1 = " + rh1 + ", rh2 = " + rh2);
             return;
         }
 
@@ -1394,6 +1396,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             return;
         }
 
+        // logger.log(Level.INFO, "Switching to Adams: rh1 = " + rh1 + ", rh2 = " + rh2);
+            
         // method switch test passed. Reset relevant quantities for Adams
         rh[0] = rh1;
         common.setIcount(20);
@@ -1413,9 +1417,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * </p>
      * <p>
      * It computes three candidate step-size factors:
-     *       <code>rhdn</code> : for decreasing order (nq - 1)
-     *       <code>rhsm</code> : for keeping the same order (nq)
-     *       <code>rhup</code> : for increasing order (nq + 1)
+     *       <ul><li><code>rhdn</code> : for decreasing order (nq - 1)</li>
+     *       <li><code>rhsm</code> : for keeping the same order (nq)</li>
+     *       <li><code>rhup</code> : for increasing order (nq + 1)</li></ul>
      * and then chooses the order yielding the largest stable step size.
      * If order is increased, the corresponding additional backward difference
      *      <code>yh[nq+1]</code> is computed using the most recent corrector vector, <code>acor</code>.
@@ -1462,7 +1466,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             }
             common.setPdest(0d);;
         }
-
+        // logger.log(Level.INFO, "rhsm = " + rhsm + " rhdn = " + rhdn + " rhup = " + rhup);
         if(rhsm >= rhup) {
             if(rhsm >= rhdn) {                  // stay at same order
                 newq = common.getNq();
