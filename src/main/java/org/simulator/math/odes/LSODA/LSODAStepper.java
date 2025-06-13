@@ -41,7 +41,7 @@ public class LSODAStepper {
         int[] m = new int[1];
         double[] del = new double[1];
         double[] delp = new double[1];
-        double rh = 1d;
+        double[] rh = {1d};
         double dsm, dup, exup, r, told;
         double pnorm;
 
@@ -94,17 +94,17 @@ public class LSODAStepper {
                 resetCoeff();
             }
             if (common.getH() != common.getHold()) {
-                rh = common.getH() / common.getHold();
+                rh[0] = common.getH() / common.getHold();
                 common.setH(common.getHold());
-                LSODAIntegrator.scaleh(ctx, rh);
+                LSODAIntegrator.scaleh(ctx, rh[0]);
             }
         }
 
         if (jstart == -2) {
             if (common.getH() != common.getHold()) {
-                rh = common.getH() / common.getHold();
+                rh[0] = common.getH() / common.getHold();
                 common.setH(common.getHold());
-                LSODAIntegrator.scaleh(ctx, rh);
+                LSODAIntegrator.scaleh(ctx, rh[0]);
             }
         }
 
@@ -139,8 +139,8 @@ public class LSODAStepper {
                     break;
                 }
                 if (corflag == 1) {
-                    rh = Math.max(0.25, hmin / Math.abs(common.getH()));
-                    LSODAIntegrator.scaleh(ctx, rh);
+                    rh[0] = Math.max(0.25, hmin / Math.abs(common.getH()));
+                    LSODAIntegrator.scaleh(ctx, rh[0]);
                     continue;
                 }
                 if (corflag == 2) {
@@ -173,10 +173,10 @@ public class LSODAStepper {
                 }
                 common.setIcount(common.getIcount() - 1);
                 if (common.getIcount() < 0) {
-                    // methodswitch(ctx, dsm, pnorm, &rh);
+                    LSODAIntegrator.methodSwitch(ctx, dsm, pnorm, rh);
                     if (common.getMeth() != common.getMused()) {
-                        rh = Math.max(rh, hmin / Math.abs(common.getH()));
-                        LSODAIntegrator.scaleh(ctx, rh);
+                        rh[0] = Math.max(rh[0], hmin / Math.abs(common.getH()));
+                        LSODAIntegrator.scaleh(ctx, rh[0]);
                         common.setRmax(10d);
                         endStoda();
                         break;
@@ -203,8 +203,8 @@ public class LSODAStepper {
                     }
 
                     if (orderflag == 1) {
-                        rh = Math.max(rh, hmin / Math.abs(common.getH()));
-                        LSODAIntegrator.scaleh(ctx, rh);
+                        rh[0] = Math.max(rh[0], hmin / Math.abs(common.getH()));
+                        LSODAIntegrator.scaleh(ctx, rh[0]);
                         common.setRmax(10d);
                         endStoda();
                         break;
@@ -212,8 +212,8 @@ public class LSODAStepper {
 
                     if (orderflag == 2) {
                         resetCoeff();
-                        rh = Math.max(rh, (hmin / Math.abs(common.getH())));
-                        LSODAIntegrator.scaleh(ctx, rh);
+                        rh[0] = Math.max(rh[0], (hmin / Math.abs(common.getH())));
+                        LSODAIntegrator.scaleh(ctx, rh[0]);
                         common.setRmax(10d);
                         endStoda();
                         break;
@@ -252,18 +252,18 @@ public class LSODAStepper {
                     break;
                 }
                 if (kflag > -3) {
-                    int orderflag = 0; //should be: orderswitch(ctx, 0d, dsm, &rh, kflag, maxord);
+                    int orderflag = LSODAIntegrator.orderSwitch(ctx, 0d, dsm, rh, kflag, maxord);
                     if (orderflag == 1 || orderflag == 0) {
                         if (orderflag == 0) {
-                            rh = Math.min(rh, 0.2d);
+                            rh[0] = Math.min(rh[0], 0.2d);
                         }
-                        rh = Math.max(rh, (hmin / Math.abs(common.getH())));
-                        LSODAIntegrator.scaleh(ctx, rh);
+                        rh[0] = Math.max(rh[0], (hmin / Math.abs(common.getH())));
+                        LSODAIntegrator.scaleh(ctx, rh[0]);
                     }
                     if (orderflag == 2) {
                         resetCoeff();
-                        rh = Math.max(rh, (hmin / Math.abs(common.getH())));
-                        LSODAIntegrator.scaleh(ctx, rh);
+                        rh[0] = Math.max(rh[0], (hmin / Math.abs(common.getH())));
+                        LSODAIntegrator.scaleh(ctx, rh[0]);
                     }
                     continue;
                 }
@@ -274,9 +274,9 @@ public class LSODAStepper {
                         jstart = 1;
                         break;
                     } else {
-                        rh = 0.1d;
-                        rh = Math.max((hmin / Math.abs(common.getH())), rh);
-                        common.setH(common.getH() * rh);
+                        rh[0] = 0.1d;
+                        rh[0] = Math.max((hmin / Math.abs(common.getH())), rh[0]);
+                        common.setH(common.getH() * rh[0]);
                         for (int i = 1; i <= neq; i++) {
                             y[i] = common.getYh()[1][i];
                         }
