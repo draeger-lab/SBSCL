@@ -193,9 +193,9 @@ public class LSODAStepper {
                         common.setSavf(savf);
                         dup = LSODAIntegrator.vmnorm(neq, common.getSavf(), common.getEwt()) / common.getTesco()[common.getNq()][3];
                         exup = 1d / (double) ((common.getNq() + 1) + 1);
-                        rhup = 1d / (1.4 * Math.pow(dup, exup) + 0.0000014);
+                        rhup = 1d / (1.4 * Math.pow(dup, exup) + 0.0000014d);
                     }
-                    int orderflag = 0; // orderswitch(ctx, rhup, dsm, &rh, kflag, maxord);
+                    int orderflag = LSODAIntegrator.orderSwitch(ctx, rhup, dsm, rh, kflag, maxord);
 
                     if (orderflag == 0) {
                         endStoda();
