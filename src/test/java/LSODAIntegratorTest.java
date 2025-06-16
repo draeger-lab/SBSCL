@@ -15,7 +15,7 @@ public class LSODAIntegratorTest {
     LSODACommon common = new LSODACommon();
     LSODAOptions opt = new LSODAOptions();
     LSODAContext ctx = new LSODAContext(common, opt);
-    LSODAIntegrator integrator = new LSODAIntegrator(ctx);
+    LSODAIntegrator integrator = new LSODAIntegrator();
 
     /**
      * The following tests are for the function .ddot() within LSODAIntegrator.java
