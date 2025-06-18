@@ -418,7 +418,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     pc[i] = pc[i - 1] + fnqm1 * pc[i];
                 }
                 pc[1] = fnqm1 * pc[1];
-                pint = pc[i];
+                pint = pc[1];
                 xpin = pc[1] / 2d;
                 tsign = 1d;
                 for (i = 2; i <= nq; i++) {
@@ -438,7 +438,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 agamq = rqfac * xpin;
                 ragq = 1d / agamq;
 
-                newTesco[nq][2] = agamq;
+                newTesco[nq][2] = ragq;
                 
                 if (nq < 12) {
                     newTesco[nqp1][1] = ragq * rqfac / (double) nqp1;
@@ -1858,7 +1858,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     if ((common.getTn() - tout) * common.getH() < 0d) {
                         //System.out.println("in itask=1");
 
-                        //System.out.println("tn = " + common.getTn() + ", h = " + common.getH());
+                        // System.out.println("tn = " + common.getTn() + ", h = " + common.getH());
                         continue;
                     }
                     //logger.log(Level.INFO, "in itask=1");

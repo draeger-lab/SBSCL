@@ -122,7 +122,7 @@ public class LSODAStepper {
                 }
                 common.setTn(common.getTn() + common.getH());
 
-                // System.out.println("from stoda while loop befoe for: yh -> " + common.getYh()[2][1]);
+                // System.out.println("from stoda while loop before for: yh -> " + common.getYh()[2][1]);
 
                 // System.out.println("nq = " + common.getNq());
                 for (int j = common.getNq(); j >= 1; j--) {
@@ -159,10 +159,12 @@ public class LSODAStepper {
             if (m[0] == 0) {
                 dsm = del[0] / common.getTesco()[common.getNq()][2];
             }
+            double vnorm=0;
             if (m[0] > 0) {
-                dsm = LSODAIntegrator.vmnorm(neq, common.getAcor(), common.getEwt()) / common.getTesco()[common.getNq()][2];
+                vnorm = LSODAIntegrator.vmnorm(neq, common.getAcor(), common.getEwt());
+                dsm = vnorm / common.getTesco()[common.getNq()][2];
             }
-            // System.out.println("dsm = " + dsm + ", m = "+ m[0] + ", del = " + del[0]);
+            // System.out.println("dsm = " + dsm + ", m = "+ m[0] + ", del = " + del[0] + " vmnorm = " + vnorm + " tesco[nq][2] = " + common.getTesco()[common.getNq()][2]);
             if (dsm <= 1d) {
                 kflag = 0;
                 common.setNst(common.getNst() + 1);
