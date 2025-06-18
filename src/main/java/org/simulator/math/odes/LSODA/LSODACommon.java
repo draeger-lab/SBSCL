@@ -53,12 +53,18 @@ public class LSODACommon {
     };
 
     public LSODACommon() {
-        this.yh = new double[14][];
-        this.wm = new double[14][];
-        this.ewt = new double[0];
-        this.savf = new double[0];
-        this.acor = new double[0];
-        this.ipvt = new int[0];
+        
+    }
+    
+    public LSODACommon(int nyh, int mxords, int mxordn) {
+        int lenyh = 1 + Math.max(mxordn, mxords);
+
+        this.yh = new double[1 + lenyh][1 + nyh];
+        this.wm = new double[1 + nyh][1 + nyh];
+        this.ewt = new double[1 + nyh];
+        this.savf = new double[1 + nyh];
+        this.acor = new double[1 + nyh];
+        this.ipvt = new int[1 + nyh];
     }
 
     @Override
