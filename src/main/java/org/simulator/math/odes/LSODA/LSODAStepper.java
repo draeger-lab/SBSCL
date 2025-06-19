@@ -251,8 +251,8 @@ public class LSODAStepper {
                 for (int j = common.getNq(); j >= 1; j--) {
                     for (int i = j; i <= common.getNq(); i++) {
                         double[][] newYh = common.getYh();
-                        for (int i1 = 1; i <= neq; i++) {
-                            newYh[i1][i] -= newYh[i1+1][i];
+                        for (int i1 = 1; i1 <= neq; i1++) {
+                            newYh[i][i1] -= newYh[i+1][i1];
                         }
                         common.setYh(newYh);
                     }

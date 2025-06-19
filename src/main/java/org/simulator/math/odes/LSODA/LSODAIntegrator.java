@@ -615,6 +615,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 }
                 common.setAcor(acor);
             }
+            // System.out.println("del = " + del[0] + " pnorm = " + pnorm);
             if (del[0] <= 100d * pnorm * common.ETA) {
                 break;
             }
@@ -1830,7 +1831,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             }
 
             kflag = stepper.stoda(ctx, yOffset, jstart);
-            // System.out.println("yh -> " + common.getYh()[2][1] + ", kflag = " + kflag );
+            // System.out.println("yh -> " + common.getYh()[2][1] + ", kflag = " + kflag);
             if (kflag == 0) {
 
                 /*
