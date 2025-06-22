@@ -2957,7 +2957,7 @@ public class LSODAIntegratorTest {
 
         int orderflag = LSODAIntegrator.orderSwitch(ctx, 1.1d, 1, rh, 1, 10);
 
-        assertEquals(2, orderflag);                       // rhup > rhdn & rhup > rhdn
+        assertEquals(2, orderflag);                       // rhup > rhsm & rhup > rhdn
         assertEquals(1.1d, rh[0]);
         assertEquals(3, common.getNq());                  // order up by one
     }
@@ -2981,7 +2981,7 @@ public class LSODAIntegratorTest {
 
         int orderflag = LSODAIntegrator.orderSwitch(ctx, 1d, 1, rh, 1, 10);
 
-        assertEquals(0, orderflag);                       // rhup > rhdn & rhup > rhdn, but rhup = 1 < 1.1, threshold of 10% increment not achieved   
+        assertEquals(0, orderflag);                       // rhup > rhsm & rhup > rhdn, but rhup = 1 < 1.1, threshold of 10% increment not achieved   
         assertEquals(2, common.getNq());                  // same order
         assertEquals(3, common.getIalth());
     }

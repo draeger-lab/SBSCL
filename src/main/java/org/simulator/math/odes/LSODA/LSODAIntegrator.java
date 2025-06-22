@@ -1431,7 +1431,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * @param kflag     flag from previous step, negative if prior error test or correction failure
      * @param maxord    maximum allowed order in current family   
      * @return          0: Keep the same stepsize and order
-     *                  1: Change in stepsize but saem order
+     *                  1: Change in stepsize but same order
      *                  2: Change in both stepsize and order
      */
     public static int orderSwitch(LSODAContext ctx, double rhup, double dsm, double[] rh, int kflag, int maxord) {
