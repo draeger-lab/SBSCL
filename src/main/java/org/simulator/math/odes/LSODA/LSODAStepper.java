@@ -34,8 +34,7 @@ public class LSODAStepper {
     }
 
     public int stoda(LSODAContext ctx, double[]y, int jstart) throws DerivativeException{
-        //System.out.println("in stoda: " + this.jstart);
-        // this.jstart++;
+        
         LSODACommon common = ctx.getCommon();
 
         int kflag;
@@ -122,25 +121,19 @@ public class LSODAStepper {
                 }
                 common.setTn(common.getTn() + common.getH());
 
-                // System.out.println("from stoda while loop before for: yh -> " + common.getYh()[2][1]);
-
-                // System.out.println("nq = " + common.getNq());
                 for (int j = common.getNq(); j >= 1; j--) {
                     for (int i1 = j; i1 <= common.getNq(); i1++) {
                         double[][] newYh = common.getYh();
                         for (int i = 1; i <= neq; i++) {
-                            // System.out.println("stoda: yh -> " + common.getYh()[2][1]);
-                            // System.out.println("yh -> " + common.getYh()[3][1]);
                             newYh[i1][i] += newYh[i1 + 1][i];
                         }
                         common.setYh(newYh);
                     }
                 }
-                // System.out.println("from stoda while loop: yh -> " + common.getYh()[2][1]);
                 pnorm = LSODAIntegrator.vmnorm(neq, common.getYh()[1], common.getEwt()); // fix vnorm definitions
                 
                 int corflag = LSODAIntegrator.correction(ctx, y, pnorm, del, delp, told, m); 
-                // System.out.println("corflag = " + corflag);
+            
                 if (corflag == 0) {
                     break;
                 }
@@ -164,7 +157,7 @@ public class LSODAStepper {
                 vnorm = LSODAIntegrator.vmnorm(neq, common.getAcor(), common.getEwt());
                 dsm = vnorm / common.getTesco()[common.getNq()][2];
             }
-            // System.out.println("dsm = " + dsm + ", m = "+ m[0] + ", del = " + del[0] + " vmnorm = " + vnorm + " tesco[nq][2] = " + common.getTesco()[common.getNq()][2]);
+
             if (dsm <= 1d) {
                 kflag = 0;
                 common.setNst(common.getNst() + 1);
@@ -179,7 +172,6 @@ public class LSODAStepper {
                         newYh[j][i] = newYh[j][i] + (common.getAcor()[i] * r);
                     }
                     common.setYh(newYh);
-                    // System.out.println("from stoda dsm<=1: yh31 -> " + common.getYh()[3][1]);
                 }
                 common.setIcount(common.getIcount() - 1);
                 if (common.getIcount() < 0) {
@@ -204,7 +196,6 @@ public class LSODAStepper {
                         dup = LSODAIntegrator.vmnorm(neq, common.getSavf(), common.getEwt()) / common.getTesco()[common.getNq()][3];
                         exup = 1d / (double) ((common.getNq() + 1) + 1);
                         rhup = 1d / (1.4 * Math.pow(dup, exup) + 0.0000014d);
-                        // System.out.println("from stoda: savf[1] = " + savf[1]);
                 
                     }
                     int orderflag = LSODAIntegrator.orderSwitch(ctx, rhup, dsm, rh, kflag, maxord);
@@ -240,7 +231,6 @@ public class LSODAStepper {
                     newYh[maxord + 1][i] = common.getAcor()[i];
                 }
                 common.setYh(newYh);
-                // System.out.println("from stoda dsm<=1 after for: yh31 -> " + common.getYh()[3][1]);
                 endStoda(ctx);
                 break;
 

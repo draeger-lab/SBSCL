@@ -6,12 +6,11 @@ public class LSODACommon {
     
     public final double ETA = 2.2204460492503131e-16;
     public final double SQRTETA = 1.4901161193847656e-08;
-    public final double CCMAX = 0.3d; // definition, see source code line 170
+    public final double CCMAX = 0.3d; 
     public final int MAXCOR = 3;
     public final int MSBP = 20;
     public final int MXNCF = 10;
     public final double RATIO = 5.0d;
-    // private LSODACommonContext commonCtx;
 
     // LSODACommonContext variables
     private double[][] yh;
@@ -37,7 +36,6 @@ public class LSODACommon {
     private int ixmer;
     private int illin, nhnil, nslast, jcur, meth, mused, nq, nst, ncf, nfe, nje, nqu, miter;
 
-    // end of LSODACommonContext variables
 
     public double max(double a, double b) {
         return (a > b) ? a : b;
@@ -56,15 +54,22 @@ public class LSODACommon {
         
     }
     
-    public LSODACommon(int nyh, int mxords, int mxordn) {
+    /**
+     * {@code LSODACommon} constructor
+     * 
+     * @param neq    the number of equations in the ODE system
+     * @param mxords maximum order of stiff method
+     * @param mxordn maximum order of nonstiff method
+     */
+    public LSODACommon(int neq, int mxords, int mxordn) {
         int lenyh = 1 + Math.max(mxordn, mxords);
 
-        this.yh = new double[1 + lenyh][1 + nyh];
-        this.wm = new double[1 + nyh][1 + nyh];
-        this.ewt = new double[1 + nyh];
-        this.savf = new double[1 + nyh];
-        this.acor = new double[1 + nyh];
-        this.ipvt = new int[1 + nyh];
+        this.yh = new double[1 + lenyh][1 + neq];
+        this.wm = new double[1 + neq][1 + neq];
+        this.ewt = new double[1 + neq];
+        this.savf = new double[1 + neq];
+        this.acor = new double[1 + neq];
+        this.ipvt = new int[1 + neq];
     }
 
     @Override
@@ -403,17 +408,5 @@ public class LSODACommon {
     public void setMiter(int miter) {
         this.miter = miter;
     }
-
-    // public LSODACommonContext getCommonCtx() {
-    //     return commonCtx;
-    // }
-
-    // public void setCommonCtx(LSODACommonContext commonCtx) {
-    //     this.commonCtx = commonCtx;
-    // }
-
-    // public LSODACommon(LSODACommonContext commonCtx) {
-    //     this.commonCtx = commonCtx;
-    // }
 
 }

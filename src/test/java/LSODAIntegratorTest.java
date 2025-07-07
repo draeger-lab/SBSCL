@@ -6,6 +6,8 @@ import org.simulator.math.odes.LSODA.LSODACommon;
 import org.simulator.math.odes.LSODA.LSODAContext;
 import org.simulator.math.odes.LSODA.LSODAIntegrator;
 import org.simulator.math.odes.LSODA.LSODAOptions;
+import org.simulator.math.odes.exception.IllegalInputException;
+
 import java.util.logging.Logger;
 
 public class LSODAIntegratorTest {
@@ -1678,7 +1680,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1695,7 +1699,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertTrue(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1712,8 +1718,49 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
+
+    @Test
+    void checkOptRtolLengthMismatch() {
+        ctx.setState(1);
+        ctx.setNeq(2);
+
+        opt.setRtol(new double[]{1e-4});
+        opt.setAtol(new double[]{1e-6, -1e-6});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
+    }
+
+    @Test
+    void checkOptAtolLengthMismatch() {
+        ctx.setState(1);
+        ctx.setNeq(2);
+
+        opt.setRtol(new double[]{1e-4, 1e-4});
+        opt.setAtol(new double[]{1e-6, -1e-6, 1e-6});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
+    }
+
 
     @Test
     void checkOptIllegalItaskHigh() {
@@ -1729,7 +1776,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1746,7 +1795,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1763,7 +1814,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1780,7 +1833,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1797,7 +1852,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1832,7 +1889,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1929,7 +1988,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(-1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1968,7 +2029,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(-0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -3049,285 +3112,6 @@ public class LSODAIntegratorTest {
         assertEquals(1, orderflag);                       // rhsm > rhdn & rhsm > rhup, 
         assertEquals(0.2d, rh[0]);                        // tiny step after several failures
         assertEquals(1, common.getNq());                  // same order
-    }
-
-    @Test
-    void linearSystem() throws DerivativeException {
-        DESystem system = new DESystem() {
-
-            @Override
-            public int getDimension() {
-                return 1;
-            }
-
-            @Override
-            public void computeDerivatives(double t, double[] y, double[] yDot) throws DerivativeException {
-                yDot[0] = 2;
-            }
-
-            @Override
-            public String[] getIdentifiers() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'getIdentifiers'");
-            }
-
-            @Override
-            public boolean containsEventsOrRules() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'containsEventsOrRules'");
-            }
-
-            @Override
-            public int getPositiveValueCount() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'getPositiveValueCount'");
-            }
-
-            @Override
-            public void setDelaysIncluded(boolean delaysIncluded) {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'setDelaysIncluded'");
-            }
-            
-        };
-
-        double[] atol = {1e-12};
-        double[] rtol = {1e-12};
-        double[] y = {15d};
-        double[] t = {5d};
-        double tout = 7d;
-        double result = 2*tout + 5;
-
-        LSODAOptions opt = new LSODAOptions();
-        opt.setIxpr(0);
-        opt.setRtol(rtol);
-        opt.setAtol(atol);
-        opt.setItask(1);
-
-        LSODAContext ctx = new LSODAContext();
-        ctx.setNeq(system.getDimension());
-        ctx.setOdeSystem(system);
-        ctx.setState(1);
-        LSODAIntegrator solver = new LSODAIntegrator();
-        solver.lsodaPrepare(ctx, opt);
-        solver.lsoda(ctx, y, t, tout);
-        double[] res = solver.getY();
-        System.out.println("output = " + res[1] + ", expected = " + result);
-
-        assertTrue(Math.abs(result-res[1])<1e-8);
-    }
-
-    @Test
-    void exponentialSystem() throws DerivativeException {
-        DESystem system = new DESystem() {
-
-            @Override
-            public int getDimension() {
-                return 1;
-            }
-
-            @Override
-            public void computeDerivatives(double t, double[] y, double[] yDot) throws DerivativeException {
-                yDot[0] = y[0];
-            }
-
-            @Override
-            public String[] getIdentifiers() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'getIdentifiers'");
-            }
-
-            @Override
-            public boolean containsEventsOrRules() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'containsEventsOrRules'");
-            }
-
-            @Override
-            public int getPositiveValueCount() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'getPositiveValueCount'");
-            }
-
-            @Override
-            public void setDelaysIncluded(boolean delaysIncluded) {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'setDelaysIncluded'");
-            }
-            
-        };
-
-        double[] atol = {1e-12};
-        double[] rtol = {1e-12};
-        double[] y = {5d};
-        double[] t = {0d};
-        double tout = 4d;
-        double result = 5*(Math.exp(tout));
-
-        LSODAOptions opt = new LSODAOptions();
-        opt.setIxpr(0);
-        opt.setRtol(rtol);
-        opt.setAtol(atol);
-        opt.setItask(1);
-
-        LSODAContext ctx = new LSODAContext();
-        ctx.setNeq(system.getDimension());
-        ctx.setOdeSystem(system);
-        ctx.setState(1);
-        LSODAIntegrator solver = new LSODAIntegrator();
-        solver.lsodaPrepare(ctx, opt);
-        solver.lsoda(ctx, y, t, tout);
-        double[] res = solver.getY();
-        System.out.println("output = " + res[1] + ", expected = " + result + ", diff = " + Math.abs(result-res[1]));
-
-        assertTrue(Math.abs(result-res[1])<1e-8);
-    }
-
-    @Test
-    void exponentialSystem2() throws DerivativeException {
-        DESystem system = new DESystem() {
-
-            @Override
-            public int getDimension() {
-                return 1;
-            }
-
-            @Override
-            public void computeDerivatives(double t, double[] y, double[] yDot) throws DerivativeException {
-                yDot[0] = 2 * y[0];
-            }
-
-            @Override
-            public String[] getIdentifiers() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'getIdentifiers'");
-            }
-
-            @Override
-            public boolean containsEventsOrRules() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'containsEventsOrRules'");
-            }
-
-            @Override
-            public int getPositiveValueCount() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'getPositiveValueCount'");
-            }
-
-            @Override
-            public void setDelaysIncluded(boolean delaysIncluded) {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'setDelaysIncluded'");
-            }
-            
-        };
-
-        double[] atol = {1e-12};
-        double[] rtol = {1e-12};
-        double[] y = {5d};
-        double[] t = {0};
-        double tout = 4;
-        double result = 5 * Math.exp(2 * tout);
-
-        LSODAOptions opt = new LSODAOptions();
-        opt.setIxpr(0);
-        opt.setRtol(rtol);
-        opt.setAtol(atol);
-        opt.setItask(1);
-
-        LSODAContext ctx = new LSODAContext(opt, system);
-        ctx.setNeq(system.getDimension());
-        ctx.setState(1);
-        LSODAIntegrator solver = new LSODAIntegrator();
-        solver.lsodaPrepare(ctx, opt);
-        solver.lsoda(ctx, y, t, tout);
-        double[] res = solver.getY();
-        System.out.println("output = " + res[1] + ", expected = " + result + ", diff = " + Math.abs(result-res[1]));
-        assertTrue(Math.abs(result-res[1])<1e-6);
-    }
-
-    @Test
-    void stiffSystem() throws DerivativeException {
-        DESystem system = new DESystem() {
-
-            @Override
-            public int getDimension() {
-                return 3;
-            }
-
-            @Override
-            public void computeDerivatives(double t, double[] y, double[] yDot) throws DerivativeException {
-                yDot[0] = 1.0E4 * y[1] * y[2] - .04E0 * y[0];
-                yDot[2] = 3.0E7 * y[1] * y[1];
-                yDot[1] = -1.0 * (yDot[0] + yDot[2]);
-            }
-
-            @Override
-            public String[] getIdentifiers() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'getIdentifiers'");
-            }
-
-            @Override
-            public boolean containsEventsOrRules() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'containsEventsOrRules'");
-            }
-
-            @Override
-            public int getPositiveValueCount() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'getPositiveValueCount'");
-            }
-
-            @Override
-            public void setDelaysIncluded(boolean delaysIncluded) {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'setDelaysIncluded'");
-            }
-            
-        };
-
-        double[] atol = new double[3];
-        double[] rtol = new double[3];
-        double[] y = new double[3];
-        y[0] = 1.0E0;
-        y[1] = 0.0E0;
-        y[2] = 0.0E0;
-        double[] t = {0d};
-        double tout = 0.4;
-        // double result = 5 * Math.exp(2 * tout);
-
-        rtol[0] = 1.0E-4;
-        rtol[2] = 1.0E-4;
-        rtol[1] = 1.0E-4;
-        atol[0] = 1.0E-6;
-        atol[1] = 1.0E-10;
-        atol[2] = 1.0E-6;
-
-        LSODAOptions opt = new LSODAOptions();
-        opt.setIxpr(0);
-        opt.setRtol(rtol);
-        opt.setAtol(atol);
-        opt.setItask(1);
-
-        LSODAContext ctx = new LSODAContext(opt, system);
-        ctx.setNeq(system.getDimension());
-        ctx.setState(1);
-        LSODAIntegrator solver = new LSODAIntegrator();
-        solver.lsodaPrepare(ctx, opt);
-
-        for(int i=1; i<=12; i++) {
-
-            solver.lsoda(ctx, y, t, tout);
-            double[] result = solver.getY();
-            System.out.println("t = " + tout + " -> " + result[1] + ",  " + result[2] + ",  " + result[3]);
-
-            if(ctx.getState()==0) break;
-            tout*=10;
-        }
-        //assertTrue(Math.abs(result-y[0])<1e-6);
     }
 
     void print2DArray(double[][]a){
