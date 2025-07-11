@@ -352,13 +352,13 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         }
 
         if (opt.getHmax() < 0d) {
-            throw new IllegalInputException("lsodaPrepare", opt.getHmax(), "less than 0");
+            throw new IllegalInputException("lsodaPrepare", "hMax", opt.getHmax(), "less than 0");
         }
 
         opt.setHmxi((opt.getHmax() > 0) ? 1d / opt.getHmax() : 0d);
 
         if (opt.getHmin() < 0d) {
-            throw new IllegalInputException("lsodaPrepare", opt.getHmin(), "less than 0");
+            throw new IllegalInputException("lsodaPrepare", "hMin", opt.getHmin(), "less than 0");
         }
 
         return true;
