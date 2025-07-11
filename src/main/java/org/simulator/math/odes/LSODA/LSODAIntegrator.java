@@ -1,8 +1,8 @@
 package org.simulator.math.odes.LSODA;
+
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
@@ -44,6 +44,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         opt.setAtol(aTol);
         opt.setRtol(rTol);
         this.ctx.setOpt(opt);
+        setAbsTol(absTol);
+        setRelTol(relTol);
     }
 
     /**
@@ -99,6 +101,14 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         }
         return change;
     }
+
+    public static enum illegalTExceptionCases{
+        toutBehindT,
+        tcritBehindTout,
+        tcritBehindTcur,
+        toutToCloseToT,
+        toutBehindTcurMinusHu
+    };
 
     /**
      * hardFailure
@@ -1810,7 +1820,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             if (ctx.getState() == 1) {
                 if ((tout - t[0]) * h0 < 0.) {
                     hardFailure(ctx);
-                    throw new IllegalTException(1, t[0], tout, h0);
+                    throw new IllegalTException(illegalTExceptionCases.toutBehindT, t[0], tout, h0);
                 }
             }
         }
@@ -1839,7 +1849,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 tcrit = opt.getTcrit();
                 if ((tcrit - tout) * (tout - t[0]) < 0.) {
                     hardFailure(ctx);
-                    throw new IllegalTException(2, t[0], tout, tcrit);
+                    throw new IllegalTException(illegalTExceptionCases.tcritBehindTout, t[0], tout, tcrit);
                 }
                 if (h0 != 0. && (t[0] + h0 - tcrit) * h0 > 0.) {
                     h0 = tcrit - t[0];
@@ -1884,7 +1894,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 w0 = Math.max(Math.abs(t[0]), Math.abs(tout));
                 if (tdist < 2d * common.ETA * w0) { 
                     hardFailure(ctx);
-                    throw new IllegalTException(4, t[0], tout, tdist);
+                    throw new IllegalTException(illegalTExceptionCases.toutToCloseToT, t[0], tout, tdist);
                 }
                 tol = 0d;
                 for (i = 1; i <= neq; i++) {
@@ -1946,7 +1956,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     tp = common.getTn() - common.getHu() * (1d + 100d * common.ETA);
                     if ((tp - tout) * common.getH() > 0d) {
                         hardFailure(ctx);
-                        throw new IllegalTException(5, t[0], tout, itask);
+                        throw new IllegalTException(illegalTExceptionCases.toutBehindTcurMinusHu, t[0], tout, itask);
                     }
                     if ((common.getTn() - tout) * common.getH() < 0d) {
                         break;
@@ -1957,11 +1967,11 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     tcrit = opt.getTcrit();
                     if((common.getTn() - tcrit) * common.getH() > 0d) {
                         hardFailure(ctx);
-                        throw new IllegalTException(3, t[0], tout, null);
+                        throw new IllegalTException(illegalTExceptionCases.tcritBehindTcur, t[0], tout, null);
                     }
                     if((tcrit - tout) * common.getH() < 0d) {
                         hardFailure(ctx);
-                        throw new IllegalTException(2, t[0], tout, null);
+                        throw new IllegalTException(illegalTExceptionCases.tcritBehindTout, t[0], tout, null);
                     }
                     if((common.getTn() - tout) * common.getH() >= 0d) {
                         return intdyReturn(ctx, yOffset, t, tout, itask);
@@ -1973,7 +1983,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                         tcrit = opt.getTcrit();
                         if ((common.getTn() - tcrit) * common.getH() > 0d) {
                             hardFailure(ctx);
-                            throw new IllegalTException(3, t[0], tout, null);
+                            throw new IllegalTException(illegalTExceptionCases.tcritBehindTcur, t[0], tout, null);
                         }
                     }
                         

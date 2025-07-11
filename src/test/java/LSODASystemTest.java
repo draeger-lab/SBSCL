@@ -8,7 +8,6 @@ import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.DESystem;
 import org.simulator.math.odes.MultiTable;
-import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.math.odes.LSODA.LSODACommon;
 import org.simulator.math.odes.LSODA.LSODAContext;
 import org.simulator.math.odes.LSODA.LSODAIntegrator;
@@ -18,9 +17,7 @@ import org.simulator.math.odes.exception.MaxStepExceededException;
 import org.simulator.math.odes.exception.MembersNotInitializedException;
 import org.simulator.math.odes.exception.TooMuchAccuracyException;
 import org.simulator.sbml.SBMLinterpreter;
-
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.logging.Logger;
 
 import javax.xml.stream.XMLStreamException;
@@ -93,7 +90,7 @@ public class LSODASystemTest {
         double[] res = solver.getResult();
 
         // System.out.println("output = " + res[0] + ", expected = " + result);
-        assertTrue(Math.abs(result-res[0])<1e-8);
+        assertTrue(Math.abs(result-res[0]) < 1e-8);
     }
 
     @Test
@@ -146,7 +143,7 @@ public class LSODASystemTest {
         double res = (change[0]+y[0]);
 
         // System.out.println("output = " + res + ", expected = " + result);
-        assertTrue(Math.abs(result-res)<1e-8);
+        assertTrue(Math.abs(result-res) < 1e-8);
     }
 
     @Test
@@ -208,7 +205,7 @@ public class LSODASystemTest {
         double[] res = solver.getResult();
 
         // System.out.println("output = " + res[0] + ", expected = " + result);
-        assertTrue(Math.abs(result-res[0])<1e-8);
+        assertTrue(Math.abs(result-res[0]) < 1e-8);
     }
 
     @Test
@@ -270,7 +267,7 @@ public class LSODASystemTest {
         double[] res = solver.getResult();
 
         // System.out.println("output = " + res[0] + ", expected = " + result);
-        assertTrue(Math.abs(result-res[0])<1e-8);
+        assertTrue(Math.abs(result-res[0]) < 1e-8);
     }
 
     @Test
@@ -332,7 +329,7 @@ public class LSODASystemTest {
         double[] res = solver.getResult();
 
         // System.out.println("output = " + res[0] + ", expected = " + result + ", diff = " + Math.abs(result-res[0]));
-        assertTrue(Math.abs(result-res[0])<1e-8);
+        assertTrue(Math.abs(result-res[0]) < 1e-8);
     }
 
     @Test
@@ -396,7 +393,7 @@ public class LSODASystemTest {
             double[] res = solver.getResult();
 
             // System.out.println("output at " + tout + " = " + res[0] + ", expected = " + result);
-            assertTrue(Math.abs(result-res[0])<1e-6);
+            assertTrue(Math.abs(result-res[0]) < 1e-6);
             tout+=1;
         }
 
