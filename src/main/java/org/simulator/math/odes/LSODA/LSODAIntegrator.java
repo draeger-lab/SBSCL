@@ -4,9 +4,13 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.math.ode.DerivativeException;
+import org.apache.commons.math.util.FastMath;
+import org.simulator.math.Mathematics;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
 import org.simulator.math.odes.DESystem;
+import org.simulator.math.odes.EventDESystem;
+import org.simulator.math.odes.FastProcessDESystem;
 import org.simulator.math.odes.exception.*;
 
 public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
@@ -15,17 +19,69 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * Logger for this class
      */
     private static final Logger logger = Logger.getLogger(LSODAIntegrator.class.getName());
-    
-    public LSODAContext ctx;
-    private double[] yOffset; // to store the result
-    
+
+    /*
+     * LSODAContext variable
+     */
+    private LSODAContext ctx;
+
+    /*
+     * LSODAOptions variable
+     */
+    private LSODAOptions opt;
+
+    /*
+     * Array to store the result of integration in lsoda driver function. It follows 1-based indexing.
+     */
+    private double[] yOffset; 
+
+    /*
+     * Array to store the result of integration from lsoda driver function. It follows 0-based indexing and contains values equal to yOffset
+     */
+    private double[] yTemp;
+
+    /*
+     * Array to store intermediate result
+     */
+    private double[] y;
+
+    /*
+     * Array to store previous result while checking any event triggering
+     */
+    private double[] oldY;
+
+    /*
+     * Current time of integration
+     */
+    private double t;
+
+    /*
+     * Number of Equations
+     */
+    private int neq;
+
+    /*
+     * Boolean to control computeChange loop
+     */
+    private boolean stop;
+
+    /**
+     * Precision for fast reaction timing
+     */
+    private static final double precisionTimingFastReactions = 1E-3;
+
+    /**
+     * Precision for fast reactions
+     */
+    private static final double precisionFastReactions = 1E-3;
+        
     /*
      * LSODAIntegrator No argument constructor
      */
     public LSODAIntegrator() {
         super();
         this.ctx = new LSODAContext();
-        LSODAOptions opt = new LSODAOptions();
+        opt = new LSODAOptions();
         this.ctx.setOpt(opt);
     }
 
@@ -38,7 +94,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     public LSODAIntegrator(double relTol, double absTol) {
         super();
         this.ctx = new LSODAContext();
-        LSODAOptions opt = new LSODAOptions();
+        opt = new LSODAOptions();
         double[] aTol = {absTol};
         double[] rTol = {relTol};
         opt.setAtol(aTol);
@@ -56,7 +112,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     public LSODAIntegrator(double[] relTol, double[] absTol) {
         super();
         this.ctx = new LSODAContext();
-        LSODAOptions opt = new LSODAOptions();
+        opt = new LSODAOptions();
         opt.setAtol(absTol);
         opt.setRtol(relTol);
         this.ctx.setOpt(opt);
@@ -65,10 +121,11 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     public LSODAIntegrator(LSODAIntegrator integrator) {
         super(integrator);
         this.ctx = integrator.ctx;
-        LSODAOptions opt = new LSODAOptions();
-        opt.setAtol(integrator.ctx.getOpt().getAtol());
-        opt.setRtol(integrator.ctx.getOpt().getAtol());
-        this.ctx.setOpt(opt);
+        this.opt = integrator.opt;
+        this.y = integrator.y;
+        this.neq = integrator.neq;
+        this.yOffset = integrator.yOffset;
+        this.yTemp = integrator.yTemp;
     }
 
     @Override
@@ -78,7 +135,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
     @Override
     public int getKiSAOterm() {
-        return 0;
+        return 111; // Not sure what to put here
     }
 
     @Override
@@ -88,20 +145,144 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
     @Override
     protected boolean hasSolverEventProcessing() {
-        return false;
+        return true;
     }
 
     @Override
-    public double[] computeChange(DESystem DES, double[] y, double t, double stepSize, double[] change, boolean steadyState) throws DerivativeException {
-        double[] tArr = {t};
-        this.lsoda(this.ctx, y, tArr, t + stepSize);
+    public double[] computeChange(DESystem DES, double[] y2, double time, double stepSize, double[] change, boolean steadyState) throws DerivativeException {
+
+        this.prepare(DES, 1, 1, 1, 10000);
         
-        for(int i=0; i<this.ctx.getNeq(); i++) {
-            change[i] = yOffset[i+1] - y[i]; 
+        opt.setHmax(stepSize);
+        double step = opt.getHmax();
+        boolean hasDerivatives = true;
+        if (DES instanceof EventDESystem) {
+            EventDESystem EDES = (EventDESystem) DES;
+            if (EDES.getNoDerivatives()) {
+                hasDerivatives = false;
+            }
         }
+        double timeEnd = time + stepSize;
+        boolean lastStepSuccessful = false;
+        int solutionIndex = 0;
+        int flag = 0;
+        double tnew;
+        t = time;
+        y = y2.clone();
+        stop = false;
+
+        while(!stop) {
+            
+            if(t >= timeEnd) {
+                if ((DES instanceof EventDESystem) && (!steadyState)) {
+                    EventDESystem EDES = (EventDESystem) DES;
+                    if ((EDES.getEventCount() > 0) || (EDES.getRuleCount() > 0)) {
+                        processEventsAndRules(true, EDES, timeEnd, t-step, yTemp);
+                    }
+                    System.arraycopy(yTemp, 0, y, 0, neq);
+                }
+                Mathematics.vvSub(y, y2, change);
+                
+                break;
+            }
+
+            System.arraycopy(y, 0, yTemp, 0, neq);
+            System.arraycopy(yTemp, 0, yOffset, 1, neq);
+
+            if(hasDerivatives) {
+                ctx.setState(1);
+                flag = lsoda(ctx, y, new double[] {t}, t+step);
+            }
+
+            if(flag>=0 && !stop) {
+                setUnstableFlag(false);
+                System.arraycopy(y, 0, oldY, 0, neq);
+                System.arraycopy(yTemp, 0, y, 0, neq);
+                boolean changed = false;
+                double newTime = t + step;
+                if ((DES instanceof EventDESystem) && (!steadyState)) {
+                    EventDESystem EDES = (EventDESystem) DES;
+                    if ((EDES.getEventCount() > 0) || (EDES.getRuleCount() > 0)) {
+                        changed = processEventsAndRules(true, EDES, Math.min(newTime, timeEnd), t, yTemp);
+                    }
+                }
+                if ((!changed) && (DES instanceof FastProcessDESystem) && (!steadyState)) {
+                    FastProcessDESystem FDES = (FastProcessDESystem) DES;
+                    if (FDES.containsFastProcesses()) {
+                        double[] yTemp2 = new double[yTemp.length];
+                        System.arraycopy(yTemp, 0, yTemp2, 0, yTemp.length);
+                        if (clonedSolver == null) {
+                            clonedSolver = clone();
+                        }
+                        
+                        double[] result = clonedSolver.computeSteadyState(FDES, yTemp2, 0);
+                        System.arraycopy(result, 0, yTemp, 0, yTemp.length);
+
+                        for (int i = 0; i != result.length; i++) {
+                            double difference = Math.abs(yTemp[i] - oldY[i]);
+                            if ((Math.abs(yTemp[i]) > 1E-10) || (Math.abs(oldY[i]) > 1E-10)) {
+                            difference = Math.abs((yTemp[i] - oldY[i]) / Math.max(yTemp[i], oldY[i]));
+                            }
+                            if ((difference > precisionFastReactions) && (step > precisionTimingFastReactions)) {
+                            changed = true;
+                            break;
+                            }
+                        }
+                    }
+                }
+                if (changed) {
+                    if (step/10 > opt.getHmin()) {
+                        step=step/10;
+                        System.arraycopy(oldY, 0, y, 0, neq);
+                    } 
+                    else {
+                        System.arraycopy(yTemp, 0, y, 0, neq);
+                        t = Math.min(newTime, timeEnd);
+                        if (timeEnd - t - step < opt.getHmin()) {
+                            step = timeEnd - t;
+                        }
+                        lastStepSuccessful = true;
+                    }
+                }
+                else {
+                    System.arraycopy(yTemp, 0, y, 0, neq);
+                    t = Math.min(newTime, timeEnd);
+                    step = step*6;
+                    if (timeEnd - t - step < opt.getHmin()) {
+                        step = timeEnd - t;
+                    }
+                    lastStepSuccessful = true;
+                }
+            }
+            else {
+                if(flag == -4 || flag == -5) {
+                    step = step/5;
+                }
+                if(timeEnd - t - step < opt.getHmin()) {
+                    step = timeEnd - t;
+                }
+                tnew = t + step;
+                if(tnew == t) {
+                    throw new DerivativeException("Stepsize underflow");
+                }
+                lastStepSuccessful = false;
+            }
+            
+            if (Math.abs(step) < opt.getHmin()) {
+                step = opt.getHmin();
+            } 
+            else if (Math.abs(step) > stepSize) {
+                step = stepSize;
+            }
+            stop = false;
+        }    
+        
         return change;
     }
 
+    /**
+     * Enum to store the illegalTException cases
+     */
     public static enum illegalTExceptionCases{
         toutBehindT,
         tcritBehindTout,
@@ -161,6 +342,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         if((itask == 4 || itask == 5) && ihit) {
             t[0] = tcrit;
         }
+        System.arraycopy(yOffset, 1, yTemp, 0, ctx.getNeq());
         ctx.setState(2);
         return ctx.getState();
     }
@@ -255,7 +437,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * @return {@code LSODAContext} state = 2, on successful return from intdy
      * @throws IntdyException 
      */
-    public static int intdyReturn(LSODAContext ctx, double[] y, double[] t, double tout, int itask) {
+    public int intdyReturn(LSODAContext ctx, double[] y, double[] t, double tout, int itask) {
 
         LSODACommon common = ctx.getCommon();
         int iflag = intdy(ctx, tout, 0, y);
@@ -264,14 +446,14 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             for (int i = 1; i <= ctx.getNeq(); i++) {
                 y[i] = common.getYh()[1][i];
             }
+            t[0] = common.getTn();
             throw new IntdyException(itask, tout);
         }
+
         t[0] = tout;
-
+        System.arraycopy(yOffset, 1, yTemp, 0, ctx.getNeq());
         ctx.setState(2);
-
         return ctx.getState();
-
     }
 
     /**
@@ -293,72 +475,72 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         }
 
         if (ctx.getNeq() <= 0) {
-            throw new IllegalInputException("lsodaPrepare","neq", ctx.getNeq(), "<= 0");
+            throw new IllegalInputException("Prepare","neq", ctx.getNeq(), "<= 0");
         }
 
         double[] rtol = opt.getRtol();
         double[] atol = opt.getAtol();
 
         if(rtol.length != ctx.getNeq()) {
-            throw new IllegalInputException("lsodaPrepare","rtol length", rtol.length, "not equal to " + ctx.getNeq());
+            throw new IllegalInputException("Prepare","rtol length", rtol.length, "not equal to " + ctx.getNeq());
         }
         if(atol.length != ctx.getNeq()) {
-            throw new IllegalInputException("lsodaPrepare","atol length = ", atol.length, "not equal to " + ctx.getNeq());
+            throw new IllegalInputException("Prepare","atol length = ", atol.length, "not equal to " + ctx.getNeq());
         }
         if (ctx.getState() == 1 || ctx.getState() == 3) {
             for (int i = 1; i <= ctx.getNeq(); i++) {
                 double rtoli = rtol[i - 1];
                 double atoli = atol[i - 1];
                 if (rtoli < 0d) {
-                    throw new IllegalInputException("lsodaPrepare","rtol[" + (i-1) + "]", rtoli, "less than 0");
+                    throw new IllegalInputException("Prepare","rtol[" + (i-1) + "]", rtoli, "less than 0");
                 }
                 if (atoli < 0d) {
-                    throw new IllegalInputException("lsodaPrepare","atol[" + (i-1) + "]", atoli, "less than 0");
+                    throw new IllegalInputException("Prepare","atol[" + (i-1) + "]", atoli, "less than 0");
                 }
             }
         }
 
         if (opt.getItask() == 0) opt.setItask(1);
         if (opt.getItask() < 1 || opt.getItask() > 5) {
-            throw new IllegalInputException("lsodaPrepare","itask" , opt.getItask());
+            throw new IllegalInputException("Prepare","itask" , opt.getItask());
         }
 
         if (opt.getIxpr() < 0 || opt.getIxpr() > 1) {
-            throw new IllegalInputException("lsodaPrepare","ixpr" , opt.getIxpr());
+            throw new IllegalInputException("Prepare","ixpr" , opt.getIxpr());
         }
 
         if (opt.getMxstep() < 0) {
-            throw new IllegalInputException("lsodaPrepare","mxstep" , opt.getMxstep(), "less than 0");
+            throw new IllegalInputException("Prepare","mxstep" , opt.getMxstep(), "less than 0");
         }
 
         if (opt.getMxstep() == 0) opt.setMxstep(mxstp0);
 
         if (opt.getMxhnil() < 0) {
-            throw new IllegalInputException("lsodaPrepare","mxhnil" , opt.getMxhnil(), "less than 0");
+            throw new IllegalInputException("Prepare","mxhnil" , opt.getMxhnil(), "less than 0");
         }
 
         if (ctx.getState() == 1) {
             if (opt.getMxordn() < 0) {
-                throw new IllegalInputException("lsodaPrepare","mxordn" , opt.getMxordn(), "less than 0");
+                throw new IllegalInputException("Prepare","mxordn" , opt.getMxordn(), "less than 0");
             }
             if (opt.getMxordn() == 0) opt.setMxordn(12);
             opt.setMxordn(Math.min(opt.getMxordn(), mord[1]));
 
             if (opt.getMxords() < 0) {
-                throw new IllegalInputException("lsodaPrepare","mxords" , opt.getMxords(), "less than 0");
+                throw new IllegalInputException("Prepare","mxords" , opt.getMxords(), "less than 0");
             }
             if (opt.getMxords() == 0) opt.setMxords(5);
             opt.setMxords(Math.min(opt.getMxords(), mord[2]));
         }
 
         if (opt.getHmax() < 0d) {
-            throw new IllegalInputException("lsodaPrepare", "hMax", opt.getHmax(), "less than 0");
+            throw new IllegalInputException("Prepare", "hMax", opt.getHmax(), "less than 0");
         }
 
         opt.setHmxi((opt.getHmax() > 0) ? 1d / opt.getHmax() : 0d);
 
         if (opt.getHmin() < 0d) {
-            throw new IllegalInputException("lsodaPrepare", "hMin", opt.getHmin(), "less than 0");
+            throw new IllegalInputException("Prepare", "hMin", opt.getHmin(), "less than 0");
         }
 
         return true;
@@ -371,10 +553,13 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * @param mxordn maximum order for nonstiff method
      * @@return {@code boolean} Returns true on successful allocation
      */
-    public static boolean allocMemory(LSODAContext ctx, int mxords, int mxordn) {
+    public boolean allocMemory(int mxords, int mxordn) {
         LSODACommon common = new LSODACommon(ctx.getNeq(), mxords, mxordn);
-        ctx.setCommon(common);
-
+        this.ctx.setCommon(common);
+        y = new double[ctx.getNeq()];
+        oldY = new double[ctx.getNeq()];
+        yTemp = new double[ctx.getNeq()];
+        yOffset = new double[ctx.getNeq() + 1];
         return true;
     }
 
@@ -393,11 +578,13 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      */
     public boolean lsodaPrepare(LSODAContext ctx, LSODAOptions opt) {
         this.ctx = ctx;
+        this.neq = ctx.getNeq();
         if(!checkOpt(ctx, opt)) {
             return false;
         }
-        ctx.setOpt(opt);
-        allocMemory(ctx, opt.getMxords(), opt.getMxordn());
+        this.opt = opt;
+        this.ctx.setOpt(opt);
+        allocMemory(opt.getMxords(), opt.getMxordn());
         return true;
     }
 
@@ -421,7 +608,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     @Override
     public boolean prepare(DESystem system, int ixpr, int itask, int state) {
         this.ctx.setNeq(system.getDimension());
-        LSODAOptions opt = this.ctx.getOpt();
+        this.neq = system.getDimension();
+        this.stop = false;
 
         if((opt.getAtol().length == 1 || opt.getRtol().length ==1) && this.ctx.getNeq() != 1) {
 
@@ -438,14 +626,21 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             opt.setRtol(rtol);
         }
 
+        opt.setIxpr(ixpr);
+        opt.setItask(itask);
+        opt.setHmin(1E-8d);
+        setStepSize(getStepSize());
+        opt.setHmax(getStepSize());
+
         if(!checkOpt(this.ctx, opt)) {
             return false;
         }
 
-        allocMemory(this.ctx, opt.getMxords(), opt.getMxordn());
+        allocMemory(opt.getMxords(), opt.getMxordn());
 
+        this.ctx.setOpt(opt);
         this.ctx.setOdeSystem(system);
-
+        this.ctx.setState(state);
         return true;
     }
 
@@ -470,8 +665,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     @Override
     public boolean prepare(DESystem system, int ixpr, int itask, int state, int mxstep) {
         this.ctx.setNeq(system.getDimension());
-        LSODAOptions opt = this.ctx.getOpt();
-        opt.setMxstep(mxstep);
+        this.neq = system.getDimension();
+        this.stop = false;
+
         if((opt.getAtol().length == 1 || opt.getRtol().length ==1) && this.ctx.getNeq() != 1) {
 
             double[] atol = new double[ctx.getNeq()];
@@ -487,14 +683,23 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             opt.setRtol(rtol);
         }
 
+        opt.setMxstep(mxstep);
+        opt.setIxpr(ixpr);
+        opt.setItask(itask);
+
+        opt.setHmin(1E-8d);
+        setStepSize(getStepSize());
+        opt.setHmax(getStepSize());
+
         if(!checkOpt(this.ctx, opt)) {
             return false;
         }
 
-        allocMemory(this.ctx, opt.getMxords(), opt.getMxordn());
+        allocMemory(opt.getMxords(), opt.getMxordn());
 
+        this.ctx.setOpt(opt);
         this.ctx.setOdeSystem(system);
-
+        this.ctx.setState(state);
         return true;
     }
 
@@ -1797,14 +2002,13 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         }
         
         int i;
-        final int neq = ctx.getNeq();
         double big, hmx, rh, tcrit = 0, tdist, tnext, tol, tolsf, tp, size, sum, w0;
         hmx = Math.abs(common.getTn()) + Math.abs(common.getH());
         boolean ihit = false;
         double h0 = opt.getH0();
 
-        yOffset = new double[neq + 1];
         System.arraycopy(y, 0, yOffset, 1, y.length);
+        System.arraycopy(y, 0, yTemp, 0, y.length);
 
         /*
          * Block a.
@@ -2055,6 +2259,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             }
 
             kflag = stepper.stoda(ctx, yOffset, jstart);
+
             if (kflag == 0) {
 
                 /*
@@ -2082,6 +2287,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     if ((common.getTn() - tout) * common.getH() < 0d) {
                         continue;
                     }
+                    ctx.setCommon(common);
                     return intdyReturn(ctx, yOffset, t, tout, itask);
                 }
 
@@ -2129,7 +2335,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 big = 0d;
                 common.setIxmer(1);
 
-                for (i = 0; i <= neq; i++) {
+                for (i = 1; i <= neq; i++) {
                     size = Math.abs(common.getAcor()[i] * common.getEwt()[i]);
                     if (big < size) {
                         big = size;
@@ -2137,12 +2343,12 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     }
                 }
                 if (kflag == -1) {
-                    softFailure(ctx, -4, t);
-                    throw new TestFailException(1, common.getTn(), common.getH());
+                    return softFailure(ctx, -4, t);
+                    // throw new TestFailException(1, common.getTn(), common.getH());
                 }
                 if (kflag == -2) {
-                    softFailure(ctx, -5, t);
-                    throw new TestFailException(2, common.getTn(), common.getH());
+                    return softFailure(ctx, -5, t);
+                    // throw new TestFailException(2, common.getTn(), common.getH());
                 }
             }
 
@@ -2150,8 +2356,25 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
  
     }
 
+    /*
+     * returns the context
+     */
     public LSODAContext getContext(){
         return this.ctx;
+    }
+
+    @Override
+    public void setAbsTol(double absTol) {
+        this.absTol = absTol;
+        double[] atol = {absTol};
+        opt.setAtol(atol);
+    }
+
+    @Override
+    public void setRelTol(double relTol) {
+        this.relTol = relTol;
+        double[] rtol = {relTol};
+        opt.setRtol(rtol);
     }
 
     /**
@@ -2159,9 +2382,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * @return double array containing the result of the integration
      */
     public double[] getResult() {
-        double[] result = new double[this.yOffset.length - 1];
-        System.arraycopy(this.yOffset, 1, result, 0, yOffset.length - 1);
-        return result;
+        return yTemp;
     }
 
 }

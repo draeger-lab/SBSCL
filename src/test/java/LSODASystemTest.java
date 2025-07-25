@@ -84,6 +84,7 @@ public class LSODASystemTest {
         ctx.setNeq(system.getDimension());
         ctx.setOdeSystem(system);
         ctx.setState(1);
+
         LSODAIntegrator solver = new LSODAIntegrator();
         solver.lsodaPrepare(ctx, opt);
         solver.lsoda(ctx, y, t, tout);
@@ -137,7 +138,7 @@ public class LSODASystemTest {
         double result = 2*tout + 5;
 
         LSODAIntegrator solver = new LSODAIntegrator(atol, rtol);
-        solver.prepare(system, 1, 1, 1);
+        solver.prepare(system, 1, 1, 1, 500);
         double[] change = new double[system.getDimension()];
         solver.computeChange(system, y, t, tout - t, change, false);
         double res = (change[0]+y[0]);
@@ -484,7 +485,7 @@ public class LSODASystemTest {
             solver.lsoda(ctx, y, t, tout);
             double[] result = solver.getResult();
 
-            // System.out.printf(" at t= %12.4e  ->  y= %14.6e %14.6e %14.6e\n", tout, result[0], result[1], result[2]);
+            System.out.printf(" at t= %12.4e  ->  y= %14.6e %14.6e %14.6e\n", tout, result[0], result[1], result[2]);
             assertTrue(Math.abs(result[0] - res[i-1][0]) < 1e-6);
             assertTrue(Math.abs(result[1] - res[i-1][1]) < 1e-8);
             assertTrue(Math.abs(result[2] - res[i-1][2]) < 1e-6);
@@ -893,14 +894,14 @@ public class LSODASystemTest {
     // @Test
     void SBMLParsingPipelineTest00001() throws DerivativeException, SBMLException, ModelOverdeterminedException, XMLStreamException, IOException {
 
-        String sbmlfile = "/home/sbml-semantic-test-cases-2017-12-12/cases/semantic/00001/00001-sbml-l1v2.xml";  // Change as per your system and uncomment the @Test decorator
+        String sbmlfile = "/home/baranwalayush/Downloads/sbml-semantic-test-cases-2017-12-12/cases/semantic/00001/00001-sbml-l1v2.xml";  // Change as per your system and uncomment the @Test decorator
         Model model = (new SBMLReader()).readSBML(sbmlfile).getModel();
         SBMLinterpreter interpreter = new SBMLinterpreter(model);
 
         double atol = 1e-12;
         double rtol = 1e-12;
         AbstractDESSolver solver = new LSODAIntegrator(atol, rtol);
-        solver.prepare(interpreter, 1, 1, 1);
+        // solver.prepare(interpreter, 1, 1, 1);
         solver.setStepSize(0.1);
         MultiTable solution = solver.solve(interpreter, interpreter.getInitialValues(), 0, 5);
 
