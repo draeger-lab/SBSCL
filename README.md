@@ -9,9 +9,9 @@
 ![Code Size](https://img.shields.io/github/languages/code-size/draeger-lab/SBSCL.svg?style=plastic)
 ![Downloads of all releases](https://img.shields.io/github/downloads/draeger-lab/SBSCL/total.svg?style=plastic)
 
-*Authors*: [Roland Keller](https://github.com/RolandKeller5), [Andreas Dräger](https://github.com/draeger), [Hemil Panchiwala](https://github.com/hemilpanchiwala), [Shalin Shah](https://github.com/shalinshah1993), [Matthias König](https://github.com/matthiaskoenig), [Alexander Dörr](https://github.com/a-doerr), [Richard Adams](https://github.com/otter606)
+*Authors*: Ayush Baranwal, Arthur Neumann, Taichi Araki, [Hemil Panchiwala](https://github.com/hemilpanchiwala), [Shalin Shah](https://github.com/shalinshah1993), [Matthias König](https://github.com/matthiaskoenig), Akira Funahashi, and [Andreas Dräger](https://github.com/draeger)
 
-*Contributors to predecessor projects:* Philip Stevens, Marcel Kronfeld, Sandra Saliger, Simon Schäfer, Dieudonné Motsou Wouamba, Hannes Borch, Nicolas Le Novère, Max Zwiessele
+*Contributors to predecessor projects:* [Roland Keller](https://github.com/RolandKeller5), [Alexander Dörr](https://github.com/a-doerr), [Richard Adams](https://github.com/otter606), Philip Stevens, Marcel Kronfeld, Sandra Saliger, Simon Schäfer, Dieudonné Motsou Wouamba, Hannes Borch, Nicolas Le Novère, Max Zwiessele
 
 ### Publications
 
