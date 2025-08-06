@@ -22,7 +22,6 @@ import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.comp.CompSimulator;
-// import org.simulator.examples.CompExample;
 import org.simulator.fba.FluxBalanceAnalysis;
 import org.simulator.io.CSVImporter;
 import org.simulator.math.odes.AbstractDESSolver;
@@ -81,9 +80,9 @@ public class SBMLTestSuiteRunnerWrapper {
     String dirPath = "/home/baranwalayush/.test-suite/cases/semantic";
     String outputDirPath = "/home/baranwalayush/Documents/SBMLTestSuiteResults/terminalLSODAResults";
     
-    String currentCase = "01481";
-    String level = "2";
-    String version = "5";
+    String currentCase = "00981";
+    String level = "3";
+    String version = "2";
 
     String filePath =
         dirPath + File.separator + currentCase + File.separator + currentCase + "-sbml-l" + level
@@ -139,8 +138,8 @@ public class SBMLTestSuiteRunnerWrapper {
       StringBuilder output = null;
 
       if (model.getExtension(FBCConstants.shortLabel) == null && model.getExtension(CompConstants.shortLabel) == null) {
-        solution = runLSODASimulation(model, duration, steps, properties, timePoints, amountHash);
-        // solution = runSBMLSimulation(model, duration, steps, properties, timePoints, amountHash);
+        // solution = runLSODASimulation(model, duration, steps, properties, timePoints, amountHash);
+        solution = runSBMLSimulation(model, duration, steps, properties, timePoints, amountHash);
       } 
 
       if(solution != null) {

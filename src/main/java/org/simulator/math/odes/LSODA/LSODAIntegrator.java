@@ -135,7 +135,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
     @Override
     public int getKiSAOterm() {
-        return 111; // Not sure what to put here
+        return 88; // https://identifiers.org/biomodels.kisao:KISAO_0000088
     }
 
     @Override
@@ -164,7 +164,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         }
         double timeEnd = time + stepSize;
         boolean lastStepSuccessful = false;
-        int solutionIndex = 0;
         int flag = 0;
         double tnew;
         t = time;
@@ -379,7 +378,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         int neq = ctx.getNeq();
         
         if (k < 0 || k > common.getNq()) {
-            logError(String.format("[intdy] k = %d illegal", k), ctx.getData());
+            logError(String.format("[intdy] k = %d illegal\n", k), ctx.getData());
             return -1;
         }
         
@@ -605,7 +604,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * @return {@code bool} Returns true on successful preparation
      * @throws IllegalInputException 
      */
-    @Override
     public boolean prepare(DESystem system, int ixpr, int itask, int state) {
         this.ctx.setNeq(system.getDimension());
         this.neq = system.getDimension();
@@ -662,7 +660,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * @return {@code bool} Returns true on successful preparation
      * @throws IllegalInputException 
      */
-    @Override
     public boolean prepare(DESystem system, int ixpr, int itask, int state, int mxstep) {
         this.ctx.setNeq(system.getDimension());
         this.neq = system.getDimension();
@@ -1381,9 +1378,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * Approximates and factorizes the Jacobian matrix used for preconditioning in the ODE solver.
      * <p>
      * This function computes a finite difference approximation to the Jacobian matrix for the current state of the ODE system.
-     * I perturbs the state vector <code>y</code> and evaluates the system function to estimate the directional derivatives.
+     * It perturbs the state vector <code>y</code> and evaluates the system function to estimate the directional derivatives.
      * The resulting differences, scaled by the step size, tolerance and a computed factor, are used to update the weighted
-     * difference matrix <code>Wm</code>. The matrix is then modified by unitizing its diagonal elements and factorized 
+     * difference matrix <code>Wm</code>. The matrix is then modified by utilizing its diagonal elements and factorized 
      * via LU decomposition (by calling <code>dgefa()</code>). This makes it ready for use as a preconditioner in the
      * iterative solution process.
      * </p>
@@ -2343,10 +2340,14 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     }
                 }
                 if (kflag == -1) {
+                    String errorMsg = "[lsoda] at t = " + common.getTn() + " and step size h = " + common.getH() + ", the\n error test failed repeatedly or\n with Math.abs(h) = hmin\n";
+                    logError(errorMsg);
                     return softFailure(ctx, -4, t);
                     // throw new TestFailException(1, common.getTn(), common.getH());
                 }
                 if (kflag == -2) {
+                    String errorMsg = "[lsoda] at t = " + common.getTn() + " and step size h = " + common.getH() + ", the\n corrector convergence failed repeatedly or\n with Math.abs(h) = hmin\n";
+                    logError(errorMsg);
                     return softFailure(ctx, -5, t);
                     // throw new TestFailException(2, common.getTn(), common.getH());
                 }
@@ -2354,6 +2355,20 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
         }
  
+    }
+
+    /**
+     * 
+     * @param y
+     * @param t
+     * @param tout
+     * @return
+     * @throws DerivativeException
+     */
+    public int lsoda(double[] y, double[] t, double tout) throws DerivativeException {
+
+        int flag = lsoda(this.ctx, y, t, tout);
+        return flag;
     }
 
     /*
