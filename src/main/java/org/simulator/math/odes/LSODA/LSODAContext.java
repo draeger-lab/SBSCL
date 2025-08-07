@@ -15,6 +15,10 @@ public class LSODAContext {
     public Object nslast;
     private LSODACommon common;
 
+    public LSODAContext() {
+    
+    }
+
     public LSODAContext(LSODACommon common, LSODAOptions opt) {
         this.common = common;
         this.opt = opt;
@@ -22,6 +26,11 @@ public class LSODAContext {
 
     public LSODAContext(LSODACommon common, LSODAOptions opt, DESystem odeSystem) {
         this.common = common;
+        this.opt = opt;
+        this.odeSystem = odeSystem;
+    }
+
+    public LSODAContext(LSODAOptions opt, DESystem odeSystem) {
         this.opt = opt;
         this.odeSystem = odeSystem;
     }

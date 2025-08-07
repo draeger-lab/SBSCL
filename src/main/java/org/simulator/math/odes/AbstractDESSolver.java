@@ -1058,4 +1058,14 @@ implements DelayValueHolder, DESSolver, EventHandler {
     // setStepSize(totalTime/maxSteps);
     // return solve(DES, initialValues, 0.0, totalTime);
   }
+
+  // Implemented in LSODAIntegrator
+  public boolean prepare(DESystem system, int ixpr, int itask, int state) {
+    throw new UnsupportedOperationException("Unimplemented method 'prepare'. Recommended to use with LSODAIntegrator only!");
+  }
+
+  // Implemented in LSODAIntegrator
+  public boolean prepare(DESystem system, int ixpr, int itask, int state, int mxstep) {
+    throw new UnsupportedOperationException("Unimplemented method 'prepare'. Recommended to use with LSODAIntegrator only!");
+  }
 }

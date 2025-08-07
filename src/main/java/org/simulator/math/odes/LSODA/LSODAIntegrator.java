@@ -1,33 +1,74 @@
 package org.simulator.math.odes.LSODA;
+
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
 import org.simulator.math.odes.DESystem;
+import org.simulator.math.odes.exception.*;
 
 public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
-    
-    /**
+
+    /*
      * Logger for this class
      */
     private static final Logger logger = Logger.getLogger(LSODAIntegrator.class.getName());
-
-    public static LSODAContext ctx;
-    private int neq;
-    private double[] yh;
-    private double[] tn;
-    private int state;
     
-    public LSODAIntegrator(LSODAContext ctx) {
+    public LSODAContext ctx;
+    private double[] yOffset; // to store the result
+    
+    /*
+     * LSODAIntegrator No argument constructor
+     */
+    public LSODAIntegrator() {
         super();
-        this.ctx = ctx;
+        this.ctx = new LSODAContext();
+        LSODAOptions opt = new LSODAOptions();
+        this.ctx.setOpt(opt);
+    }
+
+    /**
+     * LSODAIntegrator constructor
+     * <p>The same <code>relTol</code> and <code>absTol</code> value will be used for all the dependent variable calculations</p>
+     * @param relTol Relative Tolerance
+     * @param absTol Absolute Tolerance
+     */
+    public LSODAIntegrator(double relTol, double absTol) {
+        super();
+        this.ctx = new LSODAContext();
+        LSODAOptions opt = new LSODAOptions();
+        double[] aTol = {absTol};
+        double[] rTol = {relTol};
+        opt.setAtol(aTol);
+        opt.setRtol(rTol);
+        this.ctx.setOpt(opt);
+        setAbsTol(absTol);
+        setRelTol(relTol);
+    }
+
+    /**
+     * LSODAIntegrator constructor
+     * @param relTol Relative Tolerance
+     * @param absTol Absolute Tolerance
+     */
+    public LSODAIntegrator(double[] relTol, double[] absTol) {
+        super();
+        this.ctx = new LSODAContext();
+        LSODAOptions opt = new LSODAOptions();
+        opt.setAtol(absTol);
+        opt.setRtol(relTol);
+        this.ctx.setOpt(opt);
     }
 
     public LSODAIntegrator(LSODAIntegrator integrator) {
         super(integrator);
+        this.ctx = integrator.ctx;
+        LSODAOptions opt = new LSODAOptions();
+        opt.setAtol(integrator.ctx.getOpt().getAtol());
+        opt.setRtol(integrator.ctx.getOpt().getAtol());
+        this.ctx.setOpt(opt);
     }
 
     @Override
@@ -52,19 +93,42 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
     @Override
     public double[] computeChange(DESystem DES, double[] y, double t, double stepSize, double[] change, boolean steadyState) throws DerivativeException {
-        return null;
+        double[] tArr = {t};
+        this.lsoda(this.ctx, y, tArr, t + stepSize);
+        
+        for(int i=0; i<this.ctx.getNeq(); i++) {
+            change[i] = yOffset[i+1] - y[i]; 
+        }
+        return change;
     }
 
+    public static enum illegalTExceptionCases{
+        toutBehindT,
+        tcritBehindTout,
+        tcritBehindTcur,
+        toutToCloseToT,
+        toutBehindTcurMinusHu
+    };
 
-    private int hardFailure(LSODAContext ctx, String format, Object... args) {
-        System.err.printf(format + "%n", args);
+    /**
+     * hardFailure
+     * @param ctx <code>LSODAContext</code> object
+     * @return <code>LSODAContext</code> state, which is equal to -3
+     */
+    private int hardFailure(LSODAContext ctx) {
         ctx.setState(-3);
         return ctx.getState();
     }
 
-    private int softFailure(LSODAContext ctx, int code, String format, Object... args) {
-        System.err.printf(format + "%n", args);
-
+    /**
+     * softFailure
+     * @param ctx <code>LSODAContext</code> object
+     * @param code <code>LSODAContext</code> state 
+     * @param t timePoint
+     * @return <code>LSODAContext</code> state, which is the <code>code</code> itself
+     */
+    private int softFailure(LSODAContext ctx, int code, double[] t) {
+        
         LSODACommon common = ctx.getCommon();
         double[] y = new double[common.getYh().length];
 
@@ -72,19 +136,28 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             for (int i = 1; i <= ctx.getNeq(); i++) {
                 y[i] = common.getYh()[1][i];
             }
-            double t = common.getTn();
+            t[0] = common.getTn();
         }
         ctx.setState(code);
         return ctx.getState();
     }
 
+    /**
+     * successReturn
+     * @param ctx   <code>LSODAContext</code> object
+     * @param y     y array 
+     * @param t     timePoint
+     * @param itask task
+     * @param ihit  ihit
+     * @return <code>LSODAContext</code> state, which is 2 for successReturn
+     */
     private int successReturn(LSODAContext ctx, double[] y, double[] t, int itask, boolean ihit) {
-        int neq = ctx.getNeq(); //redundant for the moment, will become relevant when variable definitions in line 12-15 are fixed!
+        LSODACommon common = ctx.getCommon();
         double tcrit = ctx.getOpt().getTcrit();
-        for (int i = 1; i <= neq; i++) {
-            y[i] = yh[i];
+        for (int i = 1; i <= ctx.getNeq(); i++) {
+            y[i] = common.getYh()[1][i];
         }
-        t[0] = tn[0];
+        t[0] = common.getTn();
         if((itask == 4 || itask == 5) && ihit) {
             t[0] = tcrit;
         }
@@ -131,7 +204,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         tp = common.getTn() - common.getHu() - 100d * common.ETA * (common.getTn() + common.getHu());
 
         if ((t - tp) * (t - common.getTn()) > 0d) {
-            logError(String.format("intdy -- t = %f illegal. t not in interval (tcur - _C(hu)) to tcur", t, t, ctx.getData()));
+            logError(String.format("[intdy] t = %f illegal. t not in interval (tcur - _C(hu)) to tcur\n", t));
             return -2;
         }
 
@@ -172,16 +245,26 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return 0;
     }
 
+    /**
+     * IntdyReturn
+     * @param ctx {@code LSODAContext} object
+     * @param y
+     * @param t
+     * @param tout
+     * @param itask
+     * @return {@code LSODAContext} state = 2, on successful return from intdy
+     * @throws IntdyException 
+     */
     public static int intdyReturn(LSODAContext ctx, double[] y, double[] t, double tout, int itask) {
 
         LSODACommon common = ctx.getCommon();
         int iflag = intdy(ctx, tout, 0, y);
     
         if (iflag != 0) {
-            logError("[lsoda] trouble from indty, itas = %d, tout = %g\n", itask, tout);
             for (int i = 1; i <= ctx.getNeq(); i++) {
                 y[i] = common.getYh()[1][i];
             }
+            throw new IntdyException(itask, tout);
         }
         t[0] = tout;
 
@@ -191,6 +274,13 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
     }
 
+    /**
+     * checks the validity of {@code LSODAOptions} opt
+     * @param ctx {@code LSODAContext} object
+     * @param opt {@code LSODAOptions} object
+     * @return True, if valid
+     * @throws IllegalInputException
+     */
     public static boolean checkOpt(LSODAContext ctx, LSODAOptions opt) {
         final int mxstp0 = 500;
         final int[] mord = {0, 12, 5};
@@ -203,88 +293,208 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         }
 
         if (ctx.getNeq() <= 0) {
-            logError("[lsoda] neq = %d is less than 1\n", ctx.getNeq());
-            return false;
+            throw new IllegalInputException("lsodaPrepare","neq", ctx.getNeq(), "<= 0");
         }
 
         double[] rtol = opt.getRtol();
         double[] atol = opt.getAtol();
 
+        if(rtol.length != ctx.getNeq()) {
+            throw new IllegalInputException("lsodaPrepare","rtol length", rtol.length, "not equal to " + ctx.getNeq());
+        }
+        if(atol.length != ctx.getNeq()) {
+            throw new IllegalInputException("lsodaPrepare","atol length = ", atol.length, "not equal to " + ctx.getNeq());
+        }
         if (ctx.getState() == 1 || ctx.getState() == 3) {
             for (int i = 1; i <= ctx.getNeq(); i++) {
                 double rtoli = rtol[i - 1];
-                // System.out.println("Rtoli: " + rtoli);
                 double atoli = atol[i - 1];
                 if (rtoli < 0d) {
-                    logError("[lsoda] rtol = %g is less than 0.\n", rtoli);
-                    continue;
+                    throw new IllegalInputException("lsodaPrepare","rtol[" + (i-1) + "]", rtoli, "less than 0");
                 }
                 if (atoli < 0d) {
-                    logError("[lsoda] atol = %g is less than 0.\n", atoli);
-                    return false;
+                    throw new IllegalInputException("lsodaPrepare","atol[" + (i-1) + "]", atoli, "less than 0");
                 }
             }
         }
 
         if (opt.getItask() == 0) opt.setItask(1);
         if (opt.getItask() < 1 || opt.getItask() > 5) {
-            logError("[lsoda] illegal itask = %d\n", opt.getItask());
-            return false;
+            throw new IllegalInputException("lsodaPrepare","itask" , opt.getItask());
         }
 
         if (opt.getIxpr() < 0 || opt.getIxpr() > 1) {
-            logError("[lsoda] ixpr = %d is illegal\n", opt.getIxpr());
-            return false;
+            throw new IllegalInputException("lsodaPrepare","ixpr" , opt.getIxpr());
         }
 
         if (opt.getMxstep() < 0) {
-            logError("[lsoda] mxstep < 0\n");
-            return false;
+            throw new IllegalInputException("lsodaPrepare","mxstep" , opt.getMxstep(), "less than 0");
         }
 
         if (opt.getMxstep() == 0) opt.setMxstep(mxstp0);
 
         if (opt.getMxhnil() < 0) {
-            logError("[lsoda] mxhnil < 0\n");
-            return false;
+            throw new IllegalInputException("lsodaPrepare","mxhnil" , opt.getMxhnil(), "less than 0");
         }
 
         if (ctx.getState() == 1) {
             if (opt.getMxordn() < 0) {
-                logError("[lsoda] mxordn = %d is less than 0\n", opt.getMxordn());
-                return false;
+                throw new IllegalInputException("lsodaPrepare","mxordn" , opt.getMxordn(), "less than 0");
             }
-            if (opt.getMxordn() == 0) opt.setMxordn(100);
+            if (opt.getMxordn() == 0) opt.setMxordn(12);
             opt.setMxordn(Math.min(opt.getMxordn(), mord[1]));
 
             if (opt.getMxords() < 0) {
-                logError("[lsoda] mxords = %d is less than 0\n", opt.getMxords());
-                return false;
+                throw new IllegalInputException("lsodaPrepare","mxords" , opt.getMxords(), "less than 0");
             }
-            if (opt.getMxords() == 0) opt.setMxords(100);
+            if (opt.getMxords() == 0) opt.setMxords(5);
             opt.setMxords(Math.min(opt.getMxords(), mord[2]));
         }
 
         if (opt.getHmax() < 0d) {
-            logError("[lsoda] hmax < 0.\n");
-            return false;
+            throw new IllegalInputException("lsodaPrepare", "hMax", opt.getHmax(), "less than 0");
         }
 
         opt.setHmxi((opt.getHmax() > 0) ? 1d / opt.getHmax() : 0d);
 
         if (opt.getHmin() < 0d) {
-            logError("[lsoda] hmin < 0.\n");
-            return false;
+            throw new IllegalInputException("lsodaPrepare", "hMin", opt.getHmin(), "less than 0");
         }
 
         return true;
     }
 
-    public static boolean lsoda_prepare(LSODAContext ctx, LSODAOptions opt) {
+    /**
+     * Initializes {@code LSODACommon} variabales with suitable values, and set it in {@code LSODAContext}
+     * @param ctx    the {@code LSODAContext} object
+     * @param mxords maximum order for stiff method
+     * @param mxordn maximum order for nonstiff method
+     * @@return {@code boolean} Returns true on successful allocation
+     */
+    public static boolean allocMemory(LSODAContext ctx, int mxords, int mxordn) {
+        LSODACommon common = new LSODACommon(ctx.getNeq(), mxords, mxordn);
+        ctx.setCommon(common);
+
+        return true;
+    }
+
+    /**
+     * Initializes and prepares an LSODA solver context for integration. 
+     * 
+     * <p>This function allocates and initializes all memory required for solving a system of ODEs
+     * using the LSODA method. It also validates and sets up default solver options if they are not provided
+     * explicitly in the {@code LSODAOptions} object.
+     *
+     * It must be called before calling {@code lsoda()} for the first time with a given {@code ctx} context.</p>
+     * @param ctx the {@code LSODAContext} object
+     * @param opt the {@code LSODAOptions} object
+     * @return {@code boolean} Returns true on successful preparation
+     * @throws IllegalInputException 
+     */
+    public boolean lsodaPrepare(LSODAContext ctx, LSODAOptions opt) {
+        this.ctx = ctx;
         if(!checkOpt(ctx, opt)) {
             return false;
         }
         ctx.setOpt(opt);
+        allocMemory(ctx, opt.getMxords(), opt.getMxordn());
+        return true;
+    }
+
+    /**
+     * Initializes and prepares an LSODA solver context for integration. 
+     * 
+     * <p>This function allocates and initializes all memory required for solving a system of ODEs
+     * using the LSODA method. It also validates and sets up default solver options.
+     *
+     * It must be called before calling {@code solve()} for the first time with a given {@code SBMLInterpreter} interpreter.</p>
+     * 
+     * @param system the {@code DESystem} object, will be mostly {@code SBMLInterpreter} object
+     * @param ixpr   1 to print messages, 
+     *               0 to not print messages
+     * @param itask  controls task performed by the solver. 
+     * @param state  tells the solver how to proceed
+     * 
+     * @return {@code bool} Returns true on successful preparation
+     * @throws IllegalInputException 
+     */
+    @Override
+    public boolean prepare(DESystem system, int ixpr, int itask, int state) {
+        this.ctx.setNeq(system.getDimension());
+        LSODAOptions opt = this.ctx.getOpt();
+
+        if((opt.getAtol().length == 1 || opt.getRtol().length ==1) && this.ctx.getNeq() != 1) {
+
+            double[] atol = new double[ctx.getNeq()];
+            double[] rtol = new double[ctx.getNeq()];
+            double abstol = opt.getAtol()[0];
+            double relTol = opt.getRtol()[0];
+            for(int i=0; i<this.ctx.getNeq(); i++) {
+                atol[i] = abstol;
+                rtol[i] = relTol;
+            }
+
+            opt.setAtol(atol);
+            opt.setRtol(rtol);
+        }
+
+        if(!checkOpt(this.ctx, opt)) {
+            return false;
+        }
+
+        allocMemory(this.ctx, opt.getMxords(), opt.getMxordn());
+
+        this.ctx.setOdeSystem(system);
+
+        return true;
+    }
+
+    /**
+     * Initializes and prepares an LSODA solver context for integration. 
+     * 
+     * <p>This function allocates and initializes all memory required for solving a system of ODEs
+     * using the LSODA method. It also validates and sets up default solver options.
+     *
+     * It must be called before calling {@code solve()} for the first time with a given {@code SBMLInterpreter} interpreter.</p>
+     * 
+     * @param system the {@code DESystem} object, will be mostly {@code SBMLInterpreter} object
+     * @param ixpr   1 to print messages, 
+     *               0 to not print messages
+     * @param itask  controls task performed by the solver. 
+     * @param state  tells the solver how to proceed
+     * @param mxstep the maximum number of steps allowed
+     * 
+     * @return {@code bool} Returns true on successful preparation
+     * @throws IllegalInputException 
+     */
+    @Override
+    public boolean prepare(DESystem system, int ixpr, int itask, int state, int mxstep) {
+        this.ctx.setNeq(system.getDimension());
+        LSODAOptions opt = this.ctx.getOpt();
+        opt.setMxstep(mxstep);
+        if((opt.getAtol().length == 1 || opt.getRtol().length ==1) && this.ctx.getNeq() != 1) {
+
+            double[] atol = new double[ctx.getNeq()];
+            double[] rtol = new double[ctx.getNeq()];
+            double abstol = opt.getAtol()[0];
+            double relTol = opt.getRtol()[0];
+            for(int i=0; i<this.ctx.getNeq(); i++) {
+                atol[i] = abstol;
+                rtol[i] = relTol;
+            }
+
+            opt.setAtol(atol);
+            opt.setRtol(rtol);
+        }
+
+        if(!checkOpt(this.ctx, opt)) {
+            return false;
+        }
+
+        allocMemory(this.ctx, opt.getMxords(), opt.getMxordn());
+
+        this.ctx.setOdeSystem(system);
+
         return true;
     }
 
@@ -293,9 +503,15 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         ctx.setError(null);
     }
 
+    /**
+     * Frees the memory of {@Lcode SODAContext}
+     * <p>JVM manages on its own</p>
+     * @param ctx
+     */
     public void lsodaFree(LSODAContext ctx) {
-        ctx.setCommon(null);
-        ctx.setOpt(null);
+
+        // JVM manages memory for us.
+
     }
 
     /**
@@ -406,7 +622,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     pc[i] = pc[i - 1] + fnqm1 * pc[i];
                 }
                 pc[1] = fnqm1 * pc[1];
-                pint = pc[i];
+                pint = pc[1];
                 xpin = pc[1] / 2d;
                 tsign = 1d;
                 for (i = 2; i <= nq; i++) {
@@ -426,7 +642,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 agamq = rqfac * xpin;
                 ragq = 1d / agamq;
 
-                newTesco[nq][2] = agamq;
+                newTesco[nq][2] = ragq;
                 
                 if (nq < 12) {
                     newTesco[nqp1][1] = ragq * rqfac / (double) nqp1;
@@ -546,7 +762,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
         common.setSavf(findDerivatives(ctx.getOdeSystem(), common.getTn(), y)); 
         common.setNfe(common.getNfe() + 1);
-        
+                
         while (true) { 
             if (m[0] == 0) {
                 if (common.getIpup() > 0) {
@@ -571,6 +787,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             if (common.getMiter() == 0) {
                 double[] savf = common.getSavf();
                 for (i = 1; i <= neq; i++) {
+                    
                     savf[i] = common.getH() * savf[i] - common.getYh()[2][i];
                     y[i] = savf[i] - common.getAcor()[i];
                 }
@@ -666,7 +883,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         int neq = ctx.getNeq();
         LSODACommon common = ctx.getCommon();
         if (common.getMiter() != 2) {
-            throw new IllegalStateException("Solsy called with miter != 2: miter = " + common.getMiter());
+            throw new IllegalStateException("[solsy] solsy called with miter != 2: miter = " + common.getMiter());
         }
         if (common.getMiter() == 2) {
             dgesl(common.getWm(), neq, common.getIpvt(), y, 0);
@@ -759,7 +976,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             for (k = 1; k <= n; k++) {
                 t = ddot(k-1, a[k], b, 1, 1);
                 if (Math.abs(a[k][k]) < 1e-12) {
-                    throw new IllegalArgumentException("Matrix is singular or nearly singular at index " + k);
+                    throw new IllegalArgumentException("[dgesl] Matrix is singular or nearly singular at index " + k);
                 }
                 b[k] = (b[k] - t) / a[k][k];
             }
@@ -916,7 +1133,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         int ix, iy, i;
 
         if (dx.length < (1 + (n - 1) * Math.abs(incx)) || dy.length < (1 + (n - 1) * Math.abs(incy))) {
-            throw new IndexOutOfBoundsException("Array size too small for given incx and incy");
+            throw new IndexOutOfBoundsException("[ddot] Array size too small for given incx and incy");
         }
 
         dotprod = 0d;
@@ -981,7 +1198,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      */
     public static int prja(LSODAContext ctx, double[] y) throws DerivativeException{
         int i, j; 
-        int[] ier = new int[1]; //in the original code, ier was of type int and passed by reference. I changed it to simulate this logic.
+        int[] ier = new int[1]; 
         double fac, hl0, r, r0, yj;
         LSODACommon common = ctx.getCommon();
         int neq = ctx.getNeq();
@@ -1079,7 +1296,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         
         for (k = 1; k <= n - 1; k++) {
             
-            //since in the original C code a pointer to the first column vector was passed, this needs to be replicated using a helper array in Java
             double[] temp1 = Arrays.copyOfRange(a[k], k-1, n+1);
 
             j = idamax(n - k + 1, temp1, 1) + k - 1;
@@ -1341,10 +1557,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
                 // switch only when new stepsize factor is more than ratio = 5 times the previous stepsize factor
                 if(rh2 < (common.RATIO * rh1) ) {
-                    // logger.log(Level.INFO, "No switching: rh1 = " + rh1 + ", rh2 = " + rh2);
                     return;
                 }
-                // logger.log(Level.INFO, "Switching to BDF: rh1 = " + rh1 + ", rh2 = " + rh2);
             }
 
             // method switch test passed. Reset relevant quantities for BDF
@@ -1386,7 +1600,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
         // switch only when new stepsize factor is more than previous stepsize factor
         if((rh1 * common.RATIO) < (5d * rh2)) {
-            // logger.log(Level.INFO, "No Switching: rh1 = " + rh1 + ", rh2 = " + rh2);
             return;
         }
 
@@ -1395,8 +1608,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         if(dm1 <= 1000. * common.ETA * pnorm) {
             return;
         }
-
-        // logger.log(Level.INFO, "Switching to Adams: rh1 = " + rh1 + ", rh2 = " + rh2);
             
         // method switch test passed. Reset relevant quantities for Adams
         rh[0] = rh1;
@@ -1466,7 +1677,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             }
             common.setPdest(0d);;
         }
-        // logger.log(Level.INFO, "rhsm = " + rhsm + " rhdn = " + rhdn + " rhup = " + rhup);
+
         if(rhsm >= rhup) {
             if(rhsm >= rhdn) {                  // stay at same order
                 newq = common.getNq();
@@ -1544,111 +1755,169 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return ydot1;
     }
 
+    /**
+     * Main lsoda driver function for integrating a system of ODEs
+     * 
+     * This function numerically solves an initial value problem (IVP) of the form:
+     * <pre>
+     *     dy/dt = f(t, y)
+     * </pre>
+     * for a given initial condition {@code y(t0) = y0}, from time {@code t} towards {@code tout}, using the
+     * LSODA algorithm.
+     * @param ctx  {@code LSODAContext} object containing the problem setup, memory workspaces, and ODE system definition.
+     * @param y    the array of dependent variables of size `neq`.
+     * @param t    array of unit size containing the current timestep
+     * @param tout the target output time for the integration.
+     * @return int Status code (same as {@code ctx->state}):
+     *   <ul><li> 2: Success. Result found at time {@code tout}. </li></ul>
+     *   Negative values indicate failure:
+     *   <ul><li> -1: Too much work attempted.</li>
+     *       <li> -2: Too much accuracy requested (rtol/atol too small).</li>
+     *       <li> -3: Illegal input detected.</li>
+     *       <li> -4: Repeated local error test failures.</li>
+     *       <li> -5: Repeated convergence failures.</li>
+     *       <li> -6: Error weight {@code ewt[i]} became zero.</li>
+     *       <li> -7: Insufficient workspace.</li></ul>
+     *
+     * @throws DerivativeException
+     */
     public int lsoda(LSODAContext ctx, double[] y, double[] t, double tout) throws DerivativeException {
-        int jstart;
+
+        int kflag = 0;
+        int jstart = 0;
 
         LSODACommon common = ctx.getCommon();
         LSODAOptions opt = ctx.getOpt(); 
         DESystem odeSystem = ctx.getOdeSystem();
-        LSODAStepper stepper = new LSODAStepper(ctx, null, 0);
+        LSODAStepper stepper = new LSODAStepper();
 
         if (common == null) {
-            return hardFailure(ctx, opt.toString(), "[lsoda] illegal common block, did you call lsoda_pre");
+            hardFailure(ctx);
+            throw new MembersNotInitializedException();
         }
-
-        y = Arrays.copyOfRange(y, 1, y.length);
         
         int i;
-        double big, hmx, rh, tcrit, tdist, tnext, tol, tolsf, tp, size, sum, w0;
+        final int neq = ctx.getNeq();
+        double big, hmx, rh, tcrit = 0, tdist, tnext, tol, tolsf, tp, size, sum, w0;
         hmx = Math.abs(common.getTn()) + Math.abs(common.getH());
-        boolean ihit = Math.abs(common.getTn() - opt.getTcrit()) <= (100d * common.ETA * hmx);
+        boolean ihit = false;
         double h0 = opt.getH0();
 
-        final int itask = opt.getItask();
-        final double[] rtol = Arrays.copyOfRange(opt.getRtol(), 1, opt.getRtol().length);
-        final double[] atol = Arrays.copyOfRange(opt.getAtol(), 1, opt.getAtol().length);
+        yOffset = new double[neq + 1];
+        System.arraycopy(y, 0, yOffset, 1, y.length);
 
-        double[] yOffset = new double[y.length - 1];
-        System.arraycopy(y, 1, yOffset, 0, yOffset.length);
+        /*
+         * Block a.
+         */
 
-        double[][] yh = common.getYh();
-        double[] yhOffset = new double[yh[2].length - 1];
-        System.arraycopy(yh[2], 1, yhOffset, 0, yhOffset.length);
+
+        /*
+         * Block b.
+         */
 
         if (ctx.getState() == 1 || ctx.getState() == 3) {
             h0 = opt.getH0();
             if (ctx.getState() == 1) {
                 if ((tout - t[0]) * h0 < 0.) {
-                    hardFailure(ctx, opt.toString(), "[lsoda] tout = g behind t = %g. integration direction is given by %g");
+                    hardFailure(ctx);
+                    throw new IllegalTException(illegalTExceptionCases.toutBehindT, t[0], tout, h0);
                 }
             }
         }
+
+        final int itask = opt.getItask(); 
 
         if (ctx.getState() == 3) {
             jstart = -1;
         }
 
+
+        /*
+         * Block c.
+         */
+
+        double[] rtol = new double[neq + 1];
+        double[] atol = new double[neq + 1];
+        System.arraycopy(opt.getRtol(), 0, rtol, 1, neq);
+        System.arraycopy(opt.getAtol(), 0, atol, 1, neq);
+
         if (ctx.getState() == 1) {
-            common.setMeth(1); // enum to define which method to use
+            common.setMeth(1); 
             common.setTn(t[0]);
             common.setTsw(t[0]);
             if (itask == 4 || itask == 5) {
                 tcrit = opt.getTcrit();
                 if ((tcrit - tout) * (tout - t[0]) < 0.) {
-                    hardFailure(ctx, opt.toString(), "[lsoda] itask = 4 or 5 and tcrit behind tout");
+                    hardFailure(ctx);
+                    throw new IllegalTException(illegalTExceptionCases.tcritBehindTout, t[0], tout, tcrit);
                 }
                 if (h0 != 0. && (t[0] + h0 - tcrit) * h0 > 0.) {
                     h0 = tcrit - t[0];
                 }
             }
             jstart = 0;
-            common.setNq(1);
+            common.setNhnil(0);
+            common.setNst(0);
+            common.setNje(0);
+            common.setNslast(0);
+            common.setHu(0);
+            common.setNqu(0);
+            common.setMused(0);
+            common.setMiter(0);
 
             double[][] newYh = common.getYh();
-            newYh[2] = findDerivatives(odeSystem, t[0], y);
+            newYh[2] = findDerivatives(odeSystem, t[0], yOffset);
             common.setYh(newYh);
 
             common.setNfe(1);
 
-            for (int k = 1; k <= ctx.getNeq(); k++) {
-                common.getYh()[1][k] = y[k];
+            newYh = common.getYh();
+            for (int k = 1; k <= neq; k++) {
+                newYh[1][k] = yOffset[k];
             }
-            common.setNfe(1);
+            common.setYh(newYh);
 
-            ewset(y, opt.getRtol(), opt.getAtol(), ctx.getNeq(), common);
+            common.setNq(1);
+            common.setH(1);
+
+            ewset(yOffset, rtol, atol, neq, common);
 
             for (i = 1; i <= neq; i++) {
                 if (common.getEwt()[i] <= 0.) {
-                    hardFailure(ctx, opt.toString(), String.format("[lsoda] ewt[%d] = %g <= 0.", i, common.getEwt()));
+                    hardFailure(ctx);
+                    throw new ErrorWeightException(i, common.getEwt()[i]);
                 }
             }
 
             if (h0 == 0d) {
                 tdist = Math.abs(tout - t[0]);
                 w0 = Math.max(Math.abs(t[0]), Math.abs(tout));
-                if (tdist < 2. * common.ETA * w0) { 
-                    hardFailure(ctx, opt.toString(), "[lsoda] tOut too close to t to start integrations");
+                if (tdist < 2d * common.ETA * w0) { 
+                    hardFailure(ctx);
+                    throw new IllegalTException(illegalTExceptionCases.toutToCloseToT, t[0], tout, tdist);
                 }
-                tol = 0.;
+                tol = 0d;
                 for (i = 1; i <= neq; i++) {
                     tol = Math.max(tol, rtol[i]);
                 }
-                if (tol <= 0.) {
+                if (tol <= 0d) {
                     for (i = 1; i <= neq; i++) {
                         double atoli = atol[i];
-                        double ayi = Math.abs(y[i]);
-                        if (ayi != 0.) {
+                        double ayi = Math.abs(yOffset[i]);
+                        if (ayi != 0d) {
                             tol = Math.max(tol, atoli / ayi);
                         }
                     }
                 }
-                tol = Math.max(tol, 100. * common.ETA);
-                tol = Math.min(tol, 0.001);
+                tol = Math.max(tol, 100d * common.ETA);
+                tol = Math.min(tol, 0.001d);
                 sum = vmnorm(neq, common.getYh()[2], common.getEwt());
-                sum = 1. / (tol * w0 * w0) + tol * sum * sum;
-                h0 = 1. / Math.sqrt(sum);
+                sum = 1d / (tol * w0 * w0) + tol * sum * sum;
+                h0 = 1d / Math.sqrt(sum);
                 h0 = Math.min(h0, tdist);
-                h0 = h0 * ((tout - t[0] >= 0.) ? 1. : -1.);
+                if(tout - t[0] < 0d) {
+                    h0 *= -1d;
+                }
             }
 
             rh = Math.abs(h0) * opt.getHmxi();
@@ -1657,178 +1926,210 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             }
 
             common.setH(h0);
+            newYh = common.getYh();
             for (i = 1; i <= neq; i++) {
-                common.getYh()[2][i] *= h0;
+                newYh[2][i] *= h0;
+            }
+            common.setYh(newYh);
+        }
+
+
+        /*
+         * Block d.
+         */
+
+        if (ctx.getState() == 2 || ctx.getState() == 3) {
+            jstart = 1;
+            ctx.nslast = common.getNst();
+
+            switch (itask) {
+                case 1:
+                    if ((common.getTn() - tout) * common.getH() >= 0d) {
+                        return intdyReturn(ctx, yOffset, t, tout, itask);
+                    }
+                    break;
+
+                case 2:
+                    break; 
+                
+                case 3:
+                    tp = common.getTn() - common.getHu() * (1d + 100d * common.ETA);
+                    if ((tp - tout) * common.getH() > 0d) {
+                        hardFailure(ctx);
+                        throw new IllegalTException(illegalTExceptionCases.toutBehindTcurMinusHu, t[0], tout, itask);
+                    }
+                    if ((common.getTn() - tout) * common.getH() < 0d) {
+                        break;
+                    }
+                    return successReturn(ctx, yOffset, t, itask, ihit);
+                        
+                case 4:
+                    tcrit = opt.getTcrit();
+                    if((common.getTn() - tcrit) * common.getH() > 0d) {
+                        hardFailure(ctx);
+                        throw new IllegalTException(illegalTExceptionCases.tcritBehindTcur, t[0], tout, null);
+                    }
+                    if((tcrit - tout) * common.getH() < 0d) {
+                        hardFailure(ctx);
+                        throw new IllegalTException(illegalTExceptionCases.tcritBehindTout, t[0], tout, null);
+                    }
+                    if((common.getTn() - tout) * common.getH() >= 0d) {
+                        return intdyReturn(ctx, yOffset, t, tout, itask);
+                    }
+                    break;
+                    
+                case 5:
+                    if(itask == 5) {
+                        tcrit = opt.getTcrit();
+                        if ((common.getTn() - tcrit) * common.getH() > 0d) {
+                            hardFailure(ctx);
+                            throw new IllegalTException(illegalTExceptionCases.tcritBehindTcur, t[0], tout, null);
+                        }
+                    }
+                        
+                        
+                    hmx = Math.abs(common.getTn()) + Math.abs(common.getH());
+                    ihit = Math.abs(common.getTn() - tcrit) <= (100d * common.ETA * hmx);
+
+                    if (ihit) {
+                        t[0] = tcrit;
+                        return successReturn(ctx, yOffset, t, itask, ihit);
+                    }
+                    tnext = common.getTn() + common.getH() * (1d + 4d * common.ETA);
+                    if ((tnext - tcrit) * common.getH() <= 0d) {
+                        break;
+                    }
+                    common.setH((tcrit - common.getTn()) * (1d - 4d * common.ETA));
+                    if (ctx.getState() == 2) {
+                        jstart = -2;
+                    }
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Invalid itask value: " + itask);
+            }
+        }
+
+
+        /*
+         * Block e.
+         */
+
+        while (true) {
+            if (ctx.getState() != 1 || common.getNst() != 0) {
+                if ((common.getNst() - common.getNslast()) >= opt.getMxstep()) {
+                    softFailure(ctx, -1, t);
+                    throw new MaxStepExceededException(opt.getMxstep());
+                }
+
+                ewset(common.getYh()[1], rtol, atol, neq, common);
+                for (int j = 1; j <= neq; j++) {
+                    if (common.getEwt()[j] <= 0d) {
+                        softFailure(ctx, -6, t);
+                        throw new ErrorWeightException(j, common.getEwt()[j]);
+                    }
+                }
+            }
+            tolsf = common.ETA * vmnorm(neq, common.getYh()[1], common.getEwt());
+            if (tolsf > 0.01d) {
+                tolsf = tolsf * 200d;
+                if (common.getNst() == 0) {
+                    hardFailure(ctx);
+                    throw new TooMuchAccuracyException(tolsf);
+                }
+                softFailure(ctx, -2, t);
+                throw new TooMuchAccuracyException(t[0], tolsf);
             }
 
-            int kflag = stepper.stoda(ctx, y, jstart);
+            if ((common.getTn() + common.getH()) == common.getTn()) {
+                common.setNhnil(common.getNhnil() + 1);
+                if (common.getNhnil() <= opt.getMxhnil()) {
+                    logError(String.format("lsoda -- warning..internal t = %f and h = %f are\n", common.getTn(), common.getH()));
+                    logError(String.format("such that in the machine, t + %f = t on the next step\n", common.getH()));
+                    logError("solver will continue anyway.\n");
+                    if (common.getNhnil() == opt.getMxhnil()) {
+                        logError(String.format("lsoda -- above warning has been issued %d times,\n", common.getNhnil()));
+                        logError("it will not be issued again for this problem\n");
+                    }
+                }
+            }
 
-            if (ctx.getState() == 2 || ctx.getState() == 3) {
-                ctx.nslast = common.getNst();
+            kflag = stepper.stoda(ctx, yOffset, jstart);
+            if (kflag == 0) {
 
-                switch (itask) {
-                    case 1:
-                        if ((common.getTn() - tout) * common.getH() >= 0d) {
-                            intdyReturn(ctx, y, t, tout, itask);
+                /*
+                 * Block f.
+                 */
+
+                jstart = 1;
+
+                if (common.getMeth() != common.getMused()) {
+                    common.setTsw(common.getTn());
+                    jstart = -1;
+
+                    if (opt.getIxpr() != 0) {
+                        if (common.getMeth() == 2) {
+                            System.out.print("[lsoda] a swith to the stiff method has occured ");
                         }
-                        break;
+                        if (common.getMeth() == 1) {
+                            System.out.print("[lsoda] a switch to the non-stiff method has occured ");
+                        }
+                        System.out.printf("at t = %f, tentative step size h = %f, step nst = %d\n", common.getTn(), common.getH(), common.getNst());
+                    } 
+                }
 
-                    case 2:
-                        break; //nothing provided in source code
+                if(itask == 1) {
+                    if ((common.getTn() - tout) * common.getH() < 0d) {
+                        continue;
+                    }
+                    return intdyReturn(ctx, yOffset, t, tout, itask);
+                }
+
+                if(itask == 2) {
+                    return successReturn(ctx, yOffset, t, itask, ihit);
+                }
+
+                if(itask == 3) {
+                    if ((common.getTn() - tout) * common.getH() >= 0d) {
+                        return successReturn(ctx, yOffset, t, itask, ihit);
+                    }
+                    continue; 
+                }
                     
-                    case 3:
-                        tp = common.getTn() - common.getHu() * (1.0 + 100.0 * common.ETA);
-                        if ((tp - tout) * common.getH() > 0d) {
-                            hardFailure(ctx, opt.toString(), String.format("[lsoda] itask = %g and tout behind tcur = %f", itask, common.getHu()));
-                        }
-                        if ((common.getTn() - tout) * common.getH() < 0d) break;
-                        //return success
-                        
-                    case 4:
-                        tcrit = opt.getTcrit();
-                        if((common.getTn() - tcrit) * common.getH() > 0d) {
-                            hardFailure(ctx, "[lsoda] itask = 4 or 5 and tcrit behind tcur");
-                        }
-                        if((tcrit - tout) * common.getH() < 0d) {
-                            hardFailure(ctx, "[lsoda] itask = 4 or 5 and tcrit behind tout");
-                        }
-                        if((common.getTn() - tout) * common.getH() >= 0d) {
-                            intdyReturn(ctx, y, t, tout, itask);
-                        }
-                        break;
-                    
-                    case 5:
-                        if(itask == 5) {
-                            tcrit = opt.getTcrit();
-                            if ((common.getTn() - tcrit) * common.getH() > 0d) {
-                                hardFailure(ctx, "[lsoda] itask = 4 or 5 and tcrit behind tcur");
-                            }
-                        }
-                        
-                        
+                if(itask == 4) {
+                    tcrit = opt.getTcrit();
+                    if ((common.getTn() - tout) * common.getH() >= 0d) {
+                        return intdyReturn(ctx, yOffset, t, tout, itask);
+                    } 
+                    else {
                         hmx = Math.abs(common.getTn()) + Math.abs(common.getH());
-                        ihit = Math.abs(common.getTn() - opt.getTcrit()) <= (100d * common.ETA * opt.getHmax());
-
+                        ihit = Math.abs(common.getTn() - tcrit) <= (100d * common.ETA * hmx);
                         if (ihit) {
-                            t[0] = opt.getTcrit();
-                            //return success
+                            return successReturn(ctx, yOffset, t, itask, ihit);
                         }
                         tnext = common.getTn() + common.getH() * (1d + 4d + common.ETA);
-                        if ((tnext - opt.getTcrit()) * common.getH() <= 0d) {
-                            break;
+                        if ((tnext - tcrit) * common.getH() <= 0d) {
+                            continue;
                         }
-                        common.setH((opt.getTcrit() - common.getTn()) * (1d - 4d * common.ETA));
-                        if (ctx.getState() == 2) {
-                            jstart = -2;
-                        }
-                        break;
+                        common.setH((tcrit - common.getTn()) * (1d - 4d * common.ETA));
+                        jstart = -2;
+                        continue;
+                    }
+                }
 
-                    default:
-                        throw new IllegalArgumentException("Invalid itask value: " + itask);
+                if(itask == 5) {
+                    tcrit = opt.getTcrit();
+                    hmx = Math.abs(common.getTn() + Math.abs(common.getH()));
+                    ihit = Math.abs(common.getTn() - tcrit) <= (100d * common.ETA * hmx);
+                    return successReturn(ctx, yOffset, t, itask, ihit);
                 }
             }
-            int k = 0;
-            while (k == 0) {
-                if (ctx.getState() != 1 || common.getNst() != 0) {
-                    if ((common.getNst() - common.getNslast()) >= opt.getMxstep()) {
-                        softFailure(ctx, -1, String.format("[lsoda] %f steps taken before reaching tout.", opt.getMxstep()));
-                    }
-                    ewset(y, rtol, atol, ctx.getNeq(), common);
-                    for (int j = 1; j <= ctx.getNeq(); j++) {
-                        if (common.getEwt()[j] <= 0d) {
-                            softFailure(ctx, -6, "[lsoda] ewt[" + j + "] = " + common.getEwt()[j] + " <= 0.");
-                        }
-                    }
-                }
-                tolsf = common.ETA * vmnorm(ctx.getNeq(), common.getYh()[1], common.getEwt());
-                if (tolsf > 0.01d) {
-                    tolsf = tolsf * 200d;
-                    if (common.getNst() == 0) {
-                        hardFailure(ctx, String.format("[lsoda] -- at start of problem, too much accuracy\n requested for precision of machine, \n suggested scalilng factor = %f", tolsf));
-                    }
-                    softFailure(ctx, -2, String.format("[lsoda] -- at t = %f , too much accurary requested for precision of machine, suggested scaling factor = %f", t[0], tolsf));
-                }
 
-                if ((common.getTn() + common.getH()) == common.getTn()) {
-                    common.setNhnil(common.getNhnil() + 1);
-                    if (common.getNhnil() <= opt.getMxhnil()) {
-                        logError(String.format("[lsoda] -- warning..internal t = %f and h = %f are\n", common.getTn(), common.getH()));
-                        logError(String.format("[lsoda] -- such that in the machine, t + %f = t on the next step\n", common.getH()));
-                        logError("[lsoda] -- solver will continue anyway.\n");
-                        if (common.getNhnil() == opt.getMxhnil()) {
-                            logError(String.format("[lsoda] -- above warning has been issued %d times,\n", common.getNhnil()));
-                            logError("[lsoda] -- it will not be issued again for this problem\n");
-                        }
-                    }
-                }
-
-                kflag = stepper.stoda(ctx, y, jstart);
-                if (kflag == 0) {
-                    jstart = 1;
-
-                    if (common.getMeth() != common.getMused()) {
-                        common.setTsw(common.getTn());
-                        jstart = -1;
-
-                        if (opt.getIxpr() != 0) { // lsoda.c, line 787 say if(opt.getIxpr() != null), not available in Java --> still correct implementation?
-                            if (common.getMeth() == 2) {
-                                logError("[lsoda] a swith to the stiff method has occured.");
-                            }
-                            if (common.getMeth() == 1) {
-                                logError("[lsoda] a switch to the non-stiff method has occured.");
-                            }
-                            logError(String.format("[lsoda] at t = %f and tentative step size h = %f, step = %d\n", common.getTn(), common.getH(), common.getNst()));
-                        } 
-                    }
-                    
-                    switch (itask) {
-                        case 1:
-                            if ((common.getTn() - tout) * common.getH() < 0d) {
-                                continue;
-                            }
-                            intdyReturn(ctx, y, t, tout, itask);
-                        
-                        case 2:
-                            successReturn(ctx, y, t, itask, ihit);
-
-                        case 3:
-                            if ((common.getTn() - tout) * common.getH() >= 0d) {
-                                successReturn(ctx, y, t, itask, ihit);
-                            }
-                            continue; 
-
-                        case 4:
-                            tcrit = opt.getTcrit();
-                            if ((common.getTn() - tout) * common.getH() >= 0d) {
-                                intdyReturn(ctx, y, t, tout, itask);
-                            } else {
-                                hmx = Math.abs(common.getTn()) + Math.abs(common.getH());
-                                ihit = Math.abs(common.getTn() - tcrit) <= (100d * common.ETA * hmx);
-                                if (ihit) {
-                                    successReturn(ctx, y, t, itask, ihit);
-                                }
-                                tnext = common.getTn() + common.getH() * (1d + 4d + common.ETA);
-                                if ((tnext - tcrit) * common.getH() <= 0d) {
-                                    continue;
-                                }
-                                common.setH((tcrit - common.getTn()) * (1d - 4d * common.ETA));
-                                jstart = -2;
-                                continue;
-                            }
-                        
-                        case 5:
-                            tcrit = opt.getTcrit();
-                            hmx = Math.abs(common.getTn() + Math.abs(common.getH()));
-                            ihit = Math.abs(common.getTn() - tcrit) <= (100d * common.ETA * hmx);
-                            successReturn(ctx, y, t, itask, ihit);
-                    }
-                }
-            }
             if (kflag == -1 || kflag == -2) {
                 big = 0d;
                 common.setIxmer(1);
 
-                for (i = 0; i <= ctx.getNeq(); i++) {
+                for (i = 0; i <= neq; i++) {
                     size = Math.abs(common.getAcor()[i] * common.getEwt()[i]);
                     if (big < size) {
                         big = size;
@@ -1836,59 +2137,31 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     }
                 }
                 if (kflag == -1) {
-                    softFailure(ctx, -4, String.format("[lsoda] -- at t = %f and step size h = %f, the\n      error test failed repeatedly of\n      with Math.abs(h) = hmin\n", common.getTn(), common.getH()));
+                    softFailure(ctx, -4, t);
+                    throw new TestFailException(1, common.getTn(), common.getH());
                 }
                 if (kflag == -2) {
-                    softFailure(ctx, -5, String.format("[lsoda] -- at t = %f and step size h = %f, the\n      corrector convergence failed repeatedly\n     with Math.abs(h) = hmin\n", common.getTn(), common.getH()));
+                    softFailure(ctx, -5, t);
+                    throw new TestFailException(2, common.getTn(), common.getH());
                 }
             }
 
         }
-        return 0;
-
-        
-        
+ 
     }
 
-    public LSODAContext getCtx() {
-        return ctx;
+    public LSODAContext getContext(){
+        return this.ctx;
     }
 
-    public void setCtx(LSODAContext ctx) {
-        this.ctx = ctx;
+    /**
+     * Returns the result of integration
+     * @return double array containing the result of the integration
+     */
+    public double[] getResult() {
+        double[] result = new double[this.yOffset.length - 1];
+        System.arraycopy(this.yOffset, 1, result, 0, yOffset.length - 1);
+        return result;
     }
 
-    public int getNeq() {
-        return neq;
-    }
-
-    public void setNeq(int neq) {
-        this.neq = neq;
-    }
-
-    public double[] getYh() {
-        return yh;
-    }
-
-    public void setYh(double[] yh) {
-        this.yh = yh;
-    }
-
-    public double[] getTn() {
-        return tn;
-    }
-
-    public void setTn(double[] tn) {
-        this.tn = tn;
-    }
-
-    public int getState() {
-        return state;
-    }
-
-    public void setState(int state) {
-        this.state = state;
-    }
-
-
-}   
+}

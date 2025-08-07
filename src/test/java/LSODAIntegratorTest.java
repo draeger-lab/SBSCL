@@ -6,6 +6,8 @@ import org.simulator.math.odes.LSODA.LSODACommon;
 import org.simulator.math.odes.LSODA.LSODAContext;
 import org.simulator.math.odes.LSODA.LSODAIntegrator;
 import org.simulator.math.odes.LSODA.LSODAOptions;
+import org.simulator.math.odes.exception.IllegalInputException;
+
 import java.util.logging.Logger;
 
 public class LSODAIntegratorTest {
@@ -15,7 +17,7 @@ public class LSODAIntegratorTest {
     LSODACommon common = new LSODACommon();
     LSODAOptions opt = new LSODAOptions();
     LSODAContext ctx = new LSODAContext(common, opt);
-    LSODAIntegrator integrator = new LSODAIntegrator(ctx);
+    LSODAIntegrator integrator = new LSODAIntegrator();
 
     /**
      * The following tests are for the function .ddot() within LSODAIntegrator.java
@@ -1678,7 +1680,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1695,7 +1699,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertTrue(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1712,8 +1718,49 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
+
+    @Test
+    void checkOptRtolLengthMismatch() {
+        ctx.setState(1);
+        ctx.setNeq(2);
+
+        opt.setRtol(new double[]{1e-4});
+        opt.setAtol(new double[]{1e-6, -1e-6});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
+    }
+
+    @Test
+    void checkOptAtolLengthMismatch() {
+        ctx.setState(1);
+        ctx.setNeq(2);
+
+        opt.setRtol(new double[]{1e-4, 1e-4});
+        opt.setAtol(new double[]{1e-6, -1e-6, 1e-6});
+        opt.setItask(1);
+        opt.setIxpr(1);
+        opt.setMxstep(1);
+        opt.setMxhnil(0);
+        opt.setHmax(1.0);
+        opt.setHmin(0.01);
+
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
+    }
+
 
     @Test
     void checkOptIllegalItaskHigh() {
@@ -1729,7 +1776,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1746,7 +1795,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1763,7 +1814,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1780,7 +1833,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1797,7 +1852,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1832,7 +1889,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1929,7 +1988,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(-1.0);
         opt.setHmin(0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -1968,7 +2029,9 @@ public class LSODAIntegratorTest {
         opt.setHmax(1.0);
         opt.setHmin(-0.01);
 
-        assertFalse(LSODAIntegrator.checkOpt(ctx, opt));
+        assertThrows(IllegalInputException.class, () -> {
+            LSODAIntegrator.checkOpt(ctx, opt);
+        });
     }
 
     @Test
@@ -3050,7 +3113,6 @@ public class LSODAIntegratorTest {
         assertEquals(0.2d, rh[0]);                        // tiny step after several failures
         assertEquals(1, common.getNq());                  // same order
     }
-
 
     void print2DArray(double[][]a){
         for(int i=0; i<a.length; i++){
