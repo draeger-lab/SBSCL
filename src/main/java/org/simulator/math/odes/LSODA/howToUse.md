@@ -30,6 +30,13 @@ Multitable solution = solver.solve(interpreter, interpreter.getInitialValues(), 
 
 4. Create a `LSODAIntegrator` instance with desired tolerance values. There are a couple of options to do so.
 
+    - **Default tolerances:**
+
+    ```
+    // Default Tolerances are relTol = 1e-8 and absTol = 1e-12
+    AbstractDESolver solver = new LSODAIntegrator(); // No-Argument constructor
+    ```
+
     - **Single tolerance for all variables:**
 
     ```

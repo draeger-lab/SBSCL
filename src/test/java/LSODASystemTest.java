@@ -95,6 +95,56 @@ public class LSODASystemTest {
     }
 
     @Test
+    void linearSystemWithPrepare() throws DerivativeException {
+        DESystem system = new DESystem() {
+
+            @Override
+            public int getDimension() {
+                return 1;
+            }
+
+            @Override
+            public void computeDerivatives(double t, double[] y, double[] yDot) throws DerivativeException {
+                yDot[0] = 3;
+            }
+
+            @Override
+            public String[] getIdentifiers() {
+                throw new UnsupportedOperationException("Unimplemented method 'getIdentifiers'");
+            }
+
+            @Override
+            public boolean containsEventsOrRules() {
+                throw new UnsupportedOperationException("Unimplemented method 'containsEventsOrRules'");
+            }
+
+            @Override
+            public int getPositiveValueCount() {
+                throw new UnsupportedOperationException("Unimplemented method 'getPositiveValueCount'");
+            }
+
+            @Override
+            public void setDelaysIncluded(boolean delaysIncluded) {
+                throw new UnsupportedOperationException("Unimplemented method 'setDelaysIncluded'");
+            }
+            
+        };
+
+        double[] y = {20d};
+        double[] t = {5d};
+        double tout = 7d;
+        double result = 3*tout + 5;
+
+        LSODAIntegrator solver = new LSODAIntegrator();
+        solver.prepare(system, 1, 1, 1);
+        solver.lsoda(y, t, tout);
+        double[] res = solver.getResult();
+
+        // System.out.println("output = " + res[0] + ", expected = " + result);
+        assertTrue(Math.abs(result-res[0]) < 1e-8);
+    }
+
+    @Test
     void linearSystemComputeChangeTest() throws DerivativeException {
         DESystem system = new DESystem() {
 

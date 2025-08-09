@@ -81,7 +81,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     public LSODAIntegrator() {
         super();
         this.ctx = new LSODAContext();
-        opt = new LSODAOptions();
+        this.opt = new LSODAOptions();
         this.ctx.setOpt(opt);
     }
 
@@ -605,41 +605,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * @throws IllegalInputException 
      */
     public boolean prepare(DESystem system, int ixpr, int itask, int state) {
-        this.ctx.setNeq(system.getDimension());
-        this.neq = system.getDimension();
-        this.stop = false;
 
-        if((opt.getAtol().length == 1 || opt.getRtol().length ==1) && this.ctx.getNeq() != 1) {
-
-            double[] atol = new double[ctx.getNeq()];
-            double[] rtol = new double[ctx.getNeq()];
-            double abstol = opt.getAtol()[0];
-            double relTol = opt.getRtol()[0];
-            for(int i=0; i<this.ctx.getNeq(); i++) {
-                atol[i] = abstol;
-                rtol[i] = relTol;
-            }
-
-            opt.setAtol(atol);
-            opt.setRtol(rtol);
-        }
-
-        opt.setIxpr(ixpr);
-        opt.setItask(itask);
-        opt.setHmin(1E-8d);
-        setStepSize(getStepSize());
-        opt.setHmax(getStepSize());
-
-        if(!checkOpt(this.ctx, opt)) {
-            return false;
-        }
-
-        allocMemory(opt.getMxords(), opt.getMxordn());
-
-        this.ctx.setOpt(opt);
-        this.ctx.setOdeSystem(system);
-        this.ctx.setState(state);
-        return true;
+        return prepare(system, ixpr, itask, state, 500);
     }
 
     /**
@@ -2397,6 +2364,10 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * @return double array containing the result of the integration
      */
     public double[] getResult() {
+        if(ctx.getState() < 0) {
+            logError("Failure has occured while solving the ODE system. This result might not be correct");
+        }
+        
         return yTemp;
     }
 
