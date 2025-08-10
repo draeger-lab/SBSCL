@@ -25,6 +25,9 @@ public class OptSolvXSolverAdapter implements LPSolverAdapter {
 
     @Override
     public LPSolution solve(AbstractLPModel model) {
+        if (model == null) {
+            throw new IllegalArgumentException("model must not be null");
+        }
         if (!model.isBuilt()) {
             throw new IllegalStateException("Model must be built() before solving.");
         }
@@ -39,17 +42,19 @@ public class OptSolvXSolverAdapter implements LPSolverAdapter {
             ));
         }
 
+        long t0 = System.nanoTime();
         LPSolution sol = backend.solve(model);
+        long dtMs = (System.nanoTime() - t0) / 1_000_000L;
 
         if (debug) {
             LOGGER.info(MessageFormat.format(
-                    "{0}: result feasible={1}, objective={2}",
+                    "{0}: result feasible={1}, objective={2}, time={3} ms",
                     getClass().getSimpleName(),
                     sol.isFeasible(),
-                    sol.getObjectiveValue()
+                    sol.getObjectiveValue(),
+                    dtMs
             ));
         }
-
         return sol;
     }
 }
