@@ -10,6 +10,12 @@ import java.util.Map;
 
 public class OptSolvXSolverAdapterTest {
 
+    @Test(expected = IllegalArgumentException.class)
+    public void solve_requires_non_null_model() {
+        LPSolverAdapter s = new OptSolvXSolverAdapter(new CommonsMathSolver(), false);
+        s.solve(null); // must throw
+    }
+
     @Test(expected = IllegalStateException.class)
     public void solve_requires_build() {
         AbstractLPModel m = new AbstractLPModel();
@@ -19,22 +25,21 @@ public class OptSolvXSolverAdapterTest {
     }
 
     @Test
-    public void solves_simple_lp() {
+    public void smoke_minimize_with_eq_and_bounds() {
+        // Minimize 2x + y, s.t. x + y = 5, 0 <= x,y <= 5
         AbstractLPModel m = new AbstractLPModel();
-        m.addVariable("x", 0.0d, Double.POSITIVE_INFINITY);
-        m.addVariable("y", 0.0d, Double.POSITIVE_INFINITY);
+        m.addVariable("x", 0.0d, 5.0d);
+        m.addVariable("y", 0.0d, 5.0d);
 
         Map<String, Double> obj = new HashMap<>();
-        obj.put("x", 1.0d); obj.put("y", 1.0d);
-        m.setObjective(obj, OptimizationDirection.MAXIMIZE);
+        obj.put("x", 2.0d);
+        obj.put("y", 1.0d);
+        m.setObjective(obj, OptimizationDirection.MINIMIZE);
 
-        Map<String, Double> c1 = new HashMap<>();
-        c1.put("x", 1.0d); c1.put("y", 2.0d);
-        m.addConstraint("c1", c1, Constraint.Relation.LEQ, 4.0d);
-
-        Map<String, Double> c2 = new HashMap<>();
-        c2.put("x", 1.0d);
-        m.addConstraint("c2", c2, Constraint.Relation.LEQ, 3.0d);
+        Map<String, Double> eq = new HashMap<>();
+        eq.put("x", 1.0d);
+        eq.put("y", 1.0d);
+        m.addConstraint("sum", eq, Constraint.Relation.EQ, 5.0d);
 
         m.build();
 
@@ -42,8 +47,9 @@ public class OptSolvXSolverAdapterTest {
         LPSolution sol = s.solve(m);
 
         assertTrue(sol.isFeasible());
-        assertEquals(3.5d, sol.getObjectiveValue(), 1e-6d);
-        assertEquals(3.0d, sol.getVariableValues().get("x"), 1e-6d);
-        assertEquals(0.5d, sol.getVariableValues().get("y"), 1e-6d);
+        // Optimum at x=0, y=5 -> objective = 5
+        assertEquals(5.0d, sol.getObjectiveValue(), 1e-6d);
+        assertEquals(0.0d, sol.getVariableValues().get("x"), 1e-6d);
+        assertEquals(5.0d, sol.getVariableValues().get("y"), 1e-6d);
     }
 }
