@@ -404,7 +404,7 @@ implements DelayValueHolder, DESSolver, EventHandler {
    * @return the computed steady state
    * @throws DerivativeException
    */
-  public double[] computeSteadyState(FastProcessDESystem DES, double[] result, double timeBegin)
+  protected double[] computeSteadyState(FastProcessDESystem DES, double[] result, double timeBegin)
       throws DerivativeException {
     double[] oldValues = new double[result.length];
     double[] newValues = new double[result.length];

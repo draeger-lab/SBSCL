@@ -214,7 +214,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                             clonedSolver = clone();
                         }
                         
-                        double[] result = clonedSolver.computeSteadyState(FDES, yTemp2, 0);
+                        double[] result = ((LSODAIntegrator) clonedSolver).computeSteadyState(FDES, yTemp2, 0);
                         System.arraycopy(result, 0, yTemp, 0, yTemp.length);
 
                         for (int i = 0; i != result.length; i++) {
