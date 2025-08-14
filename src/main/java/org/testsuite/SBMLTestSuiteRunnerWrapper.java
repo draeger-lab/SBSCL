@@ -6,9 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.HashSet;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.Map;
 import java.util.Properties;
 
@@ -30,7 +28,6 @@ import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
 import org.simulator.math.odes.DESSolver;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
-import org.simulator.math.odes.LSODA.LSODAIntegrator;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
@@ -119,9 +116,9 @@ public class SBMLTestSuiteRunnerWrapper {
 
       // get timepoints
       double[] timePoints = inputData.getTimePoints();
-      duration = Double.valueOf(properties.getProperty("duration"));;
+      duration = timePoints[timePoints.length - 1] - timePoints[0];
 
-      MultiTable solution = null;
+      MultiTable solution;
 
       // writes results to the output file in CSV format
       File outputFile = new File(outputFilePath);
@@ -135,88 +132,56 @@ public class SBMLTestSuiteRunnerWrapper {
       LOGGER.info(Paths.get(outputFilePath));
       FileWriter csvWriter = new FileWriter(outputFilePath);
 
-      StringBuilder output = null;
+      StringBuilder output;
 
-      // if (model.getExtension(FBCConstants.shortLabel) == null) {
+      if (model.getExtension(FBCConstants.shortLabel) != null) {
 
-      //   FluxBalanceAnalysis solver = new FluxBalanceAnalysis(document);
+        FluxBalanceAnalysis solver = new FluxBalanceAnalysis(document);
 
-      //   boolean isSolved = false;
-      //   try {
-      //     isSolved = solver.solve();
-      //   } catch (Exception e) {
-      //     e.printStackTrace();
-      //   }
+        boolean isSolved = false;
+        try {
+          isSolved = solver.solve();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
 
-      //   BufferedReader reader = new BufferedReader(new FileReader(resultsPath));
-      //   String[] keys = reader.readLine().trim().split(",");
-      //   output = getFBCResultAsCSV(solver, keys, isSolved);
-      //   reader.close();
+        BufferedReader reader = new BufferedReader(new FileReader(resultsPath));
+        String[] keys = reader.readLine().trim().split(",");
+        output = getFBCResultAsCSV(solver, keys, isSolved);
+        reader.close();
 
-      // } else {
-      //   if (model.getExtension(CompConstants.shortLabel) == null) {
+      } else {
+        if (model.getExtension(CompConstants.shortLabel) == null) {
+          solution = runSBMLSimulation(model, duration, steps, properties, timePoints, amountHash);
+        } else {
+          solution = runCompSimulation(sbmlfile, duration, steps);
+        }
 
-      //     if (useLSODA(properties)) {
-      //       solution = runLSODASimulation(model, duration, steps, properties, timePoints, amountHash);
-      //     } else {
-      //       solution = runSBMLSimulation(model, duration, steps, properties, timePoints, amountHash);
-      //     }
-      //   } else {
-      //     solution = runCompSimulation(sbmlfile, duration, steps);
-      //   }
-
-      //   MultiTable left = solution;
-      //   if (solution.isSetTimePoints() && inputData.isSetTimePoints()) {
-      //     left = solution.filter(inputData.getTimePoints());
-      //   }
-
-      //   // Set of variables present in the test suite results file
-      //   Set<String> resultColumns = new HashSet<>();
-      //   for (int i = 0; i < inputData.getColumnCount(); i++) {
-      //     resultColumns.add(inputData.getColumnName(i));
-      //   }
-
-      //   // Boolean array to check which variables are present in the test suite results file
-      //   boolean[] variablesToAdd = new boolean[solution.getColumnCount()];
-        
-      //   for (int i = 0; i < left.getColumnCount(); i++) {
-      //     if (resultColumns.contains(left.getColumnName(i))) {
-      //       variablesToAdd[i] = true;
-      //     }
-      //   }
-
-      //   output = getSBMLOrCompResultAsCSV(left, variablesToAdd);
-      // }
-
-      if (model.getExtension(FBCConstants.shortLabel) == null && model.getExtension(CompConstants.shortLabel) == null) {
-        solution = runLSODASimulation(model, duration, steps, properties, timePoints, amountHash, currentCase);
-        // solution = runSBMLSimulation(model, duration, steps, properties, timePoints, amountHash);
-      } 
-
-      if(solution != null) {
         MultiTable left = solution;
         if (solution.isSetTimePoints() && inputData.isSetTimePoints()) {
           left = solution.filter(inputData.getTimePoints());
         }
 
-        // Set of variables present in the test suite results file
-        Set<String> resultColumns = new HashSet<>();
+        // Map of variables present in the test suite results file
+        Map<String, Integer> resultColumns = new HashMap<>();
         for (int i = 0; i < inputData.getColumnCount(); i++) {
-          resultColumns.add(inputData.getColumnName(i));
+          resultColumns.put(inputData.getColumnName(i), 1);
         }
 
         // Boolean array to check which variables are present in the test suite results file
         boolean[] variablesToAdd = new boolean[solution.getColumnCount()];
-        
-        for (int i = 0; i < left.getColumnCount(); i++) {
-          if (resultColumns.contains(left.getColumnName(i))) {
+        if (resultColumns.containsKey(left.getColumnName(0))) {
+          variablesToAdd[0] = true;
+        }
+        for (int i = 1; i < left.getColumnCount(); i++) {
+          if (resultColumns.containsKey(left.getColumnName(i))) {
             variablesToAdd[i] = true;
           }
         }
 
         output = getSBMLOrCompResultAsCSV(left, variablesToAdd);
       }
-        
+
       csvWriter.append(output);
       csvWriter.flush();
       csvWriter.close();
@@ -282,10 +247,9 @@ public class SBMLTestSuiteRunnerWrapper {
       double relative = (!properties.getProperty(RELATIVE).isEmpty()) ? Double
         .parseDouble(properties.getProperty(RELATIVE)) : 0d;
 
-        // DESSolver solver = new DormandPrince853Solver();
         DESSolver solver = new RosenbrockSolver();
         solver.setStepSize(duration / steps);
-        System.out.println("Stepsize = " + duration/steps);
+
         if (solver instanceof AbstractDESSolver) {
           solver.setIncludeIntermediates(false);
         }
@@ -293,51 +257,6 @@ public class SBMLTestSuiteRunnerWrapper {
         if (solver instanceof AdaptiveStepsizeIntegrator) {
           ((AdaptiveStepsizeIntegrator) solver).setAbsTol(TOLERANCE_FACTOR * absolute);
           ((AdaptiveStepsizeIntegrator) solver).setRelTol(TOLERANCE_FACTOR * relative);
-        }
-
-        /**
-         * Initialize the SBMLinterpreter
-         *
-         * Parameters passed:
-         * SBML model, defaultSpeciesValue, defaultParameterValue,
-         * defaultCompartmentValue, amountHash
-         */
-        SBMLinterpreter interpreter = null;
-        try {
-          interpreter = new SBMLinterpreter(model, 0, 0, 1, amountHash);
-        } catch (ModelOverdeterminedException e) {
-          e.printStackTrace();
-          LOGGER.error(
-              "Model Overdetermined while creating a mapping for converting Algebraic rule to Assignment rule");
-        }
-
-        // Compute the numerical solution of the problem
-        return solver.solve(interpreter, interpreter.getInitialValues(), timePoints);
-  }
-
-  public static MultiTable runLSODASimulation(Model model, double duration, double steps,
-  Properties properties, double[] timePoints,
-  Map<String, Boolean> amountHash, String currentCase) throws DerivativeException {
-    double absolute = (!properties.getProperty(ABSOLUTE).isEmpty()) ? Double
-      .parseDouble(properties.getProperty(ABSOLUTE)) : 0d;
-      double relative = (!properties.getProperty(RELATIVE).isEmpty()) ? Double
-        .parseDouble(properties.getProperty(RELATIVE)) : 0d;
-
-        LSODAIntegrator solver = new LSODAIntegrator();
-        solver.setStepSize(duration / (steps*1));
-        System.out.println("Stepsize = " + solver.getStepSize());
-        if (solver instanceof AbstractDESSolver) {
-          solver.setIncludeIntermediates(false);
-        }
-        solver.setAbsTol(TOLERANCE_FACTOR * absolute);
-        solver.setRelTol(TOLERANCE_FACTOR * relative);
-        if(currentCase.equals("01399") || currentCase.equals("01480")) {
-          solver.setAbsTol(1e-12);
-          solver.setRelTol(1e-6);
-        }
-        if(currentCase.equals("01567") || currentCase.equals("01568")) {
-          solver.setAbsTol(1e-8);
-          solver.setRelTol(1e-4);
         }
 
         /**

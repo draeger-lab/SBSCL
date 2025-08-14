@@ -184,12 +184,12 @@ public class SBMLTestSuiteRunnerWrapper_LSODA {
         solver.setRelTol(TOLERANCE_FACTOR * relative);
 
         if(currentCase.equals("01399") || currentCase.equals("01480")) {
-          solver.setAbsTol(1e-12);
-          solver.setRelTol(1e-6);
+          solver.setAbsTol(1e-12d);
+          solver.setRelTol(1e-6d);
         }
         if(currentCase.equals("01567") || currentCase.equals("01568")) {
-          solver.setAbsTol(1e-8);
-          solver.setRelTol(1e-4);
+          solver.setAbsTol(1e-8d);
+          solver.setRelTol(1e-4d);
         }
         
         /**
