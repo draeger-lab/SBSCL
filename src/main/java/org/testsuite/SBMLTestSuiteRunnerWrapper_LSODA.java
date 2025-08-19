@@ -191,7 +191,9 @@ public class SBMLTestSuiteRunnerWrapper_LSODA {
           solver.setAbsTol(1e-8d);
           solver.setRelTol(1e-4d);
         }
-        
+
+        // System.out.println(solver.getAbsTol() + " " + solver.getRelTol());
+
         /**
          * Initialize the SBMLinterpreter
          *

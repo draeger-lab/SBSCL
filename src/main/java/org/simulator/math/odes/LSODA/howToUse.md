@@ -33,7 +33,11 @@ Multitable solution = solver.solve(interpreter, interpreter.getInitialValues(), 
     - **Default tolerances:**
 
     ```
-    // Default Tolerances are relTol = 1e-8 and absTol = 1e-12
+    // Default Tolerances are relTol = 1e-6 for each entry and absTol is set using `absoluteToleranceAdjustmentFactor` = 1e-12, for each entry.
+    // `absolute tolerance adjustment factor` is converted into a vector of absolute tolerance values by multiplying by the initial value of all non-zero entries in 
+    // the 'state vector' (all the values that the solver is solving for). For values with an initial value of zero, the absolute tolerance adjustment factor is used 
+    // directly.
+
     AbstractDESolver solver = new LSODAIntegrator(); // No-Argument constructor
     ```
 
@@ -72,7 +76,7 @@ You can also use `LSODAIntegrator` directly with a custom `DESystem`.
 **Example Code:**
 ```
 // Define a custom ODE system
-DESystem system = new DESystem() {
+FirstOrderDifferentialEquations system = new FirstOrderDifferentialEquations() {
     public int getDimension() {
         return 1;
     }
@@ -80,12 +84,6 @@ DESystem system = new DESystem() {
     public void computeDerivatives(double t, double[] y, double[] yDot) throws DerivativeException {
         yDot[0] = 2;
     }
-
-    // Other methods can throw UnsupportedOperationException if unused
-    public String[] getIdentifiers() { throw new UnsupportedOperationException(); }
-    public boolean containsEventsOrRules() { throw new UnsupportedOperationException(); }
-    public int getPositiveValueCount() { throw new UnsupportedOperationException(); }
-    public void setDelaysIncluded(boolean delaysIncluded) { throw new UnsupportedOperationException(); }
 };
 
 // Initialize solver
@@ -104,17 +102,23 @@ if (flag > 0) {
 
 **Steps:**
 
-1. Implement a `DESystem` with your desired ODE.
+1. Implement a `FirstOrderDifferentialEquations` with your desired ODE.
 
 2. Initialize `LSODAIntegrator` with required tolerances. You can follow any of the way listed above.
 
 3. Call `prepare()`. This method is overloaded, here are the different variants.
 
-    - `prepare(DESystem, ixpr, itask, istate)`. Default value of maxStep is 500.
+    - `prepare(FirstOrderDifferentialEquations, ixpr, itask, istate)`. Default value of maxStep is 500.
 
-    - `prepare(DESystem, ixpr, itask, istate, maxStep)`
+    - `prepare(FirstOrderDifferentialEquations, ixpr, itask, istate, maxStep)`
+    
+    - `prepare(FirstOrderDifferentialEquations, hmin, hmax, ixpr, itask, istate)`
+
+    - `prepare(FirstOrderDifferentialEquations, hmin, hmax, ixpr, itask, istate, maxStep)`
 
     - Here is more detail about these variables.
+        - `hmin` - minimum stepsize
+        - `hmax` - maximum stepsize
         - `ixpr` - integer flag that controls whether to print messages. 1 means Yes and 0 means No.
         - `itask` - integer flag that controls the behavior of the solver, specifically when to return the solution. It determines whether the solver should proceed with integration, return the solution at a specific `tout` value, or handle other specific tasks. 
 
@@ -146,13 +150,13 @@ If you need more control over the solver's internals, you can define `LSODAConte
 
 ```
 // Define the ODE system
-DESystem system = new DESystem() {
-    // Define computeDerivatives, getDimension, etc.
+FirstOrderDifferentialEquations system = new FirstOrderDifferentialEquations() {
+    // Define computeDerivatives and getDimension
 };
 
 // Tolerance Values
 double[] atol = {1e-12};
-double[] rtol = {1e-12};
+double[] rtol = {1e-8};
 
 // LSODAOptions object
 LSODAOptions opt = new LSODAOptions();

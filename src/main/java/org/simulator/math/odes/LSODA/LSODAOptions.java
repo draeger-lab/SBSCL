@@ -12,7 +12,7 @@ public class LSODAOptions {
     private int mxstep;
     private int mxhnil;
     private double[] atol = {1e-12d};
-    private double[] rtol = {1e-8d};
+    private double[] rtol = {1e-6d};
     private double h0;
     private double tcrit;
 

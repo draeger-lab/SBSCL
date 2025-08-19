@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.math.ode.DerivativeException;
-import org.apache.commons.math.util.FastMath;
+import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 import org.simulator.math.Mathematics;
 import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
@@ -65,6 +65,11 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      */
     private boolean stop;
 
+    /*
+     * Boolean to indicate whether default tolerance used
+     */
+    private boolean defaultTol = false;
+
     /**
      * Precision for fast reaction timing
      */
@@ -83,6 +88,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         this.ctx = new LSODAContext();
         this.opt = new LSODAOptions();
         this.ctx.setOpt(opt);
+        defaultTol = true;
     }
 
     /**
@@ -112,9 +118,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     public LSODAIntegrator(double[] relTol, double[] absTol) {
         super();
         this.ctx = new LSODAContext();
-        opt = new LSODAOptions();
-        opt.setAtol(absTol);
-        opt.setRtol(relTol);
+        this.opt = new LSODAOptions();
+        this.opt.setAtol(absTol);
+        this.opt.setRtol(relTol);
         this.ctx.setOpt(opt);
     }
 
@@ -151,7 +157,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     @Override
     public double[] computeChange(DESystem DES, double[] y2, double time, double stepSize, double[] change, boolean steadyState) throws DerivativeException {
 
-        this.prepare(DES, 1, 1, 1, 10000);
+        this.prepare(DES, 1e-16d, getStepSize(), 1, 1, 1, 10000);
         
         opt.setHmax(stepSize);
         double step = opt.getHmax();
@@ -310,14 +316,15 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     private int softFailure(LSODAContext ctx, int code, double[] t) {
         
         LSODACommon common = ctx.getCommon();
-        double[] y = new double[common.getYh().length];
 
         if (common != null) {
             for (int i = 1; i <= ctx.getNeq(); i++) {
-                y[i] = common.getYh()[1][i];
+                yOffset[i] = common.getYh()[1][i];
             }
             t[0] = common.getTn();
         }
+
+        System.arraycopy(yOffset, 1, yTemp, 0, ctx.getNeq());
         ctx.setState(code);
         return ctx.getState();
     }
@@ -584,6 +591,8 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         this.opt = opt;
         this.ctx.setOpt(opt);
         allocMemory(opt.getMxords(), opt.getMxordn());
+        defaultTol = false;
+        // System.out.println(opt.getHmin() + " " + opt.getHmax());
         return true;
     }
 
@@ -604,9 +613,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      * @return {@code bool} Returns true on successful preparation
      * @throws IllegalInputException 
      */
-    public boolean prepare(DESystem system, int ixpr, int itask, int state) {
+    public boolean prepare(FirstOrderDifferentialEquations system, int ixpr, int itask, int state) {
 
-        return prepare(system, ixpr, itask, state, 500);
+        return prepare(system, 0, 0, ixpr, itask, state, 500);
     }
 
     /**
@@ -622,17 +631,66 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
      *               0 to not print messages
      * @param itask  controls task performed by the solver. 
      * @param state  tells the solver how to proceed
+     * @param mxstep maximum numbere of steps allowed
+     * 
+     * @return {@code bool} Returns true on successful preparation
+     * @throws IllegalInputException 
+     */
+    public boolean prepare(FirstOrderDifferentialEquations system, int ixpr, int itask, int state, int mxstep) {
+
+        return prepare(system, 0, 0, ixpr, itask, state, mxstep);
+    }
+
+    /**
+     * Initializes and prepares an LSODA solver context for integration. 
+     * 
+     * <p>This function allocates and initializes all memory required for solving a system of ODEs
+     * using the LSODA method. It also validates and sets up default solver options.
+     *
+     * It must be called before calling {@code solve()} for the first time with a given {@code SBMLInterpreter} interpreter.</p>
+     * 
+     * @param system the {@code DESystem} object, will be mostly {@code SBMLInterpreter} object
+     * @param hmin   minimum step size
+     * @param hmax   maximum step size
+     * @param ixpr   1 to print messages, 
+     *               0 to not print messages
+     * @param itask  controls task performed by the solver. 
+     * @param state  tells the solver how to proceed
+     * 
+     * @return {@code bool} Returns true on successful preparation
+     * @throws IllegalInputException 
+     */
+    public boolean prepare(FirstOrderDifferentialEquations system, double hmin, double hmax, int ixpr, int itask, int state) {
+
+        return prepare(system, hmin, hmax, ixpr, itask, state, 500);
+    }
+
+    /**
+     * Initializes and prepares an LSODA solver context for integration. 
+     * 
+     * <p>This function allocates and initializes all memory required for solving a system of ODEs
+     * using the LSODA method. It also validates and sets up default solver options.
+     *
+     * It must be called before calling {@code solve()} for the first time with a given {@code SBMLInterpreter} interpreter.</p>
+     * 
+     * @param system the {@code DESystem} object, will be mostly {@code SBMLInterpreter} object
+     * @param hmin   minimum step size
+     * @param hmax   maximum step size
+     * @param ixpr   1 to print messages, 
+     *               0 to not print messages
+     * @param itask  controls task performed by the solver. 
+     * @param state  tells the solver how to proceed
      * @param mxstep the maximum number of steps allowed
      * 
      * @return {@code bool} Returns true on successful preparation
      * @throws IllegalInputException 
      */
-    public boolean prepare(DESystem system, int ixpr, int itask, int state, int mxstep) {
+    public boolean prepare(FirstOrderDifferentialEquations system, double hmin, double hmax, int ixpr, int itask, int state, int mxstep) {
         this.ctx.setNeq(system.getDimension());
         this.neq = system.getDimension();
         this.stop = false;
 
-        if((opt.getAtol().length == 1 || opt.getRtol().length ==1) && this.ctx.getNeq() != 1) {
+        if((opt.getAtol().length == 1) && (opt.getRtol().length ==1) && (this.ctx.getNeq() != 1)) {
 
             double[] atol = new double[ctx.getNeq()];
             double[] rtol = new double[ctx.getNeq()];
@@ -651,9 +709,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         opt.setIxpr(ixpr);
         opt.setItask(itask);
 
-        opt.setHmin(1E-8d);
-        setStepSize(getStepSize());
-        opt.setHmax(getStepSize());
+        opt.setHmin(hmin);
+        // setStepSize(getStepSize());
+        opt.setHmax(hmax);
 
         if(!checkOpt(this.ctx, opt)) {
             return false;
@@ -1915,7 +1973,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     /*
      * Helper function to compute derivatives
      */
-    public static double[] findDerivatives(DESystem odeSystem, double t, double[] y) throws DerivativeException{
+    public static double[] findDerivatives(FirstOrderDifferentialEquations odeSystem, double t, double[] y) throws DerivativeException{
         int n = odeSystem.getDimension();
         double[] ydot = new double[n];
         odeSystem.computeDerivatives(t, Arrays.copyOfRange(y, 1, n+1), ydot);
@@ -1957,14 +2015,35 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
         LSODACommon common = ctx.getCommon();
         LSODAOptions opt = ctx.getOpt(); 
-        DESystem odeSystem = ctx.getOdeSystem();
+        FirstOrderDifferentialEquations odeSystem = ctx.getOdeSystem();
         LSODAStepper stepper = new LSODAStepper();
 
         if (common == null) {
             hardFailure(ctx);
             throw new MembersNotInitializedException();
         }
-        
+
+        // Setting Default Absolute Tolerance
+        if((defaultTol) && (ctx.getState() == 1)) {
+
+            logger.log(Level.INFO, "Setting Default tolerance");
+
+            double[] atol = new double[ctx.getNeq()];
+            double[] rtol = new double[ctx.getNeq()];
+            double abstol = opt.getAtol()[0];
+            double relTol = opt.getRtol()[0];
+            for(int i=0; i<ctx.getNeq(); i++) {
+                atol[i] = abstol;
+                rtol[i] = relTol;
+
+                if(y[i] != 0) atol[i] *= y[i];
+            }
+
+            opt.setAtol(atol);
+            opt.setRtol(rtol);
+            defaultTol = false;
+        }
+
         int i;
         double big, hmx, rh, tcrit = 0, tdist, tnext, tol, tolsf, tp, size, sum, w0;
         hmx = Math.abs(common.getTn()) + Math.abs(common.getH());
@@ -2350,6 +2429,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         this.absTol = absTol;
         double[] atol = {absTol};
         opt.setAtol(atol);
+        defaultTol = false;
     }
 
     @Override
@@ -2357,6 +2437,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         this.relTol = relTol;
         double[] rtol = {relTol};
         opt.setRtol(rtol);
+        defaultTol = false;
     }
 
     /**
