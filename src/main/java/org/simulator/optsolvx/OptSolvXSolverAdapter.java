@@ -4,10 +4,11 @@ import org.optsolvx.model.AbstractLPModel;
 import org.optsolvx.solver.LPSolution;
 import org.optsolvx.solver.LPSolverAdapter;
 
+import java.util.Objects;
 import java.text.MessageFormat;
 import java.util.logging.Logger;
 
-public class OptSolvXSolverAdapter implements LPSolverAdapter {
+public final class OptSolvXSolverAdapter implements LPSolverAdapter {
     private static final Logger LOGGER =
             Logger.getLogger(OptSolvXSolverAdapter.class.getName());
 
@@ -19,8 +20,13 @@ public class OptSolvXSolverAdapter implements LPSolverAdapter {
      * @param debug enable verbose logging
      */
     public OptSolvXSolverAdapter(LPSolverAdapter backend, boolean debug) {
-        this.backend = backend;
+        this.backend = Objects.requireNonNull(backend, "backend must not be null");
         this.debug = debug;
+    }
+
+    /** Convenience: debug disabled by default. */
+    public OptSolvXSolverAdapter(LPSolverAdapter backend) {
+        this(backend, false);
     }
 
     @Override
