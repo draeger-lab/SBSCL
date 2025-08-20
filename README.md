@@ -80,20 +80,28 @@ Further examples can be found directly within this repository in the [Examples P
 * How to run a [dynamic simulation](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/SimulatorExample.java)
 * How to run a [stochastic simulation](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/Start.java)
 
+
 ## Using OptSolvX (LP) in SBSCL
 
 ### Run the OptSolvX demo
-- In your IDE, run the main class: `org.simulator.optsolvx.OptSolvXDemo`.
-- The demo builds a tiny LP and solves it via OptSolvX (CommonsMath backend just yet).
 
-> Note: The demo assumes OptSolvX is on the classpath (added as a dependency in SBSCL’s `pom.xml`).
+* In your IDE, run: `org.simulator.optsolvx.OptSolvXDemo`.
+* The demo builds a tiny LP and solves it via OptSolvX (CommonsMath backend for now).
+* Make sure the OptSolvX **jdk8** artifact is on the classpath (declared in SBSCL’s `pom.xml`).
 
 ### Enable debug logs
-Construct the adapter with `debug = true`:
+
+Create the adapter with `debug = true`:
+
 ```java
 LPSolverAdapter solver =
     new OptSolvXSolverAdapter(new CommonsMathSolver(), true);
 ```
+
+### (Preview) SBML/FBC → LP
+
+An experimental entry point is available at `org.simulator.optsolvx.FbaToOptSolvX`.
+
 
 
 ### Comparison to Similar Libraries
