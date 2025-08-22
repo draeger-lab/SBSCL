@@ -872,10 +872,10 @@ public class LSODASystemTest {
         
     }
 
-    // @Test
+    @Test
     void SBMLParsingPipelineTest00001() throws DerivativeException, SBMLException, ModelOverdeterminedException, XMLStreamException, IOException {
 
-        String sbmlfile = "/home/baranwalayush/Downloads/sbml-semantic-test-cases-2017-12-12/cases/semantic/00001/00001-sbml-l1v2.xml";  // Change as per your system and uncomment the @Test decorator
+        String sbmlfile = "src/test/resources/sbml/00001/00001-sbml-l1v2.xml";  
         Model model = (new SBMLReader()).readSBML(sbmlfile).getModel();
         SBMLinterpreter interpreter = new SBMLinterpreter(model);
 
