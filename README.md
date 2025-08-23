@@ -140,6 +140,11 @@ The package structure in more detail:
 
 Please e-mail any bugs, problems, suggestions, or issues regarding this library to the bug tracker at https://github.com/draeger-lab/SBSCL/issues
 
+### Note on XML parsers (JDK ≥ 17)
+
+SBSCL excludes legacy `xercesImpl`, `xml-apis`, and `xalan` (pulled transitively by `jlibsedml`) to avoid JAXP compatibility issues on modern JDKs (e.g., an `AbstractMethodError` during Log4j2 XML configuration).  
+If you rely on specific Xerces/Xalan features, please open an issue so we can provide an opt-in solution
+
 ## Licensing terms
 
 This file is part of Simulation Core Library, a Java-based library for efficient numerical simulation of biological models.

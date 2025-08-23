@@ -411,15 +411,32 @@
       <artifactId>jmathml</artifactId>
       <version>2.1.0</version>
     </dependency>
+
+    <!--
+      Exclude legacy XML parser stack for compatibility with modern JDKs.
+      Reason: xercesImpl/xml-apis/xalan can shadow the JDK's JAXP on JDK 17/22
+              and trigger AbstractMethodError during Log4j2 XML configuration.
+      If anyone needs explicit Xerces/Xalan features, please open an issue.
+      (See SBSCL issue #91)
+    -->
     <dependency>
       <groupId>org.jlibsedml</groupId>
       <artifactId>jlibsedml</artifactId>
       <version>2.2.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-math</artifactId>
-      <version>2.2</version>
+      <exclusions>
+        <exclusion>
+          <groupId>xerces</groupId>
+          <artifactId>xercesImpl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>xalan</groupId>
+          <artifactId>xalan</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
