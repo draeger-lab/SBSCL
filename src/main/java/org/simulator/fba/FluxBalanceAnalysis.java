@@ -98,9 +98,6 @@ public class FluxBalanceAnalysis {
   /** Active FBC objective id (key used in {@link #getSolution()}). */
   private final String activeObjective;
 
-  /** Kept for API compatibility; no functional impact for OptSolvX. */
-  private double eps = 1e-10;
-
   public FluxBalanceAnalysis(SBMLDocument doc)
           throws SBMLException, ModelOverdeterminedException {
     if (doc == null || !doc.isSetModel()) {
@@ -210,14 +207,6 @@ public class FluxBalanceAnalysis {
     }
     return map;
   }
-
-  // ---- Compatibility accessors (unchanged public API) ----
-
-  public double getEpsilon() { return eps; }
-
-  public void setEpsilon(double eps) { this.eps = eps; }
-
-  public String getActiveObjective() { return activeObjective; }
 
   // ---- Backend resolution helpers ----
   /**
