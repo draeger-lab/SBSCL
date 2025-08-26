@@ -464,25 +464,11 @@
 
     <!-- LP solvers -->
     <dependency>
-      <groupId>scpsolver</groupId>
-      <artifactId>SCPSolver</artifactId>
-      <version>1.0v2</version>
-    </dependency>
-    <dependency>
-      <groupId>scpsolver</groupId>
-      <artifactId>GLPKSolverPack</artifactId>
-      <version>4.35v2</version>
-    </dependency>
-    <dependency>
-      <groupId>scpsolver</groupId>
-      <artifactId>LPSOLVESolverPack</artifactId>
-      <version>5.5.2.5</version>
-    </dependency>
-    <dependency>
       <groupId>kisao</groupId>
       <artifactId>libkisao</artifactId>
       <version>1.0.3.1-rc</version>
     </dependency>
+
     <!-- OMEX archive -->
     <dependency>
       <groupId>de.uni-rostock.sbi</groupId>
