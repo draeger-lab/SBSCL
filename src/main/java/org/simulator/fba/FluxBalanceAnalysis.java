@@ -208,6 +208,11 @@ public class FluxBalanceAnalysis {
     return map;
   }
 
+  /** Public accessor for the active FBC objective id (API/test compatibility). */
+  public String getActiveObjective() { // simple O(0) getter; not performance-critical
+    return activeObjective;
+    }
+
   // ---- Backend resolution helpers ----
   /**
    * Resolves a default OptSolvX backend without introducing a hard compile-time dependency.
