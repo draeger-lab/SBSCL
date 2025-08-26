@@ -8,6 +8,7 @@ import org.sbml.jsbml.ext.fbc.*;
 
 import java.text.MessageFormat;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -31,6 +32,10 @@ public final class FbaToOptSolvX {
         // Prepare LP model
         final AbstractLPModel lp = new AbstractLPModel();
 
+        // Cache SBML lists once to avoid repeated getter calls in hot paths
+        final List<Reaction> reactions = m.getListOfReactions();   // cached reaction list
+        final List<Species>  speciesList = m.getListOfSpecies();   // cached species list
+
         // Resolve FBC namespaces for level/version
         final int level = doc.getLevel();
         final int version = doc.getVersion();
@@ -39,10 +44,10 @@ public final class FbaToOptSolvX {
 
         // --- 1) Variables (reactions) with bounds ---------------------------------------------
         // Default bounds if FBC has no values: 0 .. +inf (conventional for FBA)
-        final Map<String, Double> lb = new LinkedHashMap<>();
-        final Map<String, Double> ub = new LinkedHashMap<>();
+        final Map<String, Double> lb = new LinkedHashMap<String, Double>(Math.max(16, reactions.size() * 2));
+        final Map<String, Double> ub = new LinkedHashMap<String, Double>(Math.max(16, reactions.size() * 2));
 
-        for (Reaction r : m.getListOfReactions()) {
+        for (Reaction r : reactions) {
             String rid = r.getId();
             double lower = 0.0d;
             double upper = Double.POSITIVE_INFINITY;
@@ -84,7 +89,7 @@ public final class FbaToOptSolvX {
         }
 
         // Add variables to LP
-        for (Reaction r : m.getListOfReactions()) {
+        for (Reaction r : reactions) {
             String rid = r.getId();
             double lower = nvl(lb.get(rid), 0.0d);
             double upper = nvl(ub.get(rid), Double.POSITIVE_INFINITY);
@@ -92,32 +97,47 @@ public final class FbaToOptSolvX {
         }
 
         // --- 2) Mass-balance constraints S·v = 0 (ignore boundary species) ---------------------
-        for (Species s : m.getListOfSpecies()) {
-            boolean isBoundary = s.isSetBoundaryCondition() && s.getBoundaryCondition();
+        for (int si = 0; si < speciesList.size(); si++) {
+            final Species s = speciesList.get(si);
+            final String sid = s.getId(); // cache id once per species
+            final boolean isBoundary = s.isSetBoundaryCondition() && s.getBoundaryCondition();
             if (isBoundary) continue;
 
-            Map<String, Double> coeffs = new LinkedHashMap<>();
-            // For each reaction, accumulate stoichiometry of species s
-            for (Reaction r : m.getListOfReactions()) {
+            // Pre-size to reduce rehashing; order preserved for readability
+            final Map<String, Double> coeffs = new LinkedHashMap<String, Double>(
+                    Math.max(16, reactions.size()));
+
+            // For each reaction, accumulate stoichiometry of species sid
+            for (int ri = 0; ri < reactions.size(); ri++) {
+                final Reaction r  = reactions.get(ri);
+                final String rid  = r.getId(); // cache id once per reaction
                 double sum = 0.0d;
+
                 // Reactants contribute negative stoichiometry
-                for (SpeciesReference sr : r.getListOfReactants()) {
-                    if (s.getId().equals(sr.getSpecies())) {
-                        sum += -stoich(sr);
+                final List<SpeciesReference> reactants = r.getListOfReactants();
+                for (int k = 0; k < reactants.size(); k++) {
+                    final SpeciesReference sr = reactants.get(k);
+                    if (sid.equals(sr.getSpecies())) {
+                        sum -= stoich(sr);
                     }
                 }
+
                 // Products contribute positive stoichiometry
-                for (SpeciesReference sr : r.getListOfProducts()) {
-                    if (s.getId().equals(sr.getSpecies())) {
-                        sum += +stoich(sr);
+                final List<SpeciesReference> products = r.getListOfProducts();
+                for (int k = 0; k < products.size(); k++) {
+                    final SpeciesReference sr = products.get(k);
+                    if (sid.equals(sr.getSpecies())) {
+                        sum += stoich(sr);
                     }
                 }
+
                 if (sum != 0.0d) {
-                    coeffs.put(r.getId(), sum);
+                    coeffs.put(rid, sum);
                 }
             }
+
             if (!coeffs.isEmpty()) {
-                lp.addConstraint("mb_" + s.getId(), coeffs, Constraint.Relation.EQ, 0.0d);
+                lp.addConstraint("mb_" + sid, coeffs, Constraint.Relation.EQ, 0.0d);
             } else {
                 // Optional: many species simply don't appear; keep quiet to avoid noisy logs
             }
