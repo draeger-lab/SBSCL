@@ -1,12 +1,11 @@
 package org.simulator.math.odes.LSODA;
 
 import java.util.Objects;
-
-import org.simulator.math.odes.DESystem;
+import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 
 public class LSODAContext {
 
-    private DESystem odeSystem;
+    private FirstOrderDifferentialEquations odeSystem;
     private Object data;
     private int state;
     private int neq;
@@ -24,13 +23,13 @@ public class LSODAContext {
         this.opt = opt;
     }
 
-    public LSODAContext(LSODACommon common, LSODAOptions opt, DESystem odeSystem) {
+    public LSODAContext(LSODACommon common, LSODAOptions opt, FirstOrderDifferentialEquations odeSystem) {
         this.common = common;
         this.opt = opt;
         this.odeSystem = odeSystem;
     }
 
-    public LSODAContext(LSODAOptions opt, DESystem odeSystem) {
+    public LSODAContext(LSODAOptions opt, FirstOrderDifferentialEquations odeSystem) {
         this.opt = opt;
         this.odeSystem = odeSystem;
     }
@@ -74,11 +73,11 @@ public class LSODAContext {
         this.common = common;
     }
 
-    public DESystem getOdeSystem() {
+    public FirstOrderDifferentialEquations getOdeSystem() {
         return odeSystem;
     }
     
-    public void setOdeSystem(DESystem odeSystem) {
+    public void setOdeSystem(FirstOrderDifferentialEquations odeSystem) {
         this.odeSystem= odeSystem;
     }
 

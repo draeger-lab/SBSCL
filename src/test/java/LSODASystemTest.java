@@ -1,5 +1,6 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.apache.commons.math.ode.DerivativeException;
+import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 import org.junit.jupiter.api.Test;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLException;
@@ -84,9 +85,60 @@ public class LSODASystemTest {
         ctx.setNeq(system.getDimension());
         ctx.setOdeSystem(system);
         ctx.setState(1);
+
         LSODAIntegrator solver = new LSODAIntegrator();
         solver.lsodaPrepare(ctx, opt);
         solver.lsoda(ctx, y, t, tout);
+        double[] res = solver.getResult();
+
+        // System.out.println("output = " + res[0] + ", expected = " + result);
+        assertTrue(Math.abs(result-res[0]) < 1e-8);
+    }
+
+    @Test
+    void linearSystemWithPrepare() throws DerivativeException {
+        DESystem system = new DESystem() {
+
+            @Override
+            public int getDimension() {
+                return 1;
+            }
+
+            @Override
+            public void computeDerivatives(double t, double[] y, double[] yDot) throws DerivativeException {
+                yDot[0] = 3;
+            }
+
+            @Override
+            public String[] getIdentifiers() {
+                throw new UnsupportedOperationException("Unimplemented method 'getIdentifiers'");
+            }
+
+            @Override
+            public boolean containsEventsOrRules() {
+                throw new UnsupportedOperationException("Unimplemented method 'containsEventsOrRules'");
+            }
+
+            @Override
+            public int getPositiveValueCount() {
+                throw new UnsupportedOperationException("Unimplemented method 'getPositiveValueCount'");
+            }
+
+            @Override
+            public void setDelaysIncluded(boolean delaysIncluded) {
+                throw new UnsupportedOperationException("Unimplemented method 'setDelaysIncluded'");
+            }
+            
+        };
+
+        double[] y = {20d};
+        double[] t = {5d};
+        double tout = 7d;
+        double result = 3*tout + 5;
+
+        LSODAIntegrator solver = new LSODAIntegrator();
+        solver.prepare(system, 1, 1, 1);
+        solver.lsoda(y, t, tout);
         double[] res = solver.getResult();
 
         // System.out.println("output = " + res[0] + ", expected = " + result);
@@ -137,7 +189,7 @@ public class LSODASystemTest {
         double result = 2*tout + 5;
 
         LSODAIntegrator solver = new LSODAIntegrator(atol, rtol);
-        solver.prepare(system, 1, 1, 1);
+        solver.prepare(system, 1, 1, 1, 500);
         double[] change = new double[system.getDimension()];
         solver.computeChange(system, y, t, tout - t, change, false);
         double res = (change[0]+y[0]);
@@ -484,7 +536,7 @@ public class LSODASystemTest {
             solver.lsoda(ctx, y, t, tout);
             double[] result = solver.getResult();
 
-            // System.out.printf(" at t= %12.4e  ->  y= %14.6e %14.6e %14.6e\n", tout, result[0], result[1], result[2]);
+            System.out.printf(" at t= %12.4e  ->  y= %14.6e %14.6e %14.6e\n", tout, result[0], result[1], result[2]);
             assertTrue(Math.abs(result[0] - res[i-1][0]) < 1e-6);
             assertTrue(Math.abs(result[1] - res[i-1][1]) < 1e-8);
             assertTrue(Math.abs(result[2] - res[i-1][2]) < 1e-6);
@@ -572,7 +624,7 @@ public class LSODASystemTest {
 
     @Test
     void stiffSystem3() throws DerivativeException {
-        DESystem system = new DESystem() {
+        FirstOrderDifferentialEquations system = new FirstOrderDifferentialEquations() {
 
             @Override
             public int getDimension() {
@@ -582,26 +634,6 @@ public class LSODASystemTest {
             @Override
             public void computeDerivatives(double t, double[] y, double[] yDot) throws DerivativeException {
                 yDot[0] = y[0]*y[0] - y[0]*y[0]*y[0];
-            }
-
-            @Override
-            public String[] getIdentifiers() {
-                throw new UnsupportedOperationException("Unimplemented method 'getIdentifiers'");
-            }
-
-            @Override
-            public boolean containsEventsOrRules() {
-                throw new UnsupportedOperationException("Unimplemented method 'containsEventsOrRules'");
-            }
-
-            @Override
-            public int getPositiveValueCount() {
-                throw new UnsupportedOperationException("Unimplemented method 'getPositiveValueCount'");
-            }
-
-            @Override
-            public void setDelaysIncluded(boolean delaysIncluded) {
-                throw new UnsupportedOperationException("Unimplemented method 'setDelaysIncluded'");
             }
             
         };
@@ -618,19 +650,9 @@ public class LSODASystemTest {
             atol[i] = 1e-6;
         }
 
-        LSODAOptions opt = new LSODAOptions();
-        opt.setIxpr(1);
-        opt.setRtol(rtol);
-        opt.setAtol(atol);
-        opt.setItask(1);
-
-        LSODAContext ctx = new LSODAContext(opt, system);
-        ctx.setNeq(system.getDimension());
-        ctx.setState(1);
-        LSODAIntegrator solver = new LSODAIntegrator();
-
-        solver.lsodaPrepare(ctx, opt);
-        solver.lsoda(ctx, y, t, tout);
+        LSODAIntegrator solver = new LSODAIntegrator(rtol, atol);
+        solver.prepare(system, 1, 1, 1);
+        solver.lsoda(y, t, tout);
 
         double[] result = solver.getResult();
 
@@ -761,7 +783,7 @@ public class LSODASystemTest {
 
     @Test
     void tooMuchAccuracyDemandedErrorTest() throws DerivativeException {
-        DESystem system = new DESystem() {
+        FirstOrderDifferentialEquations system = new FirstOrderDifferentialEquations() {
 
             @Override
             public int getDimension() {
@@ -771,26 +793,6 @@ public class LSODASystemTest {
             @Override
             public void computeDerivatives(double t, double[] y, double[] yDot) throws DerivativeException {
                 yDot[0] = y[0];
-            }
-
-            @Override
-            public String[] getIdentifiers() {
-                throw new UnsupportedOperationException("Unimplemented method 'getIdentifiers'");
-            }
-
-            @Override
-            public boolean containsEventsOrRules() {
-                throw new UnsupportedOperationException("Unimplemented method 'containsEventsOrRules'");
-            }
-
-            @Override
-            public int getPositiveValueCount() {
-                throw new UnsupportedOperationException("Unimplemented method 'getPositiveValueCount'");
-            }
-
-            @Override
-            public void setDelaysIncluded(boolean delaysIncluded) {
-                throw new UnsupportedOperationException("Unimplemented method 'setDelaysIncluded'");
             }
             
         };
@@ -824,7 +826,7 @@ public class LSODASystemTest {
 
     @Test
     void maxStepExceededErrorTest() throws DerivativeException {
-        DESystem system = new DESystem() {
+        FirstOrderDifferentialEquations system = new FirstOrderDifferentialEquations() {
 
             @Override
             public int getDimension() {
@@ -834,26 +836,6 @@ public class LSODASystemTest {
             @Override
             public void computeDerivatives(double t, double[] y, double[] yDot) throws DerivativeException {
                 yDot[0] = y[0]*y[0] - y[0]*y[0]*y[0];
-            }
-
-            @Override
-            public String[] getIdentifiers() {
-                throw new UnsupportedOperationException("Unimplemented method 'getIdentifiers'");
-            }
-
-            @Override
-            public boolean containsEventsOrRules() {
-                throw new UnsupportedOperationException("Unimplemented method 'containsEventsOrRules'");
-            }
-
-            @Override
-            public int getPositiveValueCount() {
-                throw new UnsupportedOperationException("Unimplemented method 'getPositiveValueCount'");
-            }
-
-            @Override
-            public void setDelaysIncluded(boolean delaysIncluded) {
-                throw new UnsupportedOperationException("Unimplemented method 'setDelaysIncluded'");
             }
             
         };
@@ -890,17 +872,16 @@ public class LSODASystemTest {
         
     }
 
-    // @Test
+    @Test
     void SBMLParsingPipelineTest00001() throws DerivativeException, SBMLException, ModelOverdeterminedException, XMLStreamException, IOException {
 
-        String sbmlfile = "/home/sbml-semantic-test-cases-2017-12-12/cases/semantic/00001/00001-sbml-l1v2.xml";  // Change as per your system and uncomment the @Test decorator
+        String sbmlfile = "src/test/resources/sbml/00001/00001-sbml-l1v2.xml";  
         Model model = (new SBMLReader()).readSBML(sbmlfile).getModel();
         SBMLinterpreter interpreter = new SBMLinterpreter(model);
 
         double atol = 1e-12;
         double rtol = 1e-12;
         AbstractDESSolver solver = new LSODAIntegrator(atol, rtol);
-        solver.prepare(interpreter, 1, 1, 1);
         solver.setStepSize(0.1);
         MultiTable solution = solver.solve(interpreter, interpreter.getInitialValues(), 0, 5);
 
