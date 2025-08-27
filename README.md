@@ -89,6 +89,8 @@ Further examples can be found directly within this repository in the [Examples P
 * The demo builds a tiny LP and solves it via OptSolvX (CommonsMath backend for now).
 * Make sure the OptSolvX **jdk8** artifact is on the classpath (declared in SBSCL’s `pom.xml`).
 
+*Note:* FBA in SBSCL now uses OptSolvX by default.
+
 ### Enable debug logs
 
 Create the adapter with `debug = true`:
@@ -98,10 +100,11 @@ LPSolverAdapter solver =
     new OptSolvXSolverAdapter(new CommonsMathSolver(), true);
 ```
 
+You can also pick a backend via `-Doptsolvx.backend=<fqcn>` or env `OPTSOLVX_BACKEND`.
+
 ### (Preview) SBML/FBC → LP
 
 An experimental entry point is available at `org.simulator.optsolvx.FbaToOptSolvX`.
-
 
 
 ### Comparison to Similar Libraries
