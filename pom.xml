@@ -411,20 +411,44 @@
       <artifactId>jmathml</artifactId>
       <version>2.1.0</version>
     </dependency>
+
+    <!--
+      Exclude legacy XML parser stack for compatibility with modern JDKs.
+      Reason: xercesImpl/xml-apis/xalan can shadow the JDK's JAXP on JDK 17/22
+              and trigger AbstractMethodError during Log4j2 XML configuration.
+      If anyone needs explicit Xerces/Xalan features, please open an issue.
+      (See SBSCL issue #91)
+    -->
     <dependency>
       <groupId>org.jlibsedml</groupId>
       <artifactId>jlibsedml</artifactId>
       <version>2.2.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-math</artifactId>
-      <version>2.2</version>
+      <exclusions>
+        <exclusion>
+          <groupId>xerces</groupId>
+          <artifactId>xercesImpl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>xalan</groupId>
+          <artifactId>xalan</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.18.0</version>
+    </dependency>
+
+    <!-- Commons Math 2.x (ODE API used under org.apache.commons.math.ode.*) -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-math</artifactId>
+      <version>2.2</version>
     </dependency>
 
     <dependency>
@@ -440,25 +464,11 @@
 
     <!-- LP solvers -->
     <dependency>
-      <groupId>scpsolver</groupId>
-      <artifactId>SCPSolver</artifactId>
-      <version>1.0v2</version>
-    </dependency>
-    <dependency>
-      <groupId>scpsolver</groupId>
-      <artifactId>GLPKSolverPack</artifactId>
-      <version>4.35v2</version>
-    </dependency>
-    <dependency>
-      <groupId>scpsolver</groupId>
-      <artifactId>LPSOLVESolverPack</artifactId>
-      <version>5.5.2.5</version>
-    </dependency>
-    <dependency>
       <groupId>kisao</groupId>
       <artifactId>libkisao</artifactId>
       <version>1.0.3.1-rc</version>
     </dependency>
+
     <!-- OMEX archive -->
     <dependency>
       <groupId>de.uni-rostock.sbi</groupId>
@@ -470,6 +480,14 @@
           <artifactId>junit</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+
+    <!-- OptSolvX -->
+    <dependency>
+      <groupId>org.optsolvx</groupId>
+      <artifactId>optsolvx</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+      <classifier>jdk8</classifier>
     </dependency>
   </dependencies>
 
