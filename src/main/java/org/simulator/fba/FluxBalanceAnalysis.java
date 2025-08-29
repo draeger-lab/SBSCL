@@ -49,11 +49,6 @@ import org.simulator.optsolvx.FbaToOptSolvX;
 import org.simulator.optsolvx.OptSolvXSolverAdapter;
 
 
-
-
-
-
-
 /**
  * Support for Flux Balance Analysis (FBA).
  * <p>
@@ -80,173 +75,195 @@ import org.simulator.optsolvx.OptSolvXSolverAdapter;
  */
 public class FluxBalanceAnalysis {
 
-  private static final transient Logger logger =
-          Logger.getLogger(FluxBalanceAnalysis.class.getName());
+    private static final transient Logger logger =
+            Logger.getLogger(FluxBalanceAnalysis.class.getName());
 
-  /** OptSolvX LP model built from SBML/FBC. */
-  private final AbstractLPModel lpModel;
+    /**
+     * OptSolvX LP model built from SBML/FBC.
+     */
+    private final AbstractLPModel lpModel;
 
-  /** Solution returned by the backend. */
-  private LPSolution lpSolution;
+    /**
+     * Solution returned by the backend.
+     */
+    private LPSolution lpSolution;
 
-  /** reaction id -> index (kept for array-based getters in original API). */
-  private final Map<String, Integer> reaction2Index = new LinkedHashMap<>();
+    /**
+     * reaction id -> index (kept for array-based getters in original API).
+     */
+    private final Map<String, Integer> reaction2Index = new LinkedHashMap<>();
 
-  /** Reactions in stable SBML order. */
-  private final List<String> reactionsOrdered = new ArrayList<>();
+    /**
+     * Reactions in stable SBML order.
+     */
+    private final List<String> reactionsOrdered = new ArrayList<>();
 
-  /** Active FBC objective id (key used in {@link #getSolution()}). */
-  private final String activeObjective;
+    /**
+     * Active FBC objective id (key used in {@link #getSolution()}).
+     */
+    private final String activeObjective;
 
-  public FluxBalanceAnalysis(SBMLDocument doc)
-          throws SBMLException, ModelOverdeterminedException {
-    if (doc == null || !doc.isSetModel()) {
-      throw new IllegalArgumentException(
-              "Could not find a model definition in the given SBML document.");
-    }
-    final Model model = doc.getModel();
+    public FluxBalanceAnalysis(SBMLDocument doc)
+            throws SBMLException, ModelOverdeterminedException {
+        if (doc == null || !doc.isSetModel()) {
+            throw new IllegalArgumentException(
+                    "Could not find a model definition in the given SBML document.");
+        }
+        final Model model = doc.getModel();
 
-    // Determine FBC plugin and active objective (kept for API parity).
-    final String fbcNSv1 = FBCConstants.getNamespaceURI(doc.getLevel(), doc.getVersion(), 1);
-    final String fbcNSv2 = FBCConstants.getNamespaceURI(doc.getLevel(), doc.getVersion(), 2);
-    final int fbcVersion = model.getExtension(FBCConstants.shortLabel).getPackageVersion();
+        // Determine FBC plugin and active objective (kept for API parity).
+        final String fbcNSv1 = FBCConstants.getNamespaceURI(doc.getLevel(), doc.getVersion(), 1);
+        final String fbcNSv2 = FBCConstants.getNamespaceURI(doc.getLevel(), doc.getVersion(), 2);
+        final int fbcVersion = model.getExtension(FBCConstants.shortLabel).getPackageVersion();
 
-    final FBCModelPlugin mPlug;
-    if (fbcVersion == 2) {
-      mPlug = (FBCModelPlugin) model.getPlugin(fbcNSv2);
-    } else if (fbcVersion == 1) {
-      mPlug = (FBCModelPlugin) model.getPlugin(fbcNSv1);
-    } else {
-      throw new IllegalArgumentException(format(
-              "Cannot conduct flux balance analysis without FBC package in model ''{0}''.",
-              model.getId()));
-    }
+        final FBCModelPlugin mPlug;
+        if (fbcVersion == 2) {
+            mPlug = (FBCModelPlugin) model.getPlugin(fbcNSv2);
+        } else if (fbcVersion == 1) {
+            mPlug = (FBCModelPlugin) model.getPlugin(fbcNSv1);
+        } else {
+            throw new IllegalArgumentException(format(
+                    "Cannot conduct flux balance analysis without FBC package in model ''{0}''.",
+                    model.getId()));
+        }
 
-    final Objective objective = mPlug.getActiveObjectiveInstance();
-    if (objective == null) {
-      throw new IllegalArgumentException(format(
-              "Cannot conduct FBA without defined objective function in model ''{0}''.",
-              model.getId()));
-    }
-    this.activeObjective = objective.getId();
+        final Objective objective = mPlug.getActiveObjectiveInstance();
+        if (objective == null) {
+            throw new IllegalArgumentException(format(
+                    "Cannot conduct FBA without defined objective function in model ''{0}''.",
+                    model.getId()));
+        }
+        this.activeObjective = objective.getId();
 
-    // Preserve reaction order and index mapping for API methods.
-    for (int i = 0; i < model.getReactionCount(); i++) {
-      Reaction r = model.getReaction(i);
-      reactionsOrdered.add(r.getId());
-      reaction2Index.put(r.getId(), i);
-    }
+        // Preserve reaction order and index mapping for API methods.
+        for (int i = 0; i < model.getReactionCount(); i++) {
+            Reaction r = model.getReaction(i);
+            reactionsOrdered.add(r.getId());
+            reaction2Index.put(r.getId(), i);
+        }
 
-    // SBML/FBC -> OptSolvX LP model (bridge keeps all biological semantics out of this class).
-    this.lpModel = FbaToOptSolvX.fromSBML(doc);
-    logger.info(format(
-            "FBA: built OptSolvX model (vars={0}, cons={1})",
-            lpModel.getVariables().size(), lpModel.getConstraints().size()));
-  }
-
-  /**
-   * Solve the built LP via OptSolvX.
-   * <p>Backend is resolved via ServiceLoader; if none is found, a reflective
-   * fallback tries a CommonsMath-based backend without adding a hard compile-time dependency.</p>
-   *
-   * @return true if a feasible solution is available.
-   * @throws NullPointerException if something goes wrong internally.
-   */
-  public boolean solve() throws NullPointerException {
-    final LPSolverAdapter backend = resolveDefaultBackend();
-    final OptSolvXSolverAdapter adapter = new OptSolvXSolverAdapter(backend, true);
-    this.lpSolution = adapter.solve(lpModel);
-    return lpSolution != null && lpSolution.isFeasible();
-  }
-
-  /** Objective value of the current solution. */
-  public double getObjectiveValue() throws NullPointerException {
-    if (lpSolution == null) {
-      throw new NullPointerException("No solution available; call solve() first.");
-    }
-    return lpSolution.getObjectiveValue();
-  }
-
-  /** Flux value for a given reaction id. */
-  public double getValue(String reactionId)
-          throws NullPointerException, ArrayIndexOutOfBoundsException {
-    if (lpSolution == null) {
-      throw new NullPointerException("No solution available; call solve() first.");
-    }
-    final Double v = lpSolution.getVariableValues().get(reactionId);
-    if (v == null) {
-      // Preserve robustness: unknown id -> 0.0 (keeps original API tolerant).
-      return 0.0d;
-    }
-    return v.doubleValue();
-  }
-
-  /** All flux values in SBML order (array shape preserved from original API). */
-  public double[] getValues() throws NullPointerException {
-    if (lpSolution == null) {
-      throw new NullPointerException("No solution available; call solve() first.");
-    }
-    final double[] vals = new double[reactionsOrdered.size()];
-    for (int i = 0; i < reactionsOrdered.size(); i++) {
-      final Double v = lpSolution.getVariableValues().get(reactionsOrdered.get(i));
-      vals[i] = (v == null) ? 0.0d : v.doubleValue();
-    }
-    return vals;
-  }
-
-  /** Map with objective (under activeObjective id) plus all reaction fluxes. */
-  public Map<String, Double> getSolution() {
-    if (lpSolution == null) {
-      throw new NullPointerException("No solution available; call solve() first.");
-    }
-    final Map<String, Double> map = new LinkedHashMap<>();
-    map.put(activeObjective, getObjectiveValue());
-    for (String rid : reactionsOrdered) {
-      final Double v = lpSolution.getVariableValues().get(rid);
-      map.put(rid, (v == null) ? 0.0d : v.doubleValue());
-    }
-    return map;
-  }
-
-  /** Public accessor for the active FBC objective id (API/test compatibility). */
-  public String getActiveObjective() { // simple O(0) getter; not performance-critical
-    return activeObjective;
+        // SBML/FBC -> OptSolvX LP model (bridge keeps all biological semantics out of this class).
+        this.lpModel = FbaToOptSolvX.fromSBML(doc);
+        logger.info(format(
+                "FBA: built OptSolvX model (vars={0}, cons={1})",
+                lpModel.getVariables().size(), lpModel.getConstraints().size()));
     }
 
-  // ---- Backend resolution helpers ----
-  /**
-   * Resolves a default OptSolvX backend without introducing a hard compile-time dependency.
-   * Strategy:
-   *  0) explicit override via -Doptsolvx.backend or OPTSOLVX_BACKEND
-   *  1) ServiceLoader (preferred)
-   *  2) Reflective fallback with common class names (no-arg ctor assumed)
-   */
-  private LPSolverAdapter resolveDefaultBackend() {
-    // 0) explicit override
-    String cn = System.getProperty("optsolvx.backend");
-    if (cn == null || cn.isEmpty()) cn = System.getenv("OPTSOLVX_BACKEND");
-    if (cn != null && !cn.isEmpty()) {
-      try {
-        return (LPSolverAdapter) Class.forName(cn).getDeclaredConstructor().newInstance();
-      } catch (Throwable t) {
-        throw new IllegalStateException("Configured backend class not usable: " + cn, t);
-      }
+    /**
+     * Solve the built LP via OptSolvX.
+     * <p>Backend is resolved via ServiceLoader; if none is found, a reflective
+     * fallback tries a CommonsMath-based backend without adding a hard compile-time dependency.</p>
+     *
+     * @return true if a feasible solution is available.
+     * @throws NullPointerException if something goes wrong internally.
+     */
+    public boolean solve() throws NullPointerException {
+        final LPSolverAdapter backend = resolveDefaultBackend();
+        final OptSolvXSolverAdapter adapter = new OptSolvXSolverAdapter(backend, true);
+        this.lpSolution = adapter.solve(lpModel);
+        return lpSolution != null && lpSolution.isFeasible();
     }
-    // 1) ServiceLoader
-    for (LPSolverAdapter a : ServiceLoader.load(LPSolverAdapter.class)) return a;
 
-    // 2) Reflective fallbacks (adjust if your package differs)
-    final String[] candidates = {
-            "org.optsolvx.solver.commonsmath.CommonsMathSolver",
-            "org.optsolvx.backends.commonsmath.CommonsMathSolver"
-    };
-    for (String c : candidates) {
-      try {
-        return (LPSolverAdapter) Class.forName(c).getDeclaredConstructor().newInstance();
-      } catch (Throwable ignored) {}
+    /**
+     * Objective value of the current solution.
+     */
+    public double getObjectiveValue() throws NullPointerException {
+        if (lpSolution == null) {
+            throw new NullPointerException("No solution available; call solve() first.");
+        }
+        return lpSolution.getObjectiveValue();
     }
-    throw new IllegalStateException(
-            "No OptSolvX LPSolverAdapter found on classpath (ServiceLoader and reflective fallback failed).");
-  }
+
+    /**
+     * Flux value for a given reaction id.
+     */
+    public double getValue(String reactionId)
+            throws NullPointerException, ArrayIndexOutOfBoundsException {
+        if (lpSolution == null) {
+            throw new NullPointerException("No solution available; call solve() first.");
+        }
+        final Double v = lpSolution.getVariableValues().get(reactionId);
+        if (v == null) {
+            // Preserve robustness: unknown id -> 0.0 (keeps original API tolerant).
+            return 0.0d;
+        }
+        return v.doubleValue();
+    }
+
+    /**
+     * All flux values in SBML order (array shape preserved from original API).
+     */
+    public double[] getValues() throws NullPointerException {
+        if (lpSolution == null) {
+            throw new NullPointerException("No solution available; call solve() first.");
+        }
+        final double[] vals = new double[reactionsOrdered.size()];
+        for (int i = 0; i < reactionsOrdered.size(); i++) {
+            final Double v = lpSolution.getVariableValues().get(reactionsOrdered.get(i));
+            vals[i] = (v == null) ? 0.0d : v.doubleValue();
+        }
+        return vals;
+    }
+
+    /**
+     * Map with objective (under activeObjective id) plus all reaction fluxes.
+     */
+    public Map<String, Double> getSolution() {
+        if (lpSolution == null) {
+            throw new NullPointerException("No solution available; call solve() first.");
+        }
+        final Map<String, Double> map = new LinkedHashMap<>();
+        map.put(activeObjective, getObjectiveValue());
+        for (String rid : reactionsOrdered) {
+            final Double v = lpSolution.getVariableValues().get(rid);
+            map.put(rid, (v == null) ? 0.0d : v.doubleValue());
+        }
+        return map;
+    }
+
+    /**
+     * Public accessor for the active FBC objective id (API/test compatibility).
+     */
+    public String getActiveObjective() { // simple O(0) getter; not performance-critical
+        return activeObjective;
+    }
+
+    // ---- Backend resolution helpers ----
+
+    /**
+     * Resolves a default OptSolvX backend without introducing a hard compile-time dependency.
+     * Strategy:
+     * 0) explicit override via -Doptsolvx.backend or OPTSOLVX_BACKEND
+     * 1) ServiceLoader (preferred)
+     * 2) Reflective fallback with common class names (no-arg ctor assumed)
+     */
+    private LPSolverAdapter resolveDefaultBackend() {
+        // 0) explicit override
+        String cn = System.getProperty("optsolvx.backend");
+        if (cn == null || cn.isEmpty()) cn = System.getenv("OPTSOLVX_BACKEND");
+        if (cn != null && !cn.isEmpty()) {
+            try {
+                return (LPSolverAdapter) Class.forName(cn).getDeclaredConstructor().newInstance();
+            } catch (Throwable t) {
+                throw new IllegalStateException("Configured backend class not usable: " + cn, t);
+            }
+        }
+        // 1) ServiceLoader
+        for (LPSolverAdapter a : ServiceLoader.load(LPSolverAdapter.class)) return a;
+
+        // 2) Reflective fallbacks (adjust if your package differs)
+        final String[] candidates = {
+                "org.optsolvx.solver.commonsmath.CommonsMathSolver",
+                "org.optsolvx.backends.commonsmath.CommonsMathSolver"
+        };
+        for (String c : candidates) {
+            try {
+                return (LPSolverAdapter) Class.forName(c).getDeclaredConstructor().newInstance();
+            } catch (Throwable ignored) {
+            }
+        }
+        throw new IllegalStateException(
+                "No OptSolvX LPSolverAdapter found on classpath (ServiceLoader and reflective fallback failed).");
+    }
 
 }
