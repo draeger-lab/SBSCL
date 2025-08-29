@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.Model;
@@ -44,9 +43,9 @@ import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.optsolvx.model.AbstractLPModel;
 import org.optsolvx.solver.LPSolution;
 import org.optsolvx.solver.LPSolverAdapter;
+import org.optsolvx.solver.OptSolvXConfig;
 
 import org.simulator.optsolvx.FbaToOptSolvX;
-import org.simulator.optsolvx.OptSolvXSolverAdapter;
 
 
 /**
@@ -158,9 +157,9 @@ public class FluxBalanceAnalysis {
      * @throws NullPointerException if something goes wrong internally.
      */
     public boolean solve() throws NullPointerException {
-        final LPSolverAdapter backend = resolveDefaultBackend();
-        final OptSolvXSolverAdapter adapter = new OptSolvXSolverAdapter(backend, true);
-        this.lpSolution = adapter.solve(lpModel);
+        final LPSolverAdapter backend =
+                OptSolvXConfig.resolve(lpModel, System.getProperty("optsolvx.solver"));
+        this.lpSolution = backend.solve(lpModel);
         return lpSolution != null && lpSolution.isFeasible();
     }
 
@@ -226,44 +225,6 @@ public class FluxBalanceAnalysis {
      */
     public String getActiveObjective() { // simple O(0) getter; not performance-critical
         return activeObjective;
-    }
-
-    // ---- Backend resolution helpers ----
-
-    /**
-     * Resolves a default OptSolvX backend without introducing a hard compile-time dependency.
-     * Strategy:
-     * 0) explicit override via -Doptsolvx.backend or OPTSOLVX_BACKEND
-     * 1) ServiceLoader (preferred)
-     * 2) Reflective fallback with common class names (no-arg ctor assumed)
-     */
-    private LPSolverAdapter resolveDefaultBackend() {
-        // 0) explicit override
-        String cn = System.getProperty("optsolvx.backend");
-        if (cn == null || cn.isEmpty()) cn = System.getenv("OPTSOLVX_BACKEND");
-        if (cn != null && !cn.isEmpty()) {
-            try {
-                return (LPSolverAdapter) Class.forName(cn).getDeclaredConstructor().newInstance();
-            } catch (Throwable t) {
-                throw new IllegalStateException("Configured backend class not usable: " + cn, t);
-            }
-        }
-        // 1) ServiceLoader
-        for (LPSolverAdapter a : ServiceLoader.load(LPSolverAdapter.class)) return a;
-
-        // 2) Reflective fallbacks (adjust if your package differs)
-        final String[] candidates = {
-                "org.optsolvx.solver.commonsmath.CommonsMathSolver",
-                "org.optsolvx.backends.commonsmath.CommonsMathSolver"
-        };
-        for (String c : candidates) {
-            try {
-                return (LPSolverAdapter) Class.forName(c).getDeclaredConstructor().newInstance();
-            } catch (Throwable ignored) {
-            }
-        }
-        throw new IllegalStateException(
-                "No OptSolvX LPSolverAdapter found on classpath (ServiceLoader and reflective fallback failed).");
     }
 
 }

@@ -3,9 +3,10 @@ package org.simulator.optsolvx;
 import org.optsolvx.model.AbstractLPModel;
 import org.optsolvx.model.Constraint;
 import org.optsolvx.model.OptimizationDirection;
-import org.optsolvx.solver.CommonsMathSolver;
 import org.optsolvx.solver.LPSolution;
 import org.optsolvx.solver.LPSolverAdapter;
+import org.optsolvx.solver.OptSolvXConfig;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,11 +37,9 @@ public class OptSolvXDemo {
         // Finalize model
         model.build();
 
-        // Solve via adapter, using CommonsMath as backend
-        LPSolverAdapter backend = new CommonsMathSolver();
-        LPSolverAdapter solver  = new OptSolvXSolverAdapter(backend, /*debug=*/true);
+        LPSolverAdapter backend = OptSolvXConfig.resolve(model, System.getProperty("optsolvx.solver"));
 
-        LPSolution sol = solver.solve(model);
+        LPSolution sol = backend.solve(model);
 
         // Print result (expected optimum: x=3.0, y=0.5, objective=3.5)
         System.out.println("Variables: " + sol.getVariableValues());
