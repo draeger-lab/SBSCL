@@ -21,7 +21,6 @@ import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.comp.CompSimulator;
-import org.simulator.examples.CompExample;
 import org.simulator.fba.FluxBalanceAnalysis;
 import org.simulator.io.CSVImporter;
 import org.simulator.math.odes.AbstractDESSolver;
@@ -60,7 +59,7 @@ public class SBMLTestSuiteRunnerWrapper {
   public static final String RELATIVE = "relative";
   public static final String NAN = "NaN";
   private static final double TOLERANCE_FACTOR = 1E-5;
-  private static final Logger LOGGER = Logger.getLogger(CompExample.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(SBMLTestSuiteRunnerWrapper.class.getName());
 
   /**
    * The wrapper executes the simulation of a given SBML file and writes result to a specified CSV
