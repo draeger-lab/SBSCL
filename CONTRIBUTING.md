@@ -1,6 +1,6 @@
 # Contributing to SBSCL
 
-Thank you for your interest in contributing to SBSCL! If you would like to make improvements to the library, add new features that are useful to you and others, or have found a bug that you know how to fix, please open a pull request!
+We appreciate your interest in contributing to SBSCL! If you would like to make improvements to the library, add new useful features, or have found a bug you know how to fix, please open a pull request!
 
 ## How to Contribute
 
@@ -11,7 +11,7 @@ If you find a bug, please open a new issue on our [Issue Tracker](https://github
 *   **Expected behavior:** What should happen?
 *   **Actual behavior:** What is happening instead?
 *   **Reproduction steps:** Clear, concise steps to reproduce the issue.
-*   **Environment:** Your operating system, version of the project etc.
+*   **Environment:** Your operating system, version of the project, etc.
 *   **Screenshots or error messages:** If applicable.
 
 ### Suggesting Enhancements
@@ -43,6 +43,6 @@ For more information regarding the installation, refer to [INSTALL.md](INSTALL.m
 If you have questions or need assistance, please feel free to:
 
 *   Open an issue on our [Issue Tracker](https://github.com/draeger-lab/SBSCL/issues).
-*   Ask to any maintainer.
+*   Or you may ask to any maintainer.
 
 We appreciate your contributions and look forward to collaborating with you!
