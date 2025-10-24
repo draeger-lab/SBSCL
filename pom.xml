@@ -70,7 +70,7 @@
       files -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.license.url>https://www.gnu.org/licenses/lgpl-3.0-standalone.html</project.license.url>
-    <junit.version>4.13.1</junit.version>
+    <junit.version>5.12.0</junit.version>
     <javadoc.version>3.2.0</javadoc.version>
     <site.path>https://draeger-lab.github.io/SBSCL/docs/</site.path>
   </properties>
@@ -292,6 +292,28 @@
         <role>developer</role>
       </roles>
     </developer>
+    <developer>
+      <name>Arthur Neumann</name>
+      <id>NeumannArthur</id>
+      <email>art.neumann@outlook.com</email>
+      <url>https://github.com/NeumannArthur</url>
+      <organization>University of Tübingen</organization>
+      <timezone>Europe/Berlin</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Taichi Araki</name>
+      <id>...</id>
+      <email>...</email>
+      <url>...</url>
+      <organization>Keio University</organization>
+      <timezone>Japan/Tokyo</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
   </developers>
 
   <contributors>
@@ -392,9 +414,22 @@
 
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>5.12.0</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.sbml.jsbml</groupId>
@@ -410,6 +445,12 @@
       <groupId>org.jmathml</groupId>
       <artifactId>jmathml</artifactId>
       <version>2.1.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jlibsedml</groupId>
@@ -580,6 +621,12 @@
             <target>${jdk.version}</target>
             <!-- <excludes> <exclude>**/org/simulator/fba/COBRAsolver.java</exclude>
               <exclude>**/org/simulator/fba/COBRAsolverExample.java</exclude> </excludes> -->
+            <excludes>
+              <exclude>org/simulator/examples/**</exclude>
+            </excludes>
+            <testExcludes>
+              <testExclude>org/simulator/**</testExclude>
+            </testExcludes>
           </configuration>
         </plugin>
 

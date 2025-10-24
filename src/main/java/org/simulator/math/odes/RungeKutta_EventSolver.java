@@ -26,6 +26,9 @@ package org.simulator.math.odes;
 
 import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.Mathematics;
+import org.simulator.math.odes.exception.UnsupportedMethodException;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * Runge-Kutta method.
@@ -42,6 +45,19 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   private static final long serialVersionUID = -2034495479346567501L;
 
   /**
+   * Logger for this class
+   */
+  private static final Logger logger = Logger.getLogger(RungeKutta_EventSolver.class.getName());
+
+  /**
+   * Enum representing supported RungeKutta methods
+   */
+  public static enum validMethod{
+    RK2,
+    RK4
+  }
+  
+  /**
    * Stores temporary results for the fourth-order Runge-Kutta method.
    */
   transient protected double[][] kVals = null;
@@ -51,11 +67,26 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
    */
   transient protected double[] kHelp;
 
+  /** 
+   * Enum to store the Runge_Kutta Method
+   */
+  private final validMethod method;
+
   /**
    * default constructor
    */
   public RungeKutta_EventSolver() {
     super();
+    this.method = validMethod.RK4;
+    logger.log(Level.INFO, "No method passed. Defaulting to 'RK4'.");
+  }
+
+  /**
+   * @param method
+   */
+  public RungeKutta_EventSolver(String method) throws UnsupportedMethodException {
+    super();
+    this.method = parseValidMethodOrDefault(method);
   }
 
   /**
@@ -63,6 +94,17 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
    */
   public RungeKutta_EventSolver(double stepSize) {
     super(stepSize);
+    this.method = validMethod.RK4;
+    logger.log(Level.INFO, "No method passed. Defaulting to 'RK4'.");
+  }
+
+  /**
+   * @param stepSize
+   * @param method
+   */
+  public RungeKutta_EventSolver(double stepSize, String method) throws UnsupportedMethodException {
+    super(stepSize);
+    this.method = parseValidMethodOrDefault(method);
   }
 
   /**
@@ -72,6 +114,19 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
    */
   public RungeKutta_EventSolver(double stepSize, boolean nonnegative) {
     super(stepSize, nonnegative);
+    this.method = validMethod.RK4;
+    logger.log(Level.INFO, "No method passed. Defaulting to 'RK4'.");
+  }
+
+  /**
+   * @param stepSize
+   * @param nonnegative the nonnegative flag of the super class
+   * @param method
+   * @see AbstractDESSolver
+   */
+  public RungeKutta_EventSolver(double stepSize, boolean nonnegative, String method) throws UnsupportedMethodException {
+    super(stepSize, nonnegative);
+    this.method = parseValidMethodOrDefault(method);
   }
 
   /**
@@ -81,6 +136,19 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
    */
   public RungeKutta_EventSolver(RungeKutta_EventSolver rkEventSolver) {
     super(rkEventSolver);
+    this.method = rkEventSolver.method;
+  }
+
+  /**
+   * Parses the string into a validMethod enum, defaults to RK4 if invalid.
+   */
+
+  private validMethod parseValidMethodOrDefault(String method) throws UnsupportedMethodException {
+    try {
+      return validMethod.valueOf(method.toUpperCase());
+    } catch (IllegalArgumentException | NullPointerException e) {
+      throw new UnsupportedMethodException(method);
+    }
   }
 
   /* (non-Javadoc)
@@ -89,41 +157,127 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   @Override
   public double[] computeChange(DESystem DES, double[] yTemp, double t, double h, double[] change,
       boolean steadyState)
-      throws DerivativeException {
-    int dim = DES.getDimension();
-    if ((kVals == null) || (kVals.length != 4) || (kVals[0].length != dim)) {
-      // "static" vectors which are allocated only once
-      kVals = new double[4][dim];
-      kHelp = new double[dim];
+      throws DerivativeException, UnsupportedMethodException {
+        switch(method) {
+          case RK2:
+            return computeRK2(DES, yTemp, t, h, change);
+          
+          case RK4:
+            return computeRK4(DES, yTemp, t, h, change);
+          default:
+            throw new UnsupportedMethodException(method.toString());
+        }
     }
-    // k0
-    DES.computeDerivatives(t, yTemp, kVals[0]);
-    Mathematics.svMult(h, kVals[0], kVals[0]);
-    // k1
-    Mathematics.svvAddScaled(0.5, kVals[0], yTemp, kHelp);
-    DES.computeDerivatives(t + h / 2, kHelp, kVals[1]);
-    Mathematics.svMult(h, kVals[1], kVals[1]);
-    // k2
-    Mathematics.svvAddScaled(0.5, kVals[1], yTemp, kHelp);
-    DES.computeDerivatives(t + h / 2, kHelp, kVals[2]);
-    Mathematics.svMult(h, kVals[2], kVals[2]);
-    // k3
-    Mathematics.vvAdd(yTemp, kVals[2], kHelp);
-    DES.computeDerivatives(t + h, kHelp, kVals[3]);
-    Mathematics.svMult(h, kVals[3], kVals[3]);
-    // combining all k's
-    Mathematics.svvAddScaled(2, kVals[2], kVals[3], kVals[3]);
-    Mathematics.svvAddScaled(2, kVals[1], kVals[3], kVals[2]);
-    Mathematics.svvAddAndScale(1d / 6d, kVals[0], kVals[2], change);
-    return change;
-  }
+  
+  /**
+   * Computes the change in state using second-order Runge-Kutta Heun's method
+   * 
+   * This method approximates the solution to an ODE system by evaluating the slope at the beginning and at the end of the interval, then averaging them to compute the next value.
+   *
+   * The formula used is:
+   * k0 = h * f(t, y)
+   * k1 = h * f(t + h, y + k0)
+   * change = 0.5 * (k0 + k1)
+   * 
+   * @param DES     The differential equation system representing the model.
+   * @param yTemp   The current values of system variables.
+   * @param t       The current time point.
+   * @param h       The integration step size.
+   * @param change  An array to store the computed change.
+   * @return        The array containing the computed change.
+   * @throws DerivativeException
+   */
+  public double[] computeRK2(DESystem DES, double[] yTemp, double t, double h, double[] change)
+      throws DerivativeException {
+
+        int dim = DES.getDimension();
+
+        double[][] kValues = new double[2][dim];
+        double[] kTemp = new double[dim];
+         
+        // k0 = h * f(t, yTemp)
+        DES.computeDerivatives(t, yTemp, kValues[0]);
+        Mathematics.svMult(h, kValues[0], kValues[0]);
+
+        // k1 = h * f(t + h, yTemp + k0)
+        Mathematics.vvAdd(kValues[0], yTemp, kTemp);
+        DES.computeDerivatives(t + h, kTemp, kValues[1]);
+        Mathematics.svMult(h, kValues[1], kValues[1]);
+
+        // Combine all k's
+        Mathematics.svvAddAndScale(0.5, kValues[0], kValues[1], change);
+        
+        return change;
+
+    }
+
+  /**
+   * Computes the change in state using the classical fourth-order Runge-Kutta method.
+   *
+   * RK4 evaluates the derivative at four points in each interval and combines them using a weighted average.
+   *
+   * The formula used is:
+   * k0 = h * f(t, y)
+   * k1 = h * f(t + h/2, y + k0/2)
+   * k2 = h * f(t + h/2, y + k1/2)
+   * k3 = h * f(t + h, y + k2)
+   * change = (1/6) * (k0 + 2*k1 + 2*k2 + k3)
+   *
+   * @param DES     The differential equation system representing the model.
+   * @param yTemp   The current values of system variables.
+   * @param t       The current time point.
+   * @param h       The integration step size.
+   * @param change  An array to store the computed changes.
+   * @return        The array containing the computed change in system state.
+   * @throws DerivativeException 
+   */
+  public double[] computeRK4(DESystem DES, double[] yTemp, double t, double h, double[] change)
+    throws DerivativeException {
+
+      int dim = DES.getDimension();
+      if ((kVals == null) || (kVals.length != 4) || (kVals[0].length != dim)) {
+        // "static" vectors which are allocated only once
+        kVals = new double[4][dim];
+        kHelp = new double[dim];
+      }
+
+      double halfStep = h * 0.5;
+      double tMid = t + halfStep;
+      double tEnd = t + h;
+
+      // k0 = h * f(t, yTemp)
+      DES.computeDerivatives(t, yTemp, kVals[0]);
+      Mathematics.svMult(h, kVals[0], kVals[0]);
+
+      // k1 = h * f(t + h/2, y + k0/2)
+      Mathematics.svvAddScaled(0.5, kVals[0], yTemp, kHelp);
+      DES.computeDerivatives(tMid, kHelp, kVals[1]);
+      Mathematics.svMult(h, kVals[1], kVals[1]);
+
+      // k2 = h * f(t + h/2, y + k1/2)
+      Mathematics.svvAddScaled(0.5, kVals[1], yTemp, kHelp);
+      DES.computeDerivatives(tMid, kHelp, kVals[2]);
+      Mathematics.svMult(h, kVals[2], kVals[2]);
+
+      // k3 = h * f(t + h, y + k2)
+      Mathematics.vvAdd(yTemp, kVals[2], kHelp);
+      DES.computeDerivatives(tEnd, kHelp, kVals[3]);
+      Mathematics.svMult(h, kVals[3], kVals[3]);
+
+      // combining all k's
+      for (int i = 0; i < dim; i++) {
+        change[i] = (kVals[0][i] + (2 * (kVals[1][i] + kVals[2][i])) + kVals[3][i]) / 6d;
+      }
+      return change;
+
+    }
 
   /* (non-Javadoc)
    * @see org.simulator.math.odes.AbstractDESSolver#getName()
    */
   @Override
   public String getName() {
-    return "4th order Runge-Kutta event solver";
+    return "Runge-Kutta event solver (" + method + ")";
   }
 
   /* (non-Javadoc)
