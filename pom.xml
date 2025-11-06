@@ -512,6 +512,14 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <!-- OptSolvX -->
+    <dependency>
+      <groupId>org.optsolvx</groupId>
+      <artifactId>optsolvx</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+      <classifier>jdk8</classifier>
+    </dependency>
   </dependencies>
 
 

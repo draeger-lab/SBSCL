@@ -81,6 +81,29 @@ Further examples can be found directly within this repository in the [Examples P
 * How to run a [stochastic simulation](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/Start.java)
 
 
+## Using OptSolvX (LP) in SBSCL
+
+### Run the OptSolvX demo
+
+* In your IDE, run: `org.simulator.optsolvx.OptSolvXDemo`.
+* The demo builds a tiny LP and solves it via OptSolvX (CommonsMath backend for now).
+* Make sure the OptSolvX **jdk8** artifact is on the classpath (declared in SBSCL’s `pom.xml`).
+
+### Enable debug logs
+
+Create the adapter with `debug = true`:
+
+```java
+LPSolverAdapter solver =
+    new OptSolvXSolverAdapter(new CommonsMathSolver(), true);
+```
+
+### (Preview) SBML/FBC → LP
+
+An experimental entry point is available at `org.simulator.optsolvx.FbaToOptSolvX`.
+
+
+
 ### Comparison to Similar Libraries
 
 To compare SBSCL to other simulation engines and to benchmark its predictions and results, a separate project, [SBSCL simulator comparison](https://github.com/matthiaskoenig/sbscl-simulator-comparison), is available.
