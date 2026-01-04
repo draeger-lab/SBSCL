@@ -163,11 +163,34 @@ public class ASTNodeInterpreter {
    */
   public double functionDouble(ASTNodeValue rightChild, List<String> variables,
       ASTNodeValue[] children, int nArguments, double[] values, double time, double delay) {
-    for (int i = 0; i < nArguments; i++) {
-      values[i] = children[i].compileDouble(time, delay);
+
+    // Save current function-argument environment (for nested function calls)
+    Map<String, Double> oldFuncArgs = funcArgs;
+    Map<String, Double> newFuncArgs = new HashMap<>(oldFuncArgs);
+
+    // Number of arguments we can actually map (safety for mismatches)
+    int n = Math.min(nArguments, Math.min(children.length, variables.size()));
+
+    // 1) Evaluate all argument expressions in the *caller* context
+    for (int i = 0; i < n; i++) {
+      double argVal = children[i].compileDouble(time, delay);
+      values[i] = argVal;
+
+      String varName = variables.get(i);
+      if (varName != null) {
+        // 2) Bind each function variable (bvar) to its argument value
+        newFuncArgs.put(varName, argVal);
+      }
     }
-    double value = rightChild.compileDouble(time, delay);
-    return value;
+
+    // 3) Use the extended environment while evaluating the function body
+    funcArgs = newFuncArgs;
+    try {
+      return rightChild.compileDouble(time, delay);
+    } finally {
+      // 4) Restore the previous environment (important for nested calls)
+      funcArgs = oldFuncArgs;
+    }
   }
 
   /**
@@ -562,11 +585,29 @@ public class ASTNodeInterpreter {
    */
   public boolean functionBoolean(ASTNodeValue rightChild, List<String> variables,
       ASTNodeValue[] children, double[] values, double time) {
-    for (int i = 0; i < children.length; i++) {
-      values[i] = children[i].compileDouble(time, 0d);
+
+    Map<String, Double> oldFuncArgs = funcArgs;
+    Map<String, Double> newFuncArgs = new HashMap<>(oldFuncArgs);
+
+    int n = Math.min(children.length, variables.size());
+
+    // Evaluate arguments in caller context and bind to function variables
+    for (int i = 0; i < n; i++) {
+      double argVal = children[i].compileDouble(time, 0d);
+      values[i] = argVal;
+
+      String varName = variables.get(i);
+      if (varName != null) {
+        newFuncArgs.put(varName, argVal);
+      }
     }
-    boolean value = rightChild.compileBoolean(time);
-    return value;
+
+    funcArgs = newFuncArgs;
+    try {
+      return rightChild.compileBoolean(time);
+    } finally {
+      funcArgs = oldFuncArgs;
+    }
   }
 
   /**
