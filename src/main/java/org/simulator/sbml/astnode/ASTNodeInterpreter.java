@@ -153,6 +153,33 @@ public class ASTNodeInterpreter {
   }
 
   /**
+   * Evaluates function argument expressions, stores their values, and updates the
+   * {@code funcArgs} map so that identifiers inside a FunctionDefinition body resolve to
+   * the corresponding argument values. Returns the previous {@code funcArgs} map so it can
+   * be restored after evaluation.
+   */
+  private Map<String, Double> pushFunctionArguments(List<String> variables,
+      ASTNodeValue[] children, int nArguments, double[] values, double time, double delay) {
+
+    Map<String, Double> oldFuncArgs = funcArgs;
+    Map<String, Double> newFuncArgs = new HashMap<>(oldFuncArgs);
+
+    int n = Math.min(nArguments, Math.min(children.length, variables.size()));
+    for (int i = 0; i < n; i++) {
+      double argVal = children[i].compileDouble(time, delay);
+      values[i] = argVal;
+
+      String varName = variables.get(i);
+      if (varName != null) {
+        newFuncArgs.put(varName, argVal);
+      }
+    }
+
+    funcArgs = newFuncArgs;
+    return oldFuncArgs;
+  }
+
+  /**
    * @param rightChild
    * @param variables
    * @param children
@@ -164,31 +191,12 @@ public class ASTNodeInterpreter {
   public double functionDouble(ASTNodeValue rightChild, List<String> variables,
       ASTNodeValue[] children, int nArguments, double[] values, double time, double delay) {
 
-    // Save current function-argument environment (for nested function calls)
-    Map<String, Double> oldFuncArgs = funcArgs;
-    Map<String, Double> newFuncArgs = new HashMap<>(oldFuncArgs);
+    Map<String, Double> oldFuncArgs =
+        pushFunctionArguments(variables, children, nArguments, values, time, delay);
 
-    // Number of arguments we can actually map (safety for mismatches)
-    int n = Math.min(nArguments, Math.min(children.length, variables.size()));
-
-    // 1) Evaluate all argument expressions in the *caller* context
-    for (int i = 0; i < n; i++) {
-      double argVal = children[i].compileDouble(time, delay);
-      values[i] = argVal;
-
-      String varName = variables.get(i);
-      if (varName != null) {
-        // 2) Bind each function variable (bvar) to its argument value
-        newFuncArgs.put(varName, argVal);
-      }
-    }
-
-    // 3) Use the extended environment while evaluating the function body
-    funcArgs = newFuncArgs;
     try {
       return rightChild.compileDouble(time, delay);
     } finally {
-      // 4) Restore the previous environment (important for nested calls)
       funcArgs = oldFuncArgs;
     }
   }
@@ -586,23 +594,11 @@ public class ASTNodeInterpreter {
   public boolean functionBoolean(ASTNodeValue rightChild, List<String> variables,
       ASTNodeValue[] children, double[] values, double time) {
 
-    Map<String, Double> oldFuncArgs = funcArgs;
-    Map<String, Double> newFuncArgs = new HashMap<>(oldFuncArgs);
+    int nArguments = children.length;
 
-    int n = Math.min(children.length, variables.size());
+    Map<String, Double> oldFuncArgs =
+        pushFunctionArguments(variables, children, nArguments, values, time, 0d);
 
-    // Evaluate arguments in caller context and bind to function variables
-    for (int i = 0; i < n; i++) {
-      double argVal = children[i].compileDouble(time, 0d);
-      values[i] = argVal;
-
-      String varName = variables.get(i);
-      if (varName != null) {
-        newFuncArgs.put(varName, argVal);
-      }
-    }
-
-    funcArgs = newFuncArgs;
     try {
       return rightChild.compileBoolean(time);
     } finally {
