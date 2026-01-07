@@ -38,7 +38,7 @@ public class OptSolvXDemo {
         model.build();
 
         LPSolverAdapter backend = OptSolvXConfig.resolve(model, System.getProperty("optsolvx.solver"));
-        
+
         LPSolution sol = backend.solve(model);
 
         // Print result (expected optimum: x=3.0, y=0.5, objective=3.5)

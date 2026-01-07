@@ -150,15 +150,18 @@ public class FluxBalanceAnalysis {
 
     /**
      * Solve the built LP via OptSolvX.
-     * <p>Backend is resolved via ServiceLoader; if none is found, a reflective
-     * fallback tries a CommonsMath-based backend without adding a hard compile-time dependency.</p>
+     * <p>Backend is resolved via {@link OptSolvXConfig} using (in order): explicit override
+     * (system property {@code -Doptsolvx.solver}), per-model preference, and a built-in default.</p>
      *
      * @return true if a feasible solution is available.
      * @throws NullPointerException if something goes wrong internally.
      */
     public boolean solve() throws NullPointerException {
-        final LPSolverAdapter backend =
-                OptSolvXConfig.resolve(lpModel, System.getProperty("optsolvx.solver"));
+        final String requested = System.getProperty("optsolvx.solver");
+        final LPSolverAdapter backend = OptSolvXConfig.resolve(lpModel, requested);
+        logger.info(format(
+                "FBA: resolved OptSolvX backend={0} (requested={1})",
+                backend.getClass().getSimpleName(), requested));
         this.lpSolution = backend.solve(lpModel);
         return lpSolution != null && lpSolution.isFeasible();
     }
