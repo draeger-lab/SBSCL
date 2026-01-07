@@ -86,7 +86,7 @@ Further examples can be found directly within this repository in the [Examples P
 ### Run the OptSolvX demo
 
 * In your IDE, run: `org.simulator.optsolvx.OptSolvXDemo`.
-* The demo builds a tiny LP and solves it via OptSolvX (CommonsMath backend for now).
+* The demo builds a tiny LP and solves it via OptSolvX (backend selectable via -Doptsolvx.solver=commons-math|ojalgo).
 * Make sure the OptSolvX **jdk8** artifact is on the classpath (declared in SBSCL’s `pom.xml`).
 
 *Note:* FBA in SBSCL now uses OptSolvX by default.
@@ -96,11 +96,18 @@ Further examples can be found directly within this repository in the [Examples P
 Create the adapter with `debug = true`:
 
 ```java
+LPSolverAdapter backend =
+        OptSolvXConfig.resolve(lpModel, System.getProperty("optsolvx.solver"));
 LPSolverAdapter solver =
-    new OptSolvXSolverAdapter(new CommonsMathSolver(), true);
+        new OptSolvXSolverAdapter(backend, true);
 ```
 
-You can also pick a backend via `-Doptsolvx.backend=<fqcn>` or env `OPTSOLVX_BACKEND`.
+**Solver selection behavior**
+
+You can pick a backend via `-Doptsolvx.solver=ojalgo` or env `OPTSOLVX_SOLVER=ojalgo`.
+If an explicit solver name is provided and unknown, OptSolvX fails fast with an
+`IllegalArgumentException`.  
+If no solver is specified, `commons-math` is used as the default backend.
 
 ### (Preview) SBML/FBC → LP
 
