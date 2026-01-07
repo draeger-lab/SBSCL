@@ -109,9 +109,10 @@ If an explicit solver name is provided and unknown, OptSolvX fails fast with an
 `IllegalArgumentException`.  
 If no solver is specified, `commons-math` is used as the default backend.
 
-### (Preview) SBML/FBC → LP
+### SBML/FBC → LP bridge (initial)
 
-An experimental entry point is available at `org.simulator.optsolvx.FbaToOptSolvX`.
+`FbaToOptSolvX` implements a minimal SBML/FBC → LP mapping used by FBA.
+Advanced SBML features are intentionally out of scope.
 
 
 ### Comparison to Similar Libraries
