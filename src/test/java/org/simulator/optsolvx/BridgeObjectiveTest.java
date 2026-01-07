@@ -5,7 +5,8 @@ import static org.junit.Assert.*;
 
 import org.optsolvx.model.AbstractLPModel;
 import org.optsolvx.solver.LPSolution;
-import org.optsolvx.solver.CommonsMathSolver;
+import org.optsolvx.solver.LPSolverAdapter;
+import org.optsolvx.solver.OptSolvXConfig;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.ext.fbc.*;
 
@@ -69,7 +70,8 @@ public class BridgeObjectiveTest {
 
         // --- Bridge & solve
         AbstractLPModel lp = FbaToOptSolvX.fromSBML(doc);
-        LPSolution sol = new OptSolvXSolverAdapter(new CommonsMathSolver()).solve(lp);
+        LPSolverAdapter backend = OptSolvXConfig.resolve(lp, System.getProperty("optsolvx.solver"));
+        LPSolution sol = new OptSolvXSolverAdapter(backend).solve(lp);
 
         assertTrue(sol.isFeasible());
         assertEquals(10.0, sol.getObjectiveValue(), 1e-6); // max v_out = 10

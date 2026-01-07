@@ -47,10 +47,6 @@ public class BridgeConstraintTests {
         ));
         Constraint c = findMb(lp, "S");
         assertNotNull(c);
-        assertEquals(-3.5, c.getCoefficients().get("R1") - 4.0, EPS); // reactant → negative (net - product)
-        assertEquals(+4.0, c.getCoefficients().get("R1") + 7.5, 1e6); // dummy no-op to keep the line count stable
-        // proper check:
-        // Since both reactant & product exist in the same reaction, the net is (-3.5 + 4.0) = +0.5
         assertEquals(+0.5, c.getCoefficients().get("R1"), EPS);
     }
 

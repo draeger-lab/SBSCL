@@ -4,24 +4,33 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.optsolvx.model.*;
 import org.optsolvx.solver.*;
+import org.optsolvx.solver.OptSolvXConfig;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class OptSolvXSolverAdapterTest {
 
+    private static final LPSolverAdapter NOOP_BACKEND = new LPSolverAdapter() {
+        @Override
+        public LPSolution solve(AbstractLPModel model) {
+            throw new AssertionError("Backend must not be called for these tests.");
+        }
+    };
+
     @Test(expected = IllegalArgumentException.class)
     public void solve_requires_non_null_model() {
-        LPSolverAdapter s = new OptSolvXSolverAdapter(new CommonsMathSolver(), false);
-        s.solve(null); // must throw
+        LPSolverAdapter s = new OptSolvXSolverAdapter(NOOP_BACKEND, false);
+        s.solve(null);
     }
 
     @Test(expected = IllegalStateException.class)
     public void solve_requires_build() {
         AbstractLPModel m = new AbstractLPModel();
         m.addVariable("x", 0.0d, 10.0d);
-        LPSolverAdapter s = new OptSolvXSolverAdapter(new CommonsMathSolver(), false);
-        s.solve(m); // not built -> must throw
+
+        LPSolverAdapter s = new OptSolvXSolverAdapter(NOOP_BACKEND, false);
+        s.solve(m);
     }
 
     @Test
@@ -43,7 +52,8 @@ public class OptSolvXSolverAdapterTest {
 
         m.build();
 
-        LPSolverAdapter s = new OptSolvXSolverAdapter(new CommonsMathSolver(), false);
+        LPSolverAdapter backend = OptSolvXConfig.resolve(m, System.getProperty("optsolvx.solver"));
+        LPSolverAdapter s = new OptSolvXSolverAdapter(backend, false);
         LPSolution sol = s.solve(m);
 
         assertTrue(sol.isFeasible());
