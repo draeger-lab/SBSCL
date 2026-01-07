@@ -71,6 +71,22 @@ public class BridgeObjectiveTest {
         // --- Bridge & solve
         AbstractLPModel lp = FbaToOptSolvX.fromSBML(doc);
         LPSolverAdapter backend = OptSolvXConfig.resolve(lp, System.getProperty("optsolvx.solver"));
+        assertNotNull("backend must not be null", backend);
+
+        String wanted = System.getProperty("optsolvx.solver");
+        if (wanted != null) {
+            String w = wanted.trim().toLowerCase();
+            String actual = backend.getClass().getName().toLowerCase();
+
+            if (w.equals("ojalgo") || w.equals("oj")) {
+                assertTrue("Expected OjAlgo backend but got: " + backend.getClass().getName(),
+                        actual.contains("ojalgo"));
+            } else if (w.equals("commons-math") || w.equals("commonsmath") || w.equals("cm")) {
+                assertTrue("Expected CommonsMath backend but got: " + backend.getClass().getName(),
+                        actual.contains("commonsmath"));
+            }
+        }
+
         LPSolution sol = new OptSolvXSolverAdapter(backend).solve(lp);
 
         assertTrue(sol.isFeasible());
