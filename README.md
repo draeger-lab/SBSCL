@@ -83,10 +83,27 @@ Further examples can be found directly within this repository in the [Examples P
 
 ## Using OptSolvX (LP) in SBSCL
 
+SBSCL integrates the OptSolvX linear programming abstraction layer [OptSolvX Repo](https://github.com/draeger-lab/OptSolvX).
+
+### OptSolvX dependency (temporary)
+
+OptSolvX is not yet available on Maven Central and must be installed locally.
+
+To build SBSCL with OptSolvX support:
+1. Build OptSolvX locally in the **OptSolvX repo**:
+   ```bash 
+   mvn -P compat8 -DskipTests clean package
+   ```
+2. Activate the profile in the SBSCL repo:
+    ```bash 
+   mvn -DskipTests clean package
+    ```
+3. SBSCL resolves `org.optsolvx:optsolvx:0.1.0-SNAPSHOT:jar:jdk8` from the local Maven repository.
+
 ### Run the OptSolvX demo
 
 * In your IDE, run: `org.simulator.optsolvx.OptSolvXDemo`.
-* The demo builds a tiny LP and solves it via OptSolvX (backend selectable via -Doptsolvx.solver=commons-math|ojalgo).
+* The demo builds a tiny LP and solves it via OptSolvX (backend selectable via `-Doptsolvx.solver=commons-math|ojalgo`).
 * Make sure the OptSolvX **jdk8** artifact is on the classpath (declared in SBSCL’s `pom.xml`).
 
 *Note:* FBA in SBSCL now uses OptSolvX by default.
@@ -104,12 +121,12 @@ LPSolverAdapter solver =
 
 **Solver selection behavior**
 
-You can pick a backend via `-Doptsolvx.solver=ojalgo` or env `OPTSOLVX_SOLVER=ojalgo`.
-If an explicit solver name is provided and unknown, OptSolvX fails fast with an
+* You can pick a backend via `-Doptsolvx.solver=ojalgo` or env `OPTSOLVX_SOLVER=ojalgo`.
+* If an explicit solver name is provided and unknown, OptSolvX fails fast with an
 `IllegalArgumentException`.  
-If no solver is specified, `commons-math` is used as the default backend.
+* If no solver is specified, `commons-math` is used as the default backend.
 
-### SBML/FBC → LP bridge (initial)
+#### SBML/FBC → LP bridge (initial)
 
 `FbaToOptSolvX` implements a minimal SBML/FBC → LP mapping used by FBA.
 Advanced SBML features are intentionally out of scope.
