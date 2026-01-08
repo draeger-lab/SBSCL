@@ -84,9 +84,9 @@ public class FluxBalanceAnalysis {
       .getLogger(FluxBalanceAnalysis.class.getName());
 
   /**
-   * The linear programming solver.
+   * The linear programming solver backend.
    */
-  private LinearProgramSolver glpkSolver;
+  private LinearProgramSolver solver;
 
   private LinearProgram problem;
 
@@ -130,13 +130,34 @@ public class FluxBalanceAnalysis {
    * @throws SBMLException                if the {@link Model} is invalid or inappropriate for flux
    *                                      balance analysis.
    */
+  /**
+   * Creates a new FluxBalanceAnalysis solver that uses GLPK as the default
+   * linear programming backend.
+   */
   public FluxBalanceAnalysis(SBMLDocument doc)
+      throws SBMLException, ModelOverdeterminedException {
+    this(doc, new NewGLPKSolver());
+  }
+
+  /**
+   * Creates a new FluxBalanceAnalysis solver with a caller-provided
+   * linear programming backend.
+   *
+   * @param doc    the SBML document defining the FBC model
+   * @param solver the linear programming solver implementation to use
+   */
+  public FluxBalanceAnalysis(SBMLDocument doc, LinearProgramSolver solver)
       throws SBMLException, ModelOverdeterminedException {
     super();
     if (!doc.isSetModel()) {
       throw new IllegalArgumentException(
           "Could not find a model definition in the given SBML document.");
     }
+    if (solver == null) {
+      throw new IllegalArgumentException("LinearProgramSolver must not be null.");
+    }
+    this.solver = solver;
+
     Model model = doc.getModel();
     interpreter = new SBMLinterpreter(model);
     int level = doc.getLevel(), version = doc.getVersion();
@@ -218,10 +239,9 @@ public class FluxBalanceAnalysis {
     }
 
     /*
-     * Create linear solver
+     * Create linear program
      */
     SolverFactory.newDefault();
-    glpkSolver = new NewGLPKSolver();
     problem = new LinearProgram(objvals);
     problem.setLowerbound(lb);
     problem.setUpperbound(ub);
@@ -353,11 +373,8 @@ public class FluxBalanceAnalysis {
    *                              one of its derived classes, is thrown.
    */
   public boolean solve() throws NullPointerException {
-    solution = glpkSolver.solve(problem);
-    if (solution != null) {
-      return true;
-    }
-    return false;
+    solution = solver.solve(problem);
+    return (solution != null);
   }
 
   /**
