@@ -512,6 +512,12 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <!-- Pure Java LP solver (ojAlgo) -->
+    <dependency>
+      <groupId>org.ojalgo</groupId>
+      <artifactId>ojalgo</artifactId>
+      <version>49.0.0</version>
+    </dependency>
   </dependencies>
 
 
