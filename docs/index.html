@@ -66,60 +66,96 @@
         </div>
         <div id="bodyColumn"  class="span10" >
 <h1>Systems Biology Simulation Core Library</h1>
-<p>Welcome to the Systems Biology Simulation Core Library!</p>
-<p>The Systems Biology Simulation Core Library provides an efficient and exhaustive Java&#x2122; implementation of methods to interpret the content of models encoded in the Systems Biology Markup Language (<a class="externalLink" href="http://sbml.org">SBML</a>) and its numerical solution. This library is based on the <a class="externalLink" href="http://sbml.org/Software/JSBML">JSBML</a> project and can be used on every operating system, for which a Java Virtual Machine is available.</p>
-<p>Please note that this project does not contain any user interface, neither a command-line interface, nor a graphical user interface. This project has been developed as a pure programming library. To support the Minimum Information About a Simulation Experiment (<a class="externalLink" href="http://biomodels.net/miase/">MIASE</a>) effort, it understands Simulation Experiment Description Markup Language (<a class="externalLink" href="http://sed-ml.org">SED-ML</a>) files.</p>
-<p>Its abstract type and interface hierarchy facilitates the implementation of further community standards, such as <a class="externalLink" href="http://www.cellml.org">CellML</a>.</p>
+<p>Welcome to the Systems Biology Simulation Core Library (SBSCL)!</p>
+<p>SBSCL provides an efficient and exhaustive Java&#x2122; implementation of methods to interpret the content of models encoded in the Systems Biology Markup Language (<a class="externalLink" href="http://sbml.org">SBML</a>) and to compute their numerical solution. The library is based on the <a class="externalLink" href="http://sbml.org/Software/JSBML">JSBML</a> project and can be used on every operating system, for which a Java Virtual Machine is available.</p>
+<p>Please note that this project does not contain any user interface, neither a command-line interface nor a graphical user interface. It is intended as a pure programming library that can be embedded into other tools and workflows.</p>
+<p>To support the Minimum Information About a Simulation Experiment (<a class="externalLink" href="http://biomodels.net/miase/">MIASE</a>) effort, SBSCL understands Simulation Experiment Description Markup Language (<a class="externalLink" href="http://sed-ml.org">SED-ML</a>) files and can execute simulation experiments stored in COMBINE archive (<a class="externalLink" href="https://combinearchive.org/">OMEX</a>) files.</p>
+<p>Its abstract type and interface hierarchy is designed to facilitate the future implementation of further community standards (for example, <a class="externalLink" href="http://www.cellml.org">CellML</a>). At the moment, however, CellML models are <strong>not yet supported</strong>.</p>
 <p>When using the Simulation Core Library, please cite:</p>
 
 <ol style="list-style-type: decimal">
-  
-<li>Hemil Panchiwala, Shalin Shah, Hannes Planatscher, Mykola Zakharchuk, Matthias K&#xf6;nig, Andreas Dr&#xe4;ger. The Systems Biology Simulation Core Library. Preprints 2020, 2020120296. [ <a class="externalLink" href="https://doi.org/10.20944/preprints202012.0296.v1">DOI</a> | <a class="externalLink" href="https://www.preprints.org/manuscript/202012.0296/v1/download">PDF</a> ]</li>
-  
-<li>Roland Keller, Alexander D&#xf6;rr, Akito Tabira, Akira Funahashi, Michael J. Ziller, Richard Adams, Nicolas Rodriguez, Nicolas Le Nov&#xe8;re, Noriko Hiroi, Hannes Planatscher, Andreas Zell, and Andreas Dr&#xe4;ger. The systems biology simulation core algorithm. <i>BMC Systems Biology</i>, 7:55, July 2013. [ <a class="externalLink" href="https://doi.org/10.1186/1752-0509-7-55">DOI</a> | <a class="externalLink" href="https://bmcsystbiol.biomedcentral.com/articles/10.1186/1752-0509-7-55">link</a> | <a class="externalLink" href="https://bmcsystbiol.biomedcentral.com/track/pdf/10.1186/1752-0509-7-55">pdf</a> ]</li>
-</ol><section>
-<h2><a name="Capabilities"></a>Capabilities</h2><section>
-<h3><a name="Numerical_simulation_of_SBML_models"></a>Numerical simulation of SBML models</h3>
+  <li>Hemil Panchiwala, Shalin Shah, Hannes Planatscher, Mykola Zakharchuk, Matthias K&#xf6;nig, Andreas Dr&#xe4;ger. The Systems Biology Simulation Core Library. <i>Bioinformatics</i>, btab669, 2021. [ <a class="externalLink" href="https://doi.org/10.1093/bioinformatics/btab669">DOI</a> ]</li>
+  <li>Roland Keller, Alexander D&#xf6;rr, Akito Tabira, Akira Funahashi, Michael J. Ziller, Richard Adams, Nicolas Rodriguez, Nicolas Le Nov&#xe8;re, Noriko Hiroi, Hannes Planatscher, Andreas Zell, and Andreas Dr&#xe4;ger. The systems biology simulation core algorithm. <i>BMC Systems Biology</i>, 7:55, July 2013. [ <a class="externalLink" href="https://doi.org/10.1186/1752-0509-7-55">DOI</a> | <a class="externalLink" href="https://bmcsystbiol.biomedcentral.com/articles/10.1186/1752-0509-7-55">link</a> | <a class="externalLink" href="https://bmcsystbiol.biomedcentral.com/track/pdf/10.1186/1752-0509-7-55">pdf</a> ]</li>
+</ol>
 
+<section>
+<h2><a name="Capabilities"></a>Capabilities</h2>
+
+<h3><a name="Deterministic_simulation_of_SBML_models"></a>Deterministic simulation of SBML models</h3>
 <ul>
-  
-<li>Several solvers from the <a class="externalLink" href="http://commons.apache.org/math/">Apache Commons Math Library</a> included</li>
-  
-<li>Rosenbrock solver for integration of stiff differential equation systems</li>
-  
-<li>Clear separation of <a class="externalLink" href="http://sbml.org">SBML</a> interpretation and integration routines</li>
-  
-<li>Fast <a class="externalLink" href="http://sbml.org">SBML</a> interpretation by using a transformed syntax graph</li>
-  
-<li>Full support of <a class="externalLink" href="http://sbml.org">SBML</a> events, algebraic rules and fast reactions</li>
-  
-<li>Support of all models from the <a class="externalLink" href="http://sbml.org/Software/SBML_Test_Suite">SBML Test Suite</a> (v. 3.3.0) for all levels and versions: <a class="externalLink" href="http://sbml.org/Facilities/Database/Submission/Details/257">Simulation results</a></li>
-</ul></section><section>
+  <li>Several solvers from the <a class="externalLink" href="http://commons.apache.org/math/">Apache Commons Math Library</a> included</li>
+  <li>Rosenbrock solver for integration of stiff differential equation systems</li>
+  <li>Clear separation of <a class="externalLink" href="http://sbml.org">SBML</a> interpretation and integration routines</li>
+  <li>Fast <a class="externalLink" href="http://sbml.org">SBML</a> interpretation by using a transformed syntax graph</li>
+  <li>Full support of <a class="externalLink" href="http://sbml.org">SBML</a> events, algebraic rules and fast reactions</li>
+  <li>Support of all models from the <a class="externalLink" href="http://sbml.org/Software/SBML_Test_Suite">SBML Test Suite</a> (v. 3.3.0) for all levels and versions: <a class="externalLink" href="http://sbml.org/Facilities/Database/Submission/Details/257">Simulation results</a></li>
+</ul>
+
 <h3><a name="Stochastic_simulation_of_SBML_models"></a>Stochastic simulation of SBML models</h3>
-
 <ul>
-  
-<li>Supports different solvers from the FERN library</li>
-  
-<li>Gillespie Algorithm used currently to solve the SBML models</li>
-  
-<li>Support of models from the <a class="externalLink" href="https://github.com/sbmlteam/sbml-test-suite/tree/master/cases/stochastic">Stochastic Test Suite</a> for all levels and versions</li>
-</ul></section><section>
-<h3><a name="Support_for_SED-ML"></a>Support for SED-ML</h3>
+  <li>Supports different solvers from the FERN library</li>
+  <li>Gillespie Algorithm used currently to solve the SBML models</li>
+  <li>Support of models from the <a class="externalLink" href="https://github.com/sbmlteam/sbml-test-suite/tree/master/cases/stochastic">Stochastic Test Suite</a> for all levels and versions</li>
+</ul>
 
+<h3><a name="Constraint-based_modeling_flux_balance_analysis"></a>Constraint-based modeling (flux balance analysis)</h3>
 <ul>
-  
-<li>Several quality functions for computation of the distance from simulated data to some given data</li>
-</ul></section></section><section>
+  <li>Support for SBML models that use the flux-balance-constraints (<a class="externalLink" href="http://sbml.org/Documents/Specifications/SBML_Level_3/Packages/fbc">FBC</a>) extension (versions 1 and 2)</li>
+  <li>Suitable for constraint-based modeling and flux balance analysis (FBA) of genome-scale metabolic models</li>
+  <li>Tested with models from the <a class="externalLink" href="https://github.com/matthiaskoenig/bigg-models-fba">BiGG models FBA benchmark set</a></li>
+  <li>Example code is available in the <a class="externalLink" href="https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/FBAExample.java">FBA example</a></li>
+</ul>
+
+<h3><a name="Support_for_SED-ML_and_COMBINE_archives_OMEX"></a>Support for SED-ML and COMBINE archives (OMEX)</h3>
+<ul>
+  <li>Reads and executes simulation experiments described in <a class="externalLink" href="http://sed-ml.org">SED-ML</a> Level 1 Version 3</li>
+  <li>Can work directly with COMBINE archive (<a class="externalLink" href="https://combinearchive.org/">OMEX</a>) files containing SBML, SED-ML and associated resources</li>
+  <li>Several quality functions for computation of the distance from simulated data to given reference data</li>
+  <li>Example code is available in the <a class="externalLink" href="https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/OMEXExample.java">OMEX example</a> and the <a class="externalLink" href="https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/SEDMLExample.java">SED-ML example</a></li>
+</ul>
+</section>
+
+<section>
+<h2><a name="Examples_and_demo_repository"></a>Examples and demo repository</h2>
+<p>A dedicated <a class="externalLink" href="https://github.com/draeger-lab/SBSCL-demo">Demo Repository</a> provides a few use-case examples and an exemplary <a class="externalLink" href="https://github.com/draeger-lab/SBSCL-demo/blob/main/pom.xml">POM</a> file that helps setting up a project using SBSCL.</p>
+<p>Further examples can be found directly within this repository in the <a class="externalLink" href="https://github.com/draeger-lab/SBSCL/tree/master/src/main/java/org/simulator/examples">examples package</a>, including:</p>
+<ul>
+  <li>How to <a class="externalLink" href="https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/BiomodelsExample.java">run models directly from BioModels</a></li>
+  <li>How to <a class="externalLink" href="https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/CompExample.java">run hierarchically structured models</a> that use the SBML extension package &quot;comp&quot;</li>
+  <li>How to <a class="externalLink" href="https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/ConstraintExample.java">listen to constraint violations</a></li>
+  <li>How to run a <a class="externalLink" href="https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/FBAExample.java">flux balance analysis</a></li>
+  <li>How to work with an <a class="externalLink" href="https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/OMEXExample.java">OMEX archive</a> file</li>
+  <li>How to execute a simulation as instructed in a <a class="externalLink" href="https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/SEDMLExample.java">SED-ML file</a></li>
+  <li>How to run a <a class="externalLink" href="https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/org/simulator/examples/SimulatorExample.java">dynamic simulation</a></li>
+  <li>How to run a <a class="externalLink" href="https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/Start.java">stochastic simulation</a></li>
+</ul>
+</section>
+
+<section>
 <h2><a name="Documentation_of_the_application_programing_interfaces"></a>Documentation of the application programing interfaces</h2>
-<p>To get started with this library, please see the API documentation (JavaDoc) for the most recent Version 1.5. See the introduction, use-cases, and coding examples here: (<a href="project-reports.html">Description</a>).</p>
-<p>In case you like to use older versions, you can find the documentation here: * (<a href="old_javadoc/version_1.4/index.html">Version 1.4</a>) * (<a href="old_javadoc/version_1.3/index.html">Version 1.3</a>) * (<a href="old_javadoc/version_1.2/index.html">Version 1.2</a>) * (<a href="old_javadoc/version_1.1/index.html">Version 1.1</a>) * (<a href="old_javadoc/version_1.0/index.html">Version 1.0</a>)</p></section><section>
+<p>To get started with this library, please see the API documentation (JavaDoc) on the project website: <a class="externalLink" href="https://draeger-lab.github.io/SBSCL/apidocs/overview-summary.html">https://draeger-lab.github.io/SBSCL/apidocs/overview-summary.html</a>.</p>
+<p>See also the introduction, use-cases, and coding examples summarized on the <a href="project-reports.html">project reports page</a>.</p>
+<p>In case you like to use older versions, you can find the documentation here:</p>
+<ul>
+  <li>(<a href="old_javadoc/version_1.4/index.html">Version 1.4</a>)</li>
+  <li>(<a href="old_javadoc/version_1.3/index.html">Version 1.3</a>)</li>
+  <li>(<a href="old_javadoc/version_1.2/index.html">Version 1.2</a>)</li>
+  <li>(<a href="old_javadoc/version_1.1/index.html">Version 1.1</a>)</li>
+  <li>(<a href="old_javadoc/version_1.0/index.html">Version 1.0</a>)</li>
+</ul>
+</section>
+
+<section>
 <h2><a name="Download"></a>Download</h2>
-<p>You can obtain all versions of this library by going to the <a class="externalLink" href="https://github.com/draeger-lab/SBSCL/releases/">download area</a> of the project. There you can also find the release notes for user-visible changes.</p></section><section>
+<p>You can obtain all versions of this library by going to the <a class="externalLink" href="https://github.com/draeger-lab/SBSCL/releases/">download area</a> of the project. There you can also find the release notes for user-visible changes.</p>
+</section>
+
+<section>
 <h2><a name="Acknowledgments"></a>Acknowledgments</h2>
 <p>Many thanks to B. Kotcon, S. Mesuro, D. Rozenfeld, A. Yodpinyanee, A. Perez, E. Doi, R. Mehlinger, S. Ehrlich, M. Hunt, G. Tucker, P. Scherpelz, A. Becker, E. Harley, and C. Moore, Harvey Mudd College, USA, for providing a Java implementation of Rosenbrock&#x2019;s method as part of the <a class="externalLink" href="http://odetoolkit.hmc.edu">ODEToolkit</a>.</p>
 <p>We like to thank <a class="externalLink" href="http://www.abi.auckland.ac.nz/uoa/mike-cooling/">Michael T. Cooling</a>, University of Auckland, New Zealand, for fruitful discussion.</p>
-<p>This work was funded by the Federal Ministry of Education and Research (<a class="externalLink" href="http://www.bmbf.de/en/">BMBF</a>, Germany) as part of the <a class="externalLink" href="http://www.virtual-liver.de">Virtual Liver Network</a>.</p></section>
+<p>This work was funded by the Federal Ministry of Education and Research (<a class="externalLink" href="http://www.bmbf.de/en/">BMBF</a>, Germany) as part of the <a class="externalLink" href="http://www.virtual-liver.de">Virtual Liver Network</a>.</p>
+</section>
         </div>
       </div>
     </div>
