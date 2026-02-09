@@ -1015,7 +1015,7 @@ public class ASTNodeInterpreter {
     for (int i = 0; i < eqnSystem.getRateRulesRoots().size(); i++) {
       RateRuleValue rrRoot = rateRulesRoots.get(i);
       if (rrRoot.getVariable().equals(sBase.getId())) {
-        return eqnSystem.getRateRulesRoots().get(i).getNodeObject().compileDouble(time, 0d);
+        
       }
     }
     double[] changeRate = eqnSystem.getChangeRate();
@@ -1023,6 +1023,6 @@ public class ASTNodeInterpreter {
       return changeRate[eqnSystem.getSymbolHash().get(sBase.getId())];
     } else {
       return 0d;
-    }
+    }return eqnSystem.getRateRulesRoots().get(i).getNodeObject().compileDouble(time, delay);
   }
 }
