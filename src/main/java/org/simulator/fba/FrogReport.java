@@ -22,7 +22,6 @@
  * ---------------------------------------------------------------------
  */
 package org.simulator.fba;
-import javax.xml.stream.XMLStreamException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
@@ -38,24 +37,23 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import javax.xml.stream.XMLStreamException;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.SBMLReader;
+import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
+
+import scpsolver.lpsolver.LinearProgramSolver;
 
 /**
  * Utility for creating FROG reference files (JSON) for FBA models.
  * <p>
  * The generated JSON follows the FROG schema version 1 as implemented in
  * https://github.com/matthiaskoenig/fbc_curation.
- * <p>
- * This initial implementation focuses on:
- * <ul>
- *   <li>metadata (model, software, solver, environment)</li>
- *   <li>the primary FBA objective</li>
- *   <li>empty sections for FVA and deletion analyses (placeholders for future work)</li>
- * </ul>
  */
 public final class FrogReport {
 
@@ -66,7 +64,7 @@ public final class FrogReport {
   }
 
   /**
-   * Create a FROG JSON report for the given SBML FBC model.
+   * Convenience method: read the model from a file and write a FROG report.
    *
    * @param modelFile  SBML file with FBC information
    * @param outputFile JSON file to write the FROG report to
@@ -78,13 +76,50 @@ public final class FrogReport {
       throw new IllegalArgumentException("Model file does not exist: " + modelFile);
     }
 
-    SBMLDocument doc = SBMLReader.read(modelFile);
-    Model model = doc.getModel();
+    SBMLDocument document = SBMLReader.read(modelFile);
+    String modelLocation = modelFile.getName();
+    String modelMd5 = computeMD5(modelFile);
+
+    writeFrogReportInternal(document, modelLocation, modelMd5, outputFile);
+  }
+
+  /**
+   * Create a FROG JSON report for the given SBML FBC model.
+   *
+   * @param document   SBMLDocument with FBC information
+   * @param outputFile JSON file to write the FROG report to
+   */
+  public static void writeFrogReport(SBMLDocument document, File outputFile)
+      throws SBMLException, ModelOverdeterminedException, IOException {
+
+    if (document == null || !document.isSetModel()) {
+      throw new IllegalArgumentException("SBMLDocument does not contain a model.");
+    }
+
+    Model model = document.getModel();
     String modelId = model.isSetId() ? model.getId()
-        : (model.isSetName() ? model.getName() : modelFile.getName());
+        : (model.isSetName() ? model.getName() : "model");
+
+    // when called with SBMLDocument directly, we don't know the file path/MD5
+    writeFrogReportInternal(document, modelId, null, outputFile);
+  }
+
+  /**
+   * Internal helper that does the actual work once we have an SBMLDocument and
+   * optional location/MD5 information.
+   */
+  private static void writeFrogReportInternal(SBMLDocument document,
+                                              String modelLocation,
+                                              String modelMd5,
+                                              File outputFile)
+      throws SBMLException, ModelOverdeterminedException, IOException {
+
+    Model model = document.getModel();
+    String modelId = model.isSetId() ? model.getId()
+        : (model.isSetName() ? model.getName() : modelLocation);
 
     // Run FBA
-    FluxBalanceAnalysis solver = new FluxBalanceAnalysis(doc);
+    FluxBalanceAnalysis solver = new FluxBalanceAnalysis(document);
     boolean solved = false;
     try {
       solved = solver.solve();
@@ -94,14 +129,11 @@ public final class FrogReport {
 
     String status = solved ? "optimal" : "infeasible";
     double objectiveValue = solved ? solver.getObjectiveValue() : 0.0;
-
     Map<String, Double> fluxes = solved ? solver.getSolution() : null;
 
-    // metadata
-    String modelLocation = modelFile.getName(); // location within archive; here just filename
-    String modelMd5 = computeMD5(modelFile);
-
+    // metadata fields
     String frogId = "sbscl-" + UUID.randomUUID();
+
     String sbsclVersion = FrogReport.class.getPackage() != null
         ? FrogReport.class.getPackage().getImplementationVersion()
         : null;
@@ -112,94 +144,79 @@ public final class FrogReport {
     String os = System.getProperty("os.name", "unknown") + " "
         + System.getProperty("os.arch", "");
 
-    // Build JSON
-    StringBuilder json = new StringBuilder();
-    json.append("{\n");
+    // detect LP solver name
+    LinearProgramSolver lpSolver = solver.getLinearProgramSolver();
+    String solverName = (lpSolver != null) ? lpSolver.getClass().getSimpleName() : "unknown";
+
+    // Build JSON using org.json
+    JSONObject frog = new JSONObject();
 
     // metadata
-    json.append("  \"metadata\": {\n");
-    json.append("    \"model.location\": ").append(jsonString(modelLocation)).append(",\n");
-    json.append("    \"model.md5\": ")
-        .append(modelMd5 != null ? jsonString(modelMd5) : "null").append(",\n");
-    json.append("    \"frog_id\": ").append(jsonString(frogId)).append(",\n");
+    JSONObject metadata = new JSONObject();
+    metadata.put("model.location", modelLocation != null ? modelLocation : modelId);
+    metadata.put("model.md5", modelMd5 != null ? modelMd5 : JSONObject.NULL);
+    metadata.put("frog_id", frogId);
 
-    // frog.software
-    json.append("    \"frog.software\": {\n");
-    json.append("      \"name\": ").append(jsonString("SBSCL FROG")).append(",\n");
-    json.append("      \"version\": ").append(jsonString(sbsclVersion)).append(",\n");
-    json.append("      \"url\": ").append(jsonString("https://github.com/draeger-lab/SBSCL"))
-        .append("\n");
-    json.append("    },\n");
+    JSONObject frogSoftware = new JSONObject()
+        .put("name", "SBSCL FROG")
+        .put("version", sbsclVersion)
+        .put("url", "https://github.com/draeger-lab/SBSCL");
+    metadata.put("frog.software", frogSoftware);
 
-    // frog.curators – currently a technical curator entry
-    json.append("    \"frog.curators\": [\n");
-    json.append("      {\n");
-    json.append("        \"familyName\": ").append(jsonString("SBSCL")).append(",\n");
-    json.append("        \"givenName\": ").append(jsonString("Team")).append(",\n");
-    json.append("        \"email\": null,\n");
-    json.append("        \"organization\": ").append(jsonString("SBSCL")).append(",\n");
-    json.append("        \"site\": null,\n");
-    json.append("        \"orcid\": null\n");
-    json.append("      }\n");
-    json.append("    ],\n");
+    JSONArray curators = new JSONArray();
+    curators.put(new JSONObject()
+        .put("familyName", "SBSCL")
+        .put("givenName", "Team")
+        .put("email", JSONObject.NULL)
+        .put("organization", "SBSCL")
+        .put("site", JSONObject.NULL)
+        .put("orcid", JSONObject.NULL));
+    metadata.put("frog.curators", curators);
 
-    // software (FBA implementation)
-    json.append("    \"software\": {\n");
-    json.append("      \"name\": ").append(jsonString("SBSCL FluxBalanceAnalysis")).append(",\n");
-    json.append("      \"version\": ").append(jsonString(sbsclVersion)).append(",\n");
-    json.append("      \"url\": ").append(jsonString("https://github.com/draeger-lab/SBSCL"))
-        .append("\n");
-    json.append("    },\n");
+    JSONObject software = new JSONObject()
+        .put("name", "SBSCL FluxBalanceAnalysis")
+        .put("version", sbsclVersion)
+        .put("url", "https://github.com/draeger-lab/SBSCL");
+    metadata.put("software", software);
 
-    // solver (LP solver)
-    json.append("    \"solver\": {\n");
-    json.append("      \"name\": ").append(jsonString("SCPSolver/GLPK")).append(",\n");
-    json.append("      \"version\": ").append(jsonString("unknown")).append(",\n");
-    json.append("      \"url\": ").append(jsonString("https://github.com/optimatika/scpsolver"))
-        .append("\n");
-    json.append("    },\n");
+    JSONObject solverJson = new JSONObject()
+        .put("name", solverName)
+        .put("version", "unknown")
+        .put("url", "https://github.com/optimatika/scpsolver");
+    metadata.put("solver", solverJson);
 
-    json.append("    \"environment\": ").append(jsonString(os.trim())).append("\n");
-    json.append("  },\n");
+    metadata.put("environment", os.trim());
+    frog.put("metadata", metadata);
 
     // objectives
-    json.append("  \"objectives\": {\n");
-    json.append("    \"objectives\": [\n");
-    json.append("      {\n");
-    json.append("        \"model\": ").append(jsonString(modelId)).append(",\n");
-    json.append("        \"objective\": ")
-        .append(jsonString(solver.getActiveObjective())).append(",\n");
-    json.append("        \"status\": ").append(jsonString(status)).append(",\n");
-    json.append("        \"value\": ").append(objectiveValue).append("\n");
-    json.append("      }\n");
-    json.append("    ]\n");
-    json.append("  },\n");
+    JSONArray objectivesArray = new JSONArray();
+    JSONObject objective = new JSONObject()
+        .put("model", modelId)
+        .put("objective", solver.getActiveObjective())
+        .put("status", status)
+        .put("value", objectiveValue);
+    objectivesArray.put(objective);
+    frog.put("objectives", new JSONObject().put("objectives", objectivesArray));
 
-    // fva – currently no dedicated FVA; keep empty list as placeholder
-    json.append("  \"fva\": {\n");
-    json.append("    \"fva\": []\n");
-    json.append("  },\n");
+    // fva – currently empty placeholder
+    frog.put("fva", new JSONObject().put("fva", new JSONArray()));
 
-    // reaction deletions – placeholder, empty list
-    json.append("  \"reaction_deletions\": {\n");
-    json.append("    \"deletions\": []\n");
-    json.append("  },\n");
+    // reaction deletions – placeholder
+    frog.put("reaction_deletions", new JSONObject().put("deletions", new JSONArray()));
 
-    // gene deletions – placeholder, empty list
-    json.append("  \"gene_deletions\": {\n");
-    json.append("    \"deletions\": []\n");
-    json.append("  }\n");
+    // gene deletions – placeholder
+    frog.put("gene_deletions", new JSONObject().put("deletions", new JSONArray()));
 
-    json.append("}\n");
+    // If needed later, fluxes could be used to populate FVA-like entries
 
-    // Write file
+    // Write JSON file
     if (outputFile.getParentFile() != null && !outputFile.getParentFile().exists()) {
       if (!outputFile.getParentFile().mkdirs()) {
         logger.warning("Could not create directories for output file: " + outputFile);
       }
     }
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
-      writer.write(json.toString());
+      writer.write(frog.toString(2)); // pretty-printed with indentation
     }
   }
 
@@ -232,49 +249,4 @@ public final class FrogReport {
     }
     return sb.toString();
   }
-
-  /**
-   * Quote and escape a Java string as JSON string literal.
-   */
-  private static String jsonString(String value) {
-    if (value == null) {
-      return "null";
-    }
-    StringBuilder sb = new StringBuilder();
-    sb.append('"');
-    for (int i = 0; i < value.length(); i++) {
-      char c = value.charAt(i);
-      switch (c) {
-        case '"':
-          sb.append("\\\"");
-          break;
-        case '\\':
-          sb.append("\\\\");
-          break;
-        case '\b':
-          sb.append("\\b");
-          break;
-        case '\f':
-          sb.append("\\f");
-          break;
-        case '\n':
-          sb.append("\\n");
-          break;
-        case '\r':
-          sb.append("\\r");
-          break;
-        case '\t':
-          sb.append("\\t");
-          break;
-        default:
-          if (c < 0x20) {
-            sb.append(String.format(Locale.ROOT, "\\u%04x", (int) c));
-          } else {
-            sb.append(c);
-          }
-      }
-    }
-    sb.append('"');
-    return sb.toString();
-  }
-}   
+}
