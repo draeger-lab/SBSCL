@@ -89,4 +89,6 @@ Many thanks to B. Kotcon, S. Mesuro, D. Rozenfeld, A. Yodpinyanee, A. Perez, E. 
 
 We like to thank [Michael T. Cooling](http://www.abi.auckland.ac.nz/uoa/mike-cooling/), University of Auckland, New Zealand, for fruitful discussion.
 
+We thank [Deepak Yadav](https://www.linkedin.com/in/deepak-yadav-97aa22297/) for contributing updates to the SBSCL project website and documentation.
+
 This work was funded by the Federal Ministry of Education and Research ([BMBF](http://www.bmbf.de/en/), Germany) as part of the [Virtual Liver Network](http://www.virtual-liver.de).
