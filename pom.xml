@@ -63,7 +63,7 @@
   </description>
 
   <properties>
-    <jdk.version>1.8</jdk.version>
+    <jdk.version>17</jdk.version>
     <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
     <year>${maven.build.timestamp}</year>
     <!-- This property is used for filtering the variable ${year} in some resource
@@ -456,6 +456,21 @@
       <groupId>org.jlibsedml</groupId>
       <artifactId>jlibsedml</artifactId>
       <version>2.2.3</version>
+      <exclusions>
+        <!-- Avoid legacy XML parser stack; rely on JDK JAXP instead -->
+        <exclusion>
+          <groupId>xerces</groupId>
+          <artifactId>xercesImpl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>xalan</groupId>
+          <artifactId>xalan</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -615,12 +630,13 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.3</version>
+          <!-- Newer plugin; supports Java 17+ cleanly -->
+          <version>3.11.0</version>
           <configuration>
-            <source>${jdk.version}</source>
-            <target>${jdk.version}</target>
-            <!-- <excludes> <exclude>**/org/simulator/fba/COBRAsolver.java</exclude>
-              <exclude>**/org/simulator/fba/COBRAsolverExample.java</exclude> </excludes> -->
+            <!-- Compile against Java 17 API and bytecode -->
+            <release>17</release>
+
+            <!-- Keep the existing excludes configuration -->
             <excludes>
               <exclude>org/simulator/examples/**</exclude>
             </excludes>
@@ -628,39 +644,6 @@
               <testExclude>org/simulator/**</testExclude>
             </testExcludes>
           </configuration>
-        </plugin>
-
-        <!-- Assemble executable JAR -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.6</version>
-          <configuration>
-            <archive>
-              <manifest>
-                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-              </manifest>
-            </archive>
-            <descriptorRefs>
-              <descriptorRef>jar-with-dependencies</descriptorRef>
-            </descriptorRefs>
-            <finalName>${project.artifactId}-${project.version}</finalName>
-            <appendAssemblyId>false</appendAssemblyId>
-            <descriptor>src/assembly/assembly.xml
-            </descriptor> <!-- Details of the assembly are described in this file -->
-          </configuration>
-          <executions>
-            <execution>
-              <id>make-assembly</id> <!-- this is used for inheritance merges -->
-              <phase>package</phase> <!-- bind to the packaging phase -->
-              <goals>
-                <!-- This will create a JAR with all dependencies -->
-                <!-- mvn clean compile package assembly:single -->
-                <goal>single</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
         <!-- This plug-in copies resources from target/site to docs/ so Github can render it  -->
         <plugin>
