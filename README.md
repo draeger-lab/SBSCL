@@ -50,7 +50,7 @@ Bio-Informatics, Libraries, Simulations
 
 ### Requirements
 
-SBSCL requires **Java 17 or newer**. Development and testing are done with JDK 17 and more recent JDKs (e.g. JDK 22+).  
+SBSCL requires **Java 17 or newer**. Development and testing are done with JDK 17 and more recent JDKs (e.g., JDK 22+).  
 Make sure your `JAVA_HOME` points to a JDK ≥ 17 before building the project with Maven.
 
 ### For users
