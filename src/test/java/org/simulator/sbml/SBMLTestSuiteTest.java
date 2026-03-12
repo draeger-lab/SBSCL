@@ -110,8 +110,8 @@ public class SBMLTestSuiteTest {
         "01507", "01508", "01511",
         // failing due to long run time (see issue #39)
         "01287", "01592",
-        // failing due to delay in rateOf (see issue #46)
-        "01400", "01401", "01403", "01406", "01409",
+        // previously failing due to delay in rateOf (see issue #46)
+        // (re-enabled after fix in ASTNodeInterpreter.rateOf)
         // failing due to event triggers before mentioned condition (see issue #44)
         "01444", "01445", "01446", "01447", "01448",
         "01456",
