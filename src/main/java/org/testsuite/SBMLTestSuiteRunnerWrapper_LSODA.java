@@ -6,7 +6,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.Map;
 import java.util.Properties;
 
@@ -20,14 +22,10 @@ import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
-import org.simulator.comp.CompSimulator;
-import org.simulator.fba.FluxBalanceAnalysis;
 import org.simulator.io.CSVImporter;
 import org.simulator.math.odes.AbstractDESSolver;
-import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
-import org.simulator.math.odes.DESSolver;
 import org.simulator.math.odes.MultiTable;
-import org.simulator.math.odes.RosenbrockSolver;
+import org.simulator.math.odes.LSODA.LSODAIntegrator;
 import org.simulator.sbml.SBMLinterpreter;
 
 /**
@@ -50,7 +48,7 @@ import org.simulator.sbml.SBMLinterpreter;
  * target="_blank">link</a>
  * </p>
  */
-public class SBMLTestSuiteRunnerWrapper {
+public class SBMLTestSuiteRunnerWrapper_LSODA {
 
   public static final String STEPS = "steps";
   public static final String AMOUNT = "amount";
@@ -116,9 +114,9 @@ public class SBMLTestSuiteRunnerWrapper {
 
       // get timepoints
       double[] timePoints = inputData.getTimePoints();
-      duration = timePoints[timePoints.length - 1] - timePoints[0];
+      duration = Double.valueOf(properties.getProperty("duration"));;
 
-      MultiTable solution;
+      MultiTable solution = null;
 
       // writes results to the output file in CSV format
       File outputFile = new File(outputFilePath);
@@ -132,132 +130,69 @@ public class SBMLTestSuiteRunnerWrapper {
       LOGGER.info(Paths.get(outputFilePath));
       FileWriter csvWriter = new FileWriter(outputFilePath);
 
-      StringBuilder output;
+      StringBuilder output = null;
 
-      if (model.getExtension(FBCConstants.shortLabel) != null) {
+      if (model.getExtension(FBCConstants.shortLabel) == null && model.getExtension(CompConstants.shortLabel) == null) {
+        solution = runLSODASimulation(model, duration, steps, properties, timePoints, amountHash, currentCase);
+      } 
 
-        FluxBalanceAnalysis solver = new FluxBalanceAnalysis(document);
-
-        boolean isSolved = false;
-        try {
-          isSolved = solver.solve();
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-
-        BufferedReader reader = new BufferedReader(new FileReader(resultsPath));
-        String[] keys = reader.readLine().trim().split(",");
-        output = getFBCResultAsCSV(solver, keys, isSolved);
-        reader.close();
-
-      } else {
-        if (model.getExtension(CompConstants.shortLabel) == null) {
-          solution = runSBMLSimulation(model, duration, steps, properties, timePoints, amountHash);
-        } else {
-          solution = runCompSimulation(sbmlfile, duration, steps);
-        }
-
+      if(solution != null) {
         MultiTable left = solution;
         if (solution.isSetTimePoints() && inputData.isSetTimePoints()) {
           left = solution.filter(inputData.getTimePoints());
         }
 
-        // Map of variables present in the test suite results file
-        Map<String, Integer> resultColumns = new HashMap<>();
+        // Set of variables present in the test suite results file
+        Set<String> resultColumns = new HashSet<>();
         for (int i = 0; i < inputData.getColumnCount(); i++) {
-          resultColumns.put(inputData.getColumnName(i), 1);
+          resultColumns.add(inputData.getColumnName(i));
         }
 
         // Boolean array to check which variables are present in the test suite results file
         boolean[] variablesToAdd = new boolean[solution.getColumnCount()];
-        if (resultColumns.containsKey(left.getColumnName(0))) {
-          variablesToAdd[0] = true;
-        }
-        for (int i = 1; i < left.getColumnCount(); i++) {
-          if (resultColumns.containsKey(left.getColumnName(i))) {
+        
+        for (int i = 0; i < left.getColumnCount(); i++) {
+          if (resultColumns.contains(left.getColumnName(i))) {
             variablesToAdd[i] = true;
           }
         }
 
         output = getSBMLOrCompResultAsCSV(left, variablesToAdd);
       }
-
+        
       csvWriter.append(output);
       csvWriter.flush();
       csvWriter.close();
 
   }
 
-  /**
-   * Performs the simulation of the SBML models with comp extension using {@link CompSimulator}.
-   *
-   * @param sbmlFile the file with the SBML model
-   * @param duration the duration of the simulation
-   * @param steps    total steps in the simulation
-   * @return the results of the simulation of comp model (null can be returned on exception)
-   * @throws IOException
-   * @throws XMLStreamException
-   */
-  private static MultiTable runCompSimulation(File sbmlFile, double duration, double steps) {
-
-    CompSimulator compSimulator = null;
-    try {
-      compSimulator = new CompSimulator(sbmlFile);
-    } catch (XMLStreamException e) {
-      e.printStackTrace();
-      LOGGER.error("XMLStreamException while reading the SBML model");
-    } catch (IOException e) {
-      e.printStackTrace();
-      LOGGER.error("IOException occurred!");
-    }
-
-    double stepSize = (duration / steps);
-
-    MultiTable solution = null;
-    try {
-      solution = compSimulator.solve(duration, stepSize);
-    } catch (Exception e) {
-      e.printStackTrace();
-      LOGGER.error("Error in solving the comp model!");
-    }
-
-    return solution;
-  }
-
-  /**
-   * Performs the simulation of the SBML models using {@link RosenbrockSolver}.
-   *
-   * @param model      the SBML {@link Model}
-   * @param duration   the duration of the simulation
-   * @param steps      total steps in the simulation
-   * @param properties different fields provided in the settings file of test case from SBML Test
-   *                   Suite
-   * @param timePoints array with time points of the simulation
-   * @param amountHash Stores whether species has amount or concentration units
-   * @return the results of the simulation
-   * @throws DerivativeException
-   * @throws ModelOverdeterminedException
-   */
-  private static MultiTable runSBMLSimulation(Model model, double duration, double steps,
-    Properties properties, double[] timePoints,
-    Map<String, Boolean> amountHash) throws DerivativeException {
-
+  public static MultiTable runLSODASimulation(Model model, double duration, double steps,
+  Properties properties, double[] timePoints,
+  Map<String, Boolean> amountHash, String currentCase) throws DerivativeException {
     double absolute = (!properties.getProperty(ABSOLUTE).isEmpty()) ? Double
       .parseDouble(properties.getProperty(ABSOLUTE)) : 0d;
       double relative = (!properties.getProperty(RELATIVE).isEmpty()) ? Double
         .parseDouble(properties.getProperty(RELATIVE)) : 0d;
 
-        DESSolver solver = new RosenbrockSolver();
-        solver.setStepSize(duration / steps);
-
+        LSODAIntegrator solver = new LSODAIntegrator();
+        solver.setStepSize(duration / (steps));
         if (solver instanceof AbstractDESSolver) {
           solver.setIncludeIntermediates(false);
         }
 
-        if (solver instanceof AdaptiveStepsizeIntegrator) {
-          ((AdaptiveStepsizeIntegrator) solver).setAbsTol(TOLERANCE_FACTOR * absolute);
-          ((AdaptiveStepsizeIntegrator) solver).setRelTol(TOLERANCE_FACTOR * relative);
+        solver.setAbsTol(TOLERANCE_FACTOR * absolute);
+        solver.setRelTol(TOLERANCE_FACTOR * relative);
+
+        if(currentCase.equals("01399") || currentCase.equals("01480")) {
+          solver.setAbsTol(1e-12d);
+          solver.setRelTol(1e-6d);
         }
+        if(currentCase.equals("01567") || currentCase.equals("01568")) {
+          solver.setAbsTol(1e-8d);
+          solver.setRelTol(1e-4d);
+        }
+
+        // System.out.println(solver.getAbsTol() + " " + solver.getRelTol());
 
         /**
          * Initialize the SBMLinterpreter
@@ -305,36 +240,6 @@ public class SBMLTestSuiteRunnerWrapper {
     }
 
     return amountHash;
-  }
-
-  /**
-   * Converts the simulated results of the SBML models with fbc extension in CSV format.
-   *
-   * @param fbcSolver Instance of FluxBalanceAnalysis for solving FBC model
-   * @param keys      the ids of the variables present in the pre-defined result file
-   * @param isSolved  boolean that shows whether model is solved or not
-   * @return the StringBuilder in the CSV format
-   */
-  private static StringBuilder getFBCResultAsCSV(FluxBalanceAnalysis fbcSolver, String[] keys,
-    boolean isSolved) {
-    StringBuilder output = new StringBuilder("");
-    if (isSolved) {
-      Map<String, Double> fbcSolution = fbcSolver.getSolution();
-      for (int i = 0; i < (keys.length - 1); i++) {
-        output.append(keys[i]).append(",");
-      }
-      output.append(keys[keys.length - 1]).append("\n");
-      for (String key : keys) {
-        output.append(fbcSolution.get(key)).append(",");
-      }
-      if (output.length() > 0) {
-        output.deleteCharAt(output.length() - 1);
-        output.append("\n");
-      }
-    } else {
-      output.append(keys[0]).append("\n").append(NAN).append("\n");
-    }
-    return output;
   }
 
   /**

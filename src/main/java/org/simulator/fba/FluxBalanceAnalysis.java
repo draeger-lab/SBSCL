@@ -29,6 +29,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.Model;
@@ -47,6 +52,20 @@ import org.optsolvx.solver.OptSolvXConfig;
 
 import org.simulator.optsolvx.FbaToOptSolvX;
 
+import org.sbml.jsbml.util.Pair;
+import static org.sbml.jsbml.util.Pair.pairOf;
+import org.sbml.jsbml.util.SBMLtools;
+import org.sbml.jsbml.validator.ModelOverdeterminedException;
+import org.simulator.sbml.SBMLinterpreter;
+import org.simulator.sbml.astnode.ASTNodeValue;
+
+import scpsolver.constraints.LinearBiggerThanEqualsConstraint;
+import scpsolver.constraints.LinearConstraint;
+import scpsolver.constraints.LinearEqualsConstraint;
+import scpsolver.constraints.LinearSmallerThanEqualsConstraint;
+import scpsolver.lpsolver.LinearProgramSolver;
+import scpsolver.lpsolver.SolverFactory;
+import scpsolver.problems.LinearProgram;
 
 /**
  * Support for Flux Balance Analysis (FBA).
@@ -230,4 +249,51 @@ public class FluxBalanceAnalysis {
         return activeObjective;
     }
 
+  /**
+   * Gets the id of the active objective function
+   *
+   * @return
+   */
+  public String getActiveObjective() {
+    return activeObjective;
+  }
+
+public static class CPLEXConverter {
+        public static StringBuffer convertToCPLEX(LinearProgram lp) {
+            StringBuffer cplex = new StringBuffer();
+            cplex.append("Minimize\n");
+            cplex.append(" obj: ");
+            for (int i = 0; i < lp.getC().length; i++) {
+                cplex.append(lp.getC()[i] + " x" + i);
+                if (i < lp.getC().length - 1) {
+                    cplex.append(" + ");
+                }
+            }
+            cplex.append("\n");
+            cplex.append("Subject To\n");
+            for (int i = 0; i < lp.getConstraints().size(); i++) {
+                LinearConstraint lc = (LinearConstraint) lp.getConstraints().get(i);
+                cplex.append(" c" + i + ": ");
+                for (int j = 0; j < lc.getC().length; j++) {
+                    cplex.append(lc.getC()[j] + " x" + j);
+                    if (j < lc.getC().length - 1) {
+                        cplex.append(" + ");
+                    }
+                }
+                if (lc instanceof LinearEqualsConstraint) {
+                    cplex.append(" = " + lc.getRHS() + "\n");
+                } else if (lc instanceof LinearBiggerThanEqualsConstraint) {
+                    cplex.append(" >= " + lc.getRHS() + "\n");
+                } else if (lc instanceof LinearSmallerThanEqualsConstraint) {
+                    cplex.append(" <= " + lc.getRHS() + "\n");
+                }
+            }
+            cplex.append("Bounds\n");
+            for (int i = 0; i < lp.getLowerbound().length; i++) {
+                cplex.append(" " + lp.getLowerbound()[i] + " <= x" + i + " <= " + lp.getUpperbound()[i] + "\n");
+            }
+            cplex.append("End");
+            return cplex;
+        }
+    }
 }

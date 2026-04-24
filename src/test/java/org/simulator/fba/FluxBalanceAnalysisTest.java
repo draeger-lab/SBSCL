@@ -1,21 +1,19 @@
 package org.simulator.fba;
 
-import static org.junit.Assert.*;
-
-import org.junit.Ignore;
-import org.junit.Test;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
+
 import javax.xml.stream.XMLStreamException;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import org.junit.Test;
 import org.sbml.jsbml.JSBML;
-import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
-
 import org.simulator.TestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,5 +65,4 @@ public class FluxBalanceAnalysisTest {
     gzis.close();
     is.close();
   }
-
 }
