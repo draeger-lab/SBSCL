@@ -47,6 +47,6 @@ For detailed instructions on setting up the environment and running the SBML Tes
 If you have questions or need assistance, please feel free to:
 
 *   Open an issue on our [Issue Tracker](https://github.com/draeger-lab/SBSCL/issues).
-*   Or you may ask to any maintainer.
+*   Or reach out to any maintainer.
 
 We appreciate your contributions and look forward to collaborating with you!
