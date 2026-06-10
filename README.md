@@ -51,8 +51,9 @@ Bio-Informatics, Libraries, Simulations
 ### For users
 For an introduction on how to use this library for simulation, please refer to the [UserGuidelines.md](UserGuidelines.md) file. There you can find explanations on how to simulate different models and code snippets, including the links to the complete code examples.
 
-### For developers
-To start working on SBSCL, you should first clone the repository and then refer to [INSTALL.md](INSTALL.md) which gives instruction to run maven build. Once a maven build is ran, the binaries will be generated in the target folder. This folder will also include a JAR files of the simulation core library to work with. 
+### For Contributors
+New contributors can refer to [CONTRIBUTING.md](CONTRIBUTING.md) which gives instruction about the build process and contribution guidelines. <br>
+You can also refer to [INSTALL.md](INSTALL.md) which gives instruction to run maven build. Once a maven build is ran, the binaries will be generated in the target folder. This folder will also include a JAR files of the simulation core library to work with. 
 
 For an introduction on how things currently work in SBSCL to simulate different models, please refer to the sequence diagrams present in the [/dev/diagrams/](https://github.com/draeger-lab/SBSCL/tree/master/dev/diagrams/) where you can understand complete workflow of the library. Once you get familiarized with how things work, please open the javadoc [homepage](https://draeger-lab.github.io/SBSCL/apidocs/overview-summary.html) where you can find the complete information about the library properly documented. For formatting the code-base, please refer to [formatting-guidelines](https://github.com/draeger-lab/SBSCL/tree/master/dev/formatting-guidelines/).
 
@@ -107,6 +108,8 @@ The package structure in more detail:
     |- test             -> JUnit test files along with resources required
     |- site             -> Contains markup files, old javadoc, site.xml and other website 
                             resources 
+ |- CONTRIBUTING.md     -> Contains the guidelines and instructions for new contributors
+ |- INSTALL.md          -> Contains the instruction to run maven build
  |- LICENSE.txt         -> the license, under which this project is distributed
  |- pom.xml             -> Maven file for building the project
  |- README.md           -> this file
