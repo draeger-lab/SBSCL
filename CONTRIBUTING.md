@@ -26,7 +26,7 @@ For feature requests or enhancements, please open a new issue on our [Issue Trac
 
 1.  **Fork** the repository and **clone** it locally.
 2.  **Create a new branch** for your changes: `git checkout -b your-feature-name`.
-3.  **Make your changes** and ensure they adhere to general coding style.
+3.  **Make your changes** and ensure they adhere to the general coding style.
 4.  **Write tests** for your changes to ensure functionality and prevent regressions.
 5.  **Run the test suite**:
     *   Execute existing unit/integration tests: `mvn test`
