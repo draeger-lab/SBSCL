@@ -82,6 +82,57 @@ Further examples can be found directly within this repository in the [Examples P
 * How to run a [stochastic simulation](https://github.com/draeger-lab/SBSCL/blob/master/src/main/java/fern/Start.java)
 
 
+## Using OptSolvX (LP) in SBSCL
+
+SBSCL integrates the OptSolvX linear programming abstraction layer [OptSolvX Repo](https://github.com/draeger-lab/OptSolvX).
+
+### OptSolvX dependency (temporary)
+
+OptSolvX is not yet available on Maven Central and must be installed locally.
+
+To build SBSCL with OptSolvX support:
+1. Build OptSolvX locally in the **OptSolvX repo**:
+   ```bash 
+   mvn -P compat8 -DskipTests clean package
+   ```
+2. Activate the profile in the SBSCL repo:
+    ```bash 
+   mvn -DskipTests clean package
+    ```
+3. SBSCL resolves `org.optsolvx:optsolvx:0.1.0-SNAPSHOT:jar:jdk8` from the local Maven repository.
+
+### Run the OptSolvX demo
+
+* In your IDE, run: `org.simulator.optsolvx.OptSolvXDemo`.
+* The demo builds a tiny LP and solves it via OptSolvX (backend selectable via `-Doptsolvx.solver=commons-math|ojalgo`).
+* Make sure the OptSolvX **jdk8** artifact is on the classpath (declared in SBSCL’s `pom.xml`).
+
+*Note:* FBA in SBSCL now uses OptSolvX by default.
+
+### Enable debug logs
+
+Create the adapter with `debug = true`:
+
+```java
+LPSolverAdapter backend =
+        OptSolvXConfig.resolve(lpModel, System.getProperty("optsolvx.solver"));
+LPSolverAdapter solver =
+        new OptSolvXSolverAdapter(backend, true);
+```
+
+**Solver selection behavior**
+
+* You can pick a backend via `-Doptsolvx.solver=ojalgo` or env `OPTSOLVX_SOLVER=ojalgo`.
+* If an explicit solver name is provided and unknown, OptSolvX fails fast with an
+`IllegalArgumentException`.  
+* If no solver is specified, `commons-math` is used as the default backend.
+
+#### SBML/FBC → LP bridge (initial)
+
+`FbaToOptSolvX` implements a minimal SBML/FBC → LP mapping used by FBA.
+Advanced SBML features are intentionally out of scope.
+
+
 ### Comparison to Similar Libraries
 
 To compare SBSCL to other simulation engines and to benchmark its predictions and results, a separate project, [SBSCL simulator comparison](https://github.com/matthiaskoenig/sbscl-simulator-comparison), is available.
@@ -119,6 +170,11 @@ The package structure in more detail:
 ## Troubleshooting
 
 Please e-mail any bugs, problems, suggestions, or issues regarding this library to the bug tracker at https://github.com/draeger-lab/SBSCL/issues
+
+### Note on XML parsers (JDK ≥ 17)
+
+SBSCL excludes legacy `xercesImpl`, `xml-apis`, and `xalan` (pulled transitively by `jlibsedml`) to avoid JAXP compatibility issues on modern JDKs (e.g., an `AbstractMethodError` during Log4j2 XML configuration).  
+If you rely on specific Xerces/Xalan features, please open an issue so we can provide an opt-in solution
 
 ## Licensing terms
 
