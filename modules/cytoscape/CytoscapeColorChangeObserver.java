@@ -154,7 +154,6 @@ public class CytoscapeColorChangeObserver extends Observer {
 
     }
   }
-//	private double lastTime = -1;
 
   @Override
   public void activateReaction(int mu, double tau, FireType fireType, int times) {
@@ -166,23 +165,6 @@ public class CytoscapeColorChangeObserver extends Observer {
     style.setReactionFire(net.getReactionView(mu).getNode());
     activated.add(net.getReactionView(mu));
     net.getNetworkViewObject().redrawGraph(true, true);
-
-//		try {
-//			if ((int)(lastTime/0.1) < (int)(getSimulator().getTime()/0.1)) { 
-//				Component cmp = net.getNetworkViewObject().getComponent();
-//				BufferedImage img = new BufferedImage(cmp.getWidth(),cmp.getHeight(),BufferedImage.TYPE_INT_ARGB);
-//				Graphics2D g = (Graphics2D) img.getGraphics();
-//				g.setColor(Color.BLACK);
-//				g.drawString("t="+Math.round(getSimulator().getTime()*10)/10.0, 1, 1);
-//				cmp.paintAll(g);
-//				
-//				ImageIO.write(img,"png",new File(String.format("../Uni/images/cyto/cyto%f.png",getSimulator().getTime())));
-//			}
-//			lastTime = getSimulator().getTime();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
   }
 
   protected static class ColorChangingNodeAppeareanceCalculator extends NodeAppearanceCalculator {
@@ -196,7 +178,6 @@ public class CytoscapeColorChangeObserver extends Observer {
 
     @Override
     public void calculateNodeAppearance(NodeAppearance app, Node node, CyNetwork net) {
-      // TODO Auto-generated method stub
       super.calculateNodeAppearance(app, node, net);
 			if (colorMapping.containsKey(node)) {
 				app.setFillColor(colorMapping.get(node));
@@ -214,8 +195,9 @@ public class CytoscapeColorChangeObserver extends Observer {
 
   @Override
   public void theta(double theta) {
-    // TODO Auto-generated method stub
-
+    // Intentionally left blank. 
+    // Color updates are processed during step() and activateReaction(), 
+    // so explicit theta tracking is not required for this observer.
   }
 
 }
