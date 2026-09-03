@@ -8,10 +8,13 @@ on:
     branches:
       - master
 
+permissions:
+   contents: read
+
 jobs:
   build:
     name: Build and Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
