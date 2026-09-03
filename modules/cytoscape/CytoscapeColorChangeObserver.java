@@ -196,7 +196,7 @@ public class CytoscapeColorChangeObserver extends Observer {
   @Override
   public void theta(double theta) {
     // Intentionally left blank. 
-    // Color updates are processed during step() and activateReaction(), 
+    // Color updates are processed during step() and activateReaction(),
     // so explicit theta tracking is not required for this observer.
   }
 
