@@ -5,52 +5,48 @@ import fern.simulation.Simulator.FireType;
 import fern.simulation.observer.TriggerObserver;
 import java.util.HashMap;
 import java.util.Map;
+import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.sbml.SBMLinterpreter;
+import org.simulator.sbml.astnode.ASTNodeValue;
 
 /**
  * Observer which handles an event of a sbml model.
+ * Refactored to use native ASTNode evaluation instead of MathTree.
  *
  * @author Florian Erhard
  */
 public class SBMLEventHandlerObserver extends TriggerObserver {
 
   private String name;
-  private MathTree trigger;
-  private MathTree delay;
+  private ASTNode triggerAST;
+  private ASTNode delayAST;
   private SBMLNetwork net;
-  private Map<String, MathTree> variableAssignment;
-  private Map<String, MathTree> parameterAssignment;
+  private SBMLinterpreter interpreter;
+  private Map<String, ASTNode> variableAssignment;
+  private Map<String, ASTNode> parameterAssignment;
   private boolean lastStepTriggered;
 
-  /**
-   * Creates the observer.
-   *
-   * @param sim         the simulator
-   * @param net         the sbml network
-   * @param interpreter the sbmlInterpreter instance to calculate the node values
-   * @param event       the event object of the sbml model
-   */
   public SBMLEventHandlerObserver(Simulator sim, SBMLNetwork net, SBMLinterpreter interpreter,
       Event event) throws ModelOverdeterminedException {
     super(sim);
-
     this.net = net;
+    this.interpreter = interpreter;
     parse(event, interpreter);
   }
 
   private void parse(Event event, SBMLinterpreter interpreter) {
     this.name = event.getId();
-    this.trigger = new MathTree(interpreter, event.getTrigger().getMath());
-    this.delay =
-        event.getDelay() == null ? null : new MathTree(interpreter, event.getDelay().getMath());
+    this.triggerAST = interpreter.copyAST(event.getTrigger().getMath(), true, null, null);
+    this.delayAST = event.getDelay() == null ? null : interpreter.copyAST(event.getDelay().getMath(), true, null, null);
+    
     variableAssignment = new HashMap<>();
     parameterAssignment = new HashMap<>();
 
     for (int i = 0; i < event.getNumEventAssignments(); i++) {
       String var = event.getEventAssignment(i).getVariable();
-      MathTree tree = new MathTree(interpreter, event.getEventAssignment(i).getMath());
+      ASTNode tree = interpreter.copyAST(event.getEventAssignment(i).getMath(), true, null, null);
       if (interpreter.getModel().containsSpecies(var)) {
         variableAssignment.put(var, tree);
       } else {
@@ -59,23 +55,27 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
     }
   }
 
+  private double evaluate(ASTNode ast, Simulator sim) {
+    interpreter.updateSpeciesConcentration(net.getAmountManager());
+    interpreter.setCurrentTime(sim.getTime());
+    return ((ASTNodeValue) ast.getUserObject("SBML_SIMULATION_TEMP_VALUE")).compileDouble(sim.getTime(), 0d);
+  }
+
   private void executeEvent() {
     for (String var : variableAssignment.keySet()) {
       net.getAmountManager().setAmount(net.getSpeciesByName(var),
-          (long) variableAssignment.get(var).calculate(net.getAmountManager(), getSimulator()));
+          (long) evaluate(variableAssignment.get(var), getSimulator()));
     }
     for (String par : parameterAssignment.keySet()) {
       Map<String, Double> globals = ((SBMLPropensityCalculator) net.getPropensityCalculator())
           .getGlobalParameters();
-      globals
-          .put(par, parameterAssignment.get(par).calculate(net.getAmountManager(), getSimulator()));
+      globals.put(par, evaluate(parameterAssignment.get(par), getSimulator()));
     }
     getSimulator().reinitialize();
   }
 
   @Override
-  public void activateReaction(int mu, double tau, FireType fireType,
-      int times) {
+  public void activateReaction(int mu, double tau, FireType fireType, int times) {
   }
 
   @Override
@@ -93,11 +93,10 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
 
   @Override
   public boolean trigger() {
-    boolean triggered = trigger.calculate(net.getAmountManager(), getSimulator()) != 0;
+    boolean triggered = evaluate(triggerAST, getSimulator()) != 0;
     if (!lastStepTriggered && triggered) {
       lastStepTriggered = triggered;
-      double delaytime =
-          delay == null ? 0 : delay.calculate(net.getAmountManager(), getSimulator());
+      double delaytime = delayAST == null ? 0 : evaluate(delayAST, getSimulator());
       if (delaytime <= 0) {
         executeEvent();
       } else {
@@ -122,5 +121,4 @@ public class SBMLEventHandlerObserver extends TriggerObserver {
   public String toString() {
     return name;
   }
-
 }
