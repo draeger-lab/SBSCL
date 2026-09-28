@@ -1,8 +1,8 @@
 language: java
 
 jdk:
-  - openjdk11
-  - oraclejdk11
+  - openjdk17
+  - openjdk21
 
 install:
   # get BiGG models for testing
