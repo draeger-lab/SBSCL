@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
@@ -110,6 +111,11 @@ FastProcessDESystem, RichDESystem, PropertyChangeListener {
    * Holds the current time of the simulation
    */
   protected double currentTime;
+  /**
+   * A random number generator used for stochastic decisions (e.g., picking events).
+   * It is instantiated once so that the simulation can be seeded.
+   */
+  protected Random randomGenerator = new Random(12345L);
 
   /**
    * This array stores for every event an object of {@link SBMLEventInProgress} that is used to
@@ -1850,7 +1856,7 @@ FastProcessDESystem, RichDESystem, PropertyChangeListener {
    * @param highOrderEvents
    */
   protected void pickRandomEvent(List<Integer> highOrderEvents) {
-    int randomIndex = ThreadLocalRandom.current().nextInt(highOrderEvents.size());
+    int randomIndex = randomGenerator.nextInt(highOrderEvents.size());
     Integer winner = highOrderEvents.get(randomIndex);
     highOrderEvents.clear();
     highOrderEvents.add(winner);

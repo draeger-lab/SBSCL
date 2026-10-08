@@ -26,7 +26,7 @@ import java.util.*;
 /**
  * Run full sbml-test-suite
  */
-@RunWith(value = Parameterized.class)
+@RunWith(Parameterized.class)
 public class SBMLTestSuiteTest {
 
   private String path;
@@ -53,11 +53,8 @@ public class SBMLTestSuiteTest {
   @Parameters(name = "{index}: {0}")
   public static Iterable<Object[]> data() {
 
-    // environment variable for semantic test case folder
     String testsuite_path = TestUtils.getPathForTestResource(
-        File.separator + "sbml-test-suite" + File.separator + "cases" + File.separator + "semantic"
-            + File.separator);
-    System.out.println(SBML_TEST_SUITE_PATH + ": " + testsuite_path);
+        File.separator + "sbml-test-suite" + File.separator + "cases" + File.separator + "semantic" + File.separator);
 
     if (testsuite_path.length() == 0) {
       Object[][] resources = new String[0][1];
@@ -108,8 +105,6 @@ public class SBMLTestSuiteTest {
         "01165", "01167", "01168", "01471", "01472", "01473", "01475", "01476", "01477", "01778",
         // sbml model with changing compartment size (see issue #50)
         "01507", "01508", "01511",
-        // failing due to long run time (see issue #39)
-        "01287", "01592",
         // failing due to delay in rateOf (see issue #46)
         "01400", "01401", "01403", "01406", "01409",
         // failing due to event triggers before mentioned condition (see issue #44)
