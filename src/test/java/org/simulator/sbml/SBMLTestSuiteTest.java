@@ -112,8 +112,8 @@ public class SBMLTestSuiteTest {
         "01287", "01592",
         // failing due to delay in rateOf (see issue #46)
         "01400", "01401", "01403", "01406", "01409",
-        // failing due to event triggers before mentioned condition (see issue #44)
-        "01444", "01445", "01446", "01447", "01448",
+        // previously failing due to event triggers before mentioned condition (see issue #44)
+        // (re-enabled after fix in SBMLinterpreter.getNextEventAssignments)
         "01456",
         "01480",
         "01481", // model below sbml l3v1
