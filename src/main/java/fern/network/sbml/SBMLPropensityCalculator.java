@@ -75,6 +75,12 @@ public class SBMLPropensityCalculator implements ComplexDependenciesPropensityCa
        if (index != -1 && !speciesIndices.contains(index)) speciesIndices.add(index);
     }
     
+    for (SpeciesReference product : reaction.getListOfProducts()) {
+      int index = getSpeciesIndex(product.getSpecies());
+      if (index != -1 && !speciesIndices.contains(index)) {
+        speciesIndices.add(index);
+      }
+    }
     return speciesIndices;
   }
 
