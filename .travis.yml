@@ -3,7 +3,7 @@ dist: jammy
 
 jdk:
   - openjdk17
-  - semeru22
+  - openjdk25
 
 install:
   # get BiGG models for testing
