@@ -15,7 +15,6 @@ import fern.network.FeatureNotSupportedException;
 import fern.network.KineticConstantPropensityCalculator;
 import fern.network.Network;
 import fern.network.NetworkLoader;
-import fern.network.sbml.MathTree;
 import fern.simulation.Simulator;
 import fern.simulation.algorithm.GillespieSimple;
 import org.sbml.jsbml.ASTNode;
@@ -355,40 +354,6 @@ public class NetworkTools {
     writer.flush();
   }
 
-  /**
-   * Dumps the MathTree to stdout.
-   *
-   * @param tree mathtree
-   */
-  public static void dumpMathTree(MathTree tree) {
-    try {
-      dumpMathTree(tree, new PrintWriter(System.out));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  /**
-   * Dumps the math tree to the given {@link Writer}.
-   *
-   * @param tree mathtree
-   */
-  public static void dumpMathTree(MathTree tree, Writer writer) throws IOException {
-    dumpMathTreeNode(tree.getCopiedAST(), writer, new StringBuilder());
-    writer.flush();
-  }
-
-  private static void dumpMathTreeNode(ASTNode astNode, Writer writer, StringBuilder indend)
-      throws IOException {
-    writer.write(indend.toString());
-    writer.write(astNode.toString());
-    writer.write("\n");
-    indend.append(" ");
-    for (ASTNode child : astNode.getChildren()) {
-      dumpMathTreeNode(child, writer, indend);
-    }
-    indend.deleteCharAt(0);
-  }
 
   /**
    * Copies the actual amount of the species in the network to its initial amount.
