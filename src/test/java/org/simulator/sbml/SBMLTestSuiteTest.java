@@ -117,8 +117,6 @@ public class SBMLTestSuiteTest {
         "01456",
         "01480",
         "01481", // model below sbml l3v1
-        // failing due to misinterpretation of function variables with parameters (see issue #45)
-        "01492", "01493",
         "01520",
         "01539",
         "01560", "01568", "01570", "01787", // models below sbml l3v2
