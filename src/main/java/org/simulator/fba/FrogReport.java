@@ -44,7 +44,7 @@ import org.json.JSONObject;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.xml.stax.SBMLReader;
+import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 
 import scpsolver.lpsolver.LinearProgramSolver;
@@ -122,11 +122,13 @@ public final class FrogReport {
     FluxBalanceAnalysis solver = new FluxBalanceAnalysis(document);
     String status;
     double objectiveValue = 0.0;
+    Map<String, Double> fluxes = null;
 
     try {
       if (solver.solve()) {
         status = "optimal";
         objectiveValue = solver.getObjectiveValue();
+        fluxes = solver.getSolution();
       } else {
         status = "infeasible";
       }
@@ -134,7 +136,6 @@ public final class FrogReport {
       logger.severe("Error while solving FBA model for FROG report: " + exc.getMessage());
       status = "error";
     }
-    Map<String, Double> fluxes = solved ? solver.getSolution() : null;
 
     // metadata fields
     String frogId = "sbscl-" + UUID.randomUUID();
