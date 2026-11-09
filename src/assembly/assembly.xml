@@ -64,12 +64,6 @@
       <fileMode>0644</fileMode>
       <filtered>true</filtered>
     </file>
-    <file>
-      <outputDirectory>/</outputDirectory>
-      <source>licenses/COPYING.txt</source>
-      <fileMode>0644</fileMode>
-      <filtered>true</filtered>
-    </file>
     <!-- Also include NOTICE, AUTHORS ... -->
   </files>
   

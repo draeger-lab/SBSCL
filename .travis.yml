@@ -1,8 +1,9 @@
 language: java
+dist: noble
 
 jdk:
-  - openjdk11
-  - oraclejdk11
+  - openjdk17
+  - openjdk25
 
 install:
   # get BiGG models for testing

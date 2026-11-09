@@ -48,6 +48,11 @@ Bio-Informatics, Libraries, Simulations
 
 ## Getting started
 
+### Requirements
+
+SBSCL requires **Java 17 or newer**. Development and testing are done with JDK 17 and more recent JDKs (e.g., JDK 22+).  
+Make sure your `JAVA_HOME` points to a JDK ≥ 17 before building the project with Maven.
+
 ### For users
 For an introduction on how to use this library for simulation, please refer to the [UserGuidelines.md](UserGuidelines.md) file. There you can find explanations on how to simulate different models and code snippets, including the links to the complete code examples.
 
