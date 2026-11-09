@@ -120,15 +120,20 @@ public final class FrogReport {
 
     // Run FBA
     FluxBalanceAnalysis solver = new FluxBalanceAnalysis(document);
-    boolean solved = false;
+    String status;
+    double objectiveValue = 0.0;
+
     try {
-      solved = solver.solve();
+      if (solver.solve()) {
+        status = "optimal";
+        objectiveValue = solver.getObjectiveValue();
+      } else {
+        status = "infeasible";
+      }
     } catch (RuntimeException exc) {
       logger.severe("Error while solving FBA model for FROG report: " + exc.getMessage());
+      status = "error";
     }
-
-    String status = solved ? "optimal" : "infeasible";
-    double objectiveValue = solved ? solver.getObjectiveValue() : 0.0;
     Map<String, Double> fluxes = solved ? solver.getSolution() : null;
 
     // metadata fields
