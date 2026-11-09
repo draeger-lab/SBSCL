@@ -1,8 +1,9 @@
+import sys
 import argparse
 from py4j.java_gateway import JavaGateway
 from biosimulators_utils.combine.exec import exec_sedml_docs_in_archive
 
-def exec_sed_doc(doc, working_dir, base_out_path, rel_out_path=None, apply_xml_model_changes=False, log=None, indent=0, out_dir=None, config=None):
+def exec_sed_doc(doc, working_dir, base_out_path, rel_out_path=None, apply_xml_model_changes=False, log=None, log_level=None, indent=0, out_dir=None, config=None):
     pass
 
 def exec_sed_task(task, variables, preprocessed_task=None, log=None, config=None):
@@ -16,12 +17,16 @@ def main():
     parser.add_argument("-o", "--out-dir", required=True, type=str)
     args = parser.parse_args()
 
-    exec_sedml_docs_in_archive(
+    results, log = exec_sedml_docs_in_archive(
         exec_sed_doc,
         args.archive,
         args.out_dir,
         apply_xml_model_changes=True,
     )
+
+    # Return a non-zero exit code if the archive execution logged a failure
+    if log and log.exception:
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
