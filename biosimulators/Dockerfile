@@ -12,8 +12,7 @@ WORKDIR /app
 COPY biosimulators/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the dependencies folder and the compiled Java engine
-COPY target/dependency /app/lib
+# Copy the assembled Java engine, which includes its dependencies
 COPY target/sbscl-2.1.1.jar /app/sbscl.jar
 
 # Copy the Python CLI and Entrypoint script
