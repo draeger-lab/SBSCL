@@ -1,5 +1,5 @@
 language: java
-dist: jammy
+dist: noble
 
 jdk:
   - openjdk17
