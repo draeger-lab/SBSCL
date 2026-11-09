@@ -153,6 +153,33 @@ public class ASTNodeInterpreter {
   }
 
   /**
+   * Evaluates function argument expressions, stores their values, and updates the
+   * {@code funcArgs} map so that identifiers inside a FunctionDefinition body resolve to
+   * the corresponding argument values. Returns the previous {@code funcArgs} map so it can
+   * be restored after evaluation.
+   */
+  private Map<String, Double> pushFunctionArguments(List<String> variables,
+      ASTNodeValue[] children, int nArguments, double[] values, double time, double delay) {
+
+    Map<String, Double> oldFuncArgs = funcArgs;
+    Map<String, Double> newFuncArgs = new HashMap<>(oldFuncArgs);
+
+    int n = Math.min(nArguments, Math.min(children.length, variables.size()));
+    for (int i = 0; i < n; i++) {
+      double argVal = children[i].compileDouble(time, delay);
+      values[i] = argVal;
+
+      String varName = variables.get(i);
+      if (varName != null) {
+        newFuncArgs.put(varName, argVal);
+      }
+    }
+
+    funcArgs = newFuncArgs;
+    return oldFuncArgs;
+  }
+
+  /**
    * @param rightChild
    * @param variables
    * @param children
@@ -163,11 +190,15 @@ public class ASTNodeInterpreter {
    */
   public double functionDouble(ASTNodeValue rightChild, List<String> variables,
       ASTNodeValue[] children, int nArguments, double[] values, double time, double delay) {
-    for (int i = 0; i < nArguments; i++) {
-      values[i] = children[i].compileDouble(time, delay);
+
+    Map<String, Double> oldFuncArgs =
+        pushFunctionArguments(variables, children, nArguments, values, time, delay);
+
+    try {
+      return rightChild.compileDouble(time, delay);
+    } finally {
+      funcArgs = oldFuncArgs;
     }
-    double value = rightChild.compileDouble(time, delay);
-    return value;
   }
 
   /**
@@ -562,11 +593,17 @@ public class ASTNodeInterpreter {
    */
   public boolean functionBoolean(ASTNodeValue rightChild, List<String> variables,
       ASTNodeValue[] children, double[] values, double time) {
-    for (int i = 0; i < children.length; i++) {
-      values[i] = children[i].compileDouble(time, 0d);
+
+    int nArguments = children.length;
+
+    Map<String, Double> oldFuncArgs =
+        pushFunctionArguments(variables, children, nArguments, values, time, 0d);
+
+    try {
+      return rightChild.compileBoolean(time);
+    } finally {
+      funcArgs = oldFuncArgs;
     }
-    boolean value = rightChild.compileBoolean(time);
-    return value;
   }
 
   /**
