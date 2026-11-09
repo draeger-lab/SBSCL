@@ -1,7 +1,5 @@
 package org.simulator.examples;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -54,8 +52,7 @@ public class SEDMLExample {
     LOGGER.warn("Collecting tasks...");
     Map<AbstractTask, List<IRawSedmlSimulationResults>> res = exe.run();
     if (res == null || res.isEmpty() || !exe.isExecuted()) {
-      fail("Simulatation failed: " + exe.getFailureMessages().get(0));
-      return;
+      throw new RuntimeException("Simulation failed: " + exe.getFailureMessages().get(0));
     }
 
     // now process.In this case, there's no processing performed - we're displaying the
