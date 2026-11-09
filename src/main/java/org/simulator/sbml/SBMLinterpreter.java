@@ -161,8 +161,8 @@ public class SBMLinterpreter extends EquationSystem {
     System.arraycopy(Y, 0, this.Y, 0, Y.length);
     currentTime = t;
     Double priority, execTime = 0d;
-    // Use the actual current time when evaluating triggers, priorities, delays and rules
-    astNodeTime = currentTime;
+    // Advance the evaluation token; csymbol time reads currentTime independently.
+    astNodeTime += 0.01d;
     Double[] triggerTimeValues;
     Event ev;
     int i = 0, index;
