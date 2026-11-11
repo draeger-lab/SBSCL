@@ -117,6 +117,26 @@ implements DelayValueHolder, DESSolver, EventHandler {
   protected AbstractDESSolver clonedSolver;
 
   /**
+   * History of committed internal event states (used for intra-step delay lookups).
+   */
+  protected java.util.NavigableMap<Double, double[]> committedStates = new java.util.TreeMap<>();
+
+  /**
+   * Records the latest valid solver state at time {@code t}.
+   *
+   * @param t the current simulation time
+   * @param y the state vector at time {@code t}
+   */
+  protected void recordCommittedState(double t, double[] y) {
+    if (y != null) {
+      if (t == 0d) {
+        committedStates.clear();
+      }
+      committedStates.put(t, y.clone());
+    }
+  }
+
+  /**
    * Key used when informing listeners about progress by this solver.
    */
   public static final String PROGRESS = "progress";
@@ -300,11 +320,7 @@ implements DelayValueHolder, DESSolver, EventHandler {
    */
   @Override
   public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues,
-    int yIndex) {
-    //get interval
-    //		if (logger.getLevel().intValue() <= Level.FINE.intValue()) {
-    //			logger.fine("computeDelayedValue: time = " + time + " id = " + id);
-    //		}
+                                    int yIndex) {
     double[] timepoints = data.getTimePoints();
     int leftIndex = -1;
     int rightIndex = -1;
@@ -335,23 +351,50 @@ implements DelayValueHolder, DESSolver, EventHandler {
         rightValue = leftValue;
       }
     }
-    if (Double.isNaN(rightValue)) {
+    java.util.Map.Entry<Double, double[]> committedEntry =
+            (committedStates != null) ? committedStates.floorEntry(time) : null;
+    boolean hasIntraStepEvent = (committedEntry != null)
+            && ((leftIndex == -1) || (committedEntry.getKey() > timepoints[leftIndex]));
+
+    if (Double.isNaN(rightValue) || hasIntraStepEvent) {
       boolean calculated = true;
+      double startTime = 0d;
       double[] yCopy = new double[initialValues.length];
       double[] change = new double[initialValues.length];
-      System.arraycopy(initialValues, 0, yCopy, 0, initialValues.length);
+
+      if ((committedEntry != null)
+              && ((leftIndex == -1) || (committedEntry.getKey() >= timepoints[leftIndex]))) {
+        startTime = committedEntry.getKey();
+        System.arraycopy(committedEntry.getValue(), 0, yCopy, 0, initialValues.length);
+      } else if ((leftIndex != -1) && !Double.isNaN(leftValue) && (time >= timepoints[leftIndex])) {
+        startTime = timepoints[leftIndex];
+        System.arraycopy(data.getBlock(0).getRow(leftIndex), 0, yCopy, 0, initialValues.length);
+      } else {
+        System.arraycopy(initialValues, 0, yCopy, 0, initialValues.length);
+      }
+
+      double[] savedY = null;
+      if (DES instanceof SBMLinterpreter) {
+        double[] liveY = ((SBMLinterpreter) DES).getY();
+        if (liveY != null) {
+          savedY = liveY.clone();
+        }
+      }
+
       try {
         DES.setDelaysIncluded(false);
-        if (clonedSolver == null) {
-          clonedSolver = clone();
-          clonedSolver.reset();
-        }
-        clonedSolver.computeChange(DES, yCopy, 0, time, change, false);
+        AbstractDESSolver delaySolver = clone();
+        delaySolver.reset();
+        delaySolver.computeChange(DES, yCopy, startTime, time - startTime, change, true);
       } catch (DerivativeException e) {
         rightIndex = -1;
         calculated = false;
+      } finally {
+        DES.setDelaysIncluded(true);
+        if ((DES instanceof SBMLinterpreter) && (savedY != null)) {
+          System.arraycopy(savedY, 0, ((SBMLinterpreter) DES).getY(), 0, savedY.length);
+        }
       }
-      DES.setDelaysIncluded(true);
       if (calculated) {
         return yCopy[yIndex] + change[yIndex];
       }
@@ -364,7 +407,7 @@ implements DelayValueHolder, DESSolver, EventHandler {
       return leftValue;
     } else {
       return leftValue + ((rightValue - leftValue) * ((time - timepoints[leftIndex]) / (
-          timepoints[rightIndex] - timepoints[leftIndex])));
+              timepoints[rightIndex] - timepoints[leftIndex])));
     }
   }
 
@@ -794,6 +837,7 @@ implements DelayValueHolder, DESSolver, EventHandler {
 
     // execute events that trigger at 0.0 and process rules on changes due to the events
     processEventsAndRules(true, DES, 0d, 0d, result[0]);
+    recordCommittedState(0d, result[0]);
     System.arraycopy(result[0], 0, yTemp, 0, yTemp.length);
     if (propertyChangeListener != null) {
       propertyChangeListener.propertyChange(new PropertyChangeEvent(this, PROGRESS, -stepSize, 0d));
@@ -888,6 +932,7 @@ implements DelayValueHolder, DESSolver, EventHandler {
     addPropertyChangeListener((SBMLinterpreter) DES);
     // execute events that trigger at 0.0 and process rules on changes due to the events
     processEventsAndRules(true, DES, 0d, 0d, result[0]);
+    recordCommittedState(0d, result[0]);
     System.arraycopy(result[0], 0, yTemp, 0, result[0].length);
     firePropertyChange(-stepSize, 0d, result[0]);
     for (int i = 1; (i < timePoints.length) && (!Thread.currentThread().isInterrupted()); i++) {

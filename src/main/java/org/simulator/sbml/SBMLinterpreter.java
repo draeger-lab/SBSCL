@@ -244,6 +244,11 @@ public class SBMLinterpreter extends EquationSystem {
       // check the trigger of all events in the model
       for (i = 0; i < events.length; i++) {
         if (events[i] != null) {
+          if ((events[i].getLastTimeFired() > currentTime)
+                  || (events[i].getLastTimeExecuted() > currentTime)) {
+            events[i].refresh(false);
+            runningEvents.remove((Integer) i);
+          }
           if (events[i].getTriggerObject().compileDouble(astNodeTime, 0d) != 0d) {
             // event has not fired recently -> can fire
             if (!events[i].getFireStatus(currentTime)) {
@@ -273,8 +278,12 @@ public class SBMLinterpreter extends EquationSystem {
                 if (ruleObjects != null) {
                   triggerTimeValues = new Double[ruleObjects.size()];
                   int j = 0;
+                  double savedTime = currentTime;
                   for (AssignmentRuleValue obj : ruleObjects) {
+                    astNodeTime += 0.01d;
                     obj.processRule(Y, astNodeTime, false);
+                    currentTime = savedTime;
+                    System.arraycopy(Y, 0, this.Y, 0, Y.length);
                     triggerTimeValues[j] = obj.getValue();
                     j++;
                   }
@@ -341,7 +350,7 @@ public class SBMLinterpreter extends EquationSystem {
       return;
     }
     System.arraycopy(Y, 0, this.Y, 0, Y.length);
-    if (modelHasEvents) {
+    if (modelHasEvents && delaysIncluded) {
       runningEvents.clear();
     }
     try {
@@ -560,8 +569,12 @@ public class SBMLinterpreter extends EquationSystem {
       events[index].clearAssignments();
       // event does not use values from trigger time
       if (!events[index].getUseValuesFromTriggerTime()) {
+        double savedTime = currentTime;
         for (AssignmentRuleValue obj : events[index].getRuleObjects()) {
+          astNodeTime += 0.01d;
           obj.processRule(Y, astNodeTime, false);
+          currentTime = savedTime;
+          System.arraycopy(Y, 0, this.Y, 0, Y.length);
           newVal = obj.getValue();
           symbolIndex = obj.getIndex();
 

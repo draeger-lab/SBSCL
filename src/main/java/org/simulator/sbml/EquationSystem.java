@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -113,9 +112,19 @@ FastProcessDESystem, RichDESystem, PropertyChangeListener {
   protected double currentTime;
   /**
    * A random number generator used for stochastic decisions (e.g., picking events).
-   * It is instantiated once so that the simulation can be seeded.
+   * Uses a non-fixed default seed so independent simulations sample different trajectories,
+   * while allowing deterministic seeding in regression tests.
    */
-  protected Random randomGenerator = new Random(12345L);
+  protected Random randomGenerator = new Random();
+
+  /**
+   * Sets the seed of the random number generator used for stochastic event choices.
+   *
+   * @param seed the initial seed
+   */
+  public void setRandomSeed(long seed) {
+    this.randomGenerator.setSeed(seed);
+  }
 
   /**
    * This array stores for every event an object of {@link SBMLEventInProgress} that is used to

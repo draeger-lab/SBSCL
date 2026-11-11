@@ -518,6 +518,20 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <!-- JUnit 4 / Vintage Engine support for SBMLTestSuiteTest -->
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 
@@ -631,7 +645,9 @@
               <exclude>org/simulator/examples/**</exclude>
             </excludes>
             <testExcludes>
-              <testExclude>org/simulator/**</testExclude>
+              <!-- Exclude legacy tests failing due to broken biomodels.net network links -->
+              <testExclude>org/simulator/sedml/**</testExclude>
+              <testExclude>org/simulator/biomodels/**</testExclude>
             </testExcludes>
           </configuration>
         </plugin>
