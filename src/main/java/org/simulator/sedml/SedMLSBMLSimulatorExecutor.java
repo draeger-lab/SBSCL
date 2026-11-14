@@ -69,6 +69,7 @@ import org.simulator.math.odes.DormandPrince54Solver;
 import org.simulator.math.odes.EulerMethod;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
+import org.simulator.math.odes.LSODA.LSODAIntegrator;
 import org.simulator.sbml.SBMLinterpreter;
 import de.binfalse.bflog.LOGGER;
 import net.biomodels.kisao.IKiSAOQueryMaker;
@@ -616,7 +617,10 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
       return new EulerMethod();
     } else if (SUPPORTED_KISAO_IDS[2].equals(id)) {
       return new DormandPrince54Solver();
-    } else {
+    } else if (SUPPORTED_KISAO_IDS[3].equals(id)) {
+      return new LSODAIntegrator();
+    } 
+    else {
       return new RosenbrockSolver(); // default
     }
   }
