@@ -125,13 +125,16 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
     }
 
     public LSODAIntegrator(LSODAIntegrator integrator) {
+      //context and options corrupt tcrit when combined
+      //with shared state; state flag and the integration
+      //history dont copy 
         super(integrator);
-        this.ctx = integrator.ctx;
-        this.opt = integrator.opt;
-        this.y = integrator.y;
-        this.neq = integrator.neq;
-        this.yOffset = integrator.yOffset;
-        this.yTemp = integrator.yTemp;
+        this.ctx = new LSODAContext();
+        this.opt = new LSODAOptions();
+        this.opt.setAtol(integrator.opt.getAtol().clone());
+        this.opt.setRtol(integrator.opt.getRtol().clone());
+        this.ctx.setOpt(this.opt);
+        this.defaultTol = integrator.defaultTol;
     }
 
     @Override
@@ -154,12 +157,31 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         return true;
     }
 
+    private DESystem lastDES = null;
+    private double lastTimeEnd = Double.NaN;
+    private double[] lastY = null;
+
+    private static boolean sameState(double[] a, double[] b) {
+      if (a.length != b.length) return false;
+      for (int i = 0; i < a.length; i++) {
+        double tol = 1e-12 * Math.max(Math.abs(a[i]), Math.abs(b[i]));
+        if (Math.abs(a[i] - b[i]) > tol) return false;
+      }
+      return true;
+    }
+    
     @Override
     public double[] computeChange(DESystem DES, double[] y2, double time, double stepSize, double[] change, boolean steadyState) throws DerivativeException {
 
-        this.prepare(DES, 1e-16d, getStepSize(), 1, 1, 1, 10000);
-        
+        // keep hmax consistent with the one set here, otherwise internal step stays capped at default size
+        boolean canContinue = (lastDES == DES) && (ctx.getState() == 2) && (lastTimeEnd == time) && (lastY != null) && (sameState(lastY, y2));
+
+        if (!canContinue) {
+          this.prepare(DES, 1e-16d, getStepSize(), 1, 4, 1, 10000);
+        }
+        opt.setItask(4);
         opt.setHmax(stepSize);
+        opt.setHmxi(stepSize > 0d ? 1d / stepSize : 0d);
         double step = opt.getHmax();
         boolean hasDerivatives = true;
         if (DES instanceof EventDESystem) {
@@ -169,16 +191,18 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             }
         }
         double timeEnd = time + stepSize;
-        boolean lastStepSuccessful = false;
         int flag = 0;
         double tnew;
         t = time;
         y = y2.clone();
         stop = false;
 
+        double[] ySolver = null;    // keep state as integrator left it, DONT UPDATE!
+
         while(!stop) {
             
             if(t >= timeEnd) {
+                ySolver = y.clone();
                 if ((DES instanceof EventDESystem) && (!steadyState)) {
                     EventDESystem EDES = (EventDESystem) DES;
                     if ((EDES.getEventCount() > 0) || (EDES.getRuleCount() > 0)) {
@@ -195,8 +219,34 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             System.arraycopy(yTemp, 0, yOffset, 1, neq);
 
             if(hasDerivatives) {
-                ctx.setState(1);
-                flag = lsoda(ctx, y, new double[] {t}, t+step);
+                if (canContinue && ctx.getCommon() != null) {
+                  // only continue if integrators current point lies in interval [t - hu, t + step]
+                  double tn = ctx.getCommon().getTn();
+                  double hu = Math.abs(ctx.getCommon().getHu());
+
+                  if (!(tn <= t + step && tn >= t - hu * (1d + 100d * ctx.getCommon().ETA))) {
+                    canContinue = false;
+                  }
+                }
+
+                if (!canContinue) {
+                  ctx.setState(1);
+                }
+                opt.setTcrit(t + step);
+
+                boolean wasContinuing = canContinue;
+                try {
+                  flag = lsoda(ctx, y, new double[] {t}, t+step);
+                } catch (MaxStepExceededException e) {
+                  if (!wasContinuing) {
+                    throw e;
+                  }
+                  // continued window got stuck, retry once 
+                  ctx.setState(1);
+                  flag = lsoda(ctx, y, new double[] {t}, t+step);
+                }
+
+                canContinue = true;
             }
 
             if(flag>=0 && !stop) {
@@ -221,6 +271,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                         }
                         
                         double[] result = ((LSODAIntegrator) clonedSolver).computeSteadyState(FDES, yTemp2, 0);
+                        if (!sameState(result, yTemp2)) {
+                          canContinue = false;
+                        }
                         System.arraycopy(result, 0, yTemp, 0, yTemp.length);
 
                         for (int i = 0; i != result.length; i++) {
@@ -237,6 +290,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 }
                 if (changed) {
                     // retry with a smaller window, but never below what is accepted by lsoda as a step
+                    canContinue = false;
                     double minStep = Math.max(opt.getHmin(), 8d * Math.ulp(Math.max(Math.abs(t), Math.abs(t + step))));
                     if (step/10 > minStep) {
                         step=step/10;
@@ -248,7 +302,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                         if (timeEnd - t - step < opt.getHmin()) {
                             step = timeEnd - t;
                         }
-                        lastStepSuccessful = true;
                     }
                 }
                 else {
@@ -258,10 +311,10 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     if (timeEnd - t - step < opt.getHmin()) {
                         step = timeEnd - t;
                     }
-                    lastStepSuccessful = true;
                 }
             }
             else {
+                canContinue = false;
                 if(flag == -4 || flag == -5) {
                     step = step/5;
                 }
@@ -272,7 +325,6 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                 if(tnew == t) {
                     throw new DerivativeException("Stepsize underflow");
                 }
-                lastStepSuccessful = false;
             }
             
             if (Math.abs(step) < opt.getHmin()) {
@@ -284,6 +336,13 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
             stop = false;
         }    
         
+        if (!canContinue) {
+          ctx.setState(1);
+        }
+        lastDES = DES;
+        lastTimeEnd = timeEnd;
+        lastY = ySolver;
+
         return change;
     }
 
@@ -2190,6 +2249,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         if (ctx.getState() == 2 || ctx.getState() == 3) {
             jstart = 1;
             ctx.nslast = common.getNst();
+            common.setNslast(common.getNst());    // step budget applies for each call, was never reset
 
             switch (itask) {
                 case 1:
@@ -2225,8 +2285,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     if((common.getTn() - tout) * common.getH() >= 0d) {
                         return intdyReturn(ctx, yOffset, t, tout, itask);
                     }
-                    break;
-                    
+                    // remove break, lsoda needs to continue to step limiting below as in liblsoda
                 case 5:
                     if(itask == 5) {
                         tcrit = opt.getTcrit();
@@ -2349,6 +2408,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     
                 if(itask == 4) {
                     tcrit = opt.getTcrit();
+                    ctx.setCommon(common); //needs to be before intdyReturn
                     if ((common.getTn() - tout) * common.getH() >= 0d) {
                         return intdyReturn(ctx, yOffset, t, tout, itask);
                     } 
@@ -2358,7 +2418,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                         if (ihit) {
                             return successReturn(ctx, yOffset, t, itask, ihit);
                         }
-                        tnext = common.getTn() + common.getH() * (1d + 4d + common.ETA);
+                        tnext = common.getTn() + common.getH() * (1d + 4d * common.ETA);
                         if ((tnext - tcrit) * common.getH() <= 0d) {
                             continue;
                         }
