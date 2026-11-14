@@ -236,7 +236,9 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
                     }
                 }
                 if (changed) {
-                    if (step/10 > opt.getHmin()) {
+                    // retry with a smaller window, but never below what is accepted by lsoda as a step
+                    double minStep = Math.max(opt.getHmin(), 8d * Math.ulp(Math.max(Math.abs(t), Math.abs(t + step))));
+                    if (step/10 > minStep) {
                         step=step/10;
                         System.arraycopy(oldY, 0, y, 0, neq);
                     } 
