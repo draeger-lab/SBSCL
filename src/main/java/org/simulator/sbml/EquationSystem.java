@@ -10,8 +10,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -110,6 +110,21 @@ FastProcessDESystem, RichDESystem, PropertyChangeListener {
    * Holds the current time of the simulation
    */
   protected double currentTime;
+  /**
+   * A random number generator used for stochastic decisions (e.g., picking events).
+   * Uses a non-fixed default seed so independent simulations sample different trajectories,
+   * while allowing deterministic seeding in regression tests.
+   */
+  protected Random randomGenerator = new Random();
+
+  /**
+   * Sets the seed of the random number generator used for stochastic event choices.
+   *
+   * @param seed the initial seed
+   */
+  public void setRandomSeed(long seed) {
+    this.randomGenerator.setSeed(seed);
+  }
 
   /**
    * This array stores for every event an object of {@link SBMLEventInProgress} that is used to
@@ -1850,7 +1865,7 @@ FastProcessDESystem, RichDESystem, PropertyChangeListener {
    * @param highOrderEvents
    */
   protected void pickRandomEvent(List<Integer> highOrderEvents) {
-    int randomIndex = ThreadLocalRandom.current().nextInt(highOrderEvents.size());
+    int randomIndex = randomGenerator.nextInt(highOrderEvents.size());
     Integer winner = highOrderEvents.get(randomIndex);
     highOrderEvents.clear();
     highOrderEvents.add(winner);

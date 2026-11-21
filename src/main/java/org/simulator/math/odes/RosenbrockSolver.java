@@ -476,6 +476,9 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
       for (int i = 0; i != y.length; i++) {
         ignoreNaN[i] = !Double.isFinite(y[i]);
       }
+      if (!steadyState && (t == 0d)) {
+        recordCommittedState(t, y);
+      }
 
       // add the initial conditions to the solution matrix and let all
       // point
@@ -577,6 +580,9 @@ public class RosenbrockSolver extends AdaptiveStepsizeIntegrator {
             } else {
               System.arraycopy(yTemp, 0, y, 0, numEqn);
               t = Math.min(newTime, timeEnd);
+              if (!steadyState) {
+                recordCommittedState(t, y);
+              }
               if (timeEnd - t - h < hMin) {
                 h = timeEnd - t;
               }
