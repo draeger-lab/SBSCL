@@ -119,7 +119,7 @@ public class LSODAOptions {
         return tcrit;
     }
 
-    private void setTcrit(double tcrit) {
+    public void setTcrit(double tcrit) {
         this.tcrit = tcrit;
     }
 }
