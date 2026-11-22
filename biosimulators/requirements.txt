@@ -1,0 +1,3 @@
+biosimulators-utils
+py4j
+numpy
