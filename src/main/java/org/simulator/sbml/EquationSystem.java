@@ -723,6 +723,13 @@ FastProcessDESystem, RichDESystem, PropertyChangeListener {
     initializeRules();
     initializeConstraints();
     initializeEvents();
+
+    // Bind later reaction references after all roots are created to prevent NaN evaluations
+    for (ASTNode node : nodes) {
+      if ((node.getType() == ASTNode.Type.NAME) && (node.getVariable() instanceof Reaction)) {
+        node.putUserObject(TEMP_VALUE, new ReactionValue(nodeInterpreter, node, (Reaction) node.getVariable()));
+      }
+    }
   }
 
   /**
