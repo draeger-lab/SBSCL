@@ -479,6 +479,12 @@ public class FluxBalanceAnalysis {
   public String getActiveObjective() {
     return activeObjective;
   }
+  /**
+   * Returns the underlying linear program solver used for FBA.
+   */
+  public LinearProgramSolver getLinearProgramSolver() {
+    return glpkSolver;
+  }
 
 public static class CPLEXConverter {
         public static StringBuffer convertToCPLEX(LinearProgram lp) {
