@@ -1397,11 +1397,14 @@ FastProcessDESystem, RichDESystem, PropertyChangeListener {
         /*
          * Names of identifiers: parameters, functions, species etc.
          */
-      case NAME:
-        copiedAST.setName(node.getName());
-        CallableSBase variable = node.getVariable();
-        if ((variable == null) && (function == null)) {
-          variable = model.findQuantity(node.getName());
+        case NAME:
+          copiedAST.setName(node.getName());
+          CallableSBase variable = node.getVariable();
+          if (function != null) {
+            variable = null;
+          }
+          if ((variable == null) && (function == null)) {
+            variable = model.findQuantity(node.getName());
           if ((variable == null) && (function == null)) {
             String id = node.getName();
             for (Reaction r : model.getListOfReactions()) {
