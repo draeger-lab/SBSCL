@@ -1,5 +1,7 @@
 # Guidelines to use SBSCL for simulating the models
 
+> Note: SBSCL requires **Java 17 or newer** to build and run.
+
 # Index  
 * [SBML model simulation](#simulating-the-sbml-models)
 * [COMP model simulation](#simulating-the-sbml-models-with-comp-extension)  

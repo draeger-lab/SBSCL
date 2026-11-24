@@ -1,6 +1,12 @@
 # Installation
 This document provides important information on how to setup and install SBSCL and its optional dependencies.
 
+## Prerequisites
+
+- **Java Development Kit (JDK) 17 or newer**  
+  SBSCL is built and tested against Java 17+ and requires a JDK ≥ 17.
+- **Apache Maven** (3.8+ recommended)
+
 
 SBSCL can be build with maven. To build without running the tests use
 ```
