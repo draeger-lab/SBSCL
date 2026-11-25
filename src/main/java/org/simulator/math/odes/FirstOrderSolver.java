@@ -24,12 +24,12 @@
  */
 package org.simulator.math.odes;
 
-import java.util.logging.Logger;
-
 import org.apache.commons.math.ode.AbstractIntegrator;
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.util.FastMath;
 import org.simulator.math.Mathematics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is the superclass of the wrapper classes for the solvers of the
@@ -50,7 +50,7 @@ public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
   /**
    * A logger.
    */
-  private static final Logger logger = Logger.getLogger(FirstOrderSolver.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(FirstOrderSolver.class);
 
   /**
    * The result of the integration.
@@ -147,7 +147,7 @@ public abstract class FirstOrderSolver extends AdaptiveStepsizeIntegrator {
         Mathematics.vvSub(integrationResult, y, change);
       } catch (Exception e) {
         setUnstableFlag(true);
-        logger.fine(e.getLocalizedMessage());
+        logger.debug(e.getLocalizedMessage());
       }
     }
     return change;

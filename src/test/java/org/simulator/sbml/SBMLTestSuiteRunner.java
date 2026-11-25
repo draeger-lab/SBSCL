@@ -38,7 +38,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.math.ode.DerivativeException;
-import org.apache.log4j.Logger;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.Libsedml;
@@ -64,6 +63,8 @@ import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sedml.MultTableSEDMLWrapper;
 import org.simulator.sedml.SedMLSBMLSimulatorExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class can test the simulation of all models from the SBML test suite.
@@ -78,8 +79,7 @@ public class SBMLTestSuiteRunner {
   /**
    * A {@link Logger} for this class.
    */
-  private static final Logger logger = Logger
-      .getLogger(SBMLTestSuiteRunner.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(SBMLTestSuiteRunner.class);
   /**
    * An array of all available ordinary differential equation solvers.
    */
@@ -307,23 +307,17 @@ public class SBMLTestSuiteRunner {
                 dist = computeDistance(inputData, solution);
               }
               if (dist > 0.1) {
-                logger.info(
-                    sbmlFileType
-                        + ": "
-                        + "relative distance for model-"
-                        + modelnr + " with solver "
-                        + solver.getName());
-                logger.info(String.valueOf(dist));
+                logger.info("{}: relative distance for model-{} with solver {}", sbmlFileType, modelnr, solver.getName());
+                logger.info("{}", dist);
                 highDistance[i] = true;
               } else if (Double.isNaN(dist)) {
                 errorInSimulation[i] = true;
               }
             } catch (DerivativeException e) {
-              logger.warn("Exception in model " + modelnr);
+              logger.warn("Exception in model {}", modelnr);
               errorInSimulation[i] = true;
             } catch (ModelOverdeterminedException e) {
-              logger.warn("OverdeterminationException in model "
-                  + modelnr);
+              logger.warn("OverdeterminationException in model {}", modelnr);
               errorInSimulation[i] = true;
             }
           }
@@ -528,20 +522,17 @@ public class SBMLTestSuiteRunner {
             }
 
             if (dist > 0.1) {
-              logger.info(sbmlFileType + ": "
-                  + "relative distance for model-" + modelnr
-                  + " with solver " + solver.getName());
-              logger.info(String.valueOf(dist));
+              logger.info("{}: relative distance for model-{} with solver {}", sbmlFileType, modelnr, solver.getName());
+              logger.info("{}", dist);
               highDistance = true;
             } else if (Double.isNaN(dist) && (inputData != null)) {
               errorInSimulation = true;
             }
           } catch (DerivativeException e) {
-            logger.warn("Exception in model " + modelnr);
+            logger.warn("Exception in model {}", modelnr);
             errorInSimulation = true;
           } catch (ModelOverdeterminedException e) {
-            logger.warn("OverdeterminationException in model "
-                + modelnr);
+            logger.warn("OverdeterminationException in model {}", modelnr);
             errorInSimulation = true;
           }
         }
@@ -674,7 +665,7 @@ public class SBMLTestSuiteRunner {
             sedml = doc.getSedMLModel();
 
           } catch (XMLException e1) {
-            logger.warn("SED-ML file not found for model " + modelnr);
+            logger.warn("SED-ML file not found for model {}", modelnr);
             missingFile = true;
           }
           if (sedml != null) {
@@ -688,8 +679,7 @@ public class SBMLTestSuiteRunner {
             double time2 = System.nanoTime();
 
             if (res == null || res.isEmpty() || !exe.isExecuted()) {
-              logger.warn("Exception in model " + modelnr
-                  + ":" + exe.getFailureMessages().get(0));
+              logger.warn("Exception in model {}:{}", modelnr, exe.getFailureMessages().get(0));
               errorInSimulation = true;
             }
 
@@ -747,10 +737,8 @@ public class SBMLTestSuiteRunner {
             }
 
             if (dist > 0.1) {
-              logger.info(sbmlFileType + ": "
-                  + "relative distance for model-" + modelnr
-                  + " with solver " + solver.getName());
-              logger.info(String.valueOf(dist));
+              logger.info("{}: relative distance for model-{} with solver {}", sbmlFileType, modelnr, solver.getName());
+              logger.info("{}", dist);
               highDistance = true;
             } else if (Double.isNaN(dist)) {
               errorInSimulation = true;

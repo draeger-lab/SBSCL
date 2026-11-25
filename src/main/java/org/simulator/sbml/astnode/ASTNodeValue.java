@@ -24,13 +24,13 @@
  */
 package org.simulator.sbml.astnode;
 
-import java.util.logging.Logger;
-
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.CallableSBase;
 import org.sbml.jsbml.util.Maths;
 import org.simulator.sbml.EquationSystem;
 import org.simulator.sbml.SBMLinterpreter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class can compute and store the interpreted value (double or boolean) of an {@link ASTNode}
@@ -159,7 +159,7 @@ public class ASTNodeValue {
   /**
    * A {@link Logger} for this class.
    */
-  public static final Logger logger = Logger.getLogger(ASTNodeValue.class.getName());
+  public static final Logger logger = LoggerFactory.getLogger(ASTNodeValue.class);
 
   public EquationSystem eqnSystem;
 

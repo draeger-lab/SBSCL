@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.Algorithm;
 import org.jlibsedml.ArchiveComponents;
@@ -116,9 +115,6 @@ public class SedMLSBMLSimulatorExecutor extends AbstractSedmlExecutor {
   private Map<String, Boolean> amountHash;
 
   private ModelResolver modelResolver;
-
-  private static final transient Logger logger = Logger
-      .getLogger(SedMLSBMLSimulatorExecutor.class.getName());
 
   private static final double ONE_STEP_SIM_STEPS = 10d;
 

@@ -25,7 +25,6 @@
 package org.simulator.sbml.astnode;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.util.Maths;
@@ -33,6 +32,8 @@ import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
 import org.simulator.sbml.EquationSystem;
 import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sbml.SBMLValueHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is an efficient {@link ASTNodeInterpreter} that takes the time of the calculation into
@@ -48,7 +49,7 @@ public class ASTNodeInterpreter {
   /**
    * A logger.
    */
-  public static final Logger logger = Logger.getLogger(SBMLinterpreter.class.getName());
+  public static final Logger logger = LoggerFactory.getLogger(ASTNodeInterpreter.class);
 
   /**
    * This table is necessary to store the values of arguments when a function definition is
@@ -961,7 +962,7 @@ public class ASTNodeInterpreter {
       double sign = Math.pow(-1, r);
       if (Double.isNaN(sign)) {
         sign = -1;
-        logger.fine("Power with negative base and non-integer exponent encountered.");
+        logger.debug("Power with negative base and non-integer exponent encountered.");
       }
       result = result * sign;
       return result;

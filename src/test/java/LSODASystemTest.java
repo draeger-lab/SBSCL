@@ -19,13 +19,10 @@ import org.simulator.math.odes.exception.MembersNotInitializedException;
 import org.simulator.math.odes.exception.TooMuchAccuracyException;
 import org.simulator.sbml.SBMLinterpreter;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import javax.xml.stream.XMLStreamException;
 
 public class LSODASystemTest {
-    
-    private static final Logger logger = Logger.getLogger(LSODASystemTest.class.getName());
 
     LSODACommon common = new LSODACommon();
     LSODAOptions opt = new LSODAOptions();

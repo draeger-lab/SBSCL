@@ -261,9 +261,9 @@
       this library, which can be used to perform user-defined actions upon violation
       of a {@link org.sbml.jsbml.Constraint}'s math expression during a simulation.
       A simple implementation is already included in this package,
-      which logs violation at the
-      {@link java.util.logging.Level#WARNING} using standard Java&trade;
-      logging (see {@link java.util.logging.Logger}).
+      which logs violations at the
+      {@code WARN} level using SLF4J
+      logging (see {@link org.slf4j.Logger}).
       By default the
       {@link org.simulator.sbml.SBMLinterpreter} adds this
       {@link org.simulator.sbml.SimpleConstraintListener} to its internal list of

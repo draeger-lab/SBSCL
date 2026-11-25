@@ -27,8 +27,8 @@ package org.simulator.math.odes;
 import org.apache.commons.math.ode.DerivativeException;
 import org.simulator.math.Mathematics;
 import org.simulator.math.odes.exception.UnsupportedMethodException;
-import java.util.logging.Logger;
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Runge-Kutta method.
@@ -47,7 +47,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   /**
    * Logger for this class
    */
-  private static final Logger logger = Logger.getLogger(RungeKutta_EventSolver.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(RungeKutta_EventSolver.class);
 
   /**
    * Enum representing supported RungeKutta methods
@@ -78,7 +78,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   public RungeKutta_EventSolver() {
     super();
     this.method = validMethod.RK4;
-    logger.log(Level.INFO, "No method passed. Defaulting to 'RK4'.");
+    logger.info("No method passed. Defaulting to 'RK4'.");
   }
 
   /**
@@ -95,7 +95,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   public RungeKutta_EventSolver(double stepSize) {
     super(stepSize);
     this.method = validMethod.RK4;
-    logger.log(Level.INFO, "No method passed. Defaulting to 'RK4'.");
+    logger.info("No method passed. Defaulting to 'RK4'.");
   }
 
   /**
@@ -115,7 +115,7 @@ public class RungeKutta_EventSolver extends AbstractDESSolver {
   public RungeKutta_EventSolver(double stepSize, boolean nonnegative) {
     super(stepSize, nonnegative);
     this.method = validMethod.RK4;
-    logger.log(Level.INFO, "No method passed. Defaulting to 'RK4'.");
+    logger.info("No method passed. Defaulting to 'RK4'.");
   }
 
   /**

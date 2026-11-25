@@ -6,7 +6,6 @@ import java.io.IOException;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.math.ode.DerivativeException;
-import org.apache.log4j.Logger;
 import org.sbml.jsbml.AbstractTreeNode;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
@@ -19,6 +18,8 @@ import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.AddMetaInfo;
 import org.simulator.sbml.SBMLinterpreter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class for simulating models encoded in the SBML comp package.
@@ -37,7 +38,7 @@ import org.simulator.sbml.SBMLinterpreter;
  */
 public class CompSimulator {
 
-  private static Logger logger = Logger.getLogger(CompSimulator.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(CompSimulator.class);
   private SBMLDocument doc;
   private SBMLDocument docFlat;
 
@@ -131,9 +132,10 @@ public class CompSimulator {
             .getElementBySId(solution.getColumnIdentifier(index));
         identifiers[index-1] = (String) node.getUserObject(AddMetaInfo.ORIG_ID);
         if (node.isSetUserObjects()) {
-          logger.info("flat id: " + solution.getColumnIdentifier(index) + "\t old id:" + node
-            .getUserObject(AddMetaInfo.ORIG_ID) + "\t model enclosing it: " + node
-            .getUserObject(AddMetaInfo.MODEL_ID));
+          logger.info("flat id: {}\t old id:{}\t model enclosing it: {}",
+            solution.getColumnIdentifier(index),
+            node.getUserObject(AddMetaInfo.ORIG_ID),
+            node.getUserObject(AddMetaInfo.MODEL_ID));
         }
       }
     }

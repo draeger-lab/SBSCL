@@ -15,7 +15,6 @@ import java.util.Properties;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.math.ode.DerivativeException;
-import org.apache.log4j.Logger;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
@@ -27,6 +26,8 @@ import org.simulator.math.odes.AbstractDESSolver;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.LSODA.LSODAIntegrator;
 import org.simulator.sbml.SBMLinterpreter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Wrapper for the SBML Test Suite
@@ -57,7 +58,7 @@ public class SBMLTestSuiteRunnerWrapper_LSODA {
   public static final String RELATIVE = "relative";
   public static final String NAN = "NaN";
   private static final double TOLERANCE_FACTOR = 1E-5;
-  private static final Logger LOGGER = Logger.getLogger(SBMLTestSuiteRunnerWrapper.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(SBMLTestSuiteRunnerWrapper_LSODA.class);
 
   /**
    * The wrapper executes the simulation of a given SBML file and writes result to a specified CSV
@@ -127,7 +128,7 @@ public class SBMLTestSuiteRunnerWrapper_LSODA {
         LOGGER.error("Error in creating the output file");
       }
 
-      LOGGER.info(Paths.get(outputFilePath));
+      LOGGER.info("{}", Paths.get(outputFilePath));
       FileWriter csvWriter = new FileWriter(outputFilePath);
 
       StringBuilder output = null;

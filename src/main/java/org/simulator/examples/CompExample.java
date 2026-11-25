@@ -33,11 +33,12 @@ import javax.swing.JTable;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.math.ode.DerivativeException;
-import org.apache.log4j.Logger;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.comp.CompSimulator;
 import org.simulator.math.odes.MultiTable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A simple program that performs a simulation of SBML files containing hierarchical models.
@@ -50,7 +51,7 @@ public class CompExample {
 
   private static double stepSize = 0.1;
   private static double timeEnd = 100;
-  private static Logger LOGGER = Logger.getLogger(CompExample.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(CompExample.class);
 
   /**
    * Starts a simulation at the command line.

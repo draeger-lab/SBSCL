@@ -34,7 +34,6 @@ import javax.swing.JTable;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.math.ode.DerivativeException;
-import org.apache.log4j.Logger;
 import org.jfree.ui.RefineryUtilities;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
@@ -45,6 +44,8 @@ import org.simulator.math.odes.*;
 import org.simulator.plot.PlotMultiTable;
 import org.simulator.sbml.EquationSystem;
 import org.simulator.sbml.SBMLinterpreter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A simple program that performs a simulation of a model.
@@ -55,7 +56,7 @@ import org.simulator.sbml.SBMLinterpreter;
  */
 public class SimulatorExample implements PropertyChangeListener {
 
-  private static Logger logger = Logger.getLogger(SimulatorExample.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(SimulatorExample.class);
   private static final double TOLERANCE_FACTOR = 1E-3;
   private static final int WIDTH = 400;
   private static final int HEIGHT = 400;
@@ -134,7 +135,7 @@ public class SimulatorExample implements PropertyChangeListener {
     if (propertyChangeEvent.getPropertyName().equals(RESULT)) {
       logger.info(Arrays.toString((double[]) propertyChangeEvent.getNewValue()));
     } else {
-      logger.info(propertyChangeEvent.getNewValue());
+      logger.info("{}", propertyChangeEvent.getNewValue());
     }
   }
 

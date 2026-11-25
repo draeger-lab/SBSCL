@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.InitialAssignment;
@@ -53,6 +52,8 @@ import org.sbml.jsbml.util.SBMLtools;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.sbml.SBMLinterpreter;
 import org.simulator.sbml.astnode.ASTNodeValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import scpsolver.constraints.LinearBiggerThanEqualsConstraint;
 import scpsolver.constraints.LinearConstraint;
@@ -80,8 +81,7 @@ public class FluxBalanceAnalysis {
   /**
    * A Logger for this class.
    */
-  private static final transient Logger logger = Logger
-      .getLogger(FluxBalanceAnalysis.class.getName());
+  private static final transient Logger logger = LoggerFactory.getLogger(FluxBalanceAnalysis.class);
 
   /**
    * The linear programming solver.
@@ -177,8 +177,7 @@ public class FluxBalanceAnalysis {
       if (mPlug.isSetListOfFluxBounds()) {
         for (FluxBound fb : mPlug.getListOfFluxBounds()) {
           if (!fb.isSetReaction()) {
-            logger.warning(
-                format("Encountered fluxBound ''{0}'' without reaction identifier.", fb.getId()));
+            logger.warn("Encountered fluxBound '{}' without reaction identifier.", fb.getId());
           } else {
             int index = reaction2Index.get(fb.getReaction());
             if (fb.isSetOperation()) {
@@ -189,13 +188,11 @@ public class FluxBalanceAnalysis {
               } else if (fb.getOperation() == FluxBound.Operation.EQUAL) {
                 lb[index] = ub[index] = fb.getValue();
               } else {
-                logger.severe(
-                    format("Encountered fluxBound ''{0}'' with invalid operation.", fb.getId()));
+                logger.error("Encountered fluxBound '{}' with invalid operation.", fb.getId());
               }
               adjustBoundNumerics(lb, ub, index);
             } else {
-              logger.severe(
-                  format("Encountered fluxBound ''{0}'' without defined operation.", fb.getId()));
+              logger.error("Encountered fluxBound '{}' without defined operation.", fb.getId());
             }
           }
         }
@@ -240,8 +237,7 @@ public class FluxBalanceAnalysis {
     for (Species species : model.getListOfSpecies()) {
       double[] weights = new double[reaction2Index.size()];
       if (!species2Reaction.containsKey(species.getId())) {
-        logger.warning(
-            format("Species ''{0}'' does not participate in any reaction.", species.getId()));
+        logger.warn("Species '{}' does not participate in any reaction.", species.getId());
       } else {
         for (Pair<String, Double> pair : species2Reaction.get(species.getId())) {
           weights[reaction2Index.get(pair.getKey())] = pair.getValue();

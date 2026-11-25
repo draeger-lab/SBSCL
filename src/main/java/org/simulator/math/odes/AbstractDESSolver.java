@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.events.EventException;
@@ -38,6 +37,8 @@ import org.apache.commons.math.ode.events.EventHandler;
 import org.simulator.math.Mathematics;
 import org.simulator.math.odes.MultiTable.Block.Column;
 import org.simulator.sbml.SBMLinterpreter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This Class represents an abstract solver for event-driven DES
@@ -57,8 +58,7 @@ implements DelayValueHolder, DESSolver, EventHandler {
   /**
    * A {@link Logger} for this class.
    */
-  private static final transient Logger logger = Logger
-      .getLogger(AbstractDESSolver.class.getName());
+  private static final transient Logger logger = LoggerFactory.getLogger(AbstractDESSolver.class);
 
   /**
    * Generated serial version identifier.
@@ -302,8 +302,8 @@ implements DelayValueHolder, DESSolver, EventHandler {
   public double computeDelayedValue(double time, String id, DESystem DES, double[] initialValues,
     int yIndex) {
     //get interval
-    //		if (logger.getLevel().intValue() <= Level.FINE.intValue()) {
-    //			logger.fine("computeDelayedValue: time = " + time + " id = " + id);
+    //		if (logger.isDebugEnabled()) {
+    //			logger.debug("computeDelayedValue: time = {} id = {}", time, id);
     //		}
     double[] timepoints = data.getTimePoints();
     int leftIndex = -1;
@@ -461,7 +461,7 @@ implements DelayValueHolder, DESSolver, EventHandler {
   @Override
   public double g(double t, double[] y) throws EventException {
     if (Double.isNaN(t)) {
-      logger.fine("time is NaN - returning -1");
+      logger.debug("time is NaN - returning -1");
       return -1d;
     }
     return checkSolution(y) ? 1d : -1d;
@@ -821,8 +821,8 @@ implements DelayValueHolder, DESSolver, EventHandler {
         propertyChangeListener.propertyChange(new PropertyChangeEvent(this, RESULT, yTemp, yTemp));
       }
       v = additionalResults(DES, t, result[i], data, i);
-      //			if (logger.getLevel().intValue() < Level.INFO.intValue()) {
-      //				logger.fine("additional results: " + Arrays.toString(v));
+      //			if (logger.isDebugEnabled()) {
+      //				logger.debug("additional results: {}", Arrays.toString(v));
       //			}
       firePropertyChange(oldT, t, yTemp);
     }
@@ -916,8 +916,8 @@ implements DelayValueHolder, DESSolver, EventHandler {
         System.arraycopy(steady, 0, yTemp, 0, yTemp.length);
       }
       v = additionalResults(DES, t, yTemp, data, i);
-      //			if (logger.getLevel().intValue() < Level.INFO.intValue()) {
-      //				logger.fine("additional results: " + Arrays.toString(v));
+      //			if (logger.isDebugEnabled()) {
+      //				logger.debug("additional results: {}", Arrays.toString(v));
       //			}
       firePropertyChange(timePoints[i - 1], timePoints[i], yTemp);
       t = timePoints[i];
@@ -1003,8 +1003,8 @@ implements DelayValueHolder, DESSolver, EventHandler {
       checkNonNegativity(yTemp);
       System.arraycopy(yTemp, 0, result[i], 0, yTemp.length);
       v = additionalResults(DES, t, yTemp, data, i);
-      //			if ((logger != null) && (logger.getLevel().intValue() < Level.INFO.intValue())) {
-      //				logger.fine("additional results: " + Arrays.toString(v));
+      //			if (logger.isDebugEnabled()) {
+      //				logger.debug("additional results: {}", Arrays.toString(v));
       //			}
       firePropertyChange(timePoints[i - 1] * intervalFactor, timePoints[i] * intervalFactor, yTemp);
       t = timePoints[i];
@@ -1046,7 +1046,7 @@ implements DelayValueHolder, DESSolver, EventHandler {
 
       // Stop if max number of steps is reached
       if (step == maxSteps) {
-        logger.warning("Steady state could not be reached!");
+        logger.warn("Steady state could not be reached!");
         System.arraycopy(nextState, 0, curState, 0, initialValues.length);
         break;
       }

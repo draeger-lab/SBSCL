@@ -33,10 +33,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
 
-import org.apache.log4j.Logger;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.UniqueNamedSBase;
 import org.simulator.math.odes.MultiTable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is for importing CSV files.
@@ -48,7 +49,7 @@ public class CSVImporter {
 
   private static final String TIME = "time";
 
-  private static final Logger logger = Logger.getLogger(CSVImporter.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(CSVImporter.class);
 
   /**
    * This method reads the data from the CSV file and converts it into the map with key as the

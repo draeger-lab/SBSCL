@@ -29,8 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fern.network.AmountManager;
 import org.apache.commons.math.ode.DerivativeException;
@@ -69,7 +69,7 @@ public class SBMLinterpreter extends EquationSystem {
   /**
    * A {@link Logger}.
    */
-  private static final transient Logger logger = Logger.getLogger(SBMLinterpreter.class.getName());
+  private static final transient Logger logger = LoggerFactory.getLogger(SBMLinterpreter.class);
 
   /**
    * Generated serial version UID
@@ -810,8 +810,7 @@ public class SBMLinterpreter extends EquationSystem {
         law.getMath()
             .updateVariables(); // make sure references to local parameter values are reflected in the ASTNode
       } else {
-        logger.log(Level.FINE,
-            "Cannot set local parameters for reaction {0} because of missing kinetic law.",
+        logger.debug("Cannot set local parameters for reaction {} because of missing kinetic law.", 
             model.getReaction(reactionNum).getId());
       }
     }
@@ -820,9 +819,7 @@ public class SBMLinterpreter extends EquationSystem {
         init();
       } catch (Exception exc) {
         // This can never happen
-        logger
-            .log(Level.WARNING, "Could not re-initialize the model with the new parameter values.",
-                exc);
+       logger.warn("Could not re-initialize the model with the new parameter values.", exc);
       }
     } else {
       int nCompPlusSpec = model.getCompartmentCount() + model.getSpeciesCount();
