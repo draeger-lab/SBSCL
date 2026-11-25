@@ -29,11 +29,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.Model;
@@ -46,26 +42,14 @@ import org.sbml.jsbml.ext.fbc.Objective;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 
 import org.optsolvx.model.AbstractLPModel;
+import org.optsolvx.model.Constraint;
+import org.optsolvx.model.OptimizationDirection;
+import org.optsolvx.model.Variable;
 import org.optsolvx.solver.LPSolution;
 import org.optsolvx.solver.LPSolverAdapter;
 import org.optsolvx.solver.OptSolvXConfig;
 
 import org.simulator.optsolvx.FbaToOptSolvX;
-
-import org.sbml.jsbml.util.Pair;
-import static org.sbml.jsbml.util.Pair.pairOf;
-import org.sbml.jsbml.util.SBMLtools;
-import org.sbml.jsbml.validator.ModelOverdeterminedException;
-import org.simulator.sbml.SBMLinterpreter;
-import org.simulator.sbml.astnode.ASTNodeValue;
-
-import scpsolver.constraints.LinearBiggerThanEqualsConstraint;
-import scpsolver.constraints.LinearConstraint;
-import scpsolver.constraints.LinearEqualsConstraint;
-import scpsolver.constraints.LinearSmallerThanEqualsConstraint;
-import scpsolver.lpsolver.LinearProgramSolver;
-import scpsolver.lpsolver.SolverFactory;
-import scpsolver.problems.LinearProgram;
 
 /**
  * Support for Flux Balance Analysis (FBA).
@@ -251,42 +235,160 @@ public class FluxBalanceAnalysis {
         return activeObjective;
     }
 
-public static class CPLEXConverter {
-        public static StringBuffer convertToCPLEX(LinearProgram lp) {
+    /**
+     * Converts an OptSolvX LP model into CPLEX LP format.
+     */
+    public static class CPLEXConverter {
+
+        public static StringBuffer convertToCPLEX(AbstractLPModel lp) {
+            if (lp == null) {
+                throw new IllegalArgumentException("Model must not be null.");
+            }
+
+            if (!lp.isBuilt()) {
+                throw new IllegalStateException("Model must be built before conversion.");
+            }
+
+            List<Variable> variables = lp.getVariables();
+
+            if (variables.isEmpty()) {
+                throw new IllegalArgumentException("Model must contain variables.");
+            }
+
             StringBuffer cplex = new StringBuffer();
-            cplex.append("Minimize\n");
+
+            // Objective
+            cplex.append(lp.getDirection() == OptimizationDirection.MAXIMIZE
+                    ? "Maximize\n"
+                    : "Minimize\n");
+
             cplex.append(" obj: ");
-            for (int i = 0; i < lp.getC().length; i++) {
-                cplex.append(lp.getC()[i] + " x" + i);
-                if (i < lp.getC().length - 1) {
-                    cplex.append(" + ");
-                }
-            }
+            appendExpression(cplex, lp, lp.getObjectiveCoefficients());
             cplex.append("\n");
+
+            // Constraints
             cplex.append("Subject To\n");
-            for (int i = 0; i < lp.getConstraints().size(); i++) {
-                LinearConstraint lc = (LinearConstraint) lp.getConstraints().get(i);
-                cplex.append(" c" + i + ": ");
-                for (int j = 0; j < lc.getC().length; j++) {
-                    cplex.append(lc.getC()[j] + " x" + j);
-                    if (j < lc.getC().length - 1) {
-                        cplex.append(" + ");
-                    }
+
+            List<Constraint> constraints = lp.getConstraints();
+
+            for (int i = 0; i < constraints.size(); i++) {
+                Constraint constraint = constraints.get(i);
+
+                cplex.append(" c").append(i).append(": ");
+                appendExpression(cplex, lp, constraint.getCoefficients());
+
+                switch (constraint.getRelation()) {
+                    case EQ:
+                        cplex.append(" = ");
+                        break;
+                    case GEQ:
+                        cplex.append(" >= ");
+                        break;
+                    case LEQ:
+                        cplex.append(" <= ");
+                        break;
+                    default:
+                        throw new IllegalArgumentException(
+                                "Unsupported constraint relation: "
+                                        + constraint.getRelation());
                 }
-                if (lc instanceof LinearEqualsConstraint) {
-                    cplex.append(" = " + lc.getRHS() + "\n");
-                } else if (lc instanceof LinearBiggerThanEqualsConstraint) {
-                    cplex.append(" >= " + lc.getRHS() + "\n");
-                } else if (lc instanceof LinearSmallerThanEqualsConstraint) {
-                    cplex.append(" <= " + lc.getRHS() + "\n");
-                }
+
+                cplex.append(constraint.getRhs()).append("\n");
             }
+
+            // Variable bounds
             cplex.append("Bounds\n");
-            for (int i = 0; i < lp.getLowerbound().length; i++) {
-                cplex.append(" " + lp.getLowerbound()[i] + " <= x" + i + " <= " + lp.getUpperbound()[i] + "\n");
+
+            for (int i = 0; i < variables.size(); i++) {
+                Variable variable = variables.get(i);
+
+                double lower = variable.getLowerBound();
+                double upper = variable.getUpperBound();
+
+                if (lower == Double.NEGATIVE_INFINITY
+                        && upper == Double.POSITIVE_INFINITY) {
+                    cplex.append(" x").append(i).append(" free\n");
+                } else {
+                    cplex.append(" ")
+                            .append(formatBound(lower))
+                            .append(" <= x").append(i)
+                            .append(" <= ")
+                            .append(formatBound(upper))
+                            .append("\n");
+                }
             }
-            cplex.append("End");
+
+            cplex.append("End\n");
+
             return cplex;
+        }
+
+        /**
+         * Appends a linear expression in model variable order.
+         */
+        private static void appendExpression(
+                StringBuffer output,
+                AbstractLPModel lp,
+                Map<String, Double> coefficients) {
+
+            Map<Integer, Double> terms = new TreeMap<>();
+
+            for (Map.Entry<String, Double> entry : coefficients.entrySet()) {
+                double coefficient = entry.getValue();
+
+                if (!Double.isFinite(coefficient)) {
+                    throw new IllegalArgumentException(
+                            "Non-finite coefficient for " + entry.getKey());
+                }
+
+                if (coefficient != 0.0d) {
+                    terms.put(lp.getVariableIndex(entry.getKey()), coefficient);
+                }
+            }
+
+            int termCount = 0;
+
+            for (Map.Entry<Integer, Double> entry : terms.entrySet()) {
+                double coefficient = entry.getValue();
+
+                // Wrap long expressions.
+                if (termCount > 0 && termCount % 8 == 0) {
+                    output.append("\n  ");
+                }
+
+                if (termCount == 0) {
+                    if (coefficient < 0.0d) {
+                        output.append("- ");
+                    }
+                } else {
+                    output.append(coefficient < 0.0d ? " - " : " + ");
+                }
+
+                output.append(Math.abs(coefficient))
+                        .append(" x")
+                        .append(entry.getKey());
+
+                termCount++;
+            }
+
+            if (termCount == 0) {
+                output.append("0.0 x0");
+            }
+        }
+
+        /**
+         * Formats finite and infinite variable bounds.
+         */
+        private static String formatBound(double bound) {
+            if (bound == Double.NEGATIVE_INFINITY) {
+                return "-infinity";
+            }
+
+            if (bound == Double.POSITIVE_INFINITY) {
+                return "+infinity";
+            }
+
+            return Double.toString(bound);
         }
     }
 }
