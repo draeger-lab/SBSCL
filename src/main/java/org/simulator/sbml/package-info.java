@@ -40,9 +40,9 @@
  * org.simulator.sbml.ConstraintListener}s. You can remove this element by calling {@link
  * org.simulator.sbml.SBMLinterpreter#removeConstraintListener(int)} with the argument 0 and add an
  * arbitrary number of user-specific listeners instead. The {@link org.simulator.sbml.SimpleConstraintListener}
- * uses the standard Java {@link java.util.logging.Logger} and displays the time, condition (as
+ * uses the SLF4J {@link org.slf4j.Logger} and displays the time, condition (as
  * formula {@link java.lang.String}), and the message of the {@link org.sbml.jsbml.Constraint} on
- * the log-level {@link java.util.logging.Level#WARNING}. A recommended practice would be maintain a
+ * the {@code WARN} log level. A recommended practice would be maintain a
  * list for each {@link org.sbml.jsbml.Constraint} that gathers all points in time, when it was
  * violated. This list could at the end of the simulation be presented to the user via a graphical
  * user interface together with a rendered version of the message (note that the message element in

@@ -7,12 +7,12 @@ import org.simulator.math.odes.LSODA.LSODAContext;
 import org.simulator.math.odes.LSODA.LSODAIntegrator;
 import org.simulator.math.odes.LSODA.LSODAOptions;
 import org.simulator.math.odes.exception.IllegalInputException;
-
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LSODAIntegratorTest {
 
-    private static final Logger logger = Logger.getLogger(LSODAIntegratorTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(LSODAIntegratorTest.class);
 
     LSODACommon common = new LSODACommon();
     LSODAOptions opt = new LSODAOptions();
@@ -2313,7 +2313,7 @@ public class LSODAIntegratorTest {
         assertEquals(-6, resultYh[3][1], 1e-8);
         assertEquals(-8, resultYh[3][2], 1e-8);
 
-        // logger.fine("scaleh_NegativeH passed: h=" + common.getH() + ", rc=" + common.getRc());
+        // logger.debug("scaleh_NegativeH passed: h={}, rc={}", common.getH(), common.getRc());
     }
 
     /* The following tests are for the function .cfode() within LSODAIntegrator.java */
@@ -2348,7 +2348,7 @@ public class LSODAIntegratorTest {
         // For each order from 2 to 12, ensure elco[nq][1] is not zero
         for (int nq = 2; nq <= 12; nq++) {
             double coeff = common.getElco()[nq][1];
-            // logger.fine("Checking elco[" + nq + "][1] = " + coeff);
+            // logger.debug("Checking elco[{}][1] = {}", nq, coeff);
             assertNotEquals(0.0, coeff, 1e-10, "Coefficient elco[" + nq + "][1] must be nonzero");
         }
     }

@@ -90,18 +90,18 @@ public class FunctionValue extends ASTNodeValue {
         }
         argumentValues = new double[variables.size()];
       } else {
-        logger.warning(
-            "ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! (" + node
-                .getName() + ", " + node.getParentSBMLObject() + ")");
+        logger.warn(
+            "ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! ({}, {})",
+            node.getName(), node.getParentSBMLObject());
         throw new SBMLException(
             "ASTNode of type FUNCTION but the variable is not a FunctionDefinition !! (" + node
                 .getName() + ", " + node.getParentSBMLObject() + ")");
         // doubleValue = compiler.compile(variable);
       }
     } else {
-      logger.warning(
-          "ASTNode of type FUNCTION but the variable is null !! (" + node.getName() + ", " + node
-              .getParentSBMLObject() + "). " + "Check that your object is linked to a Model.");
+      logger.warn(
+            "ASTNode of type FUNCTION but the variable is null !! ({}, {}). Check that your object is linked to a Model.",
+            node.getName(), node.getParentSBMLObject());
     }
   }
 

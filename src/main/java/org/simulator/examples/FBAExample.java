@@ -31,14 +31,14 @@ import java.util.Arrays;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.fba.FluxBalanceAnalysis;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A simple test class to demonstrate the capabilities of the FBA implementation in Simulation Core
@@ -54,7 +54,7 @@ import org.simulator.fba.FluxBalanceAnalysis;
  */
 public class FBAExample {
 
-  private static final Logger logger = Logger.getLogger(FBAExample.class);
+  private static final Logger logger = LoggerFactory.getLogger(FBAExample.class);
   PrintWriter writer;
 
   /**
@@ -103,10 +103,10 @@ public class FBAExample {
           System.out.println("Objective value:\t" + solver.getObjectiveValue());
           System.out.println("Fluxes:\t" + solver.getSolution());
         } else {
-          logger.error("\nSolver returned null for " + file.getName());
+          logger.error("\nSolver returned null for {}", file.getName());
         }
       } catch (Exception exc) {
-        logger.error("\nCannot run " + file.getName() + "\n" + exc);
+        logger.error("\nCannot run {}", file.getName(), exc);
       }
     }
   }
@@ -120,7 +120,6 @@ public class FBAExample {
    * @throws FileNotFoundException
    */
   public static void main(String[] args) throws FileNotFoundException {
-    PropertyConfigurator.configure("MyLog4j.properties");
     try {
       new FBAExample(new File(args[0]));
     } catch (Throwable exc) {

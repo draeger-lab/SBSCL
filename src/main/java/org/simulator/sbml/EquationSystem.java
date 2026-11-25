@@ -2,7 +2,6 @@ package org.simulator.sbml;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
@@ -62,6 +59,8 @@ import org.simulator.sbml.astnode.SpeciesReferenceValue;
 import org.simulator.sbml.astnode.SpeciesValue;
 import org.simulator.sbml.astnode.StoichiometryValue;
 import org.simulator.sbml.astnode.TimesValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -81,7 +80,7 @@ FastProcessDESystem, RichDESystem, PropertyChangeListener {
   /**
    * A {@link Logger}.
    */
-  private static final transient Logger logger = Logger.getLogger(EquationSystem.class.getName());
+  private static final transient Logger logger = LoggerFactory.getLogger(EquationSystem.class);
 
   /**
    * Key to memorize user objects in {@link ASTNode}
@@ -1624,8 +1623,7 @@ FastProcessDESystem, RichDESystem, PropertyChangeListener {
             .compileDouble(astNodeTime, 0d);
       } catch (SBMLException exc) {
         // TODO: Localize
-        logger.log(Level.WARNING, MessageFormat
-          .format("Could not compile stoichiometry math of species reference {0}.", id), exc);
+        logger.warn("Could not compile stoichiometry math of species reference {}.", id, exc);
       }
     } else if (sr != null) {
       return sr.getStoichiometry();
@@ -1697,8 +1695,7 @@ FastProcessDESystem, RichDESystem, PropertyChangeListener {
       return value;
     } else if (delayValueHolder == null) {
       // TODO: Localize
-      logger.warning(MessageFormat
-        .format("Cannot access delayed value at time {0,number} for {1}.", time, id));
+      logger.warn("Cannot access delayed value at time {} for {}.", time, id);
       return Double.NaN;
     }
     return delayValueHolder

@@ -36,7 +36,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import org.apache.commons.math.ode.DerivativeException;
 import org.sbml.jsbml.Model;
@@ -45,6 +44,8 @@ import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.simulator.io.CSVImporter;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Automatically evaluates models from the SBML Test Suite within a given range of model numbers,
@@ -58,7 +59,7 @@ public class SBMLTestSuiteWrapper {
   /**
    * A {@link Logger} for this class.
    */
-  private static final Logger logger = Logger.getLogger(SBMLTestSuiteWrapper.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(SBMLTestSuiteWrapper.class);
 
   /**
    * Computes a statistic for the SBML test suite using the {@link RosenbrockSolver} as integrator
@@ -169,18 +170,17 @@ public class SBMLTestSuiteWrapper {
         solution = SBMLTestSuiteRunner.testModel(solver, model,
             timepoints, duration / steps, amountHash);
       } catch (DerivativeException e) {
-        logger.warning("Exception in model " + modelnr);
+        logger.warn("Exception in model {}", modelnr);
         solution = null;
       } catch (ModelOverdeterminedException e) {
-        logger.warning("OverdeterminationException in model "
-            + modelnr);
+        logger.warn("OverdeterminationException in model {}", modelnr);
         solution = null;
       }
       if (solution != null) {
         writeMultiTableToFile(outputPath + "/" + folder + ".csv", variables, solution);
       }
     } else {
-      logger.warning("The model " + modelnr + " does not exist");
+      logger.warn("The model {} does not exist", modelnr);
     }
   }
 

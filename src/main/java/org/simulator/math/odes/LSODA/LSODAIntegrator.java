@@ -1,8 +1,6 @@
 package org.simulator.math.odes.LSODA;
 
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 import org.simulator.math.Mathematics;
@@ -12,13 +10,15 @@ import org.simulator.math.odes.DESystem;
 import org.simulator.math.odes.EventDESystem;
 import org.simulator.math.odes.FastProcessDESystem;
 import org.simulator.math.odes.exception.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
 
     /*
      * Logger for this class
      */
-    private static final Logger logger = Logger.getLogger(LSODAIntegrator.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(LSODAIntegrator.class);
 
     /*
      * LSODAContext variable
@@ -2087,7 +2087,7 @@ public class LSODAIntegrator extends AdaptiveStepsizeIntegrator {
         // Setting Default Absolute Tolerance
         if((defaultTol) && (ctx.getState() == 1)) {
 
-            logger.log(Level.INFO, "Setting Default tolerance");
+            logger.info("Setting Default tolerance");
 
             double[] atol = new double[ctx.getNeq()];
             double[] rtol = new double[ctx.getNeq()];

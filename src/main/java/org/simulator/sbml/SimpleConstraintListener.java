@@ -24,11 +24,10 @@
  */
 package org.simulator.sbml;
 
-import java.text.MessageFormat;
-import org.apache.log4j.Logger;
-
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.util.SBMLtools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a simple listener implementation to process the violation of {@link
@@ -44,8 +43,7 @@ public class SimpleConstraintListener implements ConstraintListener {
   /**
    * A {@link Logger} for this class.
    */
-  private static final transient Logger logger = Logger
-      .getLogger(SimpleConstraintListener.class.getName());
+  private static final transient Logger logger = LoggerFactory.getLogger(SimpleConstraintListener.class);
 
   /**
    * {@inheritDoc}
@@ -55,8 +53,7 @@ public class SimpleConstraintListener implements ConstraintListener {
     assert evt != null;
     String constraint = evt.getSource().getMath().toFormula();
     String message = SBMLtools.toXML(evt.getSource().getMessage());
-    logger.warn(MessageFormat
-        .format("[VIOLATION]\t{0} at time {1,number}: {2}", constraint, evt.getTime(), message));
+    logger.warn("[VIOLATION]\t{} at time {}: {}", constraint, evt.getTime(), message);
   }
 
   /**
@@ -65,6 +62,6 @@ public class SimpleConstraintListener implements ConstraintListener {
   @Override
   public void processSatisfiedAgain(ConstraintEvent evt) {
     String constraint = evt.getSource().getMath().toFormula();
-    logger.debug(MessageFormat.format("Constraint {0} satisfied again", constraint));
+    logger.debug("Constraint {} satisfied again", constraint);
   }
 }

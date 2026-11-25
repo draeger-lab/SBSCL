@@ -27,13 +27,14 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class can test the simulation of all models from
@@ -47,7 +48,7 @@ public class BiomodelsExample {
   /**
    * A {@link Logger} for this class.
    */
-  private static final Logger logger = Logger.getLogger(BiomodelsExample.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(BiomodelsExample.class);
 
 
   /**
@@ -82,7 +83,7 @@ public class BiomodelsExample {
         model = (new SBMLReader()).readSBML(modelFile).getModel();
       } catch (Exception e) {
         model = null;
-        logger.warning("Exception while reading Biomodel " + modelnr);
+        logger.warn("Exception while reading Biomodel {}", modelnr);
         errors++;
       }
       if (model != null) {
@@ -94,7 +95,7 @@ public class BiomodelsExample {
             solver.setStepSize(0.01);
             solver.solve(interpreter, interpreter.getInitialValues(), 0, 10);
             if (solver.isUnstable()) {
-              logger.warning("unstable!");
+              logger.warn("unstable!");
               errors++;
             }
           }
@@ -104,7 +105,7 @@ public class BiomodelsExample {
             slowModels.add(modelnr);
           }
         } catch (Exception e) {
-          logger.warning("Exception in Biomodel " + modelnr);
+          logger.warn("Exception in Biomodel {}", modelnr);
           errors++;
         }
       }
