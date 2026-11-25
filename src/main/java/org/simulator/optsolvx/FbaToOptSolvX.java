@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  * and sets the active objective.
  * Uses SBMLinterpreter to evaluate initial assignments and assignment rules.
  *
- * TODO: Support StoichiometryMath.
+ * StoichiometryMath is not supported because FBC requires SBML Level 3.
  */
 public final class FbaToOptSolvX {
     private static final Logger LOGGER = Logger.getLogger(FbaToOptSolvX.class.getName());
