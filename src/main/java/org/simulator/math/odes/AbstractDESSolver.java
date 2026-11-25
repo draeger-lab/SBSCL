@@ -37,7 +37,6 @@ import org.apache.commons.math.ode.events.EventException;
 import org.apache.commons.math.ode.events.EventHandler;
 import org.simulator.math.Mathematics;
 import org.simulator.math.odes.MultiTable.Block.Column;
-import org.simulator.sbml.SBMLinterpreter;
 
 /**
  * This Class represents an abstract solver for event-driven DES
@@ -793,7 +792,9 @@ implements DelayValueHolder, DESSolver, EventHandler {
       result[0] = computeSteadyState(((FastProcessDESystem) DES), result[0], timeBegin);
     }
 
-    addPropertyChangeListener((SBMLinterpreter) DES);
+    if (DES instanceof PropertyChangeListener) {
+      addPropertyChangeListener((PropertyChangeListener) DES);
+    }
 
     // execute events that trigger at 0.0 and process rules on changes due to the events
     processEventsAndRules(true, DES, 0d, 0d, result[0]);
@@ -888,7 +889,9 @@ implements DelayValueHolder, DESSolver, EventHandler {
       result[0] = computeSteadyState(((FastProcessDESystem) DES), result[0], timePoints[0]);
     }
 
-    addPropertyChangeListener((SBMLinterpreter) DES);
+    if (DES instanceof PropertyChangeListener) {
+      addPropertyChangeListener((PropertyChangeListener) DES);
+    }
     // execute events that trigger at 0.0 and process rules on changes due to the events
     processEventsAndRules(true, DES, 0d, 0d, result[0]);
     System.arraycopy(result[0], 0, yTemp, 0, result[0].length);
@@ -944,7 +947,10 @@ implements DelayValueHolder, DESSolver, EventHandler {
     if (DES instanceof DelayedDESystem) {
       ((DelayedDESystem) DES).registerDelayValueHolder(this);
     }
-    addPropertyChangeListener((SBMLinterpreter) DES);
+    
+    if (DES instanceof PropertyChangeListener) {
+      addPropertyChangeListener((PropertyChangeListener) DES);
+    }
     double[] timePoints = initConditions.getTimePoints();
 
     // of items to be simulated, this will cause a problem!
