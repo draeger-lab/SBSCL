@@ -243,20 +243,13 @@ public class FluxBalanceAnalysis {
     }
 
     /**
-     * Public accessor for the active FBC objective id (API/test compatibility).
+     * Returns the ID of the active FBC objective.
+     *
+     * @return the active objective ID
      */
-    public String getActiveObjective() { // simple O(0) getter; not performance-critical
+    public String getActiveObjective() {
         return activeObjective;
     }
-
-  /**
-   * Gets the id of the active objective function
-   *
-   * @return
-   */
-  public String getActiveObjective() {
-    return activeObjective;
-  }
 
 public static class CPLEXConverter {
         public static StringBuffer convertToCPLEX(LinearProgram lp) {
