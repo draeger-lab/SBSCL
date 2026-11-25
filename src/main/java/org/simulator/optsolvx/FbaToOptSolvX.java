@@ -79,34 +79,58 @@ public final class FbaToOptSolvX {
             ub.put(rid, upper);
         }
 
-        // FBC v1: FluxBounds at model level (override)
+        // FBC v1: combine explicit flux bounds.
         FBCModelPlugin mpV1 = (FBCModelPlugin) m.getPlugin(fbcNSv1);
+
         if (mpV1 != null && mpV1.isSetListOfFluxBounds()) {
+            final Map<String, Double> explicitLb = new LinkedHashMap<>();
+            final Map<String, Double> explicitUb = new LinkedHashMap<>();
+
             for (FluxBound fb : mpV1.getListOfFluxBounds()) {
                 String rid = fb.getReaction();
+
                 if (rid == null) continue;
-                switch (fb.getOperation()) { // Java 8 compatible switch
+
+                double value = fb.getValue();
+
+                switch (fb.getOperation()) {
                     case GREATER_EQUAL:
-                        lb.put(rid, fb.getValue());
+                        explicitLb.merge(rid, value, Math::max);
                         break;
+
                     case LESS_EQUAL:
-                        ub.put(rid, fb.getValue());
+                        explicitUb.merge(rid, value, Math::min);
                         break;
+
                     case EQUAL:
-                        lb.put(rid, fb.getValue());
-                        ub.put(rid, fb.getValue());
+                        explicitLb.merge(rid, value, Math::max);
+                        explicitUb.merge(rid, value, Math::min);
                         break;
+
                     default:
-                        LOGGER.warning("FBC v1: Unsupported FluxBound operation on " + rid);
+                        LOGGER.warning(
+                                "FBC v1: Unsupported FluxBound operation on " + rid);
                 }
             }
+
+            lb.putAll(explicitLb);
+            ub.putAll(explicitUb);
         }
 
-        // Add variables to LP
+        // Add variables to LP.
         for (Reaction r : reactions) {
             String rid = r.getId();
+
             double lower = nvl(lb.get(rid), 0.0d);
             double upper = nvl(ub.get(rid), Double.POSITIVE_INFINITY);
+
+            if (Double.isNaN(lower) || Double.isNaN(upper) || lower > upper) {
+                throw new IllegalArgumentException(
+                        MessageFormat.format(
+                                "Invalid bounds for reaction {0}: [{1}, {2}]",
+                                rid, lower, upper));
+            }
+
             lp.addVariable(rid, lower, upper);
         }
 
@@ -178,7 +202,10 @@ public final class FbaToOptSolvX {
                 // Coefficients
                 for (FluxObjective fo : o.getListOfFluxObjectives()) {
                     String rid = fo.getReaction();
-                    if (rid != null) obj.put(rid, fo.getCoefficient());
+
+                    if (rid != null) {
+                        obj.merge(rid, fo.getCoefficient(), Double::sum);
+                    }
                 }
             } else {
                 LOGGER.warning("No active FBC Objective instance set; using empty objective.");
