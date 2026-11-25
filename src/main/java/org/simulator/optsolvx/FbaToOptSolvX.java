@@ -5,6 +5,7 @@ import org.optsolvx.model.Constraint;
 import org.optsolvx.model.OptimizationDirection;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.ext.fbc.*;
+import org.simulator.sbml.SBMLinterpreter;
 
 import java.text.MessageFormat;
 import java.util.LinkedHashMap;
@@ -13,9 +14,12 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * SBML/FBC -> OptSolvX bridge (minimal functional version).
- * Maps reactions to variables (with bounds), builds S·v=0 constraints, and sets the active objective.
- * NOTE: This intentionally ignores InitialAssignments and StoichiometryMath for now (TODO).
+ * Translates SBML/FBC models into solver-independent LP models.
+ * Maps reactions to variables, builds mass-balance constraints,
+ * and sets the active objective.
+ * Uses SBMLinterpreter to evaluate initial assignments and assignment rules.
+ *
+ * TODO: Support StoichiometryMath.
  */
 public final class FbaToOptSolvX {
     private static final Logger LOGGER = Logger.getLogger(FbaToOptSolvX.class.getName());
@@ -28,6 +32,16 @@ public final class FbaToOptSolvX {
             throw new IllegalArgumentException("SBMLDocument must contain a Model.");
         }
         final Model m = doc.getModel();
+
+        // Evaluate SBML initial assignments and assignment rules.
+        final SBMLinterpreter interpreter;
+
+        try {
+            interpreter = new SBMLinterpreter(m);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    "Could not initialize the SBML interpreter.", e);
+        }
 
         // Prepare LP model
         final AbstractLPModel lp = new AbstractLPModel();
@@ -57,8 +71,8 @@ public final class FbaToOptSolvX {
                 FBCReactionPlugin rp = (FBCReactionPlugin) r.getPlugin(fbcNSv2);
                 Parameter lpi = rp.getLowerFluxBoundInstance();
                 Parameter upi = rp.getUpperFluxBoundInstance();
-                if (lpi != null) lower = valueOf(lpi);
-                if (upi != null) upper = valueOf(upi);
+                if (lpi != null) lower = valueOf(lpi, interpreter);
+                if (upi != null) upper = valueOf(upi, interpreter);
             }
             // Store preliminary bounds; FBC v1 may override below via FluxBounds list
             lb.put(rid, lower);
@@ -118,7 +132,7 @@ public final class FbaToOptSolvX {
                 for (int k = 0; k < reactants.size(); k++) {
                     final SpeciesReference sr = reactants.get(k);
                     if (sid.equals(sr.getSpecies())) {
-                        sum -= stoich(sr);
+                        sum -= stoich(sr, interpreter);
                     }
                 }
 
@@ -127,7 +141,7 @@ public final class FbaToOptSolvX {
                 for (int k = 0; k < products.size(); k++) {
                     final SpeciesReference sr = products.get(k);
                     if (sid.equals(sr.getSpecies())) {
-                        sum += stoich(sr);
+                        sum += stoich(sr, interpreter);
                     }
                 }
 
@@ -194,11 +208,24 @@ public final class FbaToOptSolvX {
 
     // --- Helpers -----------------------------------------------------------------------------
 
-    /** Get numeric value from a Parameter (defaults to 0.0 if unset). */
-    private static double valueOf(Parameter p) {
-        if (p == null) return 0.0d;
-        // Prefer explicit value; ignoring units & possible initial assignments for now (TODO)
-        return p.isSetValue() ? p.getValue() : 0.0d;
+    /**
+     * Returns the evaluated parameter value.
+     */
+    private static double valueOf(
+            Parameter p, SBMLinterpreter interpreter) {
+
+        if (p == null) {
+            return 0.0d;
+        }
+
+        double value = interpreter.getCurrentValueOf(p.getId());
+
+        if (Double.isNaN(value)) {
+            throw new IllegalArgumentException(
+                    "Could not evaluate flux bound: " + p.getId());
+        }
+
+        return value;
     }
 
     /** Null-safe value with default. */
@@ -206,9 +233,32 @@ public final class FbaToOptSolvX {
         return (v != null) ? v.doubleValue() : def;
     }
 
-    /** Basic stoichiometry extraction (ignores StoichiometryMath & InitialAssignments for now). */
-    private static double stoich(SpeciesReference sr) {
-        if (sr == null) return 0.0d;
-        return sr.isSetStoichiometry() ? sr.getStoichiometry() : 1.0d;
+    /**
+     * Returns the evaluated stoichiometric coefficient.
+     */
+    private static double stoich(
+            SpeciesReference sr, SBMLinterpreter interpreter) {
+
+        if (sr == null) {
+            return 0.0d;
+        }
+
+        double value;
+
+        if (sr.isSetId()) {
+            // Respect assignments targeting the species reference.
+            value = interpreter.getCurrentStoichiometry(sr.getId());
+        } else {
+            value = sr.isSetStoichiometry()
+                    ? sr.getStoichiometry()
+                    : 1.0d;
+        }
+
+        if (!Double.isFinite(value)) {
+            throw new IllegalArgumentException(
+                    "Invalid stoichiometry for species: " + sr.getSpecies());
+        }
+
+        return value;
     }
 }
