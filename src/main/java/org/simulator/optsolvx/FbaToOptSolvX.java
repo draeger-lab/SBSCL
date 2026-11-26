@@ -190,7 +190,13 @@ public final class FbaToOptSolvX {
                 upper = Double.POSITIVE_INFINITY;
             }
 
-            if (Double.isNaN(lower) || Double.isNaN(upper) || lower > upper) {
+            // Reject invalid bounds for real-valued flux variables.
+            if (Double.isNaN(lower)
+                    || Double.isNaN(upper)
+                    || lower == Double.POSITIVE_INFINITY
+                    || upper == Double.NEGATIVE_INFINITY
+                    || lower > upper) {
+
                 throw new IllegalArgumentException(
                         MessageFormat.format(
                                 "Invalid bounds for reaction {0}: [{1}, {2}]",

@@ -219,6 +219,48 @@ public class FbaToOptSolvXTest {
         assertBounds(lp, -10.0d, Double.POSITIVE_INFINITY);
     }
 
+    @Test
+    public void testPositiveInfinityAsLowerBound() {
+        assertThrows(IllegalArgumentException.class, () ->
+                createModel(
+                        bound("b1", "greaterEqual", Double.POSITIVE_INFINITY)
+                                + bound("b2", "lessEqual", Double.POSITIVE_INFINITY),
+                        objective(1.0d)));
+    }
+
+    @Test
+    public void testNegativeInfinityAsUpperBound() {
+        assertThrows(IllegalArgumentException.class, () ->
+                createModel(
+                        bound("b1", "greaterEqual", Double.NEGATIVE_INFINITY)
+                                + bound("b2", "lessEqual", Double.NEGATIVE_INFINITY),
+                        objective(1.0d)));
+    }
+
+    @Test
+    public void testValidNegativeInfinityLowerBound()
+            throws XMLStreamException {
+
+        AbstractLPModel lp = createModel(
+                bound("b1", "greaterEqual", Double.NEGATIVE_INFINITY)
+                        + bound("b2", "lessEqual", 10.0d),
+                objective(1.0d));
+
+        assertBounds(lp, Double.NEGATIVE_INFINITY, 10.0d);
+    }
+
+    @Test
+    public void testValidPositiveInfinityUpperBound()
+            throws XMLStreamException {
+
+        AbstractLPModel lp = createModel(
+                bound("b1", "greaterEqual", 0.0d)
+                        + bound("b2", "lessEqual", Double.POSITIVE_INFINITY),
+                objective(1.0d));
+
+        assertBounds(lp, 0.0d, Double.POSITIVE_INFINITY);
+    }
+
     /**
      * Verifies the translated variable bounds.
      */
@@ -240,11 +282,17 @@ public class FbaToOptSolvXTest {
     private static String bound(
             String id, String operation, double value) {
 
+        String xmlValue = value == Double.POSITIVE_INFINITY
+                ? "INF"
+                : value == Double.NEGATIVE_INFINITY
+                ? "-INF"
+                : Double.toString(value);
+
         return "<fbc:fluxBound"
                 + " fbc:id=\"" + id + "\""
                 + " fbc:reaction=\"R1\""
                 + " fbc:operation=\"" + operation + "\""
-                + " fbc:value=\"" + value + "\"/>";
+                + " fbc:value=\"" + xmlValue + "\"/>";
     }
 
     /**
