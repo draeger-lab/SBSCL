@@ -1,3 +1,4 @@
+
 # Bundled OptSolvX Dependency
 
 OptSolvX is temporarily provided through the in-project Maven repository until it is available through a public Maven repository.
@@ -11,22 +12,33 @@ OptSolvX is temporarily provided through the in-project Maven repository until i
 | Version | `0.1.0-SNAPSHOT` |
 | Classifier | `jdk8` |
 | Source repository | https://github.com/draeger-lab/OptSolvX |
-| Source commit | `7eb8c6d43f875ae5d8fe53d35d9de47d2b7459a4` |
+| Source commit | `7eab6d88cc69cda911833cc7e72ec3552276cad0` |
 
 SHA-256 of the bundled JAR:
 
 ```text
-cc1fb89eeaf16dbe3c999b1b22a7019c306d2fb6b77e8d04213c435fe2a045ce
+bcaecdc28b252bfe5e4b01e3236d0c77e31617593cbc80a25a7056675b0db066
 ```
 
 ## Compatibility
 
 The bundled artifact contains Java 8 bytecode and is used with the Java 17 baseline of SBSCL. Its runtime compatibility also depends on the requirements of its transitive dependencies.
 
+
 ## Validation
 
-The artifact was successfully resolved from the in-project Maven repository using an initially empty local Maven repository. All 203 configured Maven test executions passed.
+The bundled artifact includes a workaround for incorrect
+infeasibility results in ojAlgo 55.0.0 by selecting its
+legacy LP solver.
 
-The identical JAR previously passed all 130 numerical FBC test runs using Apache Commons Math and ojAlgo.
+The following validations were completed successfully:
 
-This local repository is intended as a temporary solution and should be replaced once OptSolvX is publicly available through Maven.
+- All 27 OptSolvX unit tests.
+- All 203 configured SBSCL Maven test executions.
+- All 130 numerical SBML/FBC test runs using Apache Commons
+  Math and ojAlgo.
+- Objective value validation for the BiGG models
+  `e_coli_core` and `iAF1260`.
+- Dependency resolution from the in-project Maven repository
+  using an initially empty local Maven repository.
+- SHA-256 verification of the resolved OptSolvX artifact.
