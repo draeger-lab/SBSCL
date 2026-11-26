@@ -663,10 +663,10 @@
                         <excludes>
                             <exclude>org/simulator/examples/**</exclude>
                         </excludes>
+                        <!-- Include existing tests and OptSolvX integration tests -->
                         <testIncludes>
                             <testInclude>*.java</testInclude>
-                            <testInclude>org/simulator/optsolvx/FbaToOptSolvXTest.java</testInclude>
-                            <testInclude>org/simulator/optsolvx/BridgeConstraintTests.java</testInclude>
+                            <testInclude>org/simulator/optsolvx/**/*.java</testInclude>
                             <testInclude>org/simulator/fba/FluxBalanceAnalysisConvertToCPLEXTest.java</testInclude>
                         </testIncludes>
                     </configuration>
