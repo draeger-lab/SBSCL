@@ -666,6 +666,7 @@
                         <testIncludes>
                             <testInclude>*.java</testInclude>
                             <testInclude>org/simulator/optsolvx/FbaToOptSolvXTest.java</testInclude>
+                            <testInclude>org/simulator/optsolvx/BridgeConstraintTests.java</testInclude>
                             <testInclude>org/simulator/fba/FluxBalanceAnalysisConvertToCPLEXTest.java</testInclude>
                         </testIncludes>
                     </configuration>
