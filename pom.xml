@@ -314,6 +314,16 @@
                 <role>developer</role>
             </roles>
         </developer>
+        <developer>
+            <name>Michael Gaas</name>
+            <id>xts-Michi</id>
+            <url>https://github.com/xts-Michi</url>
+            <organization>University of Tübingen</organization>
+            <timezone>Europe/Berlin</timezone>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
     </developers>
 
     <contributors>
