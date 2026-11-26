@@ -261,6 +261,39 @@ public class FbaToOptSolvXTest {
         assertBounds(lp, 0.0d, Double.POSITIVE_INFINITY);
     }
 
+    @Test
+    public void testUnknownReactionInFluxBound() {
+        String invalidBound = bound("b1", "greaterEqual", 0.0d)
+                .replace("fbc:reaction=\"R1\"",
+                        "fbc:reaction=\"UNKNOWN_REACTION\"");
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> createModel(invalidBound, objective(1.0d)));
+
+        assertEquals(
+                "Unknown reaction reference in flux bound: UNKNOWN_REACTION",
+                exception.getMessage());
+    }
+
+    @Test
+    public void testUnknownReactionInObjective() {
+        String invalidObjective = objective(1.0d)
+                .replace("fbc:reaction=\"R1\"",
+                        "fbc:reaction=\"UNKNOWN_REACTION\"");
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> createModel(
+                        bound("b1", "greaterEqual", 0.0d)
+                                + bound("b2", "lessEqual", 10.0d),
+                        invalidObjective));
+
+        assertEquals(
+                "Unknown reaction reference in objective: UNKNOWN_REACTION",
+                exception.getMessage());
+    }
+
     /**
      * Verifies the translated variable bounds.
      */

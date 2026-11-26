@@ -143,7 +143,11 @@ public final class FbaToOptSolvX {
             for (FluxBound fb : mpV1.getListOfFluxBounds()) {
                 String rid = fb.getReaction();
 
-                if (rid == null) continue;
+                // Validate the referenced reaction.
+                if (rid == null || !lb.containsKey(rid)) {
+                    throw new IllegalArgumentException(
+                            "Unknown reaction reference in flux bound: " + rid);
+                }
 
                 double value = fb.getValue();
 
@@ -274,9 +278,13 @@ public final class FbaToOptSolvX {
                 for (FluxObjective fo : o.getListOfFluxObjectives()) {
                     String rid = fo.getReaction();
 
-                    if (rid != null) {
-                        obj.merge(rid, fo.getCoefficient(), Double::sum);
+                    // Validate the referenced reaction.
+                    if (rid == null || !lb.containsKey(rid)) {
+                        throw new IllegalArgumentException(
+                                "Unknown reaction reference in objective: " + rid);
                     }
+
+                    obj.merge(rid, fo.getCoefficient(), Double::sum);
                 }
             } else {
                 LOGGER.warning("No active FBC Objective instance set; using empty objective.");
