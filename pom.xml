@@ -663,9 +663,11 @@
                         <excludes>
                             <exclude>org/simulator/examples/**</exclude>
                         </excludes>
-                        <testExcludes>
-                            <testExclude>org/simulator/**</testExclude>
-                        </testExcludes>
+                        <testIncludes>
+                            <testInclude>*.java</testInclude>
+                            <testInclude>org/simulator/optsolvx/FbaToOptSolvXTest.java</testInclude>
+                            <testInclude>org/simulator/fba/FluxBalanceAnalysisConvertToCPLEXTest.java</testInclude>
+                        </testIncludes>
                     </configuration>
                 </plugin>
 
