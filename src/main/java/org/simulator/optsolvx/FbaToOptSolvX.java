@@ -55,6 +55,15 @@ public final class FbaToOptSolvX {
         final int version = doc.getVersion();
         final String fbcNSv1 = FBCConstants.getNamespaceURI(level, version, 1);
         final String fbcNSv2 = FBCConstants.getNamespaceURI(level, version, 2);
+        // Detect whether FBC v2 strict mode is enabled.
+        final FBCModelPlugin mpV2 =
+                (FBCModelPlugin) m.getPlugin(fbcNSv2);
+
+        final boolean isStrictFbcV2 =
+                mpV2 != null
+                        && mpV2.getPackageVersion() == 2
+                        && mpV2.isSetStrict()
+                        && mpV2.getStrict();
 
         // --- 1) Variables (reactions) with bounds ---------------------------------------------
         // Preliminary bounds; missing FBC v1 bounds are resolved below.
@@ -67,9 +76,28 @@ public final class FbaToOptSolvX {
             double upper = Double.POSITIVE_INFINITY;
 
             // FBC v2: resolve and validate flux bound parameter references.
-            if (r.isSetPlugin(fbcNSv2)) {
-                FBCReactionPlugin rp = (FBCReactionPlugin) r.getPlugin(fbcNSv2);
+            FBCReactionPlugin rp = r.isSetPlugin(fbcNSv2)
+                    ? (FBCReactionPlugin) r.getPlugin(fbcNSv2)
+                    : null;
 
+            // Strict FBC v2 models require both flux bound references.
+            if (isStrictFbcV2) {
+                if (rp == null || !rp.isSetLowerFluxBound()) {
+                    throw new IllegalArgumentException(
+                            MessageFormat.format(
+                                    "Missing lower flux bound for reaction {0} in strict FBC v2 model.",
+                                    rid));
+                }
+
+                if (!rp.isSetUpperFluxBound()) {
+                    throw new IllegalArgumentException(
+                            MessageFormat.format(
+                                    "Missing upper flux bound for reaction {0} in strict FBC v2 model.",
+                                    rid));
+                }
+            }
+
+            if (rp != null) {
                 if (rp.isSetLowerFluxBound()) {
                     Parameter lpi = rp.getLowerFluxBoundInstance();
 
@@ -223,8 +251,7 @@ public final class FbaToOptSolvX {
         Map<String, Double> obj = new LinkedHashMap<>();
         OptimizationDirection dir = OptimizationDirection.MAXIMIZE; // sensible default
 
-        // Prefer FBC v2 at model level; fall back to v1
-        FBCModelPlugin mpV2 = (FBCModelPlugin) m.getPlugin(fbcNSv2);
+        // Prefer FBC v2 at model level; fall back to v1.
         FBCModelPlugin mp = (mpV2 != null) ? mpV2 : mpV1;
 
         if (mp != null && mp.isSetActiveObjective()) {

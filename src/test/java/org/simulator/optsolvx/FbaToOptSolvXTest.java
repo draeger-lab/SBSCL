@@ -159,6 +159,66 @@ public class FbaToOptSolvXTest {
         assertBounds(lp, -10.0d, 10.0d);
     }
 
+    @Test
+    public void testFbcV2StrictMissingLowerBound() {
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> createFbcV2Model(null, "UB", true));
+
+        assertEquals(
+                "Missing lower flux bound for reaction R1 in strict FBC v2 model.",
+                exception.getMessage());
+    }
+
+    @Test
+    public void testFbcV2StrictMissingUpperBound() {
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> createFbcV2Model("LB", null, true));
+
+        assertEquals(
+                "Missing upper flux bound for reaction R1 in strict FBC v2 model.",
+                exception.getMessage());
+    }
+
+    @Test
+    public void testFbcV2StrictMissingBothBounds() {
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> createFbcV2Model(null, null, true));
+
+        assertEquals(
+                "Missing lower flux bound for reaction R1 in strict FBC v2 model.",
+                exception.getMessage());
+    }
+
+    @Test
+    public void testFbcV2StrictWithBothBounds()
+            throws XMLStreamException {
+
+        AbstractLPModel lp = createFbcV2Model("LB", "UB", true);
+
+        assertBounds(lp, -10.0d, 10.0d);
+    }
+
+    @Test
+    public void testFbcV2NonStrictMissingLowerBound()
+            throws XMLStreamException {
+
+        AbstractLPModel lp = createFbcV2Model(null, "UB", false);
+
+        assertBounds(lp, 0.0d, 10.0d);
+    }
+
+    @Test
+    public void testFbcV2NonStrictMissingUpperBound()
+            throws XMLStreamException {
+
+        AbstractLPModel lp = createFbcV2Model("LB", null, false);
+
+        assertBounds(lp, -10.0d, Double.POSITIVE_INFINITY);
+    }
+
     /**
      * Verifies the translated variable bounds.
      */
@@ -213,13 +273,31 @@ public class FbaToOptSolvXTest {
             String lowerBoundRef, String upperBoundRef)
             throws XMLStreamException {
 
+        return createFbcV2Model(lowerBoundRef, upperBoundRef, false);
+    }
+
+    /**
+     * Creates and translates an FBC v2 model with configurable strictness.
+     */
+    private static AbstractLPModel createFbcV2Model(
+            String lowerBoundRef, String upperBoundRef, boolean strict)
+            throws XMLStreamException {
+
+        String lowerAttribute = lowerBoundRef == null
+                ? ""
+                : "fbc:lowerFluxBound=\"" + lowerBoundRef + "\"";
+
+        String upperAttribute = upperBoundRef == null
+                ? ""
+                : "fbc:upperFluxBound=\"" + upperBoundRef + "\"";
+
         String xml = """
             <?xml version="1.0" encoding="UTF-8"?>
             <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core"
                   xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2"
                   level="3" version="1" fbc:required="false">
 
-                <model id="testModel" fbc:strict="false">
+                <model id="testModel" fbc:strict="%s">
 
                     <listOfCompartments>
                         <compartment id="cell" size="1" constant="true"/>
@@ -241,8 +319,8 @@ public class FbaToOptSolvXTest {
 
                     <listOfReactions>
                         <reaction id="R1" reversible="true" fast="false"
-                                  fbc:lowerFluxBound="%s"
-                                  fbc:upperFluxBound="%s">
+                                      %s
+                                      %s>
 
                             <listOfReactants>
                                 <speciesReference species="A"
@@ -270,7 +348,7 @@ public class FbaToOptSolvXTest {
 
                 </model>
             </sbml>
-            """.formatted(lowerBoundRef, upperBoundRef);
+            """.formatted(strict, lowerAttribute, upperAttribute);
 
         SBMLDocument document = SBMLReader.read(xml);
 
