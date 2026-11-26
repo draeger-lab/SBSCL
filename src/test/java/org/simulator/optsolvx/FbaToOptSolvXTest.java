@@ -209,7 +209,7 @@ public class FbaToOptSolvXTest {
 
         AbstractLPModel lp = createFbcV2Model(null, "UB", false);
 
-        assertBounds(lp, 0.0d, 10.0d);
+        assertBounds(lp, Double.NEGATIVE_INFINITY, 10.0d);
     }
 
     @Test
@@ -330,6 +330,63 @@ public class FbaToOptSolvXTest {
                 exception.getMessage());
     }
 
+    @Test
+    public void testFbcV1ReversibleWithOnlyUpperBound()
+            throws XMLStreamException {
+
+        AbstractLPModel lp = createModel(
+                bound("b1", "lessEqual", 10.0d),
+                objective(1.0d),
+                true);
+
+        assertBounds(lp, Double.NEGATIVE_INFINITY, 10.0d);
+    }
+
+    @Test
+    public void testFbcV1IrreversibleWithOnlyUpperBound()
+            throws XMLStreamException {
+
+        AbstractLPModel lp = createModel(
+                bound("b1", "lessEqual", 10.0d),
+                objective(1.0d),
+                false);
+
+        assertBounds(lp, 0.0d, 10.0d);
+    }
+
+    @Test
+    public void testFbcV1ReversibleWithOnlyLowerBound()
+            throws XMLStreamException {
+
+        AbstractLPModel lp = createModel(
+                bound("b1", "greaterEqual", -5.0d),
+                objective(1.0d),
+                true);
+
+        assertBounds(lp, -5.0d, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testFbcV2NonStrictReversibleWithoutBounds()
+            throws XMLStreamException {
+
+        AbstractLPModel lp = createFbcV2Model(null, null, false);
+
+        assertBounds(lp,
+                Double.NEGATIVE_INFINITY,
+                Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testFbcV2NonStrictIrreversibleWithOnlyUpperBound()
+            throws XMLStreamException {
+
+        AbstractLPModel lp = createFbcV2Model(
+                null, "UB", false, false);
+
+        assertBounds(lp, 0.0d, 10.0d);
+    }
+
     /**
      * Verifies the translated variable bounds.
      */
@@ -406,6 +463,20 @@ public class FbaToOptSolvXTest {
             String lowerBoundRef, String upperBoundRef, boolean strict)
             throws XMLStreamException {
 
+        return createFbcV2Model(
+                lowerBoundRef, upperBoundRef, strict, true);
+    }
+
+    /**
+     * Creates an FBC v2 model with configurable strictness and reversibility.
+     */
+    private static AbstractLPModel createFbcV2Model(
+            String lowerBoundRef,
+            String upperBoundRef,
+            boolean strict,
+            boolean reversible)
+            throws XMLStreamException {
+
         String lowerAttribute = lowerBoundRef == null
                 ? ""
                 : "fbc:lowerFluxBound=\"" + lowerBoundRef + "\"";
@@ -441,7 +512,7 @@ public class FbaToOptSolvXTest {
                     </listOfParameters>
 
                     <listOfReactions>
-                        <reaction id="R1" reversible="true" fast="false"
+                        <reaction id="R1" reversible="%s" fast="false"
                                       %s
                                       %s>
 
@@ -471,7 +542,7 @@ public class FbaToOptSolvXTest {
 
                 </model>
             </sbml>
-            """.formatted(strict, lowerAttribute, upperAttribute);
+            """.formatted(strict, reversible, lowerAttribute, upperAttribute);
 
         SBMLDocument document = SBMLReader.read(xml);
 

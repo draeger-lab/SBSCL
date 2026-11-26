@@ -55,24 +55,36 @@ public final class FbaToOptSolvX {
         final int version = doc.getVersion();
         final String fbcNSv1 = FBCConstants.getNamespaceURI(level, version, 1);
         final String fbcNSv2 = FBCConstants.getNamespaceURI(level, version, 2);
-        // Detect whether FBC v2 strict mode is enabled.
+        // Detect the FBC package version and strictness.
+        final FBCModelPlugin mpV1 =
+                (FBCModelPlugin) m.getPlugin(fbcNSv1);
+
         final FBCModelPlugin mpV2 =
                 (FBCModelPlugin) m.getPlugin(fbcNSv2);
 
+        final boolean isFbcV1 =
+                mpV1 != null && mpV1.getPackageVersion() == 1;
+
+        final boolean isFbcV2 =
+                mpV2 != null && mpV2.getPackageVersion() == 2;
+
         final boolean isStrictFbcV2 =
-                mpV2 != null
-                        && mpV2.getPackageVersion() == 2
+                isFbcV2
                         && mpV2.isSetStrict()
                         && mpV2.getStrict();
 
         // --- 1) Variables (reactions) with bounds ---------------------------------------------
-        // Preliminary bounds; missing FBC v1 bounds are resolved below.
+        // Initialize default bounds and override them with explicit FBC bounds.
         final Map<String, Double> lb = new LinkedHashMap<String, Double>(Math.max(16, reactions.size() * 2));
         final Map<String, Double> ub = new LinkedHashMap<String, Double>(Math.max(16, reactions.size() * 2));
 
         for (Reaction r : reactions) {
             String rid = r.getId();
-            double lower = 0.0d;
+            // Infer missing bounds from reaction reversibility.
+            double lower = (isFbcV1 || isFbcV2) && r.getReversible()
+                    ? Double.NEGATIVE_INFINITY
+                    : 0.0d;
+
             double upper = Double.POSITIVE_INFINITY;
 
             // FBC v2: resolve and validate flux bound parameter references.
@@ -130,11 +142,6 @@ public final class FbaToOptSolvX {
         }
 
         // FBC v1: combine explicit flux bounds.
-        FBCModelPlugin mpV1 = (FBCModelPlugin) m.getPlugin(fbcNSv1);
-
-        final boolean isFbcV1 =
-                mpV1 != null && mpV1.getPackageVersion() == 1;
-
         final Map<String, Double> explicitLb = new LinkedHashMap<>();
         final Map<String, Double> explicitUb = new LinkedHashMap<>();
 
@@ -181,18 +188,6 @@ public final class FbaToOptSolvX {
 
             double lower = nvl(lb.get(rid), 0.0d);
             double upper = nvl(ub.get(rid), Double.POSITIVE_INFINITY);
-
-            // Infer bounds from reversibility if no FBC v1 bounds are defined.
-            if (isFbcV1
-                    && !explicitLb.containsKey(rid)
-                    && !explicitUb.containsKey(rid)) {
-
-                lower = r.getReversible()
-                        ? Double.NEGATIVE_INFINITY
-                        : 0.0d;
-
-                upper = Double.POSITIVE_INFINITY;
-            }
 
             // Reject invalid bounds for real-valued flux variables.
             if (Double.isNaN(lower)
