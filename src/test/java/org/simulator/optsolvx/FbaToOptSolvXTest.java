@@ -9,6 +9,8 @@ import org.sbml.jsbml.SBMLReader;
 import javax.xml.stream.XMLStreamException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class FbaToOptSolvXTest {
 
@@ -294,6 +296,40 @@ public class FbaToOptSolvXTest {
                 exception.getMessage());
     }
 
+    @ParameterizedTest
+    @ValueSource(doubles = {
+            Double.NaN,
+            Double.POSITIVE_INFINITY,
+            Double.NEGATIVE_INFINITY
+    })
+    public void testNonFiniteObjectiveCoefficient(double coefficient) {
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> createModel(
+                        bound("b1", "greaterEqual", 0.0d)
+                                + bound("b2", "lessEqual", 10.0d),
+                        objective(coefficient)));
+
+        assertEquals(
+                "Non-finite objective coefficient for reaction R1.",
+                exception.getMessage());
+    }
+
+    @Test
+    public void testObjectiveCoefficientOverflow() {
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> createModel(
+                        bound("b1", "greaterEqual", 0.0d)
+                                + bound("b2", "lessEqual", 10.0d),
+                        objective(Double.MAX_VALUE)
+                                + objective(Double.MAX_VALUE)));
+
+        assertEquals(
+                "Objective coefficient overflow for reaction R1.",
+                exception.getMessage());
+    }
+
     /**
      * Verifies the translated variable bounds.
      */
@@ -332,9 +368,15 @@ public class FbaToOptSolvXTest {
      * Creates an objective term for reaction R1.
      */
     private static String objective(double coefficient) {
+        String xmlValue = coefficient == Double.POSITIVE_INFINITY
+                ? "INF"
+                : coefficient == Double.NEGATIVE_INFINITY
+                ? "-INF"
+                : Double.toString(coefficient);
+
         return "<fbc:fluxObjective"
                 + " fbc:reaction=\"R1\""
-                + " fbc:coefficient=\"" + coefficient + "\"/>";
+                + " fbc:coefficient=\"" + xmlValue + "\"/>";
     }
 
     /**

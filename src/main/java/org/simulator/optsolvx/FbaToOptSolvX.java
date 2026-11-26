@@ -284,7 +284,23 @@ public final class FbaToOptSolvX {
                                 "Unknown reaction reference in objective: " + rid);
                     }
 
-                    obj.merge(rid, fo.getCoefficient(), Double::sum);
+                    double coefficient = fo.getCoefficient();
+
+                    // Reject non-finite objective coefficients.
+                    if (!Double.isFinite(coefficient)) {
+                        throw new IllegalArgumentException(
+                                "Non-finite objective coefficient for reaction " + rid + ".");
+                    }
+
+                    // Accumulate coefficients and reject numerical overflow.
+                    double combined = obj.getOrDefault(rid, 0.0d) + coefficient;
+
+                    if (!Double.isFinite(combined)) {
+                        throw new IllegalArgumentException(
+                                "Objective coefficient overflow for reaction " + rid + ".");
+                    }
+
+                    obj.put(rid, combined);
                 }
             } else {
                 LOGGER.warning("No active FBC Objective instance set; using empty objective.");
