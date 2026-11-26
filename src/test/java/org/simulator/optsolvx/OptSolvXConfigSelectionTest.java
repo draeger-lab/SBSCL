@@ -1,21 +1,22 @@
 package org.simulator.optsolvx;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.optsolvx.model.AbstractLPModel;
 import org.optsolvx.solver.LPSolverAdapter;
 import org.optsolvx.solver.OptSolvXConfig;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OptSolvXConfigSelectionTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void unknown_solver_name_throws_exception() {
         AbstractLPModel lp = new AbstractLPModel();
         lp.addVariable("x", 0.0d, 1.0d);
         lp.build();
 
-        OptSolvXConfig.resolve(lp, "does-not-exist");
+        assertThrows(IllegalArgumentException.class,
+                () -> OptSolvXConfig.resolve(lp, "does-not-exist"));
     }
 
     @Test
@@ -25,18 +26,22 @@ public class OptSolvXConfigSelectionTest {
         lp.build();
 
         LPSolverAdapter backend = OptSolvXConfig.resolve(lp, "oj");
+
         assertNotNull(backend);
-        assertTrue(backend.getClass().getName().toLowerCase().contains("ojalgo"));
+        assertEquals("OjAlgoSolver", backend.getClass().getSimpleName());
     }
 
     @Test
-    public void default_solver_is_commons_math_when_no_name_given() {
+    public void resolves_explicit_commons_math_backend() {
         AbstractLPModel lp = new AbstractLPModel();
         lp.addVariable("x", 0.0d, 1.0d);
         lp.build();
 
-        LPSolverAdapter backend = OptSolvXConfig.resolve(lp, null);
+        LPSolverAdapter backend =
+                OptSolvXConfig.resolve(lp, "commons-math");
+
         assertNotNull(backend);
-        assertTrue(backend.getClass().getName().toLowerCase().contains("commonsmath"));
+        assertEquals("CommonsMathSolver",
+                backend.getClass().getSimpleName());
     }
 }
