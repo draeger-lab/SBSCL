@@ -57,7 +57,7 @@ public final class FbaToOptSolvX {
         final String fbcNSv2 = FBCConstants.getNamespaceURI(level, version, 2);
 
         // --- 1) Variables (reactions) with bounds ---------------------------------------------
-        // Default bounds if FBC has no values: 0 .. +inf (conventional for FBA)
+        // Preliminary bounds; missing FBC v1 bounds are resolved below.
         final Map<String, Double> lb = new LinkedHashMap<String, Double>(Math.max(16, reactions.size() * 2));
         final Map<String, Double> ub = new LinkedHashMap<String, Double>(Math.max(16, reactions.size() * 2));
 
@@ -82,9 +82,13 @@ public final class FbaToOptSolvX {
         // FBC v1: combine explicit flux bounds.
         FBCModelPlugin mpV1 = (FBCModelPlugin) m.getPlugin(fbcNSv1);
 
+        final boolean isFbcV1 =
+                mpV1 != null && mpV1.getPackageVersion() == 1;
+
+        final Map<String, Double> explicitLb = new LinkedHashMap<>();
+        final Map<String, Double> explicitUb = new LinkedHashMap<>();
+
         if (mpV1 != null && mpV1.isSetListOfFluxBounds()) {
-            final Map<String, Double> explicitLb = new LinkedHashMap<>();
-            final Map<String, Double> explicitUb = new LinkedHashMap<>();
 
             for (FluxBound fb : mpV1.getListOfFluxBounds()) {
                 String rid = fb.getReaction();
@@ -123,6 +127,18 @@ public final class FbaToOptSolvX {
 
             double lower = nvl(lb.get(rid), 0.0d);
             double upper = nvl(ub.get(rid), Double.POSITIVE_INFINITY);
+
+            // Infer bounds from reversibility if no FBC v1 bounds are defined.
+            if (isFbcV1
+                    && !explicitLb.containsKey(rid)
+                    && !explicitUb.containsKey(rid)) {
+
+                lower = r.getReversible()
+                        ? Double.NEGATIVE_INFINITY
+                        : 0.0d;
+
+                upper = Double.POSITIVE_INFINITY;
+            }
 
             if (Double.isNaN(lower) || Double.isNaN(upper) || lower > upper) {
                 throw new IllegalArgumentException(

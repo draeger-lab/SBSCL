@@ -47,6 +47,40 @@ public class FbaToOptSolvXTest {
     }
 
     @Test
+    public void testMissingBoundsForReversibleReaction()
+            throws XMLStreamException {
+
+        AbstractLPModel lp = createModel(
+                "", objective(1.0d), true);
+
+        assertBounds(lp,
+                Double.NEGATIVE_INFINITY,
+                Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testMissingBoundsForIrreversibleReaction()
+            throws XMLStreamException {
+
+        AbstractLPModel lp = createModel(
+                "", objective(1.0d), false);
+
+        assertBounds(lp, 0.0d, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testExplicitBoundsTakePrecedenceOverReversibility()
+            throws XMLStreamException {
+
+        AbstractLPModel lp = createModel(
+                bound("b1", "greaterEqual", -10.0d)
+                        + bound("b2", "lessEqual", 10.0d),
+                objective(1.0d), false);
+
+        assertBounds(lp, -10.0d, 10.0d);
+    }
+
+    @Test
     public void testEqualityBound() throws XMLStreamException {
         AbstractLPModel lp = createModel(
                 bound("b1", "equal", 5.0d),
@@ -138,6 +172,16 @@ public class FbaToOptSolvXTest {
             String bounds, String objectives)
             throws XMLStreamException {
 
+        return createModel(bounds, objectives, true);
+    }
+
+    /**
+     * Creates and translates an FBC v1 model with configurable reversibility.
+     */
+    private static AbstractLPModel createModel(
+            String bounds, String objectives, boolean reversible)
+            throws XMLStreamException {
+
         String xml =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                         + "<sbml"
@@ -161,7 +205,8 @@ public class FbaToOptSolvXTest {
                         + "</listOfSpecies>"
 
                         + "<listOfReactions>"
-                        + "<reaction id=\"R1\" reversible=\"true\" fast=\"false\">"
+                        + "<reaction id=\"R1\" reversible=\""
+                        + reversible + "\" fast=\"false\">"
                         + "<listOfReactants>"
                         + "<speciesReference species=\"A\""
                         + " stoichiometry=\"1\" constant=\"true\"/>"
@@ -173,9 +218,10 @@ public class FbaToOptSolvXTest {
                         + "</reaction>"
                         + "</listOfReactions>"
 
-                        + "<fbc:listOfFluxBounds>"
+                        + (bounds.isEmpty() ? ""
+                        : "<fbc:listOfFluxBounds>"
                         + bounds
-                        + "</fbc:listOfFluxBounds>"
+                        + "</fbc:listOfFluxBounds>")
 
                         + "<fbc:listOfObjectives fbc:activeObjective=\"obj\">"
                         + "<fbc:objective fbc:id=\"obj\" fbc:type=\"maximize\">"
