@@ -834,17 +834,6 @@
                 <javadoc.opts>-Xdoclint:none</javadoc.opts>
             </properties>
         </profile>
-
-        <!--  Local OptSolvX call  -->
-        <profile>
-            <id>local-optsolvx</id>
-            <repositories>
-                <repository>
-                    <id>local-optsolvx</id>
-                    <url>file:${project.basedir}/lib/maven</url>
-                </repository>
-            </repositories>
-        </profile>
     </profiles>
 
     <!-- =================================================================== -->
