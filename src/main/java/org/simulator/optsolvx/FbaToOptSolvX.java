@@ -66,13 +66,35 @@ public final class FbaToOptSolvX {
             double lower = 0.0d;
             double upper = Double.POSITIVE_INFINITY;
 
-            // FBC v2: bounds via FBCReactionPlugin lower/upper "Parameter" instances
+            // FBC v2: resolve and validate flux bound parameter references.
             if (r.isSetPlugin(fbcNSv2)) {
                 FBCReactionPlugin rp = (FBCReactionPlugin) r.getPlugin(fbcNSv2);
-                Parameter lpi = rp.getLowerFluxBoundInstance();
-                Parameter upi = rp.getUpperFluxBoundInstance();
-                if (lpi != null) lower = valueOf(lpi, interpreter);
-                if (upi != null) upper = valueOf(upi, interpreter);
+
+                if (rp.isSetLowerFluxBound()) {
+                    Parameter lpi = rp.getLowerFluxBoundInstance();
+
+                    if (lpi == null) {
+                        throw new IllegalArgumentException(
+                                MessageFormat.format(
+                                        "Unresolved lower flux bound parameter {0} for reaction {1}.",
+                                        rp.getLowerFluxBound(), rid));
+                    }
+
+                    lower = valueOf(lpi, interpreter);
+                }
+
+                if (rp.isSetUpperFluxBound()) {
+                    Parameter upi = rp.getUpperFluxBoundInstance();
+
+                    if (upi == null) {
+                        throw new IllegalArgumentException(
+                                MessageFormat.format(
+                                        "Unresolved upper flux bound parameter {0} for reaction {1}.",
+                                        rp.getUpperFluxBound(), rid));
+                    }
+
+                    upper = valueOf(upi, interpreter);
+                }
             }
             // Store preliminary bounds; FBC v1 may override below via FluxBounds list
             lb.put(rid, lower);

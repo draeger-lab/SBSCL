@@ -128,6 +128,37 @@ public class FbaToOptSolvXTest {
                 TOLERANCE);
     }
 
+    @Test
+    public void testFbcV2UnknownLowerBoundParameter() {
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> createFbcV2Model("UNKNOWN_LB", "UB"));
+
+        assertEquals(
+                "Unresolved lower flux bound parameter UNKNOWN_LB for reaction R1.",
+                exception.getMessage());
+    }
+
+    @Test
+    public void testFbcV2UnknownUpperBoundParameter() {
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> createFbcV2Model("LB", "UNKNOWN_UB"));
+
+        assertEquals(
+                "Unresolved upper flux bound parameter UNKNOWN_UB for reaction R1.",
+                exception.getMessage());
+    }
+
+    @Test
+    public void testFbcV2ValidBoundParameters()
+            throws XMLStreamException {
+
+        AbstractLPModel lp = createFbcV2Model("LB", "UB");
+
+        assertBounds(lp, -10.0d, 10.0d);
+    }
+
     /**
      * Verifies the translated variable bounds.
      */
@@ -166,13 +197,84 @@ public class FbaToOptSolvXTest {
     }
 
     /**
-     * Creates and translates a minimal FBC v1 model.
+     * Creates and translates an FBC v1 model with a reversible reaction.
      */
     private static AbstractLPModel createModel(
             String bounds, String objectives)
             throws XMLStreamException {
 
         return createModel(bounds, objectives, true);
+    }
+
+    /**
+     * Creates and translates a minimal non-strict FBC v2 model.
+     */
+    private static AbstractLPModel createFbcV2Model(
+            String lowerBoundRef, String upperBoundRef)
+            throws XMLStreamException {
+
+        String xml = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core"
+                  xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2"
+                  level="3" version="1" fbc:required="false">
+
+                <model id="testModel" fbc:strict="false">
+
+                    <listOfCompartments>
+                        <compartment id="cell" size="1" constant="true"/>
+                    </listOfCompartments>
+
+                    <listOfSpecies>
+                        <species id="A" compartment="cell"
+                                 initialAmount="0" boundaryCondition="true"
+                                 hasOnlySubstanceUnits="true" constant="false"/>
+                        <species id="B" compartment="cell"
+                                 initialAmount="0" boundaryCondition="true"
+                                 hasOnlySubstanceUnits="true" constant="false"/>
+                    </listOfSpecies>
+
+                    <listOfParameters>
+                        <parameter id="LB" value="-10" constant="true"/>
+                        <parameter id="UB" value="10" constant="true"/>
+                    </listOfParameters>
+
+                    <listOfReactions>
+                        <reaction id="R1" reversible="true" fast="false"
+                                  fbc:lowerFluxBound="%s"
+                                  fbc:upperFluxBound="%s">
+
+                            <listOfReactants>
+                                <speciesReference species="A"
+                                                  stoichiometry="1"
+                                                  constant="true"/>
+                            </listOfReactants>
+
+                            <listOfProducts>
+                                <speciesReference species="B"
+                                                  stoichiometry="1"
+                                                  constant="true"/>
+                            </listOfProducts>
+
+                        </reaction>
+                    </listOfReactions>
+
+                    <fbc:listOfObjectives fbc:activeObjective="obj">
+                        <fbc:objective fbc:id="obj" fbc:type="maximize">
+                            <fbc:listOfFluxObjectives>
+                                <fbc:fluxObjective fbc:reaction="R1"
+                                                   fbc:coefficient="1"/>
+                            </fbc:listOfFluxObjectives>
+                        </fbc:objective>
+                    </fbc:listOfObjectives>
+
+                </model>
+            </sbml>
+            """.formatted(lowerBoundRef, upperBoundRef);
+
+        SBMLDocument document = SBMLReader.read(xml);
+
+        return FbaToOptSolvX.fromSBML(document);
     }
 
     /**
