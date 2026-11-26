@@ -412,6 +412,8 @@ implements DelayValueHolder, DESSolver, EventHandler {
     System.arraycopy(result, 0, newValues, 0, result.length);
     double ft = timeBegin;
     DES.setFastProcessComputation(true);
+    // The fast-reaction projection runs in pseudo-time from 0, so delayed values are meaningless here.
+    DES.setDelaysIncluded(false);
 
     // TODO what if there is oscillation, so no state with no change will be
     // reached
@@ -422,6 +424,7 @@ implements DelayValueHolder, DESSolver, EventHandler {
       step++;
     }
     DES.setFastProcessComputation(false);
+    DES.setDelaysIncluded(true);
     return oldValues;
   }
 

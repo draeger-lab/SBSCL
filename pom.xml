@@ -63,7 +63,7 @@
   </description>
 
   <properties>
-    <jdk.version>1.8</jdk.version>
+    <jdk.version>17</jdk.version>
     <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
     <year>${maven.build.timestamp}</year>
     <!-- This property is used for filtering the variable ${year} in some resource
@@ -390,8 +390,873 @@
       <url>file:${project.basedir}/src/lib/maven</url>
     </repository>
 
-    <repository>
-      <id>libs</id>
+    <repository><?xml version="1.0" encoding="UTF-8"?>
+        <!--
+            * This file is part of Simulation Core Library, a Java-based library
+            * for efficient numerical simulation of biological models.
+            *
+            * Copyright (C) 2007-2022 jointly by the following organizations:
+            * 1. University of Tuebingen, Germany
+            * 2. Keio University, Japan
+            * 3. Harvard University, USA
+            * 4. The University of Edinburgh, UK
+            * 5. EMBL European Bioinformatics Institute (EBML-EBI), Hinxton, UK
+            * 6. The University of California, San Diego, La Jolla, CA, USA
+            * 7. The Babraham Institute, Cambridge, UK
+            * 8. Duke University, Durham, NC, US
+            *
+            * This library is free software; you can redistribute it and/or modify
+            * it under the terms of the GNU Lesser General Public License as
+            * published by the Free Software Foundation. A copy of the license
+            * agreement is provided in the file named "LICENSE.txt" included with
+            * this software distribution and also available online as
+            * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>.
+        -->
+
+        <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+            <modelVersion>4.0.0</modelVersion>
+            <groupId>org.draegerlab</groupId>
+            <artifactId>sbscl</artifactId>
+
+            <!-- Output to jar format -->
+            <packaging>jar</packaging>
+
+            <!--
+               Hints for deployment:
+
+               mvn clean verify source:jar source:jar-no-fork javadoc:jar install:install gpg:sign deploy:deploy release:clean release:prepare release:perform deploy
+
+               Optionally also add: -Dmaven.test.skip=true
+
+               Minimal execution with: mvn deploy
+
+               mvn clean verify source:jar source:jar-no-fork javadoc:jar gpg:sign deploy -Dgpg.passphrase=<pw>
+            -->
+
+
+            <!-- =================================================================== -->
+            <!-- General project information                                         -->
+            <!-- =================================================================== -->
+
+            <name>Systems Biology Simulation Core Library (SBSCL)</name>
+            <version>2.1.1</version>
+            <url>https://github.com/draeger-lab/SBSCL/</url>
+            <inceptionYear>2007</inceptionYear>
+            <description>
+                The Systems Biology Simulation Core Library provides an efficient and
+                exhaustive Java™ implementation of methods to interpret the content of
+                models encoded in the Systems Biology Markup Language (SBML) and its
+                numerical solution. This library is based on the JSBML project. It can be
+                used on every operating system for which a Java Virtual Machine is available.
+                Version 2.0 and beyond support simulation in three frameworks:
+                constraint-based analysis, stochastic simulation, and ordinary differential
+                equation systems. SBSCL supports SED-ML and COMBINE archives in OMEX format.
+            </description>
+
+            <properties>
+                <jdk.version>17</jdk.version>
+                <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+                <year>${maven.build.timestamp}</year>
+                <!-- This property is used for filtering the variable ${year} in some resource
+                  files -->
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+                <project.license.url>https://www.gnu.org/licenses/lgpl-3.0-standalone.html</project.license.url>
+                <junit.version>5.12.0</junit.version>
+                <javadoc.version>3.2.0</javadoc.version>
+                <site.path>https://draeger-lab.github.io/SBSCL/docs/</site.path>
+            </properties>
+
+            <issueManagement>
+                <system>GitHub Issues</system>
+                <url>${project.url}/issues</url>
+            </issueManagement>
+
+            <distributionManagement>
+                <site>
+                    <id>SBSCL</id>
+                    <url>https://draeger-lab.github.io/SBSCL</url>
+                </site>
+                <downloadUrl>${project.url}</downloadUrl>
+                <repository>
+                    <uniqueVersion>false</uniqueVersion>
+                    <id>ossrh</id>
+                    <name>Releases</name>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                    <layout>default</layout>
+                </repository>
+                <snapshotRepository>
+                    <uniqueVersion>true</uniqueVersion>
+                    <id>ossrh</id>
+                    <name>Snapshots</name>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                    <layout>default</layout>
+                </snapshotRepository>
+            </distributionManagement>
+
+            <ciManagement>
+                <system>Travis CI</system>
+                <url>https://travis-ci.com/github/draeger-lab/SBSCL</url>
+            </ciManagement>
+
+            <licenses>
+                <license>
+                    <name>GNU Lesser General Public License</name>
+                    <url>${project.license.url}</url>
+                    <distribution>repo</distribution>
+                </license>
+            </licenses>
+
+
+            <!-- =================================================================== -->
+            <!-- Source Control Management                                           -->
+            <!-- =================================================================== -->
+
+            <scm>
+                <connection>scm:git:git://github.com/draeger-lab/SBSCL.git</connection>
+                <developerConnection>scm:git:ssh://github.com/draeger-lab/SBSCL.git</developerConnection>
+                <url>https://github.com/draeger-lab/SBSCL/tree/master/</url> <!-- Expanding ${project.url} does not work in Maven Central -->
+            </scm>
+
+
+            <!-- =================================================================== -->
+            <!-- The team of developers and contributors                             -->
+            <!-- =================================================================== -->
+
+            <developers>
+                <developer>
+                    <name>Richard Adams</name>
+                    <id>otter606</id>
+                    <email>ra22597@gmail.com</email>
+                    <url>https://github.com/otter606</url>
+                    <roles>
+                        <role>developer</role>
+                    </roles>
+                </developer>
+                <developer>
+                    <name>Alexander Dörr</name>
+                    <email>alexander.doerr@uni-tuebingen.de</email>
+                    <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/doerr/</url>
+                    <timezone>Europe/Berlin</timezone>
+                    <roles>
+                        <role>developer</role>
+                    </roles>
+                    <properties>
+                        <picUrl>
+                            http://www.cogsys.cs.uni-tuebingen.de/mitarb/doerr/portrait.jpg
+                        </picUrl>
+                    </properties>
+                </developer>
+                <developer>
+                    <name>Andreas Dräger</name>
+                    <id>draeger</id>
+                    <email>draeger@informatik.uni-tuebingen.de</email>
+                    <url>https://github.com/draeger</url>
+                    <organization>University of Tübingen</organization>
+                    <organizationUrl>https://uni-tuebingen.de/en/127116</organizationUrl>
+                    <roles>
+                        <role>architect</role>
+                        <role>developer</role>
+                    </roles>
+                    <timezone>Europe/Berlin</timezone>
+                    <properties>
+                        <picUrl>
+                            https://publons.com/media/thumbs/academic/photos/dd5f988fb8ee4bc8a8cbecbb7b71c58e.jpg.200x200_q95_crop_detail_upscale.jpg
+                        </picUrl>
+                    </properties>
+                </developer>
+                <developer>
+                    <name>Akira Funahashi</name>
+                    <id>funasoul</id>
+                    <email>funa@bio.keio.ac.jp</email>
+                    <url>http://fun.bio.keio.ac.jp/people/</url>
+                    <organization>Keio University</organization>
+                    <timezone>Japan/Tokyo</timezone>
+                    <roles>
+                        <role>developer</role>
+                    </roles>
+                    <properties>
+                        <picUrl>
+                            https://groups.oist.jp/sites/default/files/styles/group_image/public/eventimg/1611/funahashi-sensei_0.jpeg
+                        </picUrl>
+                    </properties>
+                </developer>
+                <developer>
+                    <name>Roland Keller</name>
+                    <id>RolandKeller5</id>
+                    <email>http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/</email>
+                    <url>roland.keller@gmx.de</url>
+                    <timezone>Europe/Berlin</timezone>
+                    <roles>
+                        <role>developer</role>
+                    </roles>
+                    <properties>
+                        <picUrl>
+                            http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/portrait.jpg
+                        </picUrl>
+                    </properties>
+                </developer>
+                <developer>
+                    <name>Matthias König</name>
+                    <id>matthiaskoenig</id>
+                    <email>konigmatt@googlemail.com</email>
+                    <url>https://github.com/matthiaskoenig</url>
+                    <organization>Humboldt University</organization>
+                    <timezone>Europe/Berlin</timezone>
+                    <roles>
+                        <role>developer</role>
+                    </roles>
+                    <properties>
+                        <picUrl>
+                            https://seek.lisym.org/assets/avatar-images/134-120x120.png
+                        </picUrl>
+                    </properties>
+                </developer>
+                <developer>
+                    <name>Hannes Planatscher</name>
+                    <id>planatscher</id>
+                    <email>hannes.planatscher@nmi.de</email>
+                    <url>https://github.com/planatscher</url>
+                    <timezone>Europe/Berlin</timezone>
+                    <roles>
+                        <role>developer</role>
+                    </roles>
+                    <properties>
+                        <picUrl>
+                            http://www.ra.cs.uni-tuebingen.de/mitarb/planatsc/img/PlanatscherHannes_small.png
+                        </picUrl>
+                    </properties>
+                </developer>
+                <developer>
+                    <name>Nicolas Rodriguez</name>
+                    <id>niko-rodrigue</id>
+                    <email>rodriguezn@babraham.ac.uk</email>
+                    <url>https://github.com/niko-rodrigue</url>
+                    <organization>The Babraham Institute</organization>
+                    <timezone>UK/London</timezone>
+                    <roles>
+                        <role>developer</role>
+                    </roles>
+                    <properties>
+                        <picUrl>
+                            https://www.lenoverelab.org/sites/default/files/pictures/Nicolas_Rodriguez-170x150.jpg
+                        </picUrl>
+                    </properties>
+                </developer>
+                <developer>
+                    <name>Shalin Shah</name>
+                    <id>shalinshah1993</id>
+                    <email>shalin.shah@duke.edu</email>
+                    <url>https://github.com/shalinshah1993</url>
+                    <organization>Duke University</organization>
+                    <timezone>US/EST</timezone>
+                    <roles>
+                        <role>developer</role>
+                    </roles>
+                    <properties>
+                        <picUrl>
+                            https://uni-tuebingen.de/fileadmin/_processed_/3/d/csm_Shalin_Shah_85b583dd09.png
+                        </picUrl>
+                    </properties>
+                </developer>
+                <developer>
+                    <name>Hemil Panchiwala</name>
+                    <id>hemilpanchiwala</id>
+                    <email>hpanchiwala@cs.iitr.ac.in</email>
+                    <url>https://github.com/hemilpanchiwala</url>
+                    <organization>Indian Institute of Technology, Roorkee</organization>
+                    <timezone>India/IST</timezone>
+                    <roles>
+                        <role>developer</role>
+                    </roles>
+                    <properties>
+                        <picUrl>https://avatars1.githubusercontent.com/u/42446679?s=60&amp;u=b37bc60ef87d9b485be04913305c1903f9e77f92&amp;v=4</picUrl>
+                    </properties>
+                </developer>
+                <developer>
+                    <name>Akito Tabira</name>
+                    <id>mythosil</id>
+                    <email>tabira@fun.bio.keio.ac.jp</email>
+                    <url>https://github.com/mythosil</url>
+                    <organization>Keio University</organization>
+                    <timezone>Japan/Tokyo</timezone>
+                    <roles>
+                        <role>developer</role>
+                    </roles>
+                </developer>
+                <developer>
+                    <name>Arthur Neumann</name>
+                    <id>NeumannArthur</id>
+                    <email>art.neumann@outlook.com</email>
+                    <url>https://github.com/NeumannArthur</url>
+                    <organization>University of Tübingen</organization>
+                    <timezone>Europe/Berlin</timezone>
+                    <roles>
+                        <role>developer</role>
+                    </roles>
+                </developer>
+                <developer>
+                    <name>Taichi Araki</name>
+                    <id>...</id>
+                    <email>...</email>
+                    <url>...</url>
+                    <organization>Keio University</organization>
+                    <timezone>Japan/Tokyo</timezone>
+                    <roles>
+                        <role>developer</role>
+                    </roles>
+                </developer>
+            </developers>
+
+            <contributors>
+                <contributor>
+                    <name>Leonhard Markert</name>
+                    <url>https://github.com/curiousleo</url>
+                </contributor>
+                <contributor>
+                    <name>Max Zwießele</name>
+                    <url>https://github.com/mzwiessele</url>
+                </contributor>
+                <contributor>
+                    <name>Nicolas Le Novère</name>
+                    <email>n.lenovere@gmail.com</email>
+                    <url>http://lenoverelab.org/perso/lenov/</url>
+                    <organization>The Babraham Institute</organization>
+                    <timezone>UK/London</timezone>
+                </contributor>
+                <contributor>
+                    <name>Michael T. Cooling</name>
+                    <url>https://www.linkedin.com/in/mikecooling/</url>
+                    <organization>University of Auckland</organization>
+                </contributor>
+                <contributor>
+                    <name>Noriko Hiroi</name>
+                    <email>hiroi@bio.keio.ac.jp</email>
+                    <url>http://fun.bio.keio.ac.jp/~hiroi/</url>
+                    <organization>Keio University</organization>
+                </contributor>
+                <contributor>
+                    <name>Marcel Kronfeld</name>
+                    <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/kronfeld</url>
+                    <organization>University of Tübingen</organization>
+                </contributor>
+                <contributor>
+                    <name>Adrian Schröder</name>
+                    <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/schroeder/</url>
+                    <organization>University of Tübingen</organization>
+                </contributor>
+                <contributor>
+                    <name>Dieudonné M. Wouamba</name>
+                    <url>https://www.linkedin.com/in/dieudonné-motsou-wouamba-2952a018/</url>
+                    <organization>University of Tübingen</organization>
+                </contributor>
+                <contributor>
+                    <name>Andreas Zell</name>
+                    <email>andreas.zell@uni-tuebingen.de</email>
+                    <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/zell/</url>
+                    <organization>University of Tübingen</organization>
+                </contributor>
+                <contributor>
+                    <name>Michael J. Ziller</name>
+                    <email>michael_ziller@psych.mpg.de</email>
+                    <url>https://www.psych.mpg.de/person/47510/2176252</url>
+                    <organization>Max Planck Institute of Psychatry</organization>
+                </contributor>
+                <contributor>
+                    <name>Deepak Yadav</name>
+                    <email>dyrpsf@gmail.com</email>
+                    <url>https://www.linkedin.com/in/dyrpsf/</url>
+                    <organization>VIT Bhopal University</organization>
+                </contributor>
+            </contributors>
+
+
+            <!-- =================================================================== -->
+            <!-- Repositories                                                        -->
+            <!-- =================================================================== -->
+
+            <repositories>
+                <repository>
+                    <id>in-project</id>
+                    <name>In project repository</name>
+                    <url>file:${project.basedir}/src/lib/maven</url>
+                </repository>
+
+                <repository>
+                    <id>libs</id>
+                    <url>file://${project.basedir}/lib</url>
+                </repository>
+
+                <!-- Adding repository to download latest jlibSBML -->
+                <repository>
+                    <id>JSBML-SNAPSHOT</id>
+                    <name>The JSBML Snapshot repository</name>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                </repository>
+                <!-- Adding repository to download CombineArchive -->
+
+                <repository>
+                    <id>sems-maven-repository-releases</id>
+                    <name>SEMS Maven Repo</name>
+                    <url>https://mvn.bio.informatik.uni-rostock.de/releases/</url>
+                    <layout>default</layout>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+
+            <!-- =================================================================== -->
+            <!-- Dependencies                                                        -->
+            <!-- =================================================================== -->
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter-engine</artifactId>
+                    <version>${junit.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter-api</artifactId>
+                    <version>${junit.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter-params</artifactId>
+                    <version>5.12.0</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.sbml.jsbml</groupId>
+                    <artifactId>jsbml</artifactId>
+                    <version>1.6.1</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.jdom</groupId>
+                    <artifactId>jdom2</artifactId>
+                    <version>2.0.6.1</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.jmathml</groupId>
+                    <artifactId>jmathml</artifactId>
+                    <version>2.1.0</version>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>junit</groupId>
+                            <artifactId>junit</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+
+                <!--
+                  Exclude legacy XML parser stack for compatibility with modern JDKs.
+                  Reason: xercesImpl/xml-apis/xalan can shadow the JDK's JAXP on JDK 17/22
+                          and trigger AbstractMethodError during Log4j2 XML configuration.
+                  If anyone needs explicit Xerces/Xalan features, please open an issue.
+                  (See SBSCL issue #91)
+                -->
+                <dependency>
+                    <groupId>org.jlibsedml</groupId>
+                    <artifactId>jlibsedml</artifactId>
+                    <version>2.2.3</version>
+                    <exclusions>
+                        <!-- Avoid legacy XML parser stack; rely on JDK JAXP instead -->
+                        <exclusion>
+                            <groupId>xerces</groupId>
+                            <artifactId>xercesImpl</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>xml-apis</groupId>
+                            <artifactId>xml-apis</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>xalan</groupId>
+                            <artifactId>xalan</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-math</artifactId>
+                    <version>2.2</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-math3</artifactId>
+                    <version>3.6.1</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                    <version>3.18.0</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.jfree</groupId>
+                    <artifactId>jfreechart</artifactId>
+                    <version>1.0.19</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.blazegraph</groupId>
+                    <artifactId>colt</artifactId>
+                    <version>2.1.4</version>
+                </dependency>
+
+                <!-- LP solvers -->
+                <dependency>
+                    <groupId>kisao</groupId>
+                    <artifactId>libkisao</artifactId>
+                    <version>1.0.3.1-rc</version>
+                </dependency>
+
+                <!-- OMEX archive -->
+                <dependency>
+                    <groupId>de.uni-rostock.sbi</groupId>
+                    <artifactId>CombineArchive</artifactId>
+                    <version>1.3.6</version>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>junit</groupId>
+                            <artifactId>junit</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+
+                <!-- OptSolvX -->
+                <dependency>
+                    <groupId>org.optsolvx</groupId>
+                    <artifactId>optsolvx</artifactId>
+                    <version>0.1.0-SNAPSHOT</version>
+                    <classifier>jdk8</classifier>
+                </dependency>
+            </dependencies>
+
+
+            <!-- =================================================================== -->
+            <!-- Building                                                            -->
+            <!-- =================================================================== -->
+
+            <!-- To build the project run: -->
+            <!-- mvn clean compile package assembly:single -->
+
+            <build>
+                <!--<finalName>${project.artifactId}-${project.version}</finalName>-->
+                <pluginManagement>
+                    <plugins>
+                        <!--  Run mvn license:third-party-report to build report of licenses -->
+                        <!--  Download license files for 3rd party libraries and put them in website code -->
+                        <!--  at src/target/generated-sources/THIRD-PARTY.txt and src/target/site/third-party-report.html -->
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>license-maven-plugin</artifactId>
+                            <version>1.16</version>
+                            <executions>
+                                <execution>
+                                    <id>download-licenses</id>
+                                    <goals>
+                                        <goal>download-licenses</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.apache.maven.doxia</groupId>
+                                    <artifactId>doxia-core</artifactId>
+                                    <version>1.9.1</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.maven.doxia</groupId>
+                                    <artifactId>doxia-site-renderer</artifactId>
+                                    <version>1.9.2</version>
+                                </dependency>
+                            </dependencies>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-site-plugin</artifactId>
+                            <version>3.9.1</version>
+                            <configuration>
+                                <locales>en</locales>
+                                <pomPackagingOnly>false</pomPackagingOnly>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <id>attach-descriptor</id>
+                                    <goals>
+                                        <goal>attach-descriptor</goal>
+                                        <goal>site</goal>
+                                    </goals>
+                                    <!-- select the Maven phase in which the plugin will be executed -->
+                                    <phase>site-deploy</phase>
+                                    <configuration>
+                                        <!-- Plugin configuration ges here -->
+                                        <server>github</server>
+                                        <!-- The commit message -->
+                                        <message>Building site for my project</message>
+                                        <!-- The location where the site is uploaded -->
+                                        <path>${site.path}</path>
+                                        <!-- Use merge or override the content -->
+                                        <merge>true</merge>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.apache.maven.doxia</groupId>
+                                    <artifactId>doxia-module-markdown</artifactId>
+                                    <version>1.7</version>
+                                </dependency>
+                            </dependencies>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-plugin</artifactId>
+                            <version>3.0.0-M5</version>
+                            <configuration>
+                                <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
+                            </configuration>
+                        </plugin>
+
+                        <!-- Download source code in Eclipse, best practice [OPTIONAL!] -->
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-eclipse-plugin</artifactId>
+                            <version>2.9</version>
+                            <configuration>
+                                <downloadSources>true</downloadSources>
+                                <downloadJavadocs>false</downloadJavadocs>
+                            </configuration>
+                        </plugin>
+
+                        <!-- Set a JDK compiler level -->
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-compiler-plugin</artifactId>
+                            <!-- Newer plugin; supports Java 17+ cleanly -->
+                            <version>3.11.0</version>
+                            <configuration>
+                                <!-- Compile against Java 17 API and bytecode -->
+                                <release>17</release>
+
+                                <!-- Keep the existing excludes configuration -->
+                                <excludes>
+                                    <exclude>org/simulator/examples/**</exclude>
+                                </excludes>
+                                <testExcludes>
+                                    <testExclude>org/simulator/**</testExclude>
+                                </testExcludes>
+                            </configuration>
+                        </plugin>
+
+                        <!-- Assemble executable JAR -->
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-assembly-plugin</artifactId>
+                            <version>3.6.0</version> <!-- Upgraded to fix Windows path bug -->
+                            <configuration>
+                                <archive>
+                                    <manifest>
+                                        <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                        <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                                    </manifest>
+                                </archive>
+                                <descriptorRefs>
+                                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                                </descriptorRefs>
+                                <finalName>${project.artifactId}-${project.version}</finalName>
+                                <appendAssemblyId>false</appendAssemblyId>
+                                <descriptors>
+                                    <descriptor>src/assembly/assembly.xml</descriptor> <!-- Fixed deprecated tag -->
+                                </descriptors>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                                    <phase>package</phase> <!-- bind to the packaging phase -->
+                                    <goals>
+                                        <!-- This will create a JAR with all dependencies -->
+                                        <!-- mvn clean compile package assembly:single -->
+                                        <goal>single</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+
+                        <!-- This plug-in copies resources from target/site to docs/ so Github can render it  -->
+                        <plugin>
+                            <artifactId>maven-resources-plugin</artifactId>
+                            <version>2.7</version>
+                            <configuration>
+                            </configuration>
+                        </plugin>
+
+                        <!-- Plugins for Maven Central  -->
+
+                        <!-- Needed for uploading the distriution to Maven Central  -->
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-source-plugin</artifactId>
+                            <version>3.2.0</version>
+                            <!--<configuration>
+                              <attach>true</attach>
+                            </configuration>-->
+                            <executions>
+                                <execution>
+                                    <id>attach-sources</id>
+                                    <phase>verify</phase>
+                                    <goals>
+                                        <goal>jar-no-fork</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <!-- -->
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <version>${javadoc.version}</version>
+                            <executions>
+                                <execution>
+                                    <id>attach-javadocs</id>
+                                    <goals>
+                                        <goal>jar</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                            <configuration>
+                                <!-- add this to disable checking -->
+                                <!-- <doclint>none</doclint> -->
+                                <!-- <doclint>syntax</doclint> -->
+                                <!-- <doclint>html</doclint> -->
+                                <doclint>accessibility</doclint>
+                                <doclint>reference</doclint>
+                                <!--
+                                  This sets the command-line option -Xdoclint:none. In addition
+                                  to 'none' there are further options available, including 'all',
+                                  'html', 'syntax', 'accessibility', and more. For further information see
+                                  https://docs.oracle.com/javase/8/docs/technotes/tools/unix/javadoc.html
+                                -->
+                            </configuration>
+                        </plugin>
+                        <!-- Needed to upload the distribution to Maven Central to sign the JAR file -->
+                        <!-- Execute with mvn clean deploy -Dgpg.passphrase=yourpassphrase -->
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-gpg-plugin</artifactId>
+                            <version>1.6</version>
+                            <executions>
+                                <execution>
+                                    <id>sign-artifacts</id>
+                                    <phase>verify</phase>
+                                    <goals>
+                                        <goal>sign</goal>
+                                    </goals>
+                                    <configuration>
+                                        <keyname>${gpg.keyname}</keyname>
+                                        <passphraseServerId>${gpg.keyname}</passphraseServerId>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.sonatype.plugins</groupId>
+                            <artifactId>nexus-staging-maven-plugin</artifactId>
+                            <version>1.6.7</version>
+                            <extensions>true</extensions>
+                            <configuration>
+                                <serverId>ossrh</serverId>
+                                <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                                <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            </configuration>
+                        </plugin>
+                        <!-- Execute with "mvn release:clean release:prepare" followed by "mvn release:perform" -->
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-release-plugin</artifactId>
+                            <version>2.5.3</version>
+                            <configuration>
+                                <autoVersionSubmodules>true</autoVersionSubmodules>
+                                <useReleaseProfile>false</useReleaseProfile>
+                                <releaseProfiles>release</releaseProfiles>
+                                <goals>deploy</goals>
+                            </configuration>
+                        </plugin>
+
+                    </plugins>
+                </pluginManagement>
+
+                <!-- Resources copied by resources plug-in. Note that mvn site needs to run before mvn install to
+                make sure the website code exists inside target/site folder -->
+                <resources>
+                    <resource>
+                        <directory>${project.build.directory}/site/</directory>
+                        <targetPath>${basedir}/docs/</targetPath>
+                    </resource>
+                </resources>
+            </build>
+
+            <!-- =================================================================== -->
+            <!-- Profiles                                                            -->
+            <!-- =================================================================== -->
+
+            <!--  To stop maven errors from javadoc warnings -->
+            <profiles>
+                <profile>
+                    <id>java8-doclint-disabled</id>
+                    <activation>
+                        <jdk>[1.8,)</jdk>
+                    </activation>
+                    <properties>
+                        <javadoc.opts>-Xdoclint:none</javadoc.opts>
+                    </properties>
+                </profile>
+
+                <!--  Local OptSolvX call  -->
+                <profile>
+                    <id>local-optsolvx</id>
+                    <repositories>
+                        <repository>
+                            <id>local-optsolvx</id>
+                            <url>file:${project.basedir}/lib/maven</url>
+                        </repository>
+                    </repositories>
+                </profile>
+            </profiles>
+
+            <!-- =================================================================== -->
+            <!-- Reporting                                                           -->
+            <!-- =================================================================== -->
+
+            <!-- Generate javadoc and integrate with generated website with 'mvn site' -->
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${javadoc.version}</version>
+                        <reportSets>
+                            <reportSet>
+                                <reports>
+                                    <report>javadoc</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                        <configuration>
+                            <overview>${project.basedir}/src/main/javadoc/overview.html</overview>
+                            <additionalOptions>${javadoc.opts}</additionalOptions>
+                            <failOnError>false</failOnError>
+                            <show>public</show> <!-- Display only public methods and classes -->
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </reporting>
+
+        </project>
+
+        <id>libs</id>
       <url>file://${project.basedir}/lib</url>
     </repository>
 
@@ -445,7 +1310,7 @@
     <dependency>
       <groupId>org.jdom</groupId>
       <artifactId>jdom2</artifactId>
-      <version>2.0.5</version>
+      <version>2.0.6.1</version>
     </dependency>
     <dependency>
       <groupId>org.jmathml</groupId>
@@ -471,6 +1336,7 @@
       <artifactId>jlibsedml</artifactId>
       <version>2.2.3</version>
       <exclusions>
+        <!-- Avoid legacy XML parser stack; rely on JDK JAXP instead -->
         <exclusion>
           <groupId>xerces</groupId>
           <artifactId>xercesImpl</artifactId>
@@ -490,12 +1356,15 @@
       <artifactId>commons-lang3</artifactId>
       <version>3.18.0</version>
     </dependency>
-
-    <!-- Commons Math 2.x (ODE API used under org.apache.commons.math.ode.*) -->
     <dependency>
       <groupId>org.apache.commons</groupId>
-      <artifactId>commons-math</artifactId>
-      <version>2.2</version>
+      <artifactId>commons-math3</artifactId>
+      <version>3.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.18.0</version>
     </dependency>
 
     <dependency>
@@ -639,12 +1508,13 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.3</version>
+          <!-- Newer plugin; supports Java 17+ cleanly -->
+          <version>3.11.0</version>
           <configuration>
-            <source>${jdk.version}</source>
-            <target>${jdk.version}</target>
-            <!-- <excludes> <exclude>**/org/simulator/fba/COBRAsolver.java</exclude>
-              <exclude>**/org/simulator/fba/COBRAsolverExample.java</exclude> </excludes> -->
+            <!-- Compile against Java 17 API and bytecode -->
+            <release>17</release>
+
+            <!-- Keep the existing excludes configuration -->
             <excludes>
               <exclude>org/simulator/examples/**</exclude>
             </excludes>
@@ -658,7 +1528,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.6</version>
+          <version>3.6.0</version> <!-- Upgraded to fix Windows path bug -->
           <configuration>
             <archive>
               <manifest>
@@ -671,8 +1541,9 @@
             </descriptorRefs>
             <finalName>${project.artifactId}-${project.version}</finalName>
             <appendAssemblyId>false</appendAssemblyId>
-            <descriptor>src/assembly/assembly.xml
-            </descriptor> <!-- Details of the assembly are described in this file -->
+            <descriptors>
+              <descriptor>src/assembly/assembly.xml</descriptor> <!-- Fixed deprecated tag -->
+            </descriptors>
           </configuration>
           <executions>
             <execution>
@@ -686,6 +1557,7 @@
             </execution>
           </executions>
         </plugin>
+
         <!-- This plug-in copies resources from target/site to docs/ so Github can render it  -->
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
