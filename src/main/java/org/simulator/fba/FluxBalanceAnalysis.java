@@ -66,14 +66,14 @@ import org.simulator.optsolvx.FbaToOptSolvX;
 
 
 /**
- * Flux Balance Analysis (FBA) solved via OptSolvX (SCPSolver-free).
+ * Flux Balance Analysis (FBA) using OptSolvX.
  *
- * <p>This implementation builds a pure LP using {@link FbaToOptSolvX}
- * and solves it through an OptSolvX backend (default resolved via ServiceLoader
- * with a reflective fallback to a CommonsMath-based backend).</p>
+ * <p>Translates SBML/FBC models into linear programming problems
+ * using {@link FbaToOptSolvX} and solves them through an interchangeable
+ * backend selected via {@link OptSolvXConfig}.</p>
  *
- * <p>Public API is preserved: {@code solve()}, {@code getObjectiveValue()},
- * {@code getValue(String)}, {@code getValues()}, {@code getSolution()}.</p>
+ * <p>Equal lower and upper flux bounds are supported directly,
+ * without the former SCPSolver-specific epsilon adjustment.</p>
  */
 public class FluxBalanceAnalysis {
 
@@ -189,8 +189,8 @@ public class FluxBalanceAnalysis {
         }
         final Double v = lpSolution.getVariableValues().get(reactionId);
         if (v == null) {
-            // Preserve robustness: unknown id -> 0.0 (keeps original API tolerant).
-            return 0.0d;
+            throw new NullPointerException(
+                    "No flux value available for reaction: " + reactionId);
         }
         return v.doubleValue();
     }
